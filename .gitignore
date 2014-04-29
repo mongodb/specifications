@@ -1,0 +1,9 @@
+build/*
+*.swp
+.#*
+\#*#
+*__pycache__*
+*.pyc
+makefile.generated
+logo.png
+.DS_Store
