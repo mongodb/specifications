@@ -73,7 +73,7 @@ Mode
 Drivers and mongos will support five modes:
 
 "PRIMARY":
-````
+``````````
 
 Read from primary only. All operations produce an error (throw an exception
 where applicable) if primary is unavailable. Cannot be combined with tags.
@@ -81,24 +81,24 @@ where applicable) if primary is unavailable. Cannot be combined with tags.
 *This is the default.*
 
 "PRIMARY_PREFERRED":
-````
+````````````````````
 
 Read from primary if available, otherwise a secondary.
 
 
 "SECONDARY":
-````
+````````````
 
 Read from secondary if available, otherwise error.
 
 
 "SECONDARY_PREFERRED":
-````
+``````````````````````
 
 Read from a secondary if available, otherwise read from the primary.
 
 "NEAREST":
-````
+``````````
 
 Read from any member.
 
@@ -115,7 +115,7 @@ any read no matter what. See
 `DRIVERS-73 <https://jira.mongodb.org/browse/DRIVERS-73>`_.
 
 Tag Sets
-~~~~
+~~~~~~~~
 
 Drivers will support the use of tag sets in combination with a mode. This can
 be utilized for data center awareness. Tags only filter secondary read
@@ -135,22 +135,22 @@ SECONDARY, etc.). For compatibility reasons the final tag set can be empty
 document \{ \}, which has the same behavior as not providing this parameter.
 
 How Modes Interact With Tag Sets:
-~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 "PRIMARY":
-````
+``````````
 
 It is an error to specify any tag sets with PRIMARY, see "errors" below.
 
 "PRIMARY_PREFERRED":
-````
+````````````````````
 
 If the primary is up, read from it no matter how it's tagged. If the primary is
 down, read from a secondary matching the tags provided. If there is none,
 error.
 
 "SECONDARY":
-````
+````````````
 
 The driver or mongos searches through list of tag sets from first to last. When
 it finds a tag set matching any available secondaries, it picks a random
@@ -158,7 +158,7 @@ secondary among the nearest of them. If no available secondaries match the
 tags, raise an error.
 
 "SECONDARY_PREFERRED":
-````
+``````````````````````
 
 The driver or mongos searches through the list of tag sets from first to last.
 When it finds a tag set matching any available secondaries, it picks a random
@@ -166,14 +166,14 @@ secondary among the nearest of them. If there are no tag sets matching any
 secondaries, it reads from primary regardless of any tags provided.
 
 "NEAREST":
-````
+``````````
 
 The driver or mongos searches through the list of tag sets from first to last.
 When it finds a tag set matching any available members, it picks a random
 member among the nearest of them.
 
 Ping Times
-~~~~
+~~~~~~~~~~
 
 Once the driver or mongos has found a list of candidate members based on mode
 and tag sets, determine the "nearest" member as the one with the quickest
@@ -196,7 +196,7 @@ Requests and Auto-retry
 -----------------------
 
 Requests
-~~~~
+~~~~~~~~
 
 A driver's association of a socket with an application thread is called a
 "request". A thread can be "in a request," meaning some association between the
@@ -244,7 +244,7 @@ discards the pinning state for all threads. Otherwise, it does not discard the
 pinning state.
 
 Auto-retry
-~~~~
+~~~~~~~~~~
 
 After the first successful read in a request, a thread is pinned to a
 replica-set member (a secondary or the primary). If that member goes down, the
@@ -262,7 +262,7 @@ Commands
 --------
 
 Generic Command Helper
-~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 The driver's generic ``command()`` or ``runCommand()`` API accepts a read
 preference, but it only obeys the preference for these commands:
@@ -295,7 +295,7 @@ should *not* reindex a random secondary, it should be run on the primary.
 see `SERVER-10947 <https://jira.mongodb.org/browse/SERVER-10947>`_.
 
 Command-Specific Helpers
-~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 The driver will accept no read preference for any command-specific helper the
 driver implements, *unless* the command can run on a secondary (e.g.,
@@ -316,7 +316,7 @@ These are suggestions. As always, driver authors should balance cross-language
 standardization with backwards compatibility and the idioms of their language.
 
 Modes
-~~~~
+~~~~~
 
 Modes (PRIMARY, SECONDARY, ...) are constants declared in whatever way is
 idiomatic for the programming language. The constant values may be ints,
@@ -330,7 +330,7 @@ language. The "Communication with mongos" section below may provide inspiration
 for formatting tags.
 
 Read Preference Configuration
-~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Applications may set mode and/or tag sets on a per-operation basis similar to
 how ``addSpecial``, ``hint``, or ``batchSize`` are set. E.g., in Python::
@@ -346,7 +346,7 @@ set_read_preference, etc.
 ``Connection`` object.
 
 Errors
-~~~~
+~~~~~~
 
 If the driver cannot find an available member that matches the ReadPreference,
 the driver should immediately raise an exception without attempting any network
@@ -368,7 +368,7 @@ there are no members matching the ReadPreference:
 * "No replica set member available for query with ReadPreference " + pref + " and tags " + tags
 
 slaveOk
-~~~~
+~~~~~~~
 
 The introduction of ``ReadPreference`` deprecates and totally supersedes
 ``slaveOk`` as a part of the driver API. ``slaveOk`` is deprecated. Until it's
@@ -433,14 +433,14 @@ and SECONDARY_PREFERRED without tags\-\-are backwards compatible with all
 versions of mongos.
 
 Reference implementation
-----
+------------------------
 
 Based on mongos and the basis of PyMongo's implementation:
 
 https://github.com/10gen/read-prefs-reference
 
 Note On Pinning
-----
+---------------
 
 An earlier version of this spec, which was implemented in the versions of the
 drivers and mongos released concomitantly with MongoDB 2.2, stated that a
