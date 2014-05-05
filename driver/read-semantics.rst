@@ -1,6 +1,6 @@
-====================================
-Driver Read Semantics: Specification
-====================================
+===============================
+Read Preferences: Specification
+===============================
 
 :author: Read Semantics Working Group
 :date: Feb 14, 2014
