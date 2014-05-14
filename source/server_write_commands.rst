@@ -557,8 +557,7 @@ It must convert that batch into writes + gle's and use the old op codes.
 Are we discontinuing the use of getLastError?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yes, for everything but old style write ops.  We are continuing emulation for now to allow basic
-regression test coverage until 2.6.
+Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility.
 
 What if I want to know exactly how many updates turned into upserts?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
