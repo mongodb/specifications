@@ -536,20 +536,6 @@ Through mongos, all writes are acknowledged - {w:0} simply silences the response
 or {ok: 0}.  Users wanting to maintain high write throughput should convert to batch
 operations.
 
-Isn't supporting {w:0} this way akin to pipelining?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Let's agree that pipelining is the ability to put another request on the network before the
-response to the previous request it known.
-
-{w:0} may look like that, but it isn't pipelining. It's short-cutting a response as a
-replacement for pipelining. In general, writes + GLE's have implications in the server in that
-it forces the server to keep state about a write for the possibility in the future of a GLE to
-be acted upon
-
-The write commands protocol doesn't get in the business of forcing any state into the server.
-It simplifies things by using a strict request-response discipline. Note that such discipline
-is completely orthogonal to pipelining.
 
 What happens if a driver receives a batch request against an old server?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
