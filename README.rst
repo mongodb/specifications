@@ -10,7 +10,7 @@ Writing Documents
 -----------------
 
 Write documents using `reStructuredText`_, following the `MongoDB
-Documentation Style Guidelines <https://github.com/mongodb/docs/blob/master/meta.style-guide.rst>`_.
+Documentation Style Guidelines <http://docs.mongodb.org/manual/meta/style-guide/>`_.
 
 Store all source documents in the ``source/`` directory.
 
@@ -31,7 +31,7 @@ build depends on:
 ``make all`` will build all documents in the ``source/`` folder.  The
 system builds all targets in ``build/``.
 
-Run ``make setup`` to generate (or regenerate) a ``makefile.generated`
+Run ``make setup`` to generate (or regenerate) a ``makefile.generated``
 file which provides specific targets for all files in the source file
 so you can choose to compile only some of the files that you
 need. Once generated, running "``make [file-name-without-extension]``"
