@@ -1,5 +1,5 @@
 BUILD = build
-SOURCE = server
+SOURCE = source
 EXTENSION = rst
 
 MAKEFLAGS += -j
