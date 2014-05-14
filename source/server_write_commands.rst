@@ -127,9 +127,7 @@ we'd like to perform.
   field to be present all the time. When all documents that satisfy ``q`` should be
   deleted set ``limit`` to zero, as opposed to being omitted.
 
-  As of this version of this document, ``limit`` value can only be 1 or 0. Please, follow
-  ticket `SERVER-4796 <https://jira.mongodb.org/browse/SERVER-4796>`_ for progress on the
-  implementation of this feature.
+  Note: The only valid values for ``limit`` is 1 and 0.
 
 Request Size Limits
 ~~~~~~~~~~~~~~~~~~~
@@ -145,11 +143,9 @@ Both of these limits can be found using isMaster():
   deletes, and update expression documents must be <= this size.
 
   Batches containing more than one insert, update, or delete must be less than ``maxBsonObjectSize``.
-  Note that this means a single-item batch can exceed ``maxBsonObjectSize``.  The additional overhead of
-  the command itself is guaranteed not to trigger an error from the server, except in the case of 
-  `SERVER-12305 <https://jira.mongodb.org/browse/SERVER-12305>`_.  As a workaround, drivers should throw an
-  error when the size of an update batch is > ``maxBsonObjectSize`` + 8KB - the server error will terminate the
-  connection entirely.
+  Note that this means a single-item batch can exceed ``maxBsonObjectSize``.
+  A driver should allow ``maxBsonObjectSize`` + 8KB batch updates. The additional 8KB is reserved for theoverhead
+  of the command itself, while the update documents should not exceed ``maxBsonObjectSize``.
 
 * ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
   can be included in a write batch.  If more than this number of writes are included, the server cannot
@@ -512,8 +508,7 @@ Can a driver still use the OP_INSERT, OP_DELETE, OP_UPDATE?
 
 Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of
 course, when talking to older servers, the usual op codes will continue working the same. An
-older server is one that reports ``isMaster.maxWireVersion`` to be less than 2. See
-`SERVER-10529 <https://jira.mongodb.org/browse/SERVER-10529>`_ for details.
+older server is one that reports ``isMaster.maxWireVersion`` to be less than 2.
 
 The rationale here is that we may choose to divert all the write traffic to the new
 protocol. (This depends on the having the overhead to issue a batch with one item very low.)
