@@ -3,7 +3,7 @@ Write Commands Specification
 ============================
 
 :date: May 14, 2014
-:version: 0.8
+:version: 0.9
 :status: Approved
 
 .. contents::
@@ -36,7 +36,7 @@ Generic Fields
 
 * ``<write op>``: mandatory, with a string type, where <write op> can be ``insert``,
   ``update``, or ``delete`` and the content string is a valid collection name against which the
-  write should be directed.
+  write should be directed.  The <write op> must be the first key in the document.
 
     example: ::
 
@@ -179,8 +179,8 @@ When a batch write command fails this way, like other commands, no guarantees ar
 state of the writes which were sent.  Particular error codes may indicate more about what occurred,
 but those codes are outside the scope of this spec.
 
-Write Concern Response Fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+General Response Fields
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Again, like other commands, batch write commands return ``{ ok : 1, ... }`` when they complete
 successfully.  Importantly, successful execution of a batch write command may include reporting of
@@ -201,17 +201,6 @@ The main body of a successful response is below:
   documents affected by each batch item. If the application would wish so, then the application 
   should issue one-item batches.
 
-* ``nModified``: Optional field, with a positive numeric type or zero.  Zero is the default value.  This
-  field is only and always present for batch updates.  ``nModified`` is the physical number of documents
-  affected by an update, while ``n`` is the logical number of documents matched by the update's query.
-  For example, if we have 100 documents like ::
-  
-    { bizName: "McD", employees: ["Alice", "Bob", "Carol"] }
-    
-  and we are adding a single new employee using $addToSet for each business document, ``n`` is useful to
-  ensure all businesses have been updated, and ``nModified`` is useful to know which businesses actually
-  added a new employee.
-
 .. _writeErrors:
 
 * ``writeErrors``: Optional field, an array of write errors. For every batch write that had an error, there
@@ -224,11 +213,24 @@ The main body of a successful response is below:
   applying the write concern (or an error indicating that the write concern was not applied).
   (See the `Error Document`_ section.)
 
-Specific Fields
-~~~~~~~~~~~~~~~
+Situational Fields
+~~~~~~~~~~~~~~~~~~
 
 We use the fields above for all responses, regardless of the request type. But some
-request types require additional response information, as describe below.
+request types require additional response information, as described below.
+
+.. _nModified:
+
+* ``nModified``: Optional field, with a positive numeric type or zero.  Zero is the default value.  This
+  field is only and always present for batch updates.  ``nModified`` is the physical number of documents
+  affected by an update, while ``n`` is the logical number of documents matched by the update's query.
+  For example, if we have 100 documents like ::
+  
+    { bizName: "McD", employees: ["Alice", "Bob", "Carol"] }
+    
+  and we are adding a single new employee using $addToSet for each business document, ``n`` is useful to
+  ensure all businesses have been updated, and ``nModified`` is useful to know which businesses actually
+  added a new employee.
 
 .. _upserted:
 
@@ -467,43 +469,6 @@ response would look, had the request asked for that write concern.
 
     { ok: 1 }
 
-Aggregating Responses
----------------------
-
-To implement more advanced bulk apis in the shell and drivers, it is necessary to aggregate
-multiple batch results into a single bulk result.  Helpful guidelines for doing so are below:
-
-- When emulating a larger batch with several sub-batches, aggregation must stop at the first
-  command error, if ``ok`` is false.  This should very rarely be due to any error aside from
-  authorization.  No information aside from the command failure should be returned, since the
-  result is unknown (much like a network exception).
-
-- When aggregating ``n`` statistics, the shell and drivers should aggregate per-operation (nInserted,
-  nUpserted, nMatched, nDeleted).  This is straightforward for insert and delete operations, but
-  the number of documents updated is the ``n`` value minus the length of the ``upserted`` array, if 
-  it exists (0 if not).
- 
-- Individual write errors should be aggregated together into a larger array of write errors, while
-  sub-batch write concern errors should be aggregated together into a single batch write concern 
-  error.  Aggregating the batch write concern errors together can be as simple as using a 
-  "multiple errors occurred" ``errmsg`` with ``WriteConcernFailed`` code, and better aggregation is TBD.
-
-
-Error Codes
------------
-
-Only limited error codes are necessary for aggregating results:
-
-* ``UNKNOWN_ERROR``: 8 - used when an aggregated error is not known
-* ``WRITE_CONCERN_FAILED`` : 64 - used when aggregating multiple write concern errors together
-
-also:
-
-* ``DUPLICATE_KEY`` : 11000 - used to allow drivers to handle this error case specially, for compatibility
-  with previous behavior.
-
-Other error codes should be treated as opaque to this specification.
-
 FAQ
 ---
 
@@ -521,20 +486,10 @@ protocol. (This depends on the having the overhead to issue a batch with one ite
 Can an application still issue requests with write concerns {w: 0}?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yes and no. The drivers are still required to serve a {w:0} write concern by returning the
-control to the application as soon as the request was queued for send. But a driver should
-send the request to the server via a batched write command and should, therefore, take the
-corresponding result out of the wire -- even if the caller is not interested in that result.
-
-There are several ways of doing this all revolving around the following idea. If one keeps a
-structure around that records all in-flight request, one can knock them off the structure when
-a response is received. Some drivers may pull the responses off the network with an auxiliary
-thread or socket read event. When that's not an option, there are schemes to piggy back clean
-up of previous requests onto new ones.
-
-Through mongos, all writes are acknowledged - {w:0} simply silences the response to {ok: 1}
-or {ok: 0}.  Users wanting to maintain high write throughput should convert to batch
-operations.
+Yes. The drivers are still required to serve a {w:0} write concern by returning the
+control to the application as soon as possible.  But a driver should send the request to
+the server via a write command and should, therefore, take the corresponding response off the
+wire -- even if the caller is not interested in that result.
 
 Isn't supporting {w:0} this way akin to pipelining?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -551,27 +506,15 @@ The write commands protocol doesn't get in the business of forcing any state int
 It simplifies things by using a strict request-response discipline. Note that such discipline
 is completely orthogonal to pipelining.
 
-What happens if a driver receives a batch request against an old server?
+What happens if a driver receives a write request against an old server?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It must convert that batch into writes + gle's and use the old op codes.
+It must convert that request into write operations + gle's and use the old op codes.
 
 Are we discontinuing the use of getLastError?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility.
-
-What if I want to know exactly how many updates turned into upserts?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The fields ``n`` and ``upserted`` are an aggregate number across all batch items. If you need
-to know these numbers precisely for a batch item, slice your batch accordingly.
-
-What if I want to know detailed time stats about batch application?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For now, you can't. But we may consider extending the protocol soon.
-
 
 Changelog
 ---------
@@ -579,5 +522,10 @@ Changelog
 v0.8
 ~~~~
 * First public version
+
+v0.9
+~~~~
+* Removed text related to bulk operations; see the Bulk API spec for bulk details
+* Clarified some paragraphs; re-ordered the response field sections
 
 ..  LocalWords:  boolean ie
