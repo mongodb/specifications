@@ -241,6 +241,8 @@ request types require additional response information, as describe below.
 * ``lastOp``: MONGOD ONLY.  Optional field, with a timestamp type, indicating the latest opTime on the
   server after all documents were processed.
 
+* ``electionId``: MONGOD ONLY. Optional ObjectId field representing the last primary election Id.
+
 Error Document
 ~~~~~~~~~~~~~~
 
