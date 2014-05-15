@@ -471,9 +471,7 @@ FAQ
 Can a driver still use the OP_INSERT, OP_DELETE, OP_UPDATE?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of
-course, when talking to older servers, the usual op codes will continue working the same. An
-older server is one that reports ``isMaster.maxWireVersion`` to be less than 2.
+Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``isMaster.maxWireVersion`` to be less than 2 or does not include the field.
 
 The rationale here is that we may choose to divert all the write traffic to the new
 protocol. (This depends on the having the overhead to issue a batch with one item very low.)
