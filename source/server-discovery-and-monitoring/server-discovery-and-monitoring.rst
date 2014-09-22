@@ -1915,7 +1915,7 @@ so this spec does not propose a new method.
 Backwards Compatibility
 -----------------------
 
-The Java driver 2.12.1 has a "heartbeatRetryFrequency".
+The Java driver 2.12.1 has a "heartbeatConnectRetryFrequency".
 Since this spec recommends the option be named "minHeartbeatFrequencyMS",
 the Java driver must deprecate its old option
 and rename it minHeartbeatFrequency (for consistency with its other options
