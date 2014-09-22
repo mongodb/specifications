@@ -239,6 +239,12 @@ Fields:
 * setName: the replica set name. Default null.
 * servers: a set of ServerDescription instances.
   Default contains one server: "localhost:27017", ServerType Unknown.
+* compatible: a boolean.
+  False if any server's wire protocol version range
+  is incompatible with the client's.
+  Default true.
+* compatibilityError: a string.
+  The error message if "compatible" is false, otherwise null.
 
 Single-threaded drivers have an additional field:
 
@@ -265,6 +271,10 @@ Fields:
 * error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the ismaster call. Default null.
 * type: a `ServerType`_ enum value. Default Unknown.
+* minWireVersion: the minimum wire protocol version supported by the server.
+  Default 0.
+* maxWireVersion: the maximum wire protocol version supported by the server.
+  Default 0.
 * hosts, passives, arbiters: Sets of addresses.
   This server's opinion of the replica set's members, if any.
   These `hostnames are normalized to lower-case`_.
@@ -290,8 +300,6 @@ such as:
 * maxDocumentSize
 * maxMessageSize
 * maxWriteBatchSize
-* minWireVersion
-* maxWireVersion
 
 .. _configured:
 
@@ -814,6 +822,15 @@ Whenever the client checks a server (successfully or not)
 the ServerDescription in TopologyDescription.servers
 is replaced with the new ServerDescription.
 
+.. _updates the "compatible" and "compatibilityError" fields:
+
+If the server's wire protocol version range overlaps with the client's,
+TopologyDescription.compatible is set to true.
+Otherwise it is set to false
+and the "compatibilityError" field is filled out like,
+"Server at HOST:PORT uses wire protocol versions SERVER_MIN through SERVER_MAX,
+but CLIENT only supports CLIENT_MIN through CLIENT_MAX."
+
 Verifying setName with TopologyType Single
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -831,6 +848,11 @@ Whenever a client completes an ismaster call,
 it creates a new ServerDescription with the proper `ServerType`_.
 It replaces the server's previous description in TopologyDescription.servers
 with the new one.
+
+If any server's wire protocol version range does not overlap with the client's,
+the client `updates the "compatible" and "compatibilityError" fields`_
+as described above for TopologyType Single.
+Otherwise "compatible" is set to true.
 
 It is possible for a multi-threaded client to receive an ismaster outcome
 from a server after the server has been removed from the TopologyDescription.
@@ -1438,9 +1460,9 @@ but this spec does not define what it is called or how it is configured::
         while true:
             # We check wire protocol compatibility with all known servers,
             # not just suitable ones that match the criteria.
-            if any server's wire protocol does not overlap with ours:
+            if not client.topologyDescription.compatible:
                 client.lock.release()
-                throw error("incompatible wire protocol version ranges")
+                throw error(client.topologyDescription.compatibilityError)
 
             if servers is not empty:
                 client.lock.release()
@@ -1500,8 +1522,8 @@ Pseudocode for `single-threaded server selection`_::
         while true:
             # We check wire protocol compatibility with all known servers,
             # not just suitable ones that match the criteria.
-            if any server's wire protocol does not overlap with ours:
-                throw error("incompatible wire protocol version ranges")
+            if not client.topologyDescription.compatible:
+                throw error(client.topologyDescription.compatibilityError)
 
             for server in randomized(servers):
                 if the pool has a socket for the server:
