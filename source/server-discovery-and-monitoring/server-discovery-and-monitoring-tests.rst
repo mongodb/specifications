@@ -17,30 +17,6 @@ directory.
 
 --------
 
-Handle a not-ok ismaster response
----------------------------------
-
-Servers do not currently respond "ok: 0" under any known circumstance.
-This test ensures drivers will consistently handle not-ok responses
-if any occur in the future.
-
-#. Client is configured with seed A.
-#. A responds::
-
-    {
-        ok: 1,
-        ismaster: true
-    }
-
-#. A responds again::
-
-    {
-        ok: 0,
-        ismaster: true
-    }
-
-#. **Expected**: A is ServerType Unknown. TopologyType is Single.
-
 All servers unavailable
 -----------------------
 
