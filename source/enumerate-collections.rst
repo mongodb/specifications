@@ -53,11 +53,14 @@ a database is by querying the ``system.namespaces`` collection::
 This query returns a list of documents through a normal query cursor, which
 always include a ``name`` field and optionally a ``options`` field.
 
-Each document describes a name space. Among collections, these name spaces
+Each document describes a namespace. Among collections, these namespaces
 also include special collections (containing ``.system.`` or ``.oplog.`` in the
 name). The returned documents also include indexes (containing a ``$`` in the
 name). Index names MUST NOT be returned while enumerating collections through
 ``db.system.namespaces.find()``.
+
+When returning information, drivers MUST strip the database name from the
+returned namespace, and only leave the collection name.
 
 MongoDB versions 2.7.6 to 2.8.0-rc2
 -----------------------------------
@@ -375,6 +378,10 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.3 Changes
+
+    - SPEC-121: Clarify trimming of database name
 
 Version 0.2 Changes
 
