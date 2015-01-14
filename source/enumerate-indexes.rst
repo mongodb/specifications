@@ -5,14 +5,15 @@
 Enumerating Indexes
 ===================
 
-:Spec: SPEC-53
+:Spec: 106
+:Spec-ticket: SPEC-53
 :Title: Enumerating Indexes
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: December 12, 2014
-:Version: 0.2
+:Last Modified: January 15, 2015
+:Version: 0.3
 
 .. contents::
 
@@ -228,9 +229,13 @@ driver MAY alternatively implement it as::
 Driver methods
 --------------
 
-Method names are suggestions. If a driver already has a method to perform the
-specific task, there is no need to change it; otherwise, use an idiomatic
-variant that fits the language the driver is for.
+Drivers SHOULD use the method name ``listIndexes`` for a method that returns
+all indexes with a cursor return type. Drivers MAY use an idiomatic variant
+that fits the language the driver is for.
+
+If a driver already has a method to perform one of the listed tasks, there is
+no need to change a method name. Do not break backwards compatibility when
+adding new methods.
 
 All methods:
 
@@ -240,8 +245,8 @@ All methods:
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MAY emulate returning a cursor for pre-2.8.0-rc3 servers.
 
-getIndexNames
-~~~~~~~~~~~~~
+Getting Index Names
+~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method to enumerate all indexes, and return only
 the index names. 
@@ -254,8 +259,8 @@ Example::
 	> a
 	[ "_id_", "ty_1", "l_2dsphere", "ts_1" ]
 
-getIndexInfo
-~~~~~~~~~~~~
+Getting Full Index Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method to return the full index specifications that are
 returned from both ``listIndexes`` (in the ``res.cursor.firstBatch`` field, and
@@ -295,6 +300,9 @@ Example return (a cursor which returns documents, not a simple array)::
         "name" : "ts_1",
         "ns" : "demo.poiConcat"
     }
+
+When returning this information as a cursor, a driver SHOULD use the
+method name ``listIndexes`` or an idiomatic variant.
 
 Replicasets
 ~~~~~~~~~~~
@@ -360,6 +368,11 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.3 Changes
+
+    - Put preferred method name for listing indexes with a cursor as return
+      value.
 
 Version 0.2 Changes
 
