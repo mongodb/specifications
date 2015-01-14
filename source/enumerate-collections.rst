@@ -5,14 +5,15 @@
 Enumerating Collections
 =======================
 
-:Spec: SPEC-54
+:Spec: 107
+:Spec-ticket: SPEC-54
 :Title: Enumerating Collections
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: December 12, 2014
-:Version: 0.2
+:Last Modified: January 15, 2015
+:Version: 0.3
 
 .. contents::
 
@@ -232,9 +233,13 @@ driver MAY alternatively implement it as::
 Driver methods
 --------------
 
-Method names are suggestions. If a driver already has a method to perform the
-specific task, there is no need to change it; otherwise, use an idiomatic
+Drivers SHOULD use the method name ``listCollections`` for a method that
+returns all indexes with a cursor return type. Drivers MAY use an idiomatic
 variant that fits the language the driver is for.
+
+If a driver already has a method to perform one of the listed tasks,
+there is no need to change it. Do not break backwards compatibility when
+adding new methods.
 
 All methods:
 
@@ -244,8 +249,8 @@ All methods:
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 
-getCollectionNames
-~~~~~~~~~~~~~~~~~~
+Getting Collection Names
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method to enumerate all collections, and return only
 the collection names.
@@ -261,8 +266,10 @@ Example return::
         "system.replset"
     ]
 
-getCollectionInfo
-~~~~~~~~~~~~~~~~~
+Drivers MUST strip the database name from the returned collection names.
+
+Getting Full Collection Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method to return the full ``name/options`` pairs that
 are returned from both ``listCollections`` (in the ``res.cursor.firstBatch``
@@ -294,9 +301,11 @@ Example return (a cursor which returns documents, not a simple array)::
         "name" : "system.replset", "options" : { "flags" : 1 }
     }
 
+When returning this information as a cursor, a driver SHOULD use the
+method name ``listCollections`` or an idiomatic variant.
 
-listCollections
-~~~~~~~~~~~~~~~
+Returning a List of Collection Objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method that returns a collection object for each
 returned collection, if the driver has such a concept. 
@@ -382,6 +391,8 @@ Version History
 Version 0.3 Changes
 
     - SPEC-121: Clarify trimming of database name
+    - Put preferred method name for listing collections with a cursor as return
+      value.
 
 Version 0.2 Changes
 
