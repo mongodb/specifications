@@ -441,7 +441,8 @@ or in response to certain events.
 The socket used to check a server MUST use the same
 `connectTimeoutMS <http://docs.mongodb.org/manual/reference/connection-string/>`_
 as regular sockets.
-Its socketTimeoutMS MUST also be set to the connectTimeoutMS.
+Multi-threaded clients SHOULD set monitoring sockets' socketTimeoutMS to the
+connectTimeoutMS.
 (See `socket timeout for monitoring is connectTimeoutMS`_.
 Drivers MAY let users configure the timeouts for monitoring sockets
 separately if necessary to preserve backwards compatibility.)
@@ -1824,9 +1825,11 @@ and the operation's duration on the server.
 Applications should typically set a very long or infinite socketTimeoutMS
 so they can wait for long-running MongoDB operations.
 
+Multi-threaded clients use distinct sockets for monitoring and for application
+operations.
 A socket used for monitoring does two things: it connects and calls ismaster.
 Both operations are fast on the server, so only network latency matters.
-Thus both operations MUST use connectTimeoutMS, since that is the value
+Thus both operations SHOULD use connectTimeoutMS, since that is the value
 users supply to help the client guess if a server is down,
 based on users' knowledge of expected latencies on their networks.
 
