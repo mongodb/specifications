@@ -42,6 +42,14 @@ recovering member, or ghost:
 
     {ok: 1, err: "not master"}
 
+`Possible GLE response in MongoDB 2.6`_ during failover:
+
+    {ok: 1, err: "replicatedToNum called but not master anymore"}
+
+Note that this error message contains "not master" but does not start with it.
+
+.. _Possible GLE response in MongoDB 2.6: https://jira.mongodb.org/browse/SERVER-9617
+
 Write command
 '''''''''''''
 
