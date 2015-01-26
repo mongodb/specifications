@@ -85,3 +85,21 @@ Command response on an arbiter, recovering member, ghost, or secondary
 when slaveOk is false:
 
     {ok: 0, errmsg: "not master"}
+
+Round trip times
+----------------
+
+This test requires mocks.
+
+A MongoClient with a direct connection to one server.
+
+The first ismaster response's round trip time is 125 ms. Check that the
+ServerDescription's RTT is 125 ms.
+
+Second response's RTT is 25 ms. Check that ServerDescription's RTT is now about
+105 ms (0.8 * 125 + 0.2 * 25).
+
+The third ismaster outcome is a network error, so the RTT is reset.
+
+The fourth response's RTT is 20 ms. Check that ServerDescription's RTT is now
+about 20 ms (0.8 * 105 + 0.2 * 20): RTT is reset after a disconnect.
