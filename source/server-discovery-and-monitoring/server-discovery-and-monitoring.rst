@@ -1262,24 +1262,29 @@ then a re-check will be triggered by the `server selection`_ algorithm.
 `````````````````````````````````````
 
 These errors are detected from a getLastError response,
-write command response, or query response::
+write command response, or query response. Clients MUST consider a server
+error to be a "not master" error if the server's error contains the
+substring "not master" or "node is recovering" anywhere within the error
+message::
+
+    def is_notmaster(err_message):
+        return ("not master" in err_message
+                or "node is recovering" in err_message)
 
     def parse_gle(response):
         if "err" in response:
-            if response["err"] starts with "not master":
+            if is_notmaster(response["err"]):
                 handle_not_master_or_recovering(response["err"])
 
     # Parse response to any command besides getLastError.
     def parse_command_response(response):
         if not response["ok"]:
-            if (response["errmsg"] starts with "not master"
-                or it starts with "node is recovering"
-            ):
+            if is_notmaster(response["errmsg"]):
                 handle_not_master_or_recovering(response["errmsg"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:
-            if response["$err"] starts with "not master":
+            if is_notmaster(response["$err"]):
                 handle_not_master_or_recovering(response["$err"])
 
     def handle_not_master_or_recovering(message):
