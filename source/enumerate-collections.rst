@@ -208,8 +208,9 @@ following algorithm (just like the
 If you need to fall back to querying ``system.namespaces``, then you need to
 filter out all return documents that contain a ``$`` in the ``name`` field.
 
-*Note:* Still trying to find out why there is an exception for ``".oplog.$"``
-in there.
+When falling back to querying ``system.namespaces`` you will also need to filter
+out all the documents that contain ``".oplog.$"`` as this collection is used for
+master/slave replication within the local database.
 
 Alternatively, and if a driver already implements checking MongoDB versions, a
 driver MAY alternatively implement it as::
