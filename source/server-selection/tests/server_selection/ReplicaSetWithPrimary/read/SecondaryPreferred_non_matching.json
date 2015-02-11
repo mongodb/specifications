@@ -3,31 +3,25 @@
         {
             "address": "b:27017", 
             "avg_rtt_ms": 5, 
-            "tag_sets": [
-                {
-                    "data_center": "nyc"
-                }
-            ], 
+            "tags": {
+                "data_center": "nyc"
+            }, 
             "type": "RSSecondary"
         }, 
         {
             "address": "c:27017", 
             "avg_rtt_ms": 100, 
-            "tag_sets": [
-                {
-                    "data_center": "nyc"
-                }
-            ], 
+            "tags": {
+                "data_center": "nyc"
+            }, 
             "type": "RSSecondary"
         }, 
         {
             "address": "a:27017", 
             "avg_rtt_ms": 26, 
-            "tag_sets": [
-                {
-                    "data_center": "nyc"
-                }
-            ], 
+            "tags": {
+                "data_center": "nyc"
+            }, 
             "type": "RSPrimary"
         }
     ], 
@@ -36,11 +30,9 @@
         {
             "address": "a:27017", 
             "avg_rtt_ms": 26, 
-            "tag_sets": [
-                {
-                    "data_center": "nyc"
-                }
-            ], 
+            "tags": {
+                "data_center": "nyc"
+            }, 
             "type": "RSPrimary"
         }
     ], 
@@ -57,11 +49,9 @@
         {
             "address": "a:27017", 
             "avg_rtt_ms": 26, 
-            "tag_sets": [
-                {
-                    "data_center": "nyc"
-                }
-            ], 
+            "tags": {
+                "data_center": "nyc"
+            }, 
             "type": "RSPrimary"
         }
     ], 
@@ -70,31 +60,25 @@
             {
                 "address": "b:27017", 
                 "avg_rtt_ms": 5, 
-                "tag_sets": [
-                    {
-                        "data_center": "nyc"
-                    }
-                ], 
+                "tags": {
+                    "data_center": "nyc"
+                }, 
                 "type": "RSSecondary"
             }, 
             {
                 "address": "c:27017", 
                 "avg_rtt_ms": 100, 
-                "tag_sets": [
-                    {
-                        "data_center": "nyc"
-                    }
-                ], 
+                "tags": {
+                    "data_center": "nyc"
+                }, 
                 "type": "RSSecondary"
             }, 
             {
                 "address": "a:27017", 
                 "avg_rtt_ms": 26, 
-                "tag_sets": [
-                    {
-                        "data_center": "nyc"
-                    }
-                ], 
+                "tags": {
+                    "data_center": "nyc"
+                }, 
                 "type": "RSPrimary"
             }
         ], 

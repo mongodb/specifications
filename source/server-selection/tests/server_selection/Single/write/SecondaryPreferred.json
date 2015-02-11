@@ -3,11 +3,9 @@
         {
             "address": "a:27017", 
             "avg_rtt_ms": 5, 
-            "tag_sets": [
-                {
-                    "data_center": "dc"
-                }
-            ], 
+            "tags": {
+                "data_center": "dc"
+            }, 
             "type": "Standalone"
         }
     ], 
@@ -15,11 +13,9 @@
         {
             "address": "a:27017", 
             "avg_rtt_ms": 5, 
-            "tag_sets": [
-                {
-                    "data_center": "dc"
-                }
-            ], 
+            "tags": {
+                "data_center": "dc"
+            }, 
             "type": "Standalone"
         }
     ], 
@@ -27,11 +23,9 @@
         {
             "address": "a:27017", 
             "avg_rtt_ms": 5, 
-            "tag_sets": [
-                {
-                    "data_center": "dc"
-                }
-            ], 
+            "tags": {
+                "data_center": "dc"
+            }, 
             "type": "Standalone"
         }
     ], 
@@ -48,11 +42,9 @@
         {
             "address": "a:27017", 
             "avg_rtt_ms": 5, 
-            "tag_sets": [
-                {
-                    "data_center": "dc"
-                }
-            ], 
+            "tags": {
+                "data_center": "dc"
+            }, 
             "type": "Standalone"
         }
     ], 
@@ -61,11 +53,9 @@
             {
                 "address": "a:27017", 
                 "avg_rtt_ms": 5, 
-                "tag_sets": [
-                    {
-                        "data_center": "dc"
-                    }
-                ], 
+                "tags": {
+                    "data_center": "dc"
+                }, 
                 "type": "Standalone"
             }
         ], 
