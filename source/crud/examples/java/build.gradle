@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+repositories {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    mavenCentral()
+}
+
+dependencies {
+    compile(group:"org.mongodb", name: "mongo-java-driver", version : "3.0.0-SNAPSHOT", changing : true)
+    runtime(group:"ch.qos.logback", name: "logback-classic", version : "1.1.2")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
