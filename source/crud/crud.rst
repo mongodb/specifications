@@ -8,7 +8,7 @@ Driver CRUD API
 :Spec: 110
 :Title: Driver CRUD API
 :Authors: Craig Wilson
-:Status: Draft
+:Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
 :Last Modified: Dec. 5, 2014
