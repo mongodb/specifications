@@ -9,7 +9,7 @@ Driver Authentication
 :Title: Driver Authentication
 :Author: Craig Wilson
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
-:Status: Draft
+:Status: Accepted
 :Type: Standards
 :Minimum Server Version: 1.8
 :Last Modified: February 2nd, 2015
@@ -164,9 +164,9 @@ Supported Authentication Methods
 Defaults
 --------
 
-:since: 2.8
+:since: 3.0
 
-If the user did not provide a mechanism via the connection string or via code, SCRAM-SHA-1 MUST be used when talking to servers >= 2.8. Prior to server 2.8, MONGODB-CR MUST be used.
+If the user did not provide a mechanism via the connection string or via code, SCRAM-SHA-1 MUST be used when talking to servers >= 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
 
 When a user has specified a mechanism, regardless of the server version, the driver MUST honor this and attempt to authenticate.
 
@@ -175,7 +175,7 @@ Determining Server Version
 
 Some drivers use the ``buildinfo`` command to determine server version. Occasionally, it might be enough to check the wire version. Checking the wire version is only possible when the server has bumped it in accordance with what needs to be checked.
 
-For instance, checking the wire version to determine whether or not the server supports SCRAM-SHA-1 is only possible if the server bumps the wire version when they release server 2.8.
+For instance, checking the wire version to determine whether or not the server supports SCRAM-SHA-1 is only possible if the server bumps the wire version when they release server 3.0.
 
 
 MongoDB Custom Mechanisms
@@ -185,7 +185,7 @@ MONGODB-CR
 ~~~~~~~~~~
 
 :since: 1.4
-:deprecated: 2.8
+:deprecated: 3.0
 
 MongoDB Challenge Response is a nonce and MD5 based system. The driver sends a `getNonce` command, encodes and hashes the password using the returned nonce, and then sends an `authenticate` command.
 
@@ -369,7 +369,7 @@ mechanism_properties
 SCRAM-SHA-1
 ~~~~~~~~~~
 
-:since: 2.8
+:since: 3.0
 
 SCRAM-SHA-1 is defined in `RFC 5802 <http://tools.ietf.org/html/rfc5802>`_.
 
