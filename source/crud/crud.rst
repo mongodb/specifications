@@ -1011,7 +1011,9 @@ The ``replace`` family of operations require that the replacement document param
 Test Plan
 ======================================
 
-Tests for a specification largely around naming would be difficult to define. Instead, we have constructed some example usages in different languages that show how different implementations are able to conform to the specification and still look and feel idiomatic to a user.
+See the `README <tests/README.rst>`_ for tests.
+
+In addition, we have constructed some example usages in different languages that show how different implementations are able to conform to the specification and still look and feel idiomatic to a user.
 
 * `C++ <examples/cpp/usage_example.cpp>`_
 * `Javascript <examples/javascript/usage_example.js>`_
@@ -1035,7 +1037,7 @@ This spec should be mostly backwards compatible as it is very lenient. Drivers f
 Reference Implementation
 ========================
 
-TODO:
+See Test Plan
 
 
 Q & A

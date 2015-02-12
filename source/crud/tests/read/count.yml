@@ -1,0 +1,32 @@
+data:
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+
+tests:
+    -
+        description: "Count without a filter"
+        operation:
+            name: count
+
+        outcome:
+            results: 3
+    -
+        description: "Count with a filter"
+        operation:
+            name: count
+            arguments:
+                filter: {_id: {$gt: 1}}
+
+        outcome:
+            results: 2
+    -
+        description: "Count with skip and limit"
+        operation:
+            name: count
+            arguments:
+                skip: 1
+                limit: 3
+
+        outcome:
+            results: 2
