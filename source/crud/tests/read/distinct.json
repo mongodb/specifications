@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    }
+  ],
+  "tests": [
+    {
+      "description": "Distinct",
+      "operation": {
+        "name": "distinct",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {}
+        }
+      },
+      "outcome": {
+        "results": [
+          22,
+          33
+        ]
+      }
+    }
+  ]
+}

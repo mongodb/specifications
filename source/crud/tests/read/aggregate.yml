@@ -9,9 +9,8 @@ tests:
         operation:
             name: aggregate
             arguments:
-                pipeline: [
-                    {$sort: {x: 1}}
-                ],
+                pipeline:
+                    - {$sort: { x: 1} }
                 batchSize: 2
 
         outcome:
@@ -24,10 +23,9 @@ tests:
         operation:
             name: aggregate
             arguments:
-                pipeline: [
-                    {$sort: {x: 1}},
-                    {$out: "other_test_collection"}
-                ],
+                pipeline: 
+                    - {$sort: {x: 1}}
+                    - {$out: "other_test_collection"}
                 batchSize: 2
 
         outcome:

@@ -9,10 +9,10 @@ tests:
         operation:
             name: distinct
             arguments:
-            	fieldName: "x"
-            	filter: {_id: {$gt: 1}}
+                fieldName: "x"
+                filter: {_id: {$gt: 1}}
 
         outcome:
             results: 
-            	- 22
-            	- 33
+                - 22
+                - 33

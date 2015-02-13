@@ -8,6 +8,7 @@ tests:
         description: "Count without a filter"
         operation:
             name: count
+            filter: { }
 
         outcome:
             results: 3
