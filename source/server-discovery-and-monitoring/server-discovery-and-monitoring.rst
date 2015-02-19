@@ -745,7 +745,7 @@ The same as with seeds provided in the initial configuration,
 all hostnames in the ismaster response's "hosts", "passives", and "arbiters"
 entries must be lower-cased.
 
-This prevents unecessary work rediscovering a server
+This prevents unnecessary work rediscovering a server
 if a seed "A" is provided and the server
 responds that "a" is in the replica set.
 
