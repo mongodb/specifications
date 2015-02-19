@@ -44,6 +44,11 @@ Lastly, drivers SHOULD ensure that average RTT for a given ServerDescription is 
 server is disconnected (ie a network error occurs during an ``ismaster`` call). Upon reconnect,
 the first new RTT value should become the average RTT for this server.
 
+The RTT tests are intentionally simplified to test the implementation of the
+EWMA algorithm without imposing any additional conditions on drivers that might
+affect architecture.  For some drivers, RTT tests might require mocks; for others,
+it might just require unit tests.
+
 Server Selection
 ================
 

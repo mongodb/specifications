@@ -64,6 +64,10 @@ For each file, create a server description object initialized with ``avg_rtt_ms`
 Parse ``new_rtt_ms``, and ensure that the new RTT value for the mocked server
 description is equal to ``new_avg_rtt``.
 
+If driver architecture doesn't easily allow construction of server description
+objects in isolation, unit testing the EWMA algorithm using these inputs
+and expected outputs is acceptable.
+
 Server Selection Logic Tests
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
