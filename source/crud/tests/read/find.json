@@ -33,7 +33,7 @@
         }
       },
       "outcome": {
-        "results": [
+        "result": [
           {
             "_id": 1,
             "x": 11
@@ -46,7 +46,11 @@
       "operation": {
         "name": "find",
         "arguments": {
-          "filter": {},
+          "filter": {
+            "_id": {
+              "$gt": 2
+            }
+          },
           "sort": {
             "_id": 1
           },
@@ -55,7 +59,7 @@
         }
       },
       "outcome": {
-        "results": [
+        "result": [
           {
             "_id": 5,
             "x": 55
@@ -77,7 +81,7 @@
         }
       },
       "outcome": {
-        "results": [
+        "result": [
           {
             "_id": 1,
             "x": 11

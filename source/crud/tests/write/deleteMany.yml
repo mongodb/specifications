@@ -9,13 +9,15 @@ tests:
         operation:
             name: "deleteMany"
             arguments:
-                filter: {_id: {$gt: 1}}
+                filter: 
+                    _id: {$gt: 1}
 
         outcome:
             result:
                 deletedCount: 2
             collection:
-                - {_id: 1, x: 11}
+                data:
+                    - {_id: 1, x: 11}
     -
         description: "DeleteMany when no document matches"
         operation:
@@ -27,6 +29,7 @@ tests:
             result:
                 deletedCount: 0
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}

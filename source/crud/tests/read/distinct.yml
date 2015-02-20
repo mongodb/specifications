@@ -5,14 +5,27 @@ data:
 
 tests:
     -
-        description: "Distinct"
+        description: "Distinct without a filter"
         operation:
             name: distinct
             arguments:
                 fieldName: "x"
-                filter: {_id: {$gt: 1}}
+                filter: {}
 
         outcome:
-            results: 
+            result: 
+                - 22
+                - 33
+    -
+        description: "Distinct with a filter"
+        operation:
+            name: distinct
+            arguments:
+                fieldName: "x"
+                filter: 
+                    _id: {$gt: 1}
+
+        outcome:
+            result: 
                 - 22
                 - 33

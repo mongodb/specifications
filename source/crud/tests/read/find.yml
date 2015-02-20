@@ -14,7 +14,7 @@ tests:
                 filter: {_id: 1}
 
         outcome:
-            results:
+            result:
                 - {_id: 1, x: 11}
 
     - 
@@ -22,13 +22,14 @@ tests:
         operation: 
             name: "find"
             arguments:
-                filter: {_id: {$gt: 2}}
+                filter: 
+                    _id: {$gt: 2}
                 sort: {_id: 1}
                 skip: 2
                 limit: 2
 
         outcome:
-            results:
+            result:
                 - {_id: 5, x: 55}
     -
         description: "Find with limit, sort, and batchsize"
@@ -41,7 +42,7 @@ tests:
                 batchSize: 2
 
         outcome:
-            results:
+            result:
                 - {_id: 1, x: 11}
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}

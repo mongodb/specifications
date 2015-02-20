@@ -19,7 +19,11 @@
       "operation": {
         "name": "findOneAndDelete",
         "arguments": {
-          "filter": {},
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          },
           "projection": {
             "x": 1,
             "_id": 0
@@ -30,19 +34,21 @@
         }
       },
       "outcome": {
-        "results": {
+        "result": {
           "x": 22
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -63,19 +69,21 @@
         }
       },
       "outcome": {
-        "results": {
+        "result": {
           "x": 22
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -96,21 +104,23 @@
         }
       },
       "outcome": {
-        "results": null,
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "result": null,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     }
   ]

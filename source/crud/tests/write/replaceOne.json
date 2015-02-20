@@ -19,7 +19,11 @@
       "operation": {
         "name": "replaceOne",
         "arguments": {
-          "filter": {},
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          },
           "replacement": {
             "x": 111
           }
@@ -51,20 +55,22 @@
           "matchedCount": 1,
           "modifiedCount": 1
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 111
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 111
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -86,20 +92,22 @@
           "matchedCount": 0,
           "modifiedCount": 0
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -122,24 +130,26 @@
           "modifiedCount": 0,
           "upsertedId": 4
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 23
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 1
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 23
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 1
+            }
+          ]
+        }
       }
     },
     {
@@ -163,24 +173,26 @@
           "modifiedCount": 0,
           "upsertedId": 4
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 23
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 1
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 23
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 1
+            }
+          ]
+        }
       }
     }
   ]

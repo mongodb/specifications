@@ -19,8 +19,16 @@
       "operation": {
         "name": "updateMany",
         "arguments": {
-          "filter": {},
-          "update": {}
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          },
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          }
         }
       },
       "outcome": {
@@ -28,20 +36,22 @@
           "matchedCount": 2,
           "modifiedCount": 2
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 23
-          },
-          {
-            "_id": 3,
-            "x": 34
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 23
+            },
+            {
+              "_id": 3,
+              "x": 34
+            }
+          ]
+        }
       }
     },
     {
@@ -52,7 +62,11 @@
           "filter": {
             "_id": 1
           },
-          "update": {}
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          }
         }
       },
       "outcome": {
@@ -60,20 +74,22 @@
           "matchedCount": 1,
           "modifiedCount": 1
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 12
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 12
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -84,7 +100,11 @@
           "filter": {
             "_id": 4
           },
-          "update": {}
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          }
         }
       },
       "outcome": {
@@ -92,20 +112,22 @@
           "matchedCount": 0,
           "modifiedCount": 0
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -116,7 +138,11 @@
           "filter": {
             "_id": 4
           },
-          "update": {},
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          },
           "upsert": true
         }
       },
@@ -126,24 +152,26 @@
           "modifiedCount": 0,
           "upsertedId": 4
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 23
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 1
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 23
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 1
+            }
+          ]
+        }
       }
     }
   ]

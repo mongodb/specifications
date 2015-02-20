@@ -9,34 +9,38 @@ tests:
         operation:
             name: findOneAndReplace
             arguments:
-                filter: {_id: {$gt: 1}}
+                filter: 
+                    _id: {$gt: 1}
                 replacement: {x: 32}
                 projection: {x: 1, _id: 0}
                 sort: {x: 1}
 
         outcome:
-            results: {x: 22}
+            result: {x: 22}
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 32}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 32}
+                    - {_id: 3, x: 33}
     -
         description: "FindOneAndReplace when many documents match returning the document after modification"
         operation:
             name: findOneAndReplace
             arguments:
-                filter: {_id: {$gt: 1}}
+                filter: 
+                    _id: {$gt: 1}
                 replacement: {x: 32}
                 projection: {x: 1, _id: 0}
                 returnDocument: After
                 sort: {x: 1}
 
         outcome:
-            results: {x: 32}
+            result: {x: 32}
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 32}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 32}
+                    - {_id: 3, x: 33}
     -
         description: "FindOneAndReplace when one document matches returning the document before modification"
         operation:
@@ -48,11 +52,12 @@ tests:
                 sort: {x: 1}
 
         outcome:
-            results: {x: 22}
+            result: {x: 22}
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 32}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 32}
+                    - {_id: 3, x: 33}
     -
         description: "FindOneAndReplace when one document matches returning the document after modification"
         operation:
@@ -65,11 +70,12 @@ tests:
                 sort: {x: 1}
 
         outcome:
-            results: {x: 32}
+            result: {x: 32}
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 32}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 32}
+                    - {_id: 3, x: 33}
     -
         description: "FindOneAndReplace when no documents match returning the document before modification"
         operation:
@@ -81,11 +87,12 @@ tests:
                 sort: {x: 1}
 
         outcome:
-            results: null
+            result: null
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
     -
         description: "FindOneAndReplace when no documents match with upsert returning the document before modification"
         operation:
@@ -98,12 +105,13 @@ tests:
                 upsert: true
 
         outcome:
-            results: null
+            result: null
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
-                - {_id: 4, x: 44}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
+                    - {_id: 4, x: 44}
     -
         description: "FindOneAndReplace when no documents match returning the document after modification"
         operation:
@@ -116,11 +124,12 @@ tests:
                 sort: {x: 1}
 
         outcome:
-            results: null
+            result: null
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
     -
         description: "FindOneAndReplace when no documents match with upsert returning the document after modification"
         operation:
@@ -134,9 +143,10 @@ tests:
                 upsert: true
 
         outcome:
-            results: {x: 44}
+            result: {x: 44}
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
-                - {_id: 4, x: 44}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
+                    - {_id: 4, x: 44}

@@ -11,16 +11,17 @@ tests:
             filter: { }
 
         outcome:
-            results: 3
+            result: 3
     -
         description: "Count with a filter"
         operation:
             name: count
             arguments:
-                filter: {_id: {$gt: 1}}
+                filter: 
+                    _id: {$gt: 1}
 
         outcome:
-            results: 2
+            result: 2
     -
         description: "Count with skip and limit"
         operation:
@@ -30,4 +31,4 @@ tests:
                 limit: 3
 
         outcome:
-            results: 2
+            result: 2

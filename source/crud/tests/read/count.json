@@ -18,10 +18,10 @@
       "description": "Count without a filter",
       "operation": {
         "name": "count",
-        "filter": { }
+        "filter": {}
       },
       "outcome": {
-        "results": 3
+        "result": 3
       }
     },
     {
@@ -37,7 +37,7 @@
         }
       },
       "outcome": {
-        "results": 2
+        "result": 2
       }
     },
     {
@@ -45,13 +45,12 @@
       "operation": {
         "name": "count",
         "arguments": {
-          "filter": { },
           "skip": 1,
           "limit": 3
         }
       },
       "outcome": {
-        "results": 2
+        "result": 2
       }
     }
   ]

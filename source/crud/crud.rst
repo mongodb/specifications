@@ -130,6 +130,11 @@ Read
     /**
      * Runs an aggregation framework pipeline.
      *
+     * Note: $out is a special pipeline stage that causes no results to be returned
+     * from the server. As such, the iterable here would never contain documents. Drivers
+     * MAY setup a cursor to be executed upon iteration against the $out collection such
+     * that if a user were to iterate a pipeline including $out, results would be returned.
+     *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */
     aggregate(pipeline: Document[], options: AggregateOptions): Iterable<Document>;

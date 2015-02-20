@@ -9,7 +9,8 @@ tests:
         operation:
             name: "replaceOne"
             arguments:
-                filter: {_id: {$gt: 1}}
+                filter: 
+                    _id: {$gt: 1}
                 replacement: {x: 111}
 
         outcome:
@@ -31,9 +32,10 @@ tests:
                 matchedCount: 1
                 modifiedCount: 1
             collection:
-                - {_id: 1, x: 111}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 111}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
     -
         description: "ReplaceOne when no documents match"
         operation:
@@ -47,9 +49,10 @@ tests:
                 matchedCount: 0
                 modifiedCount: 0
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
     -
         description: "ReplaceOne with upsert when no documents match without an id specified"
         operation:
@@ -65,10 +68,11 @@ tests:
                 modifiedCount: 0
                 upsertedId: 4
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 23}
-                - {_id: 3, x: 33}
-                - {_id: 4, x: 1}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 23}
+                    - {_id: 3, x: 33}
+                    - {_id: 4, x: 1}
     -
         description: "ReplaceOne with upsert when no documents match with an id specified"
         operation:
@@ -84,7 +88,8 @@ tests:
                 modifiedCount: 0
                 upsertedId: 4
             collection:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 23}
-                - {_id: 3, x: 33}
-                - {_id: 4, x: 1}
+                data:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 23}
+                    - {_id: 3, x: 33}
+                    - {_id: 4, x: 1}

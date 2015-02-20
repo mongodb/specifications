@@ -15,7 +15,7 @@
   ],
   "tests": [
     {
-      "description": "Aggregate without $out",
+      "description": "Aggregate with multiple stages",
       "operation": {
         "name": "aggregate",
         "arguments": {
@@ -24,17 +24,20 @@
               "$sort": {
                 "x": 1
               }
+            },
+            {
+              "$match": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
             }
           ],
           "batchSize": 2
         }
       },
       "outcome": {
-        "results": [
-          {
-            "_id": 1,
-            "x": 11
-          },
+        "result": [
           {
             "_id": 2,
             "x": 22
@@ -58,6 +61,13 @@
               }
             },
             {
+              "$match": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            {
               "$out": "other_test_collection"
             }
           ],
@@ -65,11 +75,7 @@
         }
       },
       "outcome": {
-        "results": [
-          {
-            "_id": 1,
-            "x": 11
-          },
+        "result": [
           {
             "_id": 2,
             "x": 22
@@ -78,7 +84,20 @@
             "_id": 3,
             "x": 33
           }
-        ]
+        ],
+        "collection": {
+          "name": "other_test_collection",
+          "data": [
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     }
   ]

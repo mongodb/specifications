@@ -19,7 +19,11 @@
       "operation": {
         "name": "deleteOne",
         "arguments": {
-          "filter": {}
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
         }
       },
       "outcome": {
@@ -42,16 +46,18 @@
         "result": {
           "deletedCount": 1
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     },
     {
@@ -68,20 +74,22 @@
         "result": {
           "deletedCount": 0
         },
-        "collection": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
       }
     }
   ]
