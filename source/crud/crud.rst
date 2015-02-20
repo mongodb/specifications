@@ -11,7 +11,7 @@ Driver CRUD API
 :Advisors: Tyler Brock, Jeremy Mikola, Jeff Yemin
 :Status: Approved
 :Type: Standards
-:Minimum Server Version: 2.6
+:Minimum Server Version: 2.4
 :Last Modified: Dec. 5, 2014
 
 .. contents::

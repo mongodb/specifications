@@ -18,7 +18,9 @@
       "description": "Count without a filter",
       "operation": {
         "name": "count",
-        "filter": {}
+        "arguments": {
+          "filter": {}
+        }
       },
       "outcome": {
         "result": 3
@@ -45,6 +47,7 @@
       "operation": {
         "name": "count",
         "arguments": {
+          "filter": {},
           "skip": 1,
           "limit": 3
         }
