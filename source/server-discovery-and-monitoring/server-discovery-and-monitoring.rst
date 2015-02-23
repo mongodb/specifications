@@ -297,8 +297,8 @@ Clients may find it useful to store additional fields
 from the ismaster response,
 such as:
 
-* maxDocumentSize
-* maxMessageSize
+* maxBsonObjectSize
+* maxMessageSizeBytes
 * maxWriteBatchSize
 
 .. _configured:
