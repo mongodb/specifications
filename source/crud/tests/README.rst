@@ -7,7 +7,7 @@ meant to exercise the translation from the API to underlying commands that
 MongoDB understands. Given the variety of languages and implementations and 
 limited nature of a description of a test, there are a number of things 
 that aren't testable. For instance, none of these tests assert that maxTimeMS 
-was properly sent the server. This would involve a lot of infrastructure to 
+was properly sent to the server. This would involve a lot of infrastructure to 
 define and setup. Therefore, these YAML tests are in no way a replacement for 
 more thorough testing. However, they can provide an initial verification of 
 your implementation.
@@ -71,5 +71,5 @@ Use as integration tests
 
 Running these as integration tests will require a running mongod server.
 Each of these tests is valid against a standalone mongod, a replica set, and a
-sharded system for all versions from 2.2 to present without any special flags 
+sharded system for all versions from 2.4 to present without any special flags 
 being set.
