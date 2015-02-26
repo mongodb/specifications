@@ -861,7 +861,7 @@ Find And Modify
   interface Collection {
 
     /**
-     * Finds a single document and deletes it, returning the original.
+     * Finds a single document and deletes it, returning the original. The document to return may be null.
      * 
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      * @throws WriteException
@@ -870,7 +870,7 @@ Find And Modify
 
     /**
      * Finds a single document and replaces it, returning either the original or the replaced
-     * document.
+     * document. The document to return may be null.
      * 
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      * @throws WriteException
@@ -879,7 +879,7 @@ Find And Modify
 
     /**
      * Finds a single document and updates it, returning either the original or the updated
-     * document.
+     * document. The document to return may be null.
      * 
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      * @throws WriteException

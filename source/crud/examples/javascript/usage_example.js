@@ -77,9 +77,9 @@
 
 // findOneAndReplace
 
-	col.findOneAndReplace({x: 1}, {x: 2}, {returnReplaced: true});
+	col.findOneAndReplace({x: 1}, {x: 2}, {returnDocument: ReturnDocument.after});
 
 
 // findOneAndUpdate
 
-	col.findOneAndUpdate({x: 1}, {$set: {x: 2}}, {returnUpdated: true});
+	col.findOneAndUpdate({x: 1}, {$set: {x: 2}}, {returnDocument: ReturnDocument.after});

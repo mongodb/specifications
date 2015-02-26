@@ -165,7 +165,7 @@ public class MongoCollectionUsageExample {
 
         //   query and replacement and optional returnReplaced (note we are changing this to returnOriginal)
         col.findOneAndReplace(new Document("x", 1), new Document("_id", 3).append("x", 2),
-                              new FindOneAndReplaceOptions().returnReplaced(true));
+                              new FindOneAndReplaceOptions().returnDocument(ReturnDocument.after));
 
 
         // findOneAndUpdate
@@ -175,7 +175,7 @@ public class MongoCollectionUsageExample {
 
         //   query and update and optional returnUpdated (note we are changing this to returnOriginal)
         col.findOneAndUpdate(new Document("x", 1), new Document("$set", new Document("x", 2)),
-                             new FindOneAndUpdateOptions().returnUpdated(true));
+                             new FindOneAndUpdateOptions().returnDocument(ReturnDocument.after));
 
 
         // explain.  note that because there is just a single explain method, we can't use the

@@ -192,7 +192,7 @@ $collection->findOneAndReplace(
     // Required replacement param
     ['x' => 2],
     // Optional named params in an associative array
-    ['returnOriginal' => false]
+    ['returnDocument' => ReturnDocument::Before]
 );
 
 
@@ -205,7 +205,7 @@ $collection->findOneAndUpdate(
     // Required update param
     ['$set' => ['x' => 2]],
     // Optional named params in an associative array
-    ['returnOriginal' => false]
+    ['returnDocument' => ReturnDocument::After]
 );
 
 

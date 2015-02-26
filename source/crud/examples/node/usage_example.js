@@ -90,11 +90,11 @@
 // findOneAndReplace
 
   col.findOneAndReplace({ x: 1 }, { x: 2 }, {
-    returnOriginal: false
+    returnDocument: ReturnDocument.after
   }, function(err, r) {});
 
 // findOneAndUpdate
 
   col.findOneAndUpdate({ x: 1 }, { $set: { x: 2 } }, {
-    returnOriginal: false
+    returnDocument: ReturnDocument.after
   }, function(err, r) {});
