@@ -696,6 +696,11 @@ Finally, any result class with all optional parameters is ultimately optional as
     acknowledged: Boolean optional;
 
     /**
+     * The number of documents that were inserted.
+     */
+    insertedCount: Int64 required;
+
+    /**
      * Map of the index of the inserted document to the id of the inserted document.
      */
     insertedIds: Map<Int64, any> optional;
