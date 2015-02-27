@@ -1,24 +1,4 @@
 {
-    "candidate_servers": [
-        {
-            "address": "a:27017", 
-            "avg_rtt_ms": 5, 
-            "tags": {
-                "data_center": "dc"
-            }, 
-            "type": "Standalone"
-        }
-    ], 
-    "eligible_servers": [
-        {
-            "address": "a:27017", 
-            "avg_rtt_ms": 5, 
-            "tags": {
-                "data_center": "dc"
-            }, 
-            "type": "Standalone"
-        }
-    ], 
     "in_latency_window": [
         {
             "address": "a:27017", 

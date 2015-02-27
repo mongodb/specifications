@@ -1,24 +1,4 @@
 {
-    "candidate_servers": [
-        {
-            "address": "a:27017", 
-            "avg_rtt_ms": 26, 
-            "tags": {
-                "data_center": "nyc"
-            }, 
-            "type": "RSPrimary"
-        }
-    ], 
-    "eligible_servers": [
-        {
-            "address": "a:27017", 
-            "avg_rtt_ms": 26, 
-            "tags": {
-                "data_center": "nyc"
-            }, 
-            "type": "RSPrimary"
-        }
-    ], 
     "in_latency_window": [
         {
             "address": "a:27017", 

@@ -59,15 +59,7 @@ the server selection process. These sets are described below.  Note that it
 is not required to test for correctness at every step.
 
 +------------------------+--------------------------------------------------------+
-| ``candidate_servers``  | the set of servers matching the ReadPreference's mode  |
-|                        | (optional).                                            |
-+------------------------+--------------------------------------------------------+
-| ``eligible_servers``   | the set of servers matching both the ReadPreference's  |
-|                        | mode and tag sets (optional).                          |
-+------------------------+--------------------------------------------------------+
 | ``suitable_servers``   | the set of servers matching all server selection logic.|
-|                        | May be a subset of ``eligible_servers`` and/or         |
-|                        | ``candidate_servers`` (suggested).                     |
 +------------------------+--------------------------------------------------------+
 | ``in_latency_window``  | the subset of ``suitable_servers`` that falls within   |
 |                        | the allowable latency window (required).               |
@@ -77,8 +69,7 @@ is not required to test for correctness at every step.
 Drivers implementing server selection MUST test that their implementations
 correctly return **one** of the servers in ``in_latency_window``. Drivers SHOULD test
 against the full set of servers in ``in_latency_window`` and against
-``suitable_servers`` if possible, and MAY test against ``eligible_servers`` and
-``candidate_servers`` if desired.
+``suitable_servers`` if possible.
 
 Topology Type Single
 --------------------
