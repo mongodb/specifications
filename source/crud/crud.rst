@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Feb. 26, 2015
+:Last Modified: Mar. 2, 2015
 
 .. contents::
 
@@ -694,11 +694,6 @@ Finally, any result class with all optional parameters is ultimately optional as
      * other members of this result will be undefined.
      */
     acknowledged: Boolean optional;
-
-    /**
-     * The number of documents that were inserted.
-     */
-    insertedCount: Int64 required;
 
     /**
      * Map of the index of the inserted document to the id of the inserted document.
