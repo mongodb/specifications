@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Mar. 2, 2015
+:Last Modified: Mar. 4, 2015
 
 .. contents::
 
@@ -892,11 +892,11 @@ Find And Modify
     /**
      * Indicates to return the document before the update, replacement, or insert occured.
      */
-     Before,
+     BEFORE,
     /**
      * Indicates to return the document after the update, replacement, or insert occured.
      */
-     After
+     AFTER
   }
 
   class FindOneAndDeleteOptions {
