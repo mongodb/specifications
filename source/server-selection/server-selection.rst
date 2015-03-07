@@ -1062,7 +1062,10 @@ is a secondary.
 
 However, because topology type Single is used for direct connections, we want
 read operations to succeed even against a secondary, so the ``slaveOK`` wire
-protocol flag must be set for topology type Single.
+protocol flag must be sent to mongods with topology type Single.
+
+(If the server type is Mongos, follow the rules for `passing read preference to
+mongos`_, even for topology type Single.)
 
 General command method going to primary
 ---------------------------------------
