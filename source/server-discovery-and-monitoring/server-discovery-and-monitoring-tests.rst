@@ -23,6 +23,17 @@ All servers unavailable
 A MongoClient can be constructed without an exception,
 even with all seeds unavailable.
 
+Network error writing to primary
+--------------------------------
+
+Scenario: With TopologyType ReplicaSetWithPrimary, a write to the primary fails
+with a network error other than timeout.
+
+Outcome: The former primary's ServerType MUST become Unknown.
+The TopologyType MUST change to ReplicaSetNoPrimary.
+A multi-threaded or asynchronous client MUST NOT immediately re-check the former primary.
+A single-threaded client MUST NOT mark the TopologyDescription "stale".
+
 Parsing "not master" and "node is recovering" errors
 ----------------------------------------------------
 

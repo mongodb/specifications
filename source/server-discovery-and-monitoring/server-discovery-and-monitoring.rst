@@ -1240,6 +1240,17 @@ the client MUST replace the server's description
 with a default ServerDescription of type Unknown,
 and fill the ServerDescription's error field with useful information.
 
+The Unknown ServerDescription is sent through the same process for
+`updating the TopologyDescription`_ as if it had been a failed ismaster outcome
+from a monitor: for example, if the TopologyType is ReplicaSetWithPrimary
+and a write to the RSPrimary server fails because of a network error
+(other than timeout), then a new ServerDescription is created for the primary,
+with type Unknown, and the client executes the proper subroutine for an
+Unknown server when the TopologyType is ReplicaSetWithPrimary:
+referring to the table above we see the subroutine is `checkIfHasPrimary`_.
+The result is the TopologyType changes to ReplicaSetNoPrimary.
+See the test scenario called "Network error writing to primary".
+
 The specific operation that discovered the error
 MUST abort and raise an exception if it was a write.
 It MAY be retried if it was a read.
