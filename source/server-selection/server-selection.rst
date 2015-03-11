@@ -517,9 +517,6 @@ the command and how it is invoked:
       configuration.  Languages with dynamic argument lists MUST throw an error
       if a read preference is provided as an argument.
 
-      If a client provides a specific helper for inline mapreduce, then the
-      *regular* mapreduce helper is "must use primary."
-
       Clients SHOULD rely on the server to return a "not master" or other error
       if the command is "must-use-primary".  Clients MAY raise an exception
       before sending the command if the topology type is Single and the server
@@ -562,9 +559,9 @@ the command and how it is invoked:
       It is the user's responsibility not to aggregate with $out on a secondary.
 
       If a client provides a specific helper for inline mapreduce, then it is
-      "may-use-secondary" and the regular mapreduce helper is "must use
-      primary". Otherwise it behaves like the aggregate helper: it is the user's
-      responsibility to specify {inline: 1} when running mapreduce on a
+      "may-use-secondary" and the *regular* mapreduce helper is "must use
+      primary". Otherwise mapreduce behaves like the aggregate helper: it is the
+      user's responsibility to specify {inline: 1} when running mapreduce on a
       secondary.
 
     New command-specific helpers implemented in the future will be considered
