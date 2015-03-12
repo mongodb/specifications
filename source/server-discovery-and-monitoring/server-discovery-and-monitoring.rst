@@ -1165,28 +1165,37 @@ then a re-check will be triggered by the server selection algorithm.
 
 These errors are detected from a getLastError response,
 write command response, or query response. Clients MUST consider a server
-error to be a "not master" error if the server's error contains the
-substring "not master" or "node is recovering" anywhere within the error
-message::
+error to be a "node is recovering" error if the substrings "node is recovering"
+or "not master or secondary" are anywhere in the error message.
+Otherwise, if the substring "not master" is in the error message it is a
+"not master" error::
 
-    def is_notmaster(err_message):
-        return ("not master" in err_message
-                or "node is recovering" in err_message)
+    def is_recovering(message):
+        return ("not master or secondary" in message
+            or "node is recovering" in message)
+
+    def is_notmaster(message):
+        if is_recovering(message):
+            return false
+        return ("not master" in message)
+
+    def is_notmaster_or_recovering(message):
+        return is_recovering(message) or is_notmaster(message)
 
     def parse_gle(response):
         if "err" in response:
-            if is_notmaster(response["err"]):
+            if is_notmaster_or_recovering(response["err"]):
                 handle_not_master_or_recovering(response["err"])
 
     # Parse response to any command besides getLastError.
     def parse_command_response(response):
         if not response["ok"]:
-            if is_notmaster(response["errmsg"]):
+            if is_notmaster_or_recovering(response["errmsg"]):
                 handle_not_master_or_recovering(response["errmsg"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:
-            if is_notmaster(response["$err"]):
+            if is_notmaster_or_recovering(response["$err"]):
                 handle_not_master_or_recovering(response["$err"])
 
     def handle_not_master_or_recovering(message):
@@ -1196,6 +1205,9 @@ message::
         if multi-threaded:
             request immediate check
         else:
+            # Check right now if this is "not master", since it might be a
+            # useful secondary. If it's "node is recovering" leave it for the
+            # next full scan.
             if is_notmaster(message):
                 check failing server
 

@@ -642,7 +642,7 @@ Instead, they periodically update the topology during server selection.
 For such a client, the general server selection algorithm is modified as
 follows:
 
-- Prior to Step #1, if the topology is marked stale or has not been scanned
+- Prior to Step #1, if the topology has not been scanned
   in ``heartBeatFrequencyMS`` milliseconds, the client MUST do a (blocking)
   immediate topology check.
 

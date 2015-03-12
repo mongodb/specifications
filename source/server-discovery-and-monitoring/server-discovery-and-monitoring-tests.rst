@@ -31,8 +31,36 @@ with a network error other than timeout.
 
 Outcome: The former primary's ServerType MUST become Unknown.
 The TopologyType MUST change to ReplicaSetNoPrimary.
-A multi-threaded or asynchronous client MUST NOT immediately re-check the former primary.
-A single-threaded client MUST NOT mark the TopologyDescription "stale".
+The client MUST NOT immediately re-check the former primary.
+
+"Not master" error when reading without SlaveOkay bit
+-----------------------------------------------------
+
+Scenario: With TopologyType ReplicaSetWithPrimary, we read from a server we
+thought was RSPrimary. Thus the slaveOk bit is not set.
+
+The response's QueryFailure bit is set and the response document is:
+
+    {$err: "not master and slaveOk=false"}
+
+Outcome: The former primary's ServerType MUST become Unknown.
+The TopologyType MUST change to ReplicaSetNoPrimary.
+The client MUST NOT immediately re-check the former primary.
+
+"Node is recovering" error reading with SlaveOkay bit
+-----------------------------------------------------
+
+Scenario: With TopologyType ReplicaSetWithPrimary, we read from a server we
+thought was RSSecondary. Thus the slaveOk bit *is* set.
+
+The response's QueryFailure bit is set and the response document is:
+
+    {$err: "not master or secondary; cannot currently read from this replSet member"}
+
+Outcome: The former secondary's ServerType MUST become Unknown.
+The TopologyType MUST remain ReplicaSetWithPrimary.
+A multi-threaded client MUST immediately re-check the former secondary,
+a single-threaded client MUST NOT.
 
 Parsing "not master" and "node is recovering" errors
 ----------------------------------------------------
@@ -40,8 +68,6 @@ Parsing "not master" and "node is recovering" errors
 For all these example responses,
 the client MUST mark the server "Unknown"
 and store the error message in the ServerDescription's error field.
-Multi-threaded or asynchronous clients MUST check the server soon;
-single-threaded clients MUST mark the TopologyDescription "stale".
 
 Clients MUST NOT depend on any particular field order in these responses.
 
