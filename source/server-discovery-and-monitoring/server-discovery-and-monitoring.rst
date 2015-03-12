@@ -246,11 +246,6 @@ Fields:
 * compatibilityError: a string.
   The error message if "compatible" is false, otherwise null.
 
-Single-threaded drivers have an additional field:
-
-* stale: true when the client needs to `rescan`_ soon.
-  Initially true.
-
 ServerDescription
 `````````````````
 
@@ -536,16 +531,17 @@ Before each operation, the client checks if `heartbeatFrequencyMS`_ has
 passed since the previous scan; if so it scans all the servers before
 selecting a server and performing the operation.
 
-.. _request a scan:
+If `server selection`_ fails to find a suitable server, single-threaded
+clients must `scan`_ all servers synchronously before retrying server
+selection.
 
-Requesting a scan
-~~~~~~~~~~~~~~~~~
+Checking a single server
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-A single-threaded client can mark its TopologyDescription "stale".
-(See `error handling`_ for the circumstances.)
-When the TopologyDescription is stale,
-the client performs a scan before the next operation,
-then clears the "stale" flag.
+Single-threaded clients MUST be able to check an individual server
+on demand (for example, after a "not master" error. See `error handling`_).
+When checking a single server, its Server Description must be updated
+and the topology must be updated based on the new Server Description.
 
 Scanning order
 ~~~~~~~~~~~~~~
@@ -1259,8 +1255,7 @@ It MAY be retried if it was a read.
 The client SHOULD clear its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
-A multi-threaded client MUST NOT request an immediate check of the server,
-and a single-threaded client MUST NOT request a scan before the next operation:
+Clients MUST NOT request an immediate check of the server;
 since application sockets are used frequently, a network error likely means
 the server has just become unavailable,
 so an immediate refresh is likely to get a network error, too.
@@ -1303,8 +1298,11 @@ message::
         replace server's description with
         new ServerDescription(type=Unknown, error=message)
 
-        request immediate check (multi-threaded),
-        or mark topologyDescription "stale" (single-threaded)
+        if multi-threaded:
+            request immediate check
+        else:
+            if is_notmaster(message):
+                check failing server
 
         clear connection pool for server
 
@@ -1317,13 +1315,18 @@ it MUST replace the server's description
 with a default ServerDescription of type Unknown.
 It MUST store useful information in the new ServerDescription's error field,
 including the error message from the server.
+
 Multi-threaded and asynchronous clients MUST `request an immediate check`_
-of the server,
-and single-threaded clients MUST `request a scan`_ before the next operation.
+of the server.
 Unlike in the "network error" scenario above,
 a "not master" or "node is recovering" error means the server is available
 but the client is wrong about its type,
 thus an immediate re-check is likely to provide useful information.
+
+For single-threaded clients, in the case of a "not master" error, the client
+MUST check the server immediately (see `checking a single server`_).  For a
+"node is recovering" error, single-threaded clients MUST NOT check the server,
+as an immediate server check is unlikely to find a usable server.
 
 The client SHOULD clear its connection pool for the server.
 
