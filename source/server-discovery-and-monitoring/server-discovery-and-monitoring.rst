@@ -47,9 +47,8 @@ Finally, this spec describes how `drivers update their topology view
 in response to errors`_,
 and includes generous implementation notes for driver authors.
 
-This spec does not describe how a client selects a server for an operation;
-that is the domain of the specs for Mongos High Availability
-and for Read Preferences.
+This spec does not describe how a client chooses a server for an operation;
+that is the domain of the Server Selection Spec.
 But there is a section describing
 the `interaction between monitoring and server selection`_.
 
@@ -180,11 +179,13 @@ The process of checking all servers in the deployment.
 suitable
 ````````
 
-A server is judged "suitable" for an operation if the client can use it.
+A server is judged "suitable" for an operation if the client can use it
+for a particular operation.
 For example, a write requires a standalone
 (or the master of a master-slave set),
-primary, or mongos,
-and a read requires a server matching its read preference.
+primary, or mongos.
+Suitability is fully specified in the `Server Selection Spec
+<https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst>`_.
 
 address
 ```````
@@ -384,9 +385,7 @@ The default MUST be 5 seconds, and it MAY be configurable.
 
 Only for single-threaded clients.
 
-(See `single-threaded server selection`_,
-`single-threaded server selection implementation`_,
-and `what is the purpose of socketCheckIntervalMS?`_).
+(See `what is the purpose of socketCheckIntervalMS?`_).
 
 Client construction
 '''''''''''''''''''
@@ -523,9 +522,8 @@ Before each operation, the client checks if `heartbeatFrequencyMS`_ has
 passed since the previous scan; if so it scans all the servers before
 selecting a server and performing the operation.
 
-If `server selection`_ fails to find a suitable server, single-threaded
-clients must `scan`_ all servers synchronously before retrying server
-selection.
+Selection failure triggers an immediate scan, see
+`single-threaded server selection`_.
 
 Checking a single server
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -958,7 +956,7 @@ Actions
 updateUnknownWithStandalone
   This subroutine is executed
   with the ServerDescription from Standalone (including a slave)
-  when the TopologyType is Unkown::
+  when the TopologyType is Unknown::
 
     if description.address not in topologyDescription.servers:
         return
@@ -1116,102 +1114,6 @@ remove
   Once the check completes, this server's ismaster outcome MUST be ignored,
   and the monitor SHOULD halt.
 
-Reference implementation
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-The Java driver's
-`MultiClusterServer.onChange
-<https://github.com/mongodb/mongo-java-driver/blob/3.0.x/driver/src/main/org/mongodb/connection/MultiServerCluster.java#L112>`_
-is a reference implementation of all logic
-for TopologyTypes besides Single.
-
-.. _interaction between monitoring and server selection:
-
-Server selection
-''''''''''''''''
-
-The client uses the TopologyDescription to select a server `suitable`_
-for a given operation.
-
-.. note::
-   Server selection criteria are not this spec's domain.
-   They are described in the specs for
-   Read Preferences and Mongos High Availability.
-   However, when TopologyType is Single
-   the client should always select the current server,
-   and for other TopologyTypes
-   it seems sane to select servers only of these types:
-   Standalone, Mongos, RSPrimary, RSSecondary.
-
-.. _mt-server-selection:
-
-.. _multi-threaded server selection:
-
-Multi-threaded or asynchronous server selection
-```````````````````````````````````````````````
-
-A driver that uses `multi-threaded or asynchronous monitoring`_
-MUST unblock waiting operations
-as soon as a suitable server is found,
-rather than waiting for all servers to be `checked`_.
-
-For example, if the client is discovering a replica set
-and the application attempts a write operation,
-the write operation MUST proceed as soon as there is an RSPrimary,
-rather than blocking until the client has checked all members.
-
-While no suitable server is available for an operation,
-`the client MUST re-check all servers every minHeartbeatFrequencyMS`_.
-(See `requesting an immediate check`_
-and `multi-threaded server selection implementation`_.)
-
-Once some maximum wait time has passed, the client MUST abort the operation
-and throw an exception.
-The client SHOULD use the error fields of all ServerDescriptions
-to determine a useful error class and message if possible.
-
-.. _st-server-selection:
-
-Single-threaded server selection
-````````````````````````````````
-
-A driver that uses `single-threaded monitoring`_
-selects a server for an operation like so:
-
-#. If the TopologyDescription has any `suitable`_ servers,
-   iterate them in random order. For each suitable server:
-
-    - If the client has an open socket to the server
-      that has been used more recently than `socketCheckIntervalMS`_, use it.
-      Server selection is complete.
-      (`Network error when reading or writing`_ specifies what happens
-      if the operation fails.)
-    - Otherwise, if there is no socket to the server, attempt to open one.
-      If this fails, mark the server "Unknown" and continue iterating the
-      list of suitable servers.
-    - Otherwise, if the client has an open socket to the server
-      but the socket has not been used in `socketCheckIntervalMS`_,
-      the client MUST check the socket by calling ismaster on it.
-    - If the ismaster call succeeds the client MUST update the
-      ServerDescription. If it fails the client MUST mark the server Unknown.
-    - If the ServerDescription is still suitable for the operation,
-      use the server.
-      Server selection is complete.
-    - If it is not (because the server changed type, or
-      because the ismaster call failed and the ServerType is Unknown),
-      continue iterating the list of suitable servers.
-
-#. If some maximum wait time has passed, throw an exception.
-   The client SHOULD use the error fields of all ServerDescriptions
-   to determine a useful error class and message if possible.
-#. `Scan`_ the servers.
-   (See `single-threaded monitoring`_ for the scan algorithm).
-#. Go to #1, to see if the scan discovered suitable servers. 
-
-See the pseudocode for `single-threaded server selection implementation`_,
-and the justification for
-`what is the purpose of socketCheckIntervalMS?`_.
-
 .. _drivers update their topology view in response to errors:
 
 Error handling
@@ -1256,7 +1158,7 @@ so an immediate refresh is likely to get a network error, too.
 The server will not remain Unknown forever.
 It will be refreshed by the next periodic check or,
 if an application operation needs the server sooner than that,
-then a re-check will be triggered by the `server selection`_ algorithm.
+then a re-check will be triggered by the server selection algorithm.
 
 "not master" and "node is recovering"
 `````````````````````````````````````
@@ -1332,6 +1234,24 @@ Implementation notes
 This section intends to provide generous guidance to driver authors.
 It is complementary to the reference implementations.
 Words like "should", "may", and so on are used more casually here.
+
+.. _interaction between monitoring and server selection:
+
+Multi-threaded or asynchronous server selection
+```````````````````````````````````````````````
+
+While no suitable server is available for an operation,
+`the client MUST re-check all servers every minHeartbeatFrequencyMS`_.
+(See `requesting an immediate check`_.)
+
+Single-threaded server selection
+````````````````````````````````
+
+When a client that uses `single-threaded monitoring`_
+fails to select a suitable server for any operation,
+it `scans`_ the servers, then attempts selection again,
+to see if the scan discovered suitable servers. It repeats, waiting
+`minHeartbeatFrequencyMS`_ between scans, until a timeout.
 
 Documentation
 `````````````
@@ -1485,7 +1405,8 @@ Once the client has taken the lock it must do no I/O::
 
 .. https://github.com/mongodb/mongo-java-driver/blob/5fb47a3bf86c56ed949ce49258a351773f716d07/src/main/com/mongodb/BaseCluster.java#L160
 
-Notifying the condition unblocks waiters in `getServer`_.
+Notifying the condition unblocks threads waiting in the server-selection loop
+for a suitable server to be discovered.
 
 .. note::
    The Java driver uses a CountDownLatch instead of a condition variable,
@@ -1493,133 +1414,6 @@ Notifying the condition unblocks waiters in `getServer`_.
    so it does not need "client.lock".
    It does, however, use a lock to ensure that only one thread runs
    onServerDescriptionChanged at a time.
-
-.. _getServer:
-
-Multi-threaded server selection implementation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A function is sketched here
-to fit this spec's requirements about
-`multi-threaded server selection`_.
-The function wakes all monitors every minHeartbeatFrequencyMS
-until a suitable server is found or a timeout is reached.
-The timeout is called "serverWaitTime" here,
-but this spec does not define what it is called or how it is configured::
-
-    def getServer(criteria, serverWaitTime):
-        client.lock.acquire()
-
-        now = gettime()
-        endTime = now + serverWaitTime
-        servers = all servers in client.topologyDescription matching criteria
-
-        while true:
-            # We check wire protocol compatibility with all known servers,
-            # not just suitable ones that match the criteria.
-            if not client.topologyDescription.compatible:
-                client.lock.release()
-                throw error(client.topologyDescription.compatibilityError)
-
-            if servers is not empty:
-                client.lock.release()
-                return a random server from servers
-
-            # No suitable servers.
-            if now after endTime:
-
-                # TODO: more error diagnostics.
-                # TODO: logging, with some severity levels: ERROR, WARNING, INFO, DEBUG?
-                # E.g., if state is ReplicaSet but every server is Unknown,
-                # and the host list is non-empty, and doesn't intersect with settings.seeds,
-                # the set is probably configured with internal hostnames or IPs
-                # and we're connecting from outside.
-                # Or if state is ReplicaSet and topologyDescription.servers is empty,
-                # we have the wrong setName.
-                # Include topologyDescription's stringification in exception msg.
-
-                # Sketch of error message logic.
-                if there are any known servers:
-                    error_message = "No servers are suitable for " + criteria
-                else if all ServerDescriptions' errors are the same:
-                    error_message = a ServerDescription.error value
-                else:
-                    error_message = ', '.join(all ServerDescriptions' errors)
-
-                client.lock.release()
-                throw error(error_message)
-
-            request that all monitors check immediately
-
-            # Wait for a new TopologyDescription. condition.wait() releases
-            # client.lock while waiting and reacquires it before returning.
-            timeout = endTime - now
-            client.condition.wait(min(serverWaitTime, minHeartbeatFrequencyMS))
-
-            # A new TopologyDescription was published, or we timed out.
-            now = gettime()
-            servers = all servers in client.topologyDescription matching criteria
-
-While a thread is waiting on client.condition, it is awakened early
-whenever a check completes. See `onServerDescriptionChanged`_.
-
-Single-threaded
-```````````````
-
-Single-threaded server selection implementation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Pseudocode for `single-threaded server selection`_::
-
-    def getServer(criteria, serverWaitTime):
-        now = gettime()
-        endTime = now + serverWaitTime
-        servers = all servers in client.topologyDescription matching criteria
-
-        while true:
-            # We check wire protocol compatibility with all known servers,
-            # not just suitable ones that match the criteria.
-            if not client.topologyDescription.compatible:
-                throw error(client.topologyDescription.compatibilityError)
-
-            for server in randomized(servers):
-                if the pool has a socket for the server:
-                    if the socket has not been used in socketCheckIntervalMS:
-                        try:
-                            call ismaster with socket
-                            create new ServerDescription with ismaster response
-                        except NetworkError:
-                            close socket
-                            replace ServerDescription with new one of type Unknown
-    
-                        if new ServerDescription does not match criteria:
-                            # Continue looping over the randomized servers.
-                            continue
-                else:
-                    try:
-                        open new socket to the server
-                    except NetworkError:
-                        replace ServerDescription with new one of type Unknown
-                        continue
-
-                # Success.
-                return socket
-
-            if now after endTime:
-                # Sketch of error message logic.
-                if there are any known servers:
-                    error_message = "No servers are suitable for " + criteria
-                else if all ServerDescriptions' errors are the same:
-                    error_message = a ServerDescription.error value
-                else:
-                    error_message = ', '.join(all ServerDescriptions' errors)
-
-                throw error(error_message)
-
-            rescan
-            servers = all servers in client.topologyDescription matching criteria
-
-This spec does not define "serverWaitTime".
 
 Rationale
 ---------
@@ -1726,11 +1520,11 @@ The slight cost is worthwhile in many scenarios. For example:
 #. A client and a MongoDB server are started simultaneously.
 #. The client checks the server before it begins listening,
    so the check fails.
-#. The client waits in `getServer`_ for the topology to change.
+#. The client waits in the server-selection loop for the topology to change.
 
 In this state, the client should check the server very frequently,
 to give it ample opportunity to connect to the server before
-timing out in getServer.
+timing out in server selection.
 
 What is the purpose of socketCheckIntervalMS?
 '''''''''''''''''''''''''''''''''''''''''''''
@@ -1835,7 +1629,7 @@ from the TopologyDescription once A's ismaster response comes.
 The user's intent in this case is clearly to use the replica set,
 despite the outdated seed list. So this spec requires clients to remove B
 from the TopologyDescription and keep the TopologyType as Unknown.
-Then when A's respone arrives, the client can set its TopologyType
+Then when A's response arrives, the client can set its TopologyType
 to ReplicaSet (with or without primary).
 
 On the other hand,
@@ -2065,7 +1859,7 @@ What's the point of periodic monitoring?
 
 Why not just wait until a "not master" error or
 "node is recovering" error informs the client that its
-TopologyDescription is wrong? Or wait until `server selection`_
+TopologyDescription is wrong? Or wait until server selection
 fails to find a suitable server, and only scan all servers then?
 
 Periodic monitoring accomplishes three objectives:
