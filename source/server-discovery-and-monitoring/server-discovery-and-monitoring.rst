@@ -266,10 +266,10 @@ Fields:
 * error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the ismaster call. Default null.
 * type: a `ServerType`_ enum value. Default Unknown.
-* minWireVersion: the minimum wire protocol version supported by the server.
-  Default 0.
-* maxWireVersion: the maximum wire protocol version supported by the server.
-  Default 0.
+* minWireVersion, maxWireVersion:
+  the wire protocol version range supported by the server.
+  Both default to 0.
+  `Use min and maxWireVersion only to determine compatibility`_.
 * hosts, passives, arbiters: Sets of addresses.
   This server's opinion of the replica set's members, if any.
   These `hostnames are normalized to lower-case`_.
@@ -287,14 +287,6 @@ Single-threaded clients need an additional field
 to implement the `single-threaded monitoring`_ algorithm:
 
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
-
-Clients may find it useful to store additional fields
-from the ismaster response,
-such as:
-
-* maxBsonObjectSize
-* maxMessageSizeBytes
-* maxWriteBatchSize
 
 .. _configured:
 
@@ -752,7 +744,7 @@ responds that "a" is in the replica set.
 Other ServerDescription fields
 ``````````````````````````````
 
-Other required and optional fields
+Other required fields
 defined in the `ServerDescription`_ data structure
 are parsed from the ismaster response in the obvious way.
 
@@ -819,6 +811,7 @@ Whenever the client checks a server (successfully or not)
 the ServerDescription in TopologyDescription.servers
 is replaced with the new ServerDescription.
 
+.. _is compatible:
 .. _updates the "compatible" and "compatibilityError" fields:
 
 If the server's wire protocol version range overlaps with the client's,
@@ -1354,6 +1347,50 @@ and generate load for multi-threaded and asynchronous drivers.
 
 Multi-threaded
 ``````````````
+
+.. _use min and maxWireVersion only to determine compatibility:
+
+Warning about the maxWireVersion from a monitor's ismaster response
+```````````````````````````````````````````````````````````````````
+
+Clients consult some fields from a server's ismaster response
+to decide how to communicate with it:
+
+* maxWireVersion
+* maxBsonObjectSize
+* maxMessageSizeBytes
+* maxWriteBatchSize
+
+It is tempting to take these values
+from the last ismaster response a *monitor* received
+and store them in the ServerDescription, but this is an anti-pattern.
+Multi-threaded and asynchronous clients that do so
+are prone to several classes of race, for example:
+
+* Setup: A MongoDB 3.0 Standalone with authentication enabled,
+  the client must log in with SCRAM-SHA-1.
+* The monitor thread discovers the server
+  and stores maxWireVersion on the ServerDescription
+* An application thread wants a socket, selects the Standalone,
+  and is about to check the maxWireVersion on its ServerDescription when...
+* The monitor thread gets disconnected from server and marks it Unknown,
+  with default maxWireVersion of 0.
+* The application thread resumes, creates a socket,
+  and attempts to log in using MONGODB-CR,
+  since maxWireVersion is *now* reported as 0.
+* Authentication fails, the server requires SCRAM-SHA-1.
+
+Better to call ismaster for each new socket, as required by the `Auth Spec
+<https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`_,
+and use the ismaster response associated with that socket
+for maxWireVersion, maxBsonObjectSize, etc.:
+all the fields required to correctly communicate with the server.
+
+The ismaster responses received by monitors determine if the topology
+as a whole `is compatible`_ with the driver,
+and which servers are suitable for selection.
+The monitors' responses should not be used to determine how to format
+wire protocol messages to the servers.
 
 Monitor thread
 ~~~~~~~~~~~~~~
