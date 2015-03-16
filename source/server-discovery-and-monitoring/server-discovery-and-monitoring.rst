@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: September 8, 2014
+:Last Modified: March 13, 2015
 
 .. contents::
 
