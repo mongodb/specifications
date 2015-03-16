@@ -1,6 +1,6 @@
 description: "Connect to RSPrimary"
 
-uri: "mongodb://a/?connect=direct"
+uri: "mongodb://a"
 
 phases: [
 
