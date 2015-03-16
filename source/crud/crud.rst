@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Mar. 4, 2015
+:Last Modified: Mar. 16, 2015
 
 .. contents::
 
@@ -183,7 +183,9 @@ Read
     allowDiskUse: Boolean;
 
     /**
-     * The number of documents to return per batch.
+     * The number of documents to return per batch. 
+     *
+     * For servers < 2.6, this option is ignored as aggregation cursors are not available.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -197,16 +199,13 @@ Read
     maxTimeMS: Int64;
 
     /**
-     * Indicates if the results should be provided as a cursor. 
+     * Indicates whether the command will request that the server provide results using a cursor.  The default is true.
      *
-     * The default for this value depends on the version of the server. 
-     * - Servers >= 2.6 will use a default of true. 
-     * - Servers < 2.6 will use a default of false. 
-     * 
-     * As with any other property, this value can be changed.
+     * For servers < 2.6, this option is ignored as aggregation cursors are not available.
+     * For servers >= 2.6, this option allows users to turn off cursors if necessary to aid in mongod/mongos upgrades.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
-     */ 
+     */
     useCursor: Boolean;
 
   }
