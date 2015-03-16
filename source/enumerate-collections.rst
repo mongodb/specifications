@@ -155,8 +155,7 @@ Return types
 For servers that support the ``listCollections`` command, the return types
 differ depending on server version. Versions 2.7.6 to 2.8.0-rc2 return a single
 document containing all the results, but versions 2.8.0-rc3 and later return a
-cursor description. As per the draft specification__, the format that is
-returned is the same as for any other command cursor::
+cursor description. The format that is returned is the same as for any other command cursor::
 
     {
         cursor: {
@@ -170,7 +169,6 @@ returned is the same as for any other command cursor::
 The number of objects in the ``firstBatch`` field depends on the
 ``cursor.batchSize`` option.
 
-__ https://docs.google.com/a/10gen.com/document/d/1u6UuUvInvnHeAAeVNfTDBD6rtn_lkb0kCDn6ejK6hDk/edit
 
 Drivers MAY expose methods to return collection names as an array. If your
 driver already has such a method, its return type MUST NOT be changed in order
