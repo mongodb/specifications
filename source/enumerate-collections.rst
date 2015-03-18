@@ -107,8 +107,8 @@ The command returns a cursor definition structure::
         ok: 1
     }
 
-With the ``cursor.id`` and ``cursor.ns`` fields you can retrieve further index
-information structures.
+With the ``cursor.id`` and ``cursor.ns`` fields you can retrieve further
+collection information structures.
 
 The command also returns the field ``ok`` to
 signal whether the command was executed successfully.
@@ -233,7 +233,7 @@ Driver methods
 --------------
 
 Drivers SHOULD use the method name ``listCollections`` for a method that
-returns all indexes with a cursor return type. Drivers MAY use an idiomatic
+returns all collections with a cursor return type. Drivers MAY use an idiomatic
 variant that fits the language the driver is for.
 
 If a driver already has a method to perform one of the listed tasks,
