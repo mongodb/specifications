@@ -6,7 +6,7 @@ Server Discovery And Monitoring
 :Title: Server Discovery And Monitoring
 :Author: A\. Jesse Jiryu Davis
 :Advisors: David Golden, Craig Wilson
-:Status: Draft
+:Status: Accepted
 :Type: Standards
 :Last Modified: March 18, 2015
 
