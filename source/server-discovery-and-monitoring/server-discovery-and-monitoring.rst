@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: March 13, 2015
+:Last Modified: March 18, 2015
 
 .. contents::
 
@@ -604,7 +604,7 @@ minHeartbeatFrequencyMS
 If a client frequently rechecks a server,
 it MUST wait at least minHeartbeatFrequencyMS milliseconds
 since the previous check to avoid pointless effort.
-This value MUST be 10 ms, and it MUST NOT be configurable.
+This value MUST be 500 ms, and it MUST NOT be configurable.
 (See `no knobs`_.)
 
 .. _parses them:
@@ -1320,7 +1320,7 @@ to control the monitor thread.
 The event API here is assumed to be like the standard `Python Event
 <https://docs.python.org/2/library/threading.html#event-objects>`_.
 `heartbeatFrequencyMS`_ is configurable,
-`minHeartbeatFrequencyMS`_ is always 10 milliseconds::
+`minHeartbeatFrequencyMS`_ is always 500 milliseconds::
 
     def run():
         while this monitor is not stopped:
