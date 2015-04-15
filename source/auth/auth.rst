@@ -394,7 +394,7 @@ As an example, given a username of "user" and a password of "pencil" and an r va
 
 | C: ``n,,n=user,r=fyko+d2lbbFgONRv9qkxdawL``
 | S: ``r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,s=rQ9ZY3MntBeuP3E1TDVC4w==,i=10000``
-| C: ``c=biws,r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE``
+| C: ``c=biws,r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,p=MC2T8BvbmWRckDw8oWl5IVghwCY=``
 | S: ``v=UMWeI25JD1yNYZRMpZ4VHvhZ9e0=``
 
 This same conversation over mongodb's sasl implementation would appear as follows:
