@@ -144,7 +144,6 @@ Standard API
      *   takes an IndexModel as a parameter, or for those languages with method
      *   overloading MAY decide to implement both.
      */
-     */
     dropIndex(keys: Document, options: IndexOptions): Result;
 
     /**
