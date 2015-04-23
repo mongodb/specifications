@@ -118,6 +118,9 @@ Standard API
      * For MongoDB 2.4 this method MUST insert the index specifications directly into
      * the system.indexes collection.
      *
+     * The driver MAY choose NOT to support creating indexes on 2.4 and if so, MUST
+     * document the method as such.
+     *
      * Note that in MongoDB server versions >= 3.0.0, the server will create the
      * indexes in parallel.
      *
@@ -357,6 +360,9 @@ Index View API
      *
      * For MongoDB 2.4 this method MUST insert the index specifications directly into
      * the system.indexes collection.
+     *
+     * The driver MAY choose NOT to support creating indexes on 2.4 and if so, MUST
+     * document the method as such.
      *
      * @return The names of the created indexes.
      *
