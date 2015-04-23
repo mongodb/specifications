@@ -11,7 +11,7 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Mar. 31, 2015
+:Last Modified: Apr. 23, 2015
 
 .. contents::
 
@@ -113,8 +113,10 @@ Standard API
     /**
      * Creates multiple indexes in the collection.
      *
-     * This method MUST execute a createIndexes command and will NOT work on MongoDB
-     * versions less than 2.6.0 and MUST be documented as such.
+     * For MongoDB 2.6 and higher this method MUST execute a createIndexes command.
+     *
+     * For MongoDB 2.4 this method MUST insert the index specifications directly into
+     * the system.indexes collection.
      *
      * Note that in MongoDB server versions >= 3.0.0, the server will create the
      * indexes in parallel.
@@ -351,8 +353,10 @@ Index View API
     /**
      * Creates multiple indexes in the collection.
      *
-     * This method MUST execute a createIndexes command and will NOT work on MongoDB
-     * versions less than 2.6.0 and MUST be documented as such.
+     * For MongoDB 2.6 and higher this method MUST execute a createIndexes command.
+     *
+     * For MongoDB 2.4 this method MUST insert the index specifications directly into
+     * the system.indexes collection.
      *
      * @return The names of the created indexes.
      *
