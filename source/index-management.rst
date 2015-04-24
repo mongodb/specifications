@@ -84,6 +84,12 @@ Deviations
 Acceptable naming deviations should fall within the basic style of the language. For example, ``createIndex`` would be a required name in Java, where camel-case method names are used, but in Ruby ``create_index`` would be acceptable.
 
 
+Index Name Generation
+---------------------
+
+When the client generates a name for an index based on the keys, The driver MUST generate the name as key-direction pairs, separated by underscores. For example, the key ``{ name: 1, dob: -1 }`` MUST generate an index name of ``name_1_dob_-1``.
+
+
 ------------
 Standard API
 ------------
