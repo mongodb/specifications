@@ -26,6 +26,7 @@ phases: [
             },
 
             topologyType: "Unknown",
+            maxElectionId:,
             setName:
         }
     }

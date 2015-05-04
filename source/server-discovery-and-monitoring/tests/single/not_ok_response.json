@@ -3,6 +3,7 @@
     "phases": [
         {
             "outcome": {
+                "maxElectionId": null, 
                 "servers": {
                     "a:27017": {
                         "address": "a:27017", 
