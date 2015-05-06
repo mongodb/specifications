@@ -1,15 +1,17 @@
 {
-    "description": "New primary", 
+    "description": "Primary with no electionId, then a primary with electionId", 
     "phases": [
         {
             "outcome": {
                 "maxElectionId": null, 
                 "servers": {
                     "a:27017": {
+                        "electionId": null, 
                         "setName": "rs", 
                         "type": "RSPrimary"
                     }, 
                     "b:27017": {
+                        "electionId": null, 
                         "setName": null, 
                         "type": "Unknown"
                     }
@@ -34,13 +36,19 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": null, 
+                "maxElectionId": {
+                    "$oid": "000000000000000000000001"
+                }, 
                 "servers": {
                     "a:27017": {
+                        "electionId": null, 
                         "setName": null, 
                         "type": "Unknown"
                     }, 
                     "b:27017": {
+                        "electionId": {
+                            "$oid": "000000000000000000000001"
+                        }, 
                         "setName": "rs", 
                         "type": "RSPrimary"
                     }
@@ -51,6 +59,44 @@
             "responses": [
                 [
                     "b:27017", 
+                    {
+                        "electionId": {
+                            "$oid": "000000000000000000000001"
+                        }, 
+                        "hosts": [
+                            "a:27017", 
+                            "b:27017"
+                        ], 
+                        "ismaster": true, 
+                        "ok": 1, 
+                        "setName": "rs"
+                    }
+                ]
+            ]
+        }, 
+        {
+            "outcome": {
+                "maxElectionId": {
+                    "$oid": "000000000000000000000001"
+                }, 
+                "servers": {
+                    "a:27017": {
+                        "electionId": null, 
+                        "setName": "rs", 
+                        "type": "RSPrimary"
+                    }, 
+                    "b:27017": {
+                        "electionId": null, 
+                        "setName": null, 
+                        "type": "Unknown"
+                    }
+                }, 
+                "setName": "rs", 
+                "topologyType": "ReplicaSetWithPrimary"
+            }, 
+            "responses": [
+                [
+                    "a:27017", 
                     {
                         "hosts": [
                             "a:27017", 
@@ -64,5 +110,5 @@
             ]
         }
     ], 
-    "uri": "mongodb://a,b/?replicaSet=rs"
+    "uri": "mongodb://a/?replicaSet=rs"
 }

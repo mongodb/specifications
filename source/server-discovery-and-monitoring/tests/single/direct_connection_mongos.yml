@@ -27,6 +27,7 @@ phases: [
             },
 
             topologyType: "Single",
+            maxElectionId:,
             setName:
         }
     }

@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Last Modified: March 18, 2015
+:Last Modified: May 1, 2015
 
 .. contents::
 
@@ -238,6 +238,8 @@ Fields:
 * type: a `TopologyType`_ enum value.
   The default is Unknown.
 * setName: the replica set name. Default null.
+* maxElectionId: an ObjectId or null. The largest electionId ever reported by
+  a primary. Default null.
 * servers: a set of ServerDescription instances.
   Default contains one server: "localhost:27017", ServerType Unknown.
 * compatible: a boolean.
@@ -278,6 +280,9 @@ Fields:
   The client `monitors all three types of servers`_ in a replica set.
 * tags: map from string to string. Default empty.
 * setName: string or null. Default null.
+* electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that
+  believes it is primary. See `using electionId to detect stale primaries`_.
+  Default null.
 * primary: an address. This server's opinion of who the primary is.
   Default null.
 
@@ -972,7 +977,7 @@ updateUnknownWithStandalone
 
 updateRSWithoutPrimary
   This subroutine is executed
-  with the ServerDescription from any replica set member
+  with the ServerDescription from an RSSecondary, RSArbiter, or RSOther
   when the TopologyType is ReplicaSetNoPrimary::
 
     if description.address not in topologyDescription.servers:
@@ -1009,7 +1014,7 @@ updateRSWithoutPrimary
 
 updateRSWithPrimaryFromMember
   This subroutine is executed
-  with the ServerDescription from any replica set member besides the primary
+  with the ServerDescription from an RSSecondary, RSArbiter, or RSOther
   when the TopologyType is ReplicaSetWithPrimary::
 
     if description.address not in topologyDescription.servers:
@@ -1038,7 +1043,7 @@ updateRSWithPrimaryFromMember
 .. _updateRSFromPrimary:
 
 updateRSFromPrimary
-  This subroutine is executed with the ServerDescription from a primary::
+  This subroutine is executed with a ServerDescription of type RSPrimary::
 
     if description.address not in topologyDescription.servers:
         return
@@ -1052,6 +1057,17 @@ updateRSFromPrimary
         remove this server from topologyDescription and stop monitoring it
         checkIfHasPrimary()
         return
+
+    if description.electionId is not null:
+        if (topologyDescription.maxElectionId is not null
+                and topologyDescription.maxElectionId > description.electionId):
+
+            # Stale primary.
+            replace description with a default ServerDescription of type "Unknown"
+            checkIfHasPrimary()
+            return
+
+        topologyDescription.maxElectionId = description.electionId
 
     for each server in topologyDescription.servers:
         if server.address != description.address:
@@ -1084,10 +1100,15 @@ updateRSFromPrimary
 
   See `replica set monitoring with and without a primary`_.
 
+  If the server is primary with an obsolete electionId, it is likely a stale
+  primary that is going to step down. Mark it Unknown and let periodic
+  monitoring detect when it becomes secondary. See
+  `using electionId to detect stale primaries`_.
+
 .. _checkIfHasPrimary:
 
 checkIfHasPrimary
-  Set TopologyType to ReplicaSetWithPrimary if there is a primary
+  Set TopologyType to ReplicaSetWithPrimary if there is an RSPrimary
   in TopologyDescription.servers, otherwise set it to ReplicaSetNoPrimary.
 
   For example, if the TopologyType is ReplicaSetWithPrimary
@@ -1735,6 +1756,60 @@ but it MUST NOT remove servers from the TopologyDescription.
 
 Eventually, when a primary is discovered, any hosts not in the primary's host
 list are removed.
+
+Using electionId to detect stale primaries
+''''''''''''''''''''''''''''''''''''''''''
+
+The client remembers the greatest electionId reported by a primary,
+and distrusts primaries with older electionIds.
+This prevents the client from oscillating
+between the old and new primary during a split-brain period,
+and helps provide read-your-writes consistency with write concern "majority"
+and read preference "primary".
+
+Consider the following situation:
+
+1. Server A is primary.
+2. A network partition isolates A from the set, but the client still sees it.
+3. Server B is elected primary.
+4. The client discovers that B is primary, does a write-concern "majority"
+   write operation on B and receives acknowledgment.
+5. The client receives an ismaster response from A, claiming A is still primary.
+6. If the client trusts that A is primary, the next read-preference "primary"
+   read sees stale data from A that may *not* include the write sent to B.
+
+See `SERVER-17975 <https://jira.mongodb.org/browse/SERVER-17975>`_, "Stale
+reads with WriteConcern Majority and ReadPreference Primary."
+
+To prevent this scenario, the client uses electionId to
+determine which primary was elected last. In this case, it would not consider
+A primary, nor read from it, after receiving B's ismaster response with its
+greater electionId.
+
+The electionId is a monotonically increasing ObjectId
+in the ismaster response of replica set primaries running MongoDB 3.0.x,
+or 2.6.x once `SERVER-13542 <https://jira.mongodb.org/browse/SERVER-13542>`_ is backported.
+In those MongoDB versions,
+the electionId's leading bytes are a server timestamp.
+If server clocks are synchronized
+then electionIds generated at least a second apart will compare accurately.
+This is precise enough, because MongoDB 2.6.x and 3.0.x
+are designed not to complete more than one election every 30 seconds.
+(Elections do not take 30 seconds--they are typically much faster than that--but
+there is a 30-second cooldown before the next election can complete.)
+Thus, as long as server clocks are skewed *less* than 30 seconds,
+electionIds can be reliably compared.
+
+Beginning in MongoDB 3.2, the electionId is guaranteed monotonic
+without relying on any clock synchronization,
+and there is no more 30-second cooldown.
+
+Using electionId only provides read-your-writes consistency if:
+
+* The application uses one MongoClient instance with write-concern "majority"
+  writes and read-preference "primary" reads, and
+* All members run MongoDB 3.0.x, or 2.6.x with the electionId backport,
+  and clocks are *less* than 30 seconds skewed. Or all members run MongoDB 3.2+.
 
 Ignore setVersion
 '''''''''''''''''

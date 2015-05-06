@@ -1,13 +1,16 @@
 {
-    "description": "Host list differs from seeds", 
+    "description": "Ignore a secondary's electionId", 
     "phases": [
         {
             "outcome": {
                 "maxElectionId": null, 
                 "servers": {
-                    "b:27017": {
-                        "setName": null, 
-                        "type": "Unknown"
+                    "a:27017": {
+                        "electionId": {
+                            "$oid": "000000000000000000000001"
+                        }, 
+                        "setName": "rs", 
+                        "type": "RSSecondary"
                     }
                 }, 
                 "setName": "rs", 
@@ -17,11 +20,15 @@
                 [
                     "a:27017", 
                     {
+                        "electionId": {
+                            "$oid": "000000000000000000000001"
+                        }, 
                         "hosts": [
-                            "b:27017"
+                            "a:27017"
                         ], 
-                        "ismaster": true, 
+                        "ismaster": false, 
                         "ok": 1, 
+                        "secondary": true, 
                         "setName": "rs"
                     }
                 ]

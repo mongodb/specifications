@@ -21,6 +21,7 @@ phases: [
             servers: {},
 
             topologyType: "ReplicaSetNoPrimary",
+            maxElectionId:,
             setName: "rs"
         }
     }
