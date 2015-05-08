@@ -28,8 +28,6 @@ phases: [
             },
 
             topologyType: "ReplicaSetWithPrimary",
-
-            maxElectionId:,
             setName: "rs"
         }
     },
@@ -52,7 +50,6 @@ phases: [
             },
 
             topologyType: "ReplicaSetNoPrimary",
-            maxElectionId:,
             setName: "rs"
         }
     }

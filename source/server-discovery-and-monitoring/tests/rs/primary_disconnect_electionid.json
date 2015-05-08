@@ -3,9 +3,6 @@
     "phases": [
         {
             "outcome": {
-                "maxElectionId": {
-                    "$oid": "000000000000000000000002"
-                }, 
                 "servers": {
                     "a:27017": {
                         "electionId": null, 
@@ -58,9 +55,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": {
-                    "$oid": "000000000000000000000002"
-                }, 
                 "servers": {
                     "a:27017": {
                         "electionId": null, 
@@ -85,9 +79,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": {
-                    "$oid": "000000000000000000000002"
-                }, 
                 "servers": {
                     "a:27017": {
                         "electionId": null, 
@@ -123,9 +114,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": {
-                    "$oid": "000000000000000000000003"
-                }, 
                 "servers": {
                     "a:27017": {
                         "electionId": {

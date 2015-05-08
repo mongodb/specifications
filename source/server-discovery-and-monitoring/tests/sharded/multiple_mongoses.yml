@@ -40,7 +40,6 @@ phases: [
             },
 
             topologyType: "Sharded",
-            maxElectionId:,
             setName:
         }
     }
