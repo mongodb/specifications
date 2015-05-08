@@ -1781,6 +1781,20 @@ between the old and new primary during a split-brain period,
 and helps provide read-your-writes consistency with write concern "majority"
 and read preference "primary".
 
+Requirements for read-your-writes consistency
+`````````````````````````````````````````````
+
+Using electionId only provides read-your-writes consistency if:
+
+* The application uses the same MongoClient instance for write-concern
+  "majority" writes and read-preference "primary" reads, and
+* All members run MongoDB 2.6.10+ or MongoDB 3.0+,
+  and clocks are *less* than 30 seconds skewed.
+  If all members run MongoDB 3.2+, clocks need not be synchronized.
+
+Scenario
+````````
+
 Consider the following situation:
 
 1. Server A is primary.
@@ -1795,24 +1809,28 @@ Consider the following situation:
 See `SERVER-17975 <https://jira.mongodb.org/browse/SERVER-17975>`_, "Stale
 reads with WriteConcern Majority and ReadPreference Primary."
 
+Detecting a stale primary
+`````````````````````````
+
 To prevent this scenario, the client uses electionId to
 determine which primary was elected last. In this case, it would not consider
 A primary, nor read from it, after receiving B's ismaster response with its
 greater electionId.
 
+Monotonicity
+````````````
+
 The electionId is a monotonically increasing ObjectId
 in the ismaster response of replica set primaries running MongoDB 3.0.x,
-or 2.6.x once `SERVER-13542 <https://jira.mongodb.org/browse/SERVER-13542>`_ is backported.
+or 2.6.10+ (which has `SERVER-13542 <https://jira.mongodb.org/browse/SERVER-13542>`_ backported).
 In those MongoDB versions,
 the electionId's leading bytes are a server timestamp.
-If server clocks are synchronized
-then electionIds generated at least a second apart will compare accurately.
-This is precise enough, because MongoDB 2.6.x and 3.0.x
-are designed not to complete more than one election every 30 seconds.
-(Elections do not take 30 seconds--they are typically much faster than that--but
-there is a 30-second cooldown before the next election can complete.)
-Thus, as long as server clocks are skewed *less* than 30 seconds,
+As long as server clocks are skewed *less* than 30 seconds,
 electionIds can be reliably compared.
+(This is precise enough, because MongoDB 2.6.x and 3.0.x
+are designed not to complete more than one election every 30 seconds.
+Elections do not take 30 seconds--they are typically much faster than that--but
+there is a 30-second cooldown before the next election can complete.)
 
 Beginning in MongoDB 3.2, the electionId is guaranteed monotonic
 without relying on any clock synchronization,
