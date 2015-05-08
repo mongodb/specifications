@@ -3,7 +3,6 @@
     "phases": [
         {
             "outcome": {
-                "maxElectionId": null, 
                 "servers": {}, 
                 "setName": "rs", 
                 "topologyType": "ReplicaSetNoPrimary"

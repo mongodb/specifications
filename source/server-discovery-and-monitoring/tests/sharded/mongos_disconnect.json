@@ -3,7 +3,6 @@
     "phases": [
         {
             "outcome": {
-                "maxElectionId": null, 
                 "servers": {
                     "a:27017": {
                         "setName": null, 
@@ -38,7 +37,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": null, 
                 "servers": {
                     "a:27017": {
                         "setName": null, 
@@ -61,7 +59,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": null, 
                 "servers": {
                     "a:27017": {
                         "setName": null, 
