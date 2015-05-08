@@ -3,7 +3,6 @@
     "phases": [
         {
             "outcome": {
-                "maxElectionId": null, 
                 "servers": {
                     "a:27017": {
                         "electionId": null, 
@@ -36,9 +35,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": {
-                    "$oid": "000000000000000000000001"
-                }, 
                 "servers": {
                     "a:27017": {
                         "electionId": null, 
@@ -76,9 +72,6 @@
         }, 
         {
             "outcome": {
-                "maxElectionId": {
-                    "$oid": "000000000000000000000001"
-                }, 
                 "servers": {
                     "a:27017": {
                         "electionId": null, 

@@ -39,7 +39,6 @@ phases: [
             },
             topologyType: "ReplicaSetWithPrimary",
             setName: "rs",
-            maxElectionId: {"$oid": "000000000000000000000001"}
         }
     }
 ]

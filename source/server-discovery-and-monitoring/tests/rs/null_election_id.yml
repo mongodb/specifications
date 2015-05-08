@@ -30,7 +30,6 @@ phases: [
             },
             topologyType: "ReplicaSetWithPrimary",
             setName: "rs",
-            maxElectionId:
         }
     },
 
@@ -61,7 +60,6 @@ phases: [
             },
             topologyType: "ReplicaSetWithPrimary",
             setName: "rs",
-            maxElectionId: {"$oid": "000000000000000000000001"}
         }
     },
 
@@ -91,7 +89,6 @@ phases: [
             topologyType: "ReplicaSetWithPrimary",
             setName: "rs",
             # But we remember old electionId.
-            maxElectionId: {"$oid": "000000000000000000000001"}
         }
     }
 ]
