@@ -273,6 +273,7 @@ Fields:
   the wire protocol version range supported by the server.
   Both default to 0.
   `Use min and maxWireVersion only to determine compatibility`_.
+* me: The hostname or IP, and the port number, that this server was configured with in the replica set. Default null.
 * hosts, passives, arbiters: Sets of addresses.
   This server's opinion of the replica set's members, if any.
   These `hostnames are normalized to lower-case`_.
@@ -733,7 +734,7 @@ Hostnames are normalized to lower-case
 ``````````````````````````````````````
 
 The same as with seeds provided in the initial configuration,
-all hostnames in the ismaster response's "hosts", "passives", and "arbiters"
+all hostnames in the ismaster response's "me", "hosts", "passives", and "arbiters"
 entries must be lower-cased.
 
 This prevents unnecessary work rediscovering a server
@@ -995,6 +996,10 @@ updateRSWithoutPrimary
             add new default ServerDescription of type "Unknown"
             begin monitoring the new server
 
+    if description.address != description.me:
+        remove this server from topologyDescription and stop monitoring it
+        return
+
     if description.primary is not null:
         find the ServerDescription in topologyDescription.servers whose
         address equals description.primary
@@ -1025,6 +1030,11 @@ updateRSWithPrimaryFromMember
     # SetName is never null here.
     if topologyDescription.setName != description.setName:
         remove this server from topologyDescription and stop monitoring it
+
+    if description.address != description.me:
+        remove this server from topologyDescription and stop monitoring it
+        checkIfHasPrimary()
+        return
 
     # Had this member been the primary?
     if there is no primary in topologyDescription.servers:
@@ -1104,6 +1114,10 @@ updateRSFromPrimary
   primary that is going to step down. Mark it Unknown and let periodic
   monitoring detect when it becomes secondary. See
   `using electionId to detect stale primaries`_.
+
+  A note on checking "me": Unlike `updateRSWithPrimaryFromMember', there is no need to remove the server if the address is not equal to
+  "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
+  removed.
 
 .. _checkIfHasPrimary:
 
@@ -1810,6 +1824,32 @@ Using electionId only provides read-your-writes consistency if:
   writes and read-preference "primary" reads, and
 * All members run MongoDB 3.0.x, or 2.6.x with the electionId backport,
   and clocks are *less* than 30 seconds skewed. Or all members run MongoDB 3.2+.
+
+Using me field to detect seed list members that do not match host names in the replica set configuration
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Removal from the topology of seed list members where the "me" property does not match the address used to connect
+prevents clients from being able to select a server, only to fail to re-select that server once the primary has responded.
+
+This scenario illustrates the problems that arise if this is NOT done:
+
+* The client specifies a seed list of A, B, C
+* Server A responds as a secondary with hosts D, E, F
+* The client executes a query with read preference of secondary, and server A is selected
+* Server B responds as a primary with hosts D, E, F.  Servers A, B, C are removed, as they don't appear in the primary's hosts list
+* The client iterates the cursor and attempts to execute a get-more against server A.
+* Server selection fails because server A is no longer part of the topology.
+
+With checking for "me" in place, it looks like this instead:
+
+* The client specifies a seed list of A, B, C
+* Server A responds as a secondary with hosts D, E, F, where "me" is D, and so the client adds D, E, F as type "Unknown" and starts
+monitoring them, but removes A from the topology.
+* The client executes a query with read preference of secondary, and goes in to the server selection loop
+* Server D responds as a secondary where "me" is D
+* Server selection completes by matching D
+* The client iterates the cursor and attempts to execute a get-more against server D.
+* Server selection completes by matching D.
 
 Ignore setVersion
 '''''''''''''''''
