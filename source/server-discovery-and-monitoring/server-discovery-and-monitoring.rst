@@ -1166,7 +1166,7 @@ See the test scenario called "Network error writing to primary".
 The specific operation that discovered the error
 MUST abort and raise an exception if it was a write.
 It MAY be retried if it was a read.
-(The Read Preferences spec includes retry rules for reads.)
+(The Server Selection spec describes retry options for reads.)
 
 The client SHOULD clear its connection pool for the server:
 if one socket is bad, it is likely that all are.
