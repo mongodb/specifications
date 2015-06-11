@@ -234,7 +234,7 @@ Read
     maxTimeMS: Int64;
 
     /**
-     * The number of documents to skip before returning the documents.
+     * The number of documents to skip before counting.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
