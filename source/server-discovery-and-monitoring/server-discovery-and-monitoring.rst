@@ -1115,7 +1115,7 @@ updateRSFromPrimary
   monitoring detect when it becomes secondary. See
   `using electionId to detect stale primaries`_.
 
-  A note on checking "me": Unlike `updateRSWithPrimaryFromMember', there is no need to remove the server if the address is not equal to
+  A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is not equal to
   "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
   removed.
 
@@ -1862,7 +1862,7 @@ With checking for "me" in place, it looks like this instead:
 
 * The client specifies a seed list of A, B, C
 * Server A responds as a secondary with hosts D, E, F, where "me" is D, and so the client adds D, E, F as type "Unknown" and starts
-monitoring them, but removes A from the topology.
+  monitoring them, but removes A from the topology.
 * The client executes a query with read preference of secondary, and goes in to the server selection loop
 * Server D responds as a secondary where "me" is D
 * Server selection completes by matching D
