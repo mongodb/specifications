@@ -242,6 +242,8 @@ Fields:
   a primary. Default null.
 * servers: a set of ServerDescription instances.
   Default contains one server: "localhost:27017", ServerType Unknown.
+* stale: a boolean for single-threaded clients, whether the topology must
+  be re-scanned.
 * compatible: a boolean.
   False if any server's wire protocol version range
   is incompatible with the client's.
@@ -519,13 +521,25 @@ be able to proceed anyway.
 Single-threaded monitoring
 ``````````````````````````
 
+cooldownMS
+~~~~~~~~~~
+
+After a single-threaded client gets a network error trying to `check`_ a
+server, the client skips re-checking the server until cooldownMS has passed.
+
+This avoids spending connectTimeoutMS on each unavailable server
+during each scan.
+
+This value MUST be 5000 ms, and it MUST NOT be configurable.
+
 Scanning
 ~~~~~~~~
 
 Single-threaded clients MUST `scan`_ all servers synchronously,
 inline with regular application operations.
 Before each operation, the client checks if `heartbeatFrequencyMS`_ has
-passed since the previous scan; if so it scans all the servers before
+passed since the previous scan or if the topology is marked "stale";
+if so it scans all the servers before
 selecting a server and performing the operation.
 
 Selection failure triggers an immediate scan, see
@@ -560,6 +574,9 @@ The scanning order is expressed in this pseudocode::
 
     while true:
         serversToCheck = all servers with lastUpdateTime before scanStartTime
+
+        remove from serversToCheck any Unknowns with lastUpdateTime < cooldownMS ago
+
         if no serversToCheck:
             # This scan has completed.
             break
