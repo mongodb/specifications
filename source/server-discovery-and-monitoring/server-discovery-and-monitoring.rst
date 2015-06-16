@@ -571,11 +571,13 @@ so they are not checked, depending on the order of events.
 The scanning order is expressed in this pseudocode::
 
     scanStartTime = now()
+    # You'll likely need to convert units here.
+    beforeCoolDown = scanStartTime - cooldownMS
 
     while true:
         serversToCheck = all servers with lastUpdateTime before scanStartTime
 
-        remove from serversToCheck any Unknowns with lastUpdateTime < cooldownMS ago
+        remove from serversToCheck any Unknowns with lastUpdateTime > beforeCoolDown
 
         if no serversToCheck:
             # This scan has completed.
