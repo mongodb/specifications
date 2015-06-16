@@ -242,6 +242,8 @@ Fields:
   a primary. Default null.
 * servers: a set of ServerDescription instances.
   Default contains one server: "localhost:27017", ServerType Unknown.
+* stale: a boolean for single-threaded clients, whether the topology must
+  be re-scanned.
 * compatible: a boolean.
   False if any server's wire protocol version range
   is incompatible with the client's.
@@ -519,13 +521,25 @@ be able to proceed anyway.
 Single-threaded monitoring
 ``````````````````````````
 
+cooldownMS
+~~~~~~~~~~
+
+After a single-threaded client gets a network error trying to `check`_ a
+server, the client skips re-checking the server until cooldownMS has passed.
+
+This avoids spending connectTimeoutMS on each unavailable server
+during each scan.
+
+This value MUST be 5000 ms, and it MUST NOT be configurable.
+
 Scanning
 ~~~~~~~~
 
 Single-threaded clients MUST `scan`_ all servers synchronously,
 inline with regular application operations.
 Before each operation, the client checks if `heartbeatFrequencyMS`_ has
-passed since the previous scan; if so it scans all the servers before
+passed since the previous scan or if the topology is marked "stale";
+if so it scans all the servers before
 selecting a server and performing the operation.
 
 Selection failure triggers an immediate scan, see
@@ -557,9 +571,14 @@ so they are not checked, depending on the order of events.
 The scanning order is expressed in this pseudocode::
 
     scanStartTime = now()
+    # You'll likely need to convert units here.
+    beforeCoolDown = scanStartTime - cooldownMS
 
     while true:
         serversToCheck = all servers with lastUpdateTime before scanStartTime
+
+        remove from serversToCheck any Unknowns with lastUpdateTime > beforeCoolDown
+
         if no serversToCheck:
             # This scan has completed.
             break
@@ -1115,7 +1134,7 @@ updateRSFromPrimary
   monitoring detect when it becomes secondary. See
   `using electionId to detect stale primaries`_.
 
-  A note on checking "me": Unlike `updateRSWithPrimaryFromMember', there is no need to remove the server if the address is not equal to
+  A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is not equal to
   "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
   removed.
 
@@ -1862,7 +1881,7 @@ With checking for "me" in place, it looks like this instead:
 
 * The client specifies a seed list of A, B, C
 * Server A responds as a secondary with hosts D, E, F, where "me" is D, and so the client adds D, E, F as type "Unknown" and starts
-monitoring them, but removes A from the topology.
+  monitoring them, but removes A from the topology.
 * The client executes a query with read preference of secondary, and goes in to the server selection loop
 * Server D responds as a secondary where "me" is D
 * Server selection completes by matching D
