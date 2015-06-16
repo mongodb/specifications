@@ -2052,3 +2052,8 @@ contributed as well.
 Bernie Hackett gently oversaw the specification process.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
+
+Changes
+-------
+
+2015-06-16: Added cooldownMS.
