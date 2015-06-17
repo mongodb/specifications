@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Mar. 16, 2015
+:Last Modified: June 17, 2015
 
 .. contents::
 
@@ -69,7 +69,7 @@ All drivers MUST offer the operations defined in the following sections. This do
 Operation Parameters
 --------------------
 
-All drivers MUST offer the same options for each operation as defined in the following sections. This does not preclude a driver from offering more. The options parameter is optional. A driver SHOULD NOT require a user to specify optional parameters, denoted by the Optional<> signature. Unless otherwise specified, optional values should not be sent to the server.
+All drivers MUST offer the same options for each operation as defined in the following sections. This does not preclude a driver from offering more. A driver SHOULD NOT require a user to specify optional parameters, denoted by the Optional<> signature. Unless otherwise specified, optional values should not be sent to the server.
 
 ~~~~~~~~~~
 Deviations
@@ -98,6 +98,7 @@ Naming
 All drivers MUST name operations, objects, and parameters as defined in the following sections. 
 
 Deviations are permitted as outlined below.
+
 
 ~~~~~~~~~~
 Deviations
@@ -286,7 +287,7 @@ Read
     /**
      * Get partial results from a mongos if some shards are down (instead of throwing an error).
      *
-     * When using the OP_QUERY wire protocol, the Partial flag should default to false.
+     * The Partial OP_QUERY flag should default to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -295,7 +296,7 @@ Read
     /**
      * The number of documents to return per batch.
      *
-     * When using the OP_QUERY wire protocol, this is combined with limit to create the numberToReturn value.
+     * This is combined with limit to create the OP_QUERY numberToReturn value.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.batchSize/
      */ 
@@ -313,7 +314,7 @@ Read
      * Indicates the type of cursor to use. This value includes both
      * the tailable and awaitData options.
      *
-     * When using the OP_QUERY wire protocol, the AWAIT_DATA flag and the TAILABLE flag should default
+     * The AwaitData OP_QUERY flag and the Tailable OP_QUERY flag should default
      * to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
@@ -323,7 +324,7 @@ Read
     /**
      * The maximum number of documents to return.
      *
-     * When using the OP_QUERY wire protocol, this is combined with batchSize to create the numberToReturn value.
+     * this is combined with batchSize to create the OP_QUERY numberToReturn value.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.limit/
      */
@@ -348,7 +349,7 @@ Read
      * The server normally times out idle cursors after an inactivity period (10 minutes) 
      * to prevent excess memory use. Set this option to prevent that.
      *
-     * When using the OP_QUERY wire protocol, the NoCursorTimeout flag should default to false.
+     * The NoCursorTimeout OP_QUERY flag should default to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -357,7 +358,7 @@ Read
     /**
      * Internal replication use only - driver should not set
      *
-     * When using the OP_QUERY wire protocol, the OplogReplay flag should default to false.
+     * The OplogReplay OP_QUERY flag should default to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -392,14 +393,14 @@ Read
 Combining Limit and Batch Size for the Wire Protocol
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The OP_QUERY wire protocol only contains a numberToReturn value which driver's must calculate to get expected limit and batch size behavior. Subsequent calls to OP_GETMORE should use the user-specified batchSize or default to 0. Below is pseudo-code for calculating numberToReturn for OP_QUERY.
+The OP_QUERY wire protocol only contains a numberToReturn value which drivers must calculate to get expected limit and batch size behavior. Subsequent calls to OP_GETMORE should use the user-specified batchSize or default to 0. Below is pseudo-code for calculating numberToReturn for OP_QUERY.
 
 .. code:: typescript
 
   function calculateFirstNumberToReturn(FindOptions options) {
     Int32 numberToReturn;
-    Int32 limit = options.Limit || 0;
-    Int32 batchSize = options.BatchSize || 0;
+    Int32 limit = options.limit || 0;
+    Int32 batchSize = options.batchSize || 0;
 
     if (limit < 0) {
       numberToReturn = limit;
@@ -420,7 +421,7 @@ The OP_QUERY wire protocol only contains a numberToReturn value which driver's m
     return numberToReturn;
   }
 
-Because of this anomoly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST send the OP_KILLCURSORS wire protocol message.
+Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST send the OP_KILLCURSORS wire protocol message.
 
 Write
 -----
@@ -663,12 +664,12 @@ Bulk Write Models
 Results
 ~~~~~~~
 
-The optional designation used below is for the implementer to decide how best their users should consume these results. For instance, the acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value. 
+The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value. 
 
 .. note::
     If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount member is not available when the write was unacknowledged. Check the acknowledged member to avoid this error."
 
-Any result class with all optional parameters is ultimately optional as well. For instance, the ``InsertOneResult`` has all optional parameters and is therefore also optional allowing a driver to use "void" as the return value for the ``insertOne`` method.
+Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUIRED as well. For instance, the ``InsertOneResult`` has all NOT REQUIRED parameters and is therefore also NOT REQUIRED allowing a driver to use "void" as the return value for the ``insertOne`` method.
 
 .. code:: typescript
   
@@ -677,8 +678,10 @@ Any result class with all optional parameters is ultimately optional as well. Fo
     /**
      * Indicates whether this write result was ackowledged. If not, then all
      * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    acknowledged: Boolean optional;
+    acknowledged: Boolean;
 
     /**
      * Number of documents inserted.
@@ -687,8 +690,10 @@ Any result class with all optional parameters is ultimately optional as well. Fo
 
     /**
      * Map of the index of the operation to the id of the inserted document.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    insertedIds: Map<Int64, any> optional;
+    insertedIds: Map<Int64, any>;
 
     /**
      * Number of documents matched for update.
@@ -722,14 +727,18 @@ Any result class with all optional parameters is ultimately optional as well. Fo
     /**
      * Indicates whether this write result was ackowledged. If not, then all
      * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    acknowledged: Boolean optional;
+    acknowledged: Boolean;
 
     /**
      * The identifier that was inserted. If the server generated the identifier, this value
      * will be null as the driver does not have access to that data.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    insertedId: any optional;
+    insertedId: any;
 
   }
 
@@ -738,13 +747,17 @@ Any result class with all optional parameters is ultimately optional as well. Fo
     /**
      * Indicates whether this write result was ackowledged. If not, then all
      * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    acknowledged: Boolean optional;
+    acknowledged: Boolean;
 
     /**
      * Map of the index of the inserted document to the id of the inserted document.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    insertedIds: Map<Int64, any> optional;
+    insertedIds: Map<Int64, any>;
 
   }
 
@@ -753,8 +766,10 @@ Any result class with all optional parameters is ultimately optional as well. Fo
     /**
      * Indicates whether this write result was ackowledged. If not, then all
      * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    acknowledged: Boolean optional;
+    acknowledged: Boolean;
 
     /**
      * The number of documents that were deleted.
@@ -768,8 +783,10 @@ Any result class with all optional parameters is ultimately optional as well. Fo
     /**
      * Indicates whether this write result was ackowledged. If not, then all
      * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
-    acknowledged: Boolean optional;
+    acknowledged: Boolean;
 
     /**
      * The number of documents that matched the filter.
@@ -878,11 +895,15 @@ Below are defined the exceptions that should be thrown from the various write me
 
     /**
      * The requests that were sent to the server.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
     processedRequests: Optional<Iterable<WriteModel>>;
 
     /**
      * The requests that were not sent to the server.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
     unprocessedRequests: Optional<Iterable<WriteModel>>;
 
@@ -894,7 +915,7 @@ Below are defined the exceptions that should be thrown from the various write me
     /**
      * The error that occured on account of a non-write concern failure. This might be empty if the error was a Write Concern related error.
      */
-    writeErrors: Iterable<BulkWriteError>;
+    writeErrors: Optional<Iterable<BulkWriteError>>;
 
   }
 
