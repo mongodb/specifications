@@ -180,7 +180,7 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
-    allowDiskUse: Boolean;
+    allowDiskUse: Optional<Boolean>;
 
     /**
      * The number of documents to return per batch. 
@@ -189,14 +189,14 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
-    batchSize: Int32;
+    batchSize: Optional<Int32>;
 
     /**
      * The maximum amount of time to allow the query to run.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
-    maxTimeMS: Int64;
+    maxTimeMS: Optional<Int64>;
 
     /**
      * Indicates whether the command will request that the server provide results using a cursor.  The default is true.
@@ -206,7 +206,7 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */
-    useCursor: Boolean;
+    useCursor: Optional<Boolean>;
 
   }
 
@@ -217,28 +217,28 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
-    hint: (String | Document);
+    hint: Optional<(String | Document)>;
 
     /**
      * The maximum number of documents to count.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
-    limit: Int64;
+    limit: Optional<Int64>;
 
     /**
      * The maximum amount of time to allow the query to run.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
-    maxTimeMS: Int64;
+    maxTimeMS: Optional<Int64>;
 
     /**
      * The number of documents to skip before counting.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
-    skip: Int64;
+    skip: Optional<Int64>;
 
   }
 
@@ -249,7 +249,7 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/command/distinct/
      */
-    maxTimeMS: Int64;
+    maxTimeMS: Optional<Int64>;
 
   }
 
@@ -288,14 +288,14 @@ Read
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
-    allowPartialResults: Boolean;
+    allowPartialResults: Optional<Boolean>;
     
     /**
      * The number of documents to return per batch.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.batchSize/
      */ 
-    batchSize: Int32;
+    batchSize: Optional<Int32>;
 
     /**
      * Attaches a comment to the query. If $comment also exists
@@ -303,7 +303,7 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/operator/meta/comment/
      */ 
-    comment: String;
+    comment: Optional<String>;
 
     /**
      * Indicates the type of cursor to use. This value includes both
@@ -312,14 +312,14 @@ Read
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
-    cursorType: CursorType;
+    cursorType: Optional<CursorType>;
 
     /**
      * The maximum number of documents to return.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.limit/
      */
-    limit: Int32;
+    limit: Optional<Int32>;
 
     /**
      * The maximum amount of time to allow the query to run. If $maxTimeMS also exists
@@ -327,14 +327,14 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/operator/meta/maxTimeMS/
      */
-    maxTimeMS: Int64;
+    maxTimeMS: Optional<Int64>;
 
     /**
      * Meta-operators modifying the output or behavior of a query.
      *
      * @see http://docs.mongodb.org/manual/reference/operator/query-modifier/
      */
-    modifiers: Document;
+    modifiers: Optional<Document>;
 
     /**
      * The server normally times out idle cursors after an inactivity period (10 minutes) 
@@ -342,28 +342,28 @@ Read
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
-    noCursorTimeout: Boolean;
+    noCursorTimeout: Optional<Boolean>;
 
     /**
      * Internal replication use only - driver should not set
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
-    oplogReplay: Boolean;
+    oplogReplay: Optional<Boolean>;
 
     /** 
      * Limits the fields to return for all matching documents.
      *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
      */
-    projection: Document;
+    projection: Optional<Document>;
 
     /**
      * The number of documents to skip before returning.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.skip/
      */
-    skip: Int32;
+    skip: Optional<Int32>;
 
     /**
      * The order in which to return matching documents. If $orderby also exists
@@ -371,7 +371,7 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.sort/
      */ 
-    sort: Document;
+    sort: Optional<Document>;
   }
 
 
@@ -395,7 +395,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/update/
      * @throws BulkWriteException
      */
-    bulkWrite(requests: WriteModel[], options: BulkWriteOptions): BulkWriteResult;
+    bulkWrite(requests: WriteModel[], options: Optional<BulkWriteOptions>): BulkWriteResult;
 
     /**
      * Inserts the provided document. If the document is missing an identifier,
@@ -417,7 +417,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/insert/
      * @throws WriteException
      */
-    insertMany(Iterable<Document> documents, options: InsertManyOptions): InsertManyResult;
+    insertMany(Iterable<Document> documents, options: Optional<InsertManyOptions>): InsertManyResult;
 
     /**
      * Deletes one document.
@@ -441,7 +441,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/update/
      * @throws WriteException
      */
-    replaceOne(filter: Document, replacement: Document, options: UpdateOptions): UpdateResult; 
+    replaceOne(filter: Document, replacement: Document, options: Optional<UpdateOptions>): UpdateResult; 
 
     /**
      * Updates one document.
@@ -449,7 +449,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/update/
      * @throws WriteException
      */
-    updateOne(filter: Document, update: Document, options: UpdateOptions): UpdateResult;
+    updateOne(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
 
     /**
      * Updates multiple documents.
@@ -457,7 +457,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/update/
      * @throws WriteException
      */
-    updateMany(filter: Document, update: Document, options: UpdateOptions): UpdateResult;
+    updateMany(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
 
   }
 
@@ -490,7 +490,7 @@ Basic
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    upsert: Boolean optional;
+    upsert: Optional<Boolean>;
 
   }
 
@@ -511,7 +511,7 @@ Bulk Write Models
      *
      * @see http://docs.mongodb.org/manual/reference/command/insert/
      */
-    document: Document required;
+    document: Document;
 
   }
 
@@ -522,7 +522,7 @@ Bulk Write Models
      *
      * @see http://docs.mongodb.org/manual/reference/command/delete/
      */
-    filter: Document required;
+    filter: Document;
 
   }
 
@@ -533,7 +533,7 @@ Bulk Write Models
      *
      * @see http://docs.mongodb.org/manual/reference/command/delete/
      */
-    filter: Document required;
+    filter: Document;
 
   }
 
@@ -544,21 +544,21 @@ Bulk Write Models
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    filter: Document required;
+    filter: Document;
 
     /**
      * The document with which to replace the matched document.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    replacement: Document required;
+    replacement: Document;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    upsert: Boolean optional;
+    upsert: Optional<Boolean>;
 
   }
 
@@ -569,21 +569,21 @@ Bulk Write Models
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    filter: Document required;
+    filter: Document;
 
     /**
      * A document containing update operators.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    update: Update required;
+    update: Update;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    upsert: Boolean optional;
+    upsert: Optional<Boolean>;
 
   }
 
@@ -594,21 +594,21 @@ Bulk Write Models
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    filter: Document required;
+    filter: Document;
 
     /**
      * A document containing update operators.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    update: Update required;
+    update: Update;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
-    upsert: Boolean optional;
+    upsert: Optional<Boolean>;
 
   }
 
@@ -616,12 +616,12 @@ Bulk Write Models
 Results
 ~~~~~~~
 
-Unlike the models, the optional and required designations are for the implementer to decide how best their users should consume these results. For instance, the acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value. 
+The optional designation used below is for the implementer to decide how best their users should consume these results. For instance, the acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value. 
 
 .. note::
     If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount member is not available when the write was unacknowledged. Check the acknowledged member to avoid this error."
 
-Finally, any result class with all optional parameters is ultimately optional as well. For instance, the ``InsertOneResult``, since it has all optional parameters, is also optional which allows for a driver to use "void" as the return value for the ``insertOne`` method.
+Any result class with all optional parameters is ultimately optional as well. For instance, the ``InsertOneResult`` has all optional parameters and is therefore also optional allowing a driver to use "void" as the return value for the ``insertOne`` method.
 
 .. code:: typescript
   
@@ -636,7 +636,7 @@ Finally, any result class with all optional parameters is ultimately optional as
     /**
      * Number of documents inserted.
      */
-    insertedCount: Int64 required;
+    insertedCount: Int64;
 
     /**
      * Map of the index of the operation to the id of the inserted document.
@@ -646,27 +646,27 @@ Finally, any result class with all optional parameters is ultimately optional as
     /**
      * Number of documents matched for update.
      */
-    matchedCount: Int64 required;
+    matchedCount: Int64;
 
     /**
      * Number of documents modified.
      */
-    modifiedCount: Int64 required;
+    modifiedCount: Int64;
 
     /**
      * Number of documents deleted.
      */
-    deletedCount: Int64 required;
+    deletedCount: Int64;
 
     /**
      * Number of documents upserted.
      */
-    upsertedCount: Int64 required;
+    upsertedCount: Int64;
 
     /**
      * Map of the index of the operation to the id of the upserted document.
      */
-    upsertedIds: Map<Int64, any> required;
+    upsertedIds: Map<Int64, any>;
 
   }
 
@@ -712,7 +712,7 @@ Finally, any result class with all optional parameters is ultimately optional as
     /**
      * The number of documents that were deleted.
      */
-    deletedCount: Int64 required;
+    deletedCount: Int64;
 
   }
 
@@ -727,17 +727,17 @@ Finally, any result class with all optional parameters is ultimately optional as
     /**
      * The number of documents that matched the filter.
      */
-    matchedCount: Int64 required;
+    matchedCount: Int64;
 
     /**
      * The number of documents that were modified.
      */
-    modifiedCount: Int64 required;
+    modifiedCount: Int64;
 
     /**
      * The identifier of the inserted document if an upsert took place.
      */
-    upsertedId: any required;
+    upsertedId: any;
 
   }
 
@@ -752,24 +752,6 @@ Below are defined the exceptions that should be thrown from the various write me
 
 .. code:: typescript
 
-  /**
-   * NOTE: Only one of writeConcernError or writeError will be populated at a time. Your driver must present the offending
-   * error to the user.
-   */
-  class WriteException {
-
-    /**
-     * The error that occurred on account of write concern failure.
-     */ 
-    writeConcernError: WriteConcernError optional;
-
-    /**
-     * The error that occurred on account of a non-write concern failure.
-     */
-    writeError: WriteError optional;
-
-  }
-
   class WriteConcernError {
 
     /**
@@ -777,21 +759,21 @@ Below are defined the exceptions that should be thrown from the various write me
      *
      * @see http://docs.mongodb.org/manual/reference/method/WriteResult/
      */
-    code: Int32 required;
+    code: Int32;
 
     /**
      * A document identifying the write concern setting related to the error.
      *
      * @see http://docs.mongodb.org/manual/reference/method/WriteResult/
      */
-    details: Document required;
+    details: Document;
 
     /**
      * A description of the error.
      *
      * @see http://docs.mongodb.org/manual/reference/method/WriteResult/
      */
-    message: String required;
+    message: String;
 
   }
 
@@ -802,38 +784,14 @@ Below are defined the exceptions that should be thrown from the various write me
      *
      * @see http://docs.mongodb.org/manual/reference/method/WriteResult/
      */
-    code: Int32 required;
+    code: Int32;
 
     /**
      * A description of the error.
      *
      * @see http://docs.mongodb.org/manual/reference/method/WriteResult/
      */
-    message: String required;
-
-  }
-
-  class BulkWriteException {
-
-    /**
-     * The requests that were sent to the server.
-     */
-    processedRequests: Iterable<WriteModel> optional;
-
-    /**
-     * The requests that were not sent to the server.
-     */
-    unprocessedRequests: Iterable<WriteModel> optional;
-
-    /**
-     * The error that occured on account of write concern failure. If the error was a Write Concern related, this field must be present.
-     */ 
-    writeConcernError: WriteConcernError optional;
-
-    /**
-     * The error that occured on account of a non-write concern failure. This might be empty if the error was a Write Concern related error.
-     */
-    writeErrors: Iterable<BulkWriteError> required;
+    message: String;
 
   }
 
@@ -842,14 +800,57 @@ Below are defined the exceptions that should be thrown from the various write me
     /**
      * The index of the request that errored.
      */
-    index: Int32 required;
+    index: Int32;
 
     /**
      * The request that errored.
      */
-    request: WriteModel optional;
+    request: Optional<WriteModel>;
 
   }
+
+  /**
+   * NOTE: Only one of writeConcernError or writeError will be populated at a time. Your driver must present the offending
+   * error to the user.
+   */
+  class WriteException {
+
+    /**
+     * The error that occurred on account of write concern failure.
+     */ 
+    writeConcernError: Optional<WriteConcernError>;
+
+    /**
+     * The error that occurred on account of a non-write concern failure.
+     */
+    writeError: Optional<WriteError>;
+
+  }
+
+  class BulkWriteException {
+
+    /**
+     * The requests that were sent to the server.
+     */
+    processedRequests: Optional<Iterable<WriteModel>>;
+
+    /**
+     * The requests that were not sent to the server.
+     */
+    unprocessedRequests: Optional<Iterable<WriteModel>>;
+
+    /**
+     * The error that occured on account of write concern failure. If the error was a Write Concern related, this field must be present.
+     */ 
+    writeConcernError: Optional<WriteConcernError>;
+
+    /**
+     * The error that occured on account of a non-write concern failure. This might be empty if the error was a Write Concern related error.
+     */
+    writeErrors: Iterable<BulkWriteError>;
+
+  }
+
 
 ~~~~~~~~~~~~~~~
 Find And Modify
@@ -865,7 +866,7 @@ Find And Modify
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndDelete(filter: Document, options: FindOneAndDeleteOptions): Document;
+    findOneAndDelete(filter: Document, options: Optional<FindOneAndDeleteOptions>): Document;
 
     /**
      * Finds a single document and replaces it, returning either the original or the replaced
@@ -874,7 +875,7 @@ Find And Modify
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndReplace(filter: Document, replacement: Document, options: FindOneAndReplaceOptions): Document;
+    findOneAndReplace(filter: Document, replacement: Document, options: Optional<FindOneAndReplaceOptions>): Document;
 
     /**
      * Finds a single document and updates it, returning either the original or the updated
@@ -883,7 +884,7 @@ Find And Modify
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndUpdate(filter: Document, update: Document, options: FindOneAndUpdateOptions): Document;
+    findOneAndUpdate(filter: Document, update: Document, options: Optional<FindOneAndUpdateOptions>): Document;
 
   }
 
@@ -905,21 +906,21 @@ Find And Modify
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */ 
-    maxTimeMS: Int64 optional;
+    maxTimeMS: Optional<Int64>;
 
     /** 
      * Limits the fields to return for all matching documents.
      *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results
      */
-    projection: Document optional;
+    projection: Optional<Document>;
 
     /**
      * Determines which document the operation modifies if the query selects multiple documents.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    sort: Document optional;
+    sort: Optional<Document>;
 
   }
 
@@ -930,14 +931,14 @@ Find And Modify
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */ 
-    maxTimeMS: Int64 optional;
+    maxTimeMS: Optional<Int64>;
 
     /** 
      * Limits the fields to return for all matching documents.
      *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results
      */
-    projection: Document optional;
+    projection: Optional<Document>;
 
     /**
      * When ReturnDocument.After, returns the replaced or inserted document rather than the original.
@@ -945,14 +946,14 @@ Find And Modify
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    returnDocument: ReturnDocument optional;
+    returnDocument: Optional<ReturnDocument>;
 
     /**
      * Determines which document the operation modifies if the query selects multiple documents.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    sort: Document optional;
+    sort: Optional<Document>;
 
     /**
      * When true, findAndModify creates a new document if no document matches the query. The
@@ -960,7 +961,7 @@ Find And Modify
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    upsert: Boolean optional;
+    upsert: Optional<Boolean>;
 
   }
 
@@ -971,14 +972,14 @@ Find And Modify
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */ 
-    maxTimeMS: Int64 optional;
+    maxTimeMS: Optional<Int64>;
     
     /** 
      * Limits the fields to return for all matching documents.
      *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results
      */
-    projection: Document optional;
+    projection: Optional<Document>;
 
     /**
      * When ReturnDocument.After, returns the updated or inserted document rather than the original.
@@ -986,21 +987,21 @@ Find And Modify
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    returnDocument: ReturnDocument optional;
+    returnDocument: Optional<ReturnDocument>;
 
     /**
      * Determines which document the operation modifies if the query selects multiple documents.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    sort: Document optional;
+    sort: Optional<Document>;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
-    upsert: Boolean optional;
+    upsert: Optional<Boolean>;
 
   }
 
