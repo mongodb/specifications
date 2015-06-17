@@ -69,7 +69,7 @@ All drivers MUST offer the operations defined in the following sections. This do
 Operation Parameters
 --------------------
 
-All drivers MUST offer the same options for each operation as defined in the following sections. This does not preclude a driver from offering more. The options parameter is optional. A driver SHOULD NOT require a user to specify optional parameters.
+All drivers MUST offer the same options for each operation as defined in the following sections. This does not preclude a driver from offering more. The options parameter is optional. A driver SHOULD NOT require a user to specify optional parameters, denoted by the Optional<> signature. Unless otherwise specified, optional values should not be sent to the server.
 
 ~~~~~~~~~~
 Deviations
@@ -138,21 +138,21 @@ Read
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */
-    aggregate(pipeline: Document[], options: AggregateOptions): Iterable<Document>;
+    aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
 
     /**
      * Gets the number of documents matching the filter.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
-    count(filter: Document, options: CountOptions): Int64;
+    count(filter: Document, options: Optional<CountOptions>): Int64;
 
     /**
      * Finds the distinct values for a specified field across a single collection. 
      *
      * @see http://docs.mongodb.org/manual/reference/command/distinct/
      */
-    distinct(fieldName: string, filter: Document, options: DistinctOptions): Iterable<any>;
+    distinct(fieldName: string, filter: Document, options: Optional<DistinctOptions>): Iterable<any>;
 
     /**
      * Finds the documents matching the model.
@@ -167,7 +167,7 @@ Read
      *
      * @see http://docs.mongodb.org/manual/core/read-operations-introduction/
      */
-    find(filter: Document, options: FindOptions): Iterable<Document>;
+    find(filter: Document, options: Optional<FindOptions>): Iterable<Document>;
 
   }
 
@@ -175,8 +175,7 @@ Read
 
     /**
      * Enables writing to temporary files. When set to true, aggregation stages 
-     * can write data to the _tmp subdirectory in the dbPath directory. The
-     * default is false.
+     * can write data to the _tmp subdirectory in the dbPath directory.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -199,10 +198,11 @@ Read
     maxTimeMS: Optional<Int64>;
 
     /**
-     * Indicates whether the command will request that the server provide results using a cursor.  The default is true.
+     * Indicates whether the command will request that the server provide results using a cursor.
      *
      * For servers < 2.6, this option is ignored as aggregation cursors are not available.
      * For servers >= 2.6, this option allows users to turn off cursors if necessary to aid in mongod/mongos upgrades.
+     * The default value is true.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */
@@ -245,7 +245,7 @@ Read
   class DistinctOptions {
 
     /**
-     * The maximum amount of time to allow the query to run. The default is infinite.
+     * The maximum amount of time to allow the query to run.
      *
      * @see http://docs.mongodb.org/manual/reference/command/distinct/
      */
@@ -286,12 +286,16 @@ Read
     /**
      * Get partial results from a mongos if some shards are down (instead of throwing an error).
      *
+     * When using the OP_QUERY wire protocol, the Partial flag should default to false.
+     *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
     allowPartialResults: Optional<Boolean>;
     
     /**
      * The number of documents to return per batch.
+     *
+     * When using the OP_QUERY wire protocol, this is combined with limit to create the numberToReturn value.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.batchSize/
      */ 
@@ -308,7 +312,9 @@ Read
     /**
      * Indicates the type of cursor to use. This value includes both
      * the tailable and awaitData options.
-     * The default is NON_TAILABLE.
+     *
+     * When using the OP_QUERY wire protocol, the AWAIT_DATA flag and the TAILABLE flag should default
+     * to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -316,6 +322,8 @@ Read
 
     /**
      * The maximum number of documents to return.
+     *
+     * When using the OP_QUERY wire protocol, this is combined with batchSize to create the numberToReturn value.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.limit/
      */
@@ -340,12 +348,16 @@ Read
      * The server normally times out idle cursors after an inactivity period (10 minutes) 
      * to prevent excess memory use. Set this option to prevent that.
      *
+     * When using the OP_QUERY wire protocol, the NoCursorTimeout flag should default to false.
+     *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
     noCursorTimeout: Optional<Boolean>;
 
     /**
      * Internal replication use only - driver should not set
+     *
+     * When using the OP_QUERY wire protocol, the OplogReplay flag should default to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -361,6 +373,8 @@ Read
     /**
      * The number of documents to skip before returning.
      *
+     * In servers < 3.2, this is a wire protocol parameter that defaults to 0.
+     *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.skip/
      */
     skip: Optional<Int32>;
@@ -374,6 +388,39 @@ Read
     sort: Optional<Document>;
   }
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Combining Limit and Batch Size for the Wire Protocol
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The OP_QUERY wire protocol only contains a numberToReturn value which driver's must calculate to get expected limit and batch size behavior. Subsequent calls to OP_GETMORE should use the user-specified batchSize or default to 0. Below is pseudo-code for calculating numberToReturn for OP_QUERY.
+
+.. code:: typescript
+
+  function calculateFirstNumberToReturn(FindOptions options) {
+    Int32 numberToReturn;
+    Int32 limit = options.Limit || 0;
+    Int32 batchSize = options.BatchSize || 0;
+
+    if (limit < 0) {
+      numberToReturn = limit;
+    }
+    else if (limit == 0) {
+      numberToReturn = batchSize;
+    }
+    else if (batchSize == 0) {
+      numberToReturn = limit;
+    }
+    else if (limit < batchSize) {
+      numberToReturn = limit;
+    }
+    else {
+      numberToReturn = batchSize;
+    }
+
+    return numberToReturn;
+  }
+
+Because of this anomoly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST send the OP_KILLCURSORS wire protocol message.
 
 Write
 -----
