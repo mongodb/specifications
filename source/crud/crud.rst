@@ -1114,6 +1114,15 @@ Reference Implementation
 See Test Plan
 
 
+Related Terminology
+===================
+
+If a driver needs to refer to items in the following list, the below are the accepted forms of those terms and deviations from the Naming section are still permissible.
+
+* Read Preference: readPreference
+* Write Concern: writeConcern
+
+
 Q & A
 =====
 
