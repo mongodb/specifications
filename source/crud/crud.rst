@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: June 17, 2015
+:Last Modified: June 18, 2015
 
 .. contents::
 
@@ -79,7 +79,9 @@ A non-exhaustive list of acceptable deviations are as follows:
 
 * Using named parameters instead of an options hash. For instance, ``collection.find({x:1}, sort: {a: -1})``.
 
-* When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``UpdateOptions`` as the options for ``UpdateOne``, ``UpdateMany``, and ``ReplaceOne``.
+* When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it might be permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``UpdateOptions`` as the options for ``UpdateOne``, ``UpdateMany``, and ``ReplaceOne``.
+
+* When using a ``Result`` class, if multiple ``Result`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it might be permissible to use the name ``SaveResult`` as the result for ``SaveOne`` and ``SaveMany``.
 
 * Using a fluent style builder for find or aggregate:
 
@@ -507,6 +509,19 @@ Basic
      */
     updateMany(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
 
+    /**
+     * Saves a single document.
+     *
+     * @throws WriteException
+     */
+    saveOne(document: Document): SaveOneResult;
+
+    /**
+     * Saves multiple documents.
+     *
+     * @throws WriteException
+     */
+     saveMany(documents: Iterable<Document>, SaveManyOptions options): SaveManyResult;
   }
 
   class BulkWriteOptions {
@@ -540,6 +555,60 @@ Basic
      */
     upsert: Optional<Boolean>;
 
+  }
+
+  class SaveManyOptions {
+
+    /**
+     * If true, when a write fails, return without performing the remaining 
+     * writes. If false, when a write fails, continue with the remaining writes, if any. 
+     * Defaults to true.
+     */
+    ordered: Boolean;
+
+  }
+
+
+SaveOne and SaveMany Details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``saveOne`` and ``saveMany`` are idempotent. It MUST be possible for a user to re-issue with the exact same arguments with no adverse affects such as a duplicate identifier exception or re-inserting the same document again under a different identifier. Under these terms, drivers may do either of the below options:
+
+* If your driver mutates the input document with a generated id in ``insertXXX``, then the same should be true for ``saveXXX``. An input document without an identifier should have one generated.
+* If your driver does not mutate the input document with a generated id in ``insertXXX``, then any input document without an identifier should be rejected and an error raised.
+
+.. code:: typescript
+
+  function saveOne(document: Document) {
+    collection.saveMany([document], null);
+  }
+
+  function saveMany(documents: Iterable<Document>, options: SaveManyOptions) {
+    options = options || { };
+    var models = [];
+
+    for (document in documents) {
+      if (!document.containsKey('_id')) {
+        if (driverMutatesDocuments) {
+          document["_id"] = generateId();
+        }
+        else {
+          throw "Documents must contain an identifier".
+        }
+      }
+
+      models.push({
+        type: saveOne,
+        filter: { _id: document['_id'] },
+        replacement: document,
+        upsert: true
+      });
+    }
+
+    var bulkWriteOptions = { };
+    bulkWriteOptions.ordered = options.ordered;
+
+    collection.bulkWrite(models, bulkWriteOptions));
   }
 
 
@@ -657,6 +726,20 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+  }
+
+  class SaveOneModel implements WriteModel {
+    
+    /**
+     * The document to save.
+     *
+     * Implementors will generate an id for the document if one does not exist
+     * and do a replacement with upsert set to true.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/update/
+     */
+    document: Document;
 
   }
 
@@ -803,6 +886,69 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
      */
     upsertedId: any;
 
+  }
+
+  class SaveOneResult {
+
+    /**
+     * Indicates whether this write result was ackowledged. If not, then all
+     * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
+     */
+    acknowledged: Boolean;
+
+    /**
+     * The number of documents that matched the filter.
+     */
+    matchedCount: Int64;
+
+    /**
+     * The number of documents that were modified.
+     */
+    modifiedCount: Int64;
+
+    /**
+     * The identifier that was saved.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
+     */
+    upsertedId: any;
+  }
+
+  class SaveManyResult {
+
+    /**
+     * Indicates whether this write result was ackowledged. If not, then all
+     * other members of this result will be undefined.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
+     */
+    acknowledged: Boolean;
+
+    /**
+     * Map of the index of the saved document to the id of the saved document.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
+     */
+    upsertedIds: Map<Int64, any>;
+
+    /**
+     * The number of documents that matched the filter.
+     */
+    matchedCount: Int64;
+
+    /**
+     * The number of documents that were modified.
+     */
+    modifiedCount: Int64;
+
+    /**
+     * Map of the index of the saved document to the id of the saved document.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
+     */
+    upsertedIds: Map<Int64, any>;
   }
 
 
@@ -1170,3 +1316,9 @@ Q: Didn't we just build a bulk API?
 
 Q: What about explain?
   Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 2.8 offers an explain command that can be run using a runCommand method.
+
+
+Substantive Change Log
+======================
+
+2015/06/18: added saveOne and saveMany.
