@@ -148,7 +148,7 @@
       },
       "outcome": {
         "result": {
-          "matchedCount": 0,
+          "matchedCount": 1,
           "modifiedCount": 0,
           "upsertedId": 4
         },

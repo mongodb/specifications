@@ -9,9 +9,9 @@ tests:
         operation:
             name: "updateOne"
             arguments:
-                filter: 
+                filter:
                     _id: {$gt: 1}
-                update: 
+                update:
                     $inc: {x: 1}
 
         outcome:
@@ -26,7 +26,7 @@ tests:
             name: "updateOne"
             arguments:
                 filter: {_id: 1}
-                update: 
+                update:
                     $inc: {x: 1}
 
         outcome:
@@ -44,7 +44,7 @@ tests:
             name: "updateOne"
             arguments:
                 filter: {_id: 4}
-                update: 
+                update:
                     $inc: {x: 1}
 
         outcome:
@@ -62,13 +62,13 @@ tests:
             name: "updateOne"
             arguments:
                 filter: {_id: 4}
-                update: 
+                update:
                     $inc: {x: 1}
                 upsert: true
 
         outcome:
             result:
-                matchedCount: 0
+                matchedCount: 1
                 modifiedCount: 0
                 upsertedId: 4
             collection:
