@@ -1,0 +1,141 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    }
+  ],
+  "tests": [
+    {
+      "description": "SaveMany when all documents match",
+      "operation": {
+        "name": "saveMany",
+        "arguments": {
+          "documents": [
+            {
+              "_id": 1,
+              "x": 111
+            },
+            {
+              "_id": 2,
+              "x": 222
+            }
+          ]
+        }
+      },
+      "outcome": {
+        "result": {
+          "matchedCount": 2,
+          "modifiedCount": 2
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 111
+            },
+            {
+              "_id": 2,
+              "x": 222
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "SaveMany when some documents match",
+      "operation": {
+        "name": "saveMany",
+        "arguments": {
+          "documents": [
+            {
+              "_id": 2,
+              "x": 222
+            },
+            {
+              "_id": 3,
+              "x": 333
+            }
+          ]
+        }
+      },
+      "outcome": {
+        "result": {
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedIds": [
+            2
+          ]
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 222
+            },
+            {
+              "_id": 3,
+              "x": 333
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "SaveMany when no documents match",
+      "operation": {
+        "name": "saveMany",
+        "arguments": {
+          "documents": [
+            {
+              "_id": 3,
+              "x": 333
+            },
+            {
+              "_id": 4,
+              "x": 444
+            }
+          ]
+        }
+      },
+      "outcome": {
+        "result": {
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedIds": [
+            3,
+            4
+          ]
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 333
+            },
+            {
+              "_id": 4,
+              "x": 444
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
