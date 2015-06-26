@@ -2,6 +2,8 @@ description: "Single mongos"
 
 uri: "mongodb://a"
 
+# Note that drivers may implement this differently.
+# Some may expect that the topology is Single instead of Sharded.
 phases: [
 
     {
