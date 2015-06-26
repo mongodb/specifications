@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: February 6, 2015
+:Last Modified: June 26, 2015
 
 .. contents::
 
@@ -272,7 +272,37 @@ number may be revised downward.
 
 Users that can tolerate long delays for server selection when the topology
 is in flux can set this higher.  Users that want to "fail fast" when the
-topology is in flux can set this to a small number (or to zero).
+topology is in flux can set this to a small number.
+
+A serverSelectionTimeoutMS of zero MAY have special meaning in some drivers;
+zero's meaning is not defined in this spec, but all drivers SHOULD document
+the meaning of zero.
+
+serverSelectionTryOnce
+~~~~~~~~~~~~~~~~~~~~~~
+
+Single-threaded drivers MUST provide a "serverSelectionTryOnce" mode,
+in which the driver scans the topology exactly once after server selection fails,
+then either selects a server or raises an error.
+
+The serverSelectionTryOnce option MUST be true by default.
+If it is set false, then the driver repeatedly searches for an appropriate server
+for up to serverSelectionTimeoutMS milliseconds
+(pausing minHeartbeatFrequencyMS between attempts).
+
+Users of single-threaded drivers MUST be able to control this mode in one or
+both of these ways:
+
+* In code, pass true or false for an option called serverSelectionTryOnce,
+  spelled idiomatically for the language, to the MongoClient constructor.
+* Include "serverSelectionTryOnce=true" or "serverSelectionTryOnce=false"
+  in the URI. The URI option is spelled the same for all drivers.
+
+Conflicting usages of the URI option and the symbol is an error.
+
+Multi-threaded drivers MUST NOT provide this mode.
+(See `single-threaded server selection implementation`_
+and the rationale for a `"try once" mode`_.)
 
 heartbeatFrequencyMS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -643,8 +673,26 @@ For such a client, the general server selection algorithm is modified as
 follows:
 
 - Prior to Step #1, if the topology has not been scanned
-  in ``heartBeatFrequencyMS`` milliseconds, the client MUST do a (blocking)
-  immediate topology check.
+  in ``heartBeatFrequencyMS`` milliseconds
+  or the topology is marked "stale",
+  the client MUST do a (blocking) immediate topology check.
+
+- In Step #2, if the topology wire version is invalid,
+  the client MUST mark the topology "stale", then raise an error.
+
+- In Step #6, if serverSelectionTryOnce is true (the default),
+  then the client MUST mark the topology "stale"
+  and raise a `server selection error`_,
+  instead of looping.
+  (See the rational for a `"try once" mode`_.)
+
+  If serverSelectionTryOnce is false,
+  the `Server Discovery and Monitoring`_ specification says
+  the client MUST wait until the previous scan is ``minHeartbeatFrequencyMS`` ago
+  before looping.
+
+  If ``serverSelectionTimeoutMS`` has expired, a single-threaded driver MUST
+  mark the topology "stale" before raising a server selection error.
 
 Before using a socket to the selected server, drivers MUST check whether
 the socket has been used in ``socketCheckIntervalMS`` milliseconds (as
@@ -876,13 +924,13 @@ Pseudocode for `multi-threaded server selection`_::
         endTime = now + serverSelectionTimeoutMS
 
         while true:
-            # The topology keeps track of whether any server has an
+            # The topologyDescription keeps track of whether any server has an
             # an invalid wire version range
-            if topology wire version range is invalid:
+            if not topologyDescription.compatible:
                 client.lock.release()
-                throw error("incompatible wire protocol version ranges")
+                throw invalid wire protocol range error with details
 
-            servers = all servers in client.topologyDescription matching criteria
+            servers = all servers in topologyDescription matching criteria
 
             if servers is not empty:
                 in_window = servers within the latency window
@@ -909,29 +957,45 @@ Single-threaded server selection implementation
 
 Pseudocode for `single-threaded server selection`_::
 
-    def getServer(criteria):
+    def getServer(criteria, serverSelectionTryOnce):
 
-        rescan all servers if topology is stale
+        startTime = gettime()
+        maxTime = now + serverSelectionTimeoutMS/1000
 
-        now = gettime()
-        endTime = now + serverSelectionTimeoutMS
+        if topologyDescription.lastUpdateTime - startTime > heartbeatFrequencyMS/1000:
+            topologyDescription.stale = true
 
         while true:
-            # The topology keeps track of whether any server has an
-            # an invalid wire version range
-            if topology wire version range is invalid:
-                throw error("incompatible wire protocol version ranges")
 
-            servers = all servers in client.topologyDescription matching criteria
+            if topologyDescription.stale:
+                rescan all servers
+                topologyDescription.stale = false
+
+            # The topologyDescription keeps track of whether any server has an
+            # an incompatible wire version range
+            if not topologyDescription.compatible:
+                topologyDescription.stale = true
+                throw invalid wire protocol range error with details
+
+            servers = all servers in topologyDescription matching criteria
 
             if servers is not empty:
                 in_window = servers within the latency window
                 return random entry from in_window
+            else:
+                topologyDescription.stale = true
 
-            rescan all servers
+            loopEndTime = gettime()
 
-            if now after endTime:
-                throw server selection error
+            if (serverSelectionTryOnce or loopEndTime > maxTime):
+                topologyDescription.stale = true
+
+            timeSinceScan = topologyDescription.lastUpdateTime - loopEndTime
+            sleepTime = minHeartbeatFrequencyMS/1000 - timeSinceScan
+
+            if sleepTime > 0:
+                sleep sleepTime
+
 
 .. _server selection error:
 
@@ -1110,6 +1174,31 @@ Error messages should be sufficiently verbose to allow users and/or support
 engineers to determine the reasons for server selection failures from log
 or other error messages.
 
+"Try once" mode
+---------------
+
+Single-threaded drivers in languages like PHP and Perl are typically deployed
+as many processes per application server. Each process must independently
+discover and monitor the MongoDB deployment.
+
+When no suitable server is available (due to a partition or misconfiguration),
+it is better for each request to fail as soon as its process detects a
+problem, instead of waiting and retrying to see if the deployment recovers.
+
+Minimizing response latency is important for maximizing request-handling
+capacity and for user experience (e.g. a quick fail message instead of a slow
+web page).
+
+However, when a request arrives and the topology information is already stale,
+making a single attempt to update the topology to service the request is
+acceptable.
+
+A user of a single-threaded driver who prefers resilience in the face of topology problems,
+rather than short response times,
+can turn the "try once" mode off.
+Then driver rescans the topology every minHeartbeatFrequencyMS
+until a suitable server is found or the serverSelectionTimeoutMS expires.
+
 Backwards Compatibility
 =======================
 
@@ -1262,3 +1351,8 @@ References
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 
+
+Changes
+=======
+
+2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
