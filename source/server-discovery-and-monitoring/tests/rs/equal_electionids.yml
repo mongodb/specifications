@@ -28,8 +28,8 @@ phases: [
             servers: {
                 "a:27017": {
                     type: "Unknown",
-                    setName:,
-                    electionId:,
+                    setName: ,
+                    electionId:
                 },
                 "b:27017": {
                     type: "RSPrimary",
