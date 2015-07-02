@@ -25,7 +25,7 @@ phases: [
                 },
                 "b:27017": {
                     type: "Unknown",
-                    setName:,
+                    setName: ,
                     electionId:
                 }
             },
@@ -50,7 +50,7 @@ phases: [
             servers: {
                 "a:27017": {
                     type: "Unknown",
-                    setName:,
+                    setName: ,
                     electionId:
                 },
                 "b:27017": {
@@ -79,7 +79,7 @@ phases: [
             servers: {
                 "a:27017": {
                     type: "Unknown",
-                    setName:,
+                    setName: ,
                     electionId:
                 },
                 "b:27017": {
