@@ -25,7 +25,7 @@ tests:
   -
     description: "A failed insert event"
     operation:
-      name: "insert"
+      name: "insertOne"
       arguments:
         document: { _id: 1, x: 11 }
     expectations:
