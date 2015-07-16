@@ -42,7 +42,6 @@ tests:
         command:
           update: *collection_name
           updates:
-          updates:
             q: { _id: { $gt: 1 }}
             u: { $nothing: { x: 1 }}
         command_name: "update"
