@@ -16,15 +16,17 @@ tests:
       arguments:
         filter: { _id: 1 }
     expectations:
-      command_started_event:
-        command:
-          find: *collection_name
-          filter: { _id: 1 }
-        command_name: "find"
-        database_name: *database_name
-      command_succeeded_event:
-        command_name: "find"
-        database_name: *database_name
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: 1 }
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          command_name: "find"
+          database_name: *database_name
   -
     description: "A successful find event with options"
     operation:
@@ -35,18 +37,53 @@ tests:
         skip: 2
         limit: 2
     expectations:
-      command_started_event:
-        command:
-          find: *collection_name
-          filter: { _id: { $gt : 2 }}
-          sort: { _id: 1 }
-          skip: 2
-          limit: 2
-        command_name: "find"
-        database_name: *database_name
-      command_succeeded_event:
-        command_name: "find"
-        database_name: *database_name
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: { $gt : 2 }}
+            sort: { _id: 1 }
+            skip: 2
+            limit: 2
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          command_name: "find"
+          database_name: *database_name
+  -
+    description: "A successful find event with a getmore"
+    operation:
+      name: "find"
+      arguments:
+        filter: { _id: 1 }
+        sort: { _id: 1 }
+        batchSize: 3
+    expectations:
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: { $gte : 1 }}
+            sort: { _id: 1 }
+            batchSize: 3
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_started_event:
+          command:
+            collection: *collection_name
+            batchSize: 3
+          command_name: "getMore"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          command_name: "getMore"
+          database_name: *database_name
   -
     description: "A failed find event"
     operation:
@@ -54,12 +91,14 @@ tests:
       arguments:
         filter: { $nothing: true }
     expectations:
-      command_started_event:
-        command:
-          find: *collection_name
-          filter: { $nothing: true }
-        command_name: "find"
-        database_name: *database_name
-      command_failed_event:
-        command_name: "find"
-        database_name: *database_name
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            filter: { $nothing: true }
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_failed_event:
+          command_name: "find"
+          database_name: *database_name

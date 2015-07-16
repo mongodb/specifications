@@ -17,17 +17,19 @@ tests:
         update:
           $inc: { x: 1 }
     expectations:
-      command_started_event:
-        command:
-          update: *collection_name
-          updates:
-            q: { _id: { $gt: 1 }}
-            u: { $inc: { x: 1 }}
-        command_name: "update"
-        database_name: *database_name
-      command_succeeded_event:
-        command_name: "update"
-        database_name: *database_name
+      -
+        command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              q: { _id: { $gt: 1 }}
+              u: { $inc: { x: 1 }}
+          command_name: "update"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          command_name: "update"
+          database_name: *database_name
   -
     description: "A failed update event"
     operation:
@@ -38,14 +40,16 @@ tests:
         update:
           $nothing: { x: 1 }
     expectations:
-      command_started_event:
-        command:
-          update: *collection_name
-          updates:
-            q: { _id: { $gt: 1 }}
-            u: { $nothing: { x: 1 }}
-        command_name: "update"
-        database_name: *database_name
-      command_failed_event:
-        command_name: "update"
-        database_name: *database_name
+      -
+        command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              q: { _id: { $gt: 1 }}
+              u: { $nothing: { x: 1 }}
+          command_name: "update"
+          database_name: *database_name
+      -
+        command_failed_event:
+          command_name: "update"
+          database_name: *database_name
