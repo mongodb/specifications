@@ -2,7 +2,7 @@ data:
   - { _id: 1, x: 11 }
 
 collection_name: &collection_name "values"
-database_name: &database_name "ruby-driver"
+database_name: &database_name "command-monitoring-tests"
 
 tests:
   -
