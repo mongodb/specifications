@@ -100,11 +100,11 @@ tests:
           command:
             killCursors: *collection_name
           command_name: "killCursors"
-          database_name: *databaseName
+          database_name: *database_name
       -
         command_succeeded_event:
           command_name: "killCursors"
-          database_name: *databaseName
+          database_name: *database_name
   -
     description: "A failed find event"
     operation:
