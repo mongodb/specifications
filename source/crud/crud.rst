@@ -463,7 +463,7 @@ Basic
      * your driver appropriately.
      *
      * @see http://docs.mongodb.org/manual/reference/command/insert/
-     * @throws WriteException
+     * @throws BulkWriteException
      */
     insertMany(Iterable<Document> documents, options: Optional<InsertManyOptions>): InsertManyResult;
 
