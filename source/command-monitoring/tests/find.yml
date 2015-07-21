@@ -95,6 +95,16 @@ tests:
             - { _id: 5, x: 55 }
           command_name: "getMore"
           database_name: *database_name
+      -
+        command_started_event:
+          command:
+            killCursors: *collection_name
+          command_name: "killCursors"
+          database_name: *databaseName
+      -
+        command_succeeded_event:
+          command_name: "killCursors"
+          database_name: *databaseName
   -
     description: "A failed find event"
     operation:
