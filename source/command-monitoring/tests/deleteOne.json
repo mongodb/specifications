@@ -36,8 +36,13 @@
                   "_id": {
                     "$gt": 1
                   }
-                }
-              }
+                },
+                "limit": 1
+              },
+              "writeConcern": {
+                "w": 1
+              },
+              "ordered": true
             },
             "command_name": "delete",
             "database_name": "command-monitoring-tests"
