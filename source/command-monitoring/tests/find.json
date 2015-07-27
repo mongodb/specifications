@@ -80,9 +80,7 @@
             "command": {
               "find": "values",
               "filter": {
-                "_id": {
-                  "$gt": 2
-                }
+                "_id": 1
               },
               "sort": {
                 "_id": 1
@@ -114,7 +112,9 @@
         "name": "find",
         "arguments": {
           "filter": {
-            "_id": 1
+            "_id": {
+              "$gte": 1
+            }
           },
           "sort": {
             "_id": 1
