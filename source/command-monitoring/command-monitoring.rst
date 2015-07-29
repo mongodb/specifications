@@ -98,6 +98,10 @@ If the response from the server completes but contains an error, the driver MUST
 Upconversion
 ------------
 
+All legacy operations MUST be converted to their equivalent commands in the 3.2 server in the event's
+``command`` and ``reply`` fields. This includes OP_INSERT, OP_DELETE, OP_UPDATE, OP_QUERY, OP_GETMORE and
+OP_KILLCURSORS. Upconversion expectations are provided in the tests.
+
 ---
 API
 ---
