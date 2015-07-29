@@ -3,7 +3,7 @@ data:
   - { _id: 2, x: 22 }
   - { _id: 3, x: 33 }
 
-collection_name: &collection_name "values"
+collection_name: &collection_name "test"
 database_name: &database_name "command-monitoring-tests"
 
 tests:
@@ -22,12 +22,17 @@ tests:
           command:
             update: *collection_name
             updates:
-              q: { _id: { $gt: 1 }}
-              u: { $inc: { x: 1 }}
+              -
+                q: { _id: { $gt: 1 }}
+                u: { $inc: { x: 1 }}
+                multi: false
+                upsert: false
           command_name: "update"
           database_name: *database_name
       -
         command_succeeded_event:
+          reply:
+            - { ok: 1 }
           command_name: "update"
           database_name: *database_name
   -
@@ -45,8 +50,11 @@ tests:
           command:
             update: *collection_name
             updates:
-              q: { _id: { $gt: 1 }}
-              u: { $nothing: { x: 1 }}
+              -
+                q: { _id: { $gt: 1 }}
+                u: { $nothing: { x: 1 }}
+                multi: false
+                upsert: false
           command_name: "update"
           database_name: *database_name
       -

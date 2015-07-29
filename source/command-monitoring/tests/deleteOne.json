@@ -13,6 +13,8 @@
       "x": 33
     }
   ],
+  "collection_name": "test",
+  "database_name": "command-monitoring-tests",
   "tests": [
     {
       "description": "A successful delete one",
@@ -30,15 +32,17 @@
         {
           "command_started_event": {
             "command": {
-              "delete": "values",
-              "deletes": {
-                "q": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                },
-                "limit": 1
-              },
+              "delete": "test",
+              "deletes": [
+                {
+                  "q": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  },
+                  "limit": 1
+                }
+              ],
               "writeConcern": {
                 "w": 1
               },
@@ -50,6 +54,11 @@
         },
         {
           "command_succeeded_event": {
+            "reply": [
+              {
+                "ok": 1
+              }
+            ],
             "command_name": "delete",
             "database_name": "command-monitoring-tests"
           }
@@ -72,7 +81,7 @@
         {
           "command_started_event": {
             "command": {
-              "delete": "values",
+              "delete": "test",
               "deletes": {
                 "q": {
                   "_id": {

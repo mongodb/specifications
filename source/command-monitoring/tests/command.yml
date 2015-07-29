@@ -1,7 +1,7 @@
 data:
   - { _id: 1, x: 11 }
 
-collection_name: &collection_name "values"
+collection_name: &collection_name "test"
 database_name: &database_name "command-monitoring-tests"
 
 tests:
@@ -30,13 +30,13 @@ tests:
     operation:
       name: "count"
       arguments:
-        filter: { $nothing: true }
+        filter: { $or: true }
     expectations:
       -
         command_started_event:
           command:
             count: *collection_name
-            query: { $nothing: true }
+            query: { $or: true }
           command_name: "count"
           database_name: *database_name
       -

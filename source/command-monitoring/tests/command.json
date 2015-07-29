@@ -5,6 +5,8 @@
       "x": 11
     }
   ],
+  "collection_name": "test",
+  "database_name": "command-monitoring-tests",
   "tests": [
     {
       "description": "A successful command",
@@ -20,7 +22,7 @@
         {
           "command_started_event": {
             "command": {
-              "count": "values",
+              "count": "test",
               "query": {
                 "_id": 1
               }
@@ -49,7 +51,7 @@
         "name": "count",
         "arguments": {
           "filter": {
-            "$nothing": true
+            "$or": true
           }
         }
       },
@@ -57,9 +59,9 @@
         {
           "command_started_event": {
             "command": {
-              "count": "values",
+              "count": "test",
               "query": {
-                "$nothing": true
+                "$or": true
               }
             },
             "command_name": "count",

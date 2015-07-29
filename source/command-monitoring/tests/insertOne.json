@@ -5,6 +5,8 @@
       "x": 11
     }
   ],
+  "collection_name": "test",
+  "database_name": "command-monitoring-tests",
   "tests": [
     {
       "description": "A successful insert one",
@@ -21,7 +23,7 @@
         {
           "command_started_event": {
             "command": {
-              "insert": "values",
+              "insert": "test",
               "documents": [
                 {
                   "_id": 2,
@@ -35,6 +37,11 @@
         },
         {
           "command_succeeded_event": {
+            "reply": [
+              {
+                "ok": 1
+              }
+            ],
             "command_name": "insert",
             "database_name": "command-monitoring-tests"
           }
@@ -56,7 +63,7 @@
         {
           "command_started_event": {
             "command": {
-              "insert": "values",
+              "insert": "test",
               "documents": [
                 {
                   "_id": 1,

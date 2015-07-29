@@ -13,6 +13,8 @@
       "x": 33
     }
   ],
+  "collection_name": "test",
+  "database_name": "command-monitoring-tests",
   "tests": [
     {
       "description": "A successful update one",
@@ -35,19 +37,23 @@
         {
           "command_started_event": {
             "command": {
-              "update": "values",
-              "updates": {
-                "q": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                },
-                "u": {
-                  "$inc": {
-                    "x": 1
-                  }
+              "update": "test",
+              "updates": [
+                {
+                  "q": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  },
+                  "u": {
+                    "$inc": {
+                      "x": 1
+                    }
+                  },
+                  "multi": false,
+                  "upsert": false
                 }
-              }
+              ]
             },
             "command_name": "update",
             "database_name": "command-monitoring-tests"
@@ -55,6 +61,11 @@
         },
         {
           "command_succeeded_event": {
+            "reply": [
+              {
+                "ok": 1
+              }
+            ],
             "command_name": "update",
             "database_name": "command-monitoring-tests"
           }
@@ -82,19 +93,23 @@
         {
           "command_started_event": {
             "command": {
-              "update": "values",
-              "updates": {
-                "q": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                },
-                "u": {
-                  "$nothing": {
-                    "x": 1
-                  }
+              "update": "test",
+              "updates": [
+                {
+                  "q": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  },
+                  "u": {
+                    "$nothing": {
+                      "x": 1
+                    }
+                  },
+                  "multi": false,
+                  "upsert": false
                 }
-              }
+              ]
             },
             "command_name": "update",
             "database_name": "command-monitoring-tests"
