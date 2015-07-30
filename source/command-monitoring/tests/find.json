@@ -23,6 +23,7 @@
   ],
   "collection_name": "test",
   "database_name": "command-monitoring-tests",
+  "namespace": "test.command-monitoring-tests",
   "tests": [
     {
       "description": "A successful find event with no options",
@@ -53,6 +54,7 @@
               "ok": 1,
               "cursor": {
                 "id": 0,
+                "ns": "test.command-monitoring-tests",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -104,6 +106,7 @@
               "ok": 1,
               "cursor": {
                 "id": 0,
+                "ns": "test.command-monitoring-tests",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -158,6 +161,7 @@
             "reply": {
               "ok": 1,
               "cursor": {
+                "ns": "test.command-monitoring-tests",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -193,6 +197,7 @@
             "reply": {
               "ok": 1,
               "cursor": {
+                "ns": "test.command-monitoring-tests",
                 "nextBatch": [
                   {
                     "_id": 4,
@@ -252,6 +257,7 @@
             "reply": {
               "ok": 1,
               "cursor": {
+                "ns": "test.command-monitoring-tests",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -287,6 +293,7 @@
             "reply": {
               "ok": 1,
               "cursor": {
+                "ns": "test.command-monitoring-tests",
                 "nextBatch": [
                   {
                     "_id": 4,
