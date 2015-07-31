@@ -95,6 +95,13 @@ If an exception occurs while sending the operation to the server, the driver MUS
 
 If the response from the server completes but contains an error, the driver MUST generate a ``CommandFailedEvent`` with the error or message from the server instead of a ``CommandSucceededEvent``. This includes ``{ ok: 0 }`` command responses and replies with query_failure flags.
 
+Upconversion
+------------
+
+All legacy operations MUST be converted to their equivalent commands in the 3.2 server in the event's
+``command`` and ``reply`` fields. This includes OP_INSERT, OP_DELETE, OP_UPDATE, OP_QUERY, OP_GETMORE and
+OP_KILLCURSORS. Upconversion expectations are provided in the tests.
+
 ---
 API
 ---
@@ -248,4 +255,92 @@ Ruby:
   # When the subscriber handles the events the log could show:
   # COMMAND.query 127.0.0.1:27017 STARTED: { $query: { name: 'testing' }}
   # COMMAND.query 127.0.0.1:27017 COMPLETED: { number_returned: 50 } (0.050s)
+
+-------
+Testing
+-------
+
+Tests are provided in YML and JSON format to assert proper upconversion of commands.
+
+Requirements
+------------
+
+Some assertions cannot be represented in YML or JSON format but MUST be tested. They are
+as follows:
+
+For ``find`` command tests, the tests MUST also assert when a ``cursor_id`` is not provided in the
+expectation that the ``cursor_id`` in the reply of the ``CommandSucceededEvent`` is equal to:
+
+- The value of the ``getMore`` field in the getmore's ``CommandStartedEvent`` command.
+- The value of the ``id`` field in the ``cursor`` subdocument of the getmore's ``CommandSucceededEvent`` reply.
+- The value exists in the ``cursors`` array in the killcursor's ``CommandStartedEvent``.
+- The value is always present and greater than 0.
+
+Example:
+
+.. code:: yml
+
+  -
+    description: "A successful find event with a getmore and killcursors"
+    operation:
+      name: "find"
+      arguments:
+        filter: { _id: { $gte: 1 }}
+        sort: { _id: 1 }
+        batchSize: 3
+        limit: 4
+    expectations:
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: { $gte : 1 }}
+            sort: { _id: 1 }
+            limit: 3
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          reply:
+            ok: 1
+            cursor:
+              id: 999999
+              firstBatch:
+                - { _id: 1, x: 11 }
+                - { _id: 2, x: 22 }
+                - { _id: 3, x: 33 }
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_started_event:
+          command:
+            getMore: 999999
+            collection: *collection_name
+            batchSize: 1
+          command_name: "getMore"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          reply:
+            ok: 1
+            cursor:
+              id: 999999
+              nextBatch:
+                - { _id: 4, x: 44 }
+          command_name: "getMore"
+          database_name: *database_name
+      -
+        command_started_event:
+          command:
+            killCursors: *collection_name
+            cursors:
+              - 999999
+          command_name: "killCursors"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          reply:
+            ok: 1
+          command_name: "killCursors"
+          database_name: *database_name
 
