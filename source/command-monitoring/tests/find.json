@@ -313,7 +313,7 @@
             "reply": {
               "ok": 1.0,
               "cursor": {
-                "getMore": {
+                "id": {
                   "$numberLong": "42"
                 },
                 "ns": "command-monitoring-tests.test",
