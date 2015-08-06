@@ -26,7 +26,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
             cursor:
               id: 0
               firstBatch:
@@ -54,7 +54,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
             cursor:
               id: 0
               firstBatch:
@@ -82,7 +82,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
             cursor:
               firstBatch:
                 - { _id: 1, x: 11 }
@@ -101,7 +101,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
             cursor:
               # id: test should verify this cursor id matches the find.
               nextBatch:
@@ -131,7 +131,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
             cursor:
               firstBatch:
                 - { _id: 1, x: 11 }
@@ -150,7 +150,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
             cursor:
               # id: test should verify this cursor id matches the find.
               nextBatch:
@@ -168,7 +168,7 @@ tests:
       -
         command_succeeded_event:
           reply:
-            ok: 1
+            ok: 1.0
           command_name: "killCursors"
           database_name: *database_name
   -
