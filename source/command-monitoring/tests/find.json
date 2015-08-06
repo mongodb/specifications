@@ -208,7 +208,7 @@
               "ok": 1.0,
               "cursor": {
                 "id": {
-                  "$numberLong": "42"
+                  "$numberLong": "0"
                 },
                 "ns": "command-monitoring-tests.test",
                 "nextBatch": [

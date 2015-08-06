@@ -108,7 +108,7 @@ tests:
           reply:
             ok: 1.0
             cursor:
-              id: { $numberLong: "42" }
+              id: { $numberLong: "0" }
               ns: *namespace
               nextBatch:
                 - { _id: 4, x: 44 }
