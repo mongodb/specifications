@@ -53,7 +53,7 @@
           "command_succeeded_event": {
             "reply": [
               {
-                "ok": 1.0
+                "ok": 1
               }
             ],
             "command_name": "delete",
@@ -79,13 +79,16 @@
           "command_started_event": {
             "command": {
               "delete": "test",
-              "deletes": {
-                "q": {
-                  "_id": {
-                    "$nothing": 1
-                  }
+              "deletes": [
+                {
+                  "q": {
+                    "_id": {
+                      "$nothing": 1
+                    }
+                  },
+                  "limit": 1
                 }
-              },
+              ],
               "ordered": true
             },
             "command_name": "delete",

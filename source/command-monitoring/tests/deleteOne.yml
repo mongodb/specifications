@@ -43,7 +43,7 @@ tests:
           command:
             delete: *collection_name
             deletes:
-              q: { _id: { $nothing: 1 }}
+              - { q: { _id: { $nothing: 1 }}, limit: 1 }
             ordered: true
           command_name: "delete"
           database_name: *database_name
