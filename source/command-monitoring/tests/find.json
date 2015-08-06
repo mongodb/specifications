@@ -23,7 +23,7 @@
   ],
   "collection_name": "test",
   "database_name": "command-monitoring-tests",
-  "namespace": "test.command-monitoring-tests",
+  "namespace": "command-monitoring-tests.test",
   "tests": [
     {
       "description": "A successful find event with no options",
@@ -51,11 +51,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
                 },
+                "ns": "command-monitoring-tests.test",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -104,11 +105,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
                 },
+                "ns": "command-monitoring-tests.test",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -152,7 +154,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 3
+              "batchSize": 3
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
@@ -161,11 +163,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
                 },
+                "ns": "command-monitoring-tests.test",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -202,11 +205,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
                 },
+                "ns": "command-monitoring-tests.test",
                 "nextBatch": [
                   {
                     "_id": 4,
@@ -255,7 +259,8 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 3
+              "batchSize": 3,
+              "limit": 4
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
@@ -264,11 +269,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
                 },
+                "ns": "command-monitoring-tests.test",
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -305,11 +311,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursor": {
                 "getMore": {
                   "$numberLong": "42"
                 },
+                "ns": "command-monitoring-tests.test",
                 "nextBatch": [
                   {
                     "_id": 4,
@@ -339,7 +346,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1,
+              "ok": 1.0,
               "cursorsUnknown": [
                 {
                   "$numberLong": "42"
