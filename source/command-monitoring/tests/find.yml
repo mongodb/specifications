@@ -7,7 +7,7 @@ data:
 
 collection_name: &collection_name "test"
 database_name: &database_name "command-monitoring-tests"
-namespace: &namespace "test.command-monitoring-tests"
+namespace: &namespace "command-monitoring-tests.test"
 
 tests:
   -
@@ -30,6 +30,7 @@ tests:
             ok: 1.0
             cursor:
               id: { $numberLong: "0" }
+              ns: *namespace
               firstBatch:
                 - { _id: 1, x: 11 }
           command_name: "find"
@@ -58,6 +59,7 @@ tests:
             ok: 1.0
             cursor:
               id: { $numberLong: "0" }
+              ns: *namespace
               firstBatch:
                 - { _id: 1, x: 11 }
           command_name: "find"
@@ -86,6 +88,7 @@ tests:
             ok: 1.0
             cursor:
               id: { $numberLong: "42" }
+              ns: *namespace
               firstBatch:
                 - { _id: 1, x: 11 }
                 - { _id: 2, x: 22 }
@@ -106,6 +109,7 @@ tests:
             ok: 1.0
             cursor:
               id: { $numberLong: "42" }
+              ns: *namespace
               nextBatch:
                 - { _id: 4, x: 44 }
                 - { _id: 5, x: 55 }
@@ -136,6 +140,7 @@ tests:
             ok: 1.0
             cursor:
               id: { $numberLong: "42" }
+              ns: *namespace
               firstBatch:
                 - { _id: 1, x: 11 }
                 - { _id: 2, x: 22 }
@@ -156,6 +161,7 @@ tests:
             ok: 1.0
             cursor:
               getMore: { $numberLong: "42" }
+              ns: *namespace
               nextBatch:
                 - { _id: 4, x: 44 }
           command_name: "getMore"
