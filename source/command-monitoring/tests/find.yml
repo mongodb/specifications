@@ -79,7 +79,7 @@ tests:
             find: *collection_name
             filter: { _id: { $gte : 1 }}
             sort: { _id: 1 }
-            limit: 3
+            batchSize: 3
           command_name: "find"
           database_name: *database_name
       -
@@ -131,7 +131,8 @@ tests:
             find: *collection_name
             filter: { _id: { $gte : 1 }}
             sort: { _id: 1 }
-            limit: 3
+            batchSize: 3
+            limit: 4
           command_name: "find"
           database_name: *database_name
       -
