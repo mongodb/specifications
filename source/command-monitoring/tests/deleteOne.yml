@@ -21,7 +21,6 @@ tests:
             delete: *collection_name
             deletes:
               - { q: { _id: { $gt: 1 }}, limit: 1 }
-            writeConcern: { w: 1 }
             ordered: true
           command_name: "delete"
           database_name: *database_name
@@ -45,6 +44,7 @@ tests:
             delete: *collection_name
             deletes:
               q: { _id: { $nothing: 1 }}
+            ordered: true
           command_name: "delete"
           database_name: *database_name
       -

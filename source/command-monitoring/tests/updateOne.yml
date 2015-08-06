@@ -21,6 +21,7 @@ tests:
         command_started_event:
           command:
             update: *collection_name
+            ordered: true
             updates:
               -
                 q: { _id: { $gt: 1 }}
@@ -49,6 +50,7 @@ tests:
         command_started_event:
           command:
             update: *collection_name
+            ordered: true
             updates:
               -
                 q: { _id: { $gt: 1 }}
