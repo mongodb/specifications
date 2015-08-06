@@ -53,7 +53,8 @@
           "command_succeeded_event": {
             "reply": [
               {
-                "ok": 1
+                "ok": 1.0,
+                "n": 1
               }
             ],
             "command_name": "delete",
