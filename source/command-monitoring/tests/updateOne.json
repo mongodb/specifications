@@ -38,6 +38,7 @@
           "command_started_event": {
             "command": {
               "update": "test",
+              "ordered": true,
               "updates": [
                 {
                   "q": {
@@ -94,6 +95,7 @@
           "command_started_event": {
             "command": {
               "update": "test",
+              "ordered": true,
               "updates": [
                 {
                   "q": {

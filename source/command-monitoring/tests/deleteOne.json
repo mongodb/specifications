@@ -43,9 +43,6 @@
                   "limit": 1
                 }
               ],
-              "writeConcern": {
-                "w": 1
-              },
               "ordered": true
             },
             "command_name": "delete",
@@ -88,7 +85,8 @@
                     "$nothing": 1
                   }
                 }
-              }
+              },
+              "ordered": true
             },
             "command_name": "delete",
             "database_name": "command-monitoring-tests"

@@ -29,7 +29,8 @@
                   "_id": 2,
                   "x": 22
                 }
-              ]
+              ],
+              "ordered": true
             },
             "command_name": "insert",
             "database_name": "command-monitoring-tests"
@@ -69,7 +70,8 @@
                   "_id": 1,
                   "x": 11
                 }
-              ]
+              ],
+              "ordered": true
             },
             "command_name": "insert",
             "database_name": "command-monitoring-tests"

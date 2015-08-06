@@ -53,8 +53,9 @@
             "reply": {
               "ok": 1,
               "cursor": {
-                "id": 0,
-                "ns": "test.command-monitoring-tests",
+                "id": {
+                  "$numberLong": "0"
+                },
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -105,8 +106,9 @@
             "reply": {
               "ok": 1,
               "cursor": {
-                "id": 0,
-                "ns": "test.command-monitoring-tests",
+                "id": {
+                  "$numberLong": "0"
+                },
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -161,7 +163,9 @@
             "reply": {
               "ok": 1,
               "cursor": {
-                "ns": "test.command-monitoring-tests",
+                "id": {
+                  "$numberLong": "42"
+                },
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -185,6 +189,9 @@
         {
           "command_started_event": {
             "command": {
+              "getMore": {
+                "$numberLong": "42"
+              },
               "collection": "test",
               "batchSize": 3
             },
@@ -197,7 +204,9 @@
             "reply": {
               "ok": 1,
               "cursor": {
-                "ns": "test.command-monitoring-tests",
+                "id": {
+                  "$numberLong": "42"
+                },
                 "nextBatch": [
                   {
                     "_id": 4,
@@ -257,7 +266,9 @@
             "reply": {
               "ok": 1,
               "cursor": {
-                "ns": "test.command-monitoring-tests",
+                "id": {
+                  "$numberLong": "42"
+                },
                 "firstBatch": [
                   {
                     "_id": 1,
@@ -281,6 +292,9 @@
         {
           "command_started_event": {
             "command": {
+              "getMore": {
+                "$numberLong": "42"
+              },
               "collection": "test",
               "batchSize": 1
             },
@@ -293,7 +307,9 @@
             "reply": {
               "ok": 1,
               "cursor": {
-                "ns": "test.command-monitoring-tests",
+                "getMore": {
+                  "$numberLong": "42"
+                },
                 "nextBatch": [
                   {
                     "_id": 4,
@@ -309,7 +325,12 @@
         {
           "command_started_event": {
             "command": {
-              "killCursors": "test"
+              "killCursors": "test",
+              "cursors": [
+                {
+                  "$numberLong": "42"
+                }
+              ]
             },
             "command_name": "killCursors",
             "database_name": "command-monitoring-tests"
@@ -318,7 +339,12 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1
+              "ok": 1,
+              "cursorsUnknown": [
+                {
+                  "$numberLong": "42"
+                }
+              ]
             },
             "command_name": "killCursors",
             "database_name": "command-monitoring-tests"
