@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: June 26, 2015
+:Last Modified: August 10, 2015
 
 .. contents::
 
@@ -610,32 +610,6 @@ Server selection varies depending on whether a client is
 multi-threaded/asynchronous or single-threaded because a single-threaded
 client cannot rely on the topology state being updated in the background.
 
-General server selection algorithm
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In general, the selection algorithm is as follows:
-
-1. Record the server selection start time
-
-2. If the topology wire version is invalid, raise an error
-
-3. Find suitable servers by topology type and operation type
-
-4. If there are any suitable servers, choose one at random from those
-   within the latency window and return it; otherwise, continue to step #5
-
-5. Request an immediate topology check
-
-6. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
-   the selection start time, raise a `server selection error`_
-
-7. Goto Step #2
-
-Specific notes and variations for multi- and single-threaded clients are
-described below.
-
-.. _multi-threaded server selection:
-
 Multi-threaded or asynchronous server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -655,44 +629,81 @@ a pool; or (b) governed by a global or client-wide limit on number of
 waiting threads, depending on how resource limits are implemented by a
 driver.
 
-For multi-threaded clients, the general server selection algorithm is
-modified as follows:
+For multi-threaded clients, the server selection algorithm is
+as follows:
 
-- In step #5, when no suitable servers are available for an operation, the
-  client MUST request an immediate topology check, then block the server
-  selection thread until the topology changes or until the server
-  selection timeout has elapsed.
+1. Record the server selection start time
+
+2. If the topology wire version is invalid, raise an error
+
+3. Find suitable servers by topology type and operation type
+
+4. If there are any suitable servers, choose one at random from those
+   within the latency window and return it; otherwise, continue to step #5
+
+5. Request an immediate topology check, then block the server selection
+   thread until the topology changes or until the server selection
+   timeout has elapsed
+
+6. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
+   the selection start time, raise a `server selection error`_
+
+7. Goto Step #2
 
 Single-threaded server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Single-threaded drivers do not monitor the topology in the background.
-Instead, they periodically update the topology during server selection.
+Instead, they MUST periodically update the topology during server selection
+as described below.
 
-For such a client, the general server selection algorithm is modified as
-follows:
+When ``serverSelectionTryOnce`` is true, ``serverSelectionTimeoutMS`` has
+no effect; a single immediate topology check will be done if the topology
+starts stale or if the first selection attempt fails.
 
-- Prior to Step #1, if the topology has not been scanned
-  in ``heartBeatFrequencyMS`` milliseconds
-  or the topology is marked "stale",
-  the client MUST do a (blocking) immediate topology check.
+When ``serverSelectionTryOnce`` is false, then the server selection loops
+until a server is successfully selected or until
+``serverSelectionTimeoutMS`` is exceeded.
 
-- In Step #2, if the topology wire version is invalid,
-  the client MUST mark the topology "stale", then raise an error.
+Therefore, for single-threaded clients, the server selection algorithm is
+as follows:
 
-- In Step #6, if serverSelectionTryOnce is true (the default),
-  then the client MUST mark the topology "stale"
-  and raise a `server selection error`_,
-  instead of looping.
-  (See the rational for a `"try once" mode`_.)
+1. Record the server selection start time
 
-  If serverSelectionTryOnce is false,
-  the `Server Discovery and Monitoring`_ specification says
-  the client MUST wait until the previous scan is ``minHeartbeatFrequencyMS`` ago
-  before looping.
+2. Record the maximum time as start time plus ``serverSelectionTimeoutMS``
 
-  If ``serverSelectionTimeoutMS`` has expired, a single-threaded driver MUST
-  mark the topology "stale" before raising a server selection error.
+3. If the topology has not been scanned in ``heartBeatFrequencyMS``
+   milliseconds, mark the topology stale
+
+4. If the topology is stale, proceed as follows:
+
+   - record the target scan time as last scan time plus ``minHeartBeatFrequencyMS``
+
+   - if `serverSelectionTryOnce`_ is false and the target scan time would
+     exceed the maximum time, raise a `server selection error`_
+
+   - if the current time is less than the target scan time, sleep until
+     the target scan time
+
+   - do a blocking immediate topology check (which must also update the
+     last scan time and mark the topology as no longer stale)
+
+5. If the topology wire version is invalid, raise an error
+
+6. Find suitable servers by topology type and operation type
+
+7. If there are any suitable servers, choose one at random from those
+   within the latency window and return it; otherwise, mark the topology
+   stale and continue to step #8
+
+8. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
+   the selection start time, raise a `server selection error`_; otherwise,
+   goto Step #4
+
+9. If the current time exceeds the maximum time, raise a
+   `server selection error`_
+
+10. Goto Step #4
 
 Before using a socket to the selected server, drivers MUST check whether
 the socket has been used in ``socketCheckIntervalMS`` milliseconds (as
@@ -701,6 +712,17 @@ socket has been idle for longer, the driver MUST update the
 ServerDescription for the selected server.  After updating, if the server
 is no longer suitable, the driver MUST repeat the server selection
 algorithm and select a new server.
+
+Because single-threaded selection can do a blocking immediate check,
+``serverSelectionTimeoutMS`` is not a hard deadline.  The actual
+maximum server selection time for any given request can vary from
+``serverSelectionTimeoutMS`` minus ``minHeartbeatFrequencyMS`` to
+``serverSelectionTimeoutMS`` plus the time required for a blocking scan.
+
+Single-threaded drivers MUST document that when ``serverSelectionTryOne``
+is true, selection may take up to the time required for a blocking scan,
+and when ``serverSelectionTryOne`` is false, selection may take up to
+``serverSelectionTimeoutMS`` plus the time required for a blocking scan.
 
 Topology type: Unknown
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -957,25 +979,42 @@ Single-threaded server selection implementation
 
 Pseudocode for `single-threaded server selection`_::
 
-    def getServer(criteria, serverSelectionTryOnce):
+    def getServer(criteria):
 
         startTime = gettime()
-        maxTime = now + serverSelectionTimeoutMS/1000
+        loopEndTime = startTime
+        maxTime = startTime + serverSelectionTimeoutMS/1000
+        nextUpdateTime = topologyDescription.lastUpdateTime
+                       + heartbeatFrequencyMS/1000:
 
-        if topologyDescription.lastUpdateTime - startTime > heartbeatFrequencyMS/1000:
+        if nextUpdateTime < startTime:
             topologyDescription.stale = true
 
         while true:
 
             if topologyDescription.stale:
+                scanReadyTime = topologyDescription.lastUpdateTime
+                              + minHeartbeatFrequencyMS/1000
+
+                if ((not serverSelectionTryOnce) && (scanReadyTime > maxTime)):
+                    throw server selection error with details
+
+                # using loopEndTime below is a proxy for "now" but avoids
+                # the overhead of another gettime() call
+                sleepTime = scanReadyTime - loopEndTime
+
+                if sleepTime > 0:
+                    sleep sleepTime
+
                 rescan all servers
+                topologyDescription.lastupdateTime = gettime()
                 topologyDescription.stale = false
 
-            # The topologyDescription keeps track of whether any server has an
-            # an incompatible wire version range
+            # topologyDescription keeps a record of whether any
+            # server has an incompatible wire version range
             if not topologyDescription.compatible:
                 topologyDescription.stale = true
-                throw invalid wire protocol range error with details
+                throw invalid wire version range error with details
 
             servers = all servers in topologyDescription matching criteria
 
@@ -987,15 +1026,11 @@ Pseudocode for `single-threaded server selection`_::
 
             loopEndTime = gettime()
 
-            if (serverSelectionTryOnce or loopEndTime > maxTime):
-                topologyDescription.stale = true
-
-            timeSinceScan = topologyDescription.lastUpdateTime - loopEndTime
-            sleepTime = minHeartbeatFrequencyMS/1000 - timeSinceScan
-
-            if sleepTime > 0:
-                sleep sleepTime
-
+            if serverSelectionTryOnce:
+                if topologyDescription.lastUpdateTime > startTime:
+                    throw server selection error with details
+            else if loopEndTime > maxTime:
+                throw server selection error with details
 
 .. _server selection error:
 
@@ -1190,6 +1225,7 @@ capacity and for user experience (e.g. a quick fail message instead of a slow
 web page).
 
 However, when a request arrives and the topology information is already stale,
+or no suitable server is known,
 making a single attempt to update the topology to service the request is
 acceptable.
 
@@ -1356,3 +1392,9 @@ Changes
 =======
 
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
+
+2015-08-10: Updated single-threaded selection logic to ensure a scan always
+happens at least once under serverSelectionTryOnce if selection fails.
+Removed the general selection algorithm and put full algorithms for each of
+the single- and multi-threaded sections. Added a requirement that
+single-threaded drivers document selection time expectations.
