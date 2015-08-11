@@ -57,8 +57,7 @@
                 "n": 1
               }
             ],
-            "command_name": "delete",
-            "database_name": "command-monitoring-tests"
+            "command_name": "delete"
           }
         }
       ]
@@ -98,8 +97,7 @@
         },
         {
           "command_failed_event": {
-            "command_name": "delete",
-            "database_name": "command-monitoring-tests"
+            "command_name": "delete"
           }
         }
       ]

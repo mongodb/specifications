@@ -35,7 +35,6 @@ tests:
           reply:
             - { ok: 1.0, n: 1 }
           command_name: "update"
-          database_name: *database_name
   -
     description: "A failed update event"
     operation:
@@ -62,4 +61,3 @@ tests:
       -
         command_failed_event:
           command_name: "update"
-          database_name: *database_name

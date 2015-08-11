@@ -44,8 +44,7 @@
                 "n": 1
               }
             ],
-            "command_name": "insert",
-            "database_name": "command-monitoring-tests"
+            "command_name": "insert"
           }
         }
       ]
@@ -80,8 +79,7 @@
         },
         {
           "command_failed_event": {
-            "command_name": "insert",
-            "database_name": "command-monitoring-tests"
+            "command_name": "insert"
           }
         }
       ]

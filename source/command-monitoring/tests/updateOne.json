@@ -68,8 +68,7 @@
                 "n": 1
               }
             ],
-            "command_name": "update",
-            "database_name": "command-monitoring-tests"
+            "command_name": "update"
           }
         }
       ]
@@ -120,8 +119,7 @@
         },
         {
           "command_failed_event": {
-            "command_name": "update",
-            "database_name": "command-monitoring-tests"
+            "command_name": "update"
           }
         }
       ]
