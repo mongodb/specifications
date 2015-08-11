@@ -81,7 +81,11 @@
           "sort": {
             "_id": 1
           },
-          "limit": 2
+          "limit": 2,
+          "modifiers": {
+            "$showDiskLoc": false,
+            "$comment": "test"
+          }
         }
       },
       "expectations": [
@@ -95,7 +99,9 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 2
+              "limit": 2,
+              "comment": "test",
+              "showRecordId": false
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
