@@ -288,7 +288,10 @@ then either selects a server or raises an error.
 The serverSelectionTryOnce option MUST be true by default.
 If it is set false, then the driver repeatedly searches for an appropriate server
 for up to serverSelectionTimeoutMS milliseconds
-(pausing minHeartbeatFrequencyMS between attempts).
+(pausing `minHeartbeatFrequencyMS
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms>`_
+between attempts, as required by the `Server Discovery and Monitoring`_
+spec).
 
 Users of single-threaded drivers MUST be able to control this mode in one or
 both of these ways:
@@ -307,8 +310,10 @@ and the rationale for a `"try once" mode`_.)
 heartbeatFrequencyMS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is defined in the `Server Discovery and Monitoring`_ spec and
-controls how topology updates are scheduled.
+This controls when topology updates are scheduled.
+See `heartbeatFrequencyMS
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms>`_
+in the `Server Discovery and Monitoring`_ spec for details.
 
 Read Preference
 ---------------
@@ -706,7 +711,9 @@ as follows:
 10. Goto Step #4
 
 Before using a socket to the selected server, drivers MUST check whether
-the socket has been used in ``socketCheckIntervalMS`` milliseconds (as
+the socket has been used in `socketCheckIntervalMS
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#socketcheckintervalms>`_
+milliseconds (as
 defined in the `Server Discovery and Monitoring`_ specification).  If the
 socket has been idle for longer, the driver MUST update the
 ServerDescription for the selected server.  After updating, if the server
@@ -937,7 +944,7 @@ Multi-threaded server selection implementation
 The following example uses a single lock for clarity.  Drivers are free to
 implement whatever concurrency model best suits their design.
 
-Pseudocode for `multi-threaded server selection`_::
+Pseudocode for `multi-threaded or asynchronous server selection`_::
 
     def getServer(criteria):
         client.lock.acquire()
