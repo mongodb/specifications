@@ -39,8 +39,7 @@
                 "n": 1
               }
             ],
-            "command_name": "count",
-            "database_name": "command-monitoring-tests"
+            "command_name": "count"
           }
         }
       ]
@@ -70,8 +69,7 @@
         },
         {
           "command_failed_event": {
-            "command_name": "count",
-            "database_name": "command-monitoring-tests"
+            "command_name": "count"
           }
         }
       ]

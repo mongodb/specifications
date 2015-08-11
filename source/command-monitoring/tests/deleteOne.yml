@@ -29,7 +29,6 @@ tests:
           reply:
             - { ok: 1.0, n: 1 }
           command_name: "delete"
-          database_name: *database_name
   -
     description: "A failed delete event"
     operation:
@@ -50,4 +49,3 @@ tests:
       -
         command_failed_event:
           command_name: "delete"
-          database_name: *database_name

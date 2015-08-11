@@ -34,7 +34,6 @@ tests:
               firstBatch:
                 - { _id: 1, x: 11 }
           command_name: "find"
-          database_name: *database_name
   -
     description: "A successful find event with options"
     operation:
@@ -63,7 +62,6 @@ tests:
               firstBatch:
                 - { _id: 1, x: 11 }
           command_name: "find"
-          database_name: *database_name
   -
     description: "A successful find event with a getmore"
     operation:
@@ -94,7 +92,6 @@ tests:
                 - { _id: 2, x: 22 }
                 - { _id: 3, x: 33 }
           command_name: "find"
-          database_name: *database_name
       -
         command_started_event:
           command:
@@ -114,7 +111,6 @@ tests:
                 - { _id: 4, x: 44 }
                 - { _id: 5, x: 55 }
           command_name: "getMore"
-          database_name: *database_name
   -
     description: "A successful find event with a getmore and killcursors"
     operation:
@@ -147,7 +143,6 @@ tests:
                 - { _id: 2, x: 22 }
                 - { _id: 3, x: 33 }
           command_name: "find"
-          database_name: *database_name
       -
         command_started_event:
           command:
@@ -166,7 +161,6 @@ tests:
               nextBatch:
                 - { _id: 4, x: 44 }
           command_name: "getMore"
-          database_name: *database_name
       -
         command_started_event:
           command:
@@ -182,7 +176,6 @@ tests:
             cursorsUnknown:
               - { $numberLong: "42" }
           command_name: "killCursors"
-          database_name: *database_name
   -
     description: "A failed find event"
     operation:
@@ -200,4 +193,3 @@ tests:
       -
         command_failed_event:
           command_name: "find"
-          database_name: *database_name

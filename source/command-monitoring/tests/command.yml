@@ -24,7 +24,6 @@ tests:
           reply:
             - { ok: 1.0, n: 1 }
           command_name: "count"
-          database_name: *database_name
   -
     description: "A failed command event"
     operation:
@@ -42,4 +41,3 @@ tests:
       -
         command_failed_event:
           command_name: "count"
-          database_name: *database_name

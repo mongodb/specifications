@@ -65,8 +65,7 @@
                 ]
               }
             },
-            "command_name": "find",
-            "database_name": "command-monitoring-tests"
+            "command_name": "find"
           }
         }
       ]
@@ -119,8 +118,7 @@
                 ]
               }
             },
-            "command_name": "find",
-            "database_name": "command-monitoring-tests"
+            "command_name": "find"
           }
         }
       ]
@@ -185,8 +183,7 @@
                 ]
               }
             },
-            "command_name": "find",
-            "database_name": "command-monitoring-tests"
+            "command_name": "find"
           }
         },
         {
@@ -223,8 +220,7 @@
                 ]
               }
             },
-            "command_name": "getMore",
-            "database_name": "command-monitoring-tests"
+            "command_name": "getMore"
           }
         }
       ]
@@ -291,8 +287,7 @@
                 ]
               }
             },
-            "command_name": "find",
-            "database_name": "command-monitoring-tests"
+            "command_name": "find"
           }
         },
         {
@@ -325,8 +320,7 @@
                 ]
               }
             },
-            "command_name": "getMore",
-            "database_name": "command-monitoring-tests"
+            "command_name": "getMore"
           }
         },
         {
@@ -353,8 +347,7 @@
                 }
               ]
             },
-            "command_name": "killCursors",
-            "database_name": "command-monitoring-tests"
+            "command_name": "killCursors"
           }
         }
       ]
@@ -384,8 +377,7 @@
         },
         {
           "command_failed_event": {
-            "command_name": "find",
-            "database_name": "command-monitoring-tests"
+            "command_name": "find"
           }
         }
       ]
