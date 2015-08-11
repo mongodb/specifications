@@ -32,8 +32,7 @@ tests:
           database_name: *database_name
       -
         command_succeeded_event:
-          reply:
-            - { ok: 1.0, n: 1 }
+          reply: { ok: 1.0, n: 1 }
           command_name: "update"
   -
     description: "A failed update event"
