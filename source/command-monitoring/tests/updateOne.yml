@@ -59,5 +59,9 @@ tests:
           database_name: *database_name
       -
         command_succeeded_event:
-          reply: { ok: 1.0, n: 0 }
+          reply:
+            ok: 1.0
+            n: 0
+            writeErrors:
+              - { index: 0, code: "42", errmsg: "42" }
           command_name: "update"
