@@ -46,5 +46,6 @@ tests:
           command_name: "delete"
           database_name: *database_name
       -
-        command_failed_event:
+        command_succeeded_event:
+          reply: { ok: 1.0, n: 0 }
           command_name: "delete"
