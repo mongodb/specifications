@@ -62,47 +62,6 @@
           }
         }
       ]
-    },
-    {
-      "description": "A failed delete event",
-      "operation": {
-        "name": "deleteOne",
-        "arguments": {
-          "filter": {
-            "_id": {
-              "$nothing": 1
-            }
-          }
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "test",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": {
-                      "$nothing": 1
-                    }
-                  },
-                  "limit": 1
-                }
-              ],
-              "ordered": true
-            },
-            "command_name": "delete",
-            "database_name": "command-monitoring-tests"
-          }
-        },
-        {
-          "command_failed_event": {
-            "command_name": "delete",
-            "database_name": "command-monitoring-tests"
-          }
-        }
-      ]
     }
   ]
 }

@@ -73,58 +73,6 @@
           }
         }
       ]
-    },
-    {
-      "description": "A failed update event",
-      "operation": {
-        "name": "updateOne",
-        "arguments": {
-          "filter": {
-            "_id": {
-              "$gt": 1
-            }
-          },
-          "update": {
-            "$nothing": {
-              "x": 1
-            }
-          }
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "update": "test",
-              "ordered": true,
-              "updates": [
-                {
-                  "q": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  },
-                  "u": {
-                    "$nothing": {
-                      "x": 1
-                    }
-                  },
-                  "multi": false,
-                  "upsert": false
-                }
-              ]
-            },
-            "command_name": "update",
-            "database_name": "command-monitoring-tests"
-          }
-        },
-        {
-          "command_failed_event": {
-            "command_name": "update",
-            "database_name": "command-monitoring-tests"
-          }
-        }
-      ]
     }
   ]
 }

@@ -49,42 +49,6 @@
           }
         }
       ]
-    },
-    {
-      "description": "A failed insert event",
-      "operation": {
-        "name": "insertOne",
-        "arguments": {
-          "document": {
-            "_id": 1,
-            "x": 11
-          }
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "insert": "test",
-              "documents": [
-                {
-                  "_id": 1,
-                  "x": 11
-                }
-              ],
-              "ordered": true
-            },
-            "command_name": "insert",
-            "database_name": "command-monitoring-tests"
-          }
-        },
-        {
-          "command_failed_event": {
-            "command_name": "insert",
-            "database_name": "command-monitoring-tests"
-          }
-        }
-      ]
     }
   ]
 }
