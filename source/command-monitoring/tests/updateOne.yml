@@ -35,7 +35,7 @@ tests:
           reply: { ok: 1.0, n: 1 }
           command_name: "update"
   -
-    description: "A failed update event"
+    description: "A successful update one command with write errors"
     operation:
       name: "updateOne"
       arguments:

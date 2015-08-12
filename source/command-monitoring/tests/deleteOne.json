@@ -61,7 +61,7 @@
       ]
     },
     {
-      "description": "A failed delete event",
+      "description": "A successful delete one command with write errors",
       "operation": {
         "name": "deleteOne",
         "arguments": {
@@ -97,7 +97,7 @@
           "command_succeeded_event": {
             "reply": {
               "ok": 1.0,
-              "n": 1,
+              "n": 0,
               "writeErrors": [
                 {
                   "index": 0,
