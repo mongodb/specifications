@@ -20,7 +20,7 @@ Expectations
 Fake Placeholder Values
 ```````````````````````
 
-When an attribute in an expectation contains the value {{"42"}}, this is a fake
+When an attribute in an expectation contains the value {{"42"}}, {{42}} or {{""}}, this is a fake
 placeholder value indicating that a special case MUST be tested that could not be
 expressed in a YAML or JSON test. These cases are as follows:
 
@@ -33,8 +33,8 @@ that the values are equal to each other and greater than zero.
 Errors
 ^^^^^^
 
-For write errors, {{code}} values of {{"42"}} MUST assert that the value is present and
-greater than zero. {{errmsg}} values of {{"42"}} MUST assert that the value is not empty
+For write errors, {{code}} values of {{42}} MUST assert that the value is present and
+greater than zero. {{errmsg}} values of {{""}} MUST assert that the value is not empty
 (a string of length greater than 1).
 
 Additional Values
