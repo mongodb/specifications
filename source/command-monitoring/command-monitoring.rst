@@ -81,19 +81,22 @@ Guarantees
 
 The driver MUST guarantee that every ``CommandStartedEvent`` has either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``.
 
-
 Unacknowledged/Acknowledged Writes
 ----------------------------------
 
 For server versions that do not support write commands, the driver MUST treat an acknowledged write as a single command event, where the GLE command is ignored as a started event and the response to the GLE is treated as the reply in the ``CommandSucceededEvent``. Unacknowledged writes must provide a ``CommandSucceededEvent`` with a ``null`` reply.
 
+Succeeded or Failed
+-------------------
+
+Commands that executed on the server and return a status of ``{ ok: 1.0 }`` are considered
+successful commands and MUST fire a ``CommandSucceededEvent``. Commands that have write errors
+are included since the actual command did succeed, only writes failed.
 
 Error Handling
 --------------
 
 If an exception occurs while sending the operation to the server, the driver MUST generate a ``CommandFailedEvent`` with the exception or message and re-raise the exception.
-
-If the response from the server completes but contains an error, the driver MUST generate a ``CommandFailedEvent`` with the error or message from the server instead of a ``CommandSucceededEvent``. This includes ``{ ok: 0 }`` command responses and replies with query_failure flags.
 
 Upconversion
 ------------
