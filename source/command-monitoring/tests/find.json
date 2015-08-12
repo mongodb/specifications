@@ -51,7 +51,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
@@ -76,12 +76,35 @@
         "name": "find",
         "arguments": {
           "filter": {
-            "_id": 1
+            "_id": {
+              "$gt": 1
+            }
           },
           "sort": {
             "_id": 1
           },
-          "limit": 2
+          "limit": 2,
+          "skip": 2,
+          "modifiers": {
+            "$comment": "test",
+            "$hint": {
+              "_id": 1
+            },
+            "$max": {
+              "_id": 6
+            },
+            "$maxScan": 5000,
+            "$maxTimeMS": 6000,
+            "$min": {
+              "_id": 0
+            },
+            "$readPreference": {
+              "mode": "secondaryPreferred"
+            },
+            "$returnKey": false,
+            "$showDiskLoc": false,
+            "$snapshot": false
+          }
         }
       },
       "expectations": [
@@ -90,12 +113,33 @@
             "command": {
               "find": "test",
               "filter": {
-                "_id": 1
+                "_id": {
+                  "$gt": 1
+                }
               },
               "sort": {
                 "_id": 1
               },
-              "limit": 2
+              "limit": 2,
+              "skip": 2,
+              "comment": "test",
+              "hint": {
+                "_id": 1
+              },
+              "max": {
+                "_id": 6
+              },
+              "maxScan": 5000,
+              "maxTimeMS": 6000,
+              "min": {
+                "_id": 0
+              },
+              "readPreference": {
+                "mode": "secondaryPreferred"
+              },
+              "returnKey": false,
+              "showRecordId": false,
+              "snapshot": false
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
@@ -104,7 +148,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
@@ -112,8 +156,12 @@
                 "ns": "command-monitoring-tests.test",
                 "firstBatch": [
                   {
-                    "_id": 1,
-                    "x": 11
+                    "_id": 4,
+                    "x": 44
+                  },
+                  {
+                    "_id": 5,
+                    "x": 55
                   }
                 ]
               }
@@ -161,7 +209,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -202,7 +250,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
@@ -265,7 +313,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -306,7 +354,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -340,7 +388,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursorsUnknown": [
                 {
                   "$numberLong": "42"
