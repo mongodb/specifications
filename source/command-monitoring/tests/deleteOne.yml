@@ -51,5 +51,5 @@ tests:
             ok: 1.0
             n: 0
             writeErrors:
-              - { index: 0, code: "42", errmsg: "42" }
+              - { index: 0, code: 42, errmsg: "" }
           command_name: "delete"

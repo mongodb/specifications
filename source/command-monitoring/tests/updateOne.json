@@ -123,8 +123,8 @@
               "writeErrors": [
                 {
                   "index": 0,
-                  "code": "42",
-                  "errmsg": "42"
+                  "code": 42,
+                  "errmsg": ""
                 }
               ]
             },
