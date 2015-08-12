@@ -105,13 +105,6 @@ All legacy operations MUST be converted to their equivalent commands in the 3.2 
 ``command`` and ``reply`` fields. This includes OP_INSERT, OP_DELETE, OP_UPDATE, OP_QUERY, OP_GETMORE and
 OP_KILLCURSORS. Upconversion expectations are provided in the tests.
 
-Bulk Writes
------------
-
-This specification defines the monitoring of inidividual commands and in that repect MUST generate
-an event for each command a bulk write executes. Each of these commands, however, must be linked
-together via the same ``operationId``.
-
 ---
 API
 ---
