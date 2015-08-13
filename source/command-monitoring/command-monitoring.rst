@@ -115,10 +115,9 @@ together via the same ``operationId``.
 Implementation Notes
 --------------------
 
-The ``command`` attribute of ``CommandStartedEvent`` MUST be upconverted to the corresponding
-command for legacy wire protocol messages in order to ensure that the data in the events follows
-the same format across all server versions. The provided tests assert these conversions take
-place.
+Legacy wire protocol messages MUST be up-converted to the corresponding commands in order to ensure
+that the data in the events follows the same format across all server versions. The provided tests
+assert these conversions take place.
 
 .. list-table::
    :header-rows: 1
