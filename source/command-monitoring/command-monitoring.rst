@@ -112,6 +112,24 @@ This specification defines the monitoring of inidividual commands and in that re
 an event for each command a bulk write executes. Each of these commands, however, must be linked
 together via the same {{operationId}}.
 
+---------
+Rationale
+---------
+
+*1. Why does the specification treat all events as commands, even those that are not sent as such?*
+
+As a public facing API, subscribers to the events should need no knowledge of the MongoDB wire
+protocol or variations in messages depending on server versions. The core motivation behind the
+specification was to eliminate changes in our drivers' implementations breaking third party APM
+solutions. Providing a unified view of operations satisfies this requirement.
+
+*2. Why are commands with* ``{ ok: 1 }`` *treated as successful and* ``{ ok: 0 }`` *as failed?*
+
+The specification is consistent with what the server deems as a successful or failed command and
+is a contract that the monitoring reports this as so. This also allows for server changes around
+this behaviour in the future to require no change in the drivers to continue to be compliant.
+
+
 ---
 API
 ---
@@ -265,6 +283,7 @@ Ruby:
   # When the subscriber handles the events the log could show:
   # COMMAND.query 127.0.0.1:27017 STARTED: { $query: { name: 'testing' }}
   # COMMAND.query 127.0.0.1:27017 COMPLETED: { number_returned: 50 } (0.050s)
+
 
 -------
 Testing
