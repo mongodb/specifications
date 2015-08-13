@@ -110,7 +110,47 @@ Bulk Writes
 
 This specification defines the monitoring of inidividual commands and in that repect MUST generate
 an event for each command a bulk write executes. Each of these commands, however, must be linked
-together via the same {{operationId}}.
+together via the same ``operationId``.
+
+Implementation Notes
+--------------------
+
+The ``command`` attribute of ``CommandStartedEvent`` MUST be upconverted to the corresponding
+command for legacy wire protocol messages in order to ensure that the data in the events follows
+the same format across all server versions. The provided tests assert these conversions take
+place.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 50 50
+
+   * - Legacy Message
+     - Upconverted Command
+
+   * - ``OP_QUERY``
+     - find ``OP_COMMAND``
+
+   * - ``OP_QUERY`` with ``$explain``
+     - explain ``OP_COMMAND``
+
+   * - ``OP_QUERY`` to ``$cmd`` collection
+     - ``OP_COMMAND``
+
+   * - ``OP_GET_MORE``
+     - getMore ``OP_COMMAND``
+
+   * - ``OP_KILL_CURSORS``
+     - killCursors ``OP_COMMAND``
+
+   * - ``OP_INSERT``
+     - insert ``OP_COMMAND``
+
+   * - ``OP_UPDATE``
+     - update ``OP_COMMAND``
+
+   * - ``OP_DELETE``
+     - delete ``OP_COMMAND``
+
 
 ---
 API
