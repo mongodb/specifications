@@ -116,6 +116,17 @@ together via the same {{operationId}}.
 Rationale
 ---------
 
+The command listener API is responsible only for receiving and handling events sent from the lowest
+level of the driver, and is only about informing listeners about what commands are sent and what
+replies are received. As such, it would be innappropiate at this level for a driver to execute
+custom logic around particular commands to determine what failure or success means for a particular
+command. Implementators of the API are free to handle these events as they see fit, which may include
+code that futher interprets replies to specific commands based on the presence or absence of other
+fields in the reply beyond the ‘ok’ field.
+
+FAQ
+---
+
 *1. Why does the specification treat all events as commands, even those that are not sent as such?*
 
 As a public facing API, subscribers to the events should need no knowledge of the MongoDB wire
@@ -126,8 +137,8 @@ solutions. Providing a unified view of operations satisfies this requirement.
 *2. Why are commands with* ``{ ok: 1 }`` *treated as successful and* ``{ ok: 0 }`` *as failed?*
 
 The specification is consistent with what the server deems as a successful or failed command and
-is a contract that the monitoring reports this as so. This also allows for server changes around
-this behaviour in the future to require no change in the drivers to continue to be compliant.
+reports this as so. This also allows for server changes around this behaviour in the future to
+require no change in the drivers to continue to be compliant.
 
 
 ---
