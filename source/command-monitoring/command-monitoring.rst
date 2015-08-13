@@ -128,28 +128,28 @@ place.
      - Upconverted Command
 
    * - ``OP_QUERY``
-     - find ``OP_COMMAND``
+     - find command
 
    * - ``OP_QUERY`` with ``$explain``
-     - explain ``OP_COMMAND``
+     - explain command
 
    * - ``OP_QUERY`` to ``$cmd`` collection
-     - ``OP_COMMAND``
+     - command
 
    * - ``OP_GET_MORE``
-     - getMore ``OP_COMMAND``
+     - getMore command
 
    * - ``OP_KILL_CURSORS``
-     - killCursors ``OP_COMMAND``
+     - killCursors command
 
    * - ``OP_INSERT``
-     - insert ``OP_COMMAND``
+     - insert command
 
    * - ``OP_UPDATE``
-     - update ``OP_COMMAND``
+     - update command
 
    * - ``OP_DELETE``
-     - delete ``OP_COMMAND``
+     - delete command
 
 
 ---
