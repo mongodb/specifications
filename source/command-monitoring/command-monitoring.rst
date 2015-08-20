@@ -176,6 +176,28 @@ command. Implementators of the API are free to handle these events as they see f
 code that futher interprets replies to specific commands based on the presence or absence of other
 fields in the reply beyond the ‘ok’ field.
 
+--------
+Security
+--------
+
+Some commands and replies will contain sensitive data and in order to not risk the leaking of this
+data to external sources or logs their commands AND replies MUST be redacted from the events. The
+value MUST be replaced with an empty BSON document. The list is as follows:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 50
+
+   * - Command
+   * - ``authenticate``
+   * - ``saslStart``
+   * - ``saslContinue``
+   * - ``getnonce``
+   * - ``createUser``
+   * - ``updateUser``
+   * - ``copydbgetnonce``
+   * - ``copydbsaslstart``
+   * - ``copydb``
 
 ---
 API
