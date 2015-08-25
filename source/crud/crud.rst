@@ -177,6 +177,8 @@ Read
     /**
      * Enables writing to temporary files. When set to true, aggregation stages 
      * can write data to the _tmp subdirectory in the dbPath directory.
+     * The default is no value: the driver sends no "allowDiskUse" option to the
+     * server with the "aggregate" command.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -186,6 +188,8 @@ Read
      * The number of documents to return per batch. 
      *
      * For servers < 2.6, this option is ignored as aggregation cursors are not available.
+     * The default is no value: the driver sends no "batchSize" option to the server with
+     * the "aggregate" command, thus accepting the server default batch size.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -193,6 +197,8 @@ Read
 
     /**
      * The maximum amount of time to allow the query to run.
+     * The default is no value: the driver sends no "maxTimeMS" option to the
+     * server with the "aggregate" command.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -203,7 +209,8 @@ Read
      *
      * For servers < 2.6, this option is ignored as aggregation cursors are not available.
      * For servers >= 2.6, this option allows users to turn off cursors if necessary to aid in mongod/mongos upgrades.
-     * The default value is true.
+     * The default value is true: the driver sends "cursor: {}" to the server with the "aggregate" command
+     * by default.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */
@@ -214,14 +221,14 @@ Read
   class CountOptions {
 
     /**
-     * The index to use.
+     * The index to use. The default is no hint.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
     hint: Optional<(String | Document)>;
 
     /**
-     * The maximum number of documents to count.
+     * The maximum number of documents to count. The default is no limit.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
@@ -229,13 +236,14 @@ Read
 
     /**
      * The maximum amount of time to allow the query to run.
+     * The default is no maxTimeMS.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
     maxTimeMS: Optional<Int64>;
 
     /**
-     * The number of documents to skip before counting.
+     * The number of documents to skip before counting. The default is no skip.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
@@ -247,6 +255,7 @@ Read
 
     /**
      * The maximum amount of time to allow the query to run.
+     * The default is no maxTimeMS.
      *
      * @see http://docs.mongodb.org/manual/reference/command/distinct/
      */
@@ -287,7 +296,10 @@ Read
     /**
      * Get partial results from a mongos if some shards are down (instead of throwing an error).
      *
-     * The Partial OP_QUERY flag should default to false.
+     * The default in servers >= 3.2 is no value: no "allowPartialResults" option is sent with
+     * the "find" command.
+     *
+     * In servers < 3.2, the Partial OP_QUERY flag defaults to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -298,6 +310,8 @@ Read
      *
      * This is combined with limit to create the OP_QUERY numberToReturn value.
      *
+     * The default is no value: the driver accepts the server default batch size.
+     *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.batchSize/
      */ 
     batchSize: Optional<Int32>;
@@ -305,6 +319,7 @@ Read
     /**
      * Attaches a comment to the query. If $comment also exists
      * in the modifiers document, the comment field overwrites $comment.
+     * The default is no comment.
      *
      * @see http://docs.mongodb.org/manual/reference/operator/meta/comment/
      */ 
@@ -314,8 +329,11 @@ Read
      * Indicates the type of cursor to use. This value includes both
      * the tailable and awaitData options.
      *
-     * The AwaitData OP_QUERY flag and the Tailable OP_QUERY flag should default
-     * to false.
+     * The default in servers >= 3.2 is no value: no "awaitData" or "tailable"
+     * option is sent with the "find" command.
+     *
+     * In servers < 3.2, the AwaitData OP_QUERY flag and the Tailable OP_QUERY
+     * flag default to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -324,7 +342,9 @@ Read
     /**
      * The maximum number of documents to return.
      *
-     * this is combined with batchSize to create the OP_QUERY numberToReturn value.
+     * This is combined with batchSize to create the OP_QUERY numberToReturn value.
+     *
+     * The default is no limit.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.limit/
      */
@@ -333,6 +353,7 @@ Read
     /**
      * The maximum amount of time to allow the query to run. If $maxTimeMS also exists
      * in the modifiers document, the maxTimeMS field overwrites $maxTimeMS.
+     * The default is no maxTimeMS.
      *
      * @see http://docs.mongodb.org/manual/reference/operator/meta/maxTimeMS/
      */
@@ -340,6 +361,7 @@ Read
 
     /**
      * Meta-operators modifying the output or behavior of a query.
+     * The default is no modifers.
      *
      * @see http://docs.mongodb.org/manual/reference/operator/query-modifier/
      */
@@ -349,7 +371,10 @@ Read
      * The server normally times out idle cursors after an inactivity period (10 minutes) 
      * to prevent excess memory use. Set this option to prevent that.
      *
-     * The NoCursorTimeout OP_QUERY flag should default to false.
+     * The default in servers >= 3.2 is no value: no "noCursorTimeout" option is sent with
+     * the "find" command.
+     *
+     * In servers < 3.2, the NoCursorTimeout OP_QUERY flag defaults to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -358,7 +383,10 @@ Read
     /**
      * Internal replication use only - driver should not set
      *
-     * The OplogReplay OP_QUERY flag should default to false.
+     * The default in servers >= 3.2 is no value: no "oplogReplay" option is sent with
+     * the "find" command.
+     *
+     * In servers < 3.2, the OplogReplay OP_QUERY flag defaults to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
@@ -366,6 +394,7 @@ Read
 
     /** 
      * Limits the fields to return for all matching documents.
+     * The default is no projection.
      *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
      */
@@ -376,6 +405,9 @@ Read
      *
      * In servers < 3.2, this is a wire protocol parameter that defaults to 0.
      *
+     * The default in servers >= 3.2 is no skip: no "skip" option is sent with
+     * the "find" command.
+     *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.skip/
      */
     skip: Optional<Int32>;
@@ -383,6 +415,7 @@ Read
     /**
      * The order in which to return matching documents. If $orderby also exists
      * in the modifiers document, the sort field overwrites $orderby.
+     * The default is no sort.
      *
      * @see http://docs.mongodb.org/manual/reference/method/cursor.sort/
      */ 
