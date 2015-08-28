@@ -8,7 +8,7 @@ Driver CRUD API
 :Spec: 110
 :Title: Driver CRUD API
 :Authors: Craig Wilson
-:Advisors: Tyler Brock, Jeremy Mikola, Jeff Yemin
+:Advisors: Jeremy Mikola, Jeff Yemin
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
@@ -194,6 +194,18 @@ Read
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
     batchSize: Optional<Int32>;
+
+    /**
+     * If true, allows the write to opt-out of document level validation. This only applies
+     * when the $out stage is specified. If $out is not specified, this option should
+     * be ignored.
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
 
     /**
      * The maximum amount of time to allow the query to run.
@@ -485,7 +497,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/insert/
      * @throws WriteException
      */
-    insertOne(document: Document): InsertOneResult;
+    insertOne(document: Document, options: Optional<InsertOneOptions>): InsertOneResult;
 
     /**
      * Inserts the provided documents. If any documents are missing an identifier,
@@ -553,7 +565,31 @@ Basic
 
   }
 
+  class InsertOneOptions {
+
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
+  }
+
   class InsertManyOptions {
+
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
 
     /**
      * If true, when an insert fails, return without performing the remaining 
@@ -565,6 +601,16 @@ Basic
   }
 
   class UpdateOptions
+
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
@@ -594,6 +640,15 @@ Bulk Write Models
      */
     document: Document;
 
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
   }
 
   class DeleteOneModel implements WriteModel {
@@ -635,6 +690,16 @@ Bulk Write Models
     replacement: Document;
 
     /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
+    /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
@@ -660,6 +725,16 @@ Bulk Write Models
     update: Update;
 
     /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
+    /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
@@ -683,6 +758,16 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     update: Update;
+
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
@@ -1028,6 +1113,16 @@ Find And Modify
   class FindOneAndReplaceOptions {
     
     /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
+    /**
      * The maximum amount of time to allow the query to run.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
@@ -1067,6 +1162,16 @@ Find And Modify
   }
 
   class FindOneAndUpdateOptions {
+    
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. no 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
     
     /**
      * The maximum amount of time to allow the query to run.
