@@ -1153,6 +1153,7 @@ Related Terminology
 If a driver needs to refer to items in the following list, the below are the accepted forms of those terms and deviations from the Naming section are still permissible.
 
 * Read Preference: readPreference
+* Read Concern: readConcern
 * Write Concern: writeConcern
 
 
@@ -1169,6 +1170,11 @@ Q: Where is read preference?
   Read preference is about selecting a server with which to perform a read operation, such as a query, a count, or an aggregate. Since all operations defined in this specification are performed on a collection, it's uncommon that two different read operations on the same collection would use a different read preference, potentially getting out-of-sync results. As such, the most natural place to indicate read preference is on the client, the database, or the collection itself and not the operations within it.
 
   However, it might be that a driver needs to expose this selection filter to a user per operation for various reasons.  As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
+
+Q: Where is read concern?
+  Read concern is about indicating how reads are handled. Since all operations defined in this specification are performed on a collection, it's uncommon that two different read operations on the same collection would use a different read cocnern, potentially causing mismatched and out-of-sync data. As such, the most natural place to indicate read concern is on the client, the database, or the collection itself and not the operations within it.
+
+  However, it might be that a driver needs to expose read concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
 
 Q: Where is write concern?
