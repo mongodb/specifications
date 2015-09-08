@@ -200,7 +200,7 @@ Read
      * when the $out stage is specified. If $out is not specified, this option should
      * be ignored.
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -320,7 +320,7 @@ Read
     /**
      * The number of documents to return per batch.
      *
-     * This is combined with limit to create the OP_QUERY numberToReturn value.
+     * In servers < 3.2, this is combined with limit to create the OP_QUERY numberToReturn value.
      *
      * The default is no value: the driver accepts the server default batch size.
      *
@@ -354,7 +354,7 @@ Read
     /**
      * The maximum number of documents to return.
      *
-     * This is combined with batchSize to create the OP_QUERY numberToReturn value.
+     * In servers < 3.2, this is combined with batchSize to create the OP_QUERY numberToReturn value.
      *
      * The default is no limit.
      *
@@ -570,7 +570,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -584,7 +584,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -605,7 +605,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -643,7 +643,7 @@ Bulk Write Models
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -692,7 +692,7 @@ Bulk Write Models
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -727,7 +727,7 @@ Bulk Write Models
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -762,7 +762,7 @@ Bulk Write Models
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
+     * On servers >= 3.2, the default is to not send a value. No 
      * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
@@ -1277,7 +1277,7 @@ Q: Where is read preference?
   However, it might be that a driver needs to expose this selection filter to a user per operation for various reasons.  As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
 Q: Where is read concern?
-  Read concern is about indicating how reads are handled. Since all operations defined in this specification are performed on a collection, it's uncommon that two different read operations on the same collection would use a different read cocnern, potentially causing mismatched and out-of-sync data. As such, the most natural place to indicate read concern is on the client, the database, or the collection itself and not the operations within it.
+  Read concern is about indicating how reads are handled. Since all operations defined in this specification are performed on a collection, it's uncommon that two different read operations on the same collection would use a different read concern, potentially causing mismatched and out-of-sync data. As such, the most natural place to indicate read concern is on the client, the database, or the collection itself and not the operations within it.
 
   However, it might be that a driver needs to expose read concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
