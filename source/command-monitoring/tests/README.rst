@@ -40,9 +40,9 @@ greater than zero. {{errmsg}} values of {{""}} MUST assert that the value is not
 OK Values
 ^^^^^^^^^
 
-The server is inconsistent on whether the ok values returned are integers or doubles and the
-spec for simplicity specifies all values as doubles. Server ok values of integers MUST be
-converted in the tests to 32 bit integers for comparison.
+The server is inconsistent on whether the ok values returned are integers or doubles so
+for simplicity the tests specify all expected values as doubles. Server 'ok' values of
+integers MUST be converted to doubles for comparison with the expected values.
 
 Additional Values
 `````````````````
