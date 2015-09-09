@@ -11,7 +11,7 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: June 25, 2015
+:Last Modified: September 9, 2015
 
 .. contents::
 
@@ -85,6 +85,9 @@ Unacknowledged/Acknowledged Writes
 ----------------------------------
 
 For server versions that do not support write commands, the driver MUST treat an acknowledged write as a single command event, where the GLE command is ignored as a started event and the response to the GLE is treated as the reply in the ``CommandSucceededEvent``. Unacknowledged writes must provide a ``CommandSucceededEvent`` with a ``{ ok: 1 }`` reply.
+
+Write concerns MUST always be included in the published commands, even in cases where it is not
+actually sent to the server, such as legacy unacknowledged writes.
 
 Succeeded or Failed
 -------------------
