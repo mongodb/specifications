@@ -42,5 +42,5 @@ Additional Values
 
 The expected events provide the minimum data that is required and can be tested. It is
 possible for more values to be present in the events, such as extra data provided when
-using sharded clusters or ``nModified`` fields in updates. The driver MUST assert the
+using sharded clusters or ``nModified`` field in updates. The driver MUST assert the
 expected data is present and also MUST allow for additional data to be present as well.
