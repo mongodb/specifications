@@ -7,6 +7,7 @@
   ],
   "collection_name": "test",
   "database_name": "command-monitoring-tests",
+  "read_preference": "primary",
   "tests": [
     {
       "description": "A successful command",
@@ -15,6 +16,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "modifiers": {
+            "$readPreference": {
+              "mode": "primary"
+            }
           }
         }
       },
@@ -49,6 +55,11 @@
         "arguments": {
           "filter": {
             "$or": true
+          },
+          "modifiers": {
+            "$readPreference": {
+              "mode": "primary"
+            }
           }
         }
       },
@@ -71,6 +82,45 @@
           }
         }
       ]
-    }
+    },
+    {
+      "description": "A successful command with a non-primary read preference",
+      "operation": {
+        "name": "count",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          },
+          "modifiers": {
+            "$readPreference": {
+              "mode": "primaryPreferred"
+            }
+          }
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "test",
+              "query": {
+                "_id": 1
+              }
+            },
+            "command_name": "count",
+            "database_name": "command-monitoring-tests"
+          }
+        },
+        {
+          "command_succeeded_event": {
+            "reply": {
+              "ok": 1.0,
+              "n": 1
+            },
+            "command_name": "count"
+          }
+        }
+      ]
+    },
   ]
 }
