@@ -86,8 +86,7 @@ Unacknowledged/Acknowledged Writes
 
 For server versions that do not support write commands, the driver MUST treat an acknowledged write as a single command event, where the GLE command is ignored as a started event and the response to the GLE is treated as the reply in the ``CommandSucceededEvent``. Unacknowledged writes must provide a ``CommandSucceededEvent`` with a ``{ ok: 1 }`` reply.
 
-Write concerns MUST always be included in the published commands, even in cases where it is not
-actually sent to the server, such as legacy unacknowledged writes.
+Write concerns MUST always be present in the started command if not the default, and in cases where the write concern is the default it is not required.
 
 Succeeded or Failed
 -------------------
