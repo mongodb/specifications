@@ -3,7 +3,6 @@ data:
 
 collection_name: &collection_name "test"
 database_name: &database_name "command-monitoring-tests"
-read_preference: &read_preference "primary"
 
 tests:
   -
@@ -12,9 +11,6 @@ tests:
       name: "count"
       arguments:
         filter: { _id: 1 }
-        modifiers:
-          $readPreference:
-            mode: *read_preference
     expectations:
       -
         command_started_event:
@@ -33,9 +29,6 @@ tests:
       name: "count"
       arguments:
         filter: { $or: true }
-        modifiers:
-          $readPreference:
-            mode: *read_preference
     expectations:
       -
         command_started_event:
@@ -53,8 +46,7 @@ tests:
       name: "count"
       arguments:
         filter: { _id: 1 }
-        modifiers:
-          $readPreference: { mode: "primaryPreferred" }
+      read_preference: { mode: "primaryPreferred" }
     expectations:
       -
         command_started_event:

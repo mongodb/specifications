@@ -7,7 +7,6 @@
   ],
   "collection_name": "test",
   "database_name": "command-monitoring-tests",
-  "read_preference": "primary",
   "tests": [
     {
       "description": "A successful command",
@@ -16,11 +15,6 @@
         "arguments": {
           "filter": {
             "_id": 1
-          },
-          "modifiers": {
-            "$readPreference": {
-              "mode": "primary"
-            }
           }
         }
       },
@@ -55,11 +49,6 @@
         "arguments": {
           "filter": {
             "$or": true
-          },
-          "modifiers": {
-            "$readPreference": {
-              "mode": "primary"
-            }
           }
         }
       },
@@ -90,12 +79,10 @@
         "arguments": {
           "filter": {
             "_id": 1
-          },
-          "modifiers": {
-            "$readPreference": {
-              "mode": "primaryPreferred"
-            }
           }
+        },
+        "read_preference": {
+          "mode": "primaryPreferred"
         }
       },
       "expectations": [
