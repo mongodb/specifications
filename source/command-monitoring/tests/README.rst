@@ -37,6 +37,13 @@ For write errors, {{code}} values of {{42}} MUST assert that the value is presen
 greater than zero. {{errmsg}} values of {{""}} MUST assert that the value is not empty
 (a string of length greater than 1).
 
+OK Values
+^^^^^^^^^
+
+The server is inconsistent on whether the ok values returned are integers or doubles so
+for simplicity the tests specify all expected values as doubles. Server 'ok' values of
+integers MUST be converted to doubles for comparison with the expected values.
+
 Additional Values
 `````````````````
 
