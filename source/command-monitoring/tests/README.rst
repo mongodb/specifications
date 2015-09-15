@@ -14,6 +14,12 @@ Testing
 
 Tests are provided in YML and JSON format to assert proper upconversion of commands.
 
+Data
+----
+
+The {{data}} at the beginning of each test file is the data that should exist in the
+collection under test before each test run.
+
 Expectations
 ------------
 
