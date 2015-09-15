@@ -152,6 +152,13 @@ assert these conversions take place.
    * - ``OP_DELETE``
      - delete command
 
+Read Preference
+^^^^^^^^^^^^^^^
+
+In cases where queries or commands are embedded in a ``$query`` parameter when a read preference
+is provided, they MUST be unwrapped and the value of the ``$query`` attribute becomes the
+``filter`` or the command in the started event. The read preference will subsequently be dropped
+as it is considered metadata and metadata is not currently provided in the command events.
 
 ---------
 Rationale
