@@ -197,11 +197,10 @@ Read
 
     /**
      * If true, allows the write to opt-out of document level validation. This only applies
-     * when the $out stage is specified. If $out is not specified, this option should
-     * be ignored.
+     * when the $out stage is specified.
      * 
      * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "aggregate" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -606,7 +605,7 @@ Basic
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "update" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -693,7 +692,7 @@ Bulk Write Models
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "update" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -728,7 +727,7 @@ Bulk Write Models
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "update" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -763,7 +762,7 @@ Bulk Write Models
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "update" command.
      *
      * On servers < 3.2, this option is ignored.
      */
