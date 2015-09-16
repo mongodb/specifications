@@ -75,7 +75,7 @@
       "operation": {
         "name": "find",
         "read_preference": {
-          "mode": "secondaryPreferred"
+          "mode": "primaryPreferred"
         },
         "arguments": {
           "filter": {
@@ -86,7 +86,6 @@
           "sort": {
             "_id": 1
           },
-          "limit": 2,
           "skip": 2,
           "modifiers": {
             "$comment": "test",
@@ -120,7 +119,6 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 2,
               "skip": 2,
               "comment": "test",
               "hint": {
