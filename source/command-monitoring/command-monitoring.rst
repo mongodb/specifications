@@ -368,3 +368,11 @@ Testing
 -------
 
 See the README in the test directory for requirements and guidance.
+
+
+Changelog
+=========
+
+*16 September 2015*:
+  - Removed {{limit}} from find test with options to support 3.2.
+  - Changed find test read preference to {{primaryPreferred}}.
