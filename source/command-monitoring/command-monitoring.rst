@@ -11,7 +11,7 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: September 9, 2015
+:Last Modified: September 16, 2015
 
 .. contents::
 
@@ -368,3 +368,11 @@ Testing
 -------
 
 See the README in the test directory for requirements and guidance.
+
+
+Changelog
+=========
+
+16 SEP 2015:
+  - Removed ``limit`` from find test with options to support 3.2.
+  - Changed find test read preference to ``primaryPreferred``.
