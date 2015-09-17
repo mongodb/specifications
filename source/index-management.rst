@@ -664,8 +664,8 @@ Common API Components
     bucketSize: Int32;
 
     /**
-     * Specifies the index to be a partial index and to only index the documents matching the
-     * provided filter.
+     * Optionally specifies a filter for use in a partial index. Only documents that match the
+     * filter expression are included in the index.
      */
     partialFilterExpression: Document;
   }
