@@ -11,7 +11,7 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Apr. 23, 2015
+:Last Modified: Sep. 17, 2015
 
 .. contents::
 
@@ -619,7 +619,7 @@ Common API Components
     languageOverride: String;
 
     /**
-     * Optionally provideds the text index version number.
+     * Optionally provides the text index version number.
      *
      * MongoDB 2.4 can only support version 1.
      *
@@ -662,6 +662,12 @@ Common API Components
      * in a geo haystack index.
      */
     bucketSize: Int32;
+
+    /**
+     * Specifies the index to be a partial index and to only index the documents matching the
+     * provided filter.
+     */
+    partialFilterExpression: Document;
   }
 
 
@@ -670,3 +676,12 @@ Backwards Compatibilty
 ----------------------
 
 This specification makes no attempts to be backwards compatible as the target drivers to implement this spec are all next generation.
+
+
+---------
+Changelog
+---------
+
+17 SEP 2015:
+  - Added ``partialFilterExpression`` attribute to ``IndexOptions`` in order to support partial indexes.
+  - Fixed "provides" typo.
