@@ -105,11 +105,11 @@ API
     /**
      * Returns the previous topology description.
      */
-    previousDescription: ServerDescription;
+    previousDescription: TopologyDescription;
 
     /**
      * Returns the new topology description.
      */
-    newDescription: ServerDescription;
+    newDescription: TopologyDescription;
   }
 
