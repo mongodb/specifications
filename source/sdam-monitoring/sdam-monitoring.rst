@@ -36,10 +36,10 @@ Terms
 -----
 
 ServerDescription
-  The term ``ServerDescription`` refers to the implementation in the driver's language of a server description. See: `SDAM Specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#id24>`_.
+  The term ``ServerDescription`` refers to the implementation in the driver's language of a server description. See: `SDAM Specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#id24>`_. The driver is NOT REQUIRED to use this name.
 
 TopologyDescription
-  The term ``TopologyDescription`` refers to the implementation in the driver's language of a topology description. See: `SDAM Specification 2119 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`_.
+  The term ``TopologyDescription`` refers to the implementation in the driver's language of a topology description. See: `SDAM Specification 2119 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#topologydescription>`_. The driver is NOT REQUIRED to use this name.
 
 
 --------
