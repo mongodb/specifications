@@ -29,7 +29,9 @@ Definitions
 Meta
 ----
 
-The keywords "MUST", “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>_.
+The keywords "MUST", “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in `RFC 2119`_.
+
+.. _RFC 2119: https://www.ietf.org/rfc/rfc2119.txt
 
 Terms
 -----
@@ -336,9 +338,9 @@ If the **slaveOk** flag was set on the **find** command it MUST be set on subseq
 
 More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec.
 
+`Passing a Read Preference`_
 
-
-[https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos](https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos)
+.. _Passing a Read Preference: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
 
 Behavior of Limit, skip and batchSize
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
