@@ -43,10 +43,16 @@ Document
 
 Command
 ^^^^^^^
+
+::
+
   A BSON document containing the fields making up a MongoDB server command.
 
 Wire Protocol
 ^^^^^^^^^^^^^
+
+::
+
   The binary protocol used to talk with MongoDB over a socket. It’s made up by the OP_QUERY, OP_GET_MORE, OP_KILL_CURSORS, OP_INSERT, OP_UPDATE and OP_DELETE.
 
 Guidance
@@ -57,7 +63,7 @@ Documentation
 
 The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
 
-The CRUD API MUST be implemented using the find, getMore and optionally killCursors commands if** **the **isMaster** command returns **maxWireVersion >= ****4**.
+The CRUD API MUST be implemented using the find, getMore and optionally killCursors commands if the **isMaster** command returns **maxWireVersion >= 4**.
 
 Commands
 ========
@@ -97,7 +103,7 @@ The **find** command replaces the query functionality of the OP_QUERY wire proto
 
 The accepted parameters are described in the table below.  Parameters marked "Req" are required by the server and MUST be included in the command.  Parameters marked "Def" define the default values assumed by the server if the parameter is omitted].
 
-.. list-table:: Frozen Delights!
+.. list-table:: Find command parameters
    :widths: 15 15 15 15 15 30
    :header-rows: 1
 
@@ -299,7 +305,7 @@ The find command **does not support querying on system collections**, so if driv
 
 Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if **ismaster.maxWireVersion >= 4** or higher.
 
-.. list-table:: Frozen Delights!
+.. list-table:: Special Collection Names
    :widths: 15 30
    :header-rows: 1
 
@@ -366,7 +372,7 @@ Mapping OP_QUERY behavior to the find command limit and batchSize fields
 
 The way that limit, batchSize and singleBatch are defined for the find command differs from how these were specified in OP_QUERY and the CRUD spec.  The following  mappings from legacy definitions MUST be performed for the find command.
 
-.. list-table:: Frozen Delights!
+.. list-table:: Limit and batchSize
    :widths: 15 15 30
    :header-rows: 1
 
@@ -446,7 +452,7 @@ The **getMore** command replaces the **OP_GET_MORE** wire protocol message. The 
 
 The accepted parameters are described in the table below.
 
-.. list-table:: Frozen Delights!
+.. list-table:: getMore command parameters
    :widths: 15 15 15 30
    :header-rows: 1
 
@@ -507,7 +513,7 @@ The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol messa
 
 The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be slave_ok=True when sent to a secondary.
 
-.. list-table:: Frozen Delights!
+.. list-table:: killCursors command parameters
    :widths: 15 15 15 30
    :header-rows: 1
 
@@ -624,7 +630,7 @@ The **find** and **getMore** commands will report errors using the standard mech
       "code" : 2
     }
 
-Like other commands, the find and getMore commands will not use the OP_REPLY response flags[ documented here](http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply).
+Like other commands, the find and getMore commands will not use the OP_REPLY response flags `documented here <http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply>`
 
 FAQ
 ===
@@ -639,7 +645,7 @@ Explain command
 
 There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found at.
 
-[http://docs.mongodb.org/manual/reference/command/explain/](http://docs.mongodb.org/manual/reference/command/explain/)
+`Explain command reference <http://docs.mongodb.org/manual/reference/command/explain/>`
 
 ReadPreference and Mongos
 -------------------------
@@ -654,4 +660,4 @@ This format is general for all commands when executing against a Mongos proxy.
 
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification.
 
-[https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos](https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos)
+`Server Selection Specification <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos>`
