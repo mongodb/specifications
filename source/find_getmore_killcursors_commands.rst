@@ -113,241 +113,168 @@ The accepted parameters are described in the table below.  Parameters marked "Re
      - String
      -
      - Its argument MUST be a string specifying the name of the collection
+   * - filter
+     - X
+     -
+     - Doc.
+     - filter
+     - The query predicate.
+   * - sort
+     -
+     -
+     - Doc.
+     - FindOptions.sort
+     - If specified, then the result set will be sorted accordingly. The document is in expected to be in ordered form.
+   * - projection
+     -
+     -
+     - Doc.
+     - FindOptions.projection
+     - If provided it specifies the inclusion or exclusion of fields in the returned documents.
+   * - hint
+     -
+     -
+     - Doc.
+       String
+     - modifiers.$hint
+     - If specified, then the query system will only consider plans using the hinted index.
 
+       If the driver provides a document, it takes the following format
 
+       { field1: <-1/1>, ... fieldN: <-1/1> }
 
+       If the driver provides a string, it is the name of the index to use as the hint.  For an index specification {a: 1} this might take the form of the string a_1.
+   * - skip
+     -
+     - 0
+     - int64
+     - FindOptions.skip
+     - Specifies the starting point for the returned documents.
+   * - limit
+     -
+     -
+     - int64
+     - FindOptions.limit
+     - A limit of 0 has the same meaning as the absence of a limit.
+   * - batchSize
+     -
+     -
+     - int64
+     - FindOptions.batchSize
+     - batchSize specifies the maximum number of documents returned in a find or getMore command.
+   * - singleBatch
+     -
+     - false
+     - Bool
+     -
+     - If true, then the server will return a single batch up to the maximum server message size, and then close the ClientCursor. The client cannot issue any OP_GET_MORE messages or getMore commands.
+   * - comment
+     -
+     -
+     - String
+     - FindOptions.comment
+     - The comment meta-operator makes it possible to attach a comment to a query.
+   * - maxScan
+     -
+     -
+     - Int32 >= 0
+     - modifiers.$maxScan
+     - Constrains the query to only scan the specified number of documents when fulfilling the query.
+   * - maxTimeMS
+     -
+     -
+     - Int32 >= 0
+     - FindOptions.maxTimeMS
+     - Specifies a cumulative time limit in milliseconds for processing operations on the cursor
+   * - max
+     -
+     -
+     - Doc.
+     - modifiers.$max
+     - Specify a max value to specify the exclusive upper bound for a specific index in order to constrain the results of find(). The max specifies the upper bound for all keys of a specific index in order.
 
-<table>
-  <tr>
-    <td>Parameter</td>
-    <td>Req</td>
-    <td>Def.</td>
-    <td>Type</td>
-    <td>CRUD API Mapping</td>
-    <td>Description</td>
-  </tr>
-  <tr>
-    <td>find</td>
-    <td>X</td>
-    <td></td>
-    <td>String</td>
-    <td></td>
-    <td>Its argument MUST be a string specifying the name of the collection</td>
-  </tr>
-  <tr>
-    <td>filter</td>
-    <td>X</td>
-    <td></td>
-    <td>Doc.</td>
-    <td>filter</td>
-    <td>The query predicate.</td>
-  </tr>
-  <tr>
-    <td>sort</td>
-    <td></td>
-    <td></td>
-    <td>Doc.</td>
-    <td>FindOptions.sort</td>
-    <td>If specified, then the result set will be sorted accordingly. The document is in expected to be in ordered form.</td>
-  </tr>
-  <tr>
-    <td>projection</td>
-    <td></td>
-    <td></td>
-    <td>Doc.</td>
-    <td>FindOptions.projection</td>
-    <td>If provided it specifies the inclusion or exclusion of fields in the returned documents.</td>
-  </tr>
-  <tr>
-    <td>hint</td>
-    <td></td>
-    <td></td>
-    <td>Doc.
-String</td>
-    <td>modifiers.$hint</td>
-    <td>If specified, then the query system will only consider plans using the hinted index.
+       The specified document takes the form of
 
-If the driver provides a document, it takes the following format
+       { field1: <max value>, ... fieldN: <max valueN> }
+   * - min
+     -
+     -
+     - Doc.
+     - modifiers.$min
+     - Specify a min value to specify the inclusive lower bound for a specific index in order to constrain the results of find(). The min specifies the lower bound for all keys of a specific index in order.
 
-{ field1: <-1/1>, ... fieldN: <-1/1> }
+       The specified document takes the form of
 
-If the driver provides a string, it is the name of the index to use as the hint.  For an index specification {a: 1} this might take the form of the string a_1.</td>
-  </tr>
-  <tr>
-    <td>skip</td>
-    <td></td>
-    <td>0</td>
-    <td>int64
->= 0</td>
-    <td>FindOptions.skip</td>
-    <td>Specifies the starting point for the returned documents.</td>
-  </tr>
-  <tr>
-    <td>limit</td>
-    <td></td>
-    <td></td>
-    <td>int64
-> 0</td>
-    <td>FindOptions.limit</td>
-    <td>A limit of 0 has the same meaning as the absence of a limit.</td>
-  </tr>
-  <tr>
-    <td>batchSize</td>
-    <td></td>
-    <td></td>
-    <td>int64
->= 0</td>
-    <td>FindOptions.batchSize</td>
-    <td>batchSize specifies the maximum number of documents returned in a find or getMore command.</td>
-  </tr>
-  <tr>
-    <td>singleBatch</td>
-    <td></td>
-    <td>false</td>
-    <td>Bool</td>
-    <td></td>
-    <td>If true, then the server will return a single batch up to the maximum server message size, and then close the ClientCursor. The client cannot issue any OP_GET_MORE messages or getMore commands.</td>
-  </tr>
-  <tr>
-    <td>comment</td>
-    <td></td>
-    <td></td>
-    <td>String</td>
-    <td>FindOptions.comment</td>
-    <td>The comment meta-operator makes it possible to attach a comment to a query.</td>
-  </tr>
-  <tr>
-    <td>maxScan</td>
-    <td></td>
-    <td></td>
-    <td>Int32
->= 0</td>
-    <td>modifiers.$maxScan</td>
-    <td>Constrains the query to only scan the specified number of documents when fulfilling the query.</td>
-  </tr>
-  <tr>
-    <td>maxTimeMS</td>
-    <td></td>
-    <td></td>
-    <td>Int32
->= 0</td>
-    <td>FindOptions.maxTimeMS</td>
-    <td>Specifies a cumulative time limit in milliseconds for processing operations on the cursor</td>
-  </tr>
-  <tr>
-    <td>max</td>
-    <td></td>
-    <td></td>
-    <td>Doc.</td>
-    <td>modifiers.$max</td>
-    <td>Specify a max value to specify the exclusive upper bound for a specific index in order to constrain the results of find(). The max specifies the upper bound for all keys of a specific index in order.
+       { field1: <min value>, ... fieldN: <min valueN> }
+   * - returnKey
+     -
+     -
+     - Bool
+     - modifiers.$returnKey
+     - Only return the index field or fields for the results of the query. If returnKey is set to true and the query does not use an index to perform the read operation, the returned documents will not contain any fields.
+   * - showRecordId
+     -
+     -
+     - Bool
+     - modifiers.$showDiskLoc
+     - The showRecordId field returns the internal MongoDB record id for each document returned by the query.
+   * - snapshot
+     -
+     -
+     - Bool
+     - modifiers.$snapshot
+     - The snapshot operator prevents the cursor from returning a document more than once because an intervening write operation.
+   * - tailable
+     -
+     -
+     - Bool
+     - Set if FindOptions.cursorType is either CursorType.TAILABLE or CursorType.TAILABLE_AWAIT
+     - Specify that find command MUST return a tailable cursor.
 
-The specified document takes the form of
+       Can only only be used if the find command is operating over a capped collections.
+   * - oplogReplay
+     -
+     -
+     - Bool
+     - FindOptions.oplogReply
+     - Internal replication use only.
+   * - noCursorTimeout
+     -
+     -
+     - Bool
+     - FindOptions.noCursorTimeout
+     - The server normally times out idle cursors after an inactivity period (10 minutes) to prevent excess memory use. Set this option to prevent that.
+   * - awaitData
+     -
+     -
+     - Bool
+     - Set if FindOptions.cursorType is CursorType.TAILABLE_AWAIT
+     - If True awaitData MUST have tailable. maxTimeMS on getMore can be used to control the amount of time the cursor waits for new documents before returning an empty result.
+   * - allowPartialResults
+     -
+     -
+     - Bool
+     - FindOptions.allowPartialResults
+     - Get partial results from a mongos if some shards are down (instead of throwing an error).
 
-{ field1: <max value>, ... fieldN: <max valueN> }</td>
-  </tr>
-  <tr>
-    <td>min</td>
-    <td></td>
-    <td></td>
-    <td>Doc.</td>
-    <td>modifiers.$min</td>
-    <td>Specify a min value to specify the inclusive lower bound for a specific index in order to constrain the results of find(). The min specifies the lower bound for all keys of a specific index in order.
+       Drivers MUST NOT send this field if the topology type is not 'Sharded'
+   * - readConcern
+     -
+     -
+     - Doc
+     - N/A
 
-The specified document takes the form of
+       MAY be set on CRUD specification (see readConcern specification for details)
+     - Allows driver to specify if the query should be performed against a specific snapshot view of the documents in a collection. (N.B. this is not the same as the "snapshot" option, above.)
 
-{ field1: <min value>, ... fieldN: <min valueN> }</td>
-  </tr>
-  <tr>
-    <td>returnKey</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>modifiers.$returnKey</td>
-    <td>Only return the index field or fields for the results of the query. If returnKey is set to true and the query does not use an index to perform the read operation, the returned documents will not contain any fields.</td>
-  </tr>
-  <tr>
-    <td>showRecordId</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>modifiers.$showDiskLoc</td>
-    <td>The showRecordId field returns the internal MongoDB record id for each document returned by the query.</td>
-  </tr>
-  <tr>
-    <td>snapshot</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>modifiers.$snapshot</td>
-    <td>The snapshot operator prevents the cursor from returning a document more than once because an intervening write operation.</td>
-  </tr>
-  <tr>
-    <td>tailable</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>Set if  FindOptions.cursorType is either CursorType.TAILABLE or CursorType.TAILABLE_AWAIT</td>
-    <td>Specify that find command MUST return a tailable cursor.
+       The readConcern option takes the following document specification.
+       {
+         level: "[majority|local]",
+       }
 
-Can only only be used if the find command is operating over a capped collections.</td>
-  </tr>
-  <tr>
-    <td>oplogReplay</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>FindOptions.oplogReply</td>
-    <td>Internal replication use only.</td>
-  </tr>
-  <tr>
-    <td>noCursorTimeout</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>FindOptions.noCursorTimeout</td>
-    <td>The server normally times out idle cursors after an inactivity period (10 minutes) to prevent excess memory use. Set this option to prevent that.</td>
-  </tr>
-  <tr>
-    <td>awaitData</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>Set if  FindOptions.cursorType is CursorType.TAILABLE_AWAIT</td>
-    <td>If True awaitData MUST have tailable. maxTimeMS on getMore can be used to control the amount of time the cursor waits for new documents before returning an empty result.</td>
-  </tr>
-  <tr>
-    <td>allowPartialResults</td>
-    <td></td>
-    <td></td>
-    <td>Bool</td>
-    <td>FindOptions.allowPartialResults</td>
-    <td>Get partial results from a mongos if some shards are down (instead of throwing an error).
-
-Drivers MUST NOT send this field if the topology type is not 'Sharded'</td>
-  </tr>
-  <tr>
-    <td>readConcern</td>
-    <td></td>
-    <td></td>
-    <td>Doc</td>
-    <td>N/A
-
-MAY be set on CRUD specification (see readConcern specification for details)
-
-</td>
-    <td>Allows driver to specify if the query should be performed against a specific snapshot view of the documents in a collection. (N.B. this is not the same as the "snapshot" option, above.)
-
-The readConcern option takes the following document specification.
-{
-  level: "[majority|local]",
-}
-
-level: “local” is the default, if no level is explicitly specified.
-level: “local” means to do a read with no snapshot; this is the behavior of reads in 3.0 and prior versions of MongoDB.
-level: “majority” means to do a read from the latest committed snapshot known to the server  (which could be stale).</td>
-  </tr>
-</table>
+       level: “local” is the default, if no level is explicitly specified.
+       level: “local” means to do a read with no snapshot; this is the behavior of reads in 3.0 and prior versions of MongoDB.
+       level: “majority” means to do a read from the latest committed snapshot known to the server  (which could be stale).
 
 
 For a successful command, the document returned from the server has the following format:
