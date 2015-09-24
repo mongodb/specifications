@@ -437,7 +437,9 @@ application will write the contents of the file. As the application writes the
 contents to the returned Stream, the contents are uploaded as chunks in the chunks
 collection. When the application signals it is done writing the contents of the
 file by calling close (or its equivalent) on the returned Stream, a files collection
-document is created in the files collection.
+document is created in the files collection. Once the Stream has been closed (and the
+files collection document has been created) a driver MUST NOT allow further writes
+to the upload Stream.
 
 The driver MUST make the Id of the new file available to the caller. Typically
 a driver SHOULD make the Id available as a property named Id on the 
