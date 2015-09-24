@@ -355,17 +355,21 @@ Below are are some examples of using **limit**, **skip** and **batchSize**.
 
 We have 100 documents in the collection **t**. We execute the following **find** command in the shell.
 
-var b = db.runCommand({find:"t", limit:20, batchSize:10});
+.. code:: javascript
 
-db.runCommand({getMore:b.cursor.id, collection:"t", batchSize:20});
+    var b = db.runCommand({find:"t", limit:20, batchSize:10});
+
+    db.runCommand({getMore:b.cursor.id, collection:"t", batchSize:20});
 
 The **find** command executes and returns the first 10 results. The **getMore** command returns the final 10 results reaching the **limit** of 20 documents.
 
 The **skip** option works in the same way as the current **OP_QUERY** starting the cursor after skipping **n** number of documents of the query.
 
-var b = db.runCommand({find:"t", limit:20, batchSize:10, skip:85});
+.. code:: javascript
 
-db.runCommand({getMore:b.cursor.id, collection:"t", batchSize:20});
+    var b = db.runCommand({find:"t", limit:20, batchSize:10, skip:85});
+
+    db.runCommand({getMore:b.cursor.id, collection:"t", batchSize:20});
 
 The **find** command returns the documents 86-95 and the **getMore** returns the last 5 documents.
 
@@ -565,8 +569,6 @@ Difference from 3.0 OP_KILL_CURSORS
 
 One of the differences with the new **killCursors** command compared to the **OP_KILL_CURSORS** wire protocol message is that the **killCursors** command returns a response while the **OP_KILL_CURSORS** wire protocol does not.
 
-OP_REPLY Notes
-
 The **OP_REPLY** message has the following general structure.
 
 .. code:: javascript
@@ -649,7 +651,7 @@ Explain command
 
 There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found at.
 
-`Explain command reference`_ 
+`Explain command reference`_
 
 .. _Explain command reference: http://docs.mongodb.org/manual/reference/command/explain/
 
@@ -666,6 +668,6 @@ This format is general for all commands when executing against a Mongos proxy.
 
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification.
 
-`Server Selection Specification`_ 
+`Server Selection Specification`_
 
 .. _Server Selection Specification: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
