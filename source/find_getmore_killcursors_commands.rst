@@ -16,6 +16,8 @@ Find, getMore and killCursors commands.
 :Minimum Server Version: 3.2
 :Last Modified: September 24, 2015
 
+.. contents::
+
 Abstract
 ========
 
@@ -279,25 +281,18 @@ The accepted parameters are described in the table below.  Parameters marked "Re
 
 For a successful command, the document returned from the server has the following format:
 
-{
+.. code:: javascript
 
-  "cursor": {
-
-    "id": <int64>,
-
-    "ns": <string>,
-
-    "firstBatch": [
-
-      ...
-
-]
-
-  },
-
-  "ok": 1
-
-  }
+    {
+      "cursor": {
+        "id": <int64>,
+        "ns": <string>,
+        "firstBatch": [
+          ...
+        ]
+      },
+      "ok": 1
+    }
 
 Special Collection names
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -306,29 +301,20 @@ The find command **does not support querying on system collections**, so if driv
 
 Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if **ismaster.maxWireVersion >= 4** or higher.
 
-<table>
-  <tr>
-    <td>Special collection name</td>
-    <td>Replacement Command</td>
-  </tr>
-  <tr>
-    <td>$cmd.sys.inprog</td>
-    <td>currentOp</td>
-  </tr>
-  <tr>
-    <td>$cmd.sys.unlock</td>
-    <td>fsyncUnlock</td>
-  </tr>
-  <tr>
-    <td><database>.system.indexes</td>
-    <td>listIndexes</td>
-  </tr>
-  <tr>
-    <td><database>.system.namespaces</td>
-    <td>listCollections</td>
-  </tr>
-</table>
+.. list-table:: Frozen Delights!
+   :widths: 15 30
+   :header-rows: 1
 
+   * - Special collection name
+     - Replacement Command
+   * - $cmd.sys.inprog
+     - currentOp
+   * - $cmd.sys.unlock
+     - fsyncUnlock
+   * - <database>.system.indexes
+     - listIndexes
+   * - <database>.system.namespaces
+     - listCollections
 
 Exhaust
 ^^^^^^^
@@ -382,59 +368,43 @@ Mapping OP_QUERY behavior to the find command limit and batchSize fields
 
 The way that limit, batchSize and singleBatch are defined for the find command differs from how these were specified in OP_QUERY and the CRUD spec.  The following  mappings from legacy definitions MUST be performed for the find command.
 
-<table>
-  <tr>
-    <td>Value</td>
-    <td>Translates to</td>
-    <td>Description</td>
-  </tr>
-  <tr>
-    <td>limit < 0</td>
-    <td>limit = Math.abs(limit)
-singleBatch = true</td>
-    <td>Negative values for limit is not allowed</td>
-  </tr>
-  <tr>
-    <td>limit == 0</td>
-    <td>Omit limit from command</td>
-    <td>Returns all document available for the query.</td>
-  </tr>
-  <tr>
-    <td>limit > 0</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>batchSize < 0</td>
-    <td>batchSize = Math.abs(batchSize)
-singleBatch= true</td>
-    <td>Negative values for batchSize is not allowed</td>
-  </tr>
-  <tr>
-    <td>batchSize == 0</td>
-    <td>Omit batchSize from command</td>
-    <td>Allow server to apply the default batchSize.</td>
-  </tr>
-  <tr>
-    <td>batchSize > 0</td>
-    <td>N/A</td>
-    <td></td>
-  </tr>
-</table>
+.. list-table:: Frozen Delights!
+   :widths: 15 15 30
+   :header-rows: 1
 
+   * - Value
+     - Translates to
+     - Description
+   * - limit < 0
+     - limit = Math.abs(limit)
+       singleBatch = true
+     - Negative values for limit is not allowed
+   * - limit == 0
+     - Omit limit from command
+     - Returns all document available for the query.
+   * - limit > 0
+     - N/A
+     -
+   * - batchSize < 0
+     - batchSize = Math.abs(batchSize)
+       singleBatch= true
+     - Negative values for batchSize is not allowed
+   * - batchSize == 0
+     - Omit batchSize from command
+     - Allow server to apply the default batchSize.
+   * - batchSize > 0
+     - N/A
+     -
 
 BatchSize of 1
 ^^^^^^^^^^^^^^
 
 In 3.2 a batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the first batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.
 
-1. **find** command with batchSize=1
-
-2. **getMore** command with batchSize=1
-
-3. **getMore** command with batchSize=1
-
-4. **getMore** command with batchSize=1
+*1. **find** command with batchSize=1
+*2. **getMore** command with batchSize=1
+*3. **getMore** command with batchSize=1
+*4. **getMore** command with batchSize=1
 
 The driver **SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier** as the new find command enables the user expected behavior of allowing the first result to contain a single document when specifying batchSize=1.
 
@@ -443,21 +413,15 @@ Tailable cursors
 
 Tailable cursors have some fundamental changes compared to the existing **OP_QUERY** implementation. To create a tailable cursor you execute the following command:
 
-var b = db.runCommand({
+.. code:: javascript
 
-find:"t",
-
-tailable: true });
+    var b = db.runCommand({ find:"t", tailable: true });
 
 To create a tailable cursor with **tailable** and **awaitData**, execute the following command:
 
-var b = db.runCommand({
+.. code:: javascript
 
-find:"t",
-
-tailable: true,
-
-awaitData: true });
+    var b = db.runCommand({ find:"t", tailable: true, awaitData: true });
 
 If **maxTimeMS** is not set in FindOptions, the driver SHOULD refrain from setting **maxTimeMS** on the **find** or **getMore** commands issued by the driver and allow the server to use its internal default value for **maxTimeMS**.
 
@@ -473,171 +437,120 @@ getMore
 
 The **getMore** command replaces the **OP_GET_MORE** wire protocol message. The query flags passed to OP_QUERY for a getMore command MUST be slave_ok=True when sent to a secondary. The OP_QUERY namespace MUST be the same as for the **find** and **killCursors** commands. The command takes the following object.
 
-{
+.. code:: javascript
 
-  "getMore": <int64>,
-
-  "collection": <string>,
-
-  "batchSize": <int64>,
-
-  "maxTimeMS": <int32>
-
-}
+    {
+      "getMore": <int64>,
+      "collection": <string>,
+      "batchSize": <int64>,
+      "maxTimeMS": <int32>
+    }
 
 The accepted parameters are described in the table below.
 
-<table>
-  <tr>
-    <td>Parameter</td>
-    <td>Req</td>
-    <td>Type</td>
-    <td>Description</td>
-  </tr>
-  <tr>
-    <td>getMore</td>
-    <td>X</td>
-    <td>int64</td>
-    <td>Specifies the cursorid of the ClientCursor that this getMore should exercise.</td>
-  </tr>
-  <tr>
-    <td>collection</td>
-    <td>X</td>
-    <td>String</td>
-    <td>The name of the collection on which the query is operating.</td>
-  </tr>
-  <tr>
-    <td>batchSize</td>
-    <td></td>
-    <td>Int32
-> 0</td>
-    <td>Indicates how many results should be returned in the next batch to the client. Errors if zero or negative.</td>
-  </tr>
-  <tr>
-    <td>maxTimeMS</td>
-    <td></td>
-    <td>Int32
->= 0</td>
-    <td>If not set, the server defaults to it’s internal maxTimeMS setting.
+.. list-table:: Frozen Delights!
+   :widths: 15 15 15 30
+   :header-rows: 1
 
-Please see the "Semantics of maxTimeMS" section for more details.
-</td>
-  </tr>
-</table>
+   * - Parameter
+     - Req
+     - Type
+     - Description
+   * - getMore
+     - X
+     - int64
+     - Specifies the cursorid of the ClientCursor that this getMore should exercise.
+   * - collection
+     - X
+     - String
+     - The name of the collection on which the query is operating.
+   * - batchSize
+     - X
+     - Int32
+     - Indicates how many results should be returned in the next batch to the client. Errors if zero or negative.
+   * - maxTimeMS
+     -
+     - Int32
+     - If not set, the server defaults to it’s internal maxTimeMS setting.
 
+       Please see the "Semantics of maxTimeMS" section for more details.
 
 On success, the getMore command will return the following:
 
-{
+.. code:: javascript
 
-  "cursor": {
-
-"id": <int64>,
-
-"ns": <string>,
-
-"nextBatch": [
-
-  ...
-
-]
-
-},
-
-"ok": 1
-
-  }
+    {
+      "cursor": {
+        "id": <int64>,
+        "ns": <string>,
+        "nextBatch": [
+          ...
+        ]
+      },
+      "ok": 1
+    }
 
 killCursors
 -----------
 
 The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
 
-{
+.. code:: javascript
 
-  "killCursors": <string>,
-
-  "cursors": [
-
-<cursor id 1>
-
-<cursor id 2>,
-
-…
-
-<cursor id n>
-
-    ]
-
-}
+    {
+      "killCursors": <string>,
+      "cursors": [
+        <cursor id 1>
+        <cursor id 2>,
+        …
+        <cursor id n>
+      ]
+    }
 
 The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be slave_ok=True when sent to a secondary.
 
-<table>
-  <tr>
-    <td>Parameter</td>
-    <td>Req</td>
-    <td>Type</td>
-    <td>Description</td>
-  </tr>
-  <tr>
-    <td>killCursors</td>
-    <td>X</td>
-    <td>String</td>
-    <td>The collection name used in the find command that created this cursor.</td>
-  </tr>
-  <tr>
-    <td>cursors</td>
-    <td>X</td>
-    <td>Array of int64’s</td>
-    <td>An array of one or more cursorId’s</td>
-  </tr>
-</table>
+.. list-table:: Frozen Delights!
+   :widths: 15 15 15 30
+   :header-rows: 1
 
+   * - Parameter
+     - Req
+     - Type
+     - Description
+   * - killCursors
+     - X
+     - String
+     - The collection name used in the find command that created this cursor.
+   * - cursors
+     - X
+     - Array of int64’s
+     - An array of one or more cursorId’s
 
 The command response will be as follows:
 
-{
+.. code:: javascript
 
-  "cursorsKilled": [
-
-<cursor id 1>
-
-<cursor id 2>,
-
-…
-
-<cursor id n>
-
-    ],
-
-    "cursorsNotFound": [
-
-<cursor id 1>
-
-<cursor id 2>,
-
-…
-
-<cursor id n>
-
-    ],
-
-"cursorsAlive": [
-
-<cursor id 1>
-
-<cursor id 2>,
-
-…
-
-<cursor id n>
-
-],
-
-ok: 1
-
-}
+    {
+      "cursorsKilled": [
+        <cursor id 1>
+        <cursor id 2>,
+        …
+        <cursor id n>
+      ],
+      "cursorsNotFound": [
+        <cursor id 1>
+        <cursor id 2>,
+        …
+        <cursor id n>
+      ],
+      "cursorsAlive": [
+        <cursor id 1>
+        <cursor id 2>,
+        …
+        <cursor id n>
+      ],
+      ok: 1
+    }
 
 The **cursorsAlive** array contain cursors that were not possible to kill. The information SHOULD be ignored by the driver.
 
@@ -650,27 +563,31 @@ OP_REPLY Notes
 
 The **OP_REPLY** message has the following general structure.
 
-struct {
+.. code:: javascript
 
-    int32     messageLength; // total message size, including
+    struct {
+        int32     messageLength;  // total message size, including
+                                  // this
 
-                             // this
-    int32     requestID;     // identifier for this message
-    int32     responseTo;    // requestID from the original
+        int32     requestID;      // identifier for this message
 
-                             // request(used in reponses from db)
-    int32     opCode;        // request type - see table below
+        int32     responseTo;     // requestID from the original
+                                  // request(used in reponses from db)
 
-    int32     responseFlags; // bit vector - see details below
-    int64     cursorID;      // cursor id if client needs to do
+        int32     opCode;         // request type - see table below
 
-                             // get more's
-    int32     startingFrom;  // where in the cursor this reply is
+        int32     responseFlags;  // bit vector - see details below
 
-                             // starting
-    int32     numberReturned; // number of documents in the reply
-    document* documents;      // documents
-}
+        int64     cursorID;       // cursor id if client needs to do
+                                  // get more's
+
+        int32     startingFrom;   // where in the cursor this reply is
+                                  // starting
+
+        int32     numberReturned; // number of documents in the reply
+
+        document* documents;      // documents
+    }
 
 For the **find**, **getMore** and **killCursors** MongoDB returns a single document meaning **numberReturned** is set to **1**. This is in contrast to MongoDB 3.0 and earlier where a **OP_QUERY** query will set **numberReturned** to >= 0.
 
@@ -685,29 +602,29 @@ Errors
 
 The **find** and **getMore** commands will report errors using the standard mechanism: an "ok: 0" field paired with “errmsg” and “code” fields. See below for example error responses:
 
-> db.runCommand({find: "t", sort: {padding: -1}})
+.. code:: shell
 
-{
+    > db.runCommand({find: "t", sort: {padding: -1}})
 
-  "errmsg" : "exception: Executor error: Overflow sort stage buffered data usage of 41630570 bytes exceeds internal limit of 33554432 bytes",
+.. code:: javascript
 
-  "code" : 28616,
+    {
+      "errmsg" : "exception: Executor error: Overflow sort stage buffered data usage of 41630570 bytes exceeds internal limit of 33554432 bytes",
+      "code" : 28616,
+      "ok" : 0
+    }
 
-  "ok" : 0
+.. code:: shell
 
-}
+    > db.runCommand({find: "t", foo: "bar"})
 
-> db.runCommand({find: "t", foo: "bar"})
+.. code:: javascript
 
-{
-
-  "ok" : 0,
-
-  "errmsg" : "Failed to parse: { find: \"t\", foo: \"bar\" }. Unrecognized field 'foo'.",
-
-  "code" : 2
-
-}
+    {
+      "ok" : 0,
+      "errmsg" : "Failed to parse: { find: \"t\", foo: \"bar\" }. Unrecognized field 'foo'.",
+      "code" : 2
+    }
 
 Like other commands, the find and getMore commands will not use the OP_REPLY response flags[ documented here](http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply).
 
@@ -731,7 +648,9 @@ ReadPreference and Mongos
 
 The **find** command does not include a readPreference field. To pass a readPreference to a **mongos** use the **$readPreference** field and format your command as.
 
-{$query: {find: ‘.....}, $readPreference: {}}
+.. code:: javascript
+
+    {$query: {find: ‘.....}, $readPreference: {}}
 
 This format is general for all commands when executing against a Mongos proxy.
 
