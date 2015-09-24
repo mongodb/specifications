@@ -411,10 +411,10 @@ BatchSize of 1
 
 In 3.2 a batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the first batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.
 
-*1. **find** command with batchSize=1
-*2. **getMore** command with batchSize=1
-*3. **getMore** command with batchSize=1
-*4. **getMore** command with batchSize=1
+1. **find** command with batchSize=1
+2. **getMore** command with batchSize=1
+3. **getMore** command with batchSize=1
+4. **getMore** command with batchSize=1
 
 The driver **SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier** as the new find command enables the user expected behavior of allowing the first result to contain a single document when specifying batchSize=1.
 
