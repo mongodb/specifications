@@ -632,9 +632,9 @@ The **find** and **getMore** commands will report errors using the standard mech
       "code" : 2
     }
 
-Like other commands, the find and getMore commands will not use the OP_REPLY response flags `documented here`_
+Like other commands, the find and getMore commands will not use the OP_REPLY response flags `Documented here`_
 
-:: _documented here: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply
+:: _Documented here: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply
 
 FAQ
 ===
