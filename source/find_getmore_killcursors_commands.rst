@@ -632,7 +632,9 @@ The **find** and **getMore** commands will report errors using the standard mech
       "code" : 2
     }
 
-Like other commands, the find and getMore commands will not use the OP_REPLY response flags `documented here <http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply>`
+Like other commands, the find and getMore commands will not use the OP_REPLY response flags `documented here`_
+
+:: _documented here: http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply
 
 FAQ
 ===
@@ -647,7 +649,9 @@ Explain command
 
 There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found at.
 
-`Explain command reference <http://docs.mongodb.org/manual/reference/command/explain/>`
+`Explain command reference`_ 
+
+.. _Explain command reference: http://docs.mongodb.org/manual/reference/command/explain/
 
 ReadPreference and Mongos
 -------------------------
@@ -662,4 +666,6 @@ This format is general for all commands when executing against a Mongos proxy.
 
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification.
 
-`Server Selection Specification <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos>`
+`Server Selection Specification`_ 
+
+.. _Server Selection Specification: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
