@@ -37,17 +37,21 @@ Terms
 Document
 ^^^^^^^^
 
-The term Document refers to the implementation in the driver's language of a BSON
+::
 
-document.
+  The term Document refers to the implementation in the driver's language of a BSON document.
 
 Command
 ^^^^^^^
+
+::
 
   A BSON document containing the fields making up a MongoDB server command.
 
 Wire Protocol
 ^^^^^^^^^^^^^
+
+::
 
   The binary protocol used to talk with MongoDB over a socket. It’s made up by the OP_QUERY, OP_GET_MORE, OP_KILL_CURSORS, OP_INSERT, OP_UPDATE and OP_DELETE.
 
