@@ -9,7 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: July 20, 2015
+:Last Modified: September 16, 2015
+:Version: 1.0
 
 .. contents::
 
@@ -1067,3 +1068,6 @@ growth for the future.
 
 It has also been suggested that the MD5 hashing performed on stored
 files be updated to use a more secure algorithm, like SHA-1 or SHA-256.
+
+Changes
+=======

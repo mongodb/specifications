@@ -7,3 +7,4 @@ build/*
 makefile.generated
 logo.png
 .DS_Store
+codereview.rc
