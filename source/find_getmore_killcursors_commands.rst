@@ -647,7 +647,7 @@ Tailable cursors pointing to documents in a capped collection that get overwritt
 Explain command
 ---------------
 
-There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found in the `Explain command reference`_/
+There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found in the `Explain command reference`_.
 
 .. _Explain command reference: http://docs.mongodb.org/manual/reference/command/explain/
 
