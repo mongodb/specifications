@@ -21,7 +21,7 @@ Find, getMore and killCursors commands.
 Abstract
 ========
 
-The Find, GetMore and KillCursors commands define the use of the new MongoDB 3.2 and later Find, GetMore and KillCursors commands to replace the OP_QUERY, OP_GET_MORE and OP_KILL_CURSORS commands from the MongoDB wire protocol.
+The Find, GetMore and KillCursors commands in MongoDB 3.2 or later replace the use of the legacy OP_QUERY, OP_GET_MORE and OP_KILL_CURSORS wire protocol messages. This specification lays out how drivers should interact with the new commands when compared to the legacy wire protocol level messages.
 
 Definitions
 ===========
@@ -336,9 +336,7 @@ For the **find**, **getMore** and **killCursors** commands the **numberToReturn*
 
 If the **slaveOk** flag was set on the **find** command it MUST be set on subsequent **getMore** commands for the same cursor. Same for cursors that were initialized with other commands, such as aggregate.
 
-More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec.
-
-`Passing a Read Preference`_
+More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
 .. _Passing a Read Preference: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
 
@@ -649,9 +647,7 @@ Tailable cursors pointing to documents in a capped collection that get overwritt
 Explain command
 ---------------
 
-There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found at.
-
-`Explain command reference`_
+There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found in the `Explain command reference`_/
 
 .. _Explain command reference: http://docs.mongodb.org/manual/reference/command/explain/
 
@@ -666,8 +662,6 @@ The **find** command does not include a readPreference field. To pass a readPref
 
 This format is general for all commands when executing against a Mongos proxy.
 
-More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification.
-
-`Server Selection Specification`_
+More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification `Server Selection Specification`_.
 
 .. _Server Selection Specification: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
