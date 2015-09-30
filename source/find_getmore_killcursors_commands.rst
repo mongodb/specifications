@@ -334,7 +334,16 @@ When sending a find operation as a find command rather than a legacy **OP_QUERY*
 
 For the **find**, **getMore** and **killCursors** commands the **numberToReturn** field SHOULD be -1. To execute **find** commands against a secondary the driver MUST set the **slaveOk** bit for the **find** command to successfully execute.
 
-The **slaveOk** flag MUST be set to true, for all **getMore** and **killCursors** commands to make the commands behave in the same manner as **OP_GET_MORE** and **OP_KILL_CURSORS**. This is to avoid the situation where a primary server steps down to secondary in between a **find** and **getMore** causing the **getMore** to fail if the readPreference was PRIMARY and the **slaveOk** flag was not set.
+The **slaveOk** flag MUST be set to true, for all **getMore** and **killCursors** commands to make the commands behave in the same manner as **OP_GET_MORE** and **OP_KILL_CURSORS**. 
+
+This is to avoid a scenario like the following.
+
+1. **find** is executed against the primary with the slaveOk bit unset.
+2. primary steps down to secondary.
+3. **getMore** is executed against the server that is no longer primary with the slaveOk bit unset.
+4. **getMore** fails due to the server not being primary.
+
+By setting the **slaveOk** bit on **getMore** and **killCursors** the query the commands will not fail during a step down from primary to secondary.
 
 More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
