@@ -6,7 +6,7 @@ Find, getMore and killCursors commands.
 =======================================
 
 :Spec: 137
-:Version: 1.0
+:Version: 1.1
 :Title: Find, getMore and killCursors commands
 :Author: Christian Kvalheim
 :Lead: Christian Kvalheim
@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: September 24, 2015
+:Last Modified: September 30, 2015
 
 .. contents::
 
@@ -334,7 +334,7 @@ When sending a find operation as a find command rather than a legacy **OP_QUERY*
 
 For the **find**, **getMore** and **killCursors** commands the **numberToReturn** field SHOULD be -1. To execute **find** commands against a secondary the driver MUST set the **slaveOk** bit for the **find** command to successfully execute.
 
-If the **slaveOk** flag was set on the **find** command it MUST be set on subsequent **getMore** commands for the same cursor. Same for cursors that were initialized with other commands, such as aggregate.
+The **slaveOk** flag MUST be set to true, for all **getMore** and **killCursors** commands to make the commands behave in the same manner as **OP_GET_MORE** and **OP_KILL_CURSORS**. This is to avoid the situation where a primary server steps down to secondary in between a **find** and **getMore** causing the **getMore** to fail if the readPreference was PRIMARY and the **slaveOk** flag was not set.
 
 More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
@@ -665,3 +665,7 @@ This format is general for all commands when executing against a Mongos proxy.
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification `Server Selection Specification`_.
 
 .. _Server Selection Specification: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
+
+Changes
+=======
+2015-10-30 slaveOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
