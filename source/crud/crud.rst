@@ -562,6 +562,16 @@ Basic
      */
     ordered: Boolean;
 
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. No 
+     * "bypassDocumentValidation" option is sent with the "insert" command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
   }
 
   class InsertOneOptions {
@@ -638,16 +648,6 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/insert/
      */
     document: Document;
-
-    /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
   }
 
   class DeleteOneModel implements WriteModel {
@@ -689,16 +689,6 @@ Bulk Write Models
     replacement: Document;
 
     /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
-
-    /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
@@ -724,16 +714,6 @@ Bulk Write Models
     update: Update;
 
     /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
-
-    /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
@@ -757,16 +737,6 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     update: Update;
-
-    /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
