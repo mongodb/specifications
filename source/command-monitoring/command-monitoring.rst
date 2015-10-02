@@ -11,7 +11,7 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: September 16, 2015
+:Last Modified: October 1, 2015
 
 .. contents::
 
@@ -376,3 +376,8 @@ Changelog
 16 SEP 2015:
   - Removed ``limit`` from find test with options to support 3.2.
   - Changed find test read preference to ``primaryPreferred``.
+
+1 OCT 2015:
+  - Changed find test with a kill cursors to not run on server versions greater than 3.0
+  - Added a find test with no kill cursors command which only runs on 3.1 and higher.
+  - Added notes on which tests should run based on server versions.
