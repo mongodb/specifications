@@ -134,7 +134,7 @@ tests:
           command_name: "getMore"
   -
     description: "A successful find event with a getmore and killcursors"
-    ignore_if_server_version_greater_than: 3.0
+    ignore_if_server_version_greater_than: "3.0"
     operation:
       name: "find"
       arguments:
@@ -200,7 +200,7 @@ tests:
           command_name: "killCursors"
   -
     description: "A successful find event with a getmore and the server kills the cursor"
-    ignore_if_server_version_less_than: 3.1
+    ignore_if_server_version_less_than: "3.1"
     operation:
       name: "find"
       arguments:
