@@ -469,7 +469,7 @@
                 "$numberLong": "42"
               },
               "collection": "test",
-              "batchSize": 1
+              "batchSize": 3
             },
             "command_name": "getMore",
             "database_name": "command-monitoring-tests"
@@ -481,7 +481,7 @@
               "ok": 1,
               "cursor": {
                 "id": {
-                  "$numberLong": "42"
+                  "$numberLong": "0"
                 },
                 "ns": "command-monitoring-tests.test",
                 "nextBatch": [

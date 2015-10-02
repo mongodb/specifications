@@ -236,7 +236,7 @@ tests:
           command:
             getMore: { $numberLong: "42" }
             collection: *collection_name
-            batchSize: 1
+            batchSize: 3
           command_name: "getMore"
           database_name: *database_name
       -
@@ -244,7 +244,7 @@ tests:
           reply:
             ok: 1.0
             cursor:
-              id: { $numberLong: "42" }
+              id: { $numberLong: "0" }
               ns: *namespace
               nextBatch:
                 - { _id: 4, x: 44 }
