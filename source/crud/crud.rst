@@ -1286,7 +1286,7 @@ Q: What about explain?
 
 
 Changes
--------
+=======
 
 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
 2015-09-16: Added bypassDocumentValidation.
