@@ -50,6 +50,14 @@ The server is inconsistent on whether the ok values returned are integers or dou
 for simplicity the tests specify all expected values as doubles. Server 'ok' values of
 integers MUST be converted to doubles for comparison with the expected values.
 
+Batch Size
+^^^^^^^^^^
+
+On server versions 3.1 and higher, batch size when used in conjunction with limit is no
+longer needed to be adjusted to the number of remaining documents. The driver MAY choose
+to use either the legacy adjusted value OR the original supplied value for batch size in
+this case.
+
 Additional Values
 `````````````````
 

@@ -11,7 +11,7 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: October 1, 2015
+:Last Modified: October 6, 2015
 
 .. contents::
 
@@ -381,3 +381,6 @@ Changelog
   - Changed find test with a kill cursors to not run on server versions greater than 3.0
   - Added a find test with no kill cursors command which only runs on 3.1 and higher.
   - Added notes on which tests should run based on server versions.
+
+6 OCT 2015:
+  - Changed batch size in the find test on 3.1 and higher to {{42}} with explaination in the test readme.
