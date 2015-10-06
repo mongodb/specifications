@@ -1,6 +1,6 @@
 .. role:: javascript(code)
   :language: javascript
-  
+
 ======================
 Read and Write Concern
 ======================
@@ -14,6 +14,8 @@ Read and Write Concern
 :Server Versions: 2.4+
 :Last Modified: Oct. 5, 2015
 :Version: 1.0
+
+.. contents::
 
 --------
 
@@ -97,7 +99,7 @@ Read commands that support ``ReadConcern`` take a named parameter spelled (case-
 When a user has not specified a ``ReadConcern`` or has specified the server’s default ``ReadConcern``, drivers MUST omit the ``readConcern`` parameter when sending the command.
 
 
-..note ::
+.. note::
     While the default ``ReadConcern`` MUST be omitted, an explicitly specified ``ReadConcern`` of :javascript:`readConcern: { level: “local” }` MUST NOT be omitted.
 
 
@@ -108,7 +110,7 @@ If your driver offers a generic ``RunCommand`` method on your ``database`` objec
 
 
 Errors
-******
+~~~~~~
 
 ``ReadConcern`` errors from a server MUST NOT be handled by a driver. There is nothing a driver can do about them and any such errors will get propagated to the user via normal error handling.
 
@@ -269,7 +271,7 @@ When a user has not specified a ``WriteConcern`` or has specified the server’s
 
 All other ``WriteConcerns``, including the ``Unacknowledged WriteConcern``, MUST be sent with the ``writeConcern`` parameter.
 
-..note ::
+.. note::
     Drivers MAY use ``OP_INSERT``, ``OP_UPDATE``, and ``OP_DELETE`` when an ``Unacknowledged WriteConcern`` is used.
 
 Generic Command Method
@@ -279,7 +281,7 @@ If your driver offers a generic ``RunCommand`` method on your ``database`` objec
 
 
 Errors
-******
+~~~~~~
 
 Errors associated with ``WriteConcern`` return successful responses with a ``writeConcernError`` field indicating the issue. For example,
 
