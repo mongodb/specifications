@@ -1,3 +1,6 @@
+.. role:: javascript(code)
+  :language: javascript
+  
 ======================
 Read and Write Concern
 ======================
