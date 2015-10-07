@@ -57,3 +57,20 @@ The expected events provide the minimum data that is required and can be tested.
 possible for more values to be present in the events, such as extra data provided when
 using sharded clusters or ``nModified`` field in updates. The driver MUST assert the
 expected data is present and also MUST allow for additional data to be present as well.
+
+Ignoring Tests Based On Server Version
+``````````````````````````````````````
+
+Due to variations in server behaviour, some tests may not be valid on a specific range
+of server versions and MUST NOT be run. These tests are indicated with the fields
+{{ignore_if_server_version_greater_than}} and {{ignore_if_server_version_less_than}} which
+are optionally provided at the description level of the test. When determining if the test
+must be run or not, use only the minor server version.
+
+Example:
+
+If {{ignore_if_server_version_greater_than}} is {{3.0}}, then the tests MUST NOT run on
+{{3.1}} and higher, but MUST run on {{3.0.3}}.
+
+Tests which do not have either one of these fields MUST run on all supported server
+versions.

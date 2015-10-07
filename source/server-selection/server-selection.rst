@@ -10,6 +10,7 @@ Server Selection
 :Status: Accepted
 :Type: Standards
 :Last Modified: August 10, 2015
+:Version: 1.2
 
 .. contents::
 

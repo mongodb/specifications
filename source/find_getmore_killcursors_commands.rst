@@ -6,7 +6,11 @@ Find, getMore and killCursors commands.
 =======================================
 
 :Spec: 137
+<<<<<<< HEAD
 :Version: 1.0
+=======
+:Version: 1.1
+>>>>>>> master
 :Title: Find, getMore and killCursors commands
 :Author: Christian Kvalheim
 :Lead: Christian Kvalheim
@@ -14,7 +18,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: September 24, 2015
+:Last Modified: September 30, 2015
 
 .. contents::
 
@@ -334,7 +338,16 @@ When sending a find operation as a find command rather than a legacy **OP_QUERY*
 
 For the **find**, **getMore** and **killCursors** commands the **numberToReturn** field SHOULD be -1. To execute **find** commands against a secondary the driver MUST set the **slaveOk** bit for the **find** command to successfully execute.
 
-If the **slaveOk** flag was set on the **find** command it MUST be set on subsequent **getMore** commands for the same cursor. Same for cursors that were initialized with other commands, such as aggregate.
+The **slaveOk** flag MUST be set to true, for all **getMore** and **killCursors** commands to make the commands behave in the same manner as **OP_GET_MORE** and **OP_KILL_CURSORS**. 
+
+This is to avoid a scenario like the following.
+
+1. **find** is executed against the primary with the slaveOk bit unset.
+2. primary steps down to secondary.
+3. **getMore** is executed against the server that is no longer primary with the slaveOk bit unset.
+4. **getMore** fails due to the server not being primary.
+
+By setting the **slaveOk** bit on **getMore** and **killCursors** the query the commands will not fail during a step down from primary to secondary.
 
 More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
@@ -346,6 +359,12 @@ Behavior of Limit, skip and batchSize
 The new **find** command has different semantics to the existing 3.0 and earlier **OP_QUERY** wire protocol message. The **limit** field is a hard limit on the total number of documents returned by the cursor no matter what **batchSize** is provided.
 
 Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILLCURSORS** wire protocol message when it limit is reached.
+
+When using the **find** and **getMore** command the same **batchSize** value **SHOULD** be passed to both commands. This means that if the **find** command had a **batchSize** of `3` the subsequent **getMore** commands **SHOULD** also have **batchSize** set to `3`. 
+
+If the driver is performing the limit calculations it **MAY** pass the pre 3.2 **batchSize** value to the **getMore** instead. See the `CRUD`_ specification for detail on combining **limit** and **batchSize** for **OP_QUERY** and **OP_GET_MORE**.
+
+.. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
 If there are not enough documents in the cursor to fulfill the **limit** defined, the cursor runs to exhaustion and is closed, returning a cursorId of 0 to the client.
 
@@ -665,3 +684,9 @@ This format is general for all commands when executing against a Mongos proxy.
 More in depth information about passing read preferences to Mongos can be found in the Server Selection Specification `Server Selection Specification`_.
 
 .. _Server Selection Specification: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
+
+Changes
+=======
+2015-09-30 slaveOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
+
+2015-10-08 added guidance on batchSize values as related to the **getMore** command.

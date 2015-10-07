@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: June 17, 2015
+:Last Modified: Sept. 16, 2015
 
 .. contents::
 
@@ -562,6 +562,16 @@ Basic
      */
     ordered: Boolean;
 
+    /**
+     * If true, allows the write to opt-out of document level validation. 
+     * 
+     * On servers >= 3.2, the default is to not send a value. No 
+     * "bypassDocumentValidation" option is sent with the write commands.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
   }
 
   class InsertOneOptions {
@@ -638,16 +648,6 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/insert/
      */
     document: Document;
-
-    /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
   }
 
   class DeleteOneModel implements WriteModel {
@@ -689,16 +689,6 @@ Bulk Write Models
     replacement: Document;
 
     /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
-
-    /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
@@ -724,16 +714,6 @@ Bulk Write Models
     update: Update;
 
     /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
-
-    /**
      * When true, creates a new document if no document matches the query. The default is false.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
@@ -757,16 +737,6 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     update: Update;
-
-    /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
-     * On servers >= 3.2, the default is to not send a value. No 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
-     */
-    bypassDocumentValidation: Optional<Boolean>;
 
     /**
      * When true, creates a new document if no document matches the query. The default is false.
@@ -1313,3 +1283,11 @@ Q: Didn't we just build a bulk API?
 
 Q: What about explain?
   Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 2.8 offers an explain command that can be run using a runCommand method.
+
+
+Changes
+=======
+
+2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
+2015-09-16: Added bypassDocumentValidation.
+2015-09-16: Added readConcern notes.
