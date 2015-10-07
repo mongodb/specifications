@@ -6,11 +6,7 @@ Find, getMore and killCursors commands.
 =======================================
 
 :Spec: 137
-<<<<<<< HEAD
-:Version: 1.0
-=======
-:Version: 1.1
->>>>>>> master
+:Version: 1.2
 :Title: Find, getMore and killCursors commands
 :Author: Christian Kvalheim
 :Lead: Christian Kvalheim
@@ -18,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: September 30, 2015
+:Last Modified: October 7, 2015
 
 .. contents::
 
