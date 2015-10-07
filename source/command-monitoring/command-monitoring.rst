@@ -383,4 +383,4 @@ Changelog
   - Added notes on which tests should run based on server versions.
 
 6 OCT 2015:
-  - Changed batch size in the find test on 3.1 and higher to {{42}} with explaination in the test readme.
+  - Changed batch size in the find test on 3.1 and higher to {{42}} with explanation in the test readme.
