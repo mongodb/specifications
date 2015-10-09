@@ -1088,6 +1088,8 @@ updateRSFromPrimary
         return
 
     if description.electionId is not null:
+        # Election ids are ObjectIds, see "using electionId to detect stale
+        # primaries" for comparison rules.
         if (topologyDescription.maxElectionId is not null
                 and topologyDescription.maxElectionId > description.electionId):
 
@@ -1793,8 +1795,13 @@ list are removed.
 Using electionId to detect stale primaries
 ''''''''''''''''''''''''''''''''''''''''''
 
+Replica set members running MongoDB 2.6.10+ or 3.0+ include an ObjectId called
+"electionId" in their ismaster response.
+
 The client remembers the greatest electionId reported by a primary,
-and distrusts primaries with older electionIds.
+and distrusts primaries with lesser electionIds.
+It compares electionIds as 12-byte big-endian integers, so ObjectIds generated
+later are considered greater.
 This prevents the client from oscillating
 between the old and new primary during a split-brain period,
 and helps provide read-your-writes consistency with write concern "majority"
