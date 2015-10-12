@@ -28,20 +28,20 @@
             }
         }, 
         {
-            "description": "wtimeout as a valid number", 
+            "description": "wtimeoutMS as a valid number", 
             "isAcknowledged": true, 
-            "uri": "mongodb://localhost/?wtimeout=500", 
+            "uri": "mongodb://localhost/?wtimeoutMS=500", 
             "writeConcern": {
                 "wtimeout": 500
             }
         }, 
         {
-            "description": "wtimeout as an invalid number", 
+            "description": "wtimeoutMS as an invalid number", 
             "error": true, 
-            "uri": "mongodb://localhost/?wtimeout=-500"
+            "uri": "mongodb://localhost/?wtimeoutMS=-500"
         }, 
         {
-            "description": "j as a valid boolean", 
+            "description": "j as false", 
             "isAcknowledged": true, 
             "uri": "mongodb://localhost/?j=false", 
             "writeConcern": {
@@ -49,7 +49,7 @@
             }
         }, 
         {
-            "description": "j as a valid boolean", 
+            "description": "j as true", 
             "isAcknowledged": true, 
             "uri": "mongodb://localhost/?j=true", 
             "writeConcern": {
@@ -57,14 +57,9 @@
             }
         }, 
         {
-            "description": "j as an invalid boolean", 
-            "error": true, 
-            "uri": "mongodb://localhost/?j=notgood"
-        }, 
-        {
             "description": "All options combined", 
             "isAcknowledged": true, 
-            "uri": "mongodb://localhost/?w=3&wtimeout=500&j=true", 
+            "uri": "mongodb://localhost/?w=3&wtimeoutMS=500&j=true", 
             "writeConcern": {
                 "j": true, 
                 "w": 3, 
@@ -89,9 +84,9 @@
             }
         }, 
         {
-            "description": "Unacknowledged with w and wtimeout", 
+            "description": "Unacknowledged with w and wtimeoutMS", 
             "isAcknowledged": false, 
-            "uri": "mongodb://localhost/?w=0&w=500", 
+            "uri": "mongodb://localhost/?w=0&wtimeoutMS=500", 
             "writeConcern": {
                 "w": 0, 
                 "wtimeout": 500

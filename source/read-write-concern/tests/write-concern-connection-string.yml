@@ -38,10 +38,6 @@ tests:
         writeConcern: { j: true }
         isAcknowledged: true
     -
-        description: "j as an invalid boolean"
-        uri: "mongodb://localhost/?j=notgood"
-        error: true
-    -
         description: "All options combined"
         uri: "mongodb://localhost/?w=3&wtimeout=500&j=true"
         writeConcern: { w: 3, wtimeout: 500, j: true }
