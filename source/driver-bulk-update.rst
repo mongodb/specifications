@@ -4,7 +4,7 @@ Bulk API Spec
 :Authors: Christian Kvalheim
 :Status: Deprecated
 :Type: Standards
-:Last Modified: May 14th, 2014
+:Last Modified: October 9, 2015
 
 .. contents::
 
@@ -12,6 +12,10 @@ Changes from previous versions
 ------------------------------
 
 Deprecated in favor of the *Driver CRUD API*.
+
+v0.7
+~~~~
+* Clarify that "writeConcernErrors" field is plural
 
 v0.6
 ~~~~
@@ -303,7 +307,7 @@ If the first step passes with no errors there might be a command level error suc
 
 In the case of an **ordered** bulk operation you'll only ever get a single write error as the execution of the command will stop at the first error. In an **unordered** bulk operation you might have more than one.
 
-The last step of applying the write concern can also cause an error. Given a write concern **{w:5, wtimeout:1000}** where there is only 3 servers in the replicaset, the write concern can never be fulfilled and will return an error. A example result might be.
+The last step of applying the write concern can also cause an error. Given a write concern **{w:5, wtimeout:1000}** where there is only 3 servers in the replicaset, the write concern can never be fulfilled and will return an error. An example server response might be:
 
 .. code:: javascript
 
@@ -311,14 +315,14 @@ The last step of applying the write concern can also cause an error. Given a wri
     "ok" : 1,
     "n" : 1,
     "writeConcernError" : {
-      "code" : 75,
+      "code" : 64,
       "errmsg" : "...."
     }
   }
 
 Notice how write concern is just a single error for the whole command. Getting a writeConcernError does not mean the items were not applied, it means the write concern could not be fulfilled. In the example above **n** is still **1**.
 
-It's fair to consider the field **writeErrors** to be hard errors while **writeConcernError** is a soft error.
+It's fair to consider the server response field **writeErrors** to be hard errors while **writeConcernError** is a soft error.
 
 Merging Results
 ===============
@@ -348,8 +352,12 @@ before stopping due to a duplicate key error. The merged result would look somet
 .. code:: javascript
 
   {
-    "ok" : 1,
-    "n" : 2,
+    "nInserted" : 2,
+    "nUpserted" : 0,
+    "nMatched" : 0,
+    "nModified" : 0,
+    "nRemoved" : 1,
+    "upserted" : [ ]
     "writeErrors" : [
       {
         "index" : 2,
@@ -357,6 +365,7 @@ before stopping due to a duplicate key error. The merged result would look somet
         "errmsg" : "DuplicateKey insertDocument :: caused by :: 11000 E11000 duplicate key error index: test.test.$a_1  dup key: { : 1 }"
       }
     ]
+    "writeConcernErrors": []
   }
 
 In this situation the client should throw a single error and stop processing.
@@ -369,13 +378,28 @@ Write concern is applied after the server side execution of the write operations
 This means that replication failure or other forms of writeConcernErrors should not affect the execution of the batch
 but simply serve as an indication that the write concern has not been met.
 
+If there is no write concern error the bulk result's "writeConcernErrors" array is empty.
+
+When the bulk operation is implemented using legacy opcodes, no server error
+code is available. The server's getlasterror response is like:
+
 .. code:: javascript
 
-  collection.ensureIndex({a:1}, {unique:true})
+  {
+    "ok" : 1,
+    "wtimeout": true,
+    "err": "timeout"
+  }
+
+In this case the driver must construct a writeConcernErrors array containing one error document with code 64,
+and the "err" field from the getlasterror response as the errmsg.
+
+An example with "w: 5" and fewer than 5 replicas:
+
+.. code:: javascript
+
   var bulk = collection.initializeOrderedBulkOp()
   bulk.insert({a:1})
-  bulk.insert({a:1})
-  bulk.insert({a:3})
   bulk.execute({w:5, wtimeout:1})
 
 The expected result from these operations are.
@@ -383,56 +407,20 @@ The expected result from these operations are.
 .. code:: javascript
 
   {
-    "ok" : 1,
-    "n" : 1,
-    "writeErrors" : [
-      {
-        "index" : 1,
-        "code" : 11000,
-        "errmsg" : "DuplicateKey insertDocument :: caused by :: 11000 E11000 duplicate key error index: test.test.$a_1  dup key: { : 1 }"
-      }
-    ],
-    "writeConcernErrors" : [{
-      "code" : 75,
-      "errmsg" : "WriteConcernLegacyOK no replication and asked for w > 1 (5)"
-    }]
-  }
-
-The first operation completes while the second operation fails due to a duplicate key error. At that point the execution stops and the third operation is never executed by the server.
-
-Let's take a look at the same scenario but executed using an unordered bulk operation.
-
-.. code:: javascript
-
-  collection.ensureIndex({a:1}, {unique:true})
-  var bulk = collection.initializeUnorderedBulkOp()
-  bulk.insert({a:1})
-  bulk.insert({a:1})
-  bulk.insert({a:3})
-  bulk.execute({w:5, wtimeout:1})
-
-In the case of an unordered batch all of the operations will be applied. So the result will look like the following:
-
-.. code:: javascript
-
-  {
-    "ok" : 1,
+    "nInserted" : 1,
+    "nUpserted" : 0,
+    "nMatched" : 0,
     "nModified" : 0,
-    "n" : 2,
-    "writeErrors" : [
-      {
-        "index" : 1,
-        "code" : 11000,
-        "errmsg" : "insertDocument :: caused by :: 11000 E11000 duplicate key error index: test.test.$a_1  dup key: { : 1 }"
-      }
-    ],
-    "writeConcernError" : [{
-      "code" : 75,
-      "errmsg" : "WriteConcernLegacyOK no replication and asked for w > 1 (5)"
+    "nRemoved" : 0,
+    "upserted" : [ ]
+    "writeErrors" : [ ],
+    "writeConcernErrors": [{
+      "code": 64,
+      "waiting for replication timed out",
     }]
   }
 
-As you can see the main difference is that **n** is 2 as two of the **insert** operations have been applied. Since the **writeConcern** failed we also get a write Concern Error for each write command executed against the server. The bulk API only returns the first writeConcern error it encounters.
+.. note:: The example output is from MongoDB 2.6. In MongoDB 2.4 the driver supplies the error code 64, and the error message is "timeout". Starting in MongoDB 3.0, the writeConcernError code is 100 and the message is "Not enough data-bearing nodes".
 
 General rule of handling errors
 -------------------------------
@@ -442,8 +430,8 @@ General rule of handling errors
 3. For ordered bulk operations the returned write Error should be rewritten and returned.
 4. Write Concern errors should not halt the processing of **ordered** bulk operations.
 
-Merging errors
---------------
+Merging write errors
+--------------------
 
 A bulk operation might involve multiple write commands.  Each write command could potentially return write errors and/or a write concern error. Each error in the **writeErrors** array contains an index pointing to the original document position in the write command document that caused it.
 
@@ -502,6 +490,44 @@ In the returned result, the **index** variable of the error points to document *
 Notice the **index: 2** correctly pointing to the original document.
 
 To correctly handle the merging the driver needs to keep track of the original indexes and how they map to the errors returned by the write commands. There might be a need to keep an index in memory to be able to correctly handle the mapping.
+
+Write concern errors
+--------------------
+
+Each writeConcernError document received from a server operation (either a write command or legacy write) is appended to the bulk result's "writeConcernErrors" array:
+
+.. code:: javascript
+
+    var bulk = db.c.initializeOrderedBulkOp()
+    bulk.insert({a:1})
+    bulk.insert({a:2})
+    bulk.find({a:1}).remove()
+    bulk.execute({w:5, wtimeout:100})
+
+The outcome on MongoDB 2.6 with fewer than 5 replicas is similar to:
+
+.. code:: javascript
+
+  {
+    "nInserted" : 2,
+    "nUpserted" : 0,
+    "nMatched" : 0,
+    "nModified" : 0,
+    "nRemoved" : 1,
+    "upserted" : [ ]
+    "writeErrors" : [ ],
+    "writeConcernErrors": [{
+      "code": 64,
+      "waiting for replication timed out",
+    }, {
+      "code": 64,
+      "waiting for replication timed out",
+    }]
+  }
+
+If there is no write concern error the bulk result's "writeConcernErrors" array is empty.
+
+.. note:: Previous versions of this spec were ambiguous about reporting writeConcernErrors. Some clients include a singular field "writeConcernError" in bulk results; the singular form is now deprecated and an array called "writeConcernErrors" is required.
 
 Handling upserts
 ----------------
@@ -582,6 +608,8 @@ nMatched is equivalent to the "n" field in the getLastError response after a leg
 For example, if a document has `x: 1` and we update it with `{$set: {x: 1}}`, nModified is not incremented for that document.
 
 The WriteError's are wrapped in their own wrapper that also contains the operation that caused the error to happen. Similarly the WriteConcernError is a simple wrapper around the result to ensure it's read only.
+
+A client may optionally provide a method to merge writeConcernErrors into one, analogous to how mongos does.
 
 .. code:: javascript
 
@@ -685,9 +713,11 @@ The WriteError's are wrapped in their own wrapper that also contains the operati
         var errmsg = "";
         for(var i = 0; i < bulkResult.writeConcernErrors.length; i++) {
           var err = bulkResult.writeConcernErrors[i];
-          errmsg = errmsg + err.errmsg;
-          // TODO: Something better
-          if(i == 0) errmsg = errmsg + " and ";
+          if (i != 0) {
+            errmsg = errmsg + " and ";
+          }
+
+          errmsg = errmsg + '"' + err.errmsg + '"';
         }
 
         return new WriteConcernError({ errmsg : errmsg, code : WRITE_CONCERN_ERROR });
@@ -841,7 +871,7 @@ depending on the order that the operations are performed in.
 
 **Question:** My unordered bulk operation got split into multiple batches that all reported a write concern error. Should I report all of the write concern errors ?
 
-**Answer:** No, it's enough to report on the first one as it's a soft error. It does not signal that the write was not applied.
+**Answer:** Yes, combined into an array called "writeConcernErrors".
 
 Detailed Test Cases
 ===================
@@ -1635,7 +1665,39 @@ Empty collection.
     error_details['nInserted'] == 1
     error_details['writeErrors'].length == 1
     error_details['writeErrors'][0]['index'] == 1
-    error_details also includes writeConcernErrors.
+    // code 64, "timed out" in 2.4
+    // code 64, "waiting for replication timed out" in 2.6
+    // code 100, "Not enough data-bearing nodes" in 3.0
+    error_details['writeConcernErrors'][0]['code'] either 64 or 100
+    error_details['writeConcernErrors'][0]['errmsg'] not empty
+
+WTIMEOUT WITH MULTIPLE OPERATIONS
+---------------------------------
+Multiple write concern errors are all reported.
+
+2-node replica set.
+
+Empty collection.
+
+.. code:: javascript
+
+    batch = initializeOrderedBulkOp()
+    batch.insert({_id: 1})
+    batch.find({}).remove()
+    batch.execute({w: 3, wtimeout: 1}) raises error with details.
+    error_details['nInserted'] == 1
+    error_details['nRemoved'] == 1
+    error_details['writeErrors'].length == 0
+    // code 64, "timed out" in 2.4
+    // code 64, "waiting for replication timed out" in 2.6
+    // code 100, "Not enough data-bearing nodes" in 3.0
+
+    wc_errors = error_details['writeConcernErrors']
+    wc_errors.length == 2
+    for (i = 0; i < 2; i++) {
+      wc_errors[i]['code'] either 64 or 100
+      wc_errors[i]['errmsg'] is not empty
+    }
 
 W = 0
 -----
