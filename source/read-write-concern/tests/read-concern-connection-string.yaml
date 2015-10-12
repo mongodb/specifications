@@ -1,13 +1,13 @@
 tests:
-	-
-		description: "Default"
-		uri: "mongodb://localhost/"
-		readConcern: { }
-	-
-		description: "local specified"
-		uri: "mongodb://localhost/?readConcernLevel=local"
-		readConcern: { level: "local" }
-	-
-		description: "majority specified"
-		uri: "mongodb://localhost/?readConcernLevel=majority"
-		readConcern: { level: "majority" }
+    -
+        description: "Default"
+        uri: "mongodb://localhost/"
+        readConcern: { }
+    -
+        description: "local specified"
+        uri: "mongodb://localhost/?readConcernLevel=local"
+        readConcern: { level: "local" }
+    -
+        description: "majority specified"
+        uri: "mongodb://localhost/?readConcernLevel=majority"
+        readConcern: { level: "majority" }
