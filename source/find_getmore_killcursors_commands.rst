@@ -334,16 +334,7 @@ When sending a find operation as a find command rather than a legacy **OP_QUERY*
 
 For the **find**, **getMore** and **killCursors** commands the **numberToReturn** field SHOULD be -1. To execute **find** commands against a secondary the driver MUST set the **slaveOk** bit for the **find** command to successfully execute.
 
-The **slaveOk** flag MUST be set to true, for all **getMore** and **killCursors** commands to make the commands behave in the same manner as **OP_GET_MORE** and **OP_KILL_CURSORS**. 
-
-This is to avoid a scenario like the following.
-
-1. **find** is executed against the primary with the slaveOk bit unset.
-2. primary steps down to secondary.
-3. **getMore** is executed against the server that is no longer primary with the slaveOk bit unset.
-4. **getMore** fails due to the server not being primary.
-
-By setting the **slaveOk** bit on **getMore** and **killCursors** the query the commands will not fail during a step down from primary to secondary.
+The **slaveOk** flag SHOULD not be set for all follow-up **getMore** and **killCursors** commands. The cursor on the server keeps the original **slaveOk** value first set on the **find** command.
 
 More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
@@ -453,7 +444,7 @@ Semantics of maxTimeMS for a Driver
 
 In the case of  a **non-tailable cursor query** OR **a tailable cursor query with awaitData == false**, the driver MUST set maxTimeMS on the **find** command and MUST NOT set maxTimeMS on the **getMore** command.
 
-In the case of **a tailable cursor with awaitData == true**, the driver MUST set maxTimeMS on both the** find** and subsequent **getMore** commands.
+In the case of **a tailable cursor with awaitData == true**, the driver MAY set the maxTimeMS field on both the **find** and subsequent **getMore** commands. In the case where the driver allows maxTimeMS to be set on the **getMore** command it SHOULD be exposed in the CRUD API as the option named **maxAwaitTimeMS**.
 
 getMore
 -------
