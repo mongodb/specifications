@@ -444,7 +444,7 @@ Semantics of maxTimeMS for a Driver
 
 In the case of  a **non-tailable cursor query** OR **a tailable cursor query with awaitData == false**, the driver MUST set maxTimeMS on the **find** command and MUST NOT set maxTimeMS on the **getMore** command.
 
-In the case of **a tailable cursor with awaitData == true**, the driver MAY set the maxTimeMS field on both the **find** and subsequent **getMore** commands. In the case where the driver allows maxTimeMS to be set on the **getMore** command it SHOULD be exposed in the CRUD API as the option named **maxAwaitTimeMS**.
+In the case of **a tailable cursor with awaitData == true** the driver MUST provide a Cursor level option named **maxAwaitTimeMS** (See CRUD specification for details). The **maxTimeMS** option on the **getMore** command MUST be set to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** options is provided it MUST default to 1000 ms.
 
 getMore
 -------
