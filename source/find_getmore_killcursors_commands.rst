@@ -494,6 +494,8 @@ The accepted parameters are described in the table below.
 
        Please see the "Semantics of maxTimeMS" section for more details.
 
+The **batchSize** MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
+
 On success, the getMore command will return the following:
 
 .. code:: javascript
