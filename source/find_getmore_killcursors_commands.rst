@@ -347,9 +347,14 @@ The new **find** command has different semantics to the existing 3.0 and earlier
 
 Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILLCURSORS** wire protocol message when it limit is reached.
 
-When using the **find** and **getMore** command the same **batchSize** value **SHOULD** be passed to both commands. This means that if the **find** command had a **batchSize** of `3` the subsequent **getMore** commands **SHOULD** also have **batchSize** set to `3`. 
+When setting the **batchSize** on the **find** and **getMore** command the value MUST be based on the cursor limit calculations specified in the `CRUD`_ specification. 
 
-If the driver is performing the limit calculations it **MAY** pass the pre 3.2 **batchSize** value to the **getMore** instead. See the `CRUD`_ specification for detail on combining **limit** and **batchSize** for **OP_QUERY** and **OP_GET_MORE**.
+In the following example the **limit** is set to **4** and the **batchSize** is set to **3** the following commands are executed.
+
+.. code:: javascript
+
+    {find: ..., batchSize:3}
+    {getMore: ..., batchSize:1}
 
 .. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
