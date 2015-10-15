@@ -50,7 +50,7 @@ This specification includes guidance for implementing `Read Concern`_ and `Write
 Read Concern
 ------------
 
-For naming and deviation guidance, see the `CRUD specification`(https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming)_ . Defined below are the constructs for drivers.
+For naming and deviation guidance, see the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_. Defined below are the constructs for drivers.
 
 .. code:: typescript
 
@@ -74,8 +74,8 @@ For naming and deviation guidance, see the `CRUD specification`(https://github.c
   }
 
 
-Unknown Levels and Additional Options
--------------------------------------
+Unknown Levels and Additional Options for String based ReadConcerns
+-------------------------------------------------------------------
 
 For forward compatibility, a driver MUST NOT raise an error when a user provides an unknown ``level`` or additional options. The driver relies on the server to validate levels and other contents of the read concern.
 
@@ -171,7 +171,7 @@ MaxWireVersion < 4
 Write Concern
 -------------
 
-For naming and deviation guidance, see the `CRUD specification`(https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming)_. Below are defined the constructs for drivers.
+For naming and deviation guidance, see the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_. Below are defined the constructs for drivers.
 
 .. code:: typescript
   
