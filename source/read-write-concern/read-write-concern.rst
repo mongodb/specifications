@@ -12,7 +12,7 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: Oct. 5, 2015
+:Last Modified: Oct. 16, 2015
 :Version: 1.0
 
 .. contents::
@@ -74,7 +74,7 @@ For naming and deviation guidance, see the `CRUD specification <https://github.c
   }
 
 
-Unknown Levels and Additional Options for String based ReadConcerns
+Unknown Levels and Additional Options for String Based ReadConcerns
 -------------------------------------------------------------------
 
 For forward compatibility, a driver MUST NOT raise an error when a user provides an unknown ``level`` or additional options. The driver relies on the server to validate levels and other contents of the read concern.
@@ -161,7 +161,7 @@ Errors
 ------
 
 MaxWireVersion < 4
-    Only the server’s default ``ReadConcern`` and the ``local`` ``readConcernLevel`` is support by ``MaxWireVersion`` < 4. When using other ``readConcernLevels`` with clients reporting ``MaxWireVersion`` < 4, the driver MUST raise an error. This check MUST happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately define a ``ReadPreference`` such that intermittent errors do not occur.
+    Only the server’s default ``ReadConcern`` is support by ``MaxWireVersion`` < 4. When using other ``readConcernLevels`` with clients reporting ``MaxWireVersion`` < 4, the driver MUST raise an error. This check MUST happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately define a ``ReadPreference`` such that intermittent errors do not occur.
 
 .. note::
 
@@ -414,3 +414,5 @@ Q: Why does a driver send :javascript:`{ readConcern: { level: “local” } }` 
 
 Version History
 ===============
+
+2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
