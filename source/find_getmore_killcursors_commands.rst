@@ -6,7 +6,7 @@ Find, getMore and killCursors commands.
 =======================================
 
 :Spec: 137
-:Version: 1.1
+:Version: 1.2
 :Title: Find, getMore and killCursors commands
 :Author: Christian Kvalheim
 :Lead: Christian Kvalheim
@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: September 30, 2015
+:Last Modified: October 13, 2015
 
 .. contents::
 
@@ -334,16 +334,7 @@ When sending a find operation as a find command rather than a legacy **OP_QUERY*
 
 For the **find**, **getMore** and **killCursors** commands the **numberToReturn** field SHOULD be -1. To execute **find** commands against a secondary the driver MUST set the **slaveOk** bit for the **find** command to successfully execute.
 
-The **slaveOk** flag MUST be set to true, for all **getMore** and **killCursors** commands to make the commands behave in the same manner as **OP_GET_MORE** and **OP_KILL_CURSORS**. 
-
-This is to avoid a scenario like the following.
-
-1. **find** is executed against the primary with the slaveOk bit unset.
-2. primary steps down to secondary.
-3. **getMore** is executed against the server that is no longer primary with the slaveOk bit unset.
-4. **getMore** fails due to the server not being primary.
-
-By setting the **slaveOk** bit on **getMore** and **killCursors** the query the commands will not fail during a step down from primary to secondary.
+The **slaveOk** flag SHOULD not be set for all follow-up **getMore** and **killCursors** commands. The cursor on the server keeps the original **slaveOk** value first set on the **find** command.
 
 More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
@@ -355,6 +346,17 @@ Behavior of Limit, skip and batchSize
 The new **find** command has different semantics to the existing 3.0 and earlier **OP_QUERY** wire protocol message. The **limit** field is a hard limit on the total number of documents returned by the cursor no matter what **batchSize** is provided.
 
 Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILLCURSORS** wire protocol message when it limit is reached.
+
+When setting the **batchSize** on the **find** and **getMore** command the value MUST be based on the cursor limit calculations specified in the `CRUD`_ specification. 
+
+In the following example the **limit** is set to **4** and the **batchSize** is set to **3** the following commands are executed.
+
+.. code:: javascript
+
+    {find: ..., batchSize:3}
+    {getMore: ..., batchSize:1}
+
+.. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
 If there are not enough documents in the cursor to fulfill the **limit** defined, the cursor runs to exhaustion and is closed, returning a cursorId of 0 to the client.
 
@@ -413,6 +415,29 @@ The way that limit, batchSize and singleBatch are defined for the find command d
      - N/A
      -
 
+Special handling of limit < 0 and batchSize < 0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If both **limit** and **batchSize** are negative the values should be handled in the following way.
+
+.. list-table:: Limit and batchSize both negative
+   :widths: 15 15 30
+   :header-rows: 1
+
+   * - Value
+     - Translates to
+     - Description
+   * - limit <= batchSize
+     - limit = Math.abs(limit)
+       batchSize = Math.abs(limit)
+       singleBatch = true
+     - No special treatment needed
+   * - limit > batchSize
+     - limit = Math.abs(limit)
+       batchSize = Math.abs(limit)
+       singleBatch = true
+     - No special treatment needed
+
 BatchSize of 1
 ^^^^^^^^^^^^^^
 
@@ -447,7 +472,7 @@ Semantics of maxTimeMS for a Driver
 
 In the case of  a **non-tailable cursor query** OR **a tailable cursor query with awaitData == false**, the driver MUST set maxTimeMS on the **find** command and MUST NOT set maxTimeMS on the **getMore** command.
 
-In the case of **a tailable cursor with awaitData == true**, the driver MUST set maxTimeMS on both the** find** and subsequent **getMore** commands.
+In the case of **a tailable cursor with awaitData == true** the driver MUST provide a Cursor level option named **maxAwaitTimeMS** (See CRUD specification for details). The **maxTimeMS** option on the **getMore** command MUST be set to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** options is provided it MUST default to 1000 ms.
 
 getMore
 -------
@@ -491,6 +516,8 @@ The accepted parameters are described in the table below.
      - If not set, the server defaults to it’s internal maxTimeMS setting.
 
        Please see the "Semantics of maxTimeMS" section for more details.
+
+The **batchSize** MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
 On success, the getMore command will return the following:
 
@@ -677,4 +704,6 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
-2015-10-30 slaveOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
+2015-09-30 slaveOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
+
+2015-10-13 added guidance on batchSize values as related to the **getMore** command. SlaveOk flag SHOULD not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore commands when the cursor is a tailable cursor with awaitData set.
