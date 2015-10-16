@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Sept. 16, 2015
+:Last Modified: Oct. 16, 2015
 
 .. contents::
 
@@ -362,8 +362,21 @@ Read
     limit: Optional<Int32>;
 
     /**
+     * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor 
+     * query. This only applies to a TAILABLE_AWAIT cursor. When the cursor is not a TAILABLE_AWAIT cursor,
+     * this option is ignored.
+     *
+     * On servers >= 3.2, this option will be specified on the getMore command as "maxTimeMS". The default
+     * is no value: no "maxTimeMS" is sent to the server with the getMore command.
+     *
+     * On servers < 3.2, this option is ignored.
+     */
+    maxAwaitTimeMS: Optional<Int64>;
+
+    /**
      * The maximum amount of time to allow the query to run. If $maxTimeMS also exists
      * in the modifiers document, the maxTimeMS field overwrites $maxTimeMS.
+     *
      * The default is no maxTimeMS.
      *
      * @see http://docs.mongodb.org/manual/reference/operator/meta/maxTimeMS/
@@ -1288,6 +1301,7 @@ Q: What about explain?
 Changes
 =======
 
+2015-10-16: Added maxAwaitTimeMS to FindOptions.
 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
 2015-09-16: Added bypassDocumentValidation.
 2015-09-16: Added readConcern notes.
