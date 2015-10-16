@@ -415,6 +415,29 @@ The way that limit, batchSize and singleBatch are defined for the find command d
      - N/A
      -
 
+Special handling of limit < 0 and batchSize < 0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If both **limit** and **batchSize** are negative the values should be handled in the following way.
+
+.. list-table:: Limit and batchSize both negative
+   :widths: 15 15 30
+   :header-rows: 1
+
+   * - Value
+     - Translates to
+     - Description
+   * - limit <= batchSize
+     - limit = Math.abs(limit)
+       batchSize = Math.abs(limit)
+       singleBatch = true
+     - No special treatment needed
+   * - limit > batchSize
+     - limit = Math.abs(limit)
+       batchSize = Math.abs(limit)
+       singleBatch = true
+     - No special treatment needed
+
 BatchSize of 1
 ^^^^^^^^^^^^^^
 
