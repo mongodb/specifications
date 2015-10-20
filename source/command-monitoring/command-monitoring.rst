@@ -381,3 +381,6 @@ Changelog
   - Changed find test with a kill cursors to not run on server versions greater than 3.0
   - Added a find test with no kill cursors command which only runs on 3.1 and higher.
   - Added notes on which tests should run based on server versions.
+
+19 OCT 2015:
+  - Changed batchSize in the 3.2 find tests to expect the remaining value.
