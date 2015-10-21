@@ -7,10 +7,12 @@ Connection String Spec
 
 :Spec: 104
 :Title: Connection String Spec
-:Authors: Ross Lawley, A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
-:Status: Draft
+:Authors: Ross Lawley
+:Advisors: A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
+:Status: Approved
 :Type: Standards
-:Last Modified: Aug. 10, 2015
+:Last Modified: Sept. 14, 2015
+:Version: 1.0
 
 .. contents::
 
@@ -344,3 +346,7 @@ Q: Why must the auth database be URL decoded by the parser?
     mongodb://localhost/admin%3F?w=1
 
   In this case the auth database would be ``admin?`` and the connection options  ``w=1``.
+
+-------
+Changes
+-------
