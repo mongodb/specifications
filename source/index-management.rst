@@ -12,6 +12,7 @@ Index Management
 :Type: Standards
 :Minimum Server Version: 2.4
 :Last Modified: Sep. 17, 2015
+:Version: 1.1
 
 .. contents::
 
