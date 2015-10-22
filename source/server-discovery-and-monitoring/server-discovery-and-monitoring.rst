@@ -8,7 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Last Modified: May 1, 2015
+:Version: 1.0
+:Last Modified: October 10, 2015
 
 .. contents::
 
@@ -2062,5 +2063,7 @@ Bernie Hackett gently oversaw the specification process.
 
 Changes
 -------
+
+2015-10-09: Specify electionID comparison method.
 
 2015-06-16: Added cooldownMS.
