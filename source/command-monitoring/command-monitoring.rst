@@ -12,6 +12,7 @@ Command Monitoring
 :Type: Standards
 :Minimum Server Version: 2.4
 :Last Modified: October 1, 2015
+:Version: 1.3
 
 .. contents::
 
