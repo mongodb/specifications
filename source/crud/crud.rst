@@ -1295,7 +1295,7 @@ Q: Didn't we just build a bulk API?
 
 
 Q: What about explain?
-  Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 2.8 offers an explain command that can be run using a runCommand method.
+  Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 3.0 offers an explain command that can be run using a runCommand method.
 
 
 Changes
