@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: October 1, 2015
-:Version: 1.3
+:Last Modified: October 31, 2015
+:Version: 1.4
 
 .. contents::
 
@@ -385,3 +385,6 @@ Changelog
 
 19 OCT 2015:
   - Changed batchSize in the 3.2 find tests to expect the remaining value.
+
+31 OCT 2015:
+  - Changed find test on 3.1 and higher to ignore being run on sharded clusters.
