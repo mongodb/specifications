@@ -579,7 +579,7 @@ Basic
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "aggregate" command.
+     * "bypassDocumentValidation" option is sent with the write command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -593,7 +593,7 @@ Basic
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "aggregate" command.
+     * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -607,7 +607,7 @@ Basic
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "aggregate" command.
+     * "bypassDocumentValidation" option is sent with the "insert" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -628,7 +628,7 @@ Basic
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "aggregate" command.
+     * "bypassDocumentValidation" option is sent with the "update" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -1098,7 +1098,7 @@ Find And Modify
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is to not send a value. no 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "findAndModify" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -1149,7 +1149,7 @@ Find And Modify
      * If true, allows the write to opt-out of document level validation. 
      * 
      * On servers >= 3.2, the default is to not send a value. no 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
+     * "bypassDocumentValidation" option is sent with the "findAndModify" command.
      *
      * On servers < 3.2, this option is ignored.
      */
@@ -1301,6 +1301,7 @@ Q: What about explain?
 Changes
 =======
 
+2015-11-05: Typos in comments about bypassDocumentValidation
 2015-10-16: Added maxAwaitTimeMS to FindOptions.
 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
 2015-09-16: Added bypassDocumentValidation.
