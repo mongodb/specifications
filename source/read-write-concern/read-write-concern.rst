@@ -106,7 +106,7 @@ When a user has not specified a ``ReadConcern`` or has specified the server’s 
 Generic Command Method
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``ReadConcern`` MUST not be applied automatically to any command. A user wishing to use a ``ReadConcern`` in a generic command must supply it manually.
+If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``ReadConcern`` MUST NOT be applied automatically to any command. A user wishing to use a ``ReadConcern`` in a generic command must supply it manually.
 
 
 Errors
