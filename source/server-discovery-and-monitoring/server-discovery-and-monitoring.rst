@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 1.0
-:Last Modified: October 10, 2015
+:Version: 2.0
+:Last Modified: December 14, 2015
 
 .. contents::
 
@@ -239,6 +239,8 @@ Fields:
 * type: a `TopologyType`_ enum value.
   The default is Unknown.
 * setName: the replica set name. Default null.
+* maxSetVersion: an integer or null. The largest setVersion ever reported by
+  a primary. Default null.
 * maxElectionId: an ObjectId or null. The largest electionId ever reported by
   a primary. Default null.
 * servers: a set of ServerDescription instances.
@@ -284,8 +286,9 @@ Fields:
   The client `monitors all three types of servers`_ in a replica set.
 * tags: map from string to string. Default empty.
 * setName: string or null. Default null.
+* setVersion: integer or null. Default null.
 * electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that
-  believes it is primary. See `using electionId to detect stale primaries`_.
+  believes it is primary. See `using setVersion and electionId to detect stale primaries`_.
   Default null.
 * primary: an address. This server's opinion of who the primary is.
   Default null.
@@ -1088,17 +1091,24 @@ updateRSFromPrimary
         checkIfHasPrimary()
         return
 
-    if description.electionId is not null:
-        # Election ids are ObjectIds, see "using electionId to detect stale
-        # primaries" for comparison rules.
-        if (topologyDescription.maxElectionId is not null
-                and topologyDescription.maxElectionId > description.electionId):
+    if description.setVersion is not null and description.electionId is not null:
+        # Election ids are ObjectIds, see
+        # "using setVersion and electionId to detect stale primaries"
+        # for comparison rules.
+        if (topologyDescription.maxSetVersion is not null and
+            topologyDescription.maxElectionId is not null and (
+                topologyDescription.maxSetVersion > description.setVersion or (
+                    topologyDescription.maxSetVersion == description.setVersion and
+                    topologyDescription.maxElectionId > description.electionId
+                )
+            ):
 
             # Stale primary.
             replace description with a default ServerDescription of type "Unknown"
             checkIfHasPrimary()
             return
 
+        topologyDescription.maxSetVersion = description.setVersion
         topologyDescription.maxElectionId = description.electionId
 
     for each server in topologyDescription.servers:
@@ -1132,10 +1142,10 @@ updateRSFromPrimary
 
   See `replica set monitoring with and without a primary`_.
 
-  If the server is primary with an obsolete electionId, it is likely a stale
-  primary that is going to step down. Mark it Unknown and let periodic
+  If the server is primary with an obsolete setVersion or electionId, it is
+  likely a stale primary that is going to step down. Mark it Unknown and let periodic
   monitoring detect when it becomes secondary. See
-  `using electionId to detect stale primaries`_.
+  `using setVersion and electionId to detect stale primaries`_.
 
   A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is not equal to
   "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
@@ -1793,16 +1803,24 @@ but it MUST NOT remove servers from the TopologyDescription.
 Eventually, when a primary is discovered, any hosts not in the primary's host
 list are removed.
 
-Using electionId to detect stale primaries
-''''''''''''''''''''''''''''''''''''''''''
+Using setVersion and electionId to detect stale primaries
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Replica set members running MongoDB 2.6.10+ or 3.0+ include an ObjectId called
+Replica set members running MongoDB 2.6.10+ or 3.0+ include an integer called
+"setVersion" and an ObjectId called
 "electionId" in their ismaster response.
+Starting with MongoDB 3.2.0, replica sets can use two different replication
+protocol versions; electionIds from one protocol version must not be compared
+to electionIds from a different protocol.
 
-The client remembers the greatest electionId reported by a primary,
-and distrusts primaries with lesser electionIds.
-It compares electionIds as 12-byte big-endian integers, so ObjectIds generated
-later are considered greater.
+Because protocol version changes require replica set reconfiguration,
+clients use the tuple (setVersion, electionId) to detect stale primaries.
+
+The client remembers the greatest setVersion and electionId reported by a primary,
+and distrusts primaries from older setVersions or from the same setVersion
+but with lesser electionIds.
+It compares setVersions as integer values.
+It compares electionIds as 12-byte big-endian integers.
 This prevents the client from oscillating
 between the old and new primary during a split-brain period,
 and helps provide read-your-writes consistency with write concern "majority"
@@ -1811,13 +1829,17 @@ and read preference "primary".
 Requirements for read-your-writes consistency
 `````````````````````````````````````````````
 
-Using electionId only provides read-your-writes consistency if:
+Using (setVersion, electionId) only provides read-your-writes consistency if:
 
 * The application uses the same MongoClient instance for write-concern
   "majority" writes and read-preference "primary" reads, and
-* All members run MongoDB 2.6.10+ or MongoDB 3.0+,
-  and clocks are *less* than 30 seconds skewed.
-  If all members run MongoDB 3.2+, clocks need not be synchronized.
+* All members use MongoDB 2.6.10+, 3.0.0+ or 3.2.0+ with replication protocol 0
+  and clocks are *less* than 30 seconds skewed, or
+* All members run MongoDB 3.2.0 and replication protocol 1
+  and clocks are *less* skewed than the election timeout
+  (`electionTimeoutMillis`, which defaults to 10 seconds), or
+* All members run MongoDB 3.2.1+ and replication protocol 1
+  (in which case clocks need not be synchronized).
 
 Scenario
 ````````
@@ -1839,36 +1861,39 @@ reads with WriteConcern Majority and ReadPreference Primary."
 Detecting a stale primary
 `````````````````````````
 
-To prevent this scenario, the client uses electionId to
+To prevent this scenario, the client uses setVersion and electionId to
 determine which primary was elected last. In this case, it would not consider
-A primary, nor read from it, after receiving B's ismaster response with its
-greater electionId.
+A primary, nor read from it, after receiving B's ismaster response with the
+same setVersion and a greater electionId.
 
 Monotonicity
 ````````````
 
-The electionId is a monotonically increasing ObjectId
-in the ismaster response of replica set primaries running MongoDB 3.0.x,
-or 2.6.10+ (which has `SERVER-13542 <https://jira.mongodb.org/browse/SERVER-13542>`_ backported).
-In those MongoDB versions,
+The electionId is an ObjectId compared bytewise in big-endian order.
+In some server versions, it is monotonic with respect
+to a particular servers' system clock, but is not globally monotonic across
+a deployment.  However, if inter-server clock skews are small, it can be
+treated as a monotonic value.
+
+In MongoDB 2.6.10+ (which has `SERVER-13542 <https://jira.mongodb.org/browse/SERVER-13542>`_ backported),
+MongoDB 3.0.0+ or MongoDB 3.2+ (under replication protocol version 0),
 the electionId's leading bytes are a server timestamp.
 As long as server clocks are skewed *less* than 30 seconds,
 electionIds can be reliably compared.
-(This is precise enough, because MongoDB 2.6.x and 3.0.x
+(This is precise enough, because in replication protocol version 0, servers
 are designed not to complete more than one election every 30 seconds.
 Elections do not take 30 seconds--they are typically much faster than that--but
 there is a 30-second cooldown before the next election can complete.)
 
-Beginning in MongoDB 3.2, the electionId is guaranteed monotonic
-without relying on any clock synchronization,
-and there is no more 30-second cooldown.
+Beginning in MongoDB 3.2.0, under replication protocol version 1,
+the electionId begins with a timestamp, but
+the cooldown is shorter.  As long as inter-server clock skew is *less* than
+the configured election timeout (`electionTimeoutMillis`, which defaults to
+10 seconds), then electionIds can be reliably compared.
 
-Using electionId only provides read-your-writes consistency if:
-
-* The application uses one MongoClient instance with write-concern "majority"
-  writes and read-preference "primary" reads, and
-* All members run MongoDB 3.0.x, or 2.6.x with the electionId backport,
-  and clocks are *less* than 30 seconds skewed. Or all members run MongoDB 3.2+.
+Beginning in MongoDB 3.2.1, under replication protocol version 1,
+the electionId is guaranteed monotonic
+without relying on any clock synchronization.
 
 Using me field to detect seed list members that do not match host names in the replica set configuration
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -2063,6 +2088,8 @@ Bernie Hackett gently oversaw the specification process.
 
 Changes
 -------
+
+2015-12-14: Require clients to compare (setVersion, electionId) tuples.
 
 2015-10-09: Specify electionID comparison method.
 
