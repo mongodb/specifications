@@ -154,6 +154,42 @@
                     }
                 ]
             ]
+        }, 
+        {
+            "outcome": {
+                "servers": {
+                    "a:27017": {
+                        "electionId": {
+                            "$oid": "000000000000000000000002"
+                        }, 
+                        "setName": "rs", 
+                        "setVersion": 1, 
+                        "type": "RSPrimary"
+                    }, 
+                    "b:27017": {
+                        "setName": "rs", 
+                        "type": "RSSecondary"
+                    }
+                }, 
+                "setName": "rs", 
+                "topologyType": "ReplicaSetWithPrimary"
+            }, 
+            "responses": [
+                [
+                    "b:27017", 
+                    {
+                        "hosts": [
+                            "a:27017", 
+                            "b:27017"
+                        ], 
+                        "ismaster": false, 
+                        "ok": 1, 
+                        "secondary": true, 
+                        "setName": "rs", 
+                        "setVersion": 2
+                    }
+                ]
+            ]
         }
     ], 
     "uri": "mongodb://a/?replicaSet=rs"
