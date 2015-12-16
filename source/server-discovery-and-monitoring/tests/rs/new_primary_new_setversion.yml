@@ -1,10 +1,10 @@
-description: "Disconnected from primary, reject primary with stale electionId"
+description: "New primary with greater setVersion"
 
 uri: "mongodb://a/?replicaSet=rs"
 
 phases: [
 
-    # A is elected, then B.
+    # Primary A is discovered and tells us about B.
     {
         responses: [
             ["a:27017", {
@@ -14,14 +14,38 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000001"}
-            }],
+            }]
+        ],
+
+        outcome: {
+            servers: {
+                "a:27017": {
+                    type: "RSPrimary",
+                    setName: "rs",
+                    setVersion: 1,
+                    electionId: {"$oid": "000000000000000000000001"}
+                },
+                "b:27017": {
+                    type: "Unknown",
+                    setName: ,
+                    electionId:
+                }
+            },
+            topologyType: "ReplicaSetWithPrimary",
+            setName: "rs",
+        }
+    },
+
+    # RS is reconfigured and B is elected.
+    {
+        responses: [
             ["b:27017", {
                 ok: 1,
                 ismaster: true,
                 hosts: ["a:27017", "b:27017"],
                 setName: "rs",
-                setVersion: 1,
-                electionId: {"$oid": "000000000000000000000002"}
+                setVersion: 2,
+                electionId: {"$oid": "000000000000000000000001"}
             }]
         ],
 
@@ -35,34 +59,11 @@ phases: [
                 "b:27017": {
                     type: "RSPrimary",
                     setName: "rs",
-                    setVersion: 1,
-                    electionId: {"$oid": "000000000000000000000002"}
+                    setVersion: 2,
+                    electionId: {"$oid": "000000000000000000000001"}
                 }
             },
             topologyType: "ReplicaSetWithPrimary",
-            setName: "rs",
-        }
-    },
-
-    # Disconnected from B.
-    {
-        responses: [
-            ["b:27017", {}]
-        ],
-        outcome: {
-            servers: {
-                "a:27017": {
-                    type: "Unknown",
-                    setName: ,
-                    electionId:
-                },
-                "b:27017": {
-                    type: "Unknown",
-                    setName: ,
-                    electionId:
-                }
-            },
-            topologyType: "ReplicaSetNoPrimary",
             setName: "rs",
         }
     },
@@ -87,40 +88,10 @@ phases: [
                     electionId:
                 },
                 "b:27017": {
-                    type: "Unknown",
-                    setName: ,
-                    electionId:
-                }
-            },
-            topologyType: "ReplicaSetNoPrimary",
-            setName: "rs",
-        }
-    },
-
-    # Now A is re-elected.
-    {
-        responses: [
-            ["a:27017", {
-                ok: 1,
-                ismaster: true,
-                hosts: ["a:27017", "b:27017"],
-                setName: "rs",
-                setVersion: 1,
-                electionId: {"$oid": "000000000000000000000003"}
-            }]
-        ],
-        outcome: {
-            servers: {
-                "a:27017": {
                     type: "RSPrimary",
                     setName: "rs",
-                    setVersion: 1,
-                    electionId: {"$oid": "000000000000000000000003"}
-                },
-                "b:27017": {
-                    type: "Unknown",
-                    setName: ,
-                    electionId:
+                    setVersion: 2,
+                    electionId: {"$oid": "000000000000000000000002"}
                 }
             },
             topologyType: "ReplicaSetWithPrimary",
