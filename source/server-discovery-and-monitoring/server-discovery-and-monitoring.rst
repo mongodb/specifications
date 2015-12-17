@@ -1108,8 +1108,13 @@ updateRSFromPrimary
             checkIfHasPrimary()
             return
 
-        topologyDescription.maxSetVersion = description.setVersion
         topologyDescription.maxElectionId = description.electionId
+
+    if (description.setVersion is not null and
+        (topologyDescription.maxSetVersion is null or
+            description.setVersion > topologyDescription.maxSetVersion)):
+
+        topologyDescription.maxSetVersion = description.setVersion
 
     for each server in topologyDescription.servers:
         if server.address != description.address:
@@ -1921,13 +1926,13 @@ With checking for "me" in place, it looks like this instead:
 * The client iterates the cursor and attempts to execute a get-more against server D.
 * Server selection completes by matching D.
 
-Ignore setVersion
-'''''''''''''''''
+Ignore setVersion unless the server is primary
+''''''''''''''''''''''''''''''''''''''''''''''
 
 It was thought that if all replica set members report a setVersion,
 and a secondary's response has a higher setVersion than any seen,
 that the secondary's host list could be considered as authoritative
-as the primary's. (See previous section.)
+as the primary's. (See `Replica set monitoring with and without a primary`_.)
 
 This scenario illustrates the problem with setVersion:
 
@@ -1955,7 +1960,7 @@ If the client trusted the setVersion in this scenario,
 it would trust whichever config it received first.
 
 mongos 2.6 ignores setVersion and only trusts the primary.
-This spec requires all clients to ignore setVersion.
+This spec requires all clients to ignore setVersion from non-primaries.
 
 Retry ismaster calls once
 '''''''''''''''''''''''''
@@ -2089,7 +2094,7 @@ Bernie Hackett gently oversaw the specification process.
 Changes
 -------
 
-2015-12-14: Require clients to compare (setVersion, electionId) tuples.
+2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 
 2015-10-09: Specify electionID comparison method.
 
