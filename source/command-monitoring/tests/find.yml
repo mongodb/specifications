@@ -90,7 +90,7 @@ tests:
       arguments:
         filter: { _id: { $gte: 1 }}
         sort: { _id: 1 }
-        batchSize: {"$numberLong": 3}
+        batchSize: {"$numberLong": "3"}
     expectations:
       -
         command_started_event:
@@ -98,7 +98,7 @@ tests:
             find: *collection_name
             filter: { _id: { $gte : 1 }}
             sort: { _id: 1 }
-            batchSize: {"$numberLong": 3}
+            batchSize: {"$numberLong": "3"}
           command_name: "find"
           database_name: *database_name
       -
@@ -118,7 +118,7 @@ tests:
           command:
             getMore: { $numberLong: "42" }
             collection: *collection_name
-            batchSize: {"$numberLong": 3}
+            batchSize: {"$numberLong": "3"}
           command_name: "getMore"
           database_name: *database_name
       -
@@ -140,8 +140,8 @@ tests:
       arguments:
         filter: { _id: { $gte: 1 }}
         sort: { _id: 1 }
-        batchSize: {"$numberLong": 3}
-        limit: {"$numberLong": 4}
+        batchSize: {"$numberLong": "3"}
+        limit: {"$numberLong": "4"}
     expectations:
       -
         command_started_event:
@@ -149,8 +149,8 @@ tests:
             find: *collection_name
             filter: { _id: { $gte : 1 }}
             sort: { _id: 1 }
-            batchSize: {"$numberLong": 3}
-            limit: {"$numberLong": 4}
+            batchSize: {"$numberLong": "3"}
+            limit: {"$numberLong": "4"}
           command_name: "find"
           database_name: *database_name
       -
@@ -170,7 +170,7 @@ tests:
           command:
             getMore: { $numberLong: "42" }
             collection: *collection_name
-            batchSize: 1
+            batchSize: { $numberLong: "1" }
           command_name: "getMore"
           database_name: *database_name
       -
@@ -208,8 +208,8 @@ tests:
       arguments:
         filter: { _id: { $gte: 1 }}
         sort: { _id: 1 }
-        batchSize: {"$numberLong": 3}
-        limit: {"$numberLong": 4}
+        batchSize: {"$numberLong": "3"}
+        limit: {"$numberLong": "4"}
     expectations:
       -
         command_started_event:
@@ -217,8 +217,8 @@ tests:
             find: *collection_name
             filter: { _id: { $gte : 1 }}
             sort: { _id: 1 }
-            batchSize: {"$numberLong": 3}
-            limit: {"$numberLong": 4}
+            batchSize: {"$numberLong": "3"}
+            limit: {"$numberLong": "4"}
           command_name: "find"
           database_name: *database_name
       -
