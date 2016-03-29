@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: October 31, 2015
-:Version: 1.4
+:Last Modified: March 29, 2016
+:Version: 1.5
 
 .. contents::
 
@@ -81,6 +81,8 @@ Guarantees
 ----------
 
 The driver MUST guarantee that every ``CommandStartedEvent`` has either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``.
+
+The driver MUST guarantee that the ``requestId`` of the ``CommandStartedEvent`` and the corresponding ``CommandSucceededEvent`` or ``CommandFailedEvent`` is the same. How the ``requestId`` is generated, however, is up to the driver and this specification provides no restrictions on the computation of that value.
 
 Unacknowledged/Acknowledged Writes
 ----------------------------------
@@ -388,3 +390,6 @@ Changelog
 
 31 OCT 2015:
   - Changed find test on 3.1 and higher to ignore being run on sharded clusters.
+
+29 MAR 2016:
+  - Added note on guarantee of the request ids.
