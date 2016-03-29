@@ -82,7 +82,7 @@ Guarantees
 
 The driver MUST guarantee that every ``CommandStartedEvent`` has either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``.
 
-The driver MUST guarantee that the ``requestId`` of the ``CommandStartedEvent`` and the corresponding ``CommandSucceededEvent`` or ``CommandFailedEvent`` is the same. How the ``requestId`` is generated, however, is up to the driver and this specification provides no restrictions on the computation of that value.
+The driver MUST guarantee that the ``requestId`` of the ``CommandStartedEvent`` and the corresponding ``CommandSucceededEvent`` or ``CommandFailedEvent`` is the same. In the case of acknowledged writes on server version 2.4 [where the driver sends an operation followed by a ``getLastError``] the ``requestId`` MUST be either the ``requestId`` from the original message or the ``requestId`` from the ``getLastError``.
 
 Unacknowledged/Acknowledged Writes
 ----------------------------------
