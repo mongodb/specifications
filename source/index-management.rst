@@ -11,8 +11,8 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Sep. 17, 2015
-:Version: 1.1
+:Last Modified: Apr. 6, 2016
+:Version: 1.2
 
 .. contents::
 
@@ -669,6 +669,12 @@ Common API Components
      * filter expression are included in the index.
      */
     partialFilterExpression: Document;
+
+    /**
+     * Optionally specifies a collation to use for the index. If not specified, the collation of
+     * the collection is used.
+     */
+    collation: Document;
   }
 
 
@@ -686,3 +692,5 @@ Changelog
 17 SEP 2015:
   - Added ``partialFilterExpression`` attribute to ``IndexOptions`` in order to support partial indexes.
   - Fixed "provides" typo.
+6 APR 2016:
+  - Added ``collation`` attribute to ``IndexOptions`` in order to support setting a collation on an index.

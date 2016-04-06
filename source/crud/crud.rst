@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Oct. 16, 2015
+:Last Modified: Apr. 6, 2016
 
 .. contents::
 
@@ -585,6 +585,14 @@ Basic
      */
     bypassDocumentValidation: Optional<Boolean>;
 
+    /**
+     * Specify the collation to use.
+     *
+     * If not specified, the collation of the collection is used.
+     *
+     * On servers < 3.4, this option is ignored.
+     */
+    collation: Optional<Document>;
   }
 
   class InsertOneOptions {
@@ -623,6 +631,15 @@ Basic
   }
 
   class UpdateOptions
+
+    /**
+     * Specify the collation to use.
+     *
+     * If not specified, the collation of the collection is used.
+     *
+     * On servers < 3.4, this option is ignored.
+     */
+    collation: Optional<Document>;
 
     /**
      * If true, allows the write to opt-out of document level validation. 
@@ -1070,6 +1087,15 @@ Find And Modify
   class FindOneAndDeleteOptions {
     
     /**
+     * Specify the collation to use.
+     *
+     * If not specified, the collation of the collection is used.
+     *
+     * On servers < 3.4, this option is ignored.
+     */
+    collation: Optional<Document>;
+
+    /**
      * The maximum amount of time to allow the query to run.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
@@ -1094,6 +1120,15 @@ Find And Modify
 
   class FindOneAndReplaceOptions {
     
+    /**
+     * Specify the collation to use.
+     *
+     * If not specified, the collation of the collection is used.
+     *
+     * On servers < 3.4, this option is ignored.
+     */
+    collation: Optional<Document>;
+
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
@@ -1145,6 +1180,15 @@ Find And Modify
 
   class FindOneAndUpdateOptions {
     
+    /**
+     * Specify the collation to use.
+     *
+     * If not specified, the collation of the collection is used.
+     *
+     * On servers < 3.4, this option is ignored.
+     */
+    collation: Optional<Document>;
+
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
@@ -1306,3 +1350,4 @@ Changes
 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
 2015-09-16: Added bypassDocumentValidation.
 2015-09-16: Added readConcern notes.
+2016-04-06: Added collation.
