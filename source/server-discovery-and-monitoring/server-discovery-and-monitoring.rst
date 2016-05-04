@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.0
-:Last Modified: December 14, 2015
+:Version: 2.1
+:Last Modified: May 4, 2016
 
 .. contents::
 
@@ -1312,6 +1312,13 @@ The client SHOULD clear its connection pool for the server.
 (See `when does a client see "not master" or "node is recovering"?`_.
 and `use error messages to detect "not master" and "node is recovering"`_.)
 
+Monitoring SDAM events
+''''''''''''''''''''''
+
+The required driver specification for providing lifecycle hooks into server
+discovery and monitoring for applications to consume can be found in the
+`SDAM Monitoring Specification <https://github.com/mongodb/specifications/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`_.
+
 Implementation notes
 ''''''''''''''''''''
 
@@ -2099,3 +2106,5 @@ Changes
 2015-10-09: Specify electionID comparison method.
 
 2015-06-16: Added cooldownMS.
+
+2016-05-04: Added link to SDAM monitoring.
