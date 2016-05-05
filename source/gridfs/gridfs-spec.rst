@@ -62,15 +62,14 @@ Chunk
   
     { 
       "_id" : <ObjectId>,
-      "files_id" : <ObjectId>,
+      "files_id" : <TFileId>,
       "n" : <Int32>,
       "data" : <binary data>
     }
 
   :_id: a unique ID for this document of type BSON ObjectId
   :files_id: the id for this file (the _id from the files collection document). This field takes the type of
-    the corresponding _id in the files collection, which on existing stored files created by legacy drivers may
-    not be ObjectId.
+    the corresponding _id in the files collection.
   :n: the index number of this chunk, zero-based.
   :data: a chunk of data from the user file
 
@@ -93,7 +92,7 @@ Files collection document
   .. code:: javascript
 
     {
-      "_id" : <ObjectId>,
+      "_id" : <TFileId>,
       "length" : <Int64>,
       "chunkSize" : <Int32>,
       "uploadDate" : <BSON datetime, ms since Unix epoch in UTC>,
@@ -104,8 +103,8 @@ Files collection document
       "metadata" : <Document>
     }
   
-  :_id: a unique ID for this document, of type BSON ObjectId. Legacy GridFS systems may store this value as
-    a different type. New files must be stored using an ObjectId.
+  :_id: a unique ID for this document. Usually this will be of type ObjectId, but a custom _id value provided by
+    the application may be of any type.
   :length: the length of this stored file, in bytes
   :chunkSize: the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is 255KB.
   :uploadDate: the date and time this file was added to GridFS, stored as a BSON datetime value. The value of this
@@ -135,6 +134,13 @@ Stored File
 Stream
   An abstraction that represents streamed I/O. In some languages a different
   word is used to represent this abstraction.
+
+TFileId
+  While GridFS file id values are ObjectIds by default, an application may choose
+  to use custom file id values, which may be of any type. In this spec the term 
+  TFileId refers to whatever data type is appropriate in the driver's programming 
+  language to represent a file id. This would be something like object, BsonValue or
+  a generic <TFileId> type parameter.
 
 User File
   A data added by a user to GridFS. This data may map to an actual file on disk, a stream of input, a large data
@@ -409,22 +415,50 @@ File Upload
   
     /**
      * Opens a Stream that the application can write the contents of the file to.
+     * The driver generates the file id.
      *
      * Returns a Stream to which the application will write the contents.
+     *
+     * Note: this overload is provided for backward compatibility. In languages
+     * that use generic type parameters, this method may be omitted since
+     * the TFileId type might not be an ObjectId.
      */
     Stream open_upload_stream(string filename, GridFSUploadOptions options=null);
     
     /**
-     * Uploads a user file to a GridFS bucket.
+     * Opens a Stream that the application can write the contents of the file to.
+     * The application provides a custom file id.
+     *
+     * Returns a Stream to which the application will write the contents.
+     */
+    Stream open_upload_stream(TFileId id, string filename, GridFSUploadOptions options=null);
+    
+    /**
+     * Uploads a user file to a GridFS bucket. The driver generates the file id.
      *
      * Reads the contents of the user file from the @source Stream and uploads it
      * as chunks in the chunks collection. After all the chunks have been uploaded,
      * it creates a files collection document for @filename in the files collection.
      *
      * Returns the id of the uploaded file.
+     *
+     * Note: this overload is provided for backward compatibility. In languages
+     * that use generic type parameters, this method may be omitted since
+     * the TFileId type might not be an ObjectId.
      */
     ObjectId upload_from_stream(string filename, Stream source, GridFSUploadOptions options=null);
   
+    /**
+     * Uploads a user file to a GridFS bucket. The application supplies a custom file id.
+     *
+     * Reads the contents of the user file from the @source Stream and uploads it
+     * as chunks in the chunks collection. After all the chunks have been uploaded,
+     * it creates a files collection document for @filename in the files collection.
+     *
+     * Note: there is no need to return the id of the uploaded file because the application
+     * already supplied it as a a parameter.
+     */
+    void upload_from_stream(TFileId id, string filename, Stream source, GridFSUploadOptions options=null);
   }
 
 Uploads a user file to a GridFS bucket. For languages that have a Stream
@@ -468,8 +502,10 @@ as the chunk size for this stored file. If this parameter is not
 specified, the default chunkSizeBytes setting for this GridFSBucket
 object MUST be used instead.
 
-To store a user file, drivers first generate an ObjectId to act as its
-id. Then, drivers store the contents of the user file in the chunks
+To store a user file, the file must have a unique id. In some cases the
+driver can generate a unique ObjectId to serve as the id for the
+file being uploaded. Otherwise the application provides the value.
+Drivers store the contents of the user file in the chunks
 collection by breaking up the contents into chunks of size
 ‘chunkSizeBytes’. For a non-empty user file, for each n\ :sup:`th`
 section of the file, drivers create a chunk document and set its fields
@@ -554,13 +590,13 @@ File Download
      *
      * Returns a Stream.
      */
-    Stream open_download_stream(ObjectId id);
+    Stream open_download_stream(TFileId id);
     
     /**
      * Downloads the contents of the stored file specified by @id and writes
      * the contents to the @destination Stream.
      */
-    void download_to_stream(ObjectId id, Stream destination);
+    void download_to_stream(TFileId id, Stream destination);
   
   }
 
@@ -578,10 +614,8 @@ In the case of download_to_stream the driver writes the contents of
 the stored file to the provided Stream. The driver does NOT call close
 (or its equivalent) on the Stream.
 
-Note: if a file in a GridFS bucket was added by a legacy implementation,
-its id may be of a type other than ObjectId. Drivers that previously
-used id’s of a different type MAY implement a download() method that
-accepts that type, but MUST mark that method as deprecated.
+Note: By default a file id is of type ObjectId. If an application
+uses custom file ids it may be of any type.
 
 **Implementation details:**
 
@@ -620,7 +654,7 @@ File Deletion
      * Given a @id, delete this stored file’s files collection document and
      * associated chunks from a GridFS bucket.
      */
-    void delete(ObjectId id);
+    void delete(TFileId id);
   
   }
 
@@ -821,7 +855,7 @@ Renaming stored files
     /**
      * Renames the stored file with the specified @id.
      */
-    void rename(ObjectId id, string new_filename);
+    void rename(TFileId id, string new_filename);
   
   }
 
@@ -1013,7 +1047,30 @@ Should drivers report an error if a stored file has extra chunks?
   but this is an extremely unlikely state and we don't want to pay a
   performance penalty checking for an error that is almost never there.
   Therefore, drivers MAY ignore extra chunks.
-
+  
+Why have we changed our mind about requiring the file id to be an ObjectId?
+  This spec originally required the file id for all new GridFS files to be
+  an ObjectId and specified that the driver itself would be the one to 
+  generate the ObjectId when a new file was uploaded. While this sounded like
+  a good idea, it has since become evident that there are valid use cases
+  for an application to want to generate its own file id, and that an 
+  application wouldn't necessarily want to use ObjectId as the type of
+  the file id. Accordingly, we have relaxed this spec to allow an application
+  to supply a custom file id (of any type) when uploading a new file.
+  
+How can we maintain backward compatibility while supporting custom file ids?
+  For most methods supporting custom file ids is as simple as relaxing the
+  type of the id parameter from ObjectId to something more general like object 
+  or BSON value (or to a type parameter like <TFileId> in languages that
+  support generic methods), or adding new overloads to support custom file ids.
+  The original upload_from_stream method returned an ObjectId, and support for
+  custom file ids is implemented by adding a new overload that takes the custom
+  file id as an additional parameter. Drivers should continue to support the original
+  method if possible to maintain backward compatibility. This spec does 
+  not attempt to completely mandate how each driver should maintain backward
+  compatibility, as different languages have different approaches and 
+  capabilities for maintaining backward compatibility. 
+  
 Backwards Compatibility
 =======================
 
