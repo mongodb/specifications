@@ -419,7 +419,7 @@ File Upload
      *
      * Returns a Stream to which the application will write the contents.
      *
-     * Note: this overload is provided for backward compatibility. In languages
+     * Note: this method is provided for backward compatibility. In languages
      * that use generic type parameters, this method may be omitted since
      * the TFileId type might not be an ObjectId.
      */
@@ -431,7 +431,7 @@ File Upload
      *
      * Returns a Stream to which the application will write the contents.
      */
-    Stream open_upload_stream(TFileId id, string filename, GridFSUploadOptions options=null);
+    Stream open_upload_stream_with_id(TFileId id, string filename, GridFSUploadOptions options=null);
     
     /**
      * Uploads a user file to a GridFS bucket. The driver generates the file id.
@@ -442,7 +442,7 @@ File Upload
      *
      * Returns the id of the uploaded file.
      *
-     * Note: this overload is provided for backward compatibility. In languages
+     * Note: this method is provided for backward compatibility. In languages
      * that use generic type parameters, this method may be omitted since
      * the TFileId type might not be an ObjectId.
      */
@@ -458,7 +458,7 @@ File Upload
      * Note: there is no need to return the id of the uploaded file because the application
      * already supplied it as a a parameter.
      */
-    void upload_from_stream(TFileId id, string filename, Stream source, GridFSUploadOptions options=null);
+    void upload_from_stream_with_id(TFileId id, string filename, Stream source, GridFSUploadOptions options=null);
   }
 
 Uploads a user file to a GridFS bucket. For languages that have a Stream
@@ -1055,16 +1055,19 @@ Why have we changed our mind about requiring the file id to be an ObjectId?
   a good idea, it has since become evident that there are valid use cases
   for an application to want to generate its own file id, and that an 
   application wouldn't necessarily want to use ObjectId as the type of
-  the file id. Accordingly, we have relaxed this spec to allow an application
+  the file id. The most common case where an application would want to use
+  a custom file id is when the chunks collection is to be sharded and the
+  application wants to use a custom file id that is suitable for sharding. 
+  Accordingly, we have relaxed this spec to allow an application
   to supply a custom file id (of any type) when uploading a new file.
   
 How can we maintain backward compatibility while supporting custom file ids?
   For most methods supporting custom file ids is as simple as relaxing the
   type of the id parameter from ObjectId to something more general like object 
   or BSON value (or to a type parameter like <TFileId> in languages that
-  support generic methods), or adding new overloads to support custom file ids.
+  support generic methods). In a few cases new methods were added to support custom file ids.
   The original upload_from_stream method returned an ObjectId, and support for
-  custom file ids is implemented by adding a new overload that takes the custom
+  custom file ids is implemented by adding a new method that takes the custom
   file id as an additional parameter. Drivers should continue to support the original
   method if possible to maintain backward compatibility. This spec does 
   not attempt to completely mandate how each driver should maintain backward
