@@ -9,7 +9,7 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: September 16, 2015
+:Last Modified: May 10, 2016
 :Version: 1.0
 
 .. contents::
@@ -1133,3 +1133,5 @@ files be updated to use a more secure algorithm, like SHA-1 or SHA-256.
 
 Changes
 =======
+
+2016-05-10 Support custom file ids
