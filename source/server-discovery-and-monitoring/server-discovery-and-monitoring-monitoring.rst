@@ -353,11 +353,9 @@ Ruby:
   class TopologyDescriptionChangedSubscriber
 
     def completed(event)
-      oldDescription = event.oldDescription()
-      newDescription = event.newDescription()
-
-      if (!event.new_description.has_readable_server?(read_preference))
-        LOGGER.warn(“New topology description contains no writable server”)
+      new_description = event.new_description
+      if (!new_description.has_writable_server?)
+        LOGGER.warn('New topology description contains no writable server.')
       end
     end
   end
