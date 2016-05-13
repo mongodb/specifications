@@ -152,7 +152,7 @@ Some drivers need to support lazy authentication for backwards compatibility. A 
 	db.logout();
 	db.auth(user: "user2", password: "password")
 
-In addition, driver's supporting lazy authentication may need to support logout as well. In practice, it works exactly the opposite of authenticate. When logout is called, those credentials MUST be forgotten. When an existing socket is checked out, any forgotten credential must be de-authenticated on that socket.
+In addition, drivers supporting lazy authentication may need to support logout as well. In practice, it works exactly the opposite of authenticate. When logout is called, those credentials MUST be forgotten. When an existing socket is checked out, any forgotten credential must be de-authenticated on that socket.
 
 If the initial authentication fails, an error SHOULD be raised and the credentials SHOULD NOT be added to the credential cache. However, when authentication fails using credentials from the credential cache, all open connections MUST be closed and the server type set to ``Unknown``.
 
@@ -232,7 +232,7 @@ MONGODB-X509
 
 :since: 2.6
 
-MONGODB-X509 is the usage of X-509 certificates to validate a client.  The server will use the distinguished subject name of the client certifate in the SSL negotiation to authenticate. The driver will be required to supply the distinguished subject name outside of the SSL negotiation to the server using the "authenticate" command.
+MONGODB-X509 is the usage of X-509 certificates to validate a client.  The server will use the distinguished subject name of the client certificate in the SSL negotiation to authenticate. The driver will be required to supply the distinguished subject name outside of the SSL negotiation to the server using the "authenticate" command.
 
 Conversation
 ````````````
@@ -278,7 +278,7 @@ SASL mechanisms are all implemented using the same sasl commands and interpreted
 #. Send the `saslStart` command.
 	* :javascript:`{ saslStart: 1, mechanism: <mechanism_name>, payload: BinData(...), autoAuthorize: 1 }`
 	* Response: :javascript:`{ conversationId: <number>, code: <code>, done: <boolean>, payload: <payload> }`
-		- conversationId: the conversation identitifer. This will need to be remembered and used for the duration of the conversation.
+		- conversationId: the conversation identifier. This will need to be remembered and used for the duration of the conversation.
 		- code: A response code that will indicate failure. This field is not included when the command was successful.
 		- done: a boolean value indicating whether or not the conversation has completed.
 		- payload: a sequence of bytes or a base64 encoded string (depending on input) to pass into the SASL library to transition the state machine.
@@ -384,7 +384,7 @@ SCRAM-SHA-1 is defined in `RFC 5802 <http://tools.ietf.org/html/rfc5802>`_.
 		clientKey = HMAC(saltedPassword, "Client Key");
 	}
 
-In addition, SCRAM-SHA-1 requires that a client create a randomly generated nonce. It is imperative, for security sake, that this be as secure and truly random as possible. For instance, java provides both a Random class as well as a SecureRandom. SecureRandom is cryptographically generated while Random is just a pseudo-random generator with predictable outcomes.
+In addition, SCRAM-SHA-1 requires that a client create a randomly generated nonce. It is imperative, for security sake, that this be as secure and truly random as possible. For instance, java provides both a Random class as well as a SecureRandom class. SecureRandom is cryptographically generated while Random is just a pseudo-random generator with predictable outcomes.
 
 
 Conversation
@@ -513,7 +513,7 @@ Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
 	* Added `Connection Handshake`_
 	* Changed connection string to support mechanism properties in generic form
-	* Added example converstations for all mechanisms except GSSAPI
+	* Added example conversations for all mechanisms except GSSAPI
 	* Miscellaneous wording changes for clarification
 
 Version 1.1 Changes
