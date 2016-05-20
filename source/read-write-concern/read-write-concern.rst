@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: Oct. 16, 2015
-:Version: 1.0
+:Last Modified: May 20, 2016
+:Version: 1.1
 
 .. contents::
 
@@ -313,6 +313,33 @@ With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAnd
 .. note ::
     Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
 
+Other commands that write
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Commands that write other than those discussed above, SHOULD support a ``writeConcern`` parameter for MongoDB >= 3.4 (MaxWireVersion >= 5).
+
+These commands are:
+  * ``aggregate`` with ``$out``
+  * ``copydb``
+  * ``create``
+  * ``createIndexes``
+  * ``drop``
+  * ``dropDatabase``
+  * ``dropIndexes``
+  * ``mapReduce`` with ``$out``
+  * ``clone``
+  * ``cloneCollection``
+  * ``cloneCollectionAsCapped``
+  * ``collMod``
+  * ``convertToCapped``
+  * ``emptyCapped``
+  * ``renameCollection``
+  * ``appendoplognote``
+  * ``godInsert``
+  * ``capTrunc``
+  * ``reindex``
+  * ``mergechunk``
+
 
 Location Specification
 ----------------------
@@ -394,7 +421,7 @@ WriteConcern
 2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server, either in the command or as a getLastError.
 3. On ServerVersion less than 2.6, drivers MUST NOT send a getLastError command for an Unacknowledged write concern.
 4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
-
+5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
 
 Reference Implementation
 ========================
@@ -416,3 +443,4 @@ Version History
 ===============
 
 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
+2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
