@@ -313,12 +313,12 @@ With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAnd
 .. note ::
     Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
 
-Helpers for other commands that write
+Other commands that write
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If your driver has helpers for commands that write other than those discussed above, they SHOULD accept a ``writeConcern`` parameter.
+Commands that write other than those discussed above, SHOULD support a ``writeConcern`` parameter for MongoDB >= 3.4 (MaxWireVersion >= 5).
 
-Commands whose helpers should accept a ``writeConcern`` parameter:
+These commands are:
   * ``aggregate`` with ``$out``
   * ``copydb``
   * ``create``
@@ -421,7 +421,7 @@ WriteConcern
 2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server, either in the command or as a getLastError.
 3. On ServerVersion less than 2.6, drivers MUST NOT send a getLastError command for an Unacknowledged write concern.
 4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
-
+5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
 
 Reference Implementation
 ========================
