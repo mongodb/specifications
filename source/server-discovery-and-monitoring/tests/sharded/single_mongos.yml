@@ -1,0 +1,35 @@
+description: "Single mongos"
+
+uri: "mongodb://a"
+
+# Note that drivers may implement this differently.
+# Some may expect that the topology is Single instead of Sharded.
+phases: [
+
+    {
+        responses: [
+
+                ["a:27017", {
+
+                    ok: 1,
+                    ismaster: true,
+                    msg: "isdbgrid"
+                }]
+        ],
+
+        outcome: {
+
+            servers: {
+
+                "a:27017": {
+
+                    type: "Mongos",
+                    setName:
+                }
+            },
+
+            topologyType: "Sharded",
+            setName:
+        }
+    }
+]
