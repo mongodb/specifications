@@ -671,9 +671,9 @@ Common API Components
     partialFilterExpression: Document;
 
     /**
-     * Optionally specifies a collation to use for the index. If not specified, the default collation
-     * of the driver collection object is used, if one is defined. Otherwise, the default collation of
-     * the collection server-side is used.
+     * Optionally specifies a collation to use for the index in MongoDB 3.4 and higher.
+     * If not specified, the default collation of the driver collection object is used,
+     * if one is defined. Otherwise, the default collation of the collection server-side is used.
      */
     collation: Document;
   }
