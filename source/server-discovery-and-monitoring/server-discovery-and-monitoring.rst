@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Last Modified: June 9, 2016
-:Version: 2.2
+:Version: 2.1
+:Last Modified: May 4, 2016
 
 .. contents::
 
@@ -247,7 +247,6 @@ Fields:
   Default contains one server: "localhost:27017", ServerType Unknown.
 * stale: a boolean for single-threaded clients, whether the topology must
   be re-scanned.
-  (Not related to maxStalenessMS, nor to `stale primaries`_.)
 * compatible: a boolean.
   False if any server's wire protocol version range
   is incompatible with the client's.
@@ -274,12 +273,6 @@ Fields:
   from the address the client uses.
 * error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the ismaster call. Default null.
-* lastWriteDate: a 64-bit BSON datetime or null.
-  The "lastWriteDate" from the server's most recent ismaster response.
-* opTime: an ObjectId or null.
-  The last opTime reported by the server; an ObjectId or null.
-  (Only mongos and shard servers record this field when monitoring
-  config servers as replica sets.)
 * type: a `ServerType`_ enum value. Default Unknown.
 * minWireVersion, maxWireVersion:
   the wire protocol version range supported by the server.
@@ -299,10 +292,14 @@ Fields:
   Default null.
 * primary: an address. This server's opinion of who the primary is.
   Default null.
-* lastUpdateTime: when this server was last checked. Default "infinity ago".
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
+
+Single-threaded clients need an additional field
+to implement the `single-threaded monitoring`_ algorithm:
+
+* lastUpdateTime: when this server was last checked. Default "infinity ago".
 
 .. _configured:
 
@@ -386,10 +383,6 @@ For single-threaded drivers it MUST default to 60 seconds
 and MUST be configurable.
 It MUST be called heartbeatFrequencyMS
 unless this breaks backwards compatibility.
-
-For both multi- and single-threaded drivers,
-if heartbeatFrequencyMS is configurable,
-the driver MUST NOT permit users to configure it less than minHeartbeatFrequencyMS (500ms).
 
 (See `heartbeatFrequencyMS defaults to 10 seconds or 60 seconds`_
 and `what's the point of periodic monitoring?`_)
@@ -759,27 +752,6 @@ and if it changes from a known type to Unknown its RTT is set to null.
 However, if it changes from one known type to another
 (e.g. from RSPrimary to RSSecondary) its RTT is updated normally,
 not set to null nor restarted from scratch.
-
-lastWriteDate and opTime
-````````````````````````
-
-DOCS-7787, lastWriteDate everywhere
-
-The isMaster response of a replica set members running MongoDB 3.4 and later
-contains a ``lastWrite`` subdocument with fields ``lastWriteDate`` and ``opTime``
-(`SERVER-8858`_).
-If these fields are available, parse them from the ismaster response,
-otherwise set them to null.
-
-Clients MUST NOT attempt to compensate for the network latency between when the server
-generated its isMaster response and when the client records ``lastUpdateTime``.
-
-.. _SERVER-8858: https://jira.mongodb.org/browse/SERVER-8858
-
-lastUpdateTime
-``````````````
-
-Clients SHOULD set lastUpdateTime with a monotonic clock.
 
 Hostnames are normalized to lower-case
 ``````````````````````````````````````
@@ -1843,8 +1815,6 @@ but it MUST NOT remove servers from the TopologyDescription.
 Eventually, when a primary is discovered, any hosts not in the primary's host
 list are removed.
 
-.. _stale primaries:
-
 Using setVersion and electionId to detect stale primaries
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -2138,5 +2108,3 @@ Changes
 2015-06-16: Added cooldownMS.
 
 2016-05-04: Added link to SDAM monitoring.
-
-2016-06-09: Updated for Max Staleness support.
