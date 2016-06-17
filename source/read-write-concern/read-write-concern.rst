@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: May 20, 2016
-:Version: 1.1
+:Last Modified: June 17, 2016
+:Version: 1.2
 
 .. contents::
 
@@ -63,7 +63,12 @@ For naming and deviation guidance, see the `CRUD specification <https://github.c
       /**
        * This is rendered as "majority" (lower-case) on the wire.
        */
-      majority
+      majority,
+
+      /**
+       * This is rendered as "linearizable" (lower-case) on the wire.
+       */
+      linearizable
   }
 
   class ReadConcern {
@@ -442,5 +447,6 @@ Q: Why does a driver send :javascript:`{ readConcern: { level: “local” } }` 
 Version History
 ===============
 
-2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
-2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
+  - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
+  - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
+  - 2016-06-17: Added "linearizable" to ReadConcern levels.
