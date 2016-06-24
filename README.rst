@@ -44,7 +44,7 @@ cleanup``" to remove the LaTeX by-products from ``build/``.
 
 Licensing
 ----------------
-All the specs in this repository are available under the  `Creative Commons Share Alike 3.0 license<https://creativecommons.org/licenses/by-nc-sa/3.0/>`_.
+All the specs in this repository are available under the  `Creative Commons Share Alike 3.0 license <https://creativecommons.org/licenses/by-nc-sa/3.0/>`_.
 
 In the future...
 ----------------
