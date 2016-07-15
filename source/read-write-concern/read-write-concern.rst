@@ -347,13 +347,8 @@ These commands are:
   * ``cloneCollectionAsCapped``
   * ``collMod``
   * ``convertToCapped``
-  * ``emptyCapped``
   * ``renameCollection``
-  * ``appendoplognote``
-  * ``godInsert``
-  * ``capTrunc``
   * ``reindex``
-  * ``mergechunk``
 
 
 Location Specification
@@ -464,3 +459,4 @@ Version History
     and raise an exception if found,
     only in command-specific helper methods that take a writeConcern parameter,
     not in generic command methods.
+    Don't mention obscure commands with no helpers.
