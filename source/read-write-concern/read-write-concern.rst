@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: June 17, 2016
-:Version: 1.2
+:Last Modified: July 15, 2016
+:Version: 1.3
 
 .. contents::
 
@@ -288,7 +288,7 @@ If your driver offers a generic ``RunCommand`` method on your ``database`` objec
 Errors
 ~~~~~~
 
-Errors associated with ``WriteConcern`` return successful responses with a ``writeConcernError`` field indicating the issue. For example,
+Server errors associated with ``WriteConcern`` return successful responses with a ``writeConcernError`` field indicating the issue. For example,
 
 .. code:: typescript
 
@@ -304,16 +304,26 @@ Errors associated with ``WriteConcern`` return successful responses with a ``wri
         }
     }
 
+Drivers SHOULD parse server replies for a "writeConcernError" field and report the error
+only in command-specific helper methods that take a separate write concern parameter
+or an options parameter that may contain a write concern option.
+For example, helper methods for "findAndModify" or "aggregate" SHOULD parse the server reply
+for "writeConcernError".
 
+Drivers SHOULD report writeConcernErrors however they report other server errors:
+by raising an exception, returning "false", or another idiom that is consistent with other server errors.
 
+Drivers SHOULD NOT parse server replies for "writeConcernError" in generic command methods.
 
+(Reporting of writeConcernErrors is more complex for bulk operations,
+see the Bulk API Spec.)
 
 Find And Modify
 ~~~~~~~~~~~~~~~
 
 The ``findAndModify`` command takes a named parameter, ``writeConcern``. See command documentation for further examples.
 
-With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAndModify``. 
+With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAndModify``.
 
 .. note ::
     Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
@@ -450,3 +460,7 @@ Version History
   - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
   - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
   - 2016-06-17: Added "linearizable" to ReadConcern levels.
+  - 2016-07-15: Advise drivers to parse server replies for writeConcernError
+    and raise an exception if found,
+    only in command-specific helper methods that take a writeConcern parameter,
+    not in generic command methods.
