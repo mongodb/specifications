@@ -282,8 +282,9 @@ All other ``WriteConcerns``, including the ``Unacknowledged WriteConcern``, MUST
 Generic Command Method
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``WriteConcern`` MUST not be applied automatically to any command. A user wishing to use a ``WriteConcern`` in a generic command must supply it manually.
+If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``WriteConcern`` MUST NOT be applied automatically to any command. A user wishing to use a ``WriteConcern`` in a generic command must supply it manually.
 
+The generic command method MUST NOT check the user's command document for a ``WriteConcern`` nor check whether the server is new enough to support a write concern for the command. The method simply sends the user's command to the server as-is.
 
 Errors
 ~~~~~~
@@ -331,7 +332,12 @@ With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAnd
 Other commands that write
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Commands that write other than those discussed above, SHOULD support a ``writeConcern`` parameter for MongoDB >= 3.4 (MaxWireVersion >= 5).
+Command helper methods for commands that write, other than those discussed above,
+SHOULD support a ``writeConcern`` parameter.
+These methods SHOULD check whether the selected server's MaxWireVersion >= 5
+and if so, include the write concern in the command on the wire.
+If the selected server's MaxWireVersion < 5,
+these methods SHOULD silently omit the write concern from the command on the wire.
 
 These commands are:
   * ``aggregate`` with ``$out``
@@ -455,7 +461,9 @@ Version History
   - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
   - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
   - 2016-06-17: Added "linearizable" to ReadConcern levels.
-  - 2016-07-15: Advise drivers to parse server replies for writeConcernError
+  - 2016-07-15: Command-specific helper methods for commands that write SHOULD check the server's MaxWireVersion
+    and decide whether to send writeConcern.
+    Advise drivers to parse server replies for writeConcernError
     and raise an exception if found,
     only in command-specific helper methods that take a writeConcern parameter,
     not in generic command methods.
