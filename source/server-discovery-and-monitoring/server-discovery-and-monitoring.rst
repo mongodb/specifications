@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.1
-:Last Modified: May 4, 2016
+:Version: 2.2
+:Last Modified: July 18, 2016
 
 .. contents::
 
@@ -144,8 +144,8 @@ Round trip time
 Also known as RTT.
 
 The client's measurement of the duration of an ismaster call.
-The round trip time is used to support the "secondaryAcceptableLatencyMS"
-option in the Read Preferences spec.
+The round trip time is used to support the "localThresholdMS" [1]_
+option in the Server Selection Spec.
 Even though this measurement is called "ping time" in that spec,
 `drivers MUST NOT use the "ping" command`_ to measure this duration.
 `This spec does not mandate how round trip time is averaged`_.
@@ -1675,8 +1675,8 @@ so it is less likely than "ping" to require authentication soon.
 This spec does not mandate how round trip time is averaged
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-The Read Preferences spec requires drivers to calculate a round trip time
-for each server to support the secondaryAcceptableLatencyMS option.
+The Server Selection Spec requires drivers to calculate a round trip time
+for each server to support the localThresholdMS option.
 That spec calls this measurement the "ping time".
 The measurement probably should be a moving average of some sort,
 but it is not in the scope of this spec to mandate how drivers
@@ -2108,3 +2108,9 @@ Changes
 2015-06-16: Added cooldownMS.
 
 2016-05-04: Added link to SDAM monitoring.
+
+2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server Selection Spec",
+  and "secondaryAcceptableLatencyMS" with "localThresholdMS".
+
+.. [1] "localThresholdMS" was called "secondaryAcceptableLatencyMS" in the Read Preferences Spec,
+  before it was superseded by the Server Selection Spec.
