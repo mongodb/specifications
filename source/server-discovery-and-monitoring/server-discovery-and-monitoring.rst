@@ -1317,7 +1317,7 @@ Monitoring SDAM events
 
 The required driver specification for providing lifecycle hooks into server
 discovery and monitoring for applications to consume can be found in the
-`SDAM Monitoring Specification <https://github.com/mongodb/specifications/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`_.
+`SDAM Monitoring Specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`_.
 
 Implementation notes
 ''''''''''''''''''''
