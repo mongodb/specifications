@@ -8,7 +8,7 @@ Connection String Spec
 :Spec: 104
 :Title: Connection String Spec
 :Authors: Ross Lawley
-:Advisors: A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
+:Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
 :Last Modified: Sept. 14, 2015
