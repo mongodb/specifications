@@ -11,8 +11,8 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: Sept. 14, 2015
-:Version: 1.0
+:Last Modified: Jul. 22, 2016
+:Version: 1.1
 
 .. contents::
 
@@ -350,3 +350,5 @@ Q: Why must the auth database be URL decoded by the parser?
 -------
 Changes
 -------
+
+- 2016-07-22: In Port section, clarify that zero is not an acceptable port.
