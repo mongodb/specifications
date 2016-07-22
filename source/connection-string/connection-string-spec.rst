@@ -104,7 +104,7 @@ This specification does not define how host types should be differentiated (e.g.
 
 Port (optional)
 ~~~~~~~~~~~~~~~
-The port is an integer between 0 and 65535 that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
+The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
 
 ------------------------
 Auth Database (optional)
