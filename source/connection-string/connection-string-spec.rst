@@ -11,8 +11,8 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: Sept. 14, 2015
-:Version: 1.0
+:Last Modified: Jul. 22, 2016
+:Version: 1.1
 
 .. contents::
 
@@ -104,7 +104,7 @@ This specification does not define how host types should be differentiated (e.g.
 
 Port (optional)
 ~~~~~~~~~~~~~~~
-The port is an integer between 0 and 65535 that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
+The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
 
 ------------------------
 Auth Database (optional)
@@ -350,3 +350,5 @@ Q: Why must the auth database be URL decoded by the parser?
 -------
 Changes
 -------
+
+- 2016-07-22: In Port section, clarify that zero is not an acceptable port.
