@@ -202,7 +202,7 @@ This feature is only for routers and shards, not drivers. See `Future Work`_.
 Reference Implementation
 ========================
 
-TBD.
+The C Driver (CDRIVER-1363) and Perl Driver (PERL-626).
 
 Estimating Staleness: Example With a Primary
 ============================================
