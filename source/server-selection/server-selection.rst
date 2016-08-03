@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: July 21, 2016
+:Last Modified: August 3, 2016
 :Version: 1.3
 
 .. contents::
@@ -377,6 +377,8 @@ Clients MUST support these modes:
 several other server types that could appear in a replica set.  Such types are never
 candidates, eligible or suitable.
 
+.. _algorithm for filtering by staleness:
+
 maxStalenessMS
 ``````````````
 
@@ -437,6 +439,8 @@ eligibility MUST be determined from ``maxStalenessMS`` as follows:
 See the Max Staleness Spec for overall description and justification of this
 feature.
 
+.. _algorithm for filtering by tag_sets:
+
 tag_sets
 ````````
 
@@ -456,6 +460,9 @@ secondary server with tag set "\{ dc: 'ny', rack: 2, size: 'large' \}".
 A tag set that is an empty document matches any server, because the empty
 tag set is a subset of any tag set.  This means the default ``tag_sets``
 parameter (``[{}]``) matches all servers.
+
+Tag sets are applied after filtering servers by ``mode`` and ``maxStalenessMS``,
+and before selecting one server within the latency window.
 
 Eligibility MUST be determined from ``tag_sets`` as follows:
 
@@ -847,13 +854,30 @@ Read operations
 ```````````````
 
 For the purpose of selecting a server for read operations, the same rules apply
-to both topology types.
+to both ReplicaSetWithPrimary and ReplicaSetNoPrimary.
 
-Servers are suitable if they meet the requirements of the ``mode``,
-``tag_sets``, and ``maxStalenessMS`` read preference parameters (whether explicit or default).
+To select from the topology a server that matches the user's Read Preference:
 
-If more than one server is suitable, clients MUST randomly select a suitable server
-within the latency window.
+If ``mode`` is 'primary', select the primary server.
+
+If ``mode`` is 'secondary' or 'nearest':
+
+  #. Select all secondaries if ``mode`` is 'secondary', or all secondaries and
+     the primary if ``mode`` is 'nearest'.
+  #. From these, filter out servers staler than ``maxStalenessMS`` if it is set.
+  #. From the remaining servers, select servers matching the ``tag_sets``.
+  #. From these, select one server within the latency window.
+
+(See `algorithm for filtering by staleness`_, `algorithm for filtering by
+tag_sets`_, and `selecting servers within the latency window`_ for details.)
+
+If ``mode`` is 'secondaryPreferred', attempt the selection algorithm with
+``mode`` 'secondary' and the user's ``maxStalenessMS`` and ``tag_sets``. If
+no server matches, select the primary.
+
+If ``mode`` is 'primaryPreferred', select the primary if it is known, otherwise
+attempt the selection algorithm with ``mode`` 'secondary' and the user's
+``maxStalenessMS`` and ``tag_sets``.
 
 For all read preferences modes except 'primary', clients MUST set the ``slaveOK`` wire
 protocol flag to ensure that any suitable server can handle the request.  Clients
@@ -1500,6 +1524,9 @@ the single- and multi-threaded sections. Added a requirement that
 single-threaded drivers document selection time expectations.
 
 2016-07-21: Updated for Max Staleness support.
+
+2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS
+comes before tag_sets.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessMS.
