@@ -9,7 +9,7 @@ Server Discovery And Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: 2.3
-:Last Modified: July 21, 2016
+:Last Modified: August 4, 2016
 
 .. contents::
 
@@ -2025,6 +2025,50 @@ than error codes.
 The substring method has worked for drivers for years
 so this spec does not propose a new method.
 
+Clients use the hostnames listed in the replica set config, not the seed list
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Very often users have DNS aliases they use in their `seed list`_ instead of
+the hostnames in the replica set config. For example, the name "host_alias"
+might refer to a server also known as "host1", and the URI is::
+
+  mongodb://host_alias/?replicaSet=rs
+
+When the client connects to "host_alias", its ismaster response includes the
+list of hostnames from the replica set config, which does not include the seed::
+
+   {
+      hosts: ["host1:27017", "host2:27017"],
+      setName: "rs",
+      ... other ismaster response fields ...
+   }
+
+This spec requires clients to connect to the hostnames listed in the ismaster
+response. Furthermore, if the response is from a primary, the client MUST
+remove all hostnames not listed. In this case, the client disconnects from
+"host_alias" and tries "host1" and "host2". (See `updateRSFromPrimary`_.)
+
+Thus, replica set members must be reachable from the client by the hostnames
+listed in the replica set config.
+
+An alternative proposal is for clients to continue using the hostnames in the
+seed list. It could add new hosts from the ismaster response, and where a host
+is known by two names, the client can deduplicate them using the "me" field and
+prefer the name in the seed list.
+
+This proposal was rejected because it does not support key features of replica
+sets: failover and zero-downtime reconfiguration.
+
+In our example, if "host1" and "host2" are not reachable from the client, the
+client continues to use "host_alias" only. If that server goes down or is
+removed by a replica set reconfig, the client is suddenly unable to reach the
+replica set at all: by allowing the client to use the alias, we have hidden the
+fact that the replica set's failover feature will not work in a crisis or
+during a reconfig.
+
+In conclusion, to support key features of replica sets, we require that the
+hostnames used in a replica set config are reachable from the client.
+
 Backwards Compatibility
 -----------------------
 
@@ -2145,3 +2189,5 @@ Changes
   before it was superseded by the Server Selection Spec.
 
 2016-07-21: Updated for Max Staleness support.
+
+2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
