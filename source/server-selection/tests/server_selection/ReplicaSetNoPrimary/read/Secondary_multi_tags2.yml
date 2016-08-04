@@ -1,5 +1,5 @@
-# Catch bugs like CDRIVER-1447, ensure clients select a server that matches all
-# tags, even when the other server mismatches multiple tags.
+# Ensure clients select a server that matches all tags, even when the other
+# server matches one tag and doesn't match the other.
 ---
 topology_description:
   type: ReplicaSetNoPrimary
@@ -16,8 +16,8 @@ topology_description:
     avg_rtt_ms: 5
     type: RSSecondary
     tags:
-      rack: two
-      data_center: sf
+      rack: two           # mismatch
+      data_center: nyc    # match
 operation: read
 read_preference:
   mode: Secondary
