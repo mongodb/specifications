@@ -1,6 +1,6 @@
 # maxStalenessMS is applied before tag sets. With tag sets
 # [{data_center: nyc}, {data_center: tokyo}], if the only node in NYC is stale
-# then use primary.
+# then use Tokyo.
 ---
 heartbeatFrequencyMS: 25000  # 25 seconds.
 topology_description:
@@ -14,7 +14,7 @@ topology_description:
     lastWrite: {lastWriteDate: {$numberLong: "25002"}}
     maxWireVersion: 5
     tags:
-      data_center: tokyo
+      data_center: tokyo  # Matches second tag set.
   - &2
     address: b:27017
     type: RSSecondary
