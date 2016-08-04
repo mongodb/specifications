@@ -869,7 +869,8 @@ If ``mode`` is 'secondary' or 'nearest':
   #. From these, select one server within the latency window.
 
 (See `algorithm for filtering by staleness`_, `algorithm for filtering by
-tag_sets`_, and `selecting servers within the latency window`_ for details.)
+tag_sets`_, and `selecting servers within the latency window`_ for details
+on each step, and `why is maxStalenessMS applied before tag_sets?`_.)
 
 If ``mode`` is 'secondaryPreferred', attempt the selection algorithm with
 ``mode`` 'secondary' and the user's ``maxStalenessMS`` and ``tag_sets``. If
@@ -1501,6 +1502,32 @@ do so, such as:
 
 Driver-common rules for retrying operations (and configuring such retries)
 could be the topic of a different, future specification.
+
+Why is maxStalenessMS applied before tag_sets?
+----------------------------------------------
+
+The intention of read preference's list of tag sets is to allow a user to prefer
+the first tag set but fall back to members matching later tag sets. In order to
+know whether to fall back or not, we must first filter by all other criteria.
+
+Say you have two secondaries:
+
+  - Node 1, tagged `{'tag': 'value1'}`, estimated staleness 5 minutes
+  - Node 2, tagged `{'tag': 'value2'}`, estimated staleness 1 minute
+
+And a read preference:
+
+  - mode: "secondary"
+  - maxStalenessMS: 120000 (2 minutes)
+  - tag_sets: `[{'tag': 'value1'}, {'tag': 'value2'}]`
+
+If tag sets were applied before maxStalenessMS, we would select Node 1 since it
+matches the first tag set, then filter it out because it is too stale, and be
+left with no eligible servers.
+
+The user's intent in specifying two tag sets was to fall back to the second set
+if needed, so we filter by maxStalenessMS first, then tag_sets, and select
+Node 2.
 
 References
 ==========
