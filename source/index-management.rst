@@ -12,7 +12,7 @@ Index Management
 :Type: Standards
 :Minimum Server Version: 2.4
 :Last Modified: May 19, 2016
-:Version: 1.2
+:Version: 1.3
 
 .. contents::
 
@@ -582,6 +582,9 @@ Common API Components
      * Optionally specify a specific name for the index outside of the default generated
      * name. If none is provided then the name is generated in the format "[field]_[direction]".
      *
+     * Note that if an index is created for the same key pattern with different collations,
+     * a name must be provided by the user to avoid ambiguity.
+     *
      * @example For an index of name: 1, age: -1, the generated name would be "name_1_age_-1".
      */
     name: String;
@@ -672,8 +675,8 @@ Common API Components
 
     /**
      * Optionally specifies a collation to use for the index in MongoDB 3.4 and higher.
-     * If not specified, the default collation of the driver collection object is used,
-     * if one is defined. Otherwise, the default collation of the collection server-side is used.
+     * If not specified, no collation is sent and the default collation of the collection
+     * server-side is used.
      */
     collation: Document;
   }
@@ -695,3 +698,5 @@ Changelog
   - Fixed "provides" typo.
 19 MAY 2016:
   - Added ``collation`` attribute to ``IndexOptions`` in order to support setting a collation on an index.
+8 AUG 2016:
+  - Fixed ``collation`` language to not mention a collection default.
