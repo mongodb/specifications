@@ -95,7 +95,7 @@ Replica Sets
 Replica set primaries and secondaries implement the following features to
 support maxStalenessMS.
 
-A primary writes a no-op to the oplog once per second to refresh secondaries'
+A idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
 lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_).
 
 A primary's or secondary's isMaster response contains a "lastWrite" subdocument
@@ -334,7 +334,7 @@ This apparent "replication lag spike" is just a measurement error, but it causes
 exactly the behavior the user wanted to avoid: a small replication lag makes the
 client route all queries from the secondaries to the primary.
 
-Therefore the primary must periodically execute a no-op to keep secondaries'
+Therefore an idle primary must execute a no-op every 10 seconds to keep secondaries'
 lastWriteDate values close to the primary's clock. The no-op also keeps opTimes close to
 the primary's, which helps mongos choose an up-to-date secondary to read from
 in a CSRS.
