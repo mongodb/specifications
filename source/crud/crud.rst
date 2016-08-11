@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Oct. 16, 2015
+:Last Modified: Aug. 5, 2016
 
 .. contents::
 
@@ -227,6 +227,16 @@ Read
      */
     useCursor: Optional<Boolean>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "aggregate" command.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/aggregate/
+     */
+    collation: Optional<Document>;
+
   }
 
   class CountOptions {
@@ -260,6 +270,16 @@ Read
      */
     skip: Optional<Int64>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "count" command.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/count/
+     */
+    collation: Optional<Document>;
+
   }
 
   class DistinctOptions {
@@ -272,6 +292,15 @@ Read
      */
     maxTimeMS: Optional<Int64>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "distinct" command.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    collation: Optional<Document>;
   }
 
   enum CursorType {
@@ -444,6 +473,17 @@ Read
      * @see http://docs.mongodb.org/manual/reference/method/cursor.sort/
      */ 
     sort: Optional<Document>;
+
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "find" command.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/find/
+     */
+    collation: Optional<Document>;
+
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -530,7 +570,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/delete/
      * @throws WriteException
      */
-    deleteOne(filter: Document): DeleteResult; 
+    deleteOne(filter: Document, options: Optional<DeleteOptions>): DeleteResult;
 
     /**
      * Deletes multiple documents.
@@ -538,7 +578,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/delete/
      * @throws WriteException
      */
-    deleteMany(filter: Document): DeleteResult;
+    deleteMany(filter: Document, options: Optional<DeleteOptions>): DeleteResult;
 
     /**
      * Replaces a single document.
@@ -546,7 +586,7 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/update/
      * @throws WriteException
      */
-    replaceOne(filter: Document, replacement: Document, options: Optional<UpdateOptions>): UpdateResult; 
+    replaceOne(filter: Document, replacement: Document, options: Optional<UpdateOptions>): UpdateResult;
 
     /**
      * Updates one document.
@@ -640,6 +680,25 @@ Basic
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "update" command.
+     */
+    collation: Optional<Document>;
+  }
+
+  class DeleteOptions
+
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "delete" command.
+     */
+    collation: Optional<Document>;
 
   }
 
@@ -1090,6 +1149,13 @@ Find And Modify
      */
     sort: Optional<Document>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "findAndModify" command.
+     */
+    collation: Optional<Document>;
   }
 
   class FindOneAndReplaceOptions {
@@ -1141,6 +1207,13 @@ Find And Modify
      */
     upsert: Optional<Boolean>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "findAndModify" command.
+     */
+    collation: Optional<Document>;
   }
 
   class FindOneAndUpdateOptions {
@@ -1191,6 +1264,13 @@ Find And Modify
      */
     upsert: Optional<Boolean>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * The default is no value: the driver sends no "collation" document to the
+     * server with the "findAndModify" command.
+     */
+    collation: Optional<Document>;
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1301,6 +1381,7 @@ Q: What about explain?
 Changes
 =======
 
+2016-08-05: Added in collation option.
 2015-11-05: Typos in comments about bypassDocumentValidation
 2015-10-16: Added maxAwaitTimeMS to FindOptions.
 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
