@@ -683,7 +683,7 @@ Tailable cursors pointing to documents in a capped collection that get overwritt
 Explain command
 ---------------
 
-There is no equivalent of the $explain modifier in the find command. The driver SHOULD use the **explain** command. Information about the command can be found in the `Explain command reference`_.
+There is no equivalent of the $explain modifier in the find command. The driver MUST use the **explain** command. Information about the command can be found in the `Explain command reference`_.
 
 .. _Explain command reference: http://docs.mongodb.org/manual/reference/command/explain/
 
@@ -709,3 +709,5 @@ Changes
 2015-10-13 added guidance on batchSize values as related to the **getMore** command. SlaveOk flag SHOULD not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore commands when the cursor is a tailable cursor with awaitData set.
 
 2015-10-21 If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command. 
+
+2016-08-15 Changed $explain modifier to MUST use explain command from SHOULD.
