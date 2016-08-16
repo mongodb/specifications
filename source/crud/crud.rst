@@ -1381,9 +1381,9 @@ Q: What about explain?
 Changes
 =======
 
-2016-08-05: Added in collation option.
-2015-11-05: Typos in comments about bypassDocumentValidation
-2015-10-16: Added maxAwaitTimeMS to FindOptions.
-2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
-2015-09-16: Added bypassDocumentValidation.
-2015-09-16: Added readConcern notes.
+* 2016-08-05: Added in collation option.
+* 2015-11-05: Typos in comments about bypassDocumentValidation
+* 2015-10-16: Added maxAwaitTimeMS to FindOptions.
+* 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
+* 2015-09-16: Added bypassDocumentValidation.
+* 2015-09-16: Added readConcern notes.
