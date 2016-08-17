@@ -312,4 +312,6 @@ Q&A
         application name while other won’t
       * The ``isMaster`` handshake must be called on all sockets, including
         administrative background sockets to MongoDB
+* My language doesn't have ``uname``, but does instead provide its own variation of these values, is that OK?
+   * Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this specification 
 
