@@ -12,7 +12,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 1.8
-:Last Modified: February 2nd, 2015
+:Last Modified: 2016/08/17
 
 .. contents::
 
@@ -121,6 +121,8 @@ Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively,
 		* Mongos
 		* RSPrimary
 		* RSSecondary
+		* RSOther
+
 	#. A single invalid credential is the same as all credentials being invalid.
 
 
@@ -508,6 +510,8 @@ Q: It's possible to continue using authenticated sockets even if new sockets fai
 
 Version History
 ===============
+
+2016/08/17 - Added RSOther into the list of server types that must be authenticated.
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
