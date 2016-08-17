@@ -12,7 +12,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 1.8
-:Last Modified: February 2nd, 2015
+:Last Modified: 2016/08/17
 
 .. contents::
 
@@ -115,12 +115,7 @@ Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively,
 
 #. If credentials exist
 	#. Upon opening a socket, drivers MUST send an isMaster command immediately. This allows a driver to determine whether the server is an Arbiter.
-	#. A driver MUST perform authentication with all supplied credentials for the following server types as defined in the Server Discovery and Monitoring Specification.
-
-		* Standalone
-		* Mongos
-		* RSPrimary
-		* RSSecondary
+	#. A driver MUST perform authentication with all supplied credentials for all server types with the exception of RSArbiter and Unknown.
 	#. A single invalid credential is the same as all credentials being invalid.
 
 
@@ -508,6 +503,8 @@ Q: It's possible to continue using authenticated sockets even if new sockets fai
 
 Version History
 ===============
+
+2016/08/17 - Changed the list of server types requiring authentication.
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
