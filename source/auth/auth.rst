@@ -12,7 +12,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 1.8
-:Last Modified: February 2nd, 2015
+:Last Modified: 2016-08-17
 
 .. contents::
 
@@ -505,9 +505,14 @@ Q: I've heard ``isMaster`` will require authentication in the future. Should we 
 Q: It's possible to continue using authenticated sockets even if new sockets fail authentication. Why can't we do that so that applications continue to work.
 	Yes, that's technically true. The issue with doing that is for drivers using connection pooling. An application would function normally until an operation needed an additional connection(s) during a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to understand for a user.
 
+Q: Should a driver support multiple credentials?
+    The server supports multiple credentials. If a driver wants to support all of the server, then it needs to support multiple credentials. However, since multiple authentications are not supported against a single database, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the $external database). 
+
 
 Version History
 ===============
+
+2016-08-17: Added FAQ regarding multiple credentials.
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
