@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Aug. 5, 2016
+:Last Modified: Aug. 17, 2016
 
 .. contents::
 
@@ -123,7 +123,7 @@ Read
 
 .. note::
     
-    The term Iterable<T> is used below to indicate many of T. This spec is flexible on what that means as different drivers will have different requirements, types, and idioms.
+    The term Iterable<T> is used below to indicate many of T. This spec is flexible on what that means as different drivers will have different requirements, types, and idioms. 
 
 .. code:: typescript
   
@@ -177,9 +177,10 @@ Read
     /**
      * Enables writing to temporary files. When set to true, aggregation stages 
      * can write data to the _tmp subdirectory in the dbPath directory.
-     * The default is no value: the driver sends no "allowDiskUse" option to the
-     * server with the "aggregate" command.
      *
+     * This option is sent only if the caller explicitly provides a value. The default 
+     * is to not send a value.
+     * 
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
     allowDiskUse: Optional<Boolean>;
@@ -187,9 +188,8 @@ Read
     /**
      * The number of documents to return per batch. 
      *
-     * For servers < 2.6, this option is ignored as aggregation cursors are not available.
-     * The default is no value: the driver sends no "batchSize" option to the server with
-     * the "aggregate" command, thus accepting the server default batch size.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 2.6, this option is ignored and should not be sent as aggregation cursors are not available.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -199,17 +199,25 @@ Read
      * If true, allows the write to opt-out of document level validation. This only applies
      * when the $out stage is specified.
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "aggregate" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
     /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/aggregate/
+     */
+    collation: Optional<Document>;
+    
+    /**
      * The maximum amount of time to allow the query to run.
-     * The default is no value: the driver sends no "maxTimeMS" option to the
-     * server with the "aggregate" command.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */ 
@@ -218,38 +226,39 @@ Read
     /**
      * Indicates whether the command will request that the server provide results using a cursor.
      *
-     * For servers < 2.6, this option is ignored as aggregation cursors are not available.
-     * For servers >= 2.6, this option allows users to turn off cursors if necessary to aid in mongod/mongos upgrades.
-     * The default value is true: the driver sends "cursor: {}" to the server with the "aggregate" command
-     * by default.
+     * If true, this option is sent with a value of "cursor: {}". The default value is true. 
+     * For servers < 2.6, this option is ignored and not sent as aggregation cursors are not available.
      *
      * @see http://docs.mongodb.org/manual/reference/command/aggregate/
      */
     useCursor: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "aggregate" command.
-     *
-     * @see http://docs.mongodb.org/manual/reference/command/aggregate/
-     */
-    collation: Optional<Document>;
-
   }
 
   class CountOptions {
 
     /**
-     * The index to use. The default is no hint.
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/count/
+     */
+    collation: Optional<Document>;
+
+    /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
     hint: Optional<(String | Document)>;
 
     /**
-     * The maximum number of documents to count. The default is no limit.
+     * The maximum number of documents to count.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
@@ -257,50 +266,43 @@ Read
 
     /**
      * The maximum amount of time to allow the query to run.
-     * The default is no maxTimeMS.
+
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
     maxTimeMS: Optional<Int64>;
 
     /**
-     * The number of documents to skip before counting. The default is no skip.
+     * The number of documents to skip before counting.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/count/
      */
     skip: Optional<Int64>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "count" command.
-     *
-     * @see http://docs.mongodb.org/manual/reference/command/count/
-     */
-    collation: Optional<Document>;
-
   }
 
   class DistinctOptions {
 
     /**
-     * The maximum amount of time to allow the query to run.
-     * The default is no maxTimeMS.
+     * Specifies a collation.
      *
-     * @see http://docs.mongodb.org/manual/reference/command/distinct/
-     */
-    maxTimeMS: Optional<Int64>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "distinct" command.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/distinct/
      */
     collation: Optional<Document>;
+
+    /**
+     * The maximum amount of time to allow the query to run.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    maxTimeMS: Optional<Int64>;
   }
 
   enum CursorType {
@@ -336,32 +338,39 @@ Read
     /**
      * Get partial results from a mongos if some shards are down (instead of throwing an error).
      *
-     * The default in servers >= 3.2 is no value: no "allowPartialResults" option is sent with
-     * the "find" command.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, the Partial wire protocol flag defaults to false.
      *
-     * In servers < 3.2, the Partial OP_QUERY flag defaults to false.
-     *
-     * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     allowPartialResults: Optional<Boolean>;
     
     /**
      * The number of documents to return per batch.
      *
-     * In servers < 3.2, this is combined with limit to create the OP_QUERY numberToReturn value.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this is combined with limit to create the wire protocol numberToReturn value.
      *
-     * The default is no value: the driver accepts the server default batch size.
-     *
-     * @see http://docs.mongodb.org/manual/reference/method/cursor.batchSize/
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */ 
     batchSize: Optional<Int32>;
 
     /**
-     * Attaches a comment to the query. If $comment also exists
-     * in the modifiers document, the comment field overwrites $comment.
-     * The default is no comment.
+     * Specifies a collation.
      *
-     * @see http://docs.mongodb.org/manual/reference/operator/meta/comment/
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    collation: Optional<Document>;
+
+    /**
+     * Attaches a comment to the query.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */ 
     comment: Optional<String>;
 
@@ -369,132 +378,169 @@ Read
      * Indicates the type of cursor to use. This value includes both
      * the tailable and awaitData options.
      *
-     * The default in servers >= 3.2 is no value: no "awaitData" or "tailable"
-     * option is sent with the "find" command.
-     *
-     * In servers < 3.2, the AwaitData OP_QUERY flag and the Tailable OP_QUERY
-     * flag default to false.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, the AwaitData wire protocol flag and the Tailable wire protocol flag default to false.
      *
      * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
      */
     cursorType: Optional<CursorType>;
 
     /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
      * The maximum number of documents to return.
      *
-     * In servers < 3.2, this is combined with batchSize to create the OP_QUERY numberToReturn value.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this is combined with batchSize to create the wire protocol numberToReturn value.
      *
-     * The default is no limit.
-     *
-     * @see http://docs.mongodb.org/manual/reference/method/cursor.limit/
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
-    limit: Optional<Int32>;
+    limit: Optional<Int64>;
+
+    /**
+     * The exclusive upper bound for a specific index.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/method/cursor.max/#cursor.max
+     */
+    max: Optional<Document>;
 
     /**
      * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor 
      * query. This only applies to a TAILABLE_AWAIT cursor. When the cursor is not a TAILABLE_AWAIT cursor,
      * this option is ignored.
      *
-     * On servers >= 3.2, this option will be specified on the getMore command as "maxTimeMS". The default
-     * is no value: no "maxTimeMS" is sent to the server with the getMore command.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the get more wire protocol.
      *
-     * On servers < 3.2, this option is ignored.
+     * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the 
+     * initial find command.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     maxAwaitTimeMS: Optional<Int64>;
 
     /**
-     * The maximum amount of time to allow the query to run. If $maxTimeMS also exists
-     * in the modifiers document, the maxTimeMS field overwrites $maxTimeMS.
+     * Maximum number of documents or index keys to scan when executing the query.
      *
-     * The default is no maxTimeMS.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * @see http://docs.mongodb.org/manual/reference/operator/meta/maxTimeMS/
+     * @see https://docs.mongodb.com/manual/reference/method/cursor.max/#cursor.max
+     */
+    maxScan: Optional<Int64>;
+
+    /**
+     * The maximum amount of time to allow the query to run.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     maxTimeMS: Optional<Int64>;
 
     /**
-     * Meta-operators modifying the output or behavior of a query.
-     * The default is no modifers.
+     * The inclusive lower bound for a specific index.
      *
-     * @see http://docs.mongodb.org/manual/reference/operator/query-modifier/
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/method/cursor.min/#cursor.min
      */
-    modifiers: Optional<Document>;
+    min: Optional<Document>;
 
     /**
      * The server normally times out idle cursors after an inactivity period (10 minutes) 
      * to prevent excess memory use. Set this option to prevent that.
      *
-     * The default in servers >= 3.2 is no value: no "noCursorTimeout" option is sent with
-     * the "find" command.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, the NoCursorTimeout wire protocol flag defaults to false.
      *
-     * In servers < 3.2, the NoCursorTimeout OP_QUERY flag defaults to false.
-     *
-     * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     noCursorTimeout: Optional<Boolean>;
 
     /**
      * Internal replication use only - driver should not set
      *
-     * The default in servers >= 3.2 is no value: no "oplogReplay" option is sent with
-     * the "find" command.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, the OplogReplay wire protocol flag defaults to false.
      *
-     * In servers < 3.2, the OplogReplay OP_QUERY flag defaults to false.
-     *
-     * @see http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     oplogReplay: Optional<Boolean>;
 
     /** 
      * Limits the fields to return for all matching documents.
-     * The default is no projection.
      *
-     * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     projection: Optional<Document>;
+
+    /** 
+     * If true, returns only the index keys in the resulting documents.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    returnKey: Optional<Document>;
+
+    /** 
+     * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    showRecordId: Optional<Document>;
 
     /**
      * The number of documents to skip before returning.
      *
-     * In servers < 3.2, this is a wire protocol parameter that defaults to 0.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this is a wire protocol parameter that defaults to 0.
      *
-     * The default in servers >= 3.2 is no skip: no "skip" option is sent with
-     * the "find" command.
-     *
-     * @see http://docs.mongodb.org/manual/reference/method/cursor.skip/
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
-    skip: Optional<Int32>;
+    skip: Optional<Int64>;
+
+    /** 
+     * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    snapshot: Optional<Document>;
 
     /**
-     * The order in which to return matching documents. If $orderby also exists
-     * in the modifiers document, the sort field overwrites $orderby.
-     * The default is no sort.
+     * The order in which to return matching documents.
      *
-     * @see http://docs.mongodb.org/manual/reference/method/cursor.sort/
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
      */ 
     sort: Optional<Document>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "find" command.
-     *
-     * @see http://docs.mongodb.org/manual/reference/command/find/
-     */
-    collation: Optional<Document>;
-
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Combining Limit and Batch Size for the Wire Protocol
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The OP_QUERY wire protocol only contains a numberToReturn value which drivers must calculate to get expected limit and batch size behavior. Subsequent calls to OP_GET_MORE should use the user-specified batchSize or default to 0. Below is pseudo-code for calculating numberToReturn for OP_QUERY.
+The OP_QUERY wire protocol only contains a numberToReturn value which drivers must calculate to get expected limit and batch size behavior. Subsequent calls to OP_GET_MORE should use the user-specified batchSize or default to 0. If the result is larger than the max Int32 value, an error MUST be raised as the computed value is impossible to send to the server. Below is pseudo-code for calculating numberToReturn for OP_QUERY.
 
 .. code:: typescript
 
-  function calculateFirstNumberToReturn(FindOptions options) {
+  function calculateFirstNumberToReturn(FindOptions options) Int32 {
     Int32 numberToReturn;
     Int32 limit = options.limit || 0;
     Int32 batchSize = options.batchSize || 0;
@@ -603,7 +649,6 @@ Basic
      * @throws WriteException
      */
     updateMany(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
-
   }
 
   class BulkWriteOptions {
@@ -618,13 +663,10 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the write command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * For servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
-
   }
 
   class InsertOneOptions {
@@ -632,13 +674,10 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * For servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
-
   }
 
   class InsertManyOptions {
@@ -646,10 +685,8 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * For servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -659,7 +696,6 @@ Basic
      * Defaults to true.
      */
     ordered: Boolean;
-
   }
 
   class UpdateOptions
@@ -667,39 +703,42 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * For servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
     /**
-     * When true, creates a new document if no document matches the query. The default is false.
+     * Specifies a collation.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    collation: Optional<Document>;
+
+    /**
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "update" command.
-     */
-    collation: Optional<Document>;
   }
 
   class DeleteOptions
 
     /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     * Specifies a collation.
      *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "delete" command.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
      */
     collation: Optional<Document>;
-
   }
 
 
@@ -773,8 +812,10 @@ Bulk Write Models
     replacement: Document;
 
     /**
-     * When true, creates a new document if no document matches the query. The default is false.
+     * When true, creates a new document if no document matches the query.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
@@ -804,8 +845,10 @@ Bulk Write Models
     update: Update;
 
     /**
-     * When true, creates a new document if no document matches the query. The default is false.
+     * When true, creates a new document if no document matches the query.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
@@ -835,7 +878,9 @@ Bulk Write Models
     update: Update;
 
     /**
-     * When true, creates a new document if no document matches the query. The default is false.
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
@@ -1159,8 +1204,20 @@ Find And Modify
   class FindOneAndDeleteOptions {
     
     /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    collation: Optional<Document>;
+
+    /**
      * The maximum amount of time to allow the query to run.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */ 
     maxTimeMS: Optional<Int64>;
@@ -1168,6 +1225,10 @@ Find And Modify
     /** 
      * Limits the fields to return for all matching documents.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * Note: this option is mapped to the "fields" findAndModify field.
+     *     
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results
      */
     projection: Optional<Document>;
@@ -1175,17 +1236,11 @@ Find And Modify
     /**
      * Determines which document the operation modifies if the query selects multiple documents.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "findAndModify" command.
-     */
-    collation: Optional<Document>;
   }
 
   class FindOneAndReplaceOptions {
@@ -1193,22 +1248,36 @@ Find And Modify
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
-     * "bypassDocumentValidation" option is sent with the "findAndModify" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
     /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    collation: Optional<Document>;
+
+    /**
      * The maximum amount of time to allow the query to run.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */ 
     maxTimeMS: Optional<Int64>;
 
     /** 
      * Limits the fields to return for all matching documents.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * Note: this option is mapped to the "fields" findAndModify field.
      *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results
      */
@@ -1216,8 +1285,12 @@ Find And Modify
 
     /**
      * When ReturnDocument.After, returns the replaced or inserted document rather than the original.
-     * Defaults to ReturnDocument.Before.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before is represents false, 
+     * and ReturnDocument.After represents true.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     returnDocument: Optional<ReturnDocument>;
@@ -1225,25 +1298,20 @@ Find And Modify
     /**
      * Determines which document the operation modifies if the query selects multiple documents.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
 
     /**
-     * When true, findAndModify creates a new document if no document matches the query. The
-     * default is false.
+     * When true, findAndModify creates a new document if no document matches the query.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "findAndModify" command.
-     */
-    collation: Optional<Document>;
   }
 
   class FindOneAndUpdateOptions {
@@ -1251,13 +1319,21 @@ Find And Modify
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
-     * "bypassDocumentValidation" option is sent with the "findAndModify" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
     
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see http://docs.mongodb.org/manual/reference/command/distinct/
+     */
+    collation: Optional<Document>;
+
     /**
      * The maximum amount of time to allow the query to run.
      *
@@ -1268,14 +1344,22 @@ Find And Modify
     /** 
      * Limits the fields to return for all matching documents.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * Note: this option is mapped to the "fields" findAndModify field.
+     *
      * @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results
      */
     projection: Optional<Document>;
 
     /**
-     * When ReturnDocument.After, returns the updated or inserted document rather than the original.
-     * Defaults to ReturnDocument.Before.
+     * When ReturnDocument.After, returns the replaced or inserted document rather than the original.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before is represents false, 
+     * and ReturnDocument.After represents true.
+     *     
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     returnDocument: Optional<ReturnDocument>;
@@ -1283,24 +1367,20 @@ Find And Modify
     /**
      * Determines which document the operation modifies if the query selects multiple documents.
      *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
 
     /**
-     * When true, creates a new document if no document matches the query. The default is false.
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see http://docs.mongodb.org/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     * The default is no value: the driver sends no "collation" document to the
-     * server with the "findAndModify" command.
-     */
-    collation: Optional<Document>;
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1362,7 +1442,6 @@ Q: Why do the names of the fields differ from those defined on docs.mongodb.org?
 
   In addition, responses from the servers are sometimes cryptic and used for the purposes of compactness. In these cases, we felt the more verbose form was desirable for self-documentation purposes.
 
-
 Q: Where is read preference?
   Read preference is about selecting a server with which to perform a read operation, such as a query, a count, or an aggregate. Since all operations defined in this specification are performed on a collection, it's uncommon that two different read operations on the same collection would use a different read preference, potentially getting out-of-sync results. As such, the most natural place to indicate read preference is on the client, the database, or the collection itself and not the operations within it.
 
@@ -1373,44 +1452,41 @@ Q: Where is read concern?
 
   However, it might be that a driver needs to expose read concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
-
 Q: Where is write concern?
   Write concern is about indicating how writes are acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different write operations on the same collection would use a different write concern, potentially causing mismatched and out-of-sync data. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
 
   However, it might be that a driver needs to expose write concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
-
 Q: How do I throttle unacknowledged writes now that write concern is longer defined on a per operation basis?
   Some users used to throttle unacknowledged writes by using a write concern every X number of operations. The proper way to handle this on >= 2.6 servers is to use the bulk write API. Users working with servers < 2.6 should manually send a ``getLastError`` command every X number of operations if the driver does not support write concerns per operation.
-
 
 Q: What is the logic for adding "One" or "Many" into the method and model names?
   If the maximum number of documents affected can only be one, we added "One" into the name. This makes it explicit that the maximum number of documents that could be affected is one vs. infinite.
 
   In addition, the current API exposed by all our drivers has the default value for "one" or "many" set differently for update and delete. This generally causes some issues for new developers and is a minor annoyance for existing developers. The safest way to combat this without introducing discrepencies between drivers/driver versions or breaking backwards compatibility was to use multiple methods, each signifying the number of documents that could be affected.
 
-
 Q: Speaking of "One", where is ``findOne``?
   If your driver wishes to offer a ``findOne`` method, that is perfectly fine. If you choose to implement ``findOne``, please keep to the naming conventions followed by the ``FindOptions`` and keep in mind that certain things don't make sense like limit (which should be -1), tailable, awaitData, etc...
-
 
 Q: What considerations have been taken for the eventual merging of query and the aggregation framework?
   In the future, it is probable that a new query engine (QE) will look very much like the aggregation framework. Given this assumption, we know that both ``find`` and ``aggregate`` will be renderable in QE, each maintaining their ordering guarantees for full backwards compatibility.
 
   Hence, the only real concern is how to initiate a query using QE. While ``find`` is preferable, it would be a backwards breaking change. It might be decided that ``find`` is what should be used, and all drivers will release major revisions with this backwards breaking change. Alternatively, it might be decided that another initiator would be used.
 
-
 Q: Didn't we just build a bulk API?
   Yes, most drivers did just build out a bulk API (fluent-bulk-api). While unfortunate, we felt it better to have the bulk api be consistent with the rest of the methods in the CRUD family of operations. However, the fluent-bulk-api is still able to be used as this change is non-backwards breaking. Any driver which implemented the fluent bulk API should deprecate it and drivers that have not built it should not do so.
-
 
 Q: What about explain?
   Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 3.0 offers an explain command that can be run using a runCommand method.
 
+Q: Where did modifiers go in FindOptions?
+  MongoDB 3.2 introduced the find command. As opposed to using the general "modifiers" field any longer, each relevant option is listed explicitly. Some options, such as "tailable" or "singleBatch" are not listed as they are derived from other fields. Upgrading a driver should be a simple procedure of deprecating the "modifiers" field and introducing the new fields. When a collision occurs, the explicitly specified field should override the value in "modifiers". 
 
 Changes
 =======
 
+* 2016-08-17: Removed modifiers from FindOptions and added in all options.
+* 2016-08-17: Reworded description of how default values are handled and when to send certain options.
 * 2016-08-05: Added in collation option.
 * 2015-11-05: Typos in comments about bypassDocumentValidation
 * 2015-10-16: Added maxAwaitTimeMS to FindOptions.
