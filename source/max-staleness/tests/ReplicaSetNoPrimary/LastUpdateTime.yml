@@ -14,7 +14,7 @@ topology_description:
     type: RSSecondary
     avg_rtt_ms: 50  # Too far.
     lastUpdateTime: 25002  # Not used when there's no primary.
-    lastWrite: {lastWriteDate: {$numberLong: "1"}}  # 25 sec stale + 25 sec heartbeat <= 50 sec maxStaleness.
+    lastWrite: {lastWriteDate: {$numberLong: "2"}}  # 25 sec stale + 25 sec heartbeat <= 50 sec maxStaleness.
     maxWireVersion: 5
   - &3
     address: c:27017
