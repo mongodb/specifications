@@ -6,7 +6,7 @@ BSON Corpus
 :Author: David Golden
 :Lead: Jeff Yemin
 :Advisors: Craig Wilson
-:Status: Draft
+:Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
 :Last Modified: July 29, 2016
