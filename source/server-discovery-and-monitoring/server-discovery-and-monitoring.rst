@@ -1606,12 +1606,10 @@ Many drivers have different values. The time has come to standardize.
 Lacking a rigorous methodology for calculating the best frequency,
 this spec chooses 10 seconds for multi-threaded or asynchronous drivers
 because some already use that value.
-It MAY be configurable, but it need not be.
 
 Because scanning has a greater impact on
 the performance of single-threaded drivers,
-they MUST default to a longer frequency (60 seconds)
-and the frequency MUST be configurable.
+they MUST default to a longer frequency (60 seconds).
 
 An alternative is to check servers less and less frequently
 the longer they remain unchanged.
