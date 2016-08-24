@@ -379,7 +379,9 @@ Drivers MUST enforce:
 heartbeatFrequencyMS
 ````````````````````
 
-The interval between server `checks`_.
+The interval between server `checks`_, counted from the end of the previous
+check until the beginning of the next one.
+
 For multi-threaded and asynchronous drivers
 it MUST default to 10 seconds and MUST be configurable.
 For single-threaded drivers it MUST default to 60 seconds
@@ -438,9 +440,9 @@ when the first operation is attempted.
 Monitoring
 ''''''''''
 
-The client monitors servers by `checking`_ them
-roughly every `heartbeatFrequencyMS`_,
-or in response to certain events.
+The client monitors servers by `checking`_ them periodically,
+pausing `heartbeatFrequencyMS`_ between checks.
+Clients check servers sooner in response to certain events.
 
 The socket used to check a server MUST use the same
 `connectTimeoutMS <http://docs.mongodb.org/manual/reference/connection-string/>`_
@@ -496,7 +498,7 @@ Servers are checked periodically
 Each monitor `checks`_ its server and notifies the client of the outcome
 so the client can update the TopologyDescription.
 
-Checks SHOULD be scheduled every `heartbeatFrequencyMS`_;
+After each check, the next check SHOULD be scheduled `heartbeatFrequencyMS`_ later;
 a check MUST NOT run while a previous check is still in progress.
 
 .. _request an immediate check:
@@ -510,7 +512,7 @@ If the monitor is sleeping when this request arrives,
 it MUST wake and check as soon as possible.
 If an ismaster call is already in progress,
 the request MUST be ignored.
-If the previous check was less than `minHeartbeatFrequencyMS`_ ago,
+If the previous check ended less than `minHeartbeatFrequencyMS`_ ago,
 the monitor MUST sleep until the minimum delay has passed,
 then check the server.
 
@@ -548,7 +550,7 @@ Scanning
 Single-threaded clients MUST `scan`_ all servers synchronously,
 inline with regular application operations.
 Before each operation, the client checks if `heartbeatFrequencyMS`_ has
-passed since the previous scan or if the topology is marked "stale";
+passed since the previous scan ended, or if the topology is marked "stale";
 if so it scans all the servers before
 selecting a server and performing the operation.
 
@@ -638,7 +640,7 @@ minHeartbeatFrequencyMS
 
 If a client frequently rechecks a server,
 it MUST wait at least minHeartbeatFrequencyMS milliseconds
-since the previous check to avoid pointless effort.
+since the previous check ended, to avoid pointless effort.
 This value MUST be 500 ms, and it MUST NOT be configurable.
 (See `no knobs`_.)
 
@@ -1369,7 +1371,7 @@ When a client that uses `single-threaded monitoring`_
 fails to select a suitable server for any operation,
 it `scans`_ the servers, then attempts selection again,
 to see if the scan discovered suitable servers. It repeats, waiting
-`minHeartbeatFrequencyMS`_ between scans, until a timeout.
+`minHeartbeatFrequencyMS`_ after each scan, until a timeout.
 
 Documentation
 `````````````
