@@ -528,6 +528,16 @@ if a check completes without detecting any change besides
 `round trip time`_: no operation that was blocked will
 be able to proceed anyway.
 
+Clients update the topology from each handshake
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a client successfully calls ismaster to handshake a new connection for application
+operations, it SHOULD use the ismaster reply to update the ServerDescription
+and TopologyDescription, the same as with an ismaster reply on a monitoring
+socket. If the ismaster call fails, the client SHOULD mark the server Unknown
+and update its TopologyDescription, the same as a failed server check on
+monitoring socket.
+
 .. _st-monitoring:
 
 Single-threaded monitoring
@@ -815,6 +825,9 @@ if the monitor's socket is bad it is likely that all are.
 Once a server is connected, the client MUST change its type
 to Unknown
 only after it has retried the server once.
+(This rule applies to server checks during monitoring.
+It does *not* apply when multi-threaded
+`clients update the topology from each handshake`_.)
 
 In this pseudocode, "description" is the prior ServerDescription::
 
