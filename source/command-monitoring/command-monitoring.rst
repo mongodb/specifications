@@ -113,7 +113,7 @@ OP_KILLCURSORS. Upconversion expectations are provided in the tests.
 Bulk Writes
 -----------
 
-This specification defines the monitoring of inidividual commands and in that repect MUST generate
+This specification defines the monitoring of inidividual commands and in that respect MUST generate
 an event for each command a bulk write executes. Each of these commands, however, must be linked
 together via the same ``operationId``.
 
