@@ -342,13 +342,13 @@ API
     hasWritableServer(): Boolean
   }
 
----------------------------------------------------
-Determining If A Topology Readable/Writable Servers
----------------------------------------------------
+-------------------------------------------------------
+Determining If A Topology Has Readable/Writable Servers
+-------------------------------------------------------
 
 The following table describes the behaviour of determining if a topology type has readable or
 writable servers. If no read preference is passed to ``hasReadableServer``, the driver MUST default
-the value to the default read preference, ``primary`` or treat the call as if ``primary`` was provided.
+the value to the default read preference, ``primary``, or treat the call as if ``primary`` was provided.
 
 +-----------------------+----------------------------------------+----------------------------------------+
 | Topology Type         | ``hasReadableServer``                  | ``hasWritableServer``                  |
