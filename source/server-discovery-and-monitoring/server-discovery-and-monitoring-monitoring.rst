@@ -7,14 +7,14 @@ SDAM Monitoring Specification
 
 :Spec: 222
 :Title: SDAM Monitoring Specification
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Durran Jordan
 :Spec Lead: Durran Jordan
 :Advisory Group: Jeff Yemin, Craig Wilson, Jesse Davis
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 4-May-2016
+:Last Modified: 31-Aug-2016
 
 .. contents::
 
@@ -330,15 +330,48 @@ API
   interface TopologyDescription {
 
     /**
-     * Determines if the topology has a readable server available.
+     * Determines if the topology has a readable server available. See the table in the
+     * following section for behaviour rules.
      */
-    hasReadableServer(readPreference: ReadPreference): Boolean
+    hasReadableServer(readPreference: Optional<ReadPreference>): Boolean
 
     /**
-     * Determines if the topology has a writable server available.
+     * Determines if the topology has a writable server available. See the table in the
+     * following section for behaviour rules.
      */
     hasWritableServer(): Boolean
   }
+
+-------------------------------------------------------
+Determining If A Topology Has Readable/Writable Servers
+-------------------------------------------------------
+
+The following table describes the behaviour of determining if a topology type has readable or
+writable servers. If no read preference is passed to ``hasReadableServer``, the driver MUST default
+the value to the default read preference, ``primary``, or treat the call as if ``primary`` was provided.
+
++-----------------------+----------------------------------------+----------------------------------------+
+| Topology Type         | ``hasReadableServer``                  | ``hasWritableServer``                  |
++=======================+========================================+========================================+
+| Unknown               | ``false``                              | ``false``                              |
++-----------------------+----------------------------------------+----------------------------------------+
+| Single                | ``true``                               | ``true``                               |
++-----------------------+----------------------------------------+----------------------------------------+
+| ReplicaSetNoPrimary   | | Called with ``primary``: ``false``   | ``false``                              |
+|                       | | Called with any other option: uses   |                                        |
+|                       |   the read preference to determine if  |                                        |
+|                       |   any server in the cluster is         |                                        |
+|                       |   suitable for reading.                |                                        |
+|                       | | Called with no option: ``false``     |                                        |
++-----------------------+----------------------------------------+----------------------------------------+
+| ReplicaSetWithPrimary | | Called with any valid option: uses   | ``true``                               |
+|                       |   the read preference to determine if  |                                        |
+|                       |   any server in the cluster is         |                                        |
+|                       |   suitable for reading.                |                                        |
+|                       | | Called with no option: ``true``      |                                        |
++-----------------------+----------------------------------------+----------------------------------------+
+| Sharded               | ``true``                               | ``true``                               |
++-----------------------+----------------------------------------+----------------------------------------+
 
 --------
 Examples
@@ -365,3 +398,9 @@ Tests
 -----
 
 See the `README <https://github.com/mongodb/specifications/server-discovery-and-monitoring/tests/monitoring/README.rst>`_.
+
+
+Changelog
+=========
+
+31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
