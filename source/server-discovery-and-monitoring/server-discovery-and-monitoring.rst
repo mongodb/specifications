@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.3
-:Last Modified: August 4, 2016
+:Version: 2.4
+:Last Modified: August 31, 2016
 
 .. contents::
 
@@ -2204,3 +2204,6 @@ Changes
 2016-07-21: Updated for Max Staleness support.
 
 2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
+
+2016-08-31: Multi-threaded clients SHOULD use ismaster replies to update the topology
+  when they handshake application connections.
