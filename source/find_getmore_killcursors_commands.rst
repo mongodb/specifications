@@ -694,7 +694,7 @@ The **find** command does not include a readPreference field. To pass a readPref
 
 .. code:: javascript
 
-    {$query: {find: ‘.....}, $readPreference: {}}
+    {$query: {find: ...}, $readPreference: {}}
 
 This format is general for all commands when executing against a Mongos proxy.
 
