@@ -68,7 +68,7 @@ Each YAML file has the following keys:
 Tests including a collation argument
 ====================================
 Tests including a collation argument should be expected to succeed against server versions >= 3.4
-and fail in server versions < 3.4. The error should be throw by the driver and its message should
+and fail in server versions < 3.4. The error should be thrown by the driver and its message should
 explain that collation is not a supported feature in the server selected for the operation.
 
 Use as integration tests
