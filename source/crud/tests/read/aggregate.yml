@@ -43,6 +43,7 @@ tests:
                     - {_id: 3, x: 33}
     -
         description: "Aggregate with collation"
+        maxWireVersion: 5
         operation:
             name: aggregate
             arguments:
