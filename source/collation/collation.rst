@@ -145,7 +145,7 @@ Drivers MUST require the server's maxWireVersion >= 5 to support Collations. Whe
 Opcode-based Unacknowledged Writes
 ----------------------------------
 
-When using opcode-based unacknowledged writes, the driver MUST raise an error if a collation is explicitly set.
+The driver MUST NOT allow collation with opcodes, because the server doesn't support it. If a driver uses opcode-based writes when the write concern is unacknowledged, the driver MUST raise an error if a collation is explicitly set.
 
 -------------------------------------------
 Setting a default collation on a collection
