@@ -115,6 +115,11 @@ Unknown Options
 
 For forward compatibility, a driver MUST NOT raise an error when a user provides unknown options or values. The driver MUST NOT validate collation document types; the driver relies on the server to validate values and other contents of the collation document.
 
+Generic Command Method
+----------------------
+
+If a driver offers a generic ``RunCommand`` method on the ``database`` object, the driver MUST NOT validate whether the provided command document contains a "collation" subdocument, and MUST NOT check the server's wire version before sending the command including the "collation" subdocument.
+
 ---
 API
 ---
