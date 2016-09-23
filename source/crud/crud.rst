@@ -731,6 +731,12 @@ Bulk Write Models
      */
     filter: Document;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     */
+    collation: Optional<Document>;
+
   }
 
   class DeleteManyModel implements WriteModel {
@@ -741,6 +747,12 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/delete/
      */
     filter: Document;
+
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     */
+    collation: Optional<Document>;
 
   }
 
@@ -767,6 +779,12 @@ Bulk Write Models
      */
     upsert: Optional<Boolean>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     */
+    collation: Optional<Document>;
+
   }
 
   class UpdateOneModel implements WriteModel {
@@ -792,6 +810,12 @@ Bulk Write Models
      */
     upsert: Optional<Boolean>;
 
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     */
+    collation: Optional<Document>;
+
   }
 
   class UpdateManyModel implements WriteModel {
@@ -816,6 +840,12 @@ Bulk Write Models
      * @see http://docs.mongodb.org/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
+     *
+     */
+    collation: Optional<Document>;
 
   }
 
