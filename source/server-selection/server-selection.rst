@@ -537,7 +537,7 @@ Therefore, when sending queries to a mongos, the following rules apply:
 
   - For mode 'secondaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag.
     If the read preference contains a non-empty ``tag_sets`` parameter,
-    or ``maxStalenessMS`` is not zero or null, drivers MUST
+    or ``maxStalenessMS`` is a positive number, drivers MUST
     use ``$readPreference``; otherwise, drivers MUST NOT use ``$readPreference``
 
   - For mode 'nearest', drivers MUST set the ``slaveOK`` wire protocol flag

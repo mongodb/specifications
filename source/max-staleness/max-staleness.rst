@@ -9,8 +9,8 @@ Max Staleness
 :Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
 :Type: Standards
-:Last Modified: July 21, 2016
-:Version: 1.0
+:Last Modified: September 29, 2016
+:Version: 1.1
 
 .. contents::
 
@@ -75,19 +75,25 @@ Specification
 API
 ---
 
-"maxStalenessMS" is a new read preference option, with a non-negative numeric value or null.
+"maxStalenessMS" is a new read preference option, with a positive numeric value.
 It MUST be configurable similar to other read preference options like "readPreference"
 and "tag_sets". Clients MUST also recognize it in the connection string::
 
   mongodb://host/?readPreference=secondary&maxStalenessMS=30000
 
-Clients MUST consider "maxStalenessMS=0" to mean "no maximum staleness".
+Clients MUST consider "maxStalenessMS=-1" in the connection string to mean
+"no maximum staleness".
 
-A connection string combining maxStalenessMS with read preference mode "primary"
-MUST be considered invalid; this includes connection strings with no explicit
-read preference mode.
+A connection string combining a positive maxStalenessMS with read preference
+mode "primary" MUST be considered invalid; this includes connection strings with
+no explicit read preference mode.
 
 By default there is no maximum staleness.
+
+Besides configuring maxStalenessMS in the connection string,
+the API for configuring it in code is not specified;
+drivers are free to use None, null, -1, or other representations of "no value"
+to represent "no max staleness".
 
 Replica Sets
 ------------
@@ -122,7 +128,7 @@ based on lastWriteDate values provided in server isMaster responses, and select 
 reads only those secondaries whose estimated staleness is less than or equal to
 maxStalenessMS.
 
-If any server's maxWireVersion is less than 5 and maxStalenessMS is neither zero nor null,
+If any server's maxWireVersion is less than 5 and maxStalenessMS a positive number,
 every attempt at server selection throws an error.
 
 When there is a known primary,
@@ -477,3 +483,6 @@ maxStalenessMS when there is no client-side setting.
 
 Changes
 =======
+
+2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
+instead of "maxStalenessMS=0".

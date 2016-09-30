@@ -26,6 +26,14 @@ These connection strings are invalid:
   mongodb://host/?maxStalenessMS=120000
   mongodb://host/?readPreference=primary&maxStalenessMS=120000
 
+Specifying "no max staleness" with "-1"
+---------------------------------------
+
+A MongoClient with this connection string has no max staleness, the same as
+if "maxStalenessMS" were omitted from the connection string::
+
+  mongodb://host/?readPreference=secondary&maxStalenessMS=-1
+
 No validation
 -------------
 
