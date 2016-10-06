@@ -271,6 +271,11 @@ Configurable GridFSBucket class
      * The write concern. Defaults to the write concern of the database.
      */
     writeConcern : WriteConcern optional;
+
+    /**
+     * The read concern. Defaults to the read concern of the database.
+     */
+    readConcern : ReadConcern optional;
     
     /**
      * The read preference. Defaults to the read preference of the database.
@@ -305,17 +310,21 @@ configurable:
   reformat existing files in the system that use a different chunk
   size. Defaults to 255KB.
 
-IF a driver supports configuring writeConcern or readPreference at the
-database or collection level, then GridFSBucket objects MUST also allow
+IF a driver supports configuring readConcern, readPreference or writeConcern
+at the database or collection level, then GridFSBucket objects MUST also allow
 the following options to be configurable:
 
-- **writeConcern:** defaults to the write concern on the parent
-  database (or client object if the parent database has no write
+- **readConcern:** defaults to the read concern on the parent
+  database (or client object if the parent database has no read
   concern).
 
 - **readPreference:** defaults to the read preference on the parent
   database (or client object if the parent database has no read
   preference).
+
+- **writeConcern:** defaults to the write concern on the parent
+  database (or client object if the parent database has no write
+  concern).
 
 GridFSBucket instances are immutable. Their properties MUST NOT be
 changed after the instance has been created. If your driver provides a
