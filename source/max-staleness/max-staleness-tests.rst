@@ -34,6 +34,10 @@ if "maxStalenessMS" were omitted from the connection string::
 
   mongodb://host/?readPreference=secondary&maxStalenessMS=-1
 
+This connection string is valid and does not raise an error:
+
+  mongodb://host/?readPreference=primary&maxStalenessMS=-1
+
 No validation
 -------------
 
