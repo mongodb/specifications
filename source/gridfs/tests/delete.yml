@@ -121,7 +121,3 @@ tests:
                     { delete : "expected.files", deletes : [
                         { q : { _id : { "$oid" : "000000000000000000000004" } }, limit : 1 }
                     ] }
-                -
-                    { delete : "expected.chunks", deletes : [
-                        { q : { files_id : { "$oid" : "000000000000000000000004" } }, limit : 0 }
-                    ] }
