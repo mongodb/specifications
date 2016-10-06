@@ -120,6 +120,10 @@ Files collection document
   implementations of GridFS will not allow this, but must be prepared to
   handle existing files collection documents that might have additional fields.
 
+  Note: drivers SHOULD store length as Int64 and chunkSize as Int32 when creating new GridFS files. However, drivers MUST
+  be able to handle existing GridFS files where the length and chunkSize fields might have been stored using a
+  different numeric data type.
+
 Orphaned chunk
   A document in the chunks collections for which the
   “files_id” does not match any “_id” in the files collection. Orphaned
