@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.4
-:Last Modified: August 31, 2016
+:Version: 2.5
+:Last Modified: October 6, 2016
 
 .. contents::
 
@@ -1061,15 +1061,15 @@ updateRSWithoutPrimary
             add new default ServerDescription of type "Unknown"
             begin monitoring the new server
 
-    if description.address != description.me:
-        remove this server from topologyDescription and stop monitoring it
-        return
-
     if description.primary is not null:
         find the ServerDescription in topologyDescription.servers whose
         address equals description.primary
 
         if its type is Unknown, change its type to PossiblePrimary
+
+    if description.address != description.me:
+        remove this server from topologyDescription and stop monitoring it
+        return
 
   Unlike `updateRSFromPrimary`_,
   this subroutine does **not** remove any servers from the TopologyDescription.
@@ -2207,3 +2207,6 @@ Changes
 
 2016-08-31: Multi-threaded clients SHOULD use ismaster replies to update the topology
   when they handshake application connections.
+
+2016-10-06: in updateRSWithoutPrimary the isMaster response's "primary" field
+  should be used to update the topology description, even if address != me.
