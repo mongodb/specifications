@@ -9,8 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: May 10, 2016
-:Version: 1.0
+:Last Modified: October 7, 2016
+:Version: 1.1
 
 .. contents::
 
@@ -1148,3 +1148,6 @@ Changes
 =======
 
 2016-05-10 Support custom file ids
+2016-10-07 Drivers SHOULD handle any numeric type of length and chunkSize
+2016-10-07 Added ReadConcern to the GridFS spec
+2016-10-07 Modified a JSON test that was testing optional behavior
