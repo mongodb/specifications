@@ -14,7 +14,7 @@ SDAM Monitoring Specification
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 31-Aug-2016
+:Last Modified: 11-Oct-2016
 
 .. contents::
 
@@ -137,6 +137,8 @@ Topology Description
 --------------------
 
 The TopologyDescription object MUST expose the new methods defined in the API below, in order for subscribers to take action on certain conditions based on the driver options.
+
+TopologyDescription objects MAY have additional methods and properties.
 
 Initial Server Description
 --------------------------
@@ -404,3 +406,5 @@ Changelog
 =========
 
 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
+11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.
+
