@@ -11,8 +11,8 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: May 19, 2016
-:Version: 1.3
+:Last Modified: Oct 11, 2016
+:Version: 1.4
 
 .. contents::
 
@@ -71,8 +71,7 @@ All drivers MUST offer at least one of the sections of operations, the Standard 
 Operation Parameters
 --------------------
 
-All drivers MUST include the specified parameters in each operation, with the exception of the options parameter which is OPTIONAL.
-
+All drivers MUST include the specified parameters in each operation, with the exception of the options parameter which is OPTIONAL. As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates options passed to the createIndexes command -- drivers should be aware when testing that passing arbitrary options when the driver does not validate them could fail on the server.
 
 Naming
 ------
@@ -131,6 +130,9 @@ Standard API
      *
      * Note that in MongoDB server versions >= 3.0.0, the server will create the
      * indexes in parallel.
+     *
+     * As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates
+     * options passed to the createIndexes command.
      *
      * @return The names of all the indexes that were created.
      */
@@ -700,3 +702,5 @@ Changelog
   - Added ``collation`` attribute to ``IndexOptions`` in order to support setting a collation on an index.
 8 AUG 2016:
   - Fixed ``collation`` language to not mention a collection default.
+11 OCT 2016:
+  - Added note on 3.4 servers validation options passed to ``createIndexes``.
