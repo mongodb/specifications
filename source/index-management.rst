@@ -12,7 +12,7 @@ Index Management
 :Type: Standards
 :Minimum Server Version: 2.4
 :Last Modified: Oct 11, 2016
-:Version: 1.4
+:Version: 1.5
 
 .. contents::
 
@@ -89,6 +89,7 @@ Index Name Generation
 
 When the client generates a name for an index based on the keys, The driver MUST generate the name as key-direction pairs, separated by underscores. For example, the key ``{ name: 1, dob: -1 }`` MUST generate an index name of ``name_1_dob_-1``.
 
+Note there is one exception to this rule on the ``_id`` field. The server uses an index name with no direction, ``_id_``, which cannot be overridden.
 
 ------------
 Standard API
@@ -704,3 +705,5 @@ Changelog
   - Fixed ``collation`` language to not mention a collection default.
 11 OCT 2016:
   - Added note on 3.4 servers validation options passed to ``createIndexes``.
+11 OCT 2016:
+  - Add note on server generated name for the _id index.
