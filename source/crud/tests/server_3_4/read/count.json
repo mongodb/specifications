@@ -1,0 +1,83 @@
+{
+    "data": [
+        {
+            "_id": 1, 
+            "x": 11
+        }, 
+        {
+            "_id": 2, 
+            "x": 22
+        }, 
+        {
+            "_id": 3, 
+            "x": 33
+        }, 
+        {
+            "_id": 4, 
+            "x": "PING"
+        }
+    ], 
+    "tests": [
+        {
+            "description": "Count without a filter", 
+            "operation": {
+                "arguments": {
+                    "filter": {}
+                }, 
+                "name": "count"
+            }, 
+            "outcome": {
+                "result": 4
+            }
+        }, 
+        {
+            "description": "Count with a filter", 
+            "operation": {
+                "arguments": {
+                    "filter": {
+                        "_id": {
+                            "$gt": 1, 
+                            "$lt": 4
+                        }
+                    }
+                }, 
+                "name": "count"
+            }, 
+            "outcome": {
+                "result": 2
+            }
+        }, 
+        {
+            "description": "Count with skip and limit", 
+            "operation": {
+                "arguments": {
+                    "filter": {}, 
+                    "limit": 3, 
+                    "skip": 1
+                }, 
+                "name": "count"
+            }, 
+            "outcome": {
+                "result": 3
+            }
+        }, 
+        {
+            "description": "Count with collation", 
+            "operation": {
+                "arguments": {
+                    "collation": {
+                        "locale": "en_US", 
+                        "strength": 2
+                    }, 
+                    "filter": {
+                        "x": "ping"
+                    }
+                }, 
+                "name": "count"
+            }, 
+            "outcome": {
+                "result": 1
+            }
+        }
+    ]
+}

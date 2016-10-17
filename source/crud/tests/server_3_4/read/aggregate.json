@@ -1,0 +1,137 @@
+{
+    "data": [
+        {
+            "_id": 1, 
+            "x": 11
+        }, 
+        {
+            "_id": 2, 
+            "x": 22
+        }, 
+        {
+            "_id": 3, 
+            "x": 33
+        }, 
+        {
+            "_id": 4, 
+            "x": "ping"
+        }
+    ], 
+    "tests": [
+        {
+            "description": "Aggregate with multiple stages", 
+            "operation": {
+                "arguments": {
+                    "batchSize": 2, 
+                    "pipeline": [
+                        {
+                            "$sort": {
+                                "x": 1
+                            }
+                        }, 
+                        {
+                            "$match": {
+                                "_id": {
+                                    "$gt": 1, 
+                                    "$lt": 4
+                                }
+                            }
+                        }
+                    ]
+                }, 
+                "name": "aggregate"
+            }, 
+            "outcome": {
+                "result": [
+                    {
+                        "_id": 2, 
+                        "x": 22
+                    }, 
+                    {
+                        "_id": 3, 
+                        "x": 33
+                    }
+                ]
+            }
+        }, 
+        {
+            "description": "Aggregate with $out", 
+            "operation": {
+                "arguments": {
+                    "batchSize": 2, 
+                    "pipeline": [
+                        {
+                            "$sort": {
+                                "x": 1
+                            }
+                        }, 
+                        {
+                            "$match": {
+                                "_id": {
+                                    "$gt": 1, 
+                                    "$lt": 4
+                                }
+                            }
+                        }, 
+                        {
+                            "$out": "other_test_collection"
+                        }
+                    ]
+                }, 
+                "name": "aggregate"
+            }, 
+            "outcome": {
+                "collection": {
+                    "data": [
+                        {
+                            "_id": 2, 
+                            "x": 22
+                        }, 
+                        {
+                            "_id": 3, 
+                            "x": 33
+                        }
+                    ], 
+                    "name": "other_test_collection"
+                }, 
+                "result": [
+                    {
+                        "_id": 2, 
+                        "x": 22
+                    }, 
+                    {
+                        "_id": 3, 
+                        "x": 33
+                    }
+                ]
+            }
+        }, 
+        {
+            "description": "Aggregate with collation", 
+            "operation": {
+                "arguments": {
+                    "collation": {
+                        "locale": "en_US", 
+                        "strength": 2
+                    }, 
+                    "pipeline": [
+                        {
+                            "$match": {
+                                "x": "PING"
+                            }
+                        }
+                    ]
+                }, 
+                "name": "aggregate"
+            }, 
+            "outcome": {
+                "result": [
+                    {
+                        "_id": 4, 
+                        "x": "ping"
+                    }
+                ]
+            }
+        }
+    ]
+}
