@@ -67,12 +67,7 @@ tests:
                 matchedCount: 0
                 modifiedCount: 0
                 upsertedId: 4
-            collection:
-                data:
-                    - {_id: 1, x: 11}
-                    - {_id: 2, x: 22}
-                    - {_id: 3, x: 33}
-                    - {_id: 4, x: 1}
+
     -
         description: "ReplaceOne with upsert when no documents match with an id specified"
         operation:
@@ -87,9 +82,3 @@ tests:
                 matchedCount: 0
                 modifiedCount: 0
                 upsertedId: 4
-            collection:
-                data:
-                    - {_id: 1, x: 11}
-                    - {_id: 2, x: 22}
-                    - {_id: 3, x: 33}
-                    - {_id: 4, x: 1}
