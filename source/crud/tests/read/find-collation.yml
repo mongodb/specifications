@@ -1,7 +1,6 @@
 data:
     - {_id: 1, x: 'ping'}
 minServerVersion: '3.4'
-maxServerVersion:
 
 tests:
     -

@@ -67,6 +67,7 @@ tests:
                 matchedCount: 0
                 modifiedCount: 0
                 upsertedId: 4
+            # See SERVER-5289 for why the collection data is not checked for server versions < 2.6
 
     -
         description: "ReplaceOne with upsert when no documents match with an id specified"
@@ -82,3 +83,4 @@ tests:
                 matchedCount: 0
                 modifiedCount: 0
                 upsertedId: 4
+            # See SERVER-5289 for why the collection data is not checked for server versions < 2.6

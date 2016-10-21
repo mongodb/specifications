@@ -3,7 +3,7 @@ data:
     - {_id: 2, x: 22}
     - {_id: 3, x: 33}
 minServerVersion: '2.6'
-maxServerVersion:
+# See SERVER-5289 for why the collection data is only checked for server versions >= 2.6
 
 tests:
     -

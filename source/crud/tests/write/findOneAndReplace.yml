@@ -106,6 +106,7 @@ tests:
 
         outcome:
             result: null
+            # See SERVER-5289 for why the collection data is not checked for server versions < 2.6
     -
         description: "FindOneAndReplace when no documents match returning the document after modification"
         operation:
@@ -138,3 +139,4 @@ tests:
 
         outcome:
             result: {x: 44}
+            # See SERVER-5289 for why the collection data is not checked for server versions < 2.6
