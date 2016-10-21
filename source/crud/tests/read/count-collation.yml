@@ -10,7 +10,7 @@ tests:
             name: count
             arguments:
                 filter: { x: 'ping' }
-                collation: { locale: 'en_US', strength: 2 }
+                collation: { locale: 'en_US', strength: 2 } # https://docs.mongodb.com/master/reference/collation/#collation-document
 
         outcome:
             result: 1

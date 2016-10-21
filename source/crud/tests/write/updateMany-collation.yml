@@ -15,7 +15,7 @@ tests:
                     x: 'ping'
                 update:
                     $set: {x: 'pong'}
-                collation: { locale: 'en_US', strength: 2 }
+                collation: { locale: 'en_US', strength: 2 } # https://docs.mongodb.com/master/reference/collation/#collation-document
 
         outcome:
             result:
