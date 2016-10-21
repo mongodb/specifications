@@ -1,14 +1,17 @@
 data:
     - {_id: 1, x: 'ping'}
-serverVersion: '3.4'
+minServerVersion: '3.4'
+maxServerVersion:
 
 tests:
     -
-        description: "Find with a collation"
+        description: "Aggregate with collation"
         operation:
-            name: "find"
+            name: aggregate
             arguments:
-                filter: {x: 'PING'}
+                pipeline:
+                    - $match:
+                        x: 'PING'
                 collation: { locale: 'en_US', strength: 2 }
         outcome:
             result:

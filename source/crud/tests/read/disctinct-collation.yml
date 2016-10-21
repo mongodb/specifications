@@ -1,7 +1,8 @@
 data:
     - {_id: 1, string: 'PING'}
     - {_id: 2, string: 'ping'}
-serverVersion: '3.4'
+minServerVersion: '3.4'
+maxServerVersion:
 
 tests:
     -
