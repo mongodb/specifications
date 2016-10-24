@@ -247,7 +247,7 @@ Fields:
   Default contains one server: "localhost:27017", ServerType Unknown.
 * stale: a boolean for single-threaded clients, whether the topology must
   be re-scanned.
-  (Not related to maxStalenessMS, nor to `stale primaries`_.)
+  (Not related to maxStalenessSeconds, nor to `stale primaries`_.)
 * compatible: a boolean.
   False if any server's wire protocol version range
   is incompatible with the client's.

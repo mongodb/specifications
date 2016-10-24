@@ -14,37 +14,37 @@ Tests of drivers' connection string parsing and validation.
 Basic
 -----
 
-maxStalenessMS is set to 120,000 ms from this connection string::
+maxStalenessSeconds is set to 120 from this connection string::
 
-  mongodb://host/?readPreference=secondary&maxStalenessMS=120000
+  mongodb://host/?readPreference=secondary&maxStalenessSeconds=120
 
-No maxStalenessMS with mode "primary"
--------------------------------------
+No maxStalenessSeconds with mode "primary"
+------------------------------------------
 
 These connection strings are invalid:
 
-  mongodb://host/?maxStalenessMS=120000
-  mongodb://host/?readPreference=primary&maxStalenessMS=120000
+  mongodb://host/?maxStalenessSeconds=120
+  mongodb://host/?readPreference=primary&maxStalenessSeconds=120
 
 Specifying "no max staleness" with "-1"
 ---------------------------------------
 
 A MongoClient with this connection string has no max staleness, the same as
-if "maxStalenessMS" were omitted from the connection string::
+if "maxStalenessSeconds" were omitted from the connection string::
 
-  mongodb://host/?readPreference=secondary&maxStalenessMS=-1
+  mongodb://host/?readPreference=secondary&maxStalenessSeconds=-1
 
 This connection string is valid and does not raise an error:
 
-  mongodb://host/?readPreference=primary&maxStalenessMS=-1
+  mongodb://host/?readPreference=primary&maxStalenessSeconds=-1
 
 No validation
 -------------
 
 A MongoClient can be initialized with this connection string;
-the small maxStalenessMS value causes no error initially::
+the small maxStalenessSeconds value causes no error initially::
 
-  mongodb://host/?readPreference=secondary&maxStalenessMS=1
+  mongodb://host/?readPreference=secondary&maxStalenessSeconds=1
 
 heartbeatFrequencyMS is configurable
 ====================================
@@ -98,7 +98,7 @@ Direct connection to mongos
 
 Initialize a MongoClient with this connection string::
 
-  mongodb://mongos/?readPreference=secondary&maxStalenessMS=120000
+  mongodb://mongos/?readPreference=secondary&maxStalenessSeconds=120
 
 Where "mongos" is the hostname and port
 of a mongos server running wire protocol version 5+.
@@ -108,41 +108,41 @@ The MongoClient must include following read preference element with its
 
   $readPreference: {
       mode: "secondary",
-      maxStalenessMS: 120000
+      maxStalenessSeconds: 120
   }
 
-The "maxStalenessMS" element must be a BSON int32 or int64 type.
+The "maxStalenessSeconds" element must be a BSON int32 or int64 type.
 
 Do the same test with this connection string::
 
   mongodb://mongos/?readPreference=secondary
 
-The read preference element sent to mongos must omit "maxStalenessMS".
+The read preference element sent to mongos must omit "maxStalenessSeconds".
 
 Mongos
 ======
 
 These tests MUST be added to the server code repository,
-validating mongos's maxStalenessMS implementation.
+validating mongos's maxStalenessSeconds implementation.
 
-maxStalenessMS and mode "primary"
----------------------------------
+maxStalenessSeconds and mode "primary"
+--------------------------------------
 
 mongos MUST reject a read with::
 
-  $readPreference: {mode: "primary", maxStalenessMS: 30000}
+  $readPreference: {mode: "primary", maxStalenessSeconds: 30}
 
 Validation
 ----------
 
-mongos MUST reject a read with ``maxStalenessMS`` that is not a number.
+mongos MUST reject a read with ``maxStalenessSeconds`` that is not a number.
 
-maxStalenessMS too small
-------------------------
+maxStalenessSeconds too small
+-----------------------------
 
-Since maxStalenessMS must be twice mongos's heartbeat frequency
+Since maxStalenessSeconds must be twice mongos's heartbeat frequency
 (currently 10 seconds), mongos MUST reject a read with::
 
-  $readPreference: {mode: "secondary", maxStalenessMS: 15000}
+  $readPreference: {mode: "secondary", maxStalenessSeconds: 15}
 
 The error code MUST be 160.

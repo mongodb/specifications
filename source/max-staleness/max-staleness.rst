@@ -9,24 +9,24 @@ Max Staleness
 :Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
 :Type: Standards
-:Last Modified: September 29, 2016
-:Version: 1.1
+:Last Modified: October 24, 2016
+:Version: 1.2
 
 .. contents::
 
 Abstract
 ========
 
-Read preference gains a new option, "maxStalenessMS".
+Read preference gains a new option, "maxStalenessSeconds".
 
 A client (driver or mongos) MUST estimate the staleness of each secondary,
 based on lastWriteDate values provided in server isMaster responses, and select only
-those secondaries whose staleness is less than or equal to maxStalenessMS.
+those secondaries whose staleness is less than or equal to maxStalenessSeconds.
 
-Most of the implementation of the maxStalenessMS option is specified in the
+Most of the implementation of the maxStalenessSeconds option is specified in the
 Server Discovery And Monitoring Spec and the Server Selection Spec. This
 document supplements those specs by collecting information specifically about
-maxStalenessMS.
+maxStalenessSeconds.
 
 Meta
 ====
@@ -53,7 +53,7 @@ Goals
   and data recency.
 * Be robust in the face of clock skew between the client and servers,
   and skew between the primary and secondaries.
-* Avoid "inadvertent primary read preference": prevent a maxStalenessMS setting
+* Avoid "inadvertent primary read preference": prevent a maxStalenessSeconds setting
   so small it forces all reads to the primary regardless of actual replication lag.
 * Specify how mongos routers and shards track the opTimes of Config Servers as
   Replica Sets ("CSRS").
@@ -63,9 +63,9 @@ Non-Goals
 
 * Provide a global server-side configuration of max acceptable staleness (see
   `rejected ideas`_).
-* Support maxStalenessMS less than twice heartbeatFrequencyMS.
+* Support a max staleness value less than twice heartbeatFrequencyMS.
 * Make a consistency guarantee resembling readConcern "afterOpTime".
-* Specify how maxStalenessMS interacts with readConcern "afterOpTime" in drivers
+* Specify how maxStalenessSeconds interacts with readConcern "afterOpTime" in drivers
   (distinct from the goal for routers and shards).
 * Compensate for the duration of server checks in staleness estimations.
 
@@ -75,22 +75,22 @@ Specification
 API
 ---
 
-"maxStalenessMS" is a new read preference option, with a positive numeric value.
+"maxStalenessSeconds" is a new read preference option, with a positive numeric value.
 It MUST be configurable similar to other read preference options like "readPreference"
 and "tag_sets". Clients MUST also recognize it in the connection string::
 
-  mongodb://host/?readPreference=secondary&maxStalenessMS=30000
+  mongodb://host/?readPreference=secondary&maxStalenessSeconds=30
 
-Clients MUST consider "maxStalenessMS=-1" in the connection string to mean
+Clients MUST consider "maxStalenessSeconds=-1" in the connection string to mean
 "no maximum staleness".
 
-A connection string combining a positive maxStalenessMS with read preference
+A connection string combining a positive maxStalenessSeconds with read preference
 mode "primary" MUST be considered invalid; this includes connection strings with
 no explicit read preference mode.
 
 By default there is no maximum staleness.
 
-Besides configuring maxStalenessMS in the connection string,
+Besides configuring maxStalenessSeconds in the connection string,
 the API for configuring it in code is not specified;
 drivers are free to use None, null, -1, or other representations of "no value"
 to represent "no max staleness".
@@ -99,7 +99,7 @@ Replica Sets
 ------------
 
 Replica set primaries and secondaries implement the following features to
-support maxStalenessMS.
+support maxStalenessSeconds.
 
 A idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
 lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_).
@@ -110,14 +110,14 @@ with these fields (SERVER-8858):
 * lastWriteDate: a BSON UTC datetime,
   the wall-clock time of the **primary** when it most recently recorded a write to the oplog.
 * opTime: an opaque value representing the most recent replicated write.
-  Needed for sharding, not used for the maxStalenessMS read preference option.
+  Needed for sharding, not used for the maxStalenessSeconds read preference option.
 
 
 Wire Version
 ------------
 
 The maxWireVersion MUST be incremented to 5
-to indicate that the server includes maxStalenessMS features
+to indicate that the server includes maxStalenessSeconds features
 (SERVER-23893).
 
 Client
@@ -126,9 +126,9 @@ Client
 A client (driver or mongos) MUST estimate the staleness of each secondary,
 based on lastWriteDate values provided in server isMaster responses, and select for
 reads only those secondaries whose estimated staleness is less than or equal to
-maxStalenessMS.
+maxStalenessSeconds.
 
-If any server's maxWireVersion is less than 5 and maxStalenessMS a positive number,
+If any server's maxWireVersion is less than 5 and maxStalenessSeconds is a positive number,
 every attempt at server selection throws an error.
 
 When there is a known primary,
@@ -231,7 +231,7 @@ Then, S reports its lastWriteDate is 0. The client estimates S's staleness as::
 Note that the secondary appears only 10 seconds stale at this moment,
 but the client adds heartbeatFrequencyMS, pessimistically assuming that
 the secondary will not replicate at all between now and the next check.
-If the current staleness plus heartbeatFrequencyMS is still less than maxStalenessMS,
+If the current staleness plus heartbeatFrequencyMS is still less than maxStalenessSeconds,
 then we can safely read from the secondary from now until the next check.
 
 The client re-checks P and S 10 seconds later, at time 70 by the client's clock.
@@ -294,7 +294,7 @@ its staleness estimate equals heartbeatFrequencyMS:
   = 20 - 20 + 10
   = 10
 
-(Since maxStalenessMS must be at least twice heartbeatFrequencyMS,
+(Since max staleness must be at least twice heartbeatFrequencyMS,
 S1 is eligible for reads no matter what.)
 
 S2's staleness estimate is::
@@ -312,10 +312,18 @@ and the YAML and JSON tests in the tests directory.
 Design Rationale
 ================
 
-maxStalenessMS is part of Read Preferences
-------------------------------------------
+Specify max staleness in seconds
+--------------------------------
 
-maxStalenessMS MAY be configurable at the client, database, and collection
+Other driver options that are timespans are in milliseconds, for example
+serverSelectionTimeoutMS. The max staleness option is specified in seconds,
+however, to make it obvious to users that clients can only enforce large,
+imprecise max staleness values.
+
+maxStalenessSeconds is part of Read Preferences
+-----------------------------------------------
+
+maxStalenessSeconds MAY be configurable at the client, database, and collection
 level, and per operation, the same as other read preference fields are,
 because users expressed that their tolerance for stale reads varies per
 operation.
@@ -327,7 +335,7 @@ Consider a scenario in which the primary does *not*:
 
 1. There are no writes for an hour.
 2. A client performs a heavy read-only workload with read preference mode
-   "nearest" and maxStalenessMS of 30 seconds.
+   "nearest" and maxStalenessSeconds of 30 seconds.
 3. The primary receives a write.
 4. In the brief time before any secondary replicates the write, the client
    re-checks all servers.
@@ -350,16 +358,16 @@ will also benefit when spurious lag spikes are solved.
 
 See also `SERVER-23892 <https://jira.mongodb.org/browse/SERVER-23892>`_.
 
-maxStalenessMS must be at least twice heartbeatFrequencyMS
-----------------------------------------------------------
+Max staleness must be at least twice heartbeatFrequencyMS
+---------------------------------------------------------
 
-If maxStalenessMS is set to exactly heartbeatFrequencyMS,
+If maxStalenessSeconds is set to exactly heartbeatFrequencyMS / 1000,
 then so long as a secondary lags even a millisecond
 it is ineligible.
 Despite the user's read preference mode, the client will always read from the primary.
 
 This is an example of "inadvertent primary read preference":
-a maxStalenessMS setting so small
+a maxStalenessSeconds setting so small
 it forces all reads to the primary regardless of actual replication lag.
 We want to prohibit this effect (see `goals`_).
 
@@ -373,10 +381,10 @@ to ensure that if S is fresh enough to select at this time,
 it will still be fresh enough before its *next* check,
 10 seconds in the future.
 
-All servers must have wire version 5 to support maxStalenessMS
---------------------------------------------------------------
+All servers must have wire version 5 to support maxStalenessSeconds
+-------------------------------------------------------------------
 
-Clients are required to throw an error if maxStalenessMS is set,
+Clients are required to throw an error if maxStalenessSeconds is set,
 and any server in the topology has maxWireVersion less than 5.
 
 Servers began reporting lastWriteDate in wire protocol version 5,
@@ -384,7 +392,7 @@ and clients require some or all servers' lastWriteDate in order to
 estimate any servers' staleness.
 The exact requirements of the formula vary according to TopologyType,
 so this spec makes a simple ruling: if any server is running an outdated version,
-maxStalenessMS cannot be supported.
+maxStalenessSeconds cannot be supported.
 
 Rejected ideas
 --------------
@@ -405,7 +413,7 @@ frequently than the periodic isMaster calls.
 But while a server is not being used (e.g., while it is too stale, or while it
 does not match some other part of the Read Preference), only its periodic
 isMaster responses can update its opTime. Therefore, heartbeatFrequencyMS
-sets a lower bound on maxStalenessMS, so there is no benefit in recording
+sets a lower bound on maxStalenessSeconds, so there is no benefit in recording
 each server's opTime more frequently. On the other hand there would be
 costs: effort adding opTime to all command responses, lock contention
 getting the opTime on the server and recording it on the client, complexity
@@ -428,7 +436,7 @@ The formula was rejected because it would slosh load to and from the secondary
 during the interval between checks.
 
 For example:
-Say heartbeatFrequencyMS is 10 seconds and maxStalenessMS is set to 25 seconds,
+Say heartbeatFrequencyMS is 10 seconds and maxStalenessSeconds is set to 25 seconds,
 and immediately after a secondary is checked its staleness is estimated at 20 seconds.
 It is eligible for reads until 5 seconds after the check, then it becomes ineligible,
 causing all queries to be directed to the primary until the next check, 5 seconds later.
@@ -438,7 +446,7 @@ Server-side Configuration
 
 We considered a deployment-wide "max staleness" setting that servers
 communicate to clients in isMaster, e.g., "120 seconds is the max staleness."
-The read preference config is simplified: "maxStalenessMS" is gone, instead we
+The read preference config is simplified: "maxStalenessSeconds" is gone, instead we
 have "staleOk: true" (the default?) and "staleOk: false".
 
 Based on Customer Advisory Board feedback, configuring staleness
@@ -469,20 +477,21 @@ do not block. This is an extension of the mongos logic for CSRS to applications.
 Future feature to support server-side configuration
 ---------------------------------------------------
 
-For this spec, we chose to control maxStalenessMS in client code.
+For this spec, we chose to control maxStalenessSeconds in client code.
 A future spec could allow database administrators to configure from the server
 side how much replication lag makes a secondary too stale to read from.
 (See `Server-side Configuration`_ above.) This could be implemented atop the
 current feature: if a server communicates is staleness configuration in its
 ismaster response like::
 
-    { ismaster: true, maxStalenessMS: 30000 }
+    { ismaster: true, maxStalenessSeconds: 30 }
 
 ... then a future client can use the value from the server as its default
-maxStalenessMS when there is no client-side setting.
+maxStalenessSeconds when there is no client-side setting.
 
 Changes
 =======
 
-2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
-instead of "maxStalenessMS=0".
+2016-09-29: Specify "no max staleness" in the URI with "maxStalenessSeconds=-1"
+instead of "maxStalenessSeconds=0".
+2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
