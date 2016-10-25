@@ -35,7 +35,11 @@
         },
         {
             "description": "invalid flags",
-            "bson": "100000000B61006162630069616D0000"
+            "bson": "100000000B61006162630061696D0000"
+        },
+        {
+            "description": "flags not alphabetized",
+            "bson": "100000000B6100616263006D69780000"
         }
     ]
 }
