@@ -396,8 +396,9 @@ Changes
 
 Version 1.0.2 – October, 25 2016
 
-* Added a "non-alphabetized flags" case to the BSON Regexp corpus file and
-  made the "invalid flags" case alphabetized.
+* Added a "non-alphabetized flags" case to the BSON Regexp corpus file;
+  decoders must be able to read non-alphabetized flags, but encoders must
+  emit alphabetized flags.
 
 Version 1.0.1 – October, 24 2016
 
