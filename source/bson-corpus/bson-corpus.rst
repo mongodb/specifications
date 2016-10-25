@@ -9,8 +9,8 @@ BSON Corpus
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: July 29, 2016
-:Version: 1.0
+:Last Modified: October 24, 2016
+:Version: 1.0.1
 
 .. contents::
 
@@ -394,4 +394,6 @@ assertions.  This makes for easier and safer test case development.
 Changes
 =======
 
-None so far.
+Version 1.0.1 – October, 24 2016
+
+* Added an "invalid flags" case to the BSON Regexp corpus file
