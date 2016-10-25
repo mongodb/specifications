@@ -9,7 +9,7 @@ Max Staleness
 :Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
 :Type: Standards
-:Last Modified: October 24, 2016
+:Last Modified: October 25, 2016
 :Version: 1.2
 
 .. contents::
@@ -63,7 +63,7 @@ Non-Goals
 
 * Provide a global server-side configuration of max acceptable staleness (see
   `rejected ideas`_).
-* Support a max staleness value less than twice heartbeatFrequencyMS.
+* Support small values for max staleness.
 * Make a consistency guarantee resembling readConcern "afterOpTime".
 * Specify how maxStalenessSeconds interacts with readConcern "afterOpTime" in drivers
   (distinct from the goal for routers and shards).
@@ -101,8 +101,16 @@ Replica Sets
 Replica set primaries and secondaries implement the following features to
 support maxStalenessSeconds.
 
-A idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
+idleWriteFrequencyMS
+~~~~~~~~~~~~~~~~~~~~
+
+An idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
 lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_).
+This spec refers to this frequency as ``idleWriteFrequencyMS`` with constant
+value 10,000.
+
+lastWrite
+~~~~~~~~~
 
 A primary's or secondary's isMaster response contains a "lastWrite" subdocument
 with these fields (SERVER-8858):
@@ -210,8 +218,8 @@ Reference Implementation
 
 The C Driver (CDRIVER-1363) and Perl Driver (PERL-626).
 
-Estimating Staleness: Example With a Primary
-============================================
+Estimating Staleness: Example With a Primary and Continuous Writes
+==================================================================
 
 Consider a primary P and a secondary S,
 and a client with heartbeatFrequencyMS set to 10 seconds.
@@ -294,7 +302,7 @@ its staleness estimate equals heartbeatFrequencyMS:
   = 20 - 20 + 10
   = 10
 
-(Since max staleness must be at least twice heartbeatFrequencyMS,
+(Since max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS,
 S1 is eligible for reads no matter what.)
 
 S2's staleness estimate is::
@@ -302,6 +310,64 @@ S2's staleness estimate is::
   SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
   = 20 - 5 + 10
   = 25
+
+Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set
+==========================================================================
+
+Consider a primary P and a secondary S,
+and a client with heartbeatFrequencyMS set to 500 ms.
+There is no clock skew. (Previous examples show that skew has no effect.)
+
+The primary has been idle for 10 seconds and writes a no-op to the oplog at time 50
+(meaning 50 seconds past midnight), and again at time 60.
+
+Before the secondary can replicate the no-op at time 60, the client checks both servers.
+The primary reports its lastWriteDate is 60, the secondary reports 50.
+
+The client estimates S's staleness as::
+
+  (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
+  = (60 - 50) - (60 - 60) + 0.5
+  = 10.5
+
+The same story as a table:
+
++-------+-----------------------+------------------+-----------------+------------------+-----------------+-------------+
+| Clock | Event                 | S.lastUpdateTime | S.lastWriteDate | P.lastUpdateTime | P.lastWriteDate | S staleness |
++=======+=======================+==================+=================+==================+=================+=============+
+| 50    | Idle write            | 50               |                 | 50               |                 |             |
++-------+-----------------------+------------------+-----------------+------------------+-----------------+-------------+
+| 60    | Idle write begins     | 60               |                 | 50               |                 |             |
++-------+-----------------------+------------------+-----------------+------------------+-----------------+-------------+
+| 60    | Client checks P and S | 60               | 60              | 50               | 60              | 10.5        |
++-------+-----------------------+------------------+-----------------+------------------+-----------------+-------------+
+| 60    | Idle write completes  | 60               |                 | 60               |                 |             |
++-------+-----------------------+------------------+-----------------+------------------+-----------------+-------------+
+
+.. Generated with table.py from https://zeth.net/code/table.txt like:
+
+    from table import Table
+
+    data = [
+        ['Clock', 'Event', 'S.lastUpdateTime', 'S.lastWriteDate',
+         'P.lastUpdateTime', 'P.lastWriteDate', 'S staleness'],
+        ['50', 'Idle write', '50', '', '50', '', ''],
+        ['60', 'Idle write begins', '60', '', '50', '', ''],
+        ['60', 'Client checks P and S', '60', '60', '50', '60', '10.5'],
+        ['60', 'Idle write completes', '60', '', '60', '', ''],
+    ]
+
+    print Table(data).create_table()
+
+In this scenario the actual secondary lag is between 0 and 10 seconds.
+But the staleness estimate can be as large as::
+
+    staleness = idleWriteFrequencyMS + heartbeatFrequencyMS
+
+To ensure the secondary is always eligible for reads in an idle replica set,
+we require::
+
+    maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWriteFrequencyMS
 
 Test Plan
 =========
@@ -356,12 +422,13 @@ in a CSRS.
 Monitoring software like MongoDB Cloud Manager that charts replication lag
 will also benefit when spurious lag spikes are solved.
 
-See also `SERVER-23892 <https://jira.mongodb.org/browse/SERVER-23892>`_.
+See `Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set`_.
+and `SERVER-23892 <https://jira.mongodb.org/browse/SERVER-23892>`_.
 
-Max staleness must be at least twice heartbeatFrequencyMS
----------------------------------------------------------
+Max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS
+--------------------------------------------------------------------------
 
-If maxStalenessSeconds is set to exactly heartbeatFrequencyMS / 1000,
+If maxStalenessSeconds is set to exactly heartbeatFrequencyMS (converted to seconds),
 then so long as a secondary lags even a millisecond
 it is ineligible.
 Despite the user's read preference mode, the client will always read from the primary.
@@ -371,15 +438,9 @@ a maxStalenessSeconds setting so small
 it forces all reads to the primary regardless of actual replication lag.
 We want to prohibit this effect (see `goals`_).
 
-We also do not want users to expect greater precision than the staleness estimate offers.
-Consider a replica set with a primary P and a secondary S.
-A client with heartbeat frequency of 10 seconds might complete a check of P
-a moment before it checks S.
-At that moment, the staleness estimate is inaccurate by as much as 10 seconds.
-Furthermore, the estimate must be padded by an additional 10 seconds
-to ensure that if S is fresh enough to select at this time,
-it will still be fresh enough before its *next* check,
-10 seconds in the future.
+We also want to ensure that a secondary in an idle replica set is always considered
+eligible for reads with maxStalenessSeconds. See
+`Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set`_.
 
 All servers must have wire version 5 to support maxStalenessSeconds
 -------------------------------------------------------------------
@@ -495,3 +556,5 @@ Changes
 2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
 instead of "maxStalenessMS=0".
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
+2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
+to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).

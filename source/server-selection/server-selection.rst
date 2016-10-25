@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: October 24, 2016
+:Last Modified: October 25, 2016
 :Version: 1.4
 
 .. contents::
@@ -317,6 +317,12 @@ heartbeatFrequencyMS
 This controls when topology updates are scheduled.
 See `heartbeatFrequencyMS`_ in the `Server Discovery and Monitoring`_ spec for details.
 
+idleWriteFrequencyMS
+~~~~~~~~~~~~~~~~~~~~
+
+A constant, how often an idle primary writes a no-op to the oplog.
+See `idleWriteFrequencyMS`_ in the `Max Staleness`_ spec for details.
+
 Read Preference
 ---------------
 
@@ -394,15 +400,21 @@ Drivers MUST raise an error if ``maxStalenessSeconds`` is a positive number
 and the ``mode`` field is 'primary'.
 
 A driver MUST raise an error
-if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary
-and ``maxStalenessSeconds * 1000`` is less than twice the client's `heartbeatFrequencyMS`_,
-defined in the `Server Discovery and Monitoring`_ spec.
-(Users can configure a shorter ``heartbeatFrequencyMS`` than the default to
+if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary and::
+
+  maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS
+
+``heartbeatFrequencyMS`` is defined in the `Server Discovery and Monitoring`_ spec,
+and ``idleWriteFrequencyMS`` is defined to be 10 seconds in the `Max Staleness`_ spec.
+
+Users can configure a shorter ``heartbeatFrequencyMS`` than the default to
 allow a smaller ``maxStalenessSeconds`` with replica sets.
 The shortest ``heartbeatFrequencyMS`` is ``minHeartbeatFrequencyMS``,
-which is 500ms and not configurable.
-See "Max staleness must be at least twice heartbeatFrequencyMS"
-in the Max Staleness Spec.)
+which is 500ms.
+Therefore, the smallest possible maxStalenessSeconds is 10.5 seconds.
+
+See "Max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS"
+in the Max Staleness Spec.
 
 mongos MUST reject a read with ``maxStalenessSeconds`` provided and a ``mode`` of 'primary'.
 
@@ -1064,7 +1076,7 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                 throw error
 
             if (maxStalenessSeconds is set and
-                maxStalenessSeconds * 1000 < 2 * heartbeatFrequencyMS and
+                maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS and
                 and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
 
                 client.lock.release()
@@ -1137,7 +1149,7 @@ Pseudocode for `single-threaded server selection`_::
                 throw error
 
             if (maxStalenessSeconds is set and
-                maxStalenessSeconds * 1000 < 2 * heartbeatFrequencyMS and
+                maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS and
                 and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
 
                 throw error
@@ -1538,6 +1550,8 @@ References
 
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
+.. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
+.. _idleWriteFrequencyMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWriteFrequencyMS
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 
 Changes
@@ -1557,6 +1571,9 @@ single-threaded drivers document selection time expectations.
 comes before tag_sets.
 
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
+
+2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
+to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
