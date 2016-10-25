@@ -10,7 +10,7 @@ BSON Corpus
 :Type: Standards
 :Minimum Server Version: N/A
 :Last Modified: October 25, 2016
-:Version: 1.0.2
+:Version: 1.1
 
 .. contents::
 
@@ -394,12 +394,10 @@ assertions.  This makes for easier and safer test case development.
 Changes
 =======
 
-Version 1.0.2 – October, 25 2016
+Version 1.1 – October, 25 2016
 
 * Added a "non-alphabetized flags" case to the BSON Regexp corpus file;
   decoders must be able to read non-alphabetized flags, but encoders must
   emit alphabetized flags.
-
-Version 1.0.1 – October, 24 2016
 
 * Added an "invalid flags" case to the BSON Regexp corpus file
