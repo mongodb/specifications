@@ -18,6 +18,10 @@ maxStalenessSeconds is set to 120 from this connection string::
 
   mongodb://host/?readPreference=secondary&maxStalenessSeconds=120
 
+maxStalenessSeconds is set to 10.5 from this connection string::
+
+  mongodb://host/?readPreference=secondary&maxStalenessSeconds=10.5
+
 No maxStalenessSeconds with mode "primary"
 ------------------------------------------
 
@@ -140,8 +144,8 @@ mongos MUST reject a read with ``maxStalenessSeconds`` that is not a number.
 maxStalenessSeconds too small
 -----------------------------
 
-Since maxStalenessSeconds must be twice mongos's heartbeat frequency
-(currently 10 seconds), mongos MUST reject a read with::
+Since maxStalenessSeconds must be at least mongos's heartbeat frequency
+(currently 10 seconds) plus maxIdleTimeMS, mongos MUST reject a read with::
 
   $readPreference: {mode: "secondary", maxStalenessSeconds: 15}
 

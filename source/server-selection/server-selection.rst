@@ -317,12 +317,6 @@ heartbeatFrequencyMS
 This controls when topology updates are scheduled.
 See `heartbeatFrequencyMS`_ in the `Server Discovery and Monitoring`_ spec for details.
 
-idleWriteFrequencyMS
-~~~~~~~~~~~~~~~~~~~~
-
-A constant, how often an idle primary writes a no-op to the oplog.
-See `idleWriteFrequencyMS`_ in the `Max Staleness`_ spec for details.
-
 Read Preference
 ---------------
 
@@ -399,18 +393,24 @@ None, null, or other representations of "no value" to represent "no max stalenes
 Drivers MUST raise an error if ``maxStalenessSeconds`` is a positive number
 and the ``mode`` field is 'primary'.
 
-A driver MUST raise an error
-if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary and::
+If the TopologyType is ReplicaSetWithPrimary, a client MUST raise an error if::
 
-  maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS
+  maxStalenessSeconds * 1000 < heartbeatFrequencyMS + (primary's idleWriteFrequencyMS)
 
-``heartbeatFrequencyMS`` is defined in the `Server Discovery and Monitoring`_ spec,
-and ``idleWriteFrequencyMS`` is defined to be 10 seconds in the `Max Staleness`_ spec.
+If the TopologyType is ReplicaSetNoPrimary, a client MUST raise an error if::
+
+  maxStalenessSeconds * 1000 < heartbeatFrequencyMS +
+                               (idleWriteFrequencyMS of secondary with greatest lastUpdateTime)
+
+``heartbeatFrequencyMS`` and ``idleWriteFrequencyMS``
+are defined in the `Server Discovery and Monitoring`_ spec.
 
 Users can configure a shorter ``heartbeatFrequencyMS`` than the default to
 allow a smaller ``maxStalenessSeconds`` with replica sets.
 The shortest ``heartbeatFrequencyMS`` is ``minHeartbeatFrequencyMS``,
 which is 500ms.
+Currently the MongoDB server's ``idleWriteFrequencyMS`` is 10 seconds
+and not configurable.
 Therefore, the smallest possible maxStalenessSeconds is 10.5 seconds.
 
 See "Max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS"
@@ -418,8 +418,9 @@ in the Max Staleness Spec.
 
 mongos MUST reject a read with ``maxStalenessSeconds`` provided and a ``mode`` of 'primary'.
 
-mongos MUST reject a read if ``maxStalenessSeconds`` is less than twice
-mongos's replica set monitoring heartbeat interval, with error code 160.
+mongos MUST reject a read if ``maxStalenessSeconds`` is less than
+mongos's replica set monitoring heartbeat interval plus ``idleWriteFrequencyMS``.
+(mongos's algorithm for determining ``idleWriteFrequencyMS`` is not specified.)
 
 During server selection,
 drivers (but not mongos) MUST raise an error if ``maxStalenessSeconds`` is a positive number,
@@ -1075,7 +1076,13 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                 client.lock.release()
                 throw error
 
-            if (maxStalenessSeconds is set and
+            if topologyDescription.type is ReplicaSetWithPrimary:
+                idleWriteFrequencyMS = primary's idleWriteFrequencyMS
+            else if topologyDescription.type is ReplicaSetNoPrimary:
+                idleWriteFrequencyMS =
+                    idleWriteFrequencyMS of secondary with greatest lastUpdateTime
+
+            if maxStalenessSeconds is set and
                 maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS and
                 and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
 
@@ -1147,6 +1154,12 @@ Pseudocode for `single-threaded server selection`_::
 
             if maxStalenessSeconds is set and any server's maxWireVersion < 5:
                 throw error
+
+            if topologyDescription.type is ReplicaSetWithPrimary:
+                idleWriteFrequencyMS = primary's idleWriteFrequencyMS
+            else if topologyDescription.type is ReplicaSetNoPrimary:
+                idleWriteFrequencyMS =
+                    idleWriteFrequencyMS of secondary with greatest lastUpdateTime
 
             if (maxStalenessSeconds is set and
                 maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS and
@@ -1551,7 +1564,7 @@ References
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
 .. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
-.. _idleWriteFrequencyMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWriteFrequencyMS
+.. _idleWriteFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#idlewritefrequencyms
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 
 Changes
@@ -1574,6 +1587,8 @@ comes before tag_sets.
 
 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
 to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
+
+2016-10-29: Allow for idleWriteFrequencyMS to someday be configurable.
 
 2016-11-01: Update formula for secondary staleness estimate with the
 equivalent, and clearer, expression of this formula from the Max Staleness Spec
