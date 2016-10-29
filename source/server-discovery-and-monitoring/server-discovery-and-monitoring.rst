@@ -774,7 +774,7 @@ not set to null nor restarted from scratch.
 lastWriteDate and opTime
 ````````````````````````
 
-The isMaster response of a replica set members running MongoDB 3.4 and later
+The isMaster response of a replica set member running MongoDB 3.4 and later
 contains a ``lastWrite`` subdocument with fields ``lastWriteDate`` and ``opTime``
 (`SERVER-8858`_).
 If these fields are available, parse them from the ismaster response,
