@@ -492,6 +492,6 @@ maxStalenessSeconds when there is no client-side setting.
 Changes
 =======
 
-2016-09-29: Specify "no max staleness" in the URI with "maxStalenessSeconds=-1"
-instead of "maxStalenessSeconds=0".
+2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
+instead of "maxStalenessMS=0".
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".

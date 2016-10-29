@@ -1553,7 +1553,7 @@ single-threaded drivers document selection time expectations.
 
 2016-07-21: Updated for Max Staleness support.
 
-2016-08-03: Clarify selection algorithm, in particular that maxStalenessSeconds
+2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS
 comes before tag_sets.
 
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
