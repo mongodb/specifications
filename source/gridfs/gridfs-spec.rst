@@ -1147,7 +1147,7 @@ files be updated to use a more secure algorithm, like SHA-1 or SHA-256.
 Changes
 =======
 
-2016-05-10 Support custom file ids
-2016-10-07 Drivers SHOULD handle any numeric type of length and chunkSize
-2016-10-07 Added ReadConcern to the GridFS spec
-2016-10-07 Modified a JSON test that was testing optional behavior
+- 2016-05-10 Support custom file ids
+- 2016-10-07 Drivers SHOULD handle any numeric type of length and chunkSize
+- 2016-10-07 Added ReadConcern to the GridFS spec
+- 2016-10-07 Modified a JSON test that was testing optional behavior
