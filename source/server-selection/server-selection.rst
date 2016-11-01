@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: October 25, 2016
+:Last Modified: November 1, 2016
 :Version: 1.4
 
 .. contents::
@@ -436,7 +436,7 @@ eligibility MUST be determined from ``maxStalenessSeconds`` as follows:
   a secondary's staleness is calculated using its ServerDescription "S"
   and the primary's ServerDescription "P"::
 
-    P.lastWriteDate + (S.lastUpdateTime - P.lastUpdateTime) - S.lastWriteDate + heartbeatFrequencyMS
+    (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 
   (All datetime units are in milliseconds.)
 
@@ -1574,6 +1574,9 @@ comes before tag_sets.
 
 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
 to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
+
+2016-11-01: Update formula for secondary staleness estimate with the
+equivalent, and clearer, expression of this formula from the Max Staleness Spec
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
