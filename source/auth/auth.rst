@@ -232,7 +232,11 @@ MONGODB-X509
 
 :since: 2.6
 
-MONGODB-X509 is the usage of X-509 certificates to validate a client.  The server will use the distinguished subject name of the client certificate in the SSL negotiation to authenticate. The driver will be required to supply the distinguished subject name outside of the SSL negotiation to the server using the "authenticate" command.
+MONGODB-X509 is the usage of X-509 certificates to validate a client.  The server will use the distinguished subject name of the client certificate in the SSL negotiation to authenticate. The driver MAY supply the distinguished subject name outside of the SSL negotiation to the server using the "authenticate" command.
+
+:since: 3.4
+
+MongoDB 3.4 no longer requires the user or the drivers to provide the username. Drivers that have the ability to automatically extract the distinguished subject name from a certificate MAY do so when no username is otherwise provided for backwards compatibility of earlier MongoDB versions. A driver SHOULD NOT preemptively error when no username is provided.
 
 Conversation
 ````````````
@@ -511,6 +515,8 @@ Q: Should a driver support multiple credentials?
 
 Version History
 ===============
+
+2016-08-25: MongoDB 3.4 no longer requires the MONGODB-X509 mechanism to provide the username.
 
 2016-08-17: Added FAQ regarding multiple credentials.
 
