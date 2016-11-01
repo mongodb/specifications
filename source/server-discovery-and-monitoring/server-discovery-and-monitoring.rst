@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.5
-:Last Modified: October 6, 2016
+:Version: 2.6
+:Last Modified: November 1, 2016
 
 .. contents::
 
@@ -236,8 +236,7 @@ The client's representation of everything it knows about the deployment's topolo
 
 Fields:
 
-* type: a `TopologyType`_ enum value.
-  The default is Unknown.
+* type: a `TopologyType`_ enum value. See `initial TopologyType`_.
 * setName: the replica set name. Default null.
 * maxSetVersion: an integer or null. The largest setVersion ever reported by
   a primary. Default null.
@@ -335,13 +334,16 @@ The hostname portion of each address MUST be normalized to lower-case.
 Initial TopologyType
 ~~~~~~~~~~~~~~~~~~~~
 
-The user MUST be able to set the initial TopologyType to Single or Unknown.
+The user MUST be able to set the initial TopologyType to Single.
 
 The user MAY be able to initialize it to ReplicaSetNoPrimary.
 This provides the user a way to tell the client
 it can only connect to replica set members.
 Similarly the user MAY be able to initialize it to Sharded,
 to connect only to mongoses.
+
+The user MAY be able to initialize it to Unknown, to allow for discovery of any
+topology type based only on ismaster responses.
 
 The API for initializing TopologyType is not specified here.
 Drivers might already have a convention, e.g. a single seed means Single,
@@ -2208,3 +2210,8 @@ Changes
 
 2016-10-06: in updateRSWithoutPrimary the isMaster response's "primary" field
   should be used to update the topology description, even if address != me.
+
+2016-11-01: "Unknown" is no longer the default TopologyType, the default is now
+  explicitly unspecified. Update instructions for setting the initial
+  TopologyType when running the spec tests.
+
