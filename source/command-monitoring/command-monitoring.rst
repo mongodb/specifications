@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: March 29, 2016
-:Version: 1.5
+:Last Modified: Nov 2, 2016
+:Version: 1.6
 
 .. contents::
 
@@ -109,6 +109,9 @@ Upconversion
 All legacy operations MUST be converted to their equivalent commands in the 3.2 server in the event's
 ``command`` and ``reply`` fields. This includes OP_INSERT, OP_DELETE, OP_UPDATE, OP_QUERY, OP_GETMORE and
 OP_KILLCURSORS. Upconversion expectations are provided in the tests.
+
+For cases where the upconverted commands would exceed the server's ``maxBsonSize``, the driver MUST NOT
+split the upconverted commands and leave the original upconversion intact.
 
 Bulk Writes
 -----------
@@ -393,3 +396,6 @@ Changelog
 
 29 MAR 2016:
   - Added note on guarantee of the request ids.
+
+2 NOV 2016:
+  - Added clause for not upconverting commands larger than maxBsonSize.
