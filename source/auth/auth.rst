@@ -73,6 +73,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 
 username (string)
 	* Applies to all mechanisms.
+	* Optional for MONGODB-X509.
 source (string)
 	* Applies to all mechanisms.
 	* Always '$external' for GSSAPI, MONGODB-X509, and PLAIN.
@@ -232,25 +233,36 @@ MONGODB-X509
 
 :since: 2.6
 
-MONGODB-X509 is the usage of X-509 certificates to validate a client.  The server will use the distinguished subject name of the client certificate in the SSL negotiation to authenticate. The driver will be required to supply the distinguished subject name outside of the SSL negotiation to the server using the "authenticate" command.
+MONGODB-X509 is the usage of X-509 certificates to validate a client where the
+distinguished subject name of the client certificate acts as the username.
+
+As of MongoDB 3.4, the username will be automatically inferred by the server, and
+there is therefore no need for the client to provide it explicitly.
+
+When connected to MongoDB 3.2 or earlier, the username is required and MUST be provided.
+Drivers MAY automatically extract the username from the certificate if the username
+was not specified in that case.
 
 Conversation
 ````````````
 
 #. Send ``authenticate`` command
-	* ``username = openssl x509 -in client.pem -inform PEM -subject -nameopt RFC2253``
-	* :javascript:`{ authenticate: 1, user: username, mechanism: "MONGODB-X509" }`
+	* :javascript:`{authenticate: 1, mechanism: "MONGODB-X509"}`
+#. Optionally with username
+	* ``username = openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem``
+	* :javascript:`{authenticate: 1, mechanism: "MONGODB-X509", username: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}`
 
-As an example, given a certificate with the RFC2253 subject of "CN=client,OU=kerneluser,O=10Gen,L=New York City,ST=New York,C=US", the conversation would appears as follows:
 
-| C: :javascript:`{authenticate: 1, mechanism: "MONGODB-X509", user: "CN=client,OU=kerneluser,O=10Gen,L=New York City,ST=New York,C=US"}`
+As an example the conversation with MongoDB 3.4+ would typically be:
+
+| C: :javascript:`{authenticate: 1, mechanism: "MONGODB-X509"}`
 | S: :javascript:`{ok: 1}`
 
 `MongoCredential`_ Properties
 `````````````````````````````
 
 username
-	MUST be specified as RFC2253 form.
+	OPTIONAL. MUST be specified as RFC2253 form, when specified.
 
 source
 	MUST be $external.
@@ -511,6 +523,8 @@ Q: Should a driver support multiple credentials?
 
 Version History
 ===============
+
+2016-11-01: Made providing username for X509 authentication optional
 
 2016-08-17: Added FAQ regarding multiple credentials.
 
