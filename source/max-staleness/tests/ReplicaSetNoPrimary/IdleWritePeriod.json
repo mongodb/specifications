@@ -4,7 +4,7 @@
         {
             "address": "a:27017",
             "avg_rtt_ms": 5,
-            "idleWriteFrequencyMillis": 9000,
+            "idleWritePeriodMillis": 9000,
             "lastUpdateTime": 1,
             "lastWrite": {
                 "lastWriteDate": {
@@ -23,7 +23,7 @@
         {
             "address": "a:27017",
             "avg_rtt_ms": 5,
-            "idleWriteFrequencyMillis": 9000,
+            "idleWritePeriodMillis": 9000,
             "lastUpdateTime": 1,
             "lastWrite": {
                 "lastWriteDate": {
@@ -36,7 +36,7 @@
         {
             "address": "b:27017",
             "avg_rtt_ms": 50,
-            "idleWriteFrequencyMillis": 11000,
+            "idleWritePeriodMillis": 11000,
             "lastUpdateTime": 0,
             "lastWrite": {
                 "lastWriteDate": {
@@ -52,7 +52,7 @@
             {
                 "address": "a:27017",
                 "avg_rtt_ms": 5,
-                "idleWriteFrequencyMillis": 9000,
+                "idleWritePeriodMillis": 9000,
                 "lastUpdateTime": 1,
                 "lastWrite": {
                     "lastWriteDate": {
@@ -65,7 +65,7 @@
             {
                 "address": "b:27017",
                 "avg_rtt_ms": 50,
-                "idleWriteFrequencyMillis": 11000,
+                "idleWritePeriodMillis": 11000,
                 "lastUpdateTime": 0,
                 "lastWrite": {
                     "lastWriteDate": {

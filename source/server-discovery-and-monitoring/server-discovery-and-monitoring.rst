@@ -279,8 +279,8 @@ Fields:
   The last opTime reported by the server; an ObjectId or null.
   (Only mongos and shard servers record this field when monitoring
   config servers as replica sets.)
-* idleWriteFrequencyMS:
-  The "idleWriteFrequencyMillis" from the server's most recent ismaster response.
+* idleWritePeriodMS:
+  The "idleWritePeriodMillis" from the server's most recent ismaster response.
   Default 10,000 (10 seconds).
 * type: a `ServerType`_ enum value. Default Unknown.
 * minWireVersion, maxWireVersion:
@@ -790,12 +790,12 @@ generated its isMaster response and when the client records ``lastUpdateTime``.
 
 .. _SERVER-8858: https://jira.mongodb.org/browse/SERVER-8858
 
-idleWriteFrequencyMS
-````````````````````
+idleWritePeriodMS
+`````````````````
 
 The isMaster response of a replica set member running MongoDB 3.4 or later
-may contain a 64-bit integer, ``idleWriteFrequencyMillis``.
-Set the ServerDescription's ``idleWriteFrequencyMS`` to this value if present,
+may contain a 64-bit integer, ``idleWritePeriodMillis``.
+Set the ServerDescription's ``idleWritePeriodMS`` to this value if present,
 otherwise to 10,000 (10 seconds).
 
 lastUpdateTime
@@ -2222,7 +2222,7 @@ Changes
 2016-10-06: in updateRSWithoutPrimary the isMaster response's "primary" field
   should be used to update the topology description, even if address != me.
 
-2016-10-29: Allow for idleWriteFrequencyMS to change someday.
+2016-10-29: Allow for idleWritePeriodMS to change someday.
 
 2016-11-01: "Unknown" is no longer the default TopologyType, the default is now
   explicitly unspecified. Update instructions for setting the initial

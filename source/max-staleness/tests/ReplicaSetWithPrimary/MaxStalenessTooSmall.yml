@@ -1,6 +1,6 @@
 # If the TopologyType is ReplicaSetWithPrimary, a client MUST raise an error if
-# maxStaleness < heartbeatFrequency + (primary's idleWriteFrequency).
-# When the server doesn't tell us, we assume idleWriteFrequencyMS is 10 seconds.
+# maxStaleness < heartbeatFrequency + (primary's idleWritePeriod).
+# When the server doesn't tell us, we assume idleWritePeriodMS is 10 seconds.
 ---
 heartbeatFrequencyMS: 500
 topology_description:
