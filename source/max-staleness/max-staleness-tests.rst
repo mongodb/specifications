@@ -115,7 +115,7 @@ The MongoClient must include following read preference element with its
       maxStalenessSeconds: 120
   }
 
-The "maxStalenessSeconds" element must be a BSON int32 or int64 type.
+The "maxStalenessSeconds" element must be a BSON int32, int64, or double type.
 
 Do the same test with this connection string::
 
@@ -140,6 +140,13 @@ Validation
 ----------
 
 mongos MUST reject a read with ``maxStalenessSeconds`` that is not a number.
+
+Fractional maxStalenessSeconds
+------------------------------
+
+mongos MUST accept a read with floating-point ``maxStalenessSeconds``::
+
+  $readPreference: {mode: "secondary", maxStalenessSeconds: 30.5}
 
 maxStalenessSeconds too small
 -----------------------------

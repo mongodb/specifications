@@ -597,8 +597,8 @@ A valid ``$readPreference`` document for mongos has the following requirements:
     least one document. It MUST contain only documents, no other type.
 
     The ``maxStalenessSeconds`` field MUST be either be absent or be present
-    exactly once with an integer value. It MUST be at least twice the mongos
-    replica set monitor's check interval; if not, mongo MUST reject the read
+    exactly once with type int32, int64, or double. It MUST be at least the mongos
+    replica set monitor's check interval plus 10 seconds; if not, mongo MUST reject the read
     with error code 160 (SERVER-24421).
 
 Mongos receiving a query with ``$readPreference`` SHOULD validate the
