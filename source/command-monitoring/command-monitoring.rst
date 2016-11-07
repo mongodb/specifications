@@ -107,8 +107,8 @@ Upconversion
 ------------
 
 All legacy operations MUST be converted to their equivalent commands in the 3.2 server in the event's
-``command`` and ``reply`` fields. This includes OP_INSERT, OP_DELETE, OP_UPDATE, OP_QUERY, OP_GETMORE and
-OP_KILLCURSORS. Upconversion expectations are provided in the tests.
+``command`` and ``reply`` fields. This includes OP_INSERT, OP_DELETE, OP_UPDATE, OP_QUERY, OP_GET_MORE and
+OP_KILL_CURSORS. Upconversion expectations are provided in the tests.
 
 Bulk Writes
 -----------
