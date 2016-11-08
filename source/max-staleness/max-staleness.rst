@@ -374,6 +374,18 @@ we require::
 
     maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
 
+Supplemental
+============
+
+Python scripts in this document's source directory:
+
+* `test_max_staleness_spo.py`: Uses `scipy.optimize` to determine worst-case
+  accuracy of the staleness estimate in an idle replica set.
+* `test_staleness_estimate.py`: Tests whether a client would correctly select
+  a secondary from an idle replica set, given a random distribution of values
+  for maxStalenessSeconds, heartbeatFrequencyMS, lastWriteDate, and
+  lastUpdateTime.
+
 Test Plan
 =========
 
