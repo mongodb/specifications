@@ -345,7 +345,7 @@ Behavior of Limit, skip and batchSize
 
 The new **find** command has different semantics to the existing 3.0 and earlier **OP_QUERY** wire protocol message. The **limit** field is a hard limit on the total number of documents returned by the cursor no matter what **batchSize** is provided.
 
-Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILLCURSORS** wire protocol message when it limit is reached.
+Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILL_CURSORS** wire protocol message when it limit is reached.
 
 When setting the **batchSize** on the **find** and **getMore** command the value MUST be based on the cursor limit calculations specified in the `CRUD`_ specification. 
 
