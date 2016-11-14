@@ -38,10 +38,6 @@
         {
             "description": "embedded null in flags",
             "bson": "100000000B61006162630069006D0000"
-        },
-        {
-            "description": "invalid flags",
-            "bson": "100000000B61006162630061696D0000"
         }
     ]
 }
