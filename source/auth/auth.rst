@@ -232,37 +232,41 @@ MONGODB-X509
 ~~~~~~~~~~~~
 
 :since: 2.6
+:changed: 3.4
 
-MONGODB-X509 is the usage of X-509 certificates to validate a client where the
+
+MONGODB-X509 is the usage of X.509 certificates to validate a client where the
 distinguished subject name of the client certificate acts as the username.
 
-As of MongoDB 3.4, the username will be automatically inferred by the server, and
-there is therefore no need for the client to provide it explicitly.
+When connected to MongoDB 3.4:
+  * You MUST NOT raise an error when the application only provides an X.509 certificate and no username.
+  * If the application does not provide a username you MUST NOT send a username to the server.
+  * If the application provides a username you MUST send that username to the server.
+When connected to MongoDB 3.2 or earlier:
+  * You MUST send a username to the server.
+  * If no username is provided by the application, you MAY extract the username from the X.509 certificate instead of requiring the application to provide it.
+  * If you choose not to automatically extract the username from the certificate you MUST error when no username is provided by the application.
 
-When connected to MongoDB 3.2 or earlier, the username is required and MUST be provided.
-Drivers MAY automatically extract the username from the certificate if the username
-was not specified in that case.
 
 Conversation
 ````````````
 
-#. Send ``authenticate`` command
-	* :javascript:`{authenticate: 1, mechanism: "MONGODB-X509"}`
-#. Optionally with username
+#. Send ``authenticate`` command (MongoDB 3.4+)
+	* C: :javascript:`{"authenticate": 1, "mechanism": "MONGODB-X509"}`
+	* S: :javascript:`{"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}`
+
+#. Send ``authenticate`` command with username:
 	* ``username = openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem``
-	* :javascript:`{authenticate: 1, mechanism: "MONGODB-X509", username: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}`
+	* C: :javascript:`{authenticate: 1, mechanism: "MONGODB-X509", user: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}`
+	* S: :javascript:`{"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}`
 
-
-As an example the conversation with MongoDB 3.4+ would typically be:
-
-| C: :javascript:`{authenticate: 1, mechanism: "MONGODB-X509"}`
-| S: :javascript:`{ok: 1}`
 
 `MongoCredential`_ Properties
 `````````````````````````````
 
 username
-	OPTIONAL. MUST be specified as RFC2253 form, when specified.
+	SHOULD NOT be provided for MongoDB 3.4+
+	MUST be specified for MongoDB prior to 3.4
 
 source
 	MUST be $external.
