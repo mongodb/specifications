@@ -153,7 +153,7 @@ maxStalenessSeconds too small
 -----------------------------
 
 Since maxStalenessSeconds must be at least mongos's heartbeat frequency
-(currently 10 seconds) plus maxIdleTimeMS, mongos MUST reject a read with::
+(currently 30 seconds) plus maxIdleTimeMS, mongos MUST reject a read with::
 
   $readPreference: {mode: "secondary", maxStalenessSeconds: 15}
 
