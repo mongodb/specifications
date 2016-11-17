@@ -25,7 +25,7 @@ maxStalenessSeconds is set to 10.5 from this connection string::
 No maxStalenessSeconds with mode "primary"
 ------------------------------------------
 
-These connection strings are invalid:
+These connection strings are invalid::
 
   mongodb://host/?maxStalenessSeconds=120
   mongodb://host/?readPreference=primary&maxStalenessSeconds=120
