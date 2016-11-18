@@ -31,7 +31,7 @@ def main():
                               ,niter=num_iterations
                               ,minimizer_kwargs = dict(
                                 method="L-BFGS-B"
-                                ,bounds = zip(argmin,argmax) )
+                                ,bounds = list(zip(argmin,argmax)))
                               ,stepsize=step
                               ,interval=interval
                               ,disp= True)
