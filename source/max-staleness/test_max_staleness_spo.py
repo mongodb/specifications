@@ -5,7 +5,7 @@ import scipy.optimize as spo
 ir = lambda n: int(round(n))
 
 # Constants
-s_freq = 500   #server-server heartbeat frequency ms
+s_freq = 500   #primary idle write frequency
 c_freq = 10000 #client-server heartbeat frequency ms
 
 # Simulation boundaries
