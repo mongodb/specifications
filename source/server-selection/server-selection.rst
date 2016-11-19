@@ -393,14 +393,11 @@ None, null, or other representations of "no value" to represent "no max stalenes
 Drivers MUST raise an error if ``maxStalenessSeconds`` is a positive number
 and the ``mode`` field is 'primary'.
 
-Drivers determine each server's ``idleWritePeriodMS`` from its ismaster response,
-or default the server's ``idleWritePeriodMS`` to 10 seconds if it is not in the ismaster response.
 If the TopologyType is ReplicaSetWithPrimary, a client MUST raise an error if::
 
   maxStalenessSeconds * 1000 < heartbeatFrequencyMS + (primary's idleWritePeriodMS)
 
-If the TopologyType is ReplicaSetNoPrimary and there are any known secondaries,
-a client MUST raise an error if::
+If the TopologyType is ReplicaSetNoPrimary, a client MUST raise an error if::
 
   maxStalenessSeconds * 1000 < heartbeatFrequencyMS +
                                (idleWritePeriodMS of secondary with greatest lastUpdateTime)
@@ -1075,25 +1072,22 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                 client.lock.release()
                 throw invalid wire protocol range error with details
 
-            if maxStalenessSeconds is set:
-                if any server's maxWireVersion < 5:
-                    client.lock.release()
-                    throw error
+            if maxStalenessSeconds is set and any server's maxWireVersion < 5:
+                client.lock.release()
+                throw error
 
-                if topologyDescription.type is ReplicaSetWithPrimary:
-                    idleWritePeriodMS = primary's idleWritePeriodMS
+            if topologyDescription.type is ReplicaSetWithPrimary:
+                idleWritePeriodMS = primary's idleWritePeriodMS
+            else if topologyDescription.type is ReplicaSetNoPrimary:
+                idleWritePeriodMS =
+                    idleWritePeriodMS of secondary with greatest lastUpdateTime
 
-                    if maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS:
-                        client.lock.release()
-                        throw error
-                else if (topologyDescription.type is ReplicaSetNoPrimary and
-                         there are known secondaries):
-                    idleWritePeriodMS =
-                        idleWritePeriodMS of secondary with greatest lastUpdateTime
+            if maxStalenessSeconds is set and
+                maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS and
+                and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
 
-                    if maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS:
-                        client.lock.release()
-                        throw error
+                client.lock.release()
+                throw error
 
             servers = all servers in topologyDescription matching criteria
 
@@ -1158,22 +1152,20 @@ Pseudocode for `single-threaded server selection`_::
                 topologyDescription.stale = true
                 throw invalid wire version range error with details
 
-            if maxStalenessSeconds is set:
-                if any server's maxWireVersion < 5:
-                    throw error
+            if maxStalenessSeconds is set and any server's maxWireVersion < 5:
+                throw error
 
-                if topologyDescription.type is ReplicaSetWithPrimary:
-                    idleWritePeriodMS = primary's idleWritePeriodMS
+            if topologyDescription.type is ReplicaSetWithPrimary:
+                idleWritePeriodMS = primary's idleWritePeriodMS
+            else if topologyDescription.type is ReplicaSetNoPrimary:
+                idleWritePeriodMS =
+                    idleWritePeriodMS of secondary with greatest lastUpdateTime
 
-                    if maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS:
-                        throw error
-                else if (topologyDescription.type is ReplicaSetNoPrimary and
-                         there are known secondaries):
-                    idleWritePeriodMS =
-                        idleWritePeriodMS of secondary with greatest lastUpdateTime
+            if (maxStalenessSeconds is set and
+                maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS and
+                and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
 
-                    if maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS:
-                        throw error
+                throw error
 
             servers = all servers in topologyDescription matching criteria
 
