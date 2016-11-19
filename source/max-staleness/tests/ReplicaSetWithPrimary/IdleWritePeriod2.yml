@@ -26,5 +26,6 @@ read_preference:
   maxStalenessSeconds: 10  # Allowed.
 suitable_servers:
 - *1
+- *2
 in_latency_window:
 - *1
