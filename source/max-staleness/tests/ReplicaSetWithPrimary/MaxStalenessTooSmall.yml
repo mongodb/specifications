@@ -1,8 +1,7 @@
-# If the TopologyType is ReplicaSetWithPrimary, a client MUST raise an error if
-# maxStaleness < heartbeatFrequency + (primary's idleWriteFrequency).
-# When the server doesn't tell us, we assume idleWriteFrequencyMS is 10 seconds.
+# A driver MUST raise an error
+# if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary
+# and ``maxStalenessSeconds`` is less than twice the client's `heartbeatFrequencyMS`.
 ---
-heartbeatFrequencyMS: 500
 topology_description:
   type: ReplicaSetWithPrimary
   servers:
@@ -22,5 +21,5 @@ topology_description:
     lastWrite: {lastWriteDate: {$numberLong: "1"}}
 read_preference:
   mode: Nearest
-  maxStalenessSeconds: 10.4  # Too small.
+  maxStalenessSeconds: 1  # Too small.
 error: true

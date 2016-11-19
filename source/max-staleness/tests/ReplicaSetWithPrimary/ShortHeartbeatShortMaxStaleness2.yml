@@ -21,7 +21,7 @@ topology_description:
     lastWrite: {lastWriteDate: {$numberLong: "1"}}
 read_preference:
   mode: Nearest
-  maxStalenessSeconds: 11  # heartbeatFrequencyMS + idleWriteFrequencyMillis ok
+  maxStalenessSeconds: 2  # 2 seconds, permitted.
 suitable_servers:
 - *1
 - *2
