@@ -1,5 +1,5 @@
 # If the TopologyType is ReplicaSetWithPrimary, a client MUST raise an error if
-# maxStaleness < heartbeatFrequency + (primary's idleWritePeriod)
+# maxStaleness < heartbeatFrequency + (primary's idleWriteFrequency)
 ---
 heartbeatFrequencyMS: 500
 topology_description:
@@ -12,7 +12,7 @@ topology_description:
     lastUpdateTime: 0
     maxWireVersion: 5
     lastWrite: {lastWriteDate: {$numberLong: "1"}}
-    idleWritePeriodMillis: 11000  # Therefore maxStaleness must be >= 11.5.
+    idleWriteFrequencyMillis: 11000  # Therefore maxStaleness must be >= 11.5.
   - &2
     address: b:27017
     type: RSSecondary
@@ -20,7 +20,7 @@ topology_description:
     lastUpdateTime: 1  # Greatest lastUpdateTime, but it's ignored.
     maxWireVersion: 5
     lastWrite: {lastWriteDate: {$numberLong: "1"}}
-    idleWritePeriodMillis: 9000   # Ignored since there is a primary.
+    idleWriteFrequencyMillis: 9000   # Ignored since there is a primary.
 read_preference:
   mode: Nearest
   maxStalenessSeconds: 10.5  # Too small.

@@ -101,18 +101,18 @@ Replica Sets
 Replica set primaries and secondaries implement the following features to
 support maxStalenessSeconds.
 
-idleWritePeriodMS
-~~~~~~~~~~~~~~~~~
+idleWriteFrequencyMS
+~~~~~~~~~~~~~~~~~~~~
 
 An idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
 lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_).
-If this period changes in the future, replica set members will
-publish its value in their isMaster responses as ``idleWritePeriodMillis``.
+If this frequency changes in the future, replica set members will
+publish its value in their isMaster responses as ``idleWriteFrequencyMillis``.
 
-.. warning:: Increasing the idle write period may break existing applications
+.. warning:: Increasing the idle write frequency may break existing applications
   during a rolling upgrade, since acceptable values for maxStalenessSeconds may
   become unacceptable. See `max staleness must be at least heartbeatFrequencyMS
-  + idleWritePeriodMS`_.
+  + idleWriteFrequencyMS`_.
 
 lastWrite
 ~~~~~~~~~
@@ -307,7 +307,7 @@ its staleness estimate equals heartbeatFrequencyMS:
   = 20 - 20 + 10
   = 10
 
-(Since max staleness must be at least heartbeatFrequencyMS + idleWritePeriodMS,
+(Since max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS,
 S1 is eligible for reads no matter what.)
 
 S2's staleness estimate is::
@@ -367,12 +367,12 @@ The same story as a table:
 In this scenario the actual secondary lag is between 0 and 10 seconds.
 But the staleness estimate can be as large as::
 
-    staleness = idleWritePeriodMS + heartbeatFrequencyMS
+    staleness = idleWriteFrequencyMS + heartbeatFrequencyMS
 
 To ensure the secondary is always eligible for reads in an idle replica set,
 we require::
 
-    maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
+    maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWriteFrequencyMS
 
 Supplemental
 ============
@@ -442,8 +442,8 @@ will also benefit when spurious lag spikes are solved.
 See `Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set`_.
 and `SERVER-23892 <https://jira.mongodb.org/browse/SERVER-23892>`_.
 
-Max staleness must be at least heartbeatFrequencyMS + idleWritePeriodMS
------------------------------------------------------------------------
+Max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS
+--------------------------------------------------------------------------
 
 If maxStalenessSeconds is set to exactly heartbeatFrequencyMS (converted to seconds),
 then so long as a secondary lags even a millisecond
@@ -575,5 +575,4 @@ instead of "maxStalenessMS=0".
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
 to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
-2016-10-29: Rename idleWriteFrequencyMS to idleWritePeriodMS, and allow for
-the period to change someday.
+2016-10-29: Allow for idleWriteFrequencyMS to change someday.
