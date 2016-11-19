@@ -109,11 +109,6 @@ lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_
 If this frequency changes in the future, replica set members will
 publish its value in their isMaster responses as ``idleWriteFrequencyMillis``.
 
-.. warning:: Increasing the idle write frequency may break existing applications
-  during a rolling upgrade, since acceptable values for maxStalenessSeconds may
-  become unacceptable. See `max staleness must be at least heartbeatFrequencyMS
-  + idleWriteFrequencyMS`_.
-
 lastWrite
 ~~~~~~~~~
 
