@@ -9,7 +9,7 @@ Max Staleness
 :Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
 :Type: Standards
-:Last Modified: October 29, 2016
+:Last Modified: October 25, 2016
 :Version: 1.2
 
 .. contents::
@@ -106,8 +106,8 @@ idleWriteFrequencyMS
 
 An idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
 lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_).
-If this frequency changes in the future, replica set members will
-publish its value in their isMaster responses as ``idleWriteFrequencyMillis``.
+This spec refers to this frequency as ``idleWriteFrequencyMS`` with constant
+value 10,000.
 
 lastWrite
 ~~~~~~~~~
@@ -570,4 +570,3 @@ instead of "maxStalenessMS=0".
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
 to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
-2016-10-29: Allow for idleWriteFrequencyMS to change someday.
