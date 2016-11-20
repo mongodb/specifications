@@ -9,8 +9,8 @@ Max Staleness
 :Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
 :Type: Standards
-:Last Modified: October 25, 2016
-:Version: 1.2
+:Last Modified: November 21, 2016
+:Version: 1.3
 
 .. contents::
 
@@ -75,11 +75,11 @@ Specification
 API
 ---
 
-"maxStalenessSeconds" is a new read preference option, with a positive numeric value.
+"maxStalenessSeconds" is a new read preference option, with a positive integer value.
 It MUST be configurable similar to other read preference options like "readPreference"
 and "tag_sets". Clients MUST also recognize it in the connection string::
 
-  mongodb://host/?readPreference=secondary&maxStalenessSeconds=30
+  mongodb://host/?readPreference=secondary&maxStalenessSeconds=120
 
 Clients MUST consider "maxStalenessSeconds=-1" in the connection string to mean
 "no maximum staleness".
@@ -89,6 +89,10 @@ mode "primary" MUST be considered invalid; this includes connection strings with
 no explicit read preference mode.
 
 By default there is no maximum staleness.
+
+A driver connected to a replica set requires that maxStalenessSeconds be absent,
+or be at least 90 seconds and at least heartbeatFrequencyMS + idleWritePeriodMS.
+The exact mechanism for enforcement is defined in the Server Selection Spec.
 
 Besides configuring maxStalenessSeconds in the connection string,
 the API for configuring it in code is not specified;
@@ -101,12 +105,12 @@ Replica Sets
 Replica set primaries and secondaries implement the following features to
 support maxStalenessSeconds.
 
-idleWriteFrequencyMS
-~~~~~~~~~~~~~~~~~~~~
+idleWritePeriodMS
+~~~~~~~~~~~~~~~~~
 
 An idle primary writes a no-op to the oplog every 10 seconds to refresh secondaries'
 lastWriteDate values (see SERVER-23892 and `primary must write periodic no-ops`_).
-This spec refers to this frequency as ``idleWriteFrequencyMS`` with constant
+This spec refers to this period as ``idleWritePeriodMS`` with constant
 value 10,000.
 
 lastWrite
@@ -302,7 +306,7 @@ its staleness estimate equals heartbeatFrequencyMS:
   = 20 - 20 + 10
   = 10
 
-(Since max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS,
+(Since max staleness must be at least heartbeatFrequencyMS + idleWritePeriodMS,
 S1 is eligible for reads no matter what.)
 
 S2's staleness estimate is::
@@ -362,12 +366,12 @@ The same story as a table:
 In this scenario the actual secondary lag is between 0 and 10 seconds.
 But the staleness estimate can be as large as::
 
-    staleness = idleWriteFrequencyMS + heartbeatFrequencyMS
+    staleness = idleWritePeriodMS + heartbeatFrequencyMS
 
 To ensure the secondary is always eligible for reads in an idle replica set,
 we require::
 
-    maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWriteFrequencyMS
+    maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
 
 Supplemental
 ============
@@ -413,7 +417,7 @@ Consider a scenario in which the primary does *not*:
 
 1. There are no writes for an hour.
 2. A client performs a heavy read-only workload with read preference mode
-   "nearest" and maxStalenessSeconds of 30 seconds.
+   "nearest" and maxStalenessSeconds of 90 seconds.
 3. The primary receives a write.
 4. In the brief time before any secondary replicates the write, the client
    re-checks all servers.
@@ -426,7 +430,7 @@ This apparent "replication lag spike" is just a measurement error, but it causes
 exactly the behavior the user wanted to avoid: a small replication lag makes the
 client route all queries from the secondaries to the primary.
 
-Therefore an idle primary must execute a no-op every 10 seconds to keep secondaries'
+Therefore an idle primary must execute a no-op every 10 seconds (idleWritePeriodMS) to keep secondaries'
 lastWriteDate values close to the primary's clock. The no-op also keeps opTimes close to
 the primary's, which helps mongos choose an up-to-date secondary to read from
 in a CSRS.
@@ -437,9 +441,14 @@ will also benefit when spurious lag spikes are solved.
 See `Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set`_.
 and `SERVER-23892 <https://jira.mongodb.org/browse/SERVER-23892>`_.
 
-Max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS
---------------------------------------------------------------------------
+Max staleness is >= heartbeatFrequencyMS + idleWritePeriodMS, or 90 seconds
+---------------------------------------------------------------------------
 
+If maxStalenessSeconds is a positive number,
+it must be at least 90 seconds and at least heartbeatFrequencyMS + idleWritePeriodMS.
+The exact mechanism for enforcement is defined in the Server Selection Spec.
+
+The justification for heartbeatFrequencyMS + idleWritePeriodMS is technical:
 If maxStalenessSeconds is set to exactly heartbeatFrequencyMS (converted to seconds),
 then so long as a secondary lags even a millisecond
 it is ineligible.
@@ -453,6 +462,24 @@ We want to prohibit this effect (see `goals`_).
 We also want to ensure that a secondary in an idle replica set is always considered
 eligible for reads with maxStalenessSeconds. See
 `Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set`_.
+
+Requiring maxStalenessSeconds to be at least 90 seconds is a design choice.
+If the only requirement were that maxStalenessSeconds be at least heartbeatFrequencyMS + idleWritePeriodMS,
+then the smallest value would be 20 seconds for multi-threaded drivers (10 second idleWritePeriodMS plus
+multi-threaded drivers' default 10 second heartbeatFrequencyMS), 70 seconds for single-threaded drivers
+(whose default heartbeatFrequencyMS is 60 seconds), and 40 seconds for mongos (whose replica set monitor
+checks servers every 30 seconds).
+
+The smallest configurable value for heartbeatFrequencyMS is 0.5 seconds,
+so maxStalenessSeconds could be as small as 10.5 when using a driver connected to a replica set,
+but mongos provides no such flexibility.
+
+Therefore, this spec *also* requires that maxStalenessSeconds is at least 90:
+
+- To provide a minimum for all languages and topologies that is easy to document and explain
+- To avoid application breakage when moving from replica set to sharded cluster, or when using the same URI with different drivers
+- To emphasize that maxStalenessSeconds is a low-precision heuristic
+- To avoid the arbitrary-seeming minimum of 70 seconds imposed by single-threaded drivers
 
 All servers must have wire version 5 to support maxStalenessSeconds
 -------------------------------------------------------------------
@@ -569,4 +596,6 @@ Changes
 instead of "maxStalenessMS=0".
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
-to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
+to heartbeatFrequencyMS + idleWritePeriodMS (with proper conversions of course).
+2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+future, require maxStalenessSeconds to be at least 90.

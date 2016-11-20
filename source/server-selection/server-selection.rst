@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: November 1, 2016
-:Version: 1.4
+:Last Modified: November 21, 2016
+:Version: 1.5
 
 .. contents::
 
@@ -317,11 +317,11 @@ heartbeatFrequencyMS
 This controls when topology updates are scheduled.
 See `heartbeatFrequencyMS`_ in the `Server Discovery and Monitoring`_ spec for details.
 
-idleWriteFrequencyMS
-~~~~~~~~~~~~~~~~~~~~
+idleWritePeriodMS
+~~~~~~~~~~~~~~~~~
 
 A constant, how often an idle primary writes a no-op to the oplog.
-See `idleWriteFrequencyMS`_ in the `Max Staleness`_ spec for details.
+See `idleWritePeriodMS`_ in the `Max Staleness`_ spec for details.
 
 Read Preference
 ---------------
@@ -402,24 +402,21 @@ and the ``mode`` field is 'primary'.
 A driver MUST raise an error
 if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary and::
 
-  maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS
+  maxStalenessSeconds * 1000 < max(heartbeatFrequencyMS + idleWritePeriodMS,
+                                   90000)
 
 ``heartbeatFrequencyMS`` is defined in the `Server Discovery and Monitoring`_ spec,
-and ``idleWriteFrequencyMS`` is defined to be 10 seconds in the `Max Staleness`_ spec.
+and ``idleWritePeriodMS`` is defined to be 10 seconds in the `Max Staleness`_ spec.
 
-Users can configure a shorter ``heartbeatFrequencyMS`` than the default to
-allow a smaller ``maxStalenessSeconds`` with replica sets.
-The shortest ``heartbeatFrequencyMS`` is ``minHeartbeatFrequencyMS``,
-which is 500ms.
-Therefore, the smallest possible maxStalenessSeconds is 10.5 seconds.
-
-See "Max staleness must be at least heartbeatFrequencyMS + idleWriteFrequencyMS"
+See "Max staleness is >= heartbeatFrequencyMS + idleWritePeriodMS, or 90 seconds"
 in the Max Staleness Spec.
 
 mongos MUST reject a read with ``maxStalenessSeconds`` provided and a ``mode`` of 'primary'.
 
-mongos MUST reject a read if ``maxStalenessSeconds`` is less than twice
-mongos's replica set monitoring heartbeat interval, with error code 160.
+mongos MUST reject a read with ``maxStalenessSeconds`` that is not a positive integer.
+
+mongos MUST reject a read if ``maxStalenessSeconds`` is less than 90 seconds,
+with error code 160 (SERVER-24421).
 
 During server selection,
 drivers (but not mongos) MUST raise an error if ``maxStalenessSeconds`` is a positive number,
@@ -516,7 +513,7 @@ in Python::
         {},
         read_preference=ReadPreference.NEAREST,
         tag_sets=[{'dc': 'ny'}],
-        maxStalenessSeconds=60)
+        maxStalenessSeconds=120)
 
 If a driver API allows users to potentially set both the legacy ``slaveOK``
 configuration option and a default read preference configuration option,
@@ -550,7 +547,7 @@ Therefore, when sending queries to a mongos, the following rules apply:
 
   - For mode 'secondaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag.
     If the read preference contains a non-empty ``tag_sets`` parameter,
-    or ``maxStalenessSeconds`` is a positive number, drivers MUST
+    or ``maxStalenessSeconds`` is a positive integer, drivers MUST
     use ``$readPreference``; otherwise, drivers MUST NOT use ``$readPreference``
 
   - For mode 'nearest', drivers MUST set the ``slaveOK`` wire protocol flag
@@ -571,7 +568,7 @@ the query MUST be provided using the ``$query`` modifier like so::
         $readPreference: {
             mode: 'secondary',
             tags: [ { 'dc': 'ny' } ],
-            maxStalenessSeconds: 60
+            maxStalenessSeconds: 120
         }
     }
 
@@ -593,9 +590,7 @@ A valid ``$readPreference`` document for mongos has the following requirements:
     least one document. It MUST contain only documents, no other type.
 
     The ``maxStalenessSeconds`` field MUST be either be absent or be present
-    exactly once with an integer value. It MUST be at least twice the mongos
-    replica set monitor's check interval; if not, mongo MUST reject the read
-    with error code 160 (SERVER-24421).
+    exactly once with an integer value.
 
 Mongos receiving a query with ``$readPreference`` SHOULD validate the
 ``mode``, ``tags``, and ``maxStalenessSeconds`` fields according to rules 1 and 2 above,
@@ -1071,16 +1066,16 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                 client.lock.release()
                 throw invalid wire protocol range error with details
 
-            if maxStalenessSeconds is set and any server's maxWireVersion < 5:
-                client.lock.release()
-                throw error
+            if maxStalenessSeconds is set:
+                if any server's maxWireVersion < 5:
+                    client.lock.release()
+                    throw error
 
-            if (maxStalenessSeconds is set and
-                maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS and
-                and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
-
-                client.lock.release()
-                throw error
+                if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
+                    if maxStalenessSeconds * 1000 < max(heartbeatFrequencyMS + idleWritePeriodMS,
+                                                        90000):
+                    client.lock.release()
+                    throw error
 
             servers = all servers in topologyDescription matching criteria
 
@@ -1145,14 +1140,14 @@ Pseudocode for `single-threaded server selection`_::
                 topologyDescription.stale = true
                 throw invalid wire version range error with details
 
-            if maxStalenessSeconds is set and any server's maxWireVersion < 5:
-                throw error
+            if maxStalenessSeconds is set:
+                if any server's maxWireVersion < 5:
+                    throw error
 
-            if (maxStalenessSeconds is set and
-                maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWriteFrequencyMS and
-                and topologyDescription.type is ReplicaSetWithPrimary or ReplicaSetNoPrimary):
-
-                throw error
+                if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
+                    if maxStalenessSeconds * 1000 < max(heartbeatFrequencyMS + idleWritePeriodMS,
+                                                        90000):
+                    throw error
 
             servers = all servers in topologyDescription matching criteria
 
@@ -1551,7 +1546,7 @@ References
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
 .. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
-.. _idleWriteFrequencyMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWriteFrequencyMS
+.. _idleWritePeriodMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWritePeriodMS
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 
 Changes
@@ -1573,10 +1568,13 @@ comes before tag_sets.
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 
 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
-to heartbeatFrequencyMS + idleWriteFrequencyMS (with proper conversions of course).
+to heartbeatFrequencyMS + idleWritePeriodMS (with proper conversions of course).
 
 2016-11-01: Update formula for secondary staleness estimate with the
 equivalent, and clearer, expression of this formula from the Max Staleness Spec
+
+2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+future, require maxStalenessSeconds to be at least 90.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

@@ -131,19 +131,18 @@ maxStalenessSeconds and mode "primary"
 
 mongos MUST reject a read with::
 
-  $readPreference: {mode: "primary", maxStalenessSeconds: 30}
+  $readPreference: {mode: "primary", maxStalenessSeconds: 120}
 
 Validation
 ----------
 
-mongos MUST reject a read with ``maxStalenessSeconds`` that is not a number.
+mongos MUST reject a read with ``maxStalenessSeconds`` that is not an int32 or int64.
 
 maxStalenessSeconds too small
 -----------------------------
 
-Since maxStalenessSeconds must be twice mongos's heartbeat frequency
-(currently 30 seconds), mongos MUST reject a read with::
+The minimum value of maxStalenessSeconds is 90. mongos MUST reject a read with::
 
-  $readPreference: {mode: "secondary", maxStalenessSeconds: 15}
+  $readPreference: {mode: "secondary", maxStalenessSeconds: 89}
 
 The error code MUST be 160.
