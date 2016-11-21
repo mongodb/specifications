@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.6
-:Last Modified: November 1, 2016
+:Version: 2.7
+:Last Modified: November 21, 2016
 
 .. contents::
 
@@ -2211,7 +2211,11 @@ Changes
 2016-10-06: in updateRSWithoutPrimary the isMaster response's "primary" field
   should be used to update the topology description, even if address != me.
 
+2016-10-29: Allow for idleWritePeriodMS to change someday.
+
 2016-11-01: "Unknown" is no longer the default TopologyType, the default is now
   explicitly unspecified. Update instructions for setting the initial
   TopologyType when running the spec tests.
 
+2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+future.
