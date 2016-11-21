@@ -323,6 +323,12 @@ idleWritePeriodMS
 A constant, how often an idle primary writes a no-op to the oplog.
 See `idleWritePeriodMS`_ in the `Max Staleness`_ spec for details.
 
+smallestMaxStalenessSeconds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A constant, 90 seconds. See "Smallest allowed value for maxStalenessSeconds"
+in the Max Staleness Spec.
+
 Read Preference
 ---------------
 
@@ -400,22 +406,22 @@ Drivers MUST raise an error if ``maxStalenessSeconds`` is a positive number
 and the ``mode`` field is 'primary'.
 
 A driver MUST raise an error
-if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary and::
+if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary
+and either of these conditions is false::
 
-  maxStalenessSeconds * 1000 < max(heartbeatFrequencyMS + idleWritePeriodMS,
-                                   90000)
+  maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
+  maxStalenessSeconds >= smallestMaxStalenessSeconds
 
 ``heartbeatFrequencyMS`` is defined in the `Server Discovery and Monitoring`_ spec,
 and ``idleWritePeriodMS`` is defined to be 10 seconds in the `Max Staleness`_ spec.
 
-See "Max staleness is >= heartbeatFrequencyMS + idleWritePeriodMS, or 90 seconds"
-in the Max Staleness Spec.
+See "Smallest allowed value for maxStalenessSeconds" in the Max Staleness Spec.
 
 mongos MUST reject a read with ``maxStalenessSeconds`` provided and a ``mode`` of 'primary'.
 
 mongos MUST reject a read with ``maxStalenessSeconds`` that is not a positive integer.
 
-mongos MUST reject a read if ``maxStalenessSeconds`` is less than 90 seconds,
+mongos MUST reject a read if ``maxStalenessSeconds`` is less than smallestMaxStalenessSeconds,
 with error code 160 (SERVER-24421).
 
 During server selection,
@@ -1072,8 +1078,8 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                     throw error
 
                 if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
-                    if maxStalenessSeconds * 1000 < max(heartbeatFrequencyMS + idleWritePeriodMS,
-                                                        90000):
+                    if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
+                        maxStalenessSeconds < smallestMaxStalenessSeconds):
                     client.lock.release()
                     throw error
 
@@ -1145,8 +1151,8 @@ Pseudocode for `single-threaded server selection`_::
                     throw error
 
                 if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
-                    if maxStalenessSeconds * 1000 < max(heartbeatFrequencyMS + idleWritePeriodMS,
-                                                        90000):
+                    if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
+                        maxStalenessSeconds < smallestMaxStalenessSeconds):
                     throw error
 
             servers = all servers in topologyDescription matching criteria

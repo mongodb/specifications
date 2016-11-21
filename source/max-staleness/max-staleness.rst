@@ -91,7 +91,7 @@ no explicit read preference mode.
 By default there is no maximum staleness.
 
 A driver connected to a replica set requires that maxStalenessSeconds be absent,
-or be at least 90 seconds and at least heartbeatFrequencyMS + idleWritePeriodMS.
+or be at least smallestMaxStalenessSeconds (90 seconds) and at least heartbeatFrequencyMS + idleWritePeriodMS.
 The exact mechanism for enforcement is defined in the Server Selection Spec.
 
 Besides configuring maxStalenessSeconds in the connection string,
@@ -441,11 +441,11 @@ will also benefit when spurious lag spikes are solved.
 See `Estimating Staleness: Example of Worst-Case Accuracy With Idle Replica Set`_.
 and `SERVER-23892 <https://jira.mongodb.org/browse/SERVER-23892>`_.
 
-Max staleness is >= heartbeatFrequencyMS + idleWritePeriodMS, or 90 seconds
----------------------------------------------------------------------------
+Smallest allowed value for maxStalenessSeconds
+----------------------------------------------
 
 If maxStalenessSeconds is a positive number,
-it must be at least 90 seconds and at least heartbeatFrequencyMS + idleWritePeriodMS.
+it must be at least smallestMaxStalenessSeconds (90 seconds) and at least heartbeatFrequencyMS + idleWritePeriodMS.
 The exact mechanism for enforcement is defined in the Server Selection Spec.
 
 The justification for heartbeatFrequencyMS + idleWritePeriodMS is technical:
