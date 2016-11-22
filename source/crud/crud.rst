@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Aug. 5, 2016
+:Last Modified: 2016/08/17
 
 .. contents::
 
@@ -187,7 +187,7 @@ Read
     /**
      * The number of documents to return per batch. 
      *
-     * For servers < 2.6, this option is ignored as aggregation cursors are not available.
+     * For servers < 2.6, this option is ignored and not sent as aggregation cursors are not available.
      * The default is no value: the driver sends no "batchSize" option to the server with
      * the "aggregate" command, thus accepting the server default batch size.
      *
@@ -199,10 +199,8 @@ Read
      * If true, allows the write to opt-out of document level validation. This only applies
      * when the $out stage is specified.
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "aggregate" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -218,7 +216,7 @@ Read
     /**
      * Indicates whether the command will request that the server provide results using a cursor.
      *
-     * For servers < 2.6, this option is ignored as aggregation cursors are not available.
+     * For servers < 2.6, this option is ignored and not sent as aggregation cursors are not available.
      * For servers >= 2.6, this option allows users to turn off cursors if necessary to aid in mongod/mongos upgrades.
      * The default value is true: the driver sends "cursor: {}" to the server with the "aggregate" command
      * by default.
@@ -393,12 +391,10 @@ Read
     /**
      * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor 
      * query. This only applies to a TAILABLE_AWAIT cursor. When the cursor is not a TAILABLE_AWAIT cursor,
-     * this option is ignored.
+     * this option is ignored and is not sent.
      *
-     * On servers >= 3.2, this option will be specified on the getMore command as "maxTimeMS". The default
-     * is no value: no "maxTimeMS" is sent to the server with the getMore command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option will be specified on the getMore command as "maxTimeMS". It is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as maxTimeMS is not available.
      */
     maxAwaitTimeMS: Optional<Int64>;
 
@@ -618,10 +614,8 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the write command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -632,10 +626,8 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -646,10 +638,8 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "insert" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -667,10 +657,8 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is no value: no 
-     * "bypassDocumentValidation" option is sent with the "update" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -1193,10 +1181,8 @@ Find And Modify
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
-     * "bypassDocumentValidation" option is sent with the "findAndModify" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -1251,10 +1237,8 @@ Find And Modify
     /**
      * If true, allows the write to opt-out of document level validation. 
      * 
-     * On servers >= 3.2, the default is to not send a value. no 
-     * "bypassDocumentValidation" option is sent with the "findAndModify" command.
-     *
-     * On servers < 3.2, this option is ignored.
+     * On servers >= 3.2, this option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * On servers < 3.2, this option is ignored and not sent as documentation validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
     
@@ -1411,6 +1395,7 @@ Q: What about explain?
 Changes
 =======
 
+* 2016-08-17: Added clarification to certain options about when and when not to send a value.
 * 2016-08-05: Added in collation option.
 * 2015-11-05: Typos in comments about bypassDocumentValidation
 * 2015-10-16: Added maxAwaitTimeMS to FindOptions.
