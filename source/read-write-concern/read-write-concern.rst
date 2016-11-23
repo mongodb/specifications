@@ -291,7 +291,9 @@ Find And Modify
 
 The ``findAndModify`` command takes a named parameter, ``writeConcern``. See command documentation for further examples.
 
-With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAndModify``.
+If writeConcern is specified for the Collection, ``writeConcern`` MUST be omitted when sending ``findAndModify`` with MaxWireVersion < 4.
+
+If the findAndModify helper accepts writeConcern as a parameter, the driver MUST raise an error with MaxWireVersion < 4.
 
 .. note ::
     Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
