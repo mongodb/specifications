@@ -291,7 +291,9 @@ Find And Modify
 
 The ``findAndModify`` command takes a named parameter, ``writeConcern``. See command documentation for further examples.
 
-With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAndModify``.
+If writeConcern is specified for the Collection, ``writeConcern`` MUST be omitted when sending ``findAndModify`` with MaxWireVersion < 4.
+
+If the findAndModify helper accepts writeConcern as a parameter, the driver MUST raise an error with MaxWireVersion < 4.
 
 .. note ::
     Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
@@ -301,11 +303,13 @@ Other commands that write
 
 Command helper methods for commands that write, other than those discussed above,
 MAY accept a write concern or write concern options in their parameter list.
+If the helper accepts a write concern, the driver MUST error if the selected server's MaxWireVersion < 5 and a
+write concern has explicitly been specified.
 
-These methods SHOULD check whether the selected server's MaxWireVersion >= 5
-and if so, include the write concern in the command on the wire.
-If the selected server's MaxWireVersion < 5,
-these methods SHOULD silently omit the write concern from the command on the wire.
+Helper methods that apply the write concern inherited from the Collection or Database, SHOULD check whether the
+selected server's MaxWireVersion >= 5 and if so, include the inherited write concern in the command on the wire.
+If the selected server's MaxWireVersion < 5, these methods SHOULD silently omit the write concern from the command
+on the wire.
 
 These commands that write are:
   * ``aggregate`` with ``$out``
