@@ -72,6 +72,12 @@ describe("connection string", function() {
 			});
 		});
 
+		it("should throw an exception when an authMechanism is specified with no username", function() {
+			assert.throws(function() {
+				parse("mongodb://localhost/foo/?authMechanism=GSSAPI");
+			});
+		});
+
 		it("should accept generic mechanism property", function() {
 			var url = parse("mongodb://user%40DOMAIN.COM:password@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:true");
 
@@ -91,6 +97,11 @@ describe("connection string", function() {
 			var url = parse("mongodb://user@localhost/?authMechanism=MONGODB-CR");
 
 			assert.equal(url.credential.mechanism, "MONGODB-CR");
+		});
+		it("should throw an exception when an authMechanism is specified with no username", function() {
+			assert.throws(function() {
+				parse("mongodb://localhost/foo/?authMechanism=MONGODB-CR");
+			});
 		});
 	});
 
@@ -119,6 +130,13 @@ describe("connection string", function() {
 			assert.equal(url.credential.mechanism, "MONGODB-X509");
 		});
 
+		it("should recognize the mechanism with no username", function() {
+			var url = parse("mongodb://localhost/?authMechanism=MONGODB-X509");
+
+			assert.equal(url.credential.mechanism, "MONGODB-X509");
+			assert.equal(url.credential.username, null);
+		});
+
 		it("should recognize the encoded username", function() {
 			var url = parse("mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/?authMechanism=MONGODB-X509");
 
@@ -132,6 +150,12 @@ describe("connection string", function() {
 
 			assert.equal(url.credential.mechanism, "PLAIN");
 		});
+
+		it("should throw an exception when an authMechanism is specified with no username", function() {
+			assert.throws(function() {
+				parse("mongodb://localhost/foo/?authMechanism=PLAIN");
+			});
+		});
 	});
 
 	describe("SCRAM-SHA-1", function() {
@@ -140,5 +164,12 @@ describe("connection string", function() {
 
 			assert.equal(url.credential.mechanism, "SCRAM-SHA-1");
 		});
+
+		it("should throw an exception when an authMechanism is specified with no username", function() {
+			assert.throws(function() {
+				parse("mongodb://localhost/foo/?authMechanism=SCRAM-SHA-1");
+			});
+		});
 	});
 });
+
