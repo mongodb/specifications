@@ -74,7 +74,7 @@ describe("connection string", function() {
 
 		it("should throw an exception when an authMechanism is specified with no username", function() {
 			assert.throws(function() {
-				parse("mongodb://localhost/foo/?authMechanism=GSSAPI");
+				parse("mongodb://localhost/?authMechanism=GSSAPI");
 			});
 		});
 
@@ -100,7 +100,7 @@ describe("connection string", function() {
 		});
 		it("should throw an exception when an authMechanism is specified with no username", function() {
 			assert.throws(function() {
-				parse("mongodb://localhost/foo/?authMechanism=MONGODB-CR");
+				parse("mongodb://localhost/?authMechanism=MONGODB-CR");
 			});
 		});
 	});
@@ -153,7 +153,7 @@ describe("connection string", function() {
 
 		it("should throw an exception when an authMechanism is specified with no username", function() {
 			assert.throws(function() {
-				parse("mongodb://localhost/foo/?authMechanism=PLAIN");
+				parse("mongodb://localhost/?authMechanism=PLAIN");
 			});
 		});
 	});
@@ -167,7 +167,7 @@ describe("connection string", function() {
 
 		it("should throw an exception when an authMechanism is specified with no username", function() {
 			assert.throws(function() {
-				parse("mongodb://localhost/foo/?authMechanism=SCRAM-SHA-1");
+				parse("mongodb://localhost/?authMechanism=SCRAM-SHA-1");
 			});
 		});
 	});
