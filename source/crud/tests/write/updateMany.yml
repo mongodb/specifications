@@ -19,6 +19,7 @@ tests:
             result:
                 matchedCount: 2
                 modifiedCount: 2
+                upsertedCount: 0
             collection:
                 data:
                     - {_id: 1, x: 11}
@@ -37,6 +38,7 @@ tests:
             result:
                 matchedCount: 1
                 modifiedCount: 1
+                upsertedCount: 0
             collection:
                 data:
                     - {_id: 1, x: 12}
@@ -55,6 +57,7 @@ tests:
             result:
                 matchedCount: 0
                 modifiedCount: 0
+                upsertedCount: 0
             collection:
                 data:
                     - {_id: 1, x: 11}
@@ -74,6 +77,7 @@ tests:
             result:
                 matchedCount: 0
                 modifiedCount: 0
+                upsertedCount: 1
                 upsertedId: 4
             collection:
                 data:

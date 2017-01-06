@@ -21,6 +21,7 @@ tests:
         outcome:
             result:
                 matchedCount: 1
+                upsertedCount: 0
             # Can't verify collection data because we don't have a way of
             # knowing which document gets updated.
     -
@@ -35,6 +36,7 @@ tests:
         outcome:
             result:
                 matchedCount: 1
+                upsertedCount: 0
             collection:
                 data:
                     - {_id: 1, x: 12}
@@ -52,6 +54,7 @@ tests:
         outcome:
             result:
                 matchedCount: 0
+                upsertedCount: 0
             collection:
                 data:
                     - {_id: 1, x: 11}
@@ -70,6 +73,7 @@ tests:
         outcome:
             result:
                 matchedCount: 0
+                upsertedCount: 1
                 upsertedId: 4
             collection:
                 data:
