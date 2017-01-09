@@ -381,7 +381,7 @@ Read
      * the tailable and awaitData options.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     * For servers < 3.2, the AwaitData and Tailable wire protocol flag are used and default to false.
+     * For servers < 3.2, the AwaitData and Tailable wire protocol flags are used and default to false.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
@@ -1279,7 +1279,7 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * Note: this option is mapped to the "fields" findAndModify field.
+     * Note: this option is mapped to the "fields" findAndModify command option.
      *
      * @see https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results
      */
@@ -1329,7 +1329,7 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * Note: this option is mapped to the "fields" findAndModify field.
+     * Note: this option is mapped to the "fields" findAndModify command option.
      *
      * @see https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results
      */
@@ -1398,7 +1398,7 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * Note: this option is mapped to the "fields" findAndModify field.
+     * Note: this option is mapped to the "fields" findAndModify command option.
      *
      * @see https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results
      */
@@ -1409,7 +1409,7 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before is represents false,
+     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before represents false,
      * and ReturnDocument.After represents true.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
@@ -1489,8 +1489,8 @@ If a driver needs to refer to items in the following list, the below are the acc
 Q & A
 =====
 
-Q: Why do the names of the fields differ from those defined on docs.mongodb.com?
-  documentation and commands often refer to same-purposed fields with different names making it difficult to have a cohesive API. In addition, occasionally the name was correct at one point and its purpose has expanded to a point where the initial name doesn't accurately describe its current function.
+Q: Why do the names of the fields differ from those defined in the MongoDB manual?
+  Documentation and commands often refer to same-purposed fields with different names making it difficult to have a cohesive API. In addition, occasionally the name was correct at one point and its purpose has expanded to a point where the initial name doesn't accurately describe its current function.
 
   In addition, responses from the servers are sometimes cryptic and used for the purposes of compactness. In these cases, we felt the more verbose form was desirable for self-documentation purposes.
 
