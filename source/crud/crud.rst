@@ -95,7 +95,7 @@ A non-exhaustive list of acceptable deviations are as follows:
 Naming
 ------
 
-All drivers MUST name operations, objects, and parameters as defined in the following sections. 
+All drivers MUST name operations, objects, and parameters as defined in the following sections.
 
 Deviations are permitted as outlined below.
 
@@ -122,11 +122,11 @@ Read
 ----
 
 .. note::
-    
-    The term Iterable<T> is used below to indicate many of T. This spec is flexible on what that means as different drivers will have different requirements, types, and idioms. 
+
+    The term Iterable<T> is used below to indicate many of T. This spec is flexible on what that means as different drivers will have different requirements, types, and idioms.
 
 .. code:: typescript
-  
+
   interface Collection {
 
     /**
@@ -149,7 +149,7 @@ Read
     count(filter: Document, options: Optional<CountOptions>): Int64;
 
     /**
-     * Finds the distinct values for a specified field across a single collection. 
+     * Finds the distinct values for a specified field across a single collection.
      *
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
@@ -159,11 +159,11 @@ Read
      * Finds the documents matching the model.
      *
      * Note: The filter parameter below equates to the $query meta operator. It cannot
-     * contain other meta operators like $maxScan. However, do not validate this document 
+     * contain other meta operators like $maxScan. However, do not validate this document
      * as it would be impossible to be forwards and backwards compatible. Let the server
      * handle the validation.
      *
-     * Note: If $explain is specified in the modifiers, the return value is a single 
+     * Note: If $explain is specified in the modifiers, the return value is a single
      * document. This could cause problems for static languages using strongly typed entities.
      *
      * @see https://docs.mongodb.com/manual/core/read-operations-introduction/
@@ -175,30 +175,30 @@ Read
   class AggregateOptions {
 
     /**
-     * Enables writing to temporary files. When set to true, aggregation stages 
+     * Enables writing to temporary files. When set to true, aggregation stages
      * can write data to the _tmp subdirectory in the dbPath directory.
      *
-     * This option is sent only if the caller explicitly provides a value. The default 
+     * This option is sent only if the caller explicitly provides a value. The default
      * is to not send a value.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
-     */ 
+     */
     allowDiskUse: Optional<Boolean>;
 
     /**
-     * The number of documents to return per batch. 
+     * The number of documents to return per batch.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 2.6, this option is ignored and should not be sent as aggregation cursors are not available.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
-     */ 
+     */
     batchSize: Optional<Int32>;
 
     /**
      * If true, allows the write to opt-out of document level validation. This only applies
      * when the $out stage is specified.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      *
@@ -215,20 +215,20 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     collation: Optional<Document>;
-    
+
     /**
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
-     */ 
+     */
     maxTimeMS: Optional<Int64>;
 
     /**
      * Indicates whether the command will request that the server provide results using a cursor.
      *
-     * If true, this option is sent with a value of "cursor: {}". The default value is true. 
+     * If true, this option is sent with a value of "cursor: {}". The default value is true.
      * For servers < 2.6, this option is ignored and not sent as aggregation cursors are not available.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
@@ -313,11 +313,11 @@ Read
      */
     NON_TAILABLE,
     /**
-     * Tailable means the cursor is not closed when the last data is retrieved. 
-     * Rather, the cursor marks the final object’s position. You can resume 
-     * using the cursor later, from where it was located, if more data were 
-     * received. Like any “latent cursor”, the cursor may become invalid at 
-     * some point (CursorNotFound) – for example if the final object it 
+     * Tailable means the cursor is not closed when the last data is retrieved.
+     * Rather, the cursor marks the final object’s position. You can resume
+     * using the cursor later, from where it was located, if more data were
+     * received. Like any “latent cursor”, the cursor may become invalid at
+     * some point (CursorNotFound) – for example if the final object it
      * references were deleted.
      *
      * @see https://docs.mongodb.com/meta-driver/latest/legacy/mongodb-wire-protocol/#op-query
@@ -346,7 +346,7 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     allowPartialResults: Optional<Boolean>;
-    
+
     /**
      * The number of documents to return per batch.
      *
@@ -354,7 +354,7 @@ Read
      * For servers < 3.2, this is combined with limit to create the wire protocol numberToReturn value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
-     */ 
+     */
     batchSize: Optional<Int32>;
 
     /**
@@ -373,7 +373,7 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
-     */ 
+     */
     comment: Optional<String>;
 
     /**
@@ -416,14 +416,14 @@ Read
     max: Optional<Document>;
 
     /**
-     * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor 
+     * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor
      * query. This only applies to a TAILABLE_AWAIT cursor. When the cursor is not a TAILABLE_AWAIT cursor,
      * this option is ignored.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the get more wire protocol.
      *
-     * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the 
+     * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the
      * initial find command.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
@@ -458,7 +458,7 @@ Read
     min: Optional<Document>;
 
     /**
-     * The server normally times out idle cursors after an inactivity period (10 minutes) 
+     * The server normally times out idle cursors after an inactivity period (10 minutes)
      * to prevent excess memory use. Set this option to prevent that.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -478,7 +478,7 @@ Read
      */
     oplogReplay: Optional<Boolean>;
 
-    /** 
+    /**
      * Limits the fields to return for all matching documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -487,7 +487,7 @@ Read
      */
     projection: Optional<Document>;
 
-    /** 
+    /**
      * If true, returns only the index keys in the resulting documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -496,7 +496,7 @@ Read
      */
     returnKey: Optional<Document>;
 
-    /** 
+    /**
      * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -515,7 +515,7 @@ Read
      */
     skip: Optional<Int64>;
 
-    /** 
+    /**
      * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -530,7 +530,7 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
-     */ 
+     */
     sort: Optional<Document>;
   }
 
@@ -582,7 +582,7 @@ Basic
     /**
      * Sends a batch of writes to the server at the same time.
      *
-     * For servers < 3.4, if a collation was explicitly set for any request, an error MUST be raised 
+     * For servers < 3.4, if a collation was explicitly set for any request, an error MUST be raised
      * and no documents sent.
      *
      * NOTE: see the FAQ about the previous bulk API and how it relates to this.
@@ -633,7 +633,7 @@ Basic
 
     /**
      * Replaces a single document.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
@@ -641,7 +641,7 @@ Basic
 
     /**
      * Updates one document.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
@@ -649,7 +649,7 @@ Basic
 
     /**
      * Updates multiple documents.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
@@ -659,15 +659,15 @@ Basic
   class BulkWriteOptions {
 
     /**
-     * If true, when a write fails, return without performing the remaining 
-     * writes. If false, when a write fails, continue with the remaining writes, if any. 
+     * If true, when a write fails, return without performing the remaining
+     * writes. If false, when a write fails, continue with the remaining writes, if any.
      * Defaults to true.
      */
     ordered: Boolean;
 
     /**
      * If true, allows the write to opt-out of document level validation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
@@ -679,7 +679,7 @@ Basic
 
     /**
      * If true, allows the write to opt-out of document level validation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
@@ -691,7 +691,7 @@ Basic
 
     /**
      * If true, allows the write to opt-out of document level validation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
@@ -699,8 +699,8 @@ Basic
     bypassDocumentValidation: Optional<Boolean>;
 
     /**
-     * If true, when an insert fails, return without performing the remaining 
-     * writes. If false, when a write fails, continue with the remaining writes, if any. 
+     * If true, when an insert fails, return without performing the remaining
+     * writes. If false, when a write fails, continue with the remaining writes, if any.
      * Defaults to true.
      */
     ordered: Boolean;
@@ -710,7 +710,7 @@ Basic
 
     /**
      * If true, allows the write to opt-out of document level validation.
-     * 
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
@@ -732,7 +732,7 @@ Basic
      * When true, creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
@@ -763,7 +763,7 @@ Bulk Write Models
   }
 
   class InsertOneModel implements WriteModel {
-    
+
     /**
      * The document to insert.
      *
@@ -845,7 +845,7 @@ Bulk Write Models
      * When true, creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
@@ -859,7 +859,7 @@ Bulk Write Models
   }
 
   class UpdateOneModel implements WriteModel {
-    
+
     /**
      * The filter to limit the updated documents.
      *
@@ -889,7 +889,7 @@ Bulk Write Models
      * When true, creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
@@ -903,7 +903,7 @@ Bulk Write Models
   }
 
   class UpdateManyModel implements WriteModel {
-    
+
     /**
      * The filter to limit the updated documents.
      *
@@ -950,7 +950,7 @@ Bulk Write Models
 Results
 ~~~~~~~
 
-The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value. 
+The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value.
 
 .. note::
     If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount member is not available when the write was unacknowledged. Check the acknowledged member to avoid this error."
@@ -958,7 +958,7 @@ The acknowledged property is defined for languages/frameworks without a sufficie
 Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUIRED as well. For instance, the ``InsertOneResult`` has all NOT REQUIRED parameters and is therefore also NOT REQUIRED allowing a driver to use "void" as the return value for the ``insertOne`` method.
 
 .. code:: typescript
-  
+
   class BulkWriteResult {
 
     /**
@@ -1167,7 +1167,7 @@ Below are defined the exceptions that should be thrown from the various write me
 
     /**
      * The error that occurred on account of write concern failure.
-     */ 
+     */
     writeConcernError: Optional<WriteConcernError>;
 
     /**
@@ -1195,7 +1195,7 @@ Below are defined the exceptions that should be thrown from the various write me
 
     /**
      * The error that occured on account of write concern failure. If the error was a Write Concern related, this field must be present.
-     */ 
+     */
     writeConcernError: Optional<WriteConcernError>;
 
     /**
@@ -1211,12 +1211,12 @@ Find And Modify
 ~~~~~~~~~~~~~~~
 
 .. code:: typescript
-  
+
   interface Collection {
 
     /**
      * Finds a single document and deletes it, returning the original. The document to return may be null.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
@@ -1225,7 +1225,7 @@ Find And Modify
     /**
      * Finds a single document and replaces it, returning either the original or the replaced
      * document. The document to return may be null.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
@@ -1234,7 +1234,7 @@ Find And Modify
     /**
      * Finds a single document and updates it, returning either the original or the updated
      * document. The document to return may be null.
-     * 
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
@@ -1254,7 +1254,7 @@ Find And Modify
   }
 
   class FindOneAndDeleteOptions {
-    
+
     /**
      * Specifies a collation.
      *
@@ -1269,18 +1269,18 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
-     */ 
+     */
     maxTimeMS: Optional<Int64>;
 
-    /** 
+    /**
      * Limits the fields to return for all matching documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * Note: this option is mapped to the "fields" findAndModify field.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results
      */
     projection: Optional<Document>;
@@ -1289,17 +1289,17 @@ Find And Modify
      * Determines which document the operation modifies if the query selects multiple documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
   }
 
   class FindOneAndReplaceOptions {
-    
+
     /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
+     * If true, allows the write to opt-out of document level validation.
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      */
@@ -1319,12 +1319,12 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
-     */ 
+     */
     maxTimeMS: Optional<Int64>;
 
-    /** 
+    /**
      * Limits the fields to return for all matching documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1340,9 +1340,9 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before represents false, 
+     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before represents false,
      * and ReturnDocument.After represents true.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     returnDocument: Optional<ReturnDocument>;
@@ -1351,7 +1351,7 @@ Find And Modify
      * Determines which document the operation modifies if the query selects multiple documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
@@ -1360,22 +1360,22 @@ Find And Modify
      * When true, findAndModify creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
   }
 
   class FindOneAndUpdateOptions {
-    
+
     /**
-     * If true, allows the write to opt-out of document level validation. 
-     * 
+     * If true, allows the write to opt-out of document level validation.
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
-    
+
     /**
      * Specifies a collation.
      *
@@ -1390,10 +1390,10 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
-     */ 
+     */
     maxTimeMS: Optional<Int64>;
-    
-    /** 
+
+    /**
      * Limits the fields to return for all matching documents.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1409,9 +1409,9 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before is represents false, 
+     * Note: this option is mapped to the "new" findAndModify boolean field. ReturnDocument.Before is represents false,
      * and ReturnDocument.After represents true.
-     *     
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     returnDocument: Optional<ReturnDocument>;
@@ -1532,7 +1532,7 @@ Q: What about explain?
   Explain has been determined to be not a normal use-case for a driver. We'd like users to use the shell for this purpose. However, explain is still possible from a driver. For find, it can be passed as a modifier. Aggregate can be run using a runCommand method passing the explain option. In addition, server 3.0 offers an explain command that can be run using a runCommand method.
 
 Q: Where did modifiers go in FindOptions?
-  MongoDB 3.2 introduced the find command. As opposed to using the general "modifiers" field any longer, each relevant option is listed explicitly. Some options, such as "tailable" or "singleBatch" are not listed as they are derived from other fields. Upgrading a driver should be a simple procedure of deprecating the "modifiers" field and introducing the new fields. When a collision occurs, the explicitly specified field should override the value in "modifiers". 
+  MongoDB 3.2 introduced the find command. As opposed to using the general "modifiers" field any longer, each relevant option is listed explicitly. Some options, such as "tailable" or "singleBatch" are not listed as they are derived from other fields. Upgrading a driver should be a simple procedure of deprecating the "modifiers" field and introducing the new fields. When a collision occurs, the explicitly specified field should override the value in "modifiers".
 
 Changes
 =======
