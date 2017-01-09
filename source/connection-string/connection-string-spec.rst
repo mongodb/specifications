@@ -11,7 +11,7 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: Jul. 22, 2016
+:Last Modified: Jan. 09, 2017
 :Version: 1.1
 
 .. contents::
@@ -326,12 +326,12 @@ Q: Can the connection string contain non-ASCII characters?
 Q: Why does reference implementation check for a ``.sock`` suffix when parsing a socket path and possible auth database?
   To simplify parsing of a socket path followed by an auth database, we rely on MongoDB's `naming restrictions <http://docs.mongodb.org/manual/reference/limits/#naming-restrictions>`_), which do not allow database names to contain a dot character, and the fact that socket paths must end with ``.sock``. This allows us to differentiate the last part of a socket path from a database name. While we could immediately rule out an auth database on the basis of the dot alone, this specification is primarily concerned with breaking down the components of a URI (e.g. hosts, auth database, options) in a deterministic manner, rather than applying strict validation to those parts (e.g. host types, database names, allowed values for an option). Additionally, some drivers might allow a namespace (e.g. ``"db.collection"``) for the auth database part, so we do not want to be more strict than is necessary for parsing.
 
-Q: Why throw an exception if the userinfo contains an at-sign ("@") or more than one colon (":")?
+Q: Why throw an exception if the userinfo contains a percent sign ("%"), at-sign ("@"), or more than one colon (":")?
   This is done to help users format the connection string correctly. Although at-signs ("@") or colons (":") in the username must be URL encoded, users may not be aware of that requirement. Take the following example::
 
     mongodb://anne:bob:pass@localhost:27017
 
-  Is the username ``anne`` and the password ``bob:pass`` or is the username ``anne:bob`` and the password ``pass``?  Accepting this as the userinfo could cause authentication to fail, causing confusion for the user as to why. By throwing an exception users are made aware and then update the connection string so to be explicit about what forms the username and password.
+  Is the username ``anne`` and the password ``bob:pass`` or is the username ``anne:bob`` and the password ``pass``? Accepting this as the userinfo could cause authentication to fail, causing confusion for the user as to why. Allowing unescaped at-sign and percent symbols would invite further ambiguity. By throwing an exception users are made aware and then update the connection string so to be explicit about what forms the username and password.
 
 Q: Why must UNIX domain sockets be URL encoded?
   This has been done to reduce ambiguity between the socket name and the database name. Take the following example::
@@ -351,4 +351,5 @@ Q: Why must the auth database be URL decoded by the parser?
 Changes
 -------
 
+- 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
 - 2016-07-22: In Port section, clarify that zero is not an acceptable port.
