@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Aug. 17, 2016
+:Last Modified: Jan. 09, 2017
 
 .. contents::
 
@@ -1537,10 +1537,10 @@ Q: Where did modifiers go in FindOptions?
 Changes
 =======
 
-* 2016-08-17: Removed modifiers from FindOptions and added in all options.
-* 2016-08-17: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
-* 2016-08-17: Reworded description of how default values are handled and when to send certain options.
-* 2016-08-17: Included collation option in the bulk write models and removed it from bulk write.
+* 2017-01-09: Removed modifiers from FindOptions and added in all options.
+* 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
+* 2017-01-09: Reworded description of how default values are handled and when to send certain options.
+* 2016-09-23: Included collation option in the bulk write models.
 * 2016-08-05: Added in collation option.
 * 2015-11-05: Typos in comments about bypassDocumentValidation
 * 2015-10-16: Added maxAwaitTimeMS to FindOptions.
