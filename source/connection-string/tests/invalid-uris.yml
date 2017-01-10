@@ -160,6 +160,14 @@ tests:
         auth: ~
         options: ~
     -
+        description: "Username with password containing an unescaped percent sign"
+        uri: "mongodb://alice%foo:bar@127.0.0.1"
+        valid: false
+        warning: ~
+        hosts: ~
+        auth: ~
+        options: ~
+    -
         description: "Username with password containing an unescaped colon"
         uri: "mongodb://alice:foo:bar@127.0.0.1"
         valid: false
