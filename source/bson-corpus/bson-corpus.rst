@@ -9,8 +9,8 @@ BSON Corpus
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: November 14, 2016
-:Version: 1.2
+:Last Modified: January 23, 2017
+:Version: 1.3
 
 .. contents::
 
