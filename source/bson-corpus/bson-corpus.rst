@@ -365,22 +365,10 @@ For example, a pathological encoder/decoder could invert Boolean true and
 false during decoding and encoding.  The BSON would roundtrip but the
 program would see the wrong values.
 
-Therefore, we need a separate, semantic description of the contents of a
-BSON string in a machine readable format.  Fortunately, we already have
-extjson as a means of doing so.  Unfortunately, extjson has changed over
-time and has some limitations in what BSON values it can represent.
-
-Nevertheless, as many drivers already have extjson encoders/decoders, we
-decided to use that whenever possible instead of requiring drivers to
-implement yet another BSON-equivalent decoder solely for testing.
-
-To account for the limitations as best as possible, tests try all possible
-conversion directions; tests follow the rule "be lax in what you accept; be
-strict in what you emit".
-
-When different extjson forms were possible, we opted to follow current
-(version 3.2) mongoimport/mongoexport behavior when unambiguous and to
-choose the least ambiguous form otherwise (e.g with DateTime).
+Therefore, we need a separate, semantic description of the contents of a BSON
+string in a machine readable format.  Fortunately, we already have extjson as a
+means of doing so.  The extended JSON strings contained within the tests adhere
+to the Extended JSON Specification.
 
 Repetition across cases
 -----------------------
@@ -393,6 +381,17 @@ assertions.  This makes for easier and safer test case development.
 
 Changes
 =======
+
+Version 1.3 - January 23, 2017
+
+* Added ``multi-type.json`` to test encoding and decoding all BSON types within
+  the same document.
+
+* Amended all extended JSON strings to adhere to the Extended JSON
+  Specification.
+
+* Modified the "Use of extjson" section of this specification to note that
+  canonical extended JSON is now used.
 
 Version 1.2 - November 14, 2016
 
