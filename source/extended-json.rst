@@ -8,7 +8,7 @@ Extended JSON
 :Author: Luke Lovett
 :Spec Lead: David Golden
 :Advisory Group: Mike O'Brien, Christian Kvalheim, Hannes Magnusson
-:Status: Draft
+:Status: Accepted
 :Type: Standards
 :Last Modified: January 23, 2017
 :Version: 1.0.0
@@ -54,7 +54,7 @@ extended JSON string into another representation, such as BSON or a
 language-specific data structure. A parser MUST accept all strings in the
 canonical extended JSON format. A parser MAY also accept strings that adhere to
 other formats, such as historical extended JSON formats emitted by old versions
-of mongoexport. A parser SHOULD support at least 200 levels of nesting in an
+of mongoexport. A parser SHOULD support at least 200 `levels of nesting`_ in an
 extended JSON document but MAY set other limits on strings it can accept as
 defined in `section 9`_ of the `JSON specification`_.
 
@@ -86,8 +86,8 @@ strings by default. If a generator does not produce strings in the canonical
 format by default, then that generator MUST be configurable to use the canonical
 format. A generator MAY be capable of exporting strings that adhere to other
 formats, such as historical extended JSON formats emitted by old versions of
-mongoexport. A generator MUST support at least 100 levels of nesting in a BSON
-document.
+mongoexport. A generator SHOULD support at least 100 `levels of nesting`_ in a
+BSON document.
 
 Transforming BSON
 .................
@@ -101,11 +101,10 @@ document.
 Transforming Language-Specific Data Structures
 ..............................................
 
-When transforming a language-specific data structure, such as one emitted by a
-BSON parser, into extended JSON, a generator MUST emit the extended JSON form
-for the BSON type corresponding to the type of the data structure. For example,
-a Python ``datetime`` object must be represented the same as a BSON datetime
-type.
+When there is a corresponding BSON type for a given language-specific type, a
+generator MUST convert this type to extended JSON in a way that corresponds to
+the BSON representation. For example, a Python ``datetime`` object must be
+represented the same as a BSON datetime type.
 
 Extended JSON Format
 --------------------
@@ -136,42 +135,42 @@ Notes
 |**BSON 1.1 Type or  |**Extended JSON Format**                                  |
 |Convention**        |                                                          |
 +--------------------+----------------------------------------------------------+
-|ObjectId            |{"$oid": <ObjectId bytes as 23-character, big-endian *hex |
-|                    |string* [#]_>                                             |
+|ObjectId            |{"$oid": <ObjectId bytes as 24-character, big-endian *hex |
+|                    |string* [#]_>}                                            |
 +--------------------+----------------------------------------------------------+
 |Symbol              |{"$symbol": *string*}                                     |
 +--------------------+----------------------------------------------------------+
 |String              |*string*                                                  |
 +--------------------+----------------------------------------------------------+
-|Int32               |{"$numberInt": <32-bit signed integer as a *string*>      |
+|Int32               |{"$numberInt": <32-bit signed integer as a *string*>}     |
 +--------------------+----------------------------------------------------------+
-|Int64               |{"$numberLong": <64-bit signed integer as a *string*>     |
+|Int64               |{"$numberLong": <64-bit signed integer as a *string*>}    |
 +--------------------+----------------------------------------------------------+
 |Double              |{"$numberDouble": <64-bit binary floating point as a      |
-|                    |*string*>                                                 |
+|                    |*string*>}                                                |
 +--------------------+----------------------------------------------------------+
 |Decimal128          |{"$numberDecimal": <decimal as a *string*>} [#]_          |
 +--------------------+----------------------------------------------------------+
 |Binary              |{"$binary": <base64-encoded (with padding as ``=``)       |
-|                    |payload as a *string*, "$type": <BSON binary type as a    |
-|                    |one- or two-character *hex string*}                       |
+|                    |payload as a *string*>, "$type": <BSON binary type as a   |
+|                    |one- or two-character *hex string*>}                      |
 +--------------------+----------------------------------------------------------+
 |Code                |{"$code": *string*}                                       |
 +--------------------+----------------------------------------------------------+
 |CodeWScope          |{"$code": *string*, "$scope": *Document*}                 |
 +--------------------+----------------------------------------------------------+
-|Document            |*object* (with Extended JSON extensions)                  |
+|Document            |*object* (with extended JSON extensions)                  |
 +--------------------+----------------------------------------------------------+
 |Timestamp           |{"$timestamp": <64-bit unsigned integer as a *string*>}   |
 +--------------------+----------------------------------------------------------+
 |Regex               |{"$regex": *string*, "$options": <BSON regex options as a |
-|                    |*string* or "" [#]_}                                      |
+|                    |*string* or "" [#]_>}                                     |
 +--------------------+----------------------------------------------------------+
 |DBPointer           |{"$dbPointer": {"$ref": <namespace [#]_ as a *string*>,   |
-|                    |"$id": *ObjectId*}                                        |
+|                    |"$id": *ObjectId*}}                                       |
 +--------------------+----------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer giving ms|
-|                    |since the epoch, as a *string*>}                          |
+|                    |since the epoch, as a *string*>}}                         |
 +--------------------+----------------------------------------------------------+
 |DBRef [#]_          |{"$ref": <collection name as a *string*>, "$id":          |
 |                    |<extended JSON for the id>}                               |
@@ -179,9 +178,12 @@ Notes
 |technically a BSON  |If the generator supports DBRefs with a database          |
 |type, but it is a   |component, and the database component is nonempty:        |
 |common convention.  |                                                          |
-|                    |{"$ref": <collection name as a *string*>, "$id":          |
-|                    |<extended JSON for the id>, "$db": <database name as a    |
-|                    |*string*>}                                                |
+|                    |{"$ref": <collection name as a *string*>, "$id": <extended|
+|                    |JSON for the id>, "$db": <database name as a *string*>}   |
+|                    |                                                          |
+|                    |DBRefs may also have other fields that do not begin with  |
+|                    |``$``, which MUST appear after ``$id`` and ``$db`` (if    |
+|                    |supported).                                               |
 +--------------------+----------------------------------------------------------+
 |MinKey              |{"$minKey": 1}                                            |
 +--------------------+----------------------------------------------------------+
@@ -226,31 +228,25 @@ values are encoded as follows:
 
 .. _extended JSON format for the Decimal128 type: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst#to-string-representation
 
-For example, a BSON floating-point number with a value of positive infinity
+For example, a BSON floating-point number with a value of negative infinity
 would be encoded as extended JSON as follows::
 
-  {"$numberDouble": "NaN"}
+  {"$numberDouble": "-Infinity"}
 
 Option Names
 ------------
 
-Parsers and generators MAY be configurable to handle both Canonical and
-Historical Extended JSON formats. In such a case, the following option names MAY
+Parsers and generators MAY be configurable to handle both canonical and
+historical extended JSON formats. In such a case, the following option names MAY
 be used to distinguish between these two formats:
 
-* ``canonicalExtendedJSON`` (references Extended JSON as described in this specification)
-* ``legacyExtendedJSON`` (references Historical Extended JSON)
+* ``canonicalExtendedJSON`` (references extended JSON as described in this specification)
+* ``legacyExtendedJSON`` (references historical extended JSON)
 
-Deviating from these names is perfectly acceptable as described in similar
-specifications. These names may also be used as "base names" by appending or
-prepending as appropriate to form method names and other option names. This
-specification does not require any specific options to be made available.
+This specification does not require any specific options to be made available.
 
-Example
-=======
-
-Input Document
---------------
+Extended JSON Example
+=====================
 
 Consider the following document, written in Groovy with the MongoDB Java Driver::
 
@@ -261,6 +257,8 @@ Consider the following document, written in Groovy with the MongoDB Java Driver:
     "Int32": 42,
     "Int64": 42L,
     "Double": 42.42,
+    "SpecialFloat": Float.NaN,
+    "Decimal": new Decimal128(1234),
     "Binary": UUID.fromString("c8edabc3-f738-4ca3-b68d-ab92a91478a3"),
     "BinaryUserDefined": new Binary((byte) 0x80, new byte[]{1, 2, 3, 4, 5}),
     "Code": new Code("function() {}"),
@@ -275,19 +273,18 @@ Consider the following document, written in Groovy with the MongoDB Java Driver:
     "True": true,
     "False": false,
     "DBPointer": new BsonDbPointer(
-         "db.collection", new ObjectId("57e193d7a9cc81b4027498b1")),
+        "db.collection", new ObjectId("57e193d7a9cc81b4027498b1")),
     "DBRef": new DBRef(
-          "database", "collection", new ObjectId("57fd71e96e32ab4225b723fb")),
+        "database", "collection", new ObjectId("57fd71e96e32ab4225b723fb")),
+    "DBRefNoDB": new DBRef(
+        "collection", new ObjectId("57fd71e96e32ab4225b723fb")),
     "Minkey": new MinKey(),
     "Maxkey": new MaxKey(),
     "Null": null,
     "Undefined": new BsonUndefined()
   }
 
-Extended JSON Output
---------------------
-
-The above document is transformed into the followig (newlines and spaces added
+The above document is transformed into the following (newlines and spaces added
 for readability)::
 
   {
@@ -295,18 +292,24 @@ for readability)::
          "$oid": "57e193d7a9cc81b4027498b5"
      },
      "Symbol": {
-          "$symbol": "symbol"
-      },
+         "$symbol": "symbol"
+     },
      "String": "string",
      "Int32": {
-          "$numberInt": "42"
-      },
+         "$numberInt": "42"
+     },
      "Int64": {
          "$numberLong": "42"
      },
      "Double": {
-          "$numberDouble": "42.42"
-      },
+         "$numberDouble": "42.42"
+     },
+     "SpecialFloat": {
+         "$numberDouble": "NaN"
+     },
+     "Decimal": {
+         "$numberDecimal": "1234"
+     },
      "Binary": {
          "$binary": "o0w498Or7cijeBSpkquNtg==",
          "$type": "03"
@@ -326,15 +329,15 @@ for readability)::
          "foo": "bar"
      },
      "Array": [
-          {"$numberInt": "1"},
-          {"$numberInt": "2"},
-          {"$numberInt": "3"},
-          {"$numberInt": "4"},
-          {"$numberInt": "5"}
-      ],
+         {"$numberInt": "1"},
+         {"$numberInt": "2"},
+         {"$numberInt": "3"},
+         {"$numberInt": "4"},
+         {"$numberInt": "5"}
+     ],
      "Timestamp": {
          "$timestamp": "180388626433"
-      },
+     },
      "Regex": {
          "$regex": "pattern",
          "$options": ""
@@ -357,20 +360,26 @@ for readability)::
      "True": true,
      "False": false,
      "DBPointer": {
-          "$dbPointer": {
+         "$dbPointer": {
              "$ref": "db.collection",
              "$id": {
                  "$oid": "57e193d7a9cc81b4027498b1"
              }
-          }
+         }
      },
-      "DBRef": {
-          "$ref": "collection",
-          "$id": {
-              "$oid": "57fd71e96e32ab4225b723fb"
-          },
-          "$db": "database"
-      },
+     "DBRef": {
+         "$ref": "collection",
+         "$id": {
+             "$oid": "57fd71e96e32ab4225b723fb"
+         },
+         "$db": "database"
+     },
+     "DBRefNoDB" {
+         "$ref": "collection",
+         "$id": {
+             "$oid": "57fd71e96e32ab4225b723fb"
+         }
+     },
      "Minkey": {
          "$minKey": 1
      },
@@ -379,8 +388,8 @@ for readability)::
      },
      "Null": null,
      "Undefined": {
-          "$undefined": true
-      }
+         "$undefined": true
+     }
   }
 
 Test Plan
@@ -411,11 +420,13 @@ always be able to accept strings emitted by a properly configured
 generator. Parsers and generators are permitted to accept and output strings in
 other formats as well for backwards compatibility.
 
-Generators are  required to  support at least  100 levels of  nesting in  a BSON
-document  being transformed  to extended  JSON. This  aligns with  MongoDB’s own
-limitation of 100 levels of nesting.
+.. _levels of nesting:
 
-Parsers should support at least 200 levels of nesting in extended JSON text,
+Generators SHOULD support at least 100 levels of nesting in a BSON document
+being transformed to extended JSON. This aligns with MongoDB's own limitation of
+100 levels of nesting.
+
+Parsers SHOULD support at least 200 levels of nesting in extended JSON text,
 since the extended JSON language can double the level of apparent nesting of a
 BSON document by wrapping certain types in their own documents.
 
@@ -583,11 +594,20 @@ Key Escaping
 ------------
 
 There is no escape mechanism for keys that are prefixed with the dollar sign
-(``$``) when parsing extended JSON. In other words, the following code snippets
-produce the same extended JSON string::
+(``$``) when parsing extended JSON. In other words, the following Java code
+snippet produces two documents that a generator would transform into identical
+extended JSON strings::
 
   new Document("s", new Document("$symbol": "val"))
   new Document("s", new Symbol("val"))
+
+The extended JSON for the above documents is the same::
+
+  {"s": {"$symbol": "val"}}
+
+An extended JSON parser will parse the above as a document with a name ``s``
+whose value is a BSON Symbol with the value ``val`` (i.e. the second line of the
+above Java code snippet).
 
 Future Work
 ===========
@@ -616,3 +636,8 @@ Q&A
  interpreted as any other JSON object. In other words, ``{"$symbol": "banana",
  "$foo": "peel"}`` is just a JSON object with two keys that map to two strings
  and does not represent a BSON symbol.
+
+*Q*. Sometimes I see the term "extjson" used in other specifications. Is
+"extjson" related to this specification?
+
+*A*. Yes, "extjson" is short for "extended JSON".
