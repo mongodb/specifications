@@ -69,7 +69,7 @@ The user information if present, is followed by a commercial at-sign ("@") that 
 
 A password may be supplied as part of the user information and is anything after the first colon (":") up until the end of the user information.
 
-If the username section contains a percent sign ("%"), an at-sign ("@") or a colon (":") it MUST be URL encoded.
+If the username, or password section contains a percent sign ("%"), an at-sign ("@") or a colon (":") it MUST be URL encoded.
 
 If the user information contains an at-sign ("@") or more than one colon (":") then an exception MUST be thrown informing the user that the username and password must be URL encoded.
 
