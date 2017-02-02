@@ -141,7 +141,7 @@ When defining and documenting keys, specifications should follow the camelCase n
 
 A WARN level logging message MUST be issued. For example::
 
-  Unsupported option 'connectMS' on URI 'mongodb://localhost/?connectMS=1'. Keys should be descriptive and follow existing conventions:
+  Unsupported option 'connectMS'. Keys should be descriptive and follow existing conventions:
 
 
 Time based keys
