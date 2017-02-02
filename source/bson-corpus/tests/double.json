@@ -51,7 +51,8 @@
         {
             "description": "NaN with payload",
             "bson": "10000000016400120000000000F87F00",
-            "extjson": "{\"d\": {\"$numberDouble\": \"NaN\"}}"
+            "extjson": "{\"d\": {\"$numberDouble\": \"NaN\"}}",
+            "lossy": true
         },
         {
             "description": "Inf",
