@@ -104,7 +104,7 @@ Naming of mechanism properties MUST be case-insensitive. For instance, SERVICE_N
 Authentication
 --------------
 
-This section augments the `Server Discovery and Monitoring Spec <http://emptysqua.re/server-discovery-and-monitoring.html>`_.
+This section augments the `Server Discovery and Monitoring Spec <server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`_.
 
 A MongoClient instance MUST be considered a single logical connection to the server/deployment. Hence, all credentials given to an instance of a MongoClient should apply to every currently opened socket. Drivers SHOULD require all credentials to be specified upon construction of the MongoClient. This is defined as eager authentication and drivers MUST support this mode.
 
