@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.7
-:Last Modified: November 21, 2016
+:Version: 2.8
+:Last Modified: February 28, 2017
 
 .. contents::
 
@@ -814,8 +814,8 @@ Other required fields
 defined in the `ServerDescription`_ data structure
 are parsed from the ismaster response in the obvious way.
 
-Network error when calling ismaster
-'''''''''''''''''''''''''''''''''''
+Network error during server check
+'''''''''''''''''''''''''''''''''
 
 When a server `check`_ fails due to a network error,
 the client SHOULD clear its connection pool for the server:
@@ -1234,20 +1234,39 @@ Error handling
 ''''''''''''''
 
 This section is about errors when reading or writing to a server.
-For errors when checking servers, see `network error when calling ismaster`_.
+For errors when checking servers, see `network error during server check`_.
 
 Network error when reading or writing
 `````````````````````````````````````
 
-When an application operation fails because of
-any network error besides a socket timeout,
+To describe how the client responds to network errors during application operations,
+we distinguish two phases of connecting to a server and using it for application operations:
+
+- *Before the handshake completes*: the client establishes a new connection to the server
+  and completes an initial handshake by calling "isMaster" and reading the response,
+  and optionally completing authentication
+- *After the handshake completes*: the client uses the established connection for
+  application operations
+
+If there is a network error or timeout on the connection before the handshake completes,
 the client MUST replace the server's description
 with a default ServerDescription of type Unknown,
 and fill the ServerDescription's error field with useful information.
 
-The Unknown ServerDescription is sent through the same process for
+If there is a network timeout on the connection after the handshake completes,
+the client MUST NOT mark the server Unknown.
+(A timeout may indicate a slow operation on the server,
+rather than an unavailable server.)
+If, however, there is some other network error on the connection after the handshake completes,
+the client MUST replace the server's description
+with a default ServerDescription of type Unknown,
+and fill the ServerDescription's error field with useful information,
+the same as if an error or timeout occurred before the handshake completed.
+
+When the client marks a server Unknown due to a network error or timeout,
+the Unknown ServerDescription MUST be sent through the same process for
 `updating the TopologyDescription`_ as if it had been a failed ismaster outcome
-from a monitor: for example, if the TopologyType is ReplicaSetWithPrimary
+from a server check: for example, if the TopologyType is ReplicaSetWithPrimary
 and a write to the RSPrimary server fails because of a network error
 (other than timeout), then a new ServerDescription is created for the primary,
 with type Unknown, and the client executes the proper subroutine for an
@@ -1255,11 +1274,6 @@ Unknown server when the TopologyType is ReplicaSetWithPrimary:
 referring to the table above we see the subroutine is `checkIfHasPrimary`_.
 The result is the TopologyType changes to ReplicaSetNoPrimary.
 See the test scenario called "Network error writing to primary".
-
-The specific operation that discovered the error
-MUST abort and raise an exception if it was a write.
-It MAY be retried if it was a read.
-(The Server Selection spec describes retry options for reads.)
 
 The client SHOULD clear its connection pool for the server:
 if one socket is bad, it is likely that all are.
@@ -2219,3 +2233,8 @@ Changes
 
 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
 future.
+
+2017-02-28: Update "network error when reading or writing": timeout while
+connecting does mark a server Unknown, unlike a timeout while reading or
+writing. Justify the different behaviors, and also remove obsolete reference
+to auto-retry.
