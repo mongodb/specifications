@@ -326,7 +326,6 @@ These commands that write are:
   * ``collMod``
   * ``convertToCapped``
   * ``renameCollection``
-  * ``reindex``
 
 Errors
 ~~~~~~
@@ -476,3 +475,6 @@ Version History
     Don't mention obscure commands with no helpers.
   - 2016-08-06: Further clarify that command-specific helper methods for commands that write
     take write concern options in their parameter lists, and relax from SHOULD to MAY.
+  - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns
+    an error if writeConcern is included with MongoDB 3.5+. See
+    `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
