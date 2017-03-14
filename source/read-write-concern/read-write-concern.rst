@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: August 6, 2016
-:Version: 1.3
+:Last Modified: March 13, 2017
+:Version: 1.4
 
 .. contents::
 
