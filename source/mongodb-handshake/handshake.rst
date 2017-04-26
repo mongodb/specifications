@@ -66,7 +66,8 @@ for topology monitoring purposes, MUST NOT include this argument.
 The ``isMaster`` handshake, as of MongoDB 3.4, supports a new argument, ``client``,
 provided as a BSON object. This object has the following structure::
 
-    isMaster({
+    {
+        isMaster: 1,
         client: {
             /* OPTIONAL. If present, the "name" is REQUIRED */
             application: {
@@ -87,7 +88,7 @@ provided as a BSON object. This object has the following structure::
             /* OPTIONAL */
             platform: "<string>"
         }
-    })
+    }
 
 
 
