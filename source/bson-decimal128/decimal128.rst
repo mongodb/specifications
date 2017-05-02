@@ -425,8 +425,10 @@ Reference Implementations
 Tests
 =====
 
-See the `README <tests/README.md>`_ for tests.
+See the `BSON Corpus <https://github.com/mongodb/specifications/tree/master/source/bson-corpus>`_ for tests.
 
+Most of the tests are converted from the
+[General Decimal Arithmetic Testcases](http://speleotrove.com/decimal/dectest.html>).
 
 Q&A
 ===
