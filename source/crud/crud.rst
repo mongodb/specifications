@@ -706,7 +706,7 @@ Basic
     ordered: Boolean;
   }
 
-  class UpdateOptions
+  class UpdateOptions {
 
     /**
      * If true, allows the write to opt-out of document level validation.
@@ -738,7 +738,7 @@ Basic
     upsert: Optional<Boolean>;
   }
 
-  class DeleteOptions
+  class DeleteOptions {
 
     /**
      * Specifies a collation.
