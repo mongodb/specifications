@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Jan. 09, 2017
+:Last Modified: May. 12, 2017
 
 .. contents::
 
@@ -849,13 +849,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     */
-    collation: Optional<Document>;
-
   }
 
   class UpdateOneModel implements WriteModel {
@@ -893,13 +886,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     */
-    collation: Optional<Document>;
-
   }
 
   class UpdateManyModel implements WriteModel {
@@ -937,13 +923,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Optionally specifies a collation to use in MongoDB 3.4 and higher.
-     *
-     */
-    collation: Optional<Document>;
-
   }
 
 
@@ -1537,6 +1516,7 @@ Q: Where did modifiers go in FindOptions?
 Changes
 =======
 
+* 2017-05-12: Removed extra "collation" option added to several bulk write models.
 * 2017-01-09: Removed modifiers from FindOptions and added in all options.
 * 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
 * 2017-01-09: Reworded description of how default values are handled and when to send certain options.
