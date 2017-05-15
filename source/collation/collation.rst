@@ -12,7 +12,7 @@ Collation
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 1.8
-:Last Modified: Aug. 30, 3016
+:Last Modified: May 15, 2017
 :Version: 1.0
 
 .. contents::
@@ -125,16 +125,16 @@ API
 ---
 The driver helpers that must support a collation option include the create collection helper, any CRUD API components relying on the MongoDB query system (including updates and deletes) and some index management helpers. The CRUD-related commands that take a collation option are:
 
-aggregate
-count
-distinct
-find (command only)
-findAndModify
-geoNear
-group
-mapReduce
-delete  (command only)
-update (command only)
+- aggregate
+- count
+- distinct
+- find (command only)
+- findAndModify
+- geoNear
+- group
+- mapReduce
+- delete  (command only)
+- update (command only)
 
 The collation option is sent to the server in the form of a BSON Document. See the `CRUD specification <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_ for details on supporting the option in the CRUD API.
 
@@ -230,4 +230,5 @@ Q: How do I create a collection with default collation? Does it affect my existi
 Version History
 ===============
 
-2016-08-31: version 1.0.
+- 2017-05-15: minor markup fixes in API section.
+- 2016-08-31: version 1.0.
