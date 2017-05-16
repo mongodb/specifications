@@ -494,7 +494,7 @@ Read
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
-    returnKey: Optional<Document>;
+    returnKey: Optional<Boolean>;
 
     /**
      * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
@@ -522,7 +522,7 @@ Read
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
-    snapshot: Optional<Document>;
+    snapshot: Optional<Boolean>;
 
     /**
      * The order in which to return matching documents.
