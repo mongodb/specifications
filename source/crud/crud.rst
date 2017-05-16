@@ -516,7 +516,7 @@ Read
     skip: Optional<Int64>;
 
     /**
-     * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
+     * Prevents the cursor from returning a document more than once because of an intervening write operation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
