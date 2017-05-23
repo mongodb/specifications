@@ -1275,7 +1275,7 @@ referring to the table above we see the subroutine is `checkIfHasPrimary`_.
 The result is the TopologyType changes to ReplicaSetNoPrimary.
 See the test scenario called "Network error writing to primary".
 
-The client SHOULD clear its connection pool for the server:
+The client SHOULD close all idle sockets in its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
 Clients MUST NOT request an immediate check of the server;
