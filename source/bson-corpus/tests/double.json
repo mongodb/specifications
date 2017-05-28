@@ -28,16 +28,16 @@
             "relaxed_extjson": "{\"d\" : -1.0001220703125}"
         },
         {
-            "description": "+2.0001220703125e42",
-            "canonical_bson": "10000000016400E3B3C39AD4F5B64800",
-            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"2.0001220703125E+42\"}}",
-            "relaxed_extjson": "{\"d\" : 2.0001220703125e42}"
+            "description": "1.23456789012345677E+18",
+            "canonical_bson": "1000000001640081E97DF41022B14300",
+            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"1.23456789012345677E+18\"}}",
+            "relaxed_extjson": "{\"d\" : 1.23456789012345677E+18}"
         },
         {
-            "description": "-2.0001220703125e42",
-            "canonical_bson": "10000000016400E3B3C39AD4F5B6C800",
-            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"-2.0001220703125E+42\"}}",
-            "relaxed_extjson": "{\"d\" : -2.0001220703125e42}"
+            "description": "-1.23456789012345677E+18",
+            "canonical_bson": "1000000001640081E97DF41022B1C300",
+            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"-1.23456789012345677E+18\"}}",
+            "relaxed_extjson": "{\"d\" : -1.23456789012345677E+18}"
         },
         {
             "description": "0.0",
