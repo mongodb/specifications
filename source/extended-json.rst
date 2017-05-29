@@ -169,7 +169,7 @@ Conversion table
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer          | {"$date": <ISO-8601 Internet Date/Time Format         |
 |\[year from 1970    |giving millisecs relative to the epoch, as a *string*>}}  | as decribed in RFC-3339 [#]_ with maximum time        |
-|to 9999 inclusive\] |                                                          | precision of milliseconds>}                           |
+|to 9999 inclusive\] |                                                          | precision of milliseconds [#]_>}                           |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer          | <Same as Canonical Extended JSON>                     |
 |\[year before 1970  |giving millisecs relative to the epoch, as a *string*>}}  |                                                       |
@@ -209,6 +209,9 @@ Conversion table
 .. [#] See https://docs.mongodb.com/manual/reference/glossary/#term-namespace
 
 .. [#] See https://tools.ietf.org/html/rfc3339#section-5.6
+
+.. [#] Fractional seconds SHOULD have exactly 3 decimal places if the fractional part
+   is non-zero.  Otherwise, fractional seconds SHOULD be omitted if zero.
 
 .. [#] See https://docs.mongodb.com/manual/reference/database-references/#dbrefs
 
