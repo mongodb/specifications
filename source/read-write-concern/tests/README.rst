@@ -48,7 +48,7 @@ Format
 Connection String
 ~~~~~~~~~~~~~~~~~
 
-These tests are designed to excersize the connection string parsing related
+These tests are designed to exercise the connection string parsing related
 to read concern and write concern.
 
 Each YAML file contains an object with a single ``tests`` key. This key is an
