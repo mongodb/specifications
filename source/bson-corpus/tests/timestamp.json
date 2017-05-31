@@ -11,7 +11,7 @@
         {
             "description": "Timestamp with high-order bit set on both seconds and increment",
             "canonical_bson": "10000000116100FFFFFFFFFFFFFFFF00",
-            "canonical_extjson": "{\"a\" : {\"$timestamp\" : {\"t\" : 4294967295, \"i\" :  4294967295} }"
+            "canonical_extjson": "{\"a\" : {\"$timestamp\" : {\"t\" : 4294967295, \"i\" :  4294967295} } }"
         }
     ],
     "decodeErrors": [
