@@ -701,7 +701,9 @@ Q: Where is write concern?
 
   However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but the driver may need to provide a separate parameter for some helpers, since the writeConcern is a top-level command option, not part of an indexModel's indexOptions. For example, whereas the write concern could possibly be included in the indexOptions parameter for createIndex() and extracted in the method implementation, it would be ambiguous to specify write concern for one or more models passed to createIndexes(). The driver would therefore most likely choose to allow the option as a separate parameter for createIndexes().
 
----------
+Q: Do the index operations support maxTimeMS?
+  The createIndexes() and dropIndexes() commands allow the maxTimeMS option, though supporting it as an option is not addressed by this specification. As is discussed above for write concern, the driver may choose to expose this top-level command option; however, for some helpers, the driver may need a separate command options parameter. For other helpers, it may choose to extract maxTimeMS from the indexOptions.
+
 Changelog
 ---------
 
