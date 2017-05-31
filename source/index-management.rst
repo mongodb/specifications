@@ -693,6 +693,15 @@ This specification makes no attempts to be backwards compatible as the target dr
 
 
 ---------
+Q & A
+---------
+
+Q: Where is write concern?
+  The createIndexes and dropIndexes commands take a write concern that indicates how the write is acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different index operations on the same collection would use a different write concern. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
+
+  However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but the driver may need to provide a separate parameter for some helpers, since the writeConcern is a top-level command option, not part of an indexModel's indexOptions. For example, whereas the write concern could possibly be included in the indexOptions parameter for createIndex() and extracted in the method implementation, it would be ambiguous to specify write concern for one or more models passed to createIndexes(). The driver would therefore most likely choose to allow the option as a separate parameter for createIndexes().
+
+---------
 Changelog
 ---------
 
