@@ -718,3 +718,5 @@ Changelog
   - Added note on 3.4 servers validation options passed to ``createIndexes``.
 11 OCT 2016:
   - Add note on server generated name for the _id index.
+31 MAY 2017:
+  - Add Q & A addressing write concern and maxTimeMS option.
