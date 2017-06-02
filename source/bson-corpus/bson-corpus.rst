@@ -108,7 +108,7 @@ Validity test case keys include:
   tests.
 
 * ``canonical_extjson``: a string containing a Canonical Extended JSON document.
-  Becuase this is itself embedded as a *string* inside a JSON document,
+  Because this is itself embedded as a *string* inside a JSON document,
   characters like quote and backslash are escaped.
 
 * ``relaxed_extjson``: (optional) a string containing a Relaxed Extended JSON
@@ -119,6 +119,17 @@ Validity test case keys include:
   of a BSON byte string that is technically parseable, but not in compliance
   with the BSON spec.  Be sure to mangle the case as appropriate in any
   roundtrip tests.
+
+* ``converted_bson``: (optional) an (uppercase) big-endian hex representation
+  of a BSON byte string.  It may be present for deprecated types. It represents
+  a possible conversion of the deprecated type to a non-deprecated type, e.g.
+  symbol to string.
+
+* ``converted_extjson``: (optional) a string containing a Canonical Extended
+  JSON document.  Because this is itself embedded as a *string* inside a JSON
+  document, characters like quote and backslash are escaped.  It may be
+  present for deprecated types and is the Canonical Extended JSON
+  representation of ``converted_bson`.
 
 * ``lossy`` (optional) -- boolean; present (and true) iff ``bson`` can't be
   represented exactly with extended JSON (e.g. NaN with a payload).
@@ -278,9 +289,10 @@ manner.
 Deprecated types
 ----------------
 
-The corpus files for deprecated types are provided for informational
-purposes.  Implementations MAY ignore or modify them to match legacy
-treatment of deprecated types.
+The corpus files for deprecated types are provided for informational purposes.
+Implementations MAY ignore or modify them to match legacy treatment of
+deprecated types.  The ``converted_bson`` and ``converted_extjson`` fields MAY
+be used to test conversion to a standard type or MAY be ignored.
 
 Implementation Notes
 ====================
