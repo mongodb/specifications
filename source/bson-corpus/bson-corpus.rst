@@ -77,8 +77,10 @@ Description of the BSON Corpus
 This BSON test data corpus consists of a JSON file for each BSON type, plus
 a ``top.json`` file for testing the overall, enclosing document and a
 ``multi-type.json`` file for testing a document with all BSON types.
+There is also a ``multi-type-deprecated.json`` that includes deprecated keys.
 
-Top level keys include:
+Top level keys
+~~~~~~~~~~~~~~
 
 * ``description``: human-readable description of what is in the file
 
@@ -99,7 +101,12 @@ Top level keys include:
 * ``deprecated`` (optional): this field will be present (and true) if the
   BSON type has been deprecated (i.e. Symbol, Undefined and DBPointer)
 
-Validity test case keys include:
+Validity test case keys
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Validity test cases include 'canonical' forms of BSON and Extended JSON that
+are deemed equivalent and may provide additional cases or metadata for
+additional assertions.  For each case, keys include:
 
 * ``description``: human-readable test case label.
 
@@ -131,8 +138,11 @@ Validity test case keys include:
   present for deprecated types and is the Canonical Extended JSON
   representation of ``converted_bson`.
 
-* ``lossy`` (optional) -- boolean; present (and true) iff ``bson`` can't be
-  represented exactly with extended JSON (e.g. NaN with a payload).
+* ``lossy`` (optional) -- boolean; present (and true) iff ``canonical_bson``
+  can't be represented exactly with extended JSON (e.g. NaN with a payload).
+
+Decode error case keys
+~~~~~~~~~~~~~~~~~~~~~~
 
 Decode error cases provide an invalid BSON document or field that
 should result in an error. For each case, keys include:
@@ -141,6 +151,9 @@ should result in an error. For each case, keys include:
 
 * ``bson``: an (uppercase) big-endian hex representation of an invalid
   BSON string that should fail to decode correctly.
+
+Parse error case keys
+~~~~~~~~~~~~~~~~~~~~~
 
 Parse error cases are type-specific and represent some input that can not
 be encoded to the ``bson_type`` under test.  For each case, keys include:
@@ -153,13 +166,13 @@ be encoded to the ``bson_type`` under test.  For each case, keys include:
 Extended JSON encoding, escaping and ordering
 ---------------------------------------------
 
-Because the ``extjson`` and ``canonical_extjson`` fields are embedded in a
-JSON document, all their JSON metacharacters are escaped.  Control
-characters and non-ASCII codepoints are represented with ``\uXXXX``.  Note
-that this means that the corpus JSON will appear to have double-escaped
-characters ``\\uXXXX``.  This is by design to ensure that the ``extjson``
-field remains printable ASCII without embedded null characters to ensure
-maximum portability to different language JSON or extended JSON decoders.
+Because the ``canonical_extjson`` and other Extended JSON fields are embedded
+in a JSON document, all their JSON metacharacters are escaped.  Control
+characters and non-ASCII codepoints are represented with ``\uXXXX``.  Note that
+this means that the corpus JSON will appear to have double-escaped characters
+``\\uXXXX``.  This is by design to ensure that the Extended JSON fields remain
+printable ASCII without embedded null characters to ensure maximum portability
+to different language JSON or extended JSON decoders.
 
 There are legal differences in JSON representation that may complicate
 testing for particular codecs.  The JSON in the corpus may not resemble
@@ -185,7 +198,7 @@ any tests which are not supported on that platform.
 Testing validity
 ----------------
 
-To test validity of a case in the ``valid`` array, we consider up to four
+To test validity of a case in the ``valid`` array, we consider up to five
 possible representations:
 
 * Canonical BSON (denoted herein as "cB") -- fully valid, spec-compliant BSON
@@ -196,6 +209,10 @@ possible representations:
 * Canonical Extended JSON (denoted herein as "cEJ") -- A string format based on
   the JSON standard that emphasizes type preservation at the expense of
   readability and interoperability.
+
+* Degenerate Extended JSON (denoted herin as "dEJ") -- An invalid form of
+  Canonical Extended JSON that is still parseable.  (For example, "1e100"
+  instead of "1E+100".)
 
 * Relaxed Extended JSON (denoted herein as "rEJ") -- A string format based on
   the JSON standard that emphasizes readability and interoperability at the
@@ -226,6 +243,10 @@ directly from BSON to JSON or back), the following assertions MUST hold
 
     * bson_to_relaxed_extended_json(dB) = rEJ (if rEJ exists)
 
+* for dEJ input (if it exists):
+
+    * json_to_bson(dEJ) = cB (unless lossy)
+
 * for rEJ input (if it exists):
 
     bson_to_relaxed_extended_json( json_to_bson(rEJ) ) = rEJ
@@ -251,6 +272,12 @@ hold (function names are for clarity of illustration only):
 * for dB input (if it exists):
 
     * native_to_bson( bson_to_native(dB) ) = cB
+
+* for dEJ input:
+
+    * native_to_canonical_extended_json( json_to_native(dEJ) ) = cEJ
+
+    * native_to_bson( json_to_native(dEJ) ) = cB (unless lossy)
 
 * for rEJ input (if it exists):
 
@@ -346,6 +373,10 @@ There is not yet a way to represent Inf, -Inf or NaN in extended JSON.  Even if
 a $numberDouble is added, it is unlikely to support special values with
 payloads, so such doubles would be lossy when converted to extended JSON.
 
+String representation of doubles is fairly unportable so it's hard to provide
+a single string that all platforms/languages will generate.  Testers may
+need to normalize/modify the test cases.
+
 String
 ~~~~~~
 
@@ -356,23 +387,21 @@ extended JSON before comparison.
 DBPointer
 ~~~~~~~~~
 
-This type is deprecated and there is no DBPointer representation in
-extended JSON.  mongoexport converts these to DBRef documents, but such
-conversion is outside the scope of this spec.
+This type is deprecated.  The provided converted form (``converted_bson``)
+represents them as DBRef documents, but such conversion is outside the scope of
+this spec.
 
 Symbol
 ~~~~~~
 
-This type is deprecated and there is no Symbol representation in extended JSON.
-mongoexport converts these to strings, but such conversion is outside the
-scope of this spec.
+This type is deprecated.  The provided converted form converts these to
+strings, but such conversion is outside the scope of this spec.
 
 Undefined
 ~~~~~~~~~
 
-This type is deprecated, but there is a "$undefined" representation in
-extended JSON.
-
+This type is deprecated.  The provided converted form converts these to Null,
+but such conversion is outside the scope of this spec.
 
 Reference Implementation
 ========================
@@ -402,9 +431,9 @@ Repetition across cases
 -----------------------
 
 Some validity cases may result in duplicate assertions across cases,
-particularly if the ``bson`` field is different in different cases, but the
-``canonical_bson`` field is the same.  This is by design so that each case
-stands alone and can be confirmed to be internally consistent via the
+particularly if the ``degenerate_bson`` field is different in different cases,
+but the ``canonical_bson`` field is the same.  This is by design so that each
+case stands alone and can be confirmed to be internally consistent via the
 assertions.  This makes for easier and safer test case development.
 
 Changes
