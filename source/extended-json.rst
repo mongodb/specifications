@@ -169,7 +169,7 @@ Conversion table
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer          | {"$date": <ISO-8601 Internet Date/Time Format         |
 |\[year from 1970    |giving millisecs relative to the epoch, as a *string*>}}  | as decribed in RFC-3339 [#]_ with maximum time        |
-|to 9999 inclusive\] |                                                          | precision of milliseconds [#]_>}                           |
+|to 9999 inclusive\] |                                                          | precision of milliseconds [#]_>}                      |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Datetime            |{"$date": {"$numberLong": <64-bit signed integer          | <Same as Canonical Extended JSON>                     |
 |\[year before 1970  |giving millisecs relative to the epoch, as a *string*>}}  |                                                       |

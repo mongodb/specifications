@@ -229,27 +229,27 @@ directly from BSON to JSON or back), the following assertions MUST hold
 
 * for cB input:
 
-    * bson_to_canonical_extended_json(cB) = cEJ
+  * bson_to_canonical_extended_json(cB) = cEJ
 
-    * bson_to_relaxed_extended_json(cB) = rEJ (if rEJ exists)
+  * bson_to_relaxed_extended_json(cB) = rEJ (if rEJ exists)
 
 * for cEJ input:
 
-    * json_to_bson(cEJ) = cB (unless lossy)
+  * json_to_bson(cEJ) = cB (unless lossy)
 
 * for dB input (if it exists):
 
-    * bson_to_canonical_extended_json(dB) = cEJ
+  * bson_to_canonical_extended_json(dB) = cEJ
 
-    * bson_to_relaxed_extended_json(dB) = rEJ (if rEJ exists)
+  * bson_to_relaxed_extended_json(dB) = rEJ (if rEJ exists)
 
 * for dEJ input (if it exists):
 
-    * json_to_bson(dEJ) = cB (unless lossy)
+  * json_to_bson(dEJ) = cB (unless lossy)
 
 * for rEJ input (if it exists):
 
-    bson_to_relaxed_extended_json( json_to_bson(rEJ) ) = rEJ
+  *  bson_to_relaxed_extended_json( json_to_bson(rEJ) ) = rEJ
 
 For a codec that has a language-native representation, we want to test both
 conversion and round-tripping.  For these codecs, the following assertions MUST
@@ -257,31 +257,31 @@ hold (function names are for clarity of illustration only):
 
 * for cB input:
 
-    * native_to_bson( bson_to_native(cB) ) = cB
+  * native_to_bson( bson_to_native(cB) ) = cB
 
-    * native_to_canonical_extended_json( bson_to_native(cB) ) = cEJ
+  * native_to_canonical_extended_json( bson_to_native(cB) ) = cEJ
 
-    * native_to_relaxed_extended_json( bson_to_native(cB) ) = rEJ (if rEJ exists)
+  * native_to_relaxed_extended_json( bson_to_native(cB) ) = rEJ (if rEJ exists)
 
 * for cEJ input:
 
-    * native_to_canonical_extended_json( json_to_native(cEJ) ) = cEJ
+  * native_to_canonical_extended_json( json_to_native(cEJ) ) = cEJ
 
-    * native_to_bson( json_to_native(cEJ) ) = cB (unless lossy)
+  * native_to_bson( json_to_native(cEJ) ) = cB (unless lossy)
 
 * for dB input (if it exists):
 
-    * native_to_bson( bson_to_native(dB) ) = cB
+  * native_to_bson( bson_to_native(dB) ) = cB
 
-* for dEJ input:
+* for dEJ input (if it exists):
 
-    * native_to_canonical_extended_json( json_to_native(dEJ) ) = cEJ
+  * native_to_canonical_extended_json( json_to_native(dEJ) ) = cEJ
 
-    * native_to_bson( json_to_native(dEJ) ) = cB (unless lossy)
+  * native_to_bson( json_to_native(dEJ) ) = cB (unless lossy)
 
 * for rEJ input (if it exists):
 
-    * native_to_relaxed_extended_json( json_to_native(rEJ) ) = rEJ
+  * native_to_relaxed_extended_json( json_to_native(rEJ) ) = rEJ
 
 Implementations MAY test assertions in an implementation-specific
 manner.
