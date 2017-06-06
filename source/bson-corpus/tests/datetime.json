@@ -20,6 +20,11 @@
             "canonical_bson": "10000000096100C33CE7B9BDFFFFFF00",
             "relaxed_extjson": "{\"a\" : {\"$date\" : {\"$numberLong\" : \"-284643869501\"}}}",
             "canonical_extjson": "{\"a\" : {\"$date\" : {\"$numberLong\" : \"-284643869501\"}}}"
+        },
+        {
+            "description" : "Y10K",
+            "canonical_bson" : "1000000009610000DC1FD277E6000000",
+            "canonical_extjson" : "{\"a\":{\"$date\":{\"$numberLong\":\"253402300800000\"}}}"
         }
     ],
     "decodeErrors": [
