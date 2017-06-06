@@ -1,6 +1,6 @@
 {
     "description": "Maxkey type",
-    "bson_type": "0xFF",
+    "bson_type": "0x7F",
     "test_key": "a",
     "valid": [
         {
