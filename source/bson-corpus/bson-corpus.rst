@@ -295,7 +295,7 @@ the BSON schema (e.g. reading arrays with invalid keys is possible, even
 though technically invalid, so they are *not* ``decodeErrors``).
 
 Drivers SHOULD test that each case results in a decoding error.
-Implementations MAY to test assertion in an implementation-specific
+Implementations MAY test assertions in an implementation-specific
 manner.
 
 Testing parsing errors
@@ -310,7 +310,7 @@ The documentation for a type (if any) will specify how to use these
 cases for testing.
 
 Drivers SHOULD test that each case results in a parse error.
-Implementations MAY to test assertion in an implementation-specific
+Implementations MAY test assertions in an implementation-specific
 manner.
 
 Deprecated types
