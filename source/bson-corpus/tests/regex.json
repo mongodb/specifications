@@ -33,7 +33,8 @@
             "description": "flags not alphabetized",
             "degenerate_bson": "100000000B6100616263006D69780000",
             "canonical_bson": "100000000B610061626300696D780000",
-            "canonical_extjson": "{\"a\" : {\"$regex\" : \"abc\", \"$options\" : \"imx\"}}"
+            "canonical_extjson": "{\"a\" : {\"$regex\" : \"abc\", \"$options\" : \"imx\"}}",
+            "degenerate_extjson": "{\"a\" : {\"$regex\" : \"abc\", \"$options\" : \"mix\"}}"
         },
         {
             "description" : "Required escapes",
