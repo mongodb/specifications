@@ -9,6 +9,12 @@
             "canonical_extjson": "{\"x\" : {\"$binary\" : \"\", \"$type\" : \"00\"}}"
         },
         {
+            "description": "subtype 0x00 (Zero-length, keys reversed)",
+            "canonical_bson": "0D000000057800000000000000",
+            "canonical_extjson": "{\"x\" : {\"$binary\" : \"\", \"$type\" : \"00\"}}",
+            "degenerate_extjson": "{\"x\" : {\"$type\" : \"00\", \"$binary\" : \"\"}}"
+        },
+        {
             "description": "subtype 0x00",
             "canonical_bson": "0F0000000578000200000000FFFF00",
             "canonical_extjson": "{\"x\" : {\"$binary\" : \"//8=\", \"$type\" : \"00\"}}"
