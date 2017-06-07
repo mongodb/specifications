@@ -16,6 +16,16 @@
             "description": "Document that resembles extended JSON, but with missing keys",
             "canonical_bson": "1A000000022462696E6172790008000000616263646566670000",
             "canonical_extjson": "{\"$binary\": \"abcdefg\"}"
+        },
+        {
+            "description" : "Nested document that resembles extjson, but with extra keys",
+            "canonical_bson" : "38000000036100300000000224726567657800040000006162630002246F7074696F6E7300010000000008756E72656C6174656400010000",
+            "canonical_extjson" : "{\"a\":{\"$regex\":\"abc\",\"$options\":\"\",\"unrelated\":true}}"
+        },
+        {
+            "description" : "Nested document that resembles extjson, but with missing keys",
+            "canonical_bson" : "1D00000003610015000000022472656765780004000000616263000000",
+            "canonical_extjson" : "{\"a\":{\"$regex\":\"abc\"}}"
         }
     ],
     "decodeErrors": [
