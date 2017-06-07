@@ -75,5 +75,95 @@
             "description": "Document truncated mid-key",
             "bson": "1200000002666F"
         }
+    ],
+    "parseErrors": [
+        {
+            "description": "Bad $oid (number, not string)",
+            "string": "{\"a\" : {\"$oid\" : 42}}"
+        },
+        {
+            "description": "Bad $numberInt (number, not string)",
+            "string": "{\"a\" : {\"$numberInt\" : 42}}"
+        },
+        {
+            "description": "Bad $numberLong (number, not string)",
+            "string": "{\"a\" : {\"$numberLong\" : 42}}"
+        },
+        {
+            "description": "Bad $numberDouble (number, not string)",
+            "string": "{\"a\" : {\"$numberDouble\" : 42}}"
+        },
+        {
+            "description": "Bad $numberDecimal (number, not string)",
+            "string": "{\"a\" : {\"$numberDecimal\" : 42}}"
+        },
+        {
+            "description": "Bad $numberDecimal (number, not string)",
+            "string": "{\"a\" : {\"$numberDecimal\" : 42}}"
+        },
+        {
+            "description": "Bad $binary (binary is number, not string)",
+            "string": "{\"x\" : {\"$binary\" : 0, \"$type\" : \"00\"}}"
+        },
+        {
+            "description": "Bad $binary (type is number, not string)",
+            "string": "{\"x\" : {\"$binary\" : \"\", \"$type\" : 0}}"
+        },
+        {
+            "description": "Bad $code (type is number, not string)",
+            "string": "{\"a\" : {\"$code\" : 42}}"
+        },
+        {
+            "description": "Bad $code with $scope (scope is number, not doc)",
+            "string": "{\"x\" : {\"$code\" : \"\", \"$scope\" : 42}}"
+        },
+        {
+            "description": "Bad $timestamp (type is number, not doc)",
+            "string": "{\"a\" : {\"$timestamp\" : 42} }"
+        },
+        {
+            "description": "Bad $timestamp ('t' type is string, not number)",
+            "string": "{\"a\" : {\"$timestamp\" : {\"t\" : \"123456789\", \"i\" : 42} } }"
+        },
+        {
+            "description": "Bad $timestamp ('i' type is string, not number)",
+            "string": "{\"a\" : {\"$timestamp\" : {\"t\" : 123456789, \"i\" : \"42\"} } }"
+        },
+        {
+            "description": "Bad $regex (regex is number, not string)",
+            "string": "{\"x\" : {\"$regex\" : 42, \"$options\" : \"\"}}"
+        },
+        {
+            "description": "Bad $regex (options are number, not string)",
+            "string": "{\"x\" : {\"$regex\" : \"a\", \"$options\" : 0}}"
+        },
+        {
+            "description": "Bad $date (number, not string or hash)",
+            "string": "{\"a\" : {\"$date\" : 42}}"
+        },
+        {
+            "description": "Bad $dbref (ref is number, not string)",
+            "string": "{\"x\" : {\"$ref\" : 42, \"$id\" : \"abc\"}}"
+        },
+        {
+            "description": "Bad $dbref (db is number, not string)",
+            "string": "{\"x\" : {\"$ref\" : \"a\", \"$id\" : \"abc\", \"$db\" : 42}}"
+        },
+        {
+            "description": "Bad $minKey (boolean, not integer)",
+            "string": "{\"a\" : {\"$minKey\" : true}}"
+        },
+        {
+            "description": "Bad $minKey (wrong integer)",
+            "string": "{\"a\" : {\"$minKey\" : 0}}"
+        },
+        {
+            "description": "Bad $maxKey (boolean, not integer)",
+            "string": "{\"a\" : {\"$maxKey\" : true}}"
+        },
+        {
+            "description": "Bad $maxKey (wrong integer)",
+            "string": "{\"a\" : {\"$maxKey\" : 0}}"
+        }
     ]
 }

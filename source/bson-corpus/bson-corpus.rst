@@ -309,6 +309,10 @@ will *not* convert correctly.
 The documentation for a type (if any) will specify how to use these
 cases for testing.
 
+For type "0x00" (i.e. top-level documents), the ``parseErrors`` entries have a
+``description`` field and an ``string`` field.  Parsing the ``string`` field
+as Extended JSON MUST result in an error.
+
 Drivers SHOULD test that each case results in a parse error.
 Implementations MAY test assertions in an implementation-specific
 manner.
