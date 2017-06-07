@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.8
-:Last Modified: February 28, 2017
+:Version: 2.9
+:Last Modified: June 13, 2017
 
 .. contents::
 
@@ -396,18 +396,6 @@ the driver MUST NOT permit users to configure it less than minHeartbeatFrequency
 
 (See `heartbeatFrequencyMS defaults to 10 seconds or 60 seconds`_
 and `what's the point of periodic monitoring?`_)
-
-socketCheckIntervalMS
-`````````````````````
-
-If a socket has not been used recently,
-a single-threaded client MUST check it, by using it for an ismaster call,
-before using it for any operation.
-The default MUST be 5 seconds, and it MAY be configurable.
-
-Only for single-threaded clients.
-
-(See `what is the purpose of socketCheckIntervalMS?`_).
 
 Client construction
 '''''''''''''''''''
@@ -844,7 +832,7 @@ In this pseudocode, "description" is the prior ServerDescription::
             else:
                 # We've been connected to this server in the past, retry once.
                 try:
-                    call ismaster
+                    reconnect and call ismaster
                     return new ServerDescription
                 except NetworkError as e1:
                     return new ServerDescription with type=Unknown, error=e1
@@ -1671,26 +1659,6 @@ In this state, the client should check the server very frequently,
 to give it ample opportunity to connect to the server before
 timing out in server selection.
 
-What is the purpose of socketCheckIntervalMS?
-'''''''''''''''''''''''''''''''''''''''''''''
-
-Single-threaded clients need to make a compromise:
-if they check servers too frequently it slows down regular operations,
-but if they check too rarely they cannot proactively avoid errors.
-
-Errors are more disruptive for single-threaded clients than for multi-threaded.
-If one thread in a multi-threaded process encounters an error,
-it warns the other threads not to use the disconnected server.
-But single-threaded clients are deployed as many independent processes
-per application server, and each process must throw an error
-until all have discovered that a server is down.
-
-The compromise specified here
-balances the cost of frequent checks against the disruption of many errors.
-The client preemptively checks individual sockets
-that have not been used in the last `socketCheckIntervalMS`_,
-which is more frequent by default than `heartbeatFrequencyMS`_.
-
 No knobs
 ''''''''
 
@@ -2238,3 +2206,5 @@ future.
 connecting does mark a server Unknown, unlike a timeout while reading or
 writing. Justify the different behaviors, and also remove obsolete reference
 to auto-retry.
+
+2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
