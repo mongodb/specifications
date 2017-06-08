@@ -152,11 +152,11 @@
             "string": "{\"a\" : {\"$date\" : 42}}"
         },
         {
-            "description": "Bad $dbref (ref is number, not string)",
+            "description": "Bad DBRef (ref is number, not string)",
             "string": "{\"x\" : {\"$ref\" : 42, \"$id\" : \"abc\"}}"
         },
         {
-            "description": "Bad $dbref (db is number, not string)",
+            "description": "Bad DBRef (db is number, not string)",
             "string": "{\"x\" : {\"$ref\" : \"a\", \"$id\" : \"abc\", \"$db\" : 42}}"
         },
         {
