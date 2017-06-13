@@ -13,9 +13,9 @@ Wire Compression in Drivers
             Dana Groff (2017-05-02) 
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2017-05-10
+:Last Modified: 2017-06-13
 :Minimum Server Version: 3.4
-:Version: 1.0
+:Version: 1.1
 
 
 Abstract
@@ -226,10 +226,14 @@ requests.
 MongoDB 3.4 will always reply with a compressed response when compression has
 been negotiated, but future versions may not.
 
+A client MAY choose to implement compression for only ``OP_QUERY``,
+``OP_REPLY``, and ``OP_MSG``, and perhaps for future opcodes, but not to
+implement it for ``OP_INSERT``, ``OP_UPDATE``, ``OP_DELETE``, ``OP_GETMORE``,
+and ``OP_KILLCURSORS``.
+
 Note that certain messages, such as authentication commands, MUST NOT be
 compressed. All other messages MUST be compressed, when compression has been
-negotiated.
-
+negotiated and the driver has implemented compression for the opcode in use.
 
 
 Messages not allowed to be compressed
@@ -469,7 +473,9 @@ Q & A
 Changelog
 =========
 
-+------------+----------------+
-| 2017-05-10 | Initial commit |
-+------------+----------------+
++------------+---------------------------------------------------+
+| 2017-06-13 | Don't require clients to implement legacy opcodes |
++------------+---------------------------------------------------+
+| 2017-05-10 | Initial commit                                    |
++------------+---------------------------------------------------+
 
