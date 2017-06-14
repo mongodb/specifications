@@ -20,16 +20,17 @@
             "converted_extjson": "{\"a\": {\"$ref\": \"b\", \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}}}"
         },
         {
-            "description": "DBpointer with extra keys",
-            "canonical_bson": "490000000361004100000003246462506F696E746572003000000010610001000000072469640056E1FC72E0C917E9C471416110630002000000022472656600020000006200000000",
-            "canonical_extjson": "{\"a\": {\"$dbPointer\": {\"a\": {\"$numberInt\": \"1\"}, \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}, \"c\": {\"$numberInt\": \"2\"}, \"$ref\": \"b\"}}}"
-        },
-        {
             "description": "With two-byte UTF-8",
             "canonical_bson": "1B0000000C610003000000C3A90056E1FC72E0C917E9C471416100",
             "canonical_extjson": "{\"a\": {\"$dbPointer\": {\"$ref\": \"é\", \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}}}}",
             "converted_bson": "2B0000000361002300000002247265660003000000C3A900072469640056E1FC72E0C917E9C47141610000",
             "converted_extjson": "{\"a\": {\"$ref\": \"é\", \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}}}"
+        }
+    ],
+    "parseErrors": [
+        {
+            "description": "DBpointer with extra keys",
+            "string": "{\"a\": {\"$dbPointer\": {\"a\": {\"$numberInt\": \"1\"}, \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}, \"c\": {\"$numberInt\": \"2\"}, \"$ref\": \"b\"}}}"
         }
     ],
     "decodeErrors": [

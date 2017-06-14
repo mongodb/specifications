@@ -269,6 +269,11 @@ MUST follow these rules:
   the document ``{"$code": "function(){}", "$scope": {}}`` must be considered
   identical to ``{"$scope": {}, "$code": "function(){}"}``.
 
+* If the parsed object contains any of the special **keys** in the Conversion
+  table such as ``"$binary"``, ``"$timestamp"``, etc., then it must contain
+  exactly the keys of a type wrapper. Any missing or extra keys constitute an
+  error.
+
 * If the **keys** of the parsed object exactly match the **keys** of a type
   wrapper in the Conversion table, and the **values** of the parsed object have
   the correct type for the type wrapper as described in the Conversion table,
@@ -278,15 +283,6 @@ MUST follow these rules:
 * If the **keys** of the parsed object exactly match the **keys** of a type
   wrapper in the Conversion table, but any the **values** are of an incorrect
   type, then the parser MUST report an error.
-
-* Otherwise, the parser MUST interpret the parsed object as an ordinary JSON
-  object.
-
-For example::
-
-    { "$regex": "12.34", "$options": "ms" }   # Regex type wrapper
-    { "$regex":  12.34 , "$options": "ms" }   # error [number, not string]
-    { "$regex": "12.34"                   }   # ordinary JSON object
 
 .. _section 9: https://tools.ietf.org/html/rfc7159#section-9
 
@@ -383,38 +379,11 @@ means that the Extended JSON representation of a document with ``$``-prefixed
 keys could be indistinguishable from another document with a type wrapper with
 the same keys.
 
-For example, consider these two Perl driver examples::
-
-    # (1) Query with BSON type 0x0B (regular expression)
-    $coll->find( name => qr/David/i );
-
-    # (2) Query with BSON type 0x03 (document) with server
-    # meta operators for regular expression search
-    $coll->find( name => { '$regex' => 'David', '$options' => 'i' } );
-
-In BSON (shown here in big-endian hexadecimal), these are distinct filter
-expressions::
-
-    # (1) with BSON type 0x0b
-    130000000b6e616d6500646176696400690000
-
-    # (2) with BSON type 0x03
-    32000000036e616d65002700000002247265676578000600000064617669640002246f7074696f6e73000200000069000000
-
-However, they both serialize to the *same* Canonical Extended JSON::
-
-    {"name":{"$regex":"david","$options":"i"}}
-
-When parsed from Extended JSON, this will result in a document with BSON type
-0x0b (regular expression), not 0x03 (document).
-
 Extended JSON formats SHOULD NOT be used in contexts where ``$``-prefixed keys
 could exist in BSON documents.
 
 Test Plan
 =========
-
-[Test corpus to be revised]
 
 Drivers, tools, and libraries can test their compliance to this specification by
 running the tests in version 2.0 and above of the `BSON Corpus Test Suite`_.
@@ -572,10 +541,10 @@ for readability)::
   }
 
 Relaxed Extended JSON Example
--------------------------------
+-----------------------------
 
 In Relaxed Extended JSON, the example document is transformed similarly
-to Canonical Extended JSON, with the exeception of the following
+to Canonical Extended JSON, with the exception of the following
 keys (newlines and spaces added for readability)::
 
   {
@@ -607,7 +576,7 @@ Design Rationale
 ================
 
 Of Relaxed and Canonical Formats
----------------------------------
+--------------------------------
 
 There are various use cases for expressing BSON documents in a text rather
 that binary format.  They broadly fall into two categories:
