@@ -11,8 +11,8 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: Jan. 09, 2017
-:Version: 1.1
+:Last Modified: June 10, 2017
+:Version: 1.2
 
 .. contents::
 
@@ -69,9 +69,7 @@ The user information if present, is followed by a commercial at-sign ("@") that 
 
 A password may be supplied as part of the user information and is anything after the first colon (":") up until the end of the user information.
 
-If the username, or password section contains a percent sign ("%"), an at-sign ("@") or a colon (":") it MUST be URL encoded.
-
-If the user information contains an at-sign ("@") or more than one colon (":") then an exception MUST be thrown informing the user that the username and password must be URL encoded.
+Both username and password MUST be encoded according to `RFC 3986 Section 2.1, "Percent-Encoding" <https://tools.ietf.org/html/rfc3986#section-2.1>`_. If the user information contains an at-sign ("@") or more than one colon (":") then an exception MUST be thrown informing the user that the username and password must be URL encoded. (For historical reasons, this spec does not require drivers to throw an exception if other characters listed in RFC 3986 as delimiters appear in the username or password.)
 
 ----------------
 Host Information
@@ -106,10 +104,14 @@ Port (optional)
 ~~~~~~~~~~~~~~~
 The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
 
+.. _database contains no prohibited characters:
+
 ------------------------
 Auth Database (optional)
 ------------------------
 The database to authenticate against. If provided it is everything after the Host Information (ending with "/") and up to the first question mark ("?") or end of string. The auth database MUST be URL decoded by the parser.
+
+The following characters MUST NOT appear in the database name, once it has been decoded: slash ("/"), backslash ("\\"), space (" "), double-quote ("""), or dollar sign ("$"). The MongoDB Manual `says that <https://docs.mongodb.com/manual/reference/limits/#Restrictions-on-Field-Names>`_ period (".") is also prohibited, but drivers MAY allow periods in order to express a namespace (database and collection name, perhaps containing multiple periods) in this part of the URL.
 
 -----------------------------
 Connection Options (optional)
@@ -265,7 +267,7 @@ Given the string ``mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-270
 
 1. Validate and remove the scheme prefix ``mongodb://``, leaving: ``foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1``
 
-2. Split the string by the last, unescaped ``/`` (if any), yielding:
+2. Split the string by the first, unescaped ``/`` (if any), yielding:
 
    1. User information and host identifers: ``foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock``.
 
@@ -289,7 +291,9 @@ Given the string ``mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-270
 
 7. URL decode the auth database. In this example, the auth database is ``admin``.
 
-8. Validate, split, and URL decode the connection options. In this example, the connection options are ``{w: 1}``.
+8. Validate the `database contains no prohibited characters`_.
+
+9. Validate, split, and URL decode the connection options. In this example, the connection options are ``{w: 1}``.
 
 ---
 Q&A
@@ -353,3 +357,6 @@ Changes
 
 - 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
 - 2016-07-22: In Port section, clarify that zero is not an acceptable port.
+- 2017-06-10: In Userinfo section, require username and password to be fully URI
+  encoded, not just "%", "@", and ":". In Auth Database, list the prohibited
+  characters. In Reference Implementation, split at the first "/", not the last.
