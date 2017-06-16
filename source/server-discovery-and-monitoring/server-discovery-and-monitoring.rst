@@ -143,12 +143,9 @@ Round trip time
 
 Also known as RTT.
 
-The client's measurement of the duration of an ismaster call.
+The client's measurement of the duration of one ismaster call.
 The round trip time is used to support the "localThresholdMS" [1]_
 option in the Server Selection Spec.
-Even though this measurement is called "ping time" in that spec,
-`drivers MUST NOT use the "ping" command`_ to measure this duration.
-`This spec does not mandate how round trip time is averaged`_.
 
 ismaster outcome
 ````````````````
@@ -751,8 +748,8 @@ roundTripTime
 `````````````
 
 Drivers MUST record the server's `round trip time`_ (RTT)
-after each successful call to ismaster,
-but `this spec does not mandate how round trip time is averaged`_.
+after each successful call to ismaster. The Server Selection Spec describes how
+RTT is averaged and how it is used in server selection.
 
 If an ismaster call fails, the RTT is not updated.
 Furthermore, while a server's type is Unknown its RTT is null,
@@ -1682,27 +1679,6 @@ Only support replica set members running MongoDB 1.6.2 or later
 
 Replica set members began reporting their setNames in that version.
 Supporting earlier versions is impractical.
-
-Drivers must not use the "ping" command
-'''''''''''''''''''''''''''''''''''''''
-
-Since discovery and monitoring require calling the "ismaster" command anyway,
-drivers MUST standardize on the ismaster command instead of the "ping" command
-to measure round-trip time to each server.
-
-Additionally, the ismaster command is widely viewed as a special command used
-when a client makes its initial connection to the server,
-so it is less likely than "ping" to require authentication soon.
-
-This spec does not mandate how round trip time is averaged
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-The Server Selection Spec requires drivers to calculate a round trip time
-for each server to support the localThresholdMS option.
-That spec calls this measurement the "ping time".
-The measurement probably should be a moving average of some sort,
-but it is not in the scope of this spec to mandate how drivers
-should average the measurements.
 
 TopologyType remains Unknown when an RSGhost is discovered
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
