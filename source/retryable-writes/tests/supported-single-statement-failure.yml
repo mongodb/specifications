@@ -1,0 +1,123 @@
+data:
+    - { _id: 1, x: 11 }
+
+minServerVersion: '3.6'
+
+# Each test expects an error due to successive network errors for the first
+# write command. The fail point drops the connection after executing the write
+# command but before its result would be returned, so we still observe changes
+# to the collection. Additionally, our observations assert that the subsequent
+# retry attempt abides exactly-once semantics.
+tests:
+    -
+        description: "DeleteOne fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "deleteOne"
+            arguments:
+                filter: { _id: 1 }
+        outcome:
+            error: true
+            collection:
+                data: []
+    -
+        description: "FindOneAndDelete fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "FindOneAndDelete"
+            arguments:
+                filter: { _id: 1 }
+        outcome:
+            error: true
+            collection:
+                data: []
+    -
+        description: "FindOneAndReplace fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "FindOneAndReplace"
+            arguments:
+                filter: { _id: 1 }
+                replacement: { _id: 1, x: 111 }
+                returnDocument: Before
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 111 }
+    -
+        description: "FindOneAndUpdate fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "FindOneAndUpdate"
+            arguments:
+                filter: { _id: 1 }
+                update: { $inc: { x : 1 }}
+                }
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 12 }
+    -
+        description: "InsertOne fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "insertOne"
+            arguments:
+                document: { _id: 2, x: 22 }
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+    -
+        description: "ReplaceOne fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "replaceOne"
+            arguments:
+                filter: { _id: 1 }
+                replacement: { _id: 1, x: 111 }
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 111 }
+    -
+        description: "UpdateOne fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "updateOne"
+            arguments:
+                filter: { _id: 1 }
+                update: { $inc: { x : 1 }}
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 12 }
+    -
+        description: "UpdateOne fails with upsert after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "updateOne"
+            arguments:
+                filter: { _id: 2, x: 22 }
+                update: { $inc: { x : 1 }}
+                upsert: true
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 23 }
