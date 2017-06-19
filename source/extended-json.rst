@@ -161,8 +161,8 @@ Conversion table
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Timestamp           |{"$timestamp": {"t": *pos-integer*, "i": *pos-integer*}}  | <Same as Canonical Extended JSON>                     |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
-|Regex               |{"$regex": *string*, "$options": <BSON regex options as a | <Same as Canonical Extended JSON>                     |
-|                    |*string* or "" [#]_>}                                     |                                                       |
+|Regex               |{"$regularExpression": {pattern: *string*,                | <Same as Canonical Extended JSON>                     |
+|                    |"options": <BSON regex options as a *string* or "" [#]_>}} |                                                       |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |DBPointer           |{"$dbPointer": {"$ref": <namespace [#]_ as a *string*>,   | <Same as Canonical Extended JSON>                     |
 |                    |"$id": *ObjectId*}}                                       |                                                       |
@@ -204,7 +204,7 @@ Conversion table
 
 .. [#] This MUST conform to the `Decimal128 specification`_
 
-.. [#] BSON Regex options MUST be in alphabetical order.
+.. [#] BSON Regular Expression options MUST be in alphabetical order.
 
 .. [#] See https://docs.mongodb.com/manual/reference/glossary/#term-namespace
 
@@ -414,7 +414,7 @@ Consider the following document, written in Groovy with the MongoDB Java Driver:
     "Subdocument": new Document("foo", "bar"),
     "Array": Arrays.asList(1, 2, 3, 4, 5),
     "Timestamp": new BSONTimestamp(42, 1),
-    "Regex": new BsonRegularExpression("pattern"),
+    "Regex": new BsonRegularExpression("foo*", "xi"),
     "DatetimeEpoch": new Date(0),
     "DatetimePositive": new Date(Long.MAX_VALUE),
     "DatetimeNegative": new Date(Long.MIN_VALUE),
@@ -487,8 +487,10 @@ for readability)::
          "$timestamp": { "t": 42, "i": 1 }
      },
      "Regex": {
-         "$regex": "pattern",
-         "$options": ""
+         "$regularExpression": { 
+             "pattern": "foo*", 
+             "options": "ix" 
+         }
      },
      "DatetimeEpoch": {
          "$date": {
@@ -627,9 +629,20 @@ to Legacy Extended JSON:
 
 3. No Legacy Extended JSON representation existed.
 
-If a BSON type fell into category (1), this specification just declares that
-form to be canonical, since all drivers, tools, and libraries already know how
-to parse or output this form.
+If a BSON type fell into category (1), this specification just declares that 
+form to be canonical, since all drivers, tools, and libraries already know how 
+to parse or output this form.  The one exception is the regular expression type:
+
+RegularExpression
+'''''''''''''''''
+
+The form ``{"$regex: <string>, $options: <string>"}`` has until this 
+specification been canonical. The change to ``{"$regularExpression": 
+{pattern: <string>, "options": <string>"}}`` is motivated by a conflict between
+the previous canonical form and the ``$regex`` MongoDB query operator. The form 
+specified here disambiguates between the two, such that a parser can accept any
+MongoDB query, even one containing the ``$regex`` operator.
+
 
 Reconciled type wrappers
 ........................
@@ -815,6 +828,9 @@ v2.0.0
 * Changed BSON timestamp type wrapper back to ``{"t": *int*, "i": *int*}`` for
   backwards compatibility.  (The change in v1 to unsigned 64-bit string was
   premature optimization.)
+
+* Changed BSON regular expression type wrapper to 
+  ``{"$regularExpression": {pattern: *string*, "options": *string*"}}``.  
 
 * Added "Restrictions and limitations" section.
 
