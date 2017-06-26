@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Jan. 09, 2017
+:Last Modified: June 26, 2017
 
 .. contents::
 
@@ -1534,9 +1534,13 @@ Q: What about explain?
 Q: Where did modifiers go in FindOptions?
   MongoDB 3.2 introduced the find command. As opposed to using the general "modifiers" field any longer, each relevant option is listed explicitly. Some options, such as "tailable" or "singleBatch" are not listed as they are derived from other fields. Upgrading a driver should be a simple procedure of deprecating the "modifiers" field and introducing the new fields. When a collision occurs, the explicitly specified field should override the value in "modifiers".
 
+Q: Where is ``save``?
+  Drivers have historically provided a ``save`` method, which was syntactic sugar for upserting or inserting a document based on whether it contained an identifier, respectively. While the ``save`` method may be convenient for interactive environments, such as the shell, it was intentionally excluded from the CRUD specification for language drivers for several reasons. The ``save`` method promotes a design pattern of "fetch, modify, replace" and invites race conditions in application logic. Additionally, the split nature of ``save`` makes it difficult to discern at a glance if application code will perform an insert or potentially dangerous full-document replacement. Instead of relying on ``save``, application code should know whether document already has an identifier and explicitly call ``insertOne`` or ``replaceOne`` with the ``upsert`` option.
+
 Changes
 =======
 
+* 2017-06-26: Added FAQ entry for omission of save method.
 * 2017-01-09: Removed modifiers from FindOptions and added in all options.
 * 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
 * 2017-01-09: Reworded description of how default values are handled and when to send certain options.
