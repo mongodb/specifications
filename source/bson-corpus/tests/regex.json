@@ -43,8 +43,8 @@
         },
         {
             "description" : "Regular expression as value of $regex query operator",
-            "canonical_bson" : "160000000B247265676578007061747465726E000000",
-            "canonical_extjson": "{\"$regex\" : {\"$regularExpression\" : { \"pattern\": \"pattern\", \"options\" : \"\"}}}"
+            "canonical_bson" : "180000000B247265676578007061747465726E0069780000",
+            "canonical_extjson": "{\"$regex\" : {\"$regularExpression\" : { \"pattern\": \"pattern\", \"options\" : \"ix\"}}}"
         },
         {
             "description" : "Regular expression as value of $regex query operator with $options",
