@@ -129,23 +129,23 @@
         },
         {
             "description": "Bad $binary (binary is number, not string)",
-            "string": "{\"x\" : {\"$binary\" : 0, \"$type\" : \"00\"}}"
+            "string": "{\"x\" : {\"$binary\" : {\"hex\" : 0, \"subType\" : \"00\"}}}"
         },
         {
             "description": "Bad $binary (type is number, not string)",
-            "string": "{\"x\" : {\"$binary\" : \"\", \"$type\" : 0}}"
+            "string": "{\"x\" : {\"$binary\" : {\"hex\" : \"\", \"subType\" : 0}}}"
         },
         {
             "description": "Bad $binary (missing $type)",
-            "string": "{\"x\" : {\"$binary\" : \"//8=\"}}"
+            "string": "{\"x\" : {\"$binary\" : {\"hex\" : \"//8=\"}}}"
         },
         {
             "description": "Bad $binary (missing $binary)",
-            "string": "{\"x\" : {\"$type\" : \"00\"}}"
+            "string": "{\"x\" : {\"$binary\" : {\"subType\" : \"00\"}}}"
         },
         {
             "description": "Bad $binary (extra field)",
-            "string": "{\"x\" : {\"$binary\" : \"//8=\", \"$type\" : 0, \"unrelated\": true}}"
+            "string": "{\"x\" : {\"$binary\" : {\"hex\" : \"//8=\", \"subType\" : 0, \"unrelated\": true}}}"
         },
         {
             "description": "Bad $code (type is number, not string)",
