@@ -53,8 +53,12 @@
             "description": "$type query operator (conflicts with legacy $binary form with $type field)",
             "canonical_bson": "1F000000037800170000000224747970650007000000737472696E67000000",
             "canonical_extjson": "{\"x\" : { \"$type\" : \"string\"}}"
+        },
+        {
+            "description": "$type query operator (conflicts with legacy $binary form with $type field)",
+            "canonical_bson": "180000000378001000000010247479706500020000000000",
+            "canonical_extjson": "{\"x\" : { \"$type\" : {\"$numberInt\": \"2\"}}}"
         }
-
     ],
     "decodeErrors": [
         {
