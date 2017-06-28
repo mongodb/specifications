@@ -914,6 +914,10 @@ v2.0.0
 * Changed BSON regular expression type wrapper to 
   ``{"$regularExpression": {pattern: *string*, "options": *string*"}}``.  
 
+* Changed BSON binary type wrapper to
+  ``{"$binary": {"base64": <base64-encoded payload as a *string*>,
+  "subType": <BSON binary type as a one- or two-character *hex string*>}}``
+
 * Added "Restrictions and limitations" section.
 
 * Clarified parser and generator rules.
