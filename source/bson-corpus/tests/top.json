@@ -129,15 +129,15 @@
         },
         {
             "description": "Bad $binary (binary is number, not string)",
-            "string": "{\"x\" : {\"$binary\" : {\"hex\" : 0, \"subType\" : \"00\"}}}"
+            "string": "{\"x\" : {\"$binary\" : {\"base64\" : 0, \"subType\" : \"00\"}}}"
         },
         {
             "description": "Bad $binary (type is number, not string)",
-            "string": "{\"x\" : {\"$binary\" : {\"hex\" : \"\", \"subType\" : 0}}}"
+            "string": "{\"x\" : {\"$binary\" : {\"base64\" : \"\", \"subType\" : 0}}}"
         },
         {
             "description": "Bad $binary (missing $type)",
-            "string": "{\"x\" : {\"$binary\" : {\"hex\" : \"//8=\"}}}"
+            "string": "{\"x\" : {\"$binary\" : {\"base64\" : \"//8=\"}}}"
         },
         {
             "description": "Bad $binary (missing $binary)",
@@ -145,7 +145,7 @@
         },
         {
             "description": "Bad $binary (extra field)",
-            "string": "{\"x\" : {\"$binary\" : {\"hex\" : \"//8=\", \"subType\" : 0, \"unrelated\": true}}}"
+            "string": "{\"x\" : {\"$binary\" : {\"base64\" : \"//8=\", \"subType\" : 0, \"unrelated\": true}}}"
         },
         {
             "description": "Bad $code (type is number, not string)",

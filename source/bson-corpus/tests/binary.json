@@ -6,48 +6,48 @@
         {
             "description": "subtype 0x00 (Zero-length)",
             "canonical_bson": "0D000000057800000000000000",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"\", \"subType\" : \"00\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"\", \"subType\" : \"00\"}}}"
         },
         {
             "description": "subtype 0x00 (Zero-length, keys reversed)",
             "canonical_bson": "0D000000057800000000000000",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"\", \"subType\" : \"00\"}}}",
-            "degenerate_extjson": "{\"x\" : { \"$binary\" : {\"subType\" : \"00\", \"hex\" : \"\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"\", \"subType\" : \"00\"}}}",
+            "degenerate_extjson": "{\"x\" : { \"$binary\" : {\"subType\" : \"00\", \"base64\" : \"\"}}}"
         },
         {
             "description": "subtype 0x00",
             "canonical_bson": "0F0000000578000200000000FFFF00",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"//8=\", \"subType\" : \"00\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"//8=\", \"subType\" : \"00\"}}}"
         },
         {
             "description": "subtype 0x01",
             "canonical_bson": "0F0000000578000200000001FFFF00",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"//8=\", \"subType\" : \"01\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"//8=\", \"subType\" : \"01\"}}}"
         },
         {
             "description": "subtype 0x02",
             "canonical_bson": "13000000057800060000000202000000FFFF00",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"//8=\", \"subType\" : \"02\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"//8=\", \"subType\" : \"02\"}}}"
         },
         {
             "description": "subtype 0x03",
             "canonical_bson": "1D000000057800100000000373FFD26444B34C6990E8E7D1DFC035D400",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"03\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"03\"}}}"
         },
         {
             "description": "subtype 0x04",
             "canonical_bson": "1D000000057800100000000473FFD26444B34C6990E8E7D1DFC035D400",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"04\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"04\"}}}"
         },
         {
             "description": "subtype 0x05",
             "canonical_bson": "1D000000057800100000000573FFD26444B34C6990E8E7D1DFC035D400",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"05\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"05\"}}}"
         },
         {
             "description": "subtype 0x80",
             "canonical_bson": "0F0000000578000200000080FFFF00",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"hex\" : \"//8=\", \"subType\" : \"80\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"//8=\", \"subType\" : \"80\"}}}"
         },
         {
             "description": "$type query operator (conflicts with legacy $binary form with $type field)",
