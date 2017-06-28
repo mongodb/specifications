@@ -27,12 +27,6 @@
             "converted_extjson": "{\"a\": {\"$ref\": \"é\", \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}}}"
         }
     ],
-    "parseErrors": [
-        {
-            "description": "DBpointer with extra keys",
-            "string": "{\"a\": {\"$dbPointer\": {\"a\": {\"$numberInt\": \"1\"}, \"$id\": {\"$oid\": \"56e1fc72e0c917e9c4714161\"}, \"c\": {\"$numberInt\": \"2\"}, \"$ref\": \"b\"}}}"
-        }
-    ],
     "decodeErrors": [
         {
             "description": "String with negative length",

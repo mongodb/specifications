@@ -149,9 +149,9 @@ Conversion table
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Decimal128          |{"$numberDecimal": <decimal as a *string*>} [#]_          | <Same as Canonical Extended JSON>                     |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
-|Binary              |{"$binary": <base64-encoded (with padding as ``=``)       | <Same as Canonical Extended JSON>                     |
-|                    |payload as a *string*>, "$type": <BSON binary type as a   |                                                       |
-|                    |one- or two-character *hex string*>}                      |                                                       |
+|Binary              |{"$binary": {"base64": <base64-encoded (with padding as   | <Same as Canonical Extended JSON>                     |
+|                    |``=``) payload as a *string*>, "subType": <BSON binary    |                                                       |
+|                    |type as a one- or two-character *hex string*>}}           |                                                       |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Code                |{"$code": *string*}                                       | <Same as Canonical Extended JSON>                     |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
@@ -161,8 +161,9 @@ Conversion table
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |Timestamp           |{"$timestamp": {"t": *pos-integer*, "i": *pos-integer*}}  | <Same as Canonical Extended JSON>                     |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
-|Regex               |{"$regex": *string*, "$options": <BSON regex options as a | <Same as Canonical Extended JSON>                     |
-|                    |*string* or "" [#]_>}                                     |                                                       |
+|Regular Expression  |{"$regularExpression": {pattern: *string*,                | <Same as Canonical Extended JSON>                     |
+|                    |"options": <BSON regular expression options as a *string* |                                                       |
+|                    |or "" [#]_>}}                                             |                                                       |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |DBPointer           |{"$dbPointer": {"$ref": <namespace [#]_ as a *string*>,   | <Same as Canonical Extended JSON>                     |
 |                    |"$id": *ObjectId*}}                                       |                                                       |
@@ -204,7 +205,7 @@ Conversion table
 
 .. [#] This MUST conform to the `Decimal128 specification`_
 
-.. [#] BSON Regex options MUST be in alphabetical order.
+.. [#] BSON Regular Expression options MUST be in alphabetical order.
 
 .. [#] See https://docs.mongodb.com/manual/reference/glossary/#term-namespace
 
@@ -256,6 +257,33 @@ A parser MAY also accept strings that adhere to other formats, such as
 Legacy Extended JSON formats emitted by old versions of mongoexport or
 other tools.
 
+A parser that accepts Legacy Extended JSON MUST be configurable such that a JSON
+text of a MongoDB query filter containing the `regex`_ query operator can be
+parsed, e.g.::
+
+    { "$regex": {
+        "$regularExpression" : { "pattern": "foo*", "options": "" }
+      }, 
+      "$options" : "ix"
+    }
+
+or::
+
+    { "$regex": {
+        "$regularExpression" : { "pattern": "foo*", "options": "" }
+      }
+    }  
+
+A parser that accepts Legacy Extended JSON MUST be configurable such that a JSON
+text of a MongoDB query filter containing the `type`_ query operator can be
+parsed, e.g.::
+
+    { "zipCode" : { $type : 2 } }
+
+or::
+
+    { "zipCode" : { $type : "string" } }
+
 A parser SHOULD support at least 200 `levels of nesting`_ in an Extended JSON
 document but MAY set other limits on strings it can accept as defined in
 `section 9`_ of the `JSON specification`_.
@@ -283,6 +311,10 @@ MUST follow these rules:
 * If the **keys** of the parsed object exactly match the **keys** of a type
   wrapper in the Conversion table, but any the **values** are of an incorrect
   type, then the parser MUST report an error.
+
+.. _regex: https://docs.mongodb.com/manual/reference/operator/query/regex/
+
+.. _type: https://docs.mongodb.com/manual/reference/operator/query/type/
 
 .. _section 9: https://tools.ietf.org/html/rfc7159#section-9
 
@@ -414,7 +446,7 @@ Consider the following document, written in Groovy with the MongoDB Java Driver:
     "Subdocument": new Document("foo", "bar"),
     "Array": Arrays.asList(1, 2, 3, 4, 5),
     "Timestamp": new BSONTimestamp(42, 1),
-    "Regex": new BsonRegularExpression("pattern"),
+    "RegularExpression": new BsonRegularExpression("foo*", "xi"),
     "DatetimeEpoch": new Date(0),
     "DatetimePositive": new Date(Long.MAX_VALUE),
     "DatetimeNegative": new Date(Long.MIN_VALUE),
@@ -459,12 +491,16 @@ for readability)::
          "$numberDecimal": "1234"
      },
      "Binary": {
-         "$binary": "o0w498Or7cijeBSpkquNtg==",
-         "$type": "03"
+         "$binary": {
+             "base64": o0w498Or7cijeBSpkquNtg==",
+             "subType": "03"
+         }
      },
      "BinaryUserDefined": {
-         "$binary": "AQIDBAU=",
-         "$type": "80"
+         "$binary": {
+             "base64": AQIDBAU=",
+             "subType": "80"
+         }
      },
      "Code": {
          "$code": "function() {}"
@@ -486,9 +522,11 @@ for readability)::
      "Timestamp": {
          "$timestamp": { "t": 42, "i": 1 }
      },
-     "Regex": {
-         "$regex": "pattern",
-         "$options": ""
+     "RegularExpression": {
+         "$regularExpression": { 
+             "pattern": "foo*", 
+             "options": "ix" 
+         }
      },
      "DatetimeEpoch": {
          "$date": {
@@ -627,9 +665,29 @@ to Legacy Extended JSON:
 
 3. No Legacy Extended JSON representation existed.
 
-If a BSON type fell into category (1), this specification just declares that
-form to be canonical, since all drivers, tools, and libraries already know how
-to parse or output this form.
+If a BSON type fell into category (1), this specification just declares that 
+form to be canonical, since all drivers, tools, and libraries already know how 
+to parse or output this form.  There are two exceptions:
+
+RegularExpression
+.................
+
+The form ``{"$regex: <string>, $options: <string>"}`` has until this 
+specification been canonical. The change to ``{"$regularExpression": 
+{pattern: <string>, "options": <string>"}}`` is motivated by a conflict between
+the previous canonical form and the ``$regex`` MongoDB query operator. The form 
+specified here disambiguates between the two, such that a parser can accept any
+MongoDB query filter, even one containing the ``$regex`` operator.
+
+Binary
+......
+
+The form ``{"$binary": "AQIDBAU=", "$type": "80"}`` has until this specification
+been canonical. The change to ``{"$binary": {"base64": AQIDBAU=", "subType":
+"80"}`` is motivated by a conflict between the previous canonical form and the
+``$type`` MongoDB query operator. The form specified here disambiguates between
+the two, such that a parser can accept any MongoDB query filter, even one
+containing the ``$type`` operator.
 
 Reconciled type wrappers
 ........................
@@ -799,6 +857,43 @@ interpreted as any other JSON object. In other words, ``{"$symbol": "banana",
 "$foo": "peel"}`` is just a JSON object with two keys that map to two strings
 and does not represent a BSON symbol.
 
+**Q**. How can implementations which require backwards compatibility with Legacy 
+Extended JSON, in which BSON regular expressions were represented with 
+``$regex``, handle parsing of extended JSON test representing a MongoDB query 
+filter containing the ``$regex`` operator?
+
+**A**. An implementation can handle this in a number of ways:
+
+- Introduce an enumeration that determines the behavior of the parser. If the 
+  value is LEGACY, it will parse ``$regex`` and not treat ``$regularExpression`` 
+  specially, and if the value is CANONICAL, it will parse ``$regularExpression`` 
+  and not treat ``$regex`` specially.
+- Support both legacy and canonical forms in the parser without requiring the 
+  application to specify one or the other. Making that work for the ``$regex`` 
+  query operator use case will require that the rules set forth in the 1.0.0 
+  version of this specification are followed for ``$regex``; specifically, that
+  a document with a ``$regex`` key whose value is a JSON object should be 
+  parsed as a normal document and not reported as an error.
+
+**Q**. How can implementations which require backwards compatibility with Legacy
+Extended JSON, in which BSON binary values were represented like ``{"$binary": 
+"AQIDBAU=", "$type": "80"}``, handle parsing of extended JSON test representing
+a MongoDB query filter containing the ``$type`` operator?
+
+**A**. An implementation can handle this in a number of ways:
+
+- Introduce an enumeration that determines the behavior of the parser. If the
+  value is LEGACY, it will parse the new binary form and not treat the legacy
+  one specially, and if the value is CANONICAL, it will parse the new form and
+  not treat the legacy form specially.
+- Support both legacy and canonical forms in the parser without requiring the
+  application to specify one or the other. Making that work for the ``$type``
+  query operator use case will require that the rules set forth in the 1.0.0
+  version of this specification are followed for ``$type``; specifically, that
+  a document with a ``$type`` key whose value is an integral type, or a
+  document with a ``$type`` key but without a ``$binary`` key, should be
+  parsed as a normal document and not reported as an error.
+
 **Q**. Sometimes I see the term "extjson" used in other specifications. Is
 "extjson" related to this specification?
 
@@ -815,6 +910,13 @@ v2.0.0
 * Changed BSON timestamp type wrapper back to ``{"t": *int*, "i": *int*}`` for
   backwards compatibility.  (The change in v1 to unsigned 64-bit string was
   premature optimization.)
+
+* Changed BSON regular expression type wrapper to 
+  ``{"$regularExpression": {pattern: *string*, "options": *string*"}}``.  
+
+* Changed BSON binary type wrapper to
+  ``{"$binary": {"base64": <base64-encoded payload as a *string*>,
+  "subType": <BSON binary type as a one- or two-character *hex string*>}}``
 
 * Added "Restrictions and limitations" section.
 
