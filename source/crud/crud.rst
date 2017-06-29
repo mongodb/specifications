@@ -421,7 +421,7 @@ Read
      * this option is ignored.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the get more wire protocol.
+     * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the OP_GET_MORE wire protocol.
      *
      * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the
      * initial find command.
@@ -566,7 +566,7 @@ The OP_QUERY wire protocol only contains a numberToReturn value which drivers mu
     return numberToReturn;
   }
 
-Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST send the OP_KILL_CURSORS wire protocol message.
+Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST kill the cursor.
 
 Write
 -----
@@ -1540,6 +1540,7 @@ Q: Where is ``save``?
 Changes
 =======
 
+* 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
 * 2017-06-26: Added FAQ entry for omission of save method.
 * 2017-01-09: Removed modifiers from FindOptions and added in all options.
 * 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
