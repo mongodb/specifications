@@ -59,9 +59,10 @@ the server selection process. These sets are described below.  Note that it
 is not required to test for correctness at every step.
 
 +------------------------+--------------------------------------------------------+
-| ``suitable_servers``   | the set of servers matching all server selection logic.|
+| ``suitable_servers``   | The set of servers matching all server selection logic.|
+|                        | Tests of servers running on localhost lack this field. |
 +------------------------+--------------------------------------------------------+
-| ``in_latency_window``  | the subset of ``suitable_servers`` that falls within   |
+| ``in_latency_window``  | The subset of ``suitable_servers`` that falls within   |
 |                        | the allowable latency window (required).               |
 |                        | NOTE: tests use the default localThresholdMS of 15 ms. |
 +------------------------+--------------------------------------------------------+

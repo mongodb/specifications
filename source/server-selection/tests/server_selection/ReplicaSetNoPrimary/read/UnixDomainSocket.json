@@ -1,0 +1,40 @@
+{
+    "in_latency_window": [
+        {
+            "address": "/tmp/mongodb-27020.sock",
+            "avg_rtt_ms": 46,
+            "type": "RSSecondary"
+        }
+    ],
+    "operation": "read",
+    "read_preference": {
+        "mode": "Secondary"
+    },
+    "suitable_servers": [
+        {
+            "address": "localhost:27017",
+            "avg_rtt_ms": 500,
+            "type": "RSSecondary"
+        },
+        {
+            "address": "/tmp/mongodb-27020.sock",
+            "avg_rtt_ms": 46,
+            "type": "RSSecondary"
+        }
+    ],
+    "topology_description": {
+        "servers": [
+            {
+                "address": "localhost:27017",
+                "avg_rtt_ms": 500,
+                "type": "RSSecondary"
+            },
+            {
+                "address": "/tmp/mongodb-27020.sock",
+                "avg_rtt_ms": 46,
+                "type": "RSSecondary"
+            }
+        ],
+        "type": "ReplicaSetNoPrimary"
+    }
+}

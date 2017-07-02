@@ -1,0 +1,21 @@
+# localhost (a domain socket) is only preferred if TopologyType is Sharded
+---
+topology_description:
+  type: ReplicaSetNoPrimary
+  servers:
+  - &1
+    address: localhost:27017
+    avg_rtt_ms: 500
+    type: RSSecondary
+  - &2
+    address: /tmp/mongodb-27020.sock
+    avg_rtt_ms: 46
+    type: RSSecondary
+operation: read
+read_preference:
+  mode: Secondary
+suitable_servers:
+- *1
+- *2
+in_latency_window:
+- *2

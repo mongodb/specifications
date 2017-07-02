@@ -85,10 +85,12 @@ Together with "operation", pass the newly-created TopologyDescription and ReadPr
 to server selection, and ensure that it selects the correct subset of servers from
 the TopologyDescription. Each YAML file contains a key for these stages of server selection:
 
-- ``suitable_servers``: the set of servers in topology_description that are suitable, as
+- ``suitable_servers`` (in most tests): the set of servers in topology_description that are suitable, as
   per the Server Selection spec, given operation and read_preference
 - ``in_latency_window``: the set of suitable_servers that fall within the latency window
 
+The ``suitable_servers`` key is missing for localhost tests, since latency is ignored for localhost.
+
 Drivers implementing server selection MUST test that their implementation
 correctly returns the set of servers in ``in_latency_window``. Drivers SHOULD also test
-against ``suitable_servers`` if possible.
+against ``suitable_servers`` if possible, for those tests which include ``suitable_servers``.

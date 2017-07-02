@@ -1,0 +1,65 @@
+{
+    "in_latency_window": [
+        {
+            "address": "a:27017",
+            "avg_rtt_ms": 5,
+            "type": "RSSecondary"
+        }
+    ],
+    "operation": "read",
+    "read_preference": {
+        "mode": "Secondary"
+    },
+    "suitable_servers": [
+        {
+            "address": "localhost:27017",
+            "avg_rtt_ms": 500,
+            "type": "RSSecondary"
+        },
+        {
+            "address": "a:27017",
+            "avg_rtt_ms": 5,
+            "type": "RSSecondary"
+        },
+        {
+            "address": "::1:27017",
+            "avg_rtt_ms": 50,
+            "type": "RSSecondary"
+        },
+        {
+            "address": "b:27017",
+            "avg_rtt_ms": 25,
+            "type": "RSSecondary"
+        }
+    ],
+    "topology_description": {
+        "servers": [
+            {
+                "address": "localhost:27017",
+                "avg_rtt_ms": 500,
+                "type": "RSSecondary"
+            },
+            {
+                "address": "a:27017",
+                "avg_rtt_ms": 5,
+                "type": "RSSecondary"
+            },
+            {
+                "address": "127.0.0.1:27017",
+                "avg_rtt_ms": 26,
+                "type": "RSPrimary"
+            },
+            {
+                "address": "::1:27017",
+                "avg_rtt_ms": 50,
+                "type": "RSSecondary"
+            },
+            {
+                "address": "b:27017",
+                "avg_rtt_ms": 25,
+                "type": "RSSecondary"
+            }
+        ],
+        "type": "ReplicaSetWithPrimary"
+    }
+}

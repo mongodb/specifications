@@ -1,0 +1,29 @@
+# Test alternate IPv6 localhost expressions
+# like 0000:0000:0000:0000:0000:0000:0000:0001, 0:0:0:0:0:0:0:1, etc. are also valid.
+---
+topology_description:
+  type: Sharded
+  servers:
+  - &1
+    address: a:27017
+    avg_rtt_ms: 2  # Lower rtt, but not chosen
+    type: Mongos
+  - &2
+    address: ::0:1:27017
+    avg_rtt_ms: 60
+    type: Mongos
+  - &3
+    address: 0000:0000:0000:0000:0000:0000:0000:0001:27017
+    avg_rtt_ms: 70
+    type: Mongos
+  - &4
+    address: 0:0:0:0:0:0:0:1:27017
+    avg_rtt_ms: 80
+    type: Mongos
+operation: read
+read_preference:
+  mode: Primary
+in_latency_window:
+- *2
+- *3
+- *4

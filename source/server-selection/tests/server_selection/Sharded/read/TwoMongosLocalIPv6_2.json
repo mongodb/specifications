@@ -1,0 +1,48 @@
+{
+    "in_latency_window": [
+        {
+            "address": "::0:1:27017",
+            "avg_rtt_ms": 60,
+            "type": "Mongos"
+        },
+        {
+            "address": "0000:0000:0000:0000:0000:0000:0000:0001:27017",
+            "avg_rtt_ms": 70,
+            "type": "Mongos"
+        },
+        {
+            "address": "0:0:0:0:0:0:0:1:27017",
+            "avg_rtt_ms": 80,
+            "type": "Mongos"
+        }
+    ],
+    "operation": "read",
+    "read_preference": {
+        "mode": "Primary"
+    },
+    "topology_description": {
+        "servers": [
+            {
+                "address": "a:27017",
+                "avg_rtt_ms": 2,
+                "type": "Mongos"
+            },
+            {
+                "address": "::0:1:27017",
+                "avg_rtt_ms": 60,
+                "type": "Mongos"
+            },
+            {
+                "address": "0000:0000:0000:0000:0000:0000:0000:0001:27017",
+                "avg_rtt_ms": 70,
+                "type": "Mongos"
+            },
+            {
+                "address": "0:0:0:0:0:0:0:1:27017",
+                "avg_rtt_ms": 80,
+                "type": "Mongos"
+            }
+        ],
+        "type": "Sharded"
+    }
+}

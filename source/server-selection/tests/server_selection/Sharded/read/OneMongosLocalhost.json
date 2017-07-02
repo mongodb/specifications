@@ -1,0 +1,23 @@
+{
+    "in_latency_window": [
+        {
+            "address": "localhost:27017",
+            "avg_rtt_ms": 50,
+            "type": "Mongos"
+        }
+    ],
+    "operation": "read",
+    "read_preference": {
+        "mode": "Primary"
+    },
+    "topology_description": {
+        "servers": [
+            {
+                "address": "localhost:27017",
+                "avg_rtt_ms": 50,
+                "type": "Mongos"
+            }
+        ],
+        "type": "Sharded"
+    }
+}
