@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: June 26, 2017
+:Last Modified: June 29, 2017
 
 .. contents::
 
@@ -709,6 +709,17 @@ Basic
   class UpdateOptions {
 
     /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    arrayFilters: Optional<Array<Document>>;
+
+    /**
      * If true, allows the write to opt-out of document level validation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1369,6 +1380,17 @@ Find And Modify
   class FindOneAndUpdateOptions {
 
     /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    arrayFilters: Optional<Array<Document>>;
+
+    /**
      * If true, allows the write to opt-out of document level validation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1541,6 +1563,7 @@ Changes
 =======
 
 * 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
+* 2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
 * 2017-06-26: Added FAQ entry for omission of save method.
 * 2017-01-09: Removed modifiers from FindOptions and added in all options.
 * 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
