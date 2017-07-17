@@ -65,7 +65,17 @@ Documentation
 
 The documentation provided in code below is merely for driver authors and SHOULD NOT be taken as required documentation for the driver.
 
-The CRUD API MUST be implemented using the find, getMore and optionally killCursors commands if the **isMaster** command returns **maxWireVersion >= 4**.
+Implementation
+--------------
+
+If the **isMaster** command returns **maxWireVersion >= 4**, drivers:
+
+* MUST implement queries with the ``find`` command instead of ``OP_QUERY``.
+
+* MUST implement cursor operations with the ``getMore`` and ``killCursors`` commands
+  instead of ``OP_GET_MORE`` and ``OP_KILL_CURSORS``, respectively.
+
+* MUST NOT use OP_QUERY except to execute commands.
 
 Commands
 ========
