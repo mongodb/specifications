@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: November 21, 2016
-:Version: 1.5
+:Last Modified: June 13, 2017
+:Version: 1.6
 
 .. contents::
 
@@ -316,6 +316,18 @@ heartbeatFrequencyMS
 
 This controls when topology updates are scheduled.
 See `heartbeatFrequencyMS`_ in the `Server Discovery and Monitoring`_ spec for details.
+
+socketCheckIntervalMS
+~~~~~~~~~~~~~~~~~~~~~
+
+Only for single-threaded drivers.
+
+The default socketCheckIntervalMS MUST be 5000 (5 seconds), and it MAY be
+configurable. If socket has been idle for at least this long, it must be
+checked before being used again.
+
+See `checking an idle socket after socketCheckIntervalMS`_ and `what is the
+purpose of socketCheckIntervalMS?`_.
 
 idleWritePeriodMS
 ~~~~~~~~~~~~~~~~~
@@ -973,6 +985,52 @@ In other words, the suitable server with the shortest average RTT is **always**
 a possible choice.  Other servers could be chosen if their average RTTs are no
 more than ``localThresholdMS`` more than the shortest average RTT.
 
+Checking an Idle Socket After socketCheckIntervalMS
+---------------------------------------------------
+
+Only for single-threaded drivers.
+
+If a server is selected that has an existing connection that has been idle for
+socketCheckIntervalMS, the driver MUST check the connection with the "ping"
+command. If the ping succeeds, use the selected connection. If not, set the
+server's type to Unknown and update the Topology Description according to the
+Server Discovery and Monitoring Spec, and attempt **once** more to select a
+server.
+
+The logic is expressed in this pseudocode. The algorithm for the "getServer"
+function is suggested below, in `Single-threaded server selection
+implementation`_::
+
+    def getConnection(criteria):
+        # Get a server for writes, or a server matching read prefs, by
+        # running the server selection algorithm.
+        server = getServer(criteria)
+        if not server:
+            throw server selection error
+
+        connection = server.connection
+        if connection is NULL:
+            connect to server and return connection
+        else if connection has been idle < socketCheckIntervalMS:
+            return connection
+        else:
+            try:
+                use connection for "ping" command
+                return connection
+            except network error:
+                close connection
+                mark server Unknown and update Topology Description
+
+                # Attempt *once* more to select.
+                server = getServer(criteria)
+                if not server:
+                    throw server selection error
+
+                connect to server and return connection
+
+
+See `What is the purpose of socketCheckIntervalMS?`_.
+
 Requests and Pinning Deprecated
 -------------------------------
 
@@ -1374,6 +1432,33 @@ can turn the "try once" mode off.
 Then driver rescans the topology every minHeartbeatFrequencyMS
 until a suitable server is found or the serverSelectionTimeoutMS expires.
 
+What is the purpose of socketCheckIntervalMS?
+---------------------------------------------
+
+Single-threaded clients need to make a compromise: if they check servers too
+frequently it slows down regular operations, but if they check too rarely they
+cannot proactively avoid errors.
+
+Errors are more disruptive for single-threaded clients than for multi-threaded.
+If one thread in a multi-threaded process encounters an error, it warns the
+other threads not to use the disconnected server. But single-threaded clients
+are deployed as many independent processes per application server, and each
+process must throw an error until all have discovered that a server is down.
+
+The compromise specified here balances the cost of frequent checks against the
+disruption of many errors. The client preemptively checks individual sockets
+that have not been used in the last `socketCheckIntervalMS`_, which is more
+frequent by default than `heartbeatFrequencyMS` defined in the Server Discovery
+and Monitoring Spec.
+
+The client checks the socket with a "ping" command, rather than "ismaster",
+because it is not checking the server's full state as in the Server Discovery
+and Monitoring Spec, it is only verifying that the connection is still open. We
+might also consider a `select` or `poll` call to check if the socket layer
+considers the socket closed, without requiring a round-trip to the server.
+However, this technique usually will not detect an uncleanly shutdown server or
+a network outage.
+
 Backwards Compatibility
 =======================
 
@@ -1581,6 +1666,9 @@ equivalent, and clearer, expression of this formula from the Max Staleness Spec
 
 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
 future, require maxStalenessSeconds to be at least 90.
+
+2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
+must retry selection after checking an idle socket and discovering it is broken.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

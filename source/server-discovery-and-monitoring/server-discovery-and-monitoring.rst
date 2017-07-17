@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.8
-:Last Modified: February 28, 2017
+:Version: 2.9
+:Last Modified: June 13, 2017
 
 .. contents::
 
@@ -143,12 +143,9 @@ Round trip time
 
 Also known as RTT.
 
-The client's measurement of the duration of an ismaster call.
+The client's measurement of the duration of one ismaster call.
 The round trip time is used to support the "localThresholdMS" [1]_
 option in the Server Selection Spec.
-Even though this measurement is called "ping time" in that spec,
-`drivers MUST NOT use the "ping" command`_ to measure this duration.
-`This spec does not mandate how round trip time is averaged`_.
 
 ismaster outcome
 ````````````````
@@ -396,18 +393,6 @@ the driver MUST NOT permit users to configure it less than minHeartbeatFrequency
 
 (See `heartbeatFrequencyMS defaults to 10 seconds or 60 seconds`_
 and `what's the point of periodic monitoring?`_)
-
-socketCheckIntervalMS
-`````````````````````
-
-If a socket has not been used recently,
-a single-threaded client MUST check it, by using it for an ismaster call,
-before using it for any operation.
-The default MUST be 5 seconds, and it MAY be configurable.
-
-Only for single-threaded clients.
-
-(See `what is the purpose of socketCheckIntervalMS?`_).
 
 Client construction
 '''''''''''''''''''
@@ -763,8 +748,8 @@ roundTripTime
 `````````````
 
 Drivers MUST record the server's `round trip time`_ (RTT)
-after each successful call to ismaster,
-but `this spec does not mandate how round trip time is averaged`_.
+after each successful call to ismaster. The Server Selection Spec describes how
+RTT is averaged and how it is used in server selection.
 
 If an ismaster call fails, the RTT is not updated.
 Furthermore, while a server's type is Unknown its RTT is null,
@@ -844,7 +829,7 @@ In this pseudocode, "description" is the prior ServerDescription::
             else:
                 # We've been connected to this server in the past, retry once.
                 try:
-                    call ismaster
+                    reconnect and call ismaster
                     return new ServerDescription
                 except NetworkError as e1:
                     return new ServerDescription with type=Unknown, error=e1
@@ -1275,7 +1260,7 @@ referring to the table above we see the subroutine is `checkIfHasPrimary`_.
 The result is the TopologyType changes to ReplicaSetNoPrimary.
 See the test scenario called "Network error writing to primary".
 
-The client SHOULD clear its connection pool for the server:
+The client SHOULD close all idle sockets in its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
 Clients MUST NOT request an immediate check of the server;
@@ -1671,26 +1656,6 @@ In this state, the client should check the server very frequently,
 to give it ample opportunity to connect to the server before
 timing out in server selection.
 
-What is the purpose of socketCheckIntervalMS?
-'''''''''''''''''''''''''''''''''''''''''''''
-
-Single-threaded clients need to make a compromise:
-if they check servers too frequently it slows down regular operations,
-but if they check too rarely they cannot proactively avoid errors.
-
-Errors are more disruptive for single-threaded clients than for multi-threaded.
-If one thread in a multi-threaded process encounters an error,
-it warns the other threads not to use the disconnected server.
-But single-threaded clients are deployed as many independent processes
-per application server, and each process must throw an error
-until all have discovered that a server is down.
-
-The compromise specified here
-balances the cost of frequent checks against the disruption of many errors.
-The client preemptively checks individual sockets
-that have not been used in the last `socketCheckIntervalMS`_,
-which is more frequent by default than `heartbeatFrequencyMS`_.
-
 No knobs
 ''''''''
 
@@ -1714,27 +1679,6 @@ Only support replica set members running MongoDB 1.6.2 or later
 
 Replica set members began reporting their setNames in that version.
 Supporting earlier versions is impractical.
-
-Drivers must not use the "ping" command
-'''''''''''''''''''''''''''''''''''''''
-
-Since discovery and monitoring require calling the "ismaster" command anyway,
-drivers MUST standardize on the ismaster command instead of the "ping" command
-to measure round-trip time to each server.
-
-Additionally, the ismaster command is widely viewed as a special command used
-when a client makes its initial connection to the server,
-so it is less likely than "ping" to require authentication soon.
-
-This spec does not mandate how round trip time is averaged
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-The Server Selection Spec requires drivers to calculate a round trip time
-for each server to support the localThresholdMS option.
-That spec calls this measurement the "ping time".
-The measurement probably should be a moving average of some sort,
-but it is not in the scope of this spec to mandate how drivers
-should average the measurements.
 
 TopologyType remains Unknown when an RSGhost is discovered
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -2238,3 +2182,5 @@ future.
 connecting does mark a server Unknown, unlike a timeout while reading or
 writing. Justify the different behaviors, and also remove obsolete reference
 to auto-retry.
+
+2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.

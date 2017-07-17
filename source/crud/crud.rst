@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: May. 12, 2017
+:Last Modified: July 17, 2017
 
 .. contents::
 
@@ -421,7 +421,7 @@ Read
      * this option is ignored.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the get more wire protocol.
+     * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the OP_GET_MORE wire protocol.
      *
      * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the
      * initial find command.
@@ -516,7 +516,7 @@ Read
     skip: Optional<Int64>;
 
     /**
-     * Determines whether to return the record identifier for each document. If true, adds a field $recordId to the returned documents.
+     * Prevents the cursor from returning a document more than once because of an intervening write operation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -566,7 +566,7 @@ The OP_QUERY wire protocol only contains a numberToReturn value which drivers mu
     return numberToReturn;
   }
 
-Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST send the OP_KILL_CURSORS wire protocol message.
+Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST kill the cursor.
 
 Write
 -----
@@ -707,6 +707,17 @@ Basic
   }
 
   class UpdateOptions {
+
+    /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    arrayFilters: Optional<Array<Document>>;
 
     /**
      * If true, allows the write to opt-out of document level validation.
@@ -1348,6 +1359,17 @@ Find And Modify
   class FindOneAndUpdateOptions {
 
     /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    arrayFilters: Optional<Array<Document>>;
+
+    /**
      * If true, allows the write to opt-out of document level validation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1513,9 +1535,15 @@ Q: What about explain?
 Q: Where did modifiers go in FindOptions?
   MongoDB 3.2 introduced the find command. As opposed to using the general "modifiers" field any longer, each relevant option is listed explicitly. Some options, such as "tailable" or "singleBatch" are not listed as they are derived from other fields. Upgrading a driver should be a simple procedure of deprecating the "modifiers" field and introducing the new fields. When a collision occurs, the explicitly specified field should override the value in "modifiers".
 
+Q: Where is ``save``?
+  Drivers have historically provided a ``save`` method, which was syntactic sugar for upserting or inserting a document based on whether it contained an identifier, respectively. While the ``save`` method may be convenient for interactive environments, such as the shell, it was intentionally excluded from the CRUD specification for language drivers for several reasons. The ``save`` method promotes a design pattern of "fetch, modify, replace" and invites race conditions in application logic. Additionally, the split nature of ``save`` makes it difficult to discern at a glance if application code will perform an insert or potentially dangerous full-document replacement. Instead of relying on ``save``, application code should know whether document already has an identifier and explicitly call ``insertOne`` or ``replaceOne`` with the ``upsert`` option.
+
 Changes
 =======
 
+* 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
+* 2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
+* 2017-06-26: Added FAQ entry for omission of save method.
 * 2017-05-12: Removed extra "collation" option added to several bulk write models.
 * 2017-01-09: Removed modifiers from FindOptions and added in all options.
 * 2017-01-09: Changed the value type of FindOptions.skip and FindOptions.limit to Int64 with a note related to calculating batchSize for opcode writes.
