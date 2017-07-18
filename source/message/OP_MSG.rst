@@ -86,10 +86,10 @@ uint32        4 bytes (32-bit unsigned integer)
 union         One of the listed members
 ============= =============================================================
 
-The `MongoDB Wire Protocol
-<https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/>`_  defines
-elements inside brackets (``[`` ``]``) as optional parts of the message, and
-`+` indicating one or more instances.
+Elements inside brackets (``[`` ``]``) are optional parts of the message.
+
+* Zero or more instances: ``*``
+* One or more instances: ``+``
 
 The new opcode, called ``OP_MSG``, has the following structure:
 
