@@ -5,8 +5,8 @@
     "valid": [
         {
             "description": "Maxkey",
-            "bson": "080000007F610000",
-            "extjson": "{\"a\" : {\"$maxKey\" : 1}}"
+            "canonical_bson": "080000007F610000",
+            "canonical_extjson": "{\"a\" : {\"$maxKey\" : 1}}"
         }
     ]
 }
