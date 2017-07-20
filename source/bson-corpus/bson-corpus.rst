@@ -9,7 +9,7 @@ BSON Corpus
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: May 26, 2017
+:Last Modified: July 20, 2017
 :Version: 2.0
 
 .. contents::

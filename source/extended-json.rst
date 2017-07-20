@@ -5,12 +5,12 @@ Extended JSON
 :Spec: 587
 :Spec-ticket: SPEC-587
 :Title: Extended JSON
-:Author: David Golden
-:Spec Lead: David Golden
+:Author: Luke Lovett, David Golden
+:Spec Lead: David Golden, Jeff Yemin
 :Advisory Group: Jeff Yemin, Christian Kvalheim, Hannes Magnusson, Matt Broadstone, Jesse Davis
 :Status: Proposed
 :Type: Standards
-:Last Modified: June 29, 2017
+:Last Modified: July 20, 2017
 :Version: 2.0.0
 
 .. contents::
