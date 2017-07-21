@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: July 1, 2017
-:Version: 1.7
+:Last Modified: June 13, 2017
+:Version: 1.6
 
 .. contents::
 
@@ -248,7 +248,7 @@ Selecting a server requires the following client-level configuration
 options:
 
 localThresholdMS
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 This defines the size of the latency window for selecting among multiple
 suitable servers. The default is 15 (milliseconds).  It MUST be configurable at
@@ -490,7 +490,7 @@ tag set is a subset of any tag set.  This means the default ``tag_sets``
 parameter (``[{}]``) matches all servers.
 
 Tag sets are applied after filtering servers by ``mode`` and ``maxStalenessSeconds``,
-and before selecting one server running on localhost (in a Sharded TopologyType) or within the latency window.
+and before selecting one server within the latency window.
 
 Eligibility MUST be determined from ``tag_sets`` as follows:
 
@@ -715,7 +715,7 @@ Rules for server selection
 --------------------------
 
 Server selection is a process which takes an operation type (read or write), a
-TopologyDescription, and optionally a read preference and, on success, returns a
+ClusterDescription, and optionally a read preference and, on success, returns a
 ServerDescription for an operation of the given type.
 
 Server selection varies depending on whether a client is
@@ -750,20 +750,17 @@ as follows:
 
 3. Find suitable servers by topology type and operation type
 
-4. If TopologyType is Sharded and there are any suitable servers running on localhost, choose one at random
-   and return it, otherwise continue to step #5
+4. If there are any suitable servers, choose one at random from those
+   within the latency window and return it; otherwise, continue to step #5
 
-5. If there are any suitable servers, choose one at random from those
-   within the latency window and return it; otherwise, continue to step #6
-
-6. Request an immediate topology check, then block the server selection
+5. Request an immediate topology check, then block the server selection
    thread until the topology changes or until the server selection
    timeout has elapsed
 
-7. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
+6. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
    the selection start time, raise a `server selection error`_
 
-8. Goto Step #2
+7. Goto Step #2
 
 Single-threaded server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -807,21 +804,18 @@ as follows:
 
 6. Find suitable servers by topology type and operation type
 
-7. If TopologyType is Sharded and there are any suitable servers running on localhost, choose one at random
-   and return it, otherwise continue to step #8
-
-8. If there are any suitable servers, choose one at random from those
+7. If there are any suitable servers, choose one at random from those
    within the latency window and return it; otherwise, mark the topology
-   stale and continue to step #9
+   stale and continue to step #8
 
-9. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
+8. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
    the selection start time, raise a `server selection error`_; otherwise,
    goto Step #4
 
-10. If the current time exceeds the maximum time, raise a
-    `server selection error`_
+9. If the current time exceeds the maximum time, raise a
+   `server selection error`_
 
-11. Goto Step #4
+10. Goto Step #4
 
 Before using a socket to the selected server, drivers MUST check whether
 the socket has been used in `socketCheckIntervalMS
@@ -933,41 +927,13 @@ A deployment of topology type Sharded contains one or more servers of type
 Mongos or Unknown.
 
 For read operations, all servers of type Mongos are suitable; the ``mode``,
-``tag_sets``, and ``maxStalenessSeconds`` read preference parameters are
-ignored for selecting a server, but are passed through to mongos. See `Passing
-read preference to mongos`_.
+``tag_sets``, and ``maxStalenessSeconds`` read preference parameters are ignored for selecting a
+server, but are passed through to mongos. See `Passing read preference to mongos`_.
 
 For write operations, all servers of type Mongos are suitable.
 
-If any mongos servers are suitable and running on localhost, drivers MUST
-randomly select one of them, otherwise drivers MUST randomly select a suitable
-server within the latency window. See the next section.
-
-Selecting servers running on localhost
-``````````````````````````````````````
-
-If TopologyType is Sharded and any suitable servers are running on localhost, a server MUST be selected
-randomly from among them, ignoring RTT and ``localThresholdMS``. (Typically,
-there will be at most one server running on localhost, but the behavior is
-specified for any number of them.)
-
-If no suitable servers are running on localhost, the client proceeds to
-`selecting servers within the latency window`_.
-
-A client MUST consider a server to be running on localhost if its hostname is:
-
-- The string "localhost"
-- The IPv4 address ``127.0.0.1``
-- The IPv6 address ``::1`` or equivalent
-- A Unix domain socket path
-
-The client MUST consider all capitalizations of "localhost" to be equivalent;
-see "Hostnames are normalized to lower-case" in the Server Discovery and
-Monitoring Spec. The Connection String Spec describes how clients determine
-whether a hostname is a Unix domain socket path.
-
-(See the justification to `prefer servers running on localhost`_,
-and `recognizing IPv6 addresses for localhost`_.)
+If more than one mongos is suitable, drivers MUST randomly select a suitable
+server within the latency window.
 
 Round Trip Times and the Latency Window
 ---------------------------------------
@@ -1329,20 +1295,6 @@ helper may become deprecated before this is fixed.
 
 .. _SERVER-10947: https://jira.mongodb.org/browse/SERVER-10947
 
-Recognizing IPv6 addresses for localhost
-----------------------------------------
-
-You may use ``getaddrinfo`` with the ``AI_NUMERICHOST`` hint to recognize the
-variations of IPv6 addresses for localhost, such as "::0:1", "::00:0:1", and
-so on. In Python:
-
-  getaddrinfo(hostname, 27017, AF_INET6, SOCK_STREAM, 0, AI_NUMERICHOST)
-
-For IPv6 address that are equivalent to "::1", the call succeeds and returns
-a single result, with address exactly equal to "::1". Otherwise, it fails (for
-hostnames that are not numeric IPv6 addresses) or returns an address not equal
-to "::1".
-
 Test Plan
 =========
 
@@ -1377,7 +1329,7 @@ both.  Behaviors that are specific to drivers are largely limited to those
 for communicating with a mongos.
 
 New localThresholdMS configuration option name
-----------------------------------------------
+------------------------------------------------
 
 Because this does not apply **only** to secondaries and does not limit absolute
 latency, the name ``secondaryAcceptableLatencyMS`` is misleading.
@@ -1389,27 +1341,6 @@ other time-related configuration options.
 However, given a choice between the two, ``localThreshold`` is a more general
 term.  For drivers, we add the ``MS`` suffix for clarity about units and
 consistency with other configuration options.
-
-Prefer servers running on localhost
------------------------------------
-
-In several users' sharded cluster deployments, the mongos server runs on the
-same machine as the application, but the application's connection string
-includes the local mongos and several remote mongos hosts as failover. The user
-wants to use the local mongos exclusively if it is available, then load balance
-among the remote mongos servers until the local mongos returns.
-
-Simply including "localhost" along with the remote hosts in the connection
-string and setting ``localThresholdMS`` to 0 does not accomplish the goal:
-First, in high-performance networks the local mongos's RTT can appear greater
-than a remote mongos's, but the user still wants applications to use their
-local mongos servers to maximize the system's overall throughput. Second, when
-a local mongos goes down, the user wants a non-zero ``localThresholdMS`` to
-enable the application to choose randomly among the remote mongos servers, not
-only the single mongos with the shortest RTT.
-
-Therefore the spec has changed to prefer servers running on localhost, if there
-are any, ignoring ``localThresholdMS`` and RTT.
 
 Random selection within the latency window
 ------------------------------------------
@@ -1738,9 +1669,6 @@ future, require maxStalenessSeconds to be at least 90.
 
 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
 must retry selection after checking an idle socket and discovering it is broken.
-
-2017-07-01: When load-balancing among mongos servers with localThresholdMS of 0,
-if "localhost" is in the host list and available, use it exclusively.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

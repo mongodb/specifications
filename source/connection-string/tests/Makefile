@@ -5,4 +5,3 @@ all: $(JSON_FILES)
 
 %.json : %.yml
 	jwc yaml2json $< > $@
-	sed -i '' -e's/[[:space:]]*$$//' $@
