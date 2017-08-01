@@ -69,7 +69,11 @@ Each YAML file has the following keys:
     the collection after the operation is executed. This will have some or all
     of the following fields:
 
-      - ``result``: The return value from the operation.
+        - ``result``: The return value from the operation. Note that some tests
+          specify an ``upsertedCount`` field when the server does not provide
+          one in the result document. In these cases, an ``upsertedCount`` field
+          with a value of 0 should be manually added to the document received
+          from the server to facilitate comparison.
 
       - ``collection``:
 
