@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.9
-:Last Modified: June 13, 2017
+:Version: 2.10
+:Last Modified: August 1, 2017
 
 .. contents::
 
@@ -250,6 +250,8 @@ Fields:
   Default true.
 * compatibilityError: a string.
   The error message if "compatible" is false, otherwise null.
+* logicalSessionTimeoutMinutes: integer or null. Default null. See
+  `logical session timeout`_.
 
 ServerDescription
 `````````````````
@@ -296,6 +298,7 @@ Fields:
 * primary: an address. This server's opinion of who the primary is.
   Default null.
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
+* localLogicalSessionTimeoutMinutes: integer or null. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -792,6 +795,14 @@ responds that "a" is in the replica set.
 
     Domain Name System (DNS) names are "case insensitive".
 
+logicalSessionTimeoutMinutes
+````````````````````````````
+
+MongoDB 3.6 and later include a ``localLogicalSessionTimeoutMinutes`` field if
+logical sessions are enabled in the deployment. Clients MUST check for this
+field and set the ServerDescription's logicalSessionTimeoutMinutes field to this
+value, or to null otherwise.
+
 Other ServerDescription fields
 ``````````````````````````````
 
@@ -1212,6 +1223,18 @@ remove
   and may not immediately abort.
   Once the check completes, this server's ismaster outcome MUST be ignored,
   and the monitor SHOULD halt.
+
+Logical Session Timeout
+```````````````````````
+
+Whenever a client updates the TopologyDescription from an ismaster response,
+it MUST set TopologyDescription.logicalSessionTimeoutMinutes to the smallest
+localLogicalSessionTimeoutMinutes value among all ServerDescriptions of
+known ServerType. If any ServerDescription of known ServerType has a null
+localLogicalSessionTimeoutMinutes, then
+TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.
+
+See the Driver Sessions Spec for the purpose of this value.
 
 .. _drivers update their topology view in response to errors:
 
@@ -2184,3 +2207,5 @@ writing. Justify the different behaviors, and also remove obsolete reference
 to auto-retry.
 
 2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
+
+2017-08-01: Parse localLogicalSessionTimeoutMinutes from isMaster reply.
