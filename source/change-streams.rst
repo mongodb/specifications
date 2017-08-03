@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: June 27, 2017
-:Version: 0.1
+:Last Modified: August 3, 2017
+:Version: 1.0
 
 .. contents::
 
