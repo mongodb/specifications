@@ -31,7 +31,7 @@ phases: [
                     electionId:
                 }
             },
-            topologyType: "ReplicaSetWithPrimary",
+            topologyType: "ReplicaSetWithPrimary",            logicalSessionTimeoutMinutes: null,
             setName: "rs",
         }
     },
@@ -61,7 +61,7 @@ phases: [
                     setVersion: 2
                 }
             },
-            topologyType: "ReplicaSetWithPrimary",
+            topologyType: "ReplicaSetWithPrimary",            logicalSessionTimeoutMinutes: null,
             setName: "rs",
         }
     },
@@ -92,7 +92,7 @@ phases: [
                     setVersion: 2
                 }
             },
-            topologyType: "ReplicaSetWithPrimary",
+            topologyType: "ReplicaSetWithPrimary",            logicalSessionTimeoutMinutes: null,
             setName: "rs",
         }
     }
