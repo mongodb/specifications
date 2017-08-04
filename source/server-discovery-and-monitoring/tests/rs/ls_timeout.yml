@@ -1,0 +1,80 @@
+description: "Parse localLogicalSessionTimeoutMinutes from replica set"
+
+uri: "mongodb://a/?replicaSet=rs"
+
+phases: [
+
+    {
+        responses: [
+            ["a:27017", {
+                ok: 1,
+                ismaster: true,
+                hosts: ["a:27017", "b:27017"],
+                setName: "rs",
+                localLogicalSessionTimeoutMinutes: 1
+            }],
+            ["b:27017", {
+                ok: 1,
+                ismaster: false,
+                secondary: true,
+                hosts: ["a:27017", "b:27017"],
+                setName: "rs",
+                localLogicalSessionTimeoutMinutes: 2
+            }]
+        ],
+
+        # logicalSessionTimeoutMinutes is the minimum of the two
+        outcome: {
+            servers: {
+                "a:27017": {
+                    type: "RSPrimary",
+                    setName: "rs"
+                },
+                "b:27017": {
+                    type: "RSSecondary",
+                    setName: "rs"
+                }
+            },
+            topologyType: "ReplicaSetWithPrimary",
+            logicalSessionTimeoutMinutes: 1,
+            setName: "rs",
+        }
+    },
+    # Now an isMaster response with no localLogicalSessionTimeoutMinutes
+    {
+        responses: [
+            ["a:27017", {
+                ok: 1,
+                ismaster: true,
+                hosts: ["a:27017", "b:27017"],
+                setName: "rs",
+                localLogicalSessionTimeoutMinutes: 1
+            }],
+            ["b:27017", {
+                ok: 1,
+                ismaster: false,
+                secondary: true,
+                hosts: ["a:27017", "b:27017"],
+                setName: "rs",
+                localLogicalSessionTimeoutMinutes: null
+            }]
+        ],
+
+        # Sessions aren't supported now
+        outcome: {
+            servers: {
+                "a:27017": {
+                    type: "RSPrimary",
+                    setName: "rs"
+                },
+                "b:27017": {
+                    type: "RSSecondary",
+                    setName: "rs"
+                }
+            },
+            topologyType: "ReplicaSetWithPrimary",
+            logicalSessionTimeoutMinutes: null,
+            setName: "rs",
+        }
+    }
+]

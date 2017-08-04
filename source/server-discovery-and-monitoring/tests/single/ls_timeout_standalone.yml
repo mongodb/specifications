@@ -1,0 +1,33 @@
+description: "Parse localLogicalSessionTimeoutMinutes from standalone"
+
+uri: "mongodb://a"
+
+phases: [
+
+    {
+        responses: [
+
+                ["a:27017", {
+
+                    ok: 1,
+                    ismaster: true,
+                    localLogicalSessionTimeoutMinutes: 7
+                }]
+        ],
+
+        outcome: {
+
+            servers: {
+
+                "a:27017": {
+
+                    type: "Standalone",
+                    setName:
+                }
+            },
+            topologyType: "Single",
+            logicalSessionTimeoutMinutes: 7,
+            setName:
+        }
+    }
+]

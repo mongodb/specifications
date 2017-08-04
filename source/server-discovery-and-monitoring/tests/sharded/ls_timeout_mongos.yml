@@ -1,0 +1,89 @@
+description: "Parse localLogicalSessionTimeoutMinutes from mongoses"
+
+uri: "mongodb://a,b"
+
+phases: [
+
+    {
+        responses: [
+
+                ["a:27017", {
+
+                    ok: 1,
+                    ismaster: true,
+                    msg: "isdbgrid",
+                    localLogicalSessionTimeoutMinutes: 1
+                }],
+
+                ["b:27017", {
+
+                    ok: 1,
+                    ismaster: true,
+                    msg: "isdbgrid",
+                    localLogicalSessionTimeoutMinutes: 2
+                }]
+        ],
+
+        outcome: {
+
+            servers: {
+
+                "a:27017": {
+
+                    type: "Mongos",
+                    setName:
+                },
+
+                "b:27017": {
+
+                    type: "Mongos",
+                    setName:
+                }
+            },
+            topologyType: "Sharded",
+            logicalSessionTimeoutMinutes: 1,  # Minimum of the two
+            setName:
+        }
+    },
+    # Now an ismaster response with no localLogicalSessionTimeoutMinutes
+    {
+        responses: [
+
+                ["a:27017", {
+
+                    ok: 1,
+                    ismaster: true,
+                    msg: "isdbgrid",
+                    localLogicalSessionTimeoutMinutes: 1
+                }],
+
+                ["b:27017", {
+
+                    ok: 1,
+                    ismaster: true,
+                    msg: "isdbgrid"
+                }]
+        ],
+
+        outcome: {
+
+            servers: {
+
+                "a:27017": {
+
+                    type: "Mongos",
+                    setName:
+                },
+
+                "b:27017": {
+
+                    type: "Mongos",
+                    setName:
+                }
+            },
+            topologyType: "Sharded",
+            logicalSessionTimeoutMinutes: null,  # Sessions not supported now
+            setName:
+        }
+    }
+]
