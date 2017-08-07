@@ -234,7 +234,7 @@ The stage has the following shape:
 
 .. code:: typescript
 
-  { $changeNotification: ChangeStreamOptions }
+  { $changeStream: ChangeStreamOptions }
 
 The first parameter of the helper specifies an array of aggregation pipeline stages which MUST be appended to the initial stage. Drivers MUST support an empty pipeline. Languages which support default parameters MAY specify an empty array as the default value for this parameter. Drivers SHOULD otherwise make specification of a pipeline as similar as possible to the `aggregate <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ CRUD method.
 
@@ -418,5 +418,7 @@ Changelog
 =========
 +------------+---------------------------------------------------+
 | 2017-08-03 | Initial commit                                    |
++------------+---------------------------------------------------+
+| 2017-08-07 | Fixed typo in command format                      |
 +------------+---------------------------------------------------+
 
