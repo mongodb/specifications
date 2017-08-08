@@ -41,7 +41,7 @@ Terms
 Resumable Error
 ^^^^^^^^^^^^^^^
 
-Any error encountered which is not a server error, with the exception of a “not master” server response. An example might be a timeout error, or network error.
+Any error encountered which is not a server error, with the exception of a “not master” or “cursor not found” server response. An example might be a timeout error, or network error.
 
 --------
 Guidance
