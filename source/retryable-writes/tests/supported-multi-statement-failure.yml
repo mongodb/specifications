@@ -1,0 +1,54 @@
+data:
+    - { _id: 1, x: 11 }
+
+minServerVersion: '3.6'
+
+# Each test expects an error due to successive network errors for the first
+# write command in the batch. The fail point drops the connection after
+# executing the write command but before its result would be returned, so we
+# still observe changes to the collection. Additionally, our observations assert
+# that the subsequent retry attempt abides exactly-once semantics.
+tests:
+    -
+        description: "BulkWrite fails after multiple network errors for first command"
+        failPoint:
+            times: 2
+        operation:
+            name: "bulkWrite"
+            arguments:
+                requests:
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 1 }
+                            update: { $inc: { x : 1 }}
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                options: { ordered: true }
+        outcome:
+            error: true
+            # The first "update" command will be applied, despite the network
+            # error. The second "insert" command in the batch is never executed.
+            collection:
+                data:
+                    - { _id: 1, x: 12 }
+    -
+        description: "InsertMany fails after multiple network errors"
+        failPoint:
+            times: 2
+        operation:
+            name: "insertMany"
+            arguments:
+                documents: 
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }
+                options: { ordered: true }
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }
