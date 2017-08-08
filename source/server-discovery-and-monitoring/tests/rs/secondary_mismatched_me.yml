@@ -14,7 +14,8 @@
                     }
                 },
                 "setName": "rs",
-                "topologyType": "ReplicaSetNoPrimary"
+                "topologyType": "ReplicaSetNoPrimary",
+                "logicalSessionTimeoutMinutes": null
             },
             "responses": [
                 [

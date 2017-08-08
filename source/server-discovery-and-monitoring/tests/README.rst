@@ -15,17 +15,10 @@ and because YAML includes a standard comment format.
 A JSONified version of each YAML file is included in this repository.
 Whenever you change the YAML, re-convert to JSON.
 One method to convert to JSON is with
-`jsonwidget-python <http://jsonwidget.org/wiki/Jsonwidget-python>`_::
+`yaml2json <https://github.com/debrouwere/yaml2json>`_::
 
-    pip install PyYAML urwid jsonwidget
+    npm install -g yaml-to-json
     make
-
-Or instead of "make"::
-
-    for i in `find . -iname '*.yml'`; do
-        echo "${i%.*}"
-        jwc yaml2json $i > ${i%.*}.json
-    done
 
 Version
 -------
