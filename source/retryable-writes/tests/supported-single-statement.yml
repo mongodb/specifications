@@ -55,7 +55,6 @@ tests:
             arguments:
                 filter: { _id: 1 }
                 update: { $inc: { x : 1 }}
-                }
         outcome:
             result: { _id: 1, x: 11 }
             collection:
