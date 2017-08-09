@@ -268,7 +268,7 @@
       "outcome": {
         "result": {
           "matchedCount": 1,
-          "modifiedCount": 1
+          "modifiedCount": 0
         },
         "collection": {
           "data": [
@@ -279,7 +279,7 @@
                   "b": 3
                 },
                 {
-                  "b": 2
+                  "b": 1
                 }
               ]
             },
@@ -351,7 +351,7 @@
                   "b": 3
                 },
                 {
-                  "b": 2
+                  "b": 1
                 }
               ]
             },

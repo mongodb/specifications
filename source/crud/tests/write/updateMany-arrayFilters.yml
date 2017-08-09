@@ -11,7 +11,7 @@ tests:
             arguments:
                 filter: {}
                 update:
-                    $set: {y.$[i].b: 2}
+                    $set: {"y.$[i].b": 2}
                 arrayFilters:
                     - {i.b: 4}
 
@@ -30,7 +30,7 @@ tests:
             arguments:
                 filter: {}
                 update:
-                    $set: {y.$[i].b: 2}
+                    $set: {"y.$[i].b": 2}
                 arrayFilters:
                     - {i.b: 3}
 
@@ -49,7 +49,7 @@ tests:
             arguments:
                 filter: {}
                 update:
-                    $set: {y.$[i].b: 2}
+                    $set: {"y.$[i].b": 2}
                 arrayFilters:
                     - {i.b: 1}
 
