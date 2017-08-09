@@ -99,7 +99,7 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
 
     /**
      * Always present for operations of type ‘insert’ and ‘replace’. Also
-     * present for operations of type ‘update’ if the user has specified ‘lookup’
+     * present for operations of type ‘update’ if the user has specified ‘updateLookup’
      * in the ‘fullDocument’ arguments to the ‘$changeStream’ stage.
      *
      * For operations of type ‘insert’ and ‘replace’, this key will contain the
@@ -107,8 +107,8 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
      * the existing document, respectively.
      *
      * For operations of type ‘update’, this key will contain a copy of the full
-     * version of the document from *some point* after the update occurred. If the
-     * document was deleted since the updated happened, it will be null
+     * version of the document from some point after the update occurred. If the
+     * document was deleted since the updated happened, it will be null.
      */
     fullDocument: Document | null;
 
@@ -167,17 +167,16 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: ‘none’, ‘lookup’.  Defaults to ‘none’.  When set to
-     * ‘lookup’, the change stream will include both a delta describing the
-     * changes to the document, as well as a copy of the entire document that was
-     * changed from some time after the change occurred.  For forward compatibility,
-     * a driver MUST NOT raise an error when a user provides an unknown value. The
-     * driver relies on the server to validate this option.
+     * Allowed values: ‘none’, ‘updateLookup’.  Defaults to ‘none’.  When set to
+     * ‘updateLookup’, the change notification for partial updates will include both
+     * a delta describing the changes to the document, as well as a copy of the entire
+     * document that was changed from some time after the change occurred.  For forward
+     * compatibility, a driver MUST NOT raise an error when a user provides an unknown
+     * value. The driver relies on the server to validate this option.
      *
      * @note this is an option of the `$changeStream` pipeline stage.
      */
     fullDocument: string = ‘none’;
-
 
     /**
      * Specifies the logical starting point for the new change stream.
@@ -306,7 +305,7 @@ Execute the known aggregation command, specifying a ``resumeAfter`` with the las
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-**1. `fullDocument` lookup can result in change documents larger than 16MB**
+**1. `fullDocument: updateLookup` can result in change documents larger than 16MB**
 
 There is a risk that if there is a large change to a large document, the full document and delta might result in a document larger than the 16MB limitation on BSON documents.  If that happens the cursor will be closed, and a server error will be returned.
 
