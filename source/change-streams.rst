@@ -186,6 +186,17 @@ Driver API
      */
     resumeAfter: Optional<Document>;
 
+
+    /**
+     * The maximum amount of time for the server to wait when initially requesting documents to satisfy
+     * a change stream query.
+     *
+     * This is the same field described in AggregateOptions in the CRUD spec.
+     * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst
+     * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
+     */
+    maxTimeMS: Optional<Int64>;
+
     /**
      * The maximum amount of time for the server to wait on new documents to satisfy
      * a change stream query.
