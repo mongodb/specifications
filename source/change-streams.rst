@@ -167,7 +167,7 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: ‘none’, ‘updateLookup’.  Defaults to ‘none’.  When set to
+     * Allowed values: ‘default’, ‘updateLookup’.  Defaults to ‘default’.  When set to
      * ‘updateLookup’, the change notification for partial updates will include both
      * a delta describing the changes to the document, as well as a copy of the entire
      * document that was changed from some time after the change occurred.  For forward
@@ -176,7 +176,7 @@ Driver API
      *
      * @note this is an option of the `$changeStream` pipeline stage.
      */
-    fullDocument: string = ‘none’;
+    fullDocument: string = ‘default’;
 
     /**
      * Specifies the logical starting point for the new change stream.
