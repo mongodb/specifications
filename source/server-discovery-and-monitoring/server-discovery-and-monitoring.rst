@@ -9,7 +9,7 @@ Server Discovery And Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: 2.10
-:Last Modified: August 1, 2017
+:Last Modified: August 11, 2017
 
 .. contents::
 
@@ -201,6 +201,14 @@ using different data structures.
 This spec uses these enums and structs in order to describe driver **behavior**,
 not to mandate how a driver represents the topology,
 nor to mandate an API.
+
+Constants
+`````````
+
+clientMinWireVersion and clientMaxWireVersion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Integers. The wire protocol range supported by the client.
 
 Enums
 `````
@@ -877,14 +885,20 @@ the ServerDescription in TopologyDescription.servers
 is replaced with the new ServerDescription.
 
 .. _is compatible:
-.. _updates the "compatible" and "compatibilityError" fields:
 
-If the server's wire protocol version range overlaps with the client's,
-TopologyDescription.compatible is set to true.
-Otherwise it is set to false
-and the "compatibilityError" field is filled out like,
-"Server at HOST:PORT uses wire protocol versions SERVER_MIN through SERVER_MAX,
-but CLIENT only supports CLIENT_MIN through CLIENT_MAX."
+Checking wire protocol compatibility
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ServerDescription is incompatible if:
+
+* minWireVersion > clientMaxWireVersion, or
+* maxWireVersion < clientMinWireVersion
+
+If the ServerDescription is incompatible, set the TopologyDescription's
+"compatible" field to false and fill out the "compatibilityError" field like:
+"Server at $host:$port uses wire protocol versions $minWireVersion through
+$maxWireVersion, but $driverName $driverVersion only supports
+$clientMinWireVersion through $clientMaxWireVersion."
 
 Verifying setName with TopologyType Single
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -904,8 +918,10 @@ it creates a new ServerDescription with the proper `ServerType`_.
 It replaces the server's previous description in TopologyDescription.servers
 with the new one.
 
+Apply the logic for `checking wire protocol compatibility`_ to each
+ServerDescription in the topology.
 If any server's wire protocol version range does not overlap with the client's,
-the client `updates the "compatible" and "compatibilityError" fields`_
+the client updates the "compatible" and "compatibilityError" fields
 as described above for TopologyType Single.
 Otherwise "compatible" is set to true.
 
@@ -2209,3 +2225,5 @@ to auto-retry.
 2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
 
 2017-08-01: Parse localLogicalSessionTimeoutMinutes from isMaster reply.
+
+2017-08-11: Clearer specification of "incompatible" logic.
