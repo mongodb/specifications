@@ -65,6 +65,7 @@ processing the responses in the phases so far. It has the following keys:
 - servers: An object whose keys are addresses like "a:27017", and whose values
   are "server" objects.
 - logicalSessionTimeoutMinutes: null or an integer.
+- compatible: absent or a bool.
 
 A "server" object represents a correct ServerDescription within the client's
 current TopologyDescription. It has the following keys:
@@ -74,6 +75,8 @@ current TopologyDescription. It has the following keys:
 - setVersion: absent or an integer.
 - electionId: absent, null, or an ObjectId.
 - localLogicalSessionTimeoutMinutes: absent, null, or an integer.
+- minWireVersion: absent or an integer.
+- maxWireVersion: absent or an integer.
 
 Use as unittests
 ----------------
@@ -117,5 +120,10 @@ If a response is the empty object `{}`, simulate a network error.
 
 Once all responses are processed, assert that the phase's "outcome" object
 is equivalent to the driver's current TopologyDescription.
+
+Some fields such as "logicalSessionTimeoutMinutes" or "compatible" were added
+later and haven't been added to all test files. If these fields are present,
+test that they are equivalent to the fields of the driver's current
+TopologyDescription.
 
 Continue until all phases have been executed.
