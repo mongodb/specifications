@@ -6,30 +6,6 @@ The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the Read and Write Concern 
 specification.
 
-Converting to JSON
-------------------
-
-The tests are written in YAML because it is easier for humans to write and read,
-and because YAML includes a standard comment format. A JSONified version of each
-YAML file is included in this repository. Whenever you change the YAML,
-re-convert to JSON. One method to convert to JSON is with
-`jsonwidget-python <http://jsonwidget.org/wiki/Jsonwidget-python>`_::
-
-    pip install PyYAML urwid jsonwidget
-    make
-
-Or instead of "make"::
-
-    for i in `find . -iname '*.yml'`; do
-        echo "${i%.*}"
-        jwc yaml2json $i > ${i%.*}.json
-    done
-
-Alternatively, you can use `yamljs <https://www.npmjs.com/package/yamljs>`_::
-
-    npm install -g yamljs
-    yaml2json -s -p -r .
-
 Version
 -------
 

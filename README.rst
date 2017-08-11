@@ -42,6 +42,17 @@ cleanup``" to remove the LaTeX by-products from ``build/``.
 
 .. _`MacTeX` : http://www.tug.org/mactex/
 
+Converting to JSON
+------------------
+
+There are many YAML to JSON converters. There are even several converters called
+``yaml2json`` in NPM. The specific ``yaml2json`` command we use is provided by
+the `yaml-to-json <https://www.npmjs.com/package/yaml-to-json>`_ package.
+Use only that converter, so that JSON is formatted consistently.
+
+Run ``npm install yaml-to-json``, then run ``make`` in the ``source`` directory
+at the top level of this repository to convert all YAML test files to JSON.
+
 Licensing
 ----------------
 All the specs in this repository are available under the  `Creative Commons Attribution-NonCommercial-ShareAlike 3.0 United States License <https://creativecommons.org/licenses/by-nc-sa/3.0/us/>`_.

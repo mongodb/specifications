@@ -6,20 +6,6 @@ The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the
 Server Discovery And Monitoring Spec.
 
-Converting to JSON
-------------------
-
-The tests are written in YAML
-because it is easier for humans to write and read,
-and because YAML includes a standard comment format.
-A JSONified version of each YAML file is included in this repository.
-Whenever you change the YAML, re-convert to JSON.
-One method to convert to JSON is with
-`yaml2json <https://github.com/debrouwere/yaml2json>`_::
-
-    npm install -g yaml-to-json
-    make
-
 Version
 -------
 

@@ -12,18 +12,6 @@ define and setup. Therefore, these YAML tests are in no way a replacement for
 more thorough testing. However, they can provide an initial verification of your
 implementation.
 
-Converting to JSON
-==================
-
-The tests are written in YAML because it is easier for humans to write and read,
-and because YAML includes a standard comment format. A JSONified version of each
-YAML file is included in this repository. Whenever a YAML file is modified, the
-corresponding JSON file should be regenerated. One method to convert to JSON is
-using `yamljs <https://www.npmjs.com/package/yamljs>`_::
-
-    npm install -g yamljs
-    yaml2json -s -p -r .
-
 Version
 =======
 
