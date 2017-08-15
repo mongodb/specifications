@@ -10,9 +10,9 @@ OP_MSG
 :Informed: Bryan Reinero, Chris Hendel, drivers@
 :Status: Approved
 :Type: Standards
-:Last Modified: 2017-07-18
+:Last Modified: 2017-08-17
 :Minimum Server Version: 3.6
-:Version: 1.0.0
+:Version: 1.0.1
 
 
 
@@ -340,6 +340,19 @@ defined in their own specs.
 |
 |
 
+User originating commands
+=========================
+
+Drivers MUST NOT mutate user provided command documents in any way, whether it
+is adding required arguments, pulling out arguments, compressing it, adding
+supplemental APM data or any other modification. 
+
+.. This RST artwork improves the readability of the rendered document
+
+|
+|
+|
+
 Examples
 ========
 
@@ -559,5 +572,6 @@ Changelog
 =========
 
 
+- 2017-08-17 Added the ``User originating command`` section
 - 2017-07-18 Published 1.0.0
 
