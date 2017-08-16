@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: August 16, 2017
-:Version: 1.1
+:Version: 1.2
 
 .. contents::
 
@@ -295,11 +295,11 @@ Resume Process
 
 Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to resume one time.  The process for resuming MUST follow these steps:
 
-Perform server selection
-Connect to selected server
-Issue a ``killCursors`` command with the original cursor id
-This process MUST NOT be allowed to throw an exception in the event that the server receiving the ``killCursors`` command has no knowledge of the cursor the driver is trying to close.
-Execute the known aggregation command, specifying a ``resumeAfter`` with the last known ``resumeToken``
+- Perform server selection
+- Connect to selected server
+- Issue a ``killCursors`` command with the original cursor id
+    - This process MUST NOT be allowed to throw an exception in the event that the server receiving the ``killCursors`` command has no knowledge of the cursor the driver is trying to close.
+- Execute the known aggregation command, specifying a ``resumeAfter`` with the last known ``resumeToken``
 
 
 Notes and Restrictions
@@ -422,4 +422,6 @@ Changelog
 | 2017-08-07 | Fixed typo in command format                      |
 +------------+---------------------------------------------------+
 | 2017-08-16 | Added clarification regarding Resumable errors    |
++----------------------------------------------------------------+
+| 2017-08-16 | Fixed formatting of resume process                |
 +----------------------------------------------------------------+
