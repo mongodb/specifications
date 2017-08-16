@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: August 3, 2017
-:Version: 1.0
+:Last Modified: August 16, 2017
+:Version: 1.1
 
 .. contents::
 
@@ -41,7 +41,7 @@ Terms
 Resumable Error
 ^^^^^^^^^^^^^^^
 
-Any error encountered which is not a server error, with the exception of a “not master” or “cursor not found” server response. An example might be a timeout error, or network error.
+Any error encountered which is not a server error, with the exception of server responses with the message “not master” or error code 43 (cursor not found).  An example might be a timeout error, or network error.
 
 --------
 Guidance
@@ -399,6 +399,7 @@ Integration
 
 2. Executing a ``watch`` helper on a Collection results in notifications for changes to the specified collection
 
+3. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
 
 Backwards Compatibility
 =======================
@@ -420,4 +421,5 @@ Changelog
 +------------+---------------------------------------------------+
 | 2017-08-07 | Fixed typo in command format                      |
 +------------+---------------------------------------------------+
-
+| 2017-08-16 | Added clarification regarding Resumable errors    |
++----------------------------------------------------------------+
