@@ -467,8 +467,6 @@ Test Plan
 - Repeat the previous 5 tests as updates, and then deletes.
 - Create one small document, and one large 16mb document. Ensure they are
   inserted, updated and deleted in one roundtrip.
-- Create 10 16mb documents. Ensure they are inserted, updated, and deleted in 4
-  roundtrips, 3 documents each followed by one alone in the 4th trip.
 
 
 
