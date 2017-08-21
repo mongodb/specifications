@@ -13,7 +13,9 @@ phases: [
                 ["b:27017", {
                     ok: 1,
                     ismaster: true,
-                    msg: "isdbgrid"
+                    msg: "isdbgrid",
+                    minWireVersion: 0,
+                    maxWireVersion: 6
                 }]
         ],
         outcome: {

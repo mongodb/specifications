@@ -12,7 +12,9 @@ phases: [
                 ismaster: true,
                 hosts: ["a:27017", "b:27017"],
                 setName: "rs",
-                setVersion: 2
+                setVersion: 2,
+                minWireVersion: 0,
+                maxWireVersion: 6
             }]
         ],
 
@@ -30,7 +32,8 @@ phases: [
                     electionId:
                 }
             },
-            topologyType: "ReplicaSetWithPrimary",            logicalSessionTimeoutMinutes: null,
+            topologyType: "ReplicaSetWithPrimary",
+            logicalSessionTimeoutMinutes: null,
             setName: "rs",
         }
     },
@@ -44,7 +47,9 @@ phases: [
                 ismaster: true,
                 hosts: ["a:27017", "b:27017"],
                 setName: "rs",
-                setVersion: 1
+                setVersion: 1,
+                minWireVersion: 0,
+                maxWireVersion: 6
             }]
         ],
 
@@ -62,7 +67,8 @@ phases: [
                     electionId:
                 }
             },
-            topologyType: "ReplicaSetWithPrimary",            logicalSessionTimeoutMinutes: null,
+            topologyType: "ReplicaSetWithPrimary",
+            logicalSessionTimeoutMinutes: null,
             setName: "rs",
         }
     }

@@ -7,7 +7,7 @@ phases: [
                     ok: 1,
                     ismaster: true,
                     minWireVersion: 0,
-                    maxWireVersion: 1000
+                    maxWireVersion: 6
                 }]
         ],
         outcome: {

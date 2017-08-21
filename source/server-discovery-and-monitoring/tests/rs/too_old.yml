@@ -1,4 +1,4 @@
-description: "Replica set member with large minWireVersion"
+description: "Replica set member with default maxWireVersion of 0"
 uri: "mongodb://a,b/?replicaSet=rs"
 phases: [
     {
@@ -7,16 +7,16 @@ phases: [
                     ok: 1,
                     ismaster: true,
                     setName: "rs",
-                    hosts: ["a:27017", "b:27017"]
+                    hosts: ["a:27017", "b:27017"],
+                    minWireVersion: 0,
+                    maxWireVersion: 6
                 }],
                 ["b:27017", {
                     ok: 1,
                     ismaster: false,
                     secondary: true,
                     setName: "rs",
-                    hosts: ["a:27017", "b:27017"],
-                    minWireVersion: 999,
-                    maxWireVersion: 1000
+                    hosts: ["a:27017", "b:27017"]
                 }]
         ],
         outcome: {
