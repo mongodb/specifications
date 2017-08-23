@@ -12,7 +12,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 1.8
-:Last Modified: 2016-08-17
+:Last Modified: 2017-08-23
 
 .. contents::
 
@@ -115,13 +115,8 @@ Connection Handshake
 Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively, an authentication failure is equivalent to a network or socket error in that we have failed to establish a connection with the server. The steps to support this are below:
 
 #. If credentials exist
-	#. Upon opening a socket, drivers MUST send an isMaster command immediately. This allows a driver to determine whether the server is an Arbiter.
-	#. A driver MUST perform authentication with all supplied credentials for the following server types as defined in the Server Discovery and Monitoring Specification.
-
-		* Standalone
-		* Mongos
-		* RSPrimary
-		* RSSecondary
+	#. Upon opening a socket, drivers MUST issue `MongoDB Handshake <../mongodb-handshake/handshake.rst>`_ immediately. This allows a driver to determine whether the server is an Arbiter.
+	#. A driver MUST perform authentication with all supplied credentials for all server types with the exception of RSArbiter.
 	#. A single invalid credential is the same as all credentials being invalid.
 
 
@@ -383,7 +378,7 @@ mechanism_properties
 
 
 SCRAM-SHA-1
-~~~~~~~~~~
+~~~~~~~~~~~
 
 :since: 3.0
 
@@ -528,7 +523,9 @@ Q: Should a driver support multiple credentials?
 Version History
 ===============
 
-2016-11-01: Made providing username for X509 authentication optional
+2017-08-23: Changed the list of server types requiring authentication.
+
+2016-11-01: Made providing username for X509 authentication optional.
 
 2016-08-17: Added FAQ regarding multiple credentials.
 
