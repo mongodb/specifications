@@ -15,7 +15,7 @@ describe("connection string", function() {
 	});
 
 	it("should use the authSource when specified", function() {
-		var url = parse("mongodb://user:password@localhost/foo/?authSource=bar");
+		var url = parse("mongodb://user:password@localhost/foo?authSource=bar");
 
 		assert.equal(url.credential.source, "bar");
 	});
@@ -61,14 +61,14 @@ describe("connection string", function() {
 		});
 
 		it("should use $external as the source when a database is specified", function() {
-			var url = parse("mongodb://user%40DOMAIN.COM:password@localhost/foo/?authMechanism=GSSAPI");
+			var url = parse("mongodb://user%40DOMAIN.COM:password@localhost/foo?authMechanism=GSSAPI");
 
 			assert.equal(url.credential.source, "$external");
 		});
 
 		it("should throw an exception when an authSource is specified other than $external", function() {
 			assert.throws(function() {
-				parse("mongodb://user%40DOMAIN.COM:password@localhost/foo/?authMechanism=GSSAPI&authSource=bar");
+				parse("mongodb://user%40DOMAIN.COM:password@localhost/foo?authMechanism=GSSAPI&authSource=bar");
 			});
 		});
 
@@ -113,14 +113,14 @@ describe("connection string", function() {
 		});
 
 		it("should use $external as the source when a database is specified", function() {
-			var url = parse("mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/foo/?authMechanism=MONGODB-X509");
+			var url = parse("mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/foo?authMechanism=MONGODB-X509");
 
 			assert.equal(url.credential.source, "$external");
 		});
 
 		it("should throw an exception when an authSource is specified other than $external", function() {
 			assert.throws(function() {
-				parse("mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/foo/?authMechanism=MONGODB-X509&authSource=bar");
+				parse("mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/foo?authMechanism=MONGODB-X509&authSource=bar");
 			});
 		});
 
