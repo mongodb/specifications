@@ -94,7 +94,7 @@ describe("connection string", function() {
 
 	describe("MONGODB-CR", function() {
 		it("should recognize the mechanism", function() {
-			var url = parse("mongodb://user@localhost/?authMechanism=MONGODB-CR");
+			var url = parse("mongodb://user:pass@localhost/?authMechanism=MONGODB-CR");
 
 			assert.equal(url.credential.mechanism, "MONGODB-CR");
 		});
