@@ -45,6 +45,7 @@
         },
         "topologyType": "ReplicaSetWithPrimary",
         "setName": "rs",
+        "logicalSessionTimeoutMinutes": null,
         "compatible": false
       }
     }
