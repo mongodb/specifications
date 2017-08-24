@@ -104,7 +104,8 @@ the write operation from the application or constructed internally for the
 operation. Drivers will be responsible for maintaining a monotonically
 increasing transaction number for each server session used by a ClientSession
 object. Drivers MUST preserve the transaction number when reusing a server
-session from the pool with a new ClientSession.
+session from the pool with a new ClientSession (this can be tracked as another
+property on the driver’s object for the server session).
 
 Drivers MUST ensure that each retryable write command specifies a transaction
 number larger than any previously used transaction number for its session ID.
