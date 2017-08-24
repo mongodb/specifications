@@ -87,7 +87,7 @@ retryWrites
 ~~~~~~~~~~~
 
 This boolean option determines whether retryable behavior will be applied to all
-write operations executed within the application. This option MUST default to
+write operations executed within the MongoClient. This option MUST default to
 false, which implies no change in write behavior.
 
 This option MUST NOT be configurable at the level of a database object,
@@ -143,7 +143,7 @@ check the user’s command document to determine if it is a write, nor check
 whether the server is new enough to support a transaction ID for the command.
 The method should simply send the user’s command document to the server as-is.
 
-This specification does not affect write commands executed in an application
+This specification does not affect write commands executed within a MongoClient
 where retryable writes have not been enabled.
 
 Constructing Write Commands
