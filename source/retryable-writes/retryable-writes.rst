@@ -69,8 +69,14 @@ Naming Deviations
 -----------------
 
 This specification defines the name for a new MongoClient option,
-``retryWrites``. Drivers MUST use the defined name to ensure portability of
-connection strings across applications and drivers.
+``retryWrites``. Drivers MUST use the defined name for the connection string
+parameter to ensure portability of connection strings across applications and
+drivers.
+
+If drivers solicit MongoClient options through another mechanism (e.g. options
+dictionary provided to the MongoClient constructor), drivers SHOULD use the
+defined name but MAY deviate to comply with their existing conventions. For
+example, a driver may use ``retry_writes`` instead of ``retryWrites``.
 
 MongoClient Configuration
 -------------------------
