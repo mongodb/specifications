@@ -56,11 +56,11 @@ Transaction ID
    The ``txnNum`` component is a monotonically increasing (per server session),
    positive 64-bit integer.
 
-DriverSession
+ClientSession
    Driver object representing a client session, which is defined in the Driver
    Session specification. This object is always associated with a server
    session; however, drivers will pool server sessions so that creating a
-   DriverSession will not always entail creation of a new server session. The
+   ClientSession will not always entail creation of a new server session. The
    name of this object MAY vary across drivers.
 
 Additional terms may be defined in the Driver Session specification.
@@ -93,17 +93,17 @@ Generating Transaction IDs
 The server requires each retryable write operation to provide a unique
 transaction ID in its command document. The transaction ID consists of a server
 session ID and a monotonically increasing transaction number. The session ID is
-obtained from the DriverSession object, which will have either been passed to
+obtained from the ClientSession object, which will have either been passed to
 the write operation from the application or constructed internally for the
 operation. Drivers will be responsible for maintaining a monotonically
-increasing transaction number for each server session used by a DriverSession
+increasing transaction number for each server session used by a ClientSession
 object. Drivers MUST preserve the transaction number when reusing a server
-session from the pool with a new DriverSession.
+session from the pool with a new ClientSession.
 
 Drivers MUST ensure that each retryable write command specifies a transaction
 number larger than any previously used transaction number for its session ID.
 
-Since DriverSession objects are not thread safe and may only be used by one
+Since ClientSession objects are not thread safe and may only be used by one
 thread at a time, drivers should not need to worry about race conditions when
 incrementing the transaction number.
 
@@ -112,13 +112,13 @@ Behavioral Changes for Write Commands
 
 Any helper method that takes a write concern parameter (see the `CRUD`_ and
 `Read and Write Concern`_ specifications) MUST also accept an optional
-DriverSession parameter. If a DriverSession parameter is specified by the
+ClientSession parameter. If a ClientSession parameter is specified by the
 application, drivers MUST use it to generate the transaction ID for a retryable
 write operation. Otherwise, drivers MUST internally construct a new
-DriverSession for the sole purpose of generating a transaction ID. Any
-internally constructed DriverSession SHOULD be destroyed as soon as the
+ClientSession for the sole purpose of generating a transaction ID. Any
+internally constructed ClientSession SHOULD be destroyed as soon as the
 operation is complete in its interactions with the server so that the
-DriverSession may return its server session to the pool.
+ClientSession may return its server session to the pool.
 
 Drivers MUST automatically add a transaction ID to all write operations
 executed within a MongoClient where retryable writes have been enabled. The
