@@ -20,10 +20,10 @@ Abstract
 ========
 
 MongoDB 3.6 will implement support for server sessions, which are shared
-resources within a cluster identified by an opaque session ID. Drivers
-compatible with MongoDB 3.6 will also implement support for driver sessions,
-which are always associated with a server session and will allow for certain
-commands to be executed within the context of a server session.
+resources within a cluster identified by a session ID. Drivers compatible with
+MongoDB 3.6 will also implement support for client sessions, which are always
+associated with a server session and will allow for certain commands to be
+executed within the context of a server session.
 
 Additionally, MongoDB 3.6 will utilize server sessions to allow some write
 commands to specify a transaction ID to enforce at-most-once semantics for the
@@ -52,8 +52,8 @@ Transaction ID
    running. In a write command where the client has requested retryable
    behavior, it is expressed by the top-level ``sessionId`` and ``txnNum``
    fields. The ``sessionId`` component is the corresponding server session ID.
-   which is an opaque BSON value defined in the Driver Session specification.
-   The ``txnNum`` component is a monotonically increasing (per server session),
+   which is a BSON value defined in the Driver Session specification. The
+   ``txnNum`` component is a monotonically increasing (per server session),
    positive 64-bit integer.
 
 ClientSession
@@ -147,10 +147,9 @@ When constructing any write command that will be executed within a MongoClient
 where retryable writes have been enabled, drivers MUST increment the transaction
 number for the corresponding server session and include the server session ID
 and transaction number in top-level ``sessionId`` and ``txnNum`` fields,
-respectively. The ``sessionId`` value is an opaque BSON type (as discussed in
-the Driver Session specification). The ``txnNum`` value MUST be an unsigned
-integer and the server will accept 32-bit (BSON type 0x10) or 64-bit (0x12)
-values.
+respectively. ``sessionId`` is a BSON value (discussed in the Driver Session
+specification). ``txnNum`` MUST be an unsigned integer; the server will accept
+32-bit (BSON type 0x10) or 64-bit (0x12) values.
 
 The following example illustrates a possible write command for an
 ``updateOne()`` operation:
