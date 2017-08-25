@@ -561,9 +561,10 @@ some `CRUD`_ operations, such as ``updateMany()`` and ``deleteMany()``.
 Additionally, write commands other than ``insert``, ``update``, ``delete``, and
 ``findAndModify`` are not supported at all.
 
-Furthermore, we cannot know for sure what the server-side overhead will be for
-executing write operations within sessions. As such, it would be prudent not to
-introduce this feature by enabling it for all applications by default.
+Enabling retryability for write operations does incur some server-side overhead.
+As such, it would be prudent not to enable this feature for all applications by
+default and instead have applications opt in to the behavior. We may change this
+default in the future if testing reveals the overhead to be sufficiently small.
 
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------
