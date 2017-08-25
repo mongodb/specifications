@@ -50,11 +50,11 @@ Terms
 Transaction ID
    The transaction ID identifies the transaction as part of which the command is
    running. In a write command where the client has requested retryable
-   behavior, it is expressed by the top-level ``sessionId`` and ``txnNum``
-   fields. The ``sessionId`` component is the corresponding server session ID.
-   which is a BSON value defined in the Driver Session specification. The
-   ``txnNum`` component is a monotonically increasing (per server session),
-   positive 64-bit integer.
+   behavior, it is expressed by the top-level ``lsid`` and ``txnNum`` fields.
+   The ``lsid`` component is the corresponding server session ID. which is a
+   BSON value defined in the Driver Session specification. The ``txnNum``
+   component is a monotonically increasing (per server session), positive 64-bit
+   integer.
 
 ClientSession
    Driver object representing a client session, which is defined in the Driver
@@ -153,8 +153,8 @@ Constructing Write Commands
 When constructing any write command that will be executed within a MongoClient
 where retryable writes have been enabled, drivers MUST increment the transaction
 number for the corresponding server session and include the server session ID
-and transaction number in top-level ``sessionId`` and ``txnNum`` fields,
-respectively. ``sessionId`` is a BSON value (discussed in the Driver Session
+and transaction number in top-level ``lsid`` and ``txnNum`` fields,
+respectively. ``lsid`` is a BSON value (discussed in the Driver Session
 specification). ``txnNum`` MUST be an unsigned integer; the server will accept
 32-bit (BSON type 0x10) or 64-bit (0x12) values.
 
@@ -165,7 +165,7 @@ The following example illustrates a possible write command for an
 
   {
     update: "coll",
-    sessionId: { ... },
+    lsid: { ... },
     txnNum: 100,
     updates: [
       { q: { x: 1 }, u: { $inc: { y: 1 } }, multi: false, upsert: false },
@@ -348,7 +348,7 @@ Drivers MUST add an optional ``transactionId`` field to the
    * events together such as retryable write operations. OPTIONAL.
    *
    * If set, this should be a subset of the command document containing
-   * only the sessionId and txnNum fields.
+   * only the lsid and txnNum fields.
    */
   transactionId: Document;
 
