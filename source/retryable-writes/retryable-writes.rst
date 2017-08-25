@@ -78,6 +78,10 @@ dictionary provided to the MongoClient constructor), drivers SHOULD use the
 defined name but MAY deviate to comply with their existing conventions. For
 example, a driver may use ``retry_writes`` instead of ``retryWrites``.
 
+For other names in the spec (e.g. ``transactionId`` field for Command Monitoring
+event objects), drivers SHOULD use the defined name but MAY deviate to comply
+with their existing conventions.
+
 MongoClient Configuration
 -------------------------
 
