@@ -91,8 +91,8 @@ retryWrites
 ~~~~~~~~~~~
 
 This boolean option determines whether retryable behavior will be applied to all
-write operations executed within the MongoClient. This option MUST default to
-false, which implies no change in write behavior.
+supported write operations executed within the MongoClient. This option MUST
+default to false, which implies no change in write behavior.
 
 This option MUST NOT be configurable at the level of a database object,
 collection object, or at the level of an individual write operation.
@@ -111,6 +111,15 @@ object. Drivers MUST preserve the transaction number when reusing a server
 session from the pool with a new ClientSession (this can be tracked as another
 property on the driver’s object for the server session).
 
+Per the Driver Session specification, all helper methods that communicate with
+the server accept an optional ClientSession parameter. If a ClientSession
+parameter is specified by the application, drivers MUST use it to generate the
+transaction ID for a retryable write operation. Otherwise, drivers MUST
+internally construct a new ClientSession for the sole purpose of generating a
+transaction ID. Any internally constructed ClientSession SHOULD be destroyed as
+soon as the operation is complete in its interactions with the server so that
+the ClientSession may return its server session to the pool.
+
 Drivers MUST ensure that each retryable write command specifies a transaction
 number larger than any previously used transaction number for its session ID.
 
@@ -121,32 +130,17 @@ incrementing the transaction number.
 Behavioral Changes for Write Commands
 -------------------------------------
 
-Any helper method that takes a write concern parameter (see the `CRUD`_ and
-`Read and Write Concern`_ specifications) MUST also accept an optional
-ClientSession parameter. If a ClientSession parameter is specified by the
-application, drivers MUST use it to generate the transaction ID for a retryable
-write operation. Otherwise, drivers MUST internally construct a new
-ClientSession for the sole purpose of generating a transaction ID. Any
-internally constructed ClientSession SHOULD be destroyed as soon as the
-operation is complete in its interactions with the server so that the
-ClientSession may return its server session to the pool.
-
-Drivers MUST automatically add a transaction ID to all write operations
-executed within a MongoClient where retryable writes have been enabled. The
-client MUST NOT check whether the specific write command supports retryability.
-If the client provides a helper method for any of the "other commands that
-write" specified in the Read and Write Concern specification, the method MUST
-automatically add a transaction ID when executed within a MongoClient where
-retryable writes have been enabled.
+Drivers MUST automatically add a transaction ID to all supported write commands
+executed via a specific `CRUD`_ method (e.g. ``updateOne()``) or write command
+method (e.g. ``executeWriteCommand()``) within a MongoClient where retryable
+writes have been enabled.
 
 .. _CRUD: ../crud/crud.rst
-.. _Read and Write Concern: ../read-write-concern/read-write-concern.rst
 
-If your driver offers a generic command method on your database object, it MUST
-NOT automatically add a transaction ID. The generic command method MUST NOT
-check the user’s command document to determine if it is a write, nor check
-whether the server is new enough to support a transaction ID for the command.
-The method should simply send the user’s command document to the server as-is.
+If your driver offers a generic command method on your database object (e.g.
+``runCommand()``), it MUST NOT check the user’s command document to determine if
+it is a supported write operation and MUST NOT automatically add a transaction
+ID. The method should send the user’s command document to the server as-is.
 
 This specification does not affect write commands executed within a MongoClient
 where retryable writes have not been enabled.
@@ -154,10 +148,10 @@ where retryable writes have not been enabled.
 Constructing Write Commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When constructing any write command that will be executed within a MongoClient
-where retryable writes have been enabled, drivers MUST increment the transaction
-number for the corresponding server session and include the server session ID
-and transaction number in top-level ``lsid`` and ``txnNum`` fields,
+When constructing a supported write command that will be executed within a
+MongoClient where retryable writes have been enabled, drivers MUST increment the
+transaction number for the corresponding server session and include the server
+session ID and transaction number in top-level ``lsid`` and ``txnNum`` fields,
 respectively. ``lsid`` is a BSON value (discussed in the Driver Session
 specification). ``txnNum`` MUST be an unsigned integer; the server will accept
 32-bit (BSON type 0x10) or 64-bit (0x12) values.
@@ -179,7 +173,7 @@ The following example illustrates a possible write command for an
 
 When constructing multiple write commands for a multi-statement write operation
 (i.e. ``insertMany()`` and ``bulkWrite()``), drivers MUST increment the
-transaction number for each command in the batch.
+transaction number for each supported write command in the batch.
 
 Retrying Write Commands
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -253,8 +247,8 @@ These methods above are defined in the `CRUD`_ specification.
 
 Later versions of MongoDB may add support for additional write operations.
 
-Unsupported Write Operations (client-side error)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unsupported Write Operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When selecting a writable server for the first attempt of a retryable write
 operation, drivers MUST raise a client-side error if the server’s maximum wire
@@ -264,20 +258,10 @@ server may not support retryable writes if the
 cluster; however, that can only be reported as a server-side error (discussed
 later).
 
-Write commands specifying an unacknowledged write concern (i.e. ``{w: 0})`` are
-not supported. Drivers MUST raise an error if an unacknowledged write concern
-would be applied to any write command executed within a MongoClient where
-retryable writes have been enabled.
-
-Drivers MAY raise the error for an unacknowledged write concern eagerly instead
-of waiting until a write operation is invoked. For example, drivers with an
-immutable collection object, which also do not allow a write concern to be
-specified on a per-operation basis, may prefer to raise an error at the time
-the collection is instantiated with an unacknowledged write concern when
-associated with a MongoClient where retryable writes have been enabled.
-
-Unsupported Write Operations (server-side error)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
+not support retryable behavior. Drivers MUST NOT add a transaction ID to any
+write command with an unacknowledged write concern executed within a MongoClient
+where retryable writes have been enabled.
 
 Write commands where a single statement might affect multiple documents will not
 be initially supported by MongoDB 3.6, although this may change in the future.
@@ -285,8 +269,10 @@ This includes an `update`_ command where any statement in the updates sequence
 specifies a ``multi`` option of ``true`` or a `delete`_ command where any
 statement in the ``deletes`` sequence specifies a ``limit`` option of ``0``. In
 the context of the `CRUD`_ specification, this includes the ``updateMany()`` and
-``deleteMany()`` methods. Drivers MUST rely on the server to raise an error if a
-multi-document write operations would be retried and is not supported.
+``deleteMany()`` methods as well as ``bulkWrite()`` where the requests parameter
+includes an ``UpdateMany`` or ``DeleteMany`` operation.. Drivers MUST NOT add a
+transaction ID to any single- or multi-statement write commands that include one
+or more multi-document write operations.
 
 .. _update: https://docs.mongodb.com/manual/reference/command/update/
 .. _delete: https://docs.mongodb.com/manual/reference/command/delete/
@@ -295,17 +281,18 @@ Write commands containing multiple statements and unordered execution will not
 be initially supported by MongoDB 3.6, although this may change in the future.
 This includes an `insert`_, `update`_, or `delete`_ command where the
 ``ordered`` option is ``false``. In the context of the `CRUD`_ specification,
-this includes the ``insertMany()`` and ``bulkWrite()`` methods. Drivers MUST
-rely on the server to raise an error if a multi-statement write operation with
-unordered execution would be retried and is not supported.
+this includes the ``insertMany()`` and ``bulkWrite()`` methods where the
+``ordered`` option is ``false`` (even if execution would result in a sequence of
+single-statement write commands). Drivers MUST NOT add a transaction ID to any
+write commands specifying unordered execution.
 
 .. _insert: https://docs.mongodb.com/manual/reference/command/insert/
 
 Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
 will not be initially supported by MongoDB 3.6, although this may change in the
 future. This includes, but is not limited to, an `aggregate`_ command using the
-``$out`` pipeline operator. Drivers MUST rely on the server to raise an error if
-a write command would be retried and is not supported.
+``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to any
+unsupported write commands.
 
 .. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
 .. _aggregate: https://docs.mongodb.com/manual/reference/command/aggregate/
@@ -335,11 +322,17 @@ a writable server is reselected for the retry attempt.
 
 .. _Command Monitoring: ../command-monitoring/command-monitoring.rst
 
+Each attempt of a retryable write operation SHOULD report a different
+``requestId`` so that events for each attempt can be properly correlated with
+one another.
+
 The `Command Monitoring`_ specification states that the ``operationId`` field is
 a driver-generated, 64-bit integer and may be “used to link events together such
-as bulk write operations.” Drivers SHOULD NOT use this field to relay
-information about a transaction ID. A bulk write operation may consist of
-multiple write commands, each of which have a unique transaction ID.
+as bulk write operations.” Each attempt of a retryable write operation SHOULD
+report the same ``operationId``; however, drivers SHOULD NOT use the
+``operationId`` field to relay information about a transaction ID. A bulk write
+operation may consist of multiple write commands, each of which may specify a
+unique transaction ID.
 
 Drivers MUST add an optional ``transactionId`` field to the
 ``CommandStartedEvent``, ``CommandSucceededEvent``, and
@@ -364,50 +357,41 @@ Test Plan
 
 See the `README <tests/README.rst>`_ for tests.
 
-At a high level, the following scenarios are covered by the test plan:
+At a high level, the test plan will cover the following scenarios for executing
+supported write operations within a MongoClient where retryable writes have been
+enabled:
 
- * Test behavior for supported write operations.
+* Executing the same write operation (and transaction ID) multiple times should
+  yield an identical write result.
+* Test at-most-once behavior by observing that subsequent executions of the same
+  write operation do not incur further modifications to the collection data.
+* Exercise supported single-statement write operations (i.e. deleteOne,
+  insertOne, replaceOne, updateOne, and findAndModify).
+* Exercise supported multi-statement insertMany and bulkWrite operations, which
+  specify ordered execution and contain only supported single-statement write
+  operations.
 
-   - Executing the same write operation (and transaction ID) multiple times
-     should yield an identical write result.
-   - Test at-most-once behavior by observing that subsequent executions of the
-     same write operation do not incur further modifications to the collection
-     data.
-   - Exercise supported single-statement write operations (i.e. deleteOne,
-     insertOne, replaceOne, updateOne, and findAndModify) executed within a
-     client session where the ``retryWrites`` option is ``true``.
-   - Exercise supported multi-statement insertMany and bulkWrite operations,
-     which contain only supported single-statement write operations, executed
-     within a client session where the ``retryable`` and ``ordered`` options are
-     ``true``.
+If possible, drivers should test that transaction IDs are never included in
+commands for unsupported write operations:
 
- * Test that unsupported API usage yields a client-side error
+* Write commands with unacknowledged write concerns (e.g. ``{w: 0}``)
+* Unsupported single-statement write operations
+  - ``updateMany()``
+  - ``deleteMany()``
+* Unsupported multi-statement write operations
+  - ``insertMany()`` where ``ordered`` is ``false``
+  - ``bulkWrite()`` where ``ordered`` is ``false``
+  - ``bulkWrite()`` that includes ``UpdateMany`` or ``DeleteMany``
+* Unsupported write commands
+  - ``aggregate`` with ``$out`` pipeline operator
 
-   - Unsupported write concerns: ``{w:0}`` (i.e fire-and-forget)
+If possible, drivers should test that the server raises an error for invalid
+transaction IDs:
 
- * Test that unsupported write operations yield a server-side error
-
-   - Unsupported write operations: updateMany and deleteMany
-   - Unsupported write operations included within a bulkWrite
-
-     + When ``ordered`` is ``true``, test that a sequence of supported write
-       operations succeeds until an unsupported write operation is encountered
-       and that the bulkWrite result indicates which writes succeeded and
-       failed. Test cases where the bulkWrite consists of like operations
-       executed in a single command (e.g. series of updateOne and updateMany) or
-       as multiple commands (e.g. updateOne followed by deleteMany).
-
-   - Unsupported execution order: insertMany or bulkWrite when ``ordered`` is
-     ``false``
-   - Unsupported write commands: aggregate with ``$out`` pipeline operator
-
-If possible, drivers should test exceptional behavior for invalid transaction
-IDs:
-
- * Transaction ID containing an invalid session ID (e.g. does not correlate with
-   a valid server session)
- * Transaction ID containing an invalid transaction number (e.g. decremented
-   from the previous transaction number)
+* Including a transaction ID with an unsupported write command
+* Specifying an invalid session ID (e.g. incorrect BSON type)
+* Specifying an invalid transaction number (e.g. decremented from the previous
+  value)
 
 Drivers may also be able to verify at-most-once semantics as described above by
 testing their internal implementation (e.g. checking that transaction IDs are
@@ -426,14 +410,20 @@ Design Rationale
 The design of this specification piggy-backs that of the Driver Session
 specification in that it modifies the driver API as little as possible to
 introduce the concept of at-most-once semantics and retryable behavior for write
-operations. A transaction ID will be included in all write commands executed
-within the scope of a MongoClient where retryable writes have been enabled.
+operations. A transaction ID will be included in all supported write commands
+executed within the scope of a MongoClient where retryable writes have been
+enabled.
 
-Drivers will rely on the server to yield an error if an unsupported write
-operation would be retried and is not supported. This will free drivers from
-having to maintain a list of supported write operations and also allow for
-forward compatibility when future server versions begin to support retryable
-behavior for additional write operations.
+Drivers expect the server to yield an error if a transaction ID is included in
+an unsupported write command. This requires drivers to maintain a whitelist and
+track which write operations support retryable behavior for a given server
+version (see: `Why must drivers maintain a whitelist of supported
+operations?`_).
+
+While this approach will allow applications to take advantage of retryable write
+behavior with minimal code changes, it also presents a documentation challenge.
+Users must understand exactly what can and will be retried (see: `How will users
+know which operations are supported?`_).
 
 Backwards Compatibility
 =======================
@@ -502,11 +492,11 @@ However, the spec elects not to support unacknowledged write concerns due to
 various ways that drivers may issue write operations with unacknowledged write
 concerns.
 
-When using ``OP_QUERY`` to issue a write command to the server, a command response
-is always returned. A write command with an unacknowledged write concern (i.e.
-``{w:0}``) will return a response of ``{ok:1}``. If a network error is
-encountered attempting to read that response, the driver could attempt to retry
-the operation by executing it again with the same transaction ID.
+When using ``OP_QUERY`` to issue a write command to the server, a command
+response is always returned. A write command with an unacknowledged write
+concern (i.e. ``{w: 0}``) will return a response of ``{ok: 1}``. If a network
+error is encountered attempting to read that response, the driver could attempt
+to retry the operation by executing it again with the same transaction ID.
 
 Some drivers fall back to legacy opcodes (e.g. ``OP_INSERT``) to execute write
 operations with an unacknowledged write concern. In the future, ``OP_MSG`` may
@@ -516,52 +506,60 @@ for which the driver might encounter a network error and decide to retry the
 operation.
 
 Rather than depend on an implementation detail to determine if retryable
-behavior might apply, the spec has chosen to prohibit retryable behavior
-outright for unacknowledged write concerns and guarantee a consistent user
-experience across all drivers.
+behavior might apply, the spec has chosen to not support retryable behavior
+for unacknowledged write concerns and guarantee a consistent user experience
+across all drivers.
 
-Why expose users to server-side errors for unsupported operations?
-------------------------------------------------------------------
+Why must drivers maintain a whitelist of supported operations?
+--------------------------------------------------------------
 
-.. todo:: Determine how this should change. Do we end up using whitelists for
-   supported operations (based on wire protocol verison) and avoid injecting
-   transaction IDs on all write ops, or rely on the server to raise an error if
-   unsupported ops would be retried? In both cases, it's possible for users to
-   be unaware that some operations are not supported until some error in prod.
-   Given the MongoClient-wide scope of retryWrites, we likely don't want to
-   prohibit unsupported operations outright (either in the client API or by
-   having the server raise an exception on the first attempt).
+Requiring that drivers maintain a whitelist of supported write operations is
+unfortunate. It both adds complexity to the driver's implementation and limits
+the driver's ability to immediately take advantage of new server functionality
+(i.e. the driver must be upgraded to support additional write operations).
 
-Several approaches that would shelter users from such errors were discussed.
-Drivers could maintain a whitelist so that transaction IDs would only be added
-to operations known to be supported by the server. Alternatively, the server
-could change its behavior to ignore transaction IDs when an unsupported
-operations is first attempted and only report an error if the operation was
-retried (in this case, the unsupported error takes the place of what would
-otherwise be a network error).
+Several other alternatives were discussed:
 
-Ultimately, it was decided that immediate feedback should be a priority. Drivers
-currently raise a client-side error if an update or delete specify a
-``collation`` option that is not supported by the primary server rather than
-have it be silently ignored. In the case of retryable writes, such errors
-clearly inform the user that their code is not compatible with the current
-server version. This forces the user to acknowledge exactly which operations are
-supported during testing and avoids the chance of encountering an unexpected
-"operation cannot be retried" error in production.
+* The server could inform drivers which write operations support retryable
+  behavior in its ``isMaster`` response. This would be a form of feature
+  discovery, for which there is no established protocol. It would also add
+  complexity to the connection handshake.
+* The server could ignore a transaction ID on the first observed attempt of an
+  unsupported write command and only yield an error on subsequent attempts. This
+  would require the server to create a transaction record for unsupported writes
+  to avoid the risk of applying a write twice and ensuring that retry attempts
+  could be differentiated. It also poses a significant problem for sharding if a
+  multi-document write does not reach all shards, since those shards would not
+  know to create a transaction record.
+* The driver could allow more fine-grained control retryable write behavior by
+  supporting a ``retryWrites`` option on the database and collection objects.
+  This would allow users to enable ``retryWrites`` on a MongoClient and disable
+  it as needed to execute unsupported write operations, or vice versa. Since we
+  expect the ``retryWrites`` option to become less relevant once transactions
+  are implemented, we would prefer not to add the option throughout the driver
+  API.
 
-Lastly, the initial list of supported operations is already quite permissive.
-Most `CRUD`_ operations are supported apart from ``updateMany()``,
-``deleteMany()``, and ``aggregate()`` with ``$out``. Unordered bulk writes are
-rare and other write operations (e.g. ``renameCollection``) are rarer still.
+How will users know which operations are supported?
+---------------------------------------------------
+
+The initial list of supported operations is already quite permissive. Most
+`CRUD`_ operations are supported apart from ``updateMany()``, ``deleteMany()``,
+and ``aggregate()`` with ``$out``. Unordered bulk writes are rare and other
+write operations (e.g. ``renameCollection``) are rarer still.
+
+That said, drivers will need to clearly document exactly which operations
+support retryable behavior. In the case of bulk write operations such as
+``insertMany()`` and ``bulkWrite()``, which may or may not support retryability,
+drivers should discuss how elegibility is determined.
 
 Why does the retryWrites MongoClient option default to false?
 -------------------------------------------------------------
 
 Retryable write operations are a first step towards the server supporting
 transactions and multi-document writes. MongoDB 3.6 lacks support for retrying
-some CRUD operations, such as ``updateMany()`` and
-``deleteMany()``. Additionally, write commands other than ``insert``,
-``update``, and ``delete`` are not supported at all.
+some `CRUD`_ operations, such as ``updateMany()`` and ``deleteMany()``.
+Additionally, write commands other than ``insert``, ``update``, ``delete``, and
+``findAndModify`` are not supported at all.
 
 Furthermore, we cannot know for sure what the server-side overhead will be for
 executing write operations within sessions. As such, it would be prudent not to
@@ -573,13 +571,17 @@ Can drivers resend the same wire protocol message on retry attempts?
 Since retry attempts entail sending the same command and transaction ID to the
 server, drivers may opt to resend the same wire protocol message in order to
 avoid constructing a new message and computing its checksum. The server will not
-complain if it receives two messages with the same ``requestID``, as the field
+complain if it receives two messages with the same ``requestId``, as the field
 is only used for logging and populating the ``responseTo`` field in its replies
 to the client. That said, this approach may have implications for
 `Command Monitoring`_, since the original write command and its retry attempt
-may report the same requestID.
+may report the same ``requestId``.
 
 Changes
 =======
 
-2017-08-18: retryWrites is now a MongoClient option.
+2017-08-25: Drivers will maintain a whitelist so that only supported write
+operations may be retried. Transaction IDs will not be included in unsupported
+write commands, irrespective of the ``retryWrites`` option.
+
+2017-08-18: ``retryWrites`` is now a MongoClient option.
