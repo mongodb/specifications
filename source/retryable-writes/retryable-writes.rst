@@ -232,8 +232,8 @@ is not possible and drivers MUST raise the original network error to the user.
 When retrying a write command, drivers MUST resend the command with the same
 transaction ID. Drivers MAY resend the original wire protocol message (see:
 `Can drivers resend the same wire protocol message on retry attempts?`_). If the
-second attempt also fails, drivers MUST raise its corresponding error to the
-user.
+second attempt also fails with a network error, drivers MUST raise its
+corresponding error to the user.
 
 Supported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
