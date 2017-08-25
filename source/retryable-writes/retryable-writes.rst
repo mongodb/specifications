@@ -385,14 +385,6 @@ commands for unsupported write operations:
 * Unsupported write commands
   - ``aggregate`` with ``$out`` pipeline operator
 
-If possible, drivers should test that the server raises an error for invalid
-transaction IDs:
-
-* Including a transaction ID with an unsupported write command
-* Specifying an invalid session ID (e.g. incorrect BSON type)
-* Specifying an invalid transaction number (e.g. decremented from the previous
-  value)
-
 Drivers may also be able to verify at-most-once semantics as described above by
 testing their internal implementation (e.g. checking that transaction IDs are
 added to outgoing commands).
