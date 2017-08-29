@@ -492,7 +492,7 @@ Test Plan
 
 Tests have been defined in the associated files:
 
-* `Connection String <tests\connection-string.js>`_.
+* `Connection String <tests/connection-string.json>`_.
 
 
 Backwards Compatibility
