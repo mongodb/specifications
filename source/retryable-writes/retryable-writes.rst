@@ -107,18 +107,9 @@ obtained from the ClientSession object, which will have either been passed to
 the write operation from the application or constructed internally for the
 operation. Drivers will be responsible for maintaining a monotonically
 increasing transaction number for each server session used by a ClientSession
-object. Drivers MUST preserve the transaction number when reusing a server
-session from the pool with a new ClientSession (this can be tracked as another
-property on the driver’s object for the server session).
-
-Per the Driver Session specification, all helper methods that communicate with
-the server accept an optional ClientSession parameter. If a ClientSession
-parameter is specified by the application, drivers MUST use it to generate the
-transaction ID for a retryable write operation. Otherwise, drivers MUST
-internally construct a new ClientSession for the sole purpose of generating a
-transaction ID. Any internally constructed ClientSession SHOULD be destroyed as
-soon as the operation is complete in its interactions with the server so that
-the ClientSession may return its server session to the pool.
+object. Drivers that pool server sessions MUST preserve the transaction number
+when reusing a server session from the pool with a new ClientSession (this can
+be tracked as another property on the driver’s object for the server session).
 
 Drivers MUST ensure that each retryable write command specifies a transaction
 number larger than any previously used transaction number for its session ID.
