@@ -78,9 +78,8 @@ dictionary provided to the MongoClient constructor), drivers SHOULD use the
 defined name but MAY deviate to comply with their existing conventions. For
 example, a driver may use ``retry_writes`` instead of ``retryWrites``.
 
-For other names in the spec (e.g. ``transactionId`` field for Command Monitoring
-event objects), drivers SHOULD use the defined name but MAY deviate to comply
-with their existing conventions.
+For any other names in the spec, drivers SHOULD use the defined name but MAY
+deviate to comply with their existing conventions.
 
 MongoClient Configuration
 -------------------------
@@ -324,24 +323,6 @@ report the same ``operationId``; however, drivers SHOULD NOT use the
 ``operationId`` field to relay information about a transaction ID. A bulk write
 operation may consist of multiple write commands, each of which may specify a
 unique transaction ID.
-
-Drivers MUST add an optional ``transactionId`` field to the
-``CommandStartedEvent``, ``CommandSucceededEvent``, and
-``CommandFailedEventdata`` data structures:
-
-.. code:: typescript
-
-  /**
-   * Returns the transaction ID for the command. This is used to link
-   * events together such as retryable write operations. OPTIONAL.
-   *
-   * If set, this should be a subset of the command document containing
-   * only the lsid and txnNum fields.
-   */
-  transactionId: Document;
-
-Drivers MUST set the ``transactionId`` field for write commands executed within
-a MongoClient where retryable writes have been enabled.
 
 Test Plan
 =========
