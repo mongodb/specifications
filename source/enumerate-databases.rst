@@ -3,9 +3,10 @@ Enumerating Databases
 =====================
 
 :Spec Title: Enumerating Databases
+:Spec Ticket: SPEC-587
 :Spec Version: 1.0
 :Author: Jeremy Mikola
-:Status: Draft
+:Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: 2017-08-28
