@@ -11,11 +11,10 @@ Initial DNS Seedlist discovery
 :Status: Draft
 :Type: Standards
 :Last Modified: 2017-08-29
-:Version: 0.3
+:Version: 1.0
 :Spec Lead: Matt Broadstone
-:Advisory Group: A. Jesse Jiryu Davis
+:Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett (2017-08-17), David Golden (2017-08-29), Jeff Yemin (2017-08-22), Matt Broadstone (2017-08-24), A. Jesse Jiryu Davis (2017-08-14)
-:Informed: drivers@
 
 
 .. contents::
@@ -185,9 +184,7 @@ No results
 
    Parsed hostname: ``test4.test.mongodb.com``
 
-2. No error/exception raised constructing a MongoClient object
-
-3. An error/exception is raised when doing the ping operation, with the
+2. An error/exception is raised when doing the ping operation, with the
    message that there were no SRV records found for ``test4.test.mongodb.com``.
 
 Multiple Names in URI
@@ -239,7 +236,7 @@ Future Work
 ===========
 
 In the future we could consider using the priority and weight fields of the
-SRV records, or to use SRV records to do mongos discovery.
+SRV records, or to use SRV records to do MongoS discovery.
 
 ChangeLog
 =========
