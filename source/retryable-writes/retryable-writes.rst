@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-07-25
+:Last Modified: 2017-08-31
 
 .. contents::
 
@@ -251,7 +251,8 @@ later).
 Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
 not support retryable behavior. Drivers MUST NOT add a transaction ID to any
 write command with an unacknowledged write concern executed within a MongoClient
-where retryable writes have been enabled.
+where retryable writes have been enabled. Drivers MUST NOT retry these commands
+if they fail to return a response.
 
 Write commands where a single statement might affect multiple documents will not
 be initially supported by MongoDB 3.6, although this may change in the future.
@@ -262,7 +263,8 @@ the context of the `CRUD`_ specification, this includes the ``updateMany()`` and
 ``deleteMany()`` methods as well as ``bulkWrite()`` where the requests parameter
 includes an ``UpdateMany`` or ``DeleteMany`` operation.. Drivers MUST NOT add a
 transaction ID to any single- or multi-statement write commands that include one
-or more multi-document write operations.
+or more multi-document write operations. Drivers MUST NOT retry these commands
+if they fail to return a response.
 
 .. _update: https://docs.mongodb.com/manual/reference/command/update/
 .. _delete: https://docs.mongodb.com/manual/reference/command/delete/
@@ -274,15 +276,16 @@ This includes an `insert`_, `update`_, or `delete`_ command where the
 this includes the ``insertMany()`` and ``bulkWrite()`` methods where the
 ``ordered`` option is ``false`` (even if execution would result in a sequence of
 single-statement write commands). Drivers MUST NOT add a transaction ID to any
-write commands specifying unordered execution.
+write commands specifying unordered execution and MUST NOT retry those commands
+if they fail due return a response.
 
 .. _insert: https://docs.mongodb.com/manual/reference/command/insert/
 
 Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
 will not be initially supported by MongoDB 3.6, although this may change in the
 future. This includes, but is not limited to, an `aggregate`_ command using the
-``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to any
-unsupported write commands.
+``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to these
+commands and MUST NOT retry these commands if they fail to return a response.
 
 .. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
 .. _aggregate: https://docs.mongodb.com/manual/reference/command/aggregate/
