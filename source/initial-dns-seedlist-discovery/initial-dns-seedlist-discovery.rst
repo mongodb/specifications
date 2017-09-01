@@ -2,11 +2,11 @@
   :language: javascript
 
 ==============================
-Initial DNS Seedlist discovery
+Initial DNS Seedlist Discovery
 ==============================
 
 :Spec-ticket: SPEC-878
-:Title: Initial DNS Seedlist discovery
+:Title: Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
@@ -14,7 +14,7 @@ Initial DNS Seedlist discovery
 :Version: 1.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
-:Approver(s): Bernie Hackett (2017-08-17), David Golden (2017-08-29), Jeff Yemin (2017-08-22), Matt Broadstone (2017-08-24), A. Jesse Jiryu Davis (2017-08-14)
+:Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
 
 
 .. contents::
@@ -96,116 +96,10 @@ following URI was used instead::
 Test Plan
 =========
 
-Set up test DNS records to test the expansion. Preferably the following three
-sets::
+See README.rst in the accompanying test directory.
 
-    _mongodb._tcp.test1.test.mongodb.com. 86400 IN SRV 10 1 27017 localhost.
-    _mongodb._tcp.test1.test.mongodb.com. 86400 IN SRV 10 1 27018 localhost.
-
-    _mongodb._tcp.test2.test.mongodb.com. 86400 IN SRV 10 1 27018 localhost.
-    _mongodb._tcp.test2.test.mongodb.com. 86400 IN SRV 10 1 27019 localhost.
-
-    _mongodb._tcp.test3.test.mongodb.com. 86400 IN SRV 10 1 27017 localhost.
-
-
-The ``localhost:27017``, ``localhost:27018``, and ``localhost:27019`` nodes
-are all part of the same replica set.
-
-This replica set, and these SRV records are to be used with the following test
-cases.
-
-For each of the test cases:
-
-1. Verify that the connection string has been parsed correctly
-2. Verify that after a ping command, connections to the expanded hosts have
-   been made, or that the SDAM mechanism in the driver is aware of these hosts
-   existing.
-3. RECOMMENDED: Verify that the driver is aware that the seed hosts are
-   exactly what the DNS query for the SRV record indicates.
-
-Two results with default port
------------------------------
-
-``mongodb+srv://test1.test.mongodb.com/``
-
-1. Parsed protocol: ``mongodb+srv``
-   
-   Parsed hostname: ``test1.test.mongodb.com``
-
-2. The following servers MUST now be known to SDAM:
-   
-   ``localhost:27017`` ``localhost:27018`` ``localhost:27019``
-
-3. The driver should be aware that the following seed hosts exist:
-   
-   ``localhost:27017`` ``localhost:27018``
-
-Two results with non-standard port
-----------------------------------
-
-``mongodb+srv://test2.test.mongodb.com/``
-
-1. Parsed protocol: ``mongodb+srv``
-
-   Parsed hostname: ``test2.test.mongodb.com``
-
-2. The following server/port combinations must now be known to SDAM:
-
-   ``localhost:27017`` ``localhost:27018`` ``localhost:27019``
-
-3. The driver should be aware that the following seed hosts exist:
-
-   ``localhost:27018`` ``localhost:27019``
-
-One result with default port
-----------------------------
-
-``mongodb+srv://test3.test.mongodb.com/``
-
-1. Parsed protocol: ``mongodb+srv``
-
-   Parsed hostname: ``test3.test.mongodb.com``
-
-2. The following server/port combinations must now be known to SDAM:
-
-   ``localhost:27017 localhost:27018 localhost:27019``
-
-3. The driver should be aware the following seed host exist:
-
-   ``localhost:27017``
-
-No results
-----------
-
-``mongodb+srv://test4.test.mongodb.com/``
-
-
-1. Parsed protocol: ``mongodb+srv``
-
-   Parsed hostname: ``test4.test.mongodb.com``
-
-2. An error/exception is raised when doing the ping operation, with the
-   message that there were no SRV records found for ``test4.test.mongodb.com``.
-
-Multiple Names in URI
----------------------
-
-``mongodb+srv://test5.test.mongodb.com,test6.test.mongodb.com/``
-
-1. Parser must fail while constructing the MongoClient object, because two
-   hostnames are specified with the ``mongodb+srv://`` protocol
-
-2. The driver MUST NOT run the operation and MUST NOT be aware of any hosts
-
-URI has a port
---------------
-
-``mongodb+srv://test7.test.mongodb.com:27018/``
-
-1. Parser must fail while constructing the MongoClient object, because a port
-   is specified with the ``mongodb+srv://`` protocol
-
-2. The driver MUST NOT run the operation and MUST NOT be aware of any hosts
+Additionally, see the "mongodb+srv" tests invalid-uris.yml in the Connection
+String Spec tests.
 
 Motivation
 ==========
@@ -241,4 +135,5 @@ SRV records, or to use SRV records to do MongoS discovery.
 ChangeLog
 =========
 
-Nothing yet.
+2017-09-01: Updated test plan with YAML tests, and moved prose tests for
+  URI parsing into invalid-uris.yml in the Connection String Spec tests.

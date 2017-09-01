@@ -223,3 +223,19 @@ tests:
         hosts: ~
         auth: ~
         options: ~
+    -
+        description: "mongodb+srv with multiple service names"
+        uri: "mongodb+srv://test5.test.mongodb.com,test6.test.mongodb.com"
+        valid: false
+        warning: ~
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "mongodb+srv with port number"
+        uri: "mongodb+srv://test7.test.mongodb.com:27018"
+        valid: false
+        warning: ~
+        hosts: ~
+        auth: ~
+        options: ~
