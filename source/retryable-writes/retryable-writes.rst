@@ -7,7 +7,7 @@ Retryable Writes
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
-:Status: Draft
+:Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: 2017-08-31
