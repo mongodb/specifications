@@ -261,7 +261,7 @@ specifies a ``multi`` option of ``true`` or a `delete`_ command where any
 statement in the ``deletes`` sequence specifies a ``limit`` option of ``0``. In
 the context of the `CRUD`_ specification, this includes the ``updateMany()`` and
 ``deleteMany()`` methods as well as ``bulkWrite()`` where the requests parameter
-includes an ``UpdateMany`` or ``DeleteMany`` operation.. Drivers MUST NOT add a
+includes an ``UpdateMany`` or ``DeleteMany`` operation. Drivers MUST NOT add a
 transaction ID to any single- or multi-statement write commands that include one
 or more multi-document write operations. Drivers MUST NOT retry these commands
 if they fail to return a response.
