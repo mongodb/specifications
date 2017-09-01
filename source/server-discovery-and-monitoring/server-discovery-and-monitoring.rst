@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.10
+:Version: 2.11
 :Last Modified: August 11, 2017
 
 .. contents::
@@ -894,11 +894,30 @@ The ServerDescription is incompatible if:
 * minWireVersion > clientMaxWireVersion, or
 * maxWireVersion < clientMinWireVersion
 
-If the ServerDescription is incompatible, set the TopologyDescription's
-"compatible" field to false and fill out the "compatibilityError" field like:
-"Server at $host:$port uses wire protocol versions $minWireVersion through
-$maxWireVersion, but $driverName $driverVersion only supports
-$clientMinWireVersion through $clientMaxWireVersion."
+If any ServerDescription is incompatible, the client MUST set the
+TopologyDescription's "compatible" field to false and fill out the
+TopologyDescription's "compatibilityError" field like so:
+
+- if ServerDescription.minWireVersion > clientMaxWireVersion:
+
+  "Server at $host:$port requires wire version $minWireVersion, but this version
+  of $driverName only supports up to $clientMaxWireVersion."
+
+- if ServerDescription.maxWireVersion < clientMinWireVersion:
+
+  "Server at $host:$port reports wire version $maxWireVersion, but this version
+  of $driverName requires at least $clientMinWireVersion (MongoDB
+  $mongoVersion)."
+
+Replace $mongoVersion with the appropriate MongoDB minor version, for example if
+clientMinWireVersion is 2 and it connects to MongoDB 2.4, format the error like:
+
+  "Server at example.com:27017 reports wire version 0, but this version
+  of My Driver requires at least 2 (MongoDB 2.6)."
+
+In this second case, the exact required MongoDB version is known and can be
+named in the error message, whereas in the first case the implementor does not
+know which MongoDB versions will be compatible or incompatible in the future.
 
 Verifying setName with TopologyType Single
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2227,3 +2246,5 @@ to auto-retry.
 2017-08-01: Parse localLogicalSessionTimeoutMinutes from isMaster reply.
 
 2017-08-11: Clearer specification of "incompatible" logic.
+
+2017-09-01: Improved incompatibility error messages.
