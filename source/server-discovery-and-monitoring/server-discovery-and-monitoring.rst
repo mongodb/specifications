@@ -306,7 +306,7 @@ Fields:
 * primary: an address. This server's opinion of who the primary is.
   Default null.
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
-* localLogicalSessionTimeoutMinutes: integer or null. Default null.
+* logicalSessionTimeoutMinutes: integer or null. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -806,7 +806,7 @@ responds that "a" is in the replica set.
 logicalSessionTimeoutMinutes
 ````````````````````````````
 
-MongoDB 3.6 and later include a ``localLogicalSessionTimeoutMinutes`` field if
+MongoDB 3.6 and later include a ``logicalSessionTimeoutMinutes`` field if
 logical sessions are enabled in the deployment. Clients MUST check for this
 field and set the ServerDescription's logicalSessionTimeoutMinutes field to this
 value, or to null otherwise.
@@ -1264,9 +1264,9 @@ Logical Session Timeout
 
 Whenever a client updates the TopologyDescription from an ismaster response,
 it MUST set TopologyDescription.logicalSessionTimeoutMinutes to the smallest
-localLogicalSessionTimeoutMinutes value among all ServerDescriptions of
+logicalSessionTimeoutMinutes value among all ServerDescriptions of
 known ServerType. If any ServerDescription of known ServerType has a null
-localLogicalSessionTimeoutMinutes, then
+logicalSessionTimeoutMinutes, then
 TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.
 
 See the Driver Sessions Spec for the purpose of this value.
@@ -2243,7 +2243,7 @@ to auto-retry.
 
 2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
 
-2017-08-01: Parse localLogicalSessionTimeoutMinutes from isMaster reply.
+2017-08-01: Parse logicalSessionTimeoutMinutes from isMaster reply.
 
 2017-08-11: Clearer specification of "incompatible" logic.
 

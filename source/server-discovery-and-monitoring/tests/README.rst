@@ -60,7 +60,7 @@ current TopologyDescription. It has the following keys:
 - setName: A string with the expected replica set name, or null.
 - setVersion: absent or an integer.
 - electionId: absent, null, or an ObjectId.
-- localLogicalSessionTimeoutMinutes: absent, null, or an integer.
+- logicalSessionTimeoutMinutes: absent, null, or an integer.
 - minWireVersion: absent or an integer.
 - maxWireVersion: absent or an integer.
 
