@@ -251,8 +251,7 @@ later).
 Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
 not support retryable behavior. Drivers MUST NOT add a transaction ID to any
 write command with an unacknowledged write concern executed within a MongoClient
-where retryable writes have been enabled. Drivers MUST NOT retry these commands
-if they fail to return a response.
+where retryable writes have been enabled. Drivers MUST NOT retry these commands.
 
 Write commands where a single statement might affect multiple documents will not
 be initially supported by MongoDB 3.6, although this may change in the future.
