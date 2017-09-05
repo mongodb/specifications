@@ -495,13 +495,13 @@ for readability)::
      },
      "Binary": {
          "$binary": {
-             "base64": o0w498Or7cijeBSpkquNtg==",
+             "base64": "o0w498Or7cijeBSpkquNtg==",
              "subType": "03"
          }
      },
      "BinaryUserDefined": {
          "$binary": {
-             "base64": AQIDBAU=",
+             "base64": "AQIDBAU=",
              "subType": "80"
          }
      },
@@ -563,7 +563,7 @@ for readability)::
          },
          "$db": "database"
      },
-     "DBRefNoDB" {
+     "DBRefNoDB": {
          "$ref": "collection",
          "$id": {
              "$oid": "57fd71e96e32ab4225b723fb"
