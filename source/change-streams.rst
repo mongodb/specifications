@@ -246,11 +246,11 @@ Additionally, implementors MAY provide a form of this method which requires no p
 
 Presently change streams support only a subset of available aggregation stages:
 
- - ``$match``
- - ``$project``
- - ``$addFields``
- - ``$replaceRoot``
- - ``$redact``
+- ``$match``
+- ``$project``
+- ``$addFields``
+- ``$replaceRoot``
+- ``$redact``
 
 A driver MUST NOT throw an exception if any unsupported stage is provided, but instead depend on the server to return an error.
 
