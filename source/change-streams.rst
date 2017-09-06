@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: August 22, 2017
-:Version: 1.3
+:Last Modified: September 6, 2017
+:Version: 1.4
 
 .. contents::
 
@@ -262,18 +262,6 @@ ChangeStream
 
 A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a method to close the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``.
 
-The following is an example of the desired user experience:
-
-.. code:: python
-
-  try:
-      for change in db.collection.watch(...)
-          print(change)
-  except Exception:
-      # We know for sure it's unrecoverable:
-      log.error("...")
-
-
 A change stream MUST track the last resume token returned by the iterator to the user, caching it locally for use in future attempts to resume.  A driver MUST raise an error on the first response received without a resume token (e.g. the user has removed it with a pipeline stage).  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error.  A change stream MUST NOT attempt to resume on any other type of error, with the exception of a “not master” server error.  If a driver receives a “not master” error (for instance, because the primary it was connected to is stepping down), it will treat the error as a resumable error and attempt to resume.
@@ -365,6 +353,26 @@ Imagine a scenario in which a user wants to process each change to a collection 
 
 In this case the current change is always persisted locally, including the resume token, such that on restart the application can still process the change while ensuring that the change stream continues from the right logical time in the oplog.  It is the application's responsibility to ensure that ``processChange`` is idempotent, this design merely makes a reasonable effort to process each change **at least** once.
 
+-------------------------------------------------------
+Why is there no example of the desired user experience?
+-------------------------------------------------------
+
+The specification used to include this overspecified example of the "desired user experience":
+
+.. code:: python
+
+  try:
+      for change in db.collection.watch(...)
+          print(change)
+  except Exception:
+      # We know for sure it's unrecoverable:
+      log.error("...")
+
+It was decided to remove this example from the specification for the following reasons:
+
+- Tailable + awaitData cursors behave differently in existing supported drivers.
+- There are considerations to be made for languages that do not permit interruptible I/O (such as Java), where a change stream which blocks forever in a separate thread would necessitate killing the thread.
+- There is something to be said for an API that allows cooperation by default. The model in which a call to next only blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g. interaction with other event loops).
 
 Test Plan
 =========
@@ -426,4 +434,6 @@ Changelog
 | 2017-08-16 | Fixed formatting of resume process                |
 +----------------------------------------------------------------+
 | 2017-08-22 | Clarified killing cursors during resume process   |
++----------------------------------------------------------------+
+| 2017-09-06 | Remove `desired user experience` example          |
 +----------------------------------------------------------------+
