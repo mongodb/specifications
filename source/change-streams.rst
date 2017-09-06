@@ -227,7 +227,7 @@ The driver API consists of one helper method located on a driver’s Collection 
 
 The helper method must construct an aggregation command with a REQUIRED initial ``$changeStream`` stage.  A driver MUST NOT throw a custom exception if multiple ``$changeStream`` stages are present (e.g. if a user also passed ``$changeStream`` in the pipeline supplied to the helper), as the server will return an error.
 
-The aggregation command MUST use the inherited read concern of the collection it is being run against, in accordance with the `Read and Write Concern specification <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code>`_ .  The initial implementation of change streams on the server requires a “majority” read concern, drivers MUST document this requirement.  Drivers SHALL NOT throw an exception if any other read preference is specified, but instead should depend on the server to return an error.
+The aggregation command MUST use the inherited read concern of the collection it is being run against, in accordance with the `Read and Write Concern specification <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code>`_ .  The initial implementation of change streams on the server requires a “majority” read concern, drivers MUST document this requirement.  Drivers SHALL NOT throw an exception if any other read concern is specified, but instead should depend on the server to return an error.
 
 The stage has the following shape:
 
