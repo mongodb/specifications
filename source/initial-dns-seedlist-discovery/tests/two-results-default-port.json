@@ -1,5 +1,5 @@
 {
-  "uri": "mongodb+srv://test1.test.mongodb.com/?replicaSet=rs",
+  "uri": "mongodb+srv://test1.test.build.10gen.cc/?replicaSet=repl0",
   "seeds": [
     "localhost:27017",
     "localhost:27018"
