@@ -952,7 +952,7 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
   class BulkWriteResult {
 
     /**
-     * Indicates whether this write result was ackowledged. If not, then all
+     * Indicates whether this write result was acknowledged. If not, then all
      * other members of this result will be undefined.
      *
      * NOT REQUIRED: Drivers may choose to not provide this property.
@@ -1001,7 +1001,7 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
   class InsertOneResult {
 
     /**
-     * Indicates whether this write result was ackowledged. If not, then all
+     * Indicates whether this write result was acknowledged. If not, then all
      * other members of this result will be undefined.
      *
      * NOT REQUIRED: Drivers may choose to not provide this property.
@@ -1021,7 +1021,7 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
   class InsertManyResult {
 
     /**
-     * Indicates whether this write result was ackowledged. If not, then all
+     * Indicates whether this write result was acknowledged. If not, then all
      * other members of this result will be undefined.
      *
      * NOT REQUIRED: Drivers may choose to not provide this property.
@@ -1040,7 +1040,7 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
   class DeleteResult {
 
     /**
-     * Indicates whether this write result was ackowledged. If not, then all
+     * Indicates whether this write result was acknowledged. If not, then all
      * other members of this result will be undefined.
      *
      * NOT REQUIRED: Drivers may choose to not provide this property.
@@ -1057,7 +1057,7 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
   class UpdateResult {
 
     /**
-     * Indicates whether this write result was ackowledged. If not, then all
+     * Indicates whether this write result was acknowledged. If not, then all
      * other members of this result will be undefined.
      *
      * NOT REQUIRED: Drivers may choose to not provide this property.
