@@ -223,7 +223,7 @@ API
   interface CommandStartedEvent {
 
     /**
-     * Returns the command.
+     * Returns the command document, e.g. Payload Type=0 in OP_MSG.
      */
     command: Document;
 
