@@ -16,7 +16,7 @@
               "b:27017"
             ],
             "setName": "rs",
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]
@@ -53,7 +53,7 @@
               "b:27017"
             ],
             "setName": "rs",
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]

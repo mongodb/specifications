@@ -13,7 +13,7 @@ phases: [
                     ismaster: true,
                     msg: "isdbgrid",
                     logicalSessionTimeoutMinutes: 1,
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }],
 
@@ -23,7 +23,7 @@ phases: [
                     ismaster: true,
                     msg: "isdbgrid",
                     logicalSessionTimeoutMinutes: 2,
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],
@@ -59,7 +59,7 @@ phases: [
                     ismaster: true,
                     msg: "isdbgrid",
                     logicalSessionTimeoutMinutes: 1,
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }],
 
@@ -68,7 +68,7 @@ phases: [
                     ok: 1,
                     ismaster: true,
                     msg: "isdbgrid",
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],

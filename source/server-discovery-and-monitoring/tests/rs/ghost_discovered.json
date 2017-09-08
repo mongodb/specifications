@@ -10,7 +10,7 @@
             "ok": 1,
             "ismaster": false,
             "isreplicaset": true,
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]

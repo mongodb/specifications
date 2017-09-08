@@ -11,7 +11,7 @@ phases: [
 
                     ok: 1,
                     ismaster: true,
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],
@@ -41,7 +41,7 @@ phases: [
                     ismaster: true,
                     setName: "rs",
                     hosts: ["a:27017"],
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],

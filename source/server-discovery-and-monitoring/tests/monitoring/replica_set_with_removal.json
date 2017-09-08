@@ -15,7 +15,7 @@
             "hosts": [
               "a:27017"
             ],
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 4
           }
         ],

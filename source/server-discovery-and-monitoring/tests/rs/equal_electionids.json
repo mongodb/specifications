@@ -18,7 +18,7 @@
             "electionId": {
               "$oid": "000000000000000000000001"
             },
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ],
@@ -36,7 +36,7 @@
             "electionId": {
               "$oid": "000000000000000000000001"
             },
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]

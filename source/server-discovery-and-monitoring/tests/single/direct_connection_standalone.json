@@ -9,7 +9,7 @@
           {
             "ok": 1,
             "ismaster": true,
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]

@@ -15,7 +15,7 @@ phases: [
                     hidden: true,
                     hosts: ["c:27017", "d:27017"],
                     setName: "rs",
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }],
                 ["b:27017", {
@@ -25,7 +25,7 @@ phases: [
                     secondary: false,
                     hosts: ["c:27017", "d:27017"],
                     setName: "rs",
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],
