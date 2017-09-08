@@ -11,7 +11,7 @@ phases: [
 
                     ok: 1,
                     ismaster: true,
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }],
 
@@ -19,7 +19,7 @@ phases: [
 
                     ok: 0,
                     ismaster: true,
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],

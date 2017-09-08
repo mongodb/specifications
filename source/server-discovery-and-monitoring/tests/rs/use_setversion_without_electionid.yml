@@ -14,7 +14,7 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000001"},
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],
@@ -48,7 +48,7 @@ phases: [
                 hosts: ["a:27017", "b:27017"],
                 setName: "rs",
                 setVersion: 2,
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],
@@ -83,7 +83,7 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000002"},
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],

@@ -15,7 +15,7 @@ phases: [
                     hosts: ["A:27017"],
                     passives: ["B:27017"],
                     arbiters: ["C:27017"],
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],

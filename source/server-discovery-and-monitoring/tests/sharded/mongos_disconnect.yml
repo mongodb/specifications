@@ -12,7 +12,7 @@ phases: [
                     ok: 1,
                     ismaster: true,
                     msg: "isdbgrid",
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }],
 
@@ -21,7 +21,7 @@ phases: [
                     ok: 1,
                     ismaster: true,
                     msg: "isdbgrid",
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }]
         ],
@@ -81,7 +81,7 @@ phases: [
                     ok: 1,
                     ismaster: true,
                     msg: "isdbgrid",
-                    minWireVersion: 0,
+                    minWireVersion: 2,
                     maxWireVersion: 6
                 }],
         ],

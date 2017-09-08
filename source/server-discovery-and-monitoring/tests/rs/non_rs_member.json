@@ -8,7 +8,7 @@
           "b:27017",
           {
             "ok": 1,
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]

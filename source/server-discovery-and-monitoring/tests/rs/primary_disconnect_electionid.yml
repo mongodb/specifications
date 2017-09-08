@@ -14,7 +14,7 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000001"},
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }],
             ["b:27017", {
@@ -24,7 +24,7 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000002"},
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],
@@ -83,7 +83,7 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000001"},
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],
@@ -116,7 +116,7 @@ phases: [
                 setName: "rs",
                 setVersion: 1,
                 electionId: {"$oid": "000000000000000000000003"},
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],
@@ -149,7 +149,7 @@ phases: [
                 secondary: true,
                 hosts: ["a:27017", "b:27017"],
                 setName: "rs",
-                minWireVersion: 0,
+                minWireVersion: 2,
                 maxWireVersion: 6
             }]
         ],

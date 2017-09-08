@@ -16,7 +16,7 @@
               "b:27017",
               "c:27017"
             ],
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]
@@ -56,7 +56,7 @@
               "c:27017",
               "d:27017"
             ],
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]
@@ -99,7 +99,7 @@
               "d:27017",
               "e:27017"
             ],
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]
@@ -142,7 +142,7 @@
               "b:27017",
               "c:27017"
             ],
-            "minWireVersion": 0,
+            "minWireVersion": 2,
             "maxWireVersion": 6
           }
         ]
