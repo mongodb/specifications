@@ -12,21 +12,23 @@ tests:
             arguments:
                 requests:
                     -
+                        description: "UpdateOne when one document matches arrayFilters"
                         name: "updateOne"
                         arguments:
                             filter: {}
                             update:
                                 $set: {"y.$[i].b": 2}
                             arrayFilters:
-                              - {i.b: {"$eq": 3}}
+                              - {i.b: 3}
                     -
+                        description: "UpdateMany when multiple documents match arrayFilters"
                         name: "updateMany"
                         arguments:
                             filter: {}
                             update:
-                                $set: {"y.$[i].b": 5}
+                                $set: {"y.$[i].b": 2}
                             arrayFilters:
-                              - {i.b: {"$eq": 1}}
+                              - {i.b: 1}
                 options: { ordered: true }
         outcome:
             result:
@@ -38,5 +40,5 @@ tests:
                 upsertedIds: {}
             collection:
                 data:
-                    - {_id: 1, y: [{b: 2}, {b: 5}]}
-                    - {_id: 2, y: [{b: 0}, {b: 5}]}
+                    - {_id: 1, y: [{b: 2}, {b: 2}]}
+                    - {_id: 2, y: [{b: 0}, {b: 2}]}
