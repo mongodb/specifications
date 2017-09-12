@@ -879,6 +879,17 @@ Bulk Write Models
     update: Update;
 
     /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    arrayFilters: Optional<Array<Document>>;
+
+    /**
      * Specifies a collation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -914,6 +925,17 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     update: Update;
+
+    /**
+     * A set of filters specifying to which array elements an update should apply.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    arrayFilters: Optional<Array<Document>>;
 
     /**
      * Specifies a collation.
@@ -1541,6 +1563,7 @@ Q: Where is ``save``?
 Changes
 =======
 
+* 2017-08-31: Added arrayFilters to bulk write update models.
 * 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
 * 2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
 * 2017-06-26: Added FAQ entry for omission of save method.
