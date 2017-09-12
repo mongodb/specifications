@@ -12,7 +12,7 @@ tests:
             arguments:
                 requests:
                     -
-                        description: "UpdateOne when one document matches arrayFilters"
+                        # UpdateOne when one document matches arrayFilters
                         name: "updateOne"
                         arguments:
                             filter: {}
@@ -21,7 +21,7 @@ tests:
                             arrayFilters:
                               - {i.b: 3}
                     -
-                        description: "UpdateMany when multiple documents match arrayFilters"
+                        # UpdateMany when multiple documents match arrayFilters
                         name: "updateMany"
                         arguments:
                             filter: {}

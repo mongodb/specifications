@@ -47,7 +47,6 @@
                   }
                 }
               },
-              "description": "UpdateOne when one document matches arrayFilters",
               "name": "updateOne"
             },
             {
@@ -64,7 +63,6 @@
                   }
                 }
               },
-              "description": "UpdateMany when multiple documents match arrayFilters",
               "name": "updateMany"
             }
           ]
