@@ -126,11 +126,14 @@ this:
 All read operations performed using this session will now be causally
 consistent.
 
+If no value is provided for ``causalConsistency`` a value of true is
+implied. See the ``causalConsistency`` section.
+
 MongoClient changes
 ===================
 
 There are no API changes to ``MongoClient`` to support causal consistency.
-Applications indicate that they want causal consistency by setting the
+Applications indicate whether they want causal consistency by setting the
 ``causalConsistency`` field in the options passed to the ``startSession`` method.
 
 SessionOptions changes
@@ -150,8 +153,8 @@ SessionOptions changes
 
 In order to support causal consistency a new property named
 ``causalConsistency`` is added to ``SessionOptions``. Applications set
-``causalConsistency`` to true when starting a client session to indicate
-that they want causal consistency. All read operations performed
+``causalConsistency`` when starting a client session to indicate
+whether they want causal consistency. All read operations performed
 using that client session are then causally consistent.
 
 The optional ``initialClusterTime`` and ``initialOperationTime`` options allow a
@@ -163,12 +166,14 @@ Each new member is documented below.
 causalConsistency
 -----------------
 
-Applications set ``causalConsistency`` to true when starting a session to
-indicate they want causal consistency.
+Applications set ``causalConsistency`` when starting a session to
+indicate whether they want causal consistency.
 
-If no value is supplied for ``causalConsistency`` the default value will be
-used. Currently the default value is false, but might be changed in the future
-(for example, by specifying a default value in the connection string).
+Note that the ``causalConsistency`` property is optional. The default value of
+this property is ``not supplied``. If no value is supplied for
+``causalConsistency`` the value will be inherited. Currently it is inherited
+from the global default which is defined to be true. In the future it *might*
+be inherited from client settings.
 
 initialClusterTime
 ------------------
@@ -505,3 +510,4 @@ Changelog
 =========
 
 2017-09-13 Renamed "causally consistent reads" to "causal consistency"
+2017-09-13 If no value is supplied for ``causallyConsistent`` assume true
