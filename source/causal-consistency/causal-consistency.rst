@@ -17,10 +17,10 @@ Causal Consistency Specification
 Abstract
 ========
 
-Version 3.6 of the server introduces support for causally consistent reads.
+Version 3.6 of the server introduces support for causal consistency.
 This spec builds upon the Sessions Specification to define how an application
-requests causally consistent reads and how a driver interacts with the server
-to implement causally consistent reads.
+requests causal consistency and how a driver interacts with the server
+to implement causal consistency.
 
 Definitions
 ===========
@@ -35,7 +35,7 @@ interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 Terms
 -----
 
-Causally consistent reads
+Causal consistency
     A property that guarantees that an application can read its own writes and that
     a later read will never observe a version of the database that is older than an
     earlier read.
@@ -83,20 +83,20 @@ ServerSession
 Session
     A session is an abstract concept that represents a set of sequential
     operations executed by an application that are related in some way. This
-    specification defines how sessions are used to implement causally
-    consistent reads.
+    specification defines how sessions are used to implement causal
+    consistency.
 
 Unacknowledged writes
     Unacknowledged writes are write operations that are sent to the server without
     waiting for a reply acknowledging the write. See the "Unacknowledged Writes"
     section below for information on how unacknowledged writes interact with
-    causally consistent reads.
+    causal consistency.
 
 Specification
 =============
 
-An application requests causally consistent reads by creating a ``ClientSession``
-with options that specify that causally consistent reads are desired. An
+An application requests causal consistency by creating a ``ClientSession``
+with options that specify that causal consistency is desired. An
 application then passes the session as an argument to methods in the
 ``MongoDatabase`` and ``MongoCollection`` classes. Any operations performed against
 that session will then be causally consistent.
@@ -110,17 +110,17 @@ driver's and/or language's naming conventions differ you SHOULD continue to use
 them instead. For example, you might use ``StartSession`` or ``start_session`` instead
 of ``startSession``.
 
-High level summary of the API changes for causally consistent reads
-===================================================================
+High level summary of the API changes for causal consistency
+============================================================
 
-Causally consistent reads are built on top of client sessions.
+Causal consistency is built on top of client sessions.
 
-Applications will start a new client session for causally consistent reads like
+Applications will start a new client session for causal consistency like
 this:
 
 .. code:: typescript
 
-    options = new SessionOptions(causallyConsistentReads = true);
+    options = new SessionOptions(causalConsistency = true);
     session = client.startSession(options);
 
 All read operations performed using this session will now be causally
@@ -129,9 +129,9 @@ consistent.
 MongoClient changes
 ===================
 
-There are no API changes to ``MongoClient`` to support causally consistent reads.
-Applications indicate that they want causally consistent reads by setting the
-``causallyConsistentReads`` field in the options passed to the ``startSession`` method.
+There are no API changes to ``MongoClient`` to support causal consistency.
+Applications indicate that they want causal consistency by setting the
+``causalConsistency`` field in the options passed to the ``startSession`` method.
 
 SessionOptions changes
 ======================
@@ -141,17 +141,17 @@ SessionOptions changes
 .. code:: typescript
 
     class SessionOptions {
-        Optional<bool> causallyConsistentReads;
+        Optional<bool> causalConsistency;
         Optional<BsonDocument> initialClusterTime;
         Optional<BsonTimestamp> initialOperationTime;
 
         // other options defined by other specs
     }
 
-In order to support causally consistent reads a new property named
-``causallyConsistentReads`` is added to ``SessionOptions``. Applications set
-``causallyConsistentReads`` to true when starting a client session to indicate
-that they want to use causally consistent reads. All read operations performed
+In order to support causal consistency a new property named
+``causalConsistency`` is added to ``SessionOptions``. Applications set
+``causalConsistency`` to true when starting a client session to indicate
+that they want causal consistency. All read operations performed
 using that client session are then causally consistent.
 
 The optional ``initialClusterTime`` and ``initialOperationTime`` options allow a
@@ -160,13 +160,13 @@ occurred elsewhere (even in another process) before this session was started.
 
 Each new member is documented below.
 
-causallyConsistentReads
------------------------
+causalConsistency
+-----------------
 
-Applications set ``causallyConsistentReads`` to true when starting a session to
-indicate they want to use causally consistent reads.
+Applications set ``causalConsistency`` to true when starting a session to
+indicate they want causal consistency.
 
-If no value is supplied for ``causallyConsistentReads`` the default value will be
+If no value is supplied for ``causalConsistency`` the default value will be
 used. Currently the default value is false, but might be changed in the future
 (for example, by specifying a default value in the connection string).
 
@@ -228,7 +228,7 @@ MongoDatabase changes
 There are no additional API changes to ``MongoDatabase`` beyond those specified in
 the Sessions Specification. All ``MongoDatabase`` methods that talk to the server
 have been overloaded to take a session parameter. If that session was started
-with ``causallyConsistentReads = true`` then all operations using that session will
+with ``causalConsistency = true`` then all operations using that session will
 be causally consistent.
 
 MongoCollection changes
@@ -237,14 +237,14 @@ MongoCollection changes
 There are no additional API changes to ``MongoCollection`` beyond those specified
 in the Sessions Specification. All ``MongoCollection`` methods that talk to the
 server have been overloaded to take a session parameter. If that session was
-started with ``causallyConsistentReads = true`` then all operations using that
+started with ``causalConsistency = true`` then all operations using that
 session will be causally consistent.
 
 Server Commands
 ===============
 
-There are no new server commands related to causally consistent reads. Instead,
-causally consistent reads are implemented by:
+There are no new server commands related to causal consistency. Instead,
+causal consistency is implemented by:
 
 1. Saving the ``operationTime`` returned by 3.6+ servers for all operations in a
    property of the ``ClientSession`` object. The server reports the ``operationTime``
@@ -260,7 +260,7 @@ causally consistent reads are implemented by:
 Server Command Responses
 ========================
 
-To support causally consistent reads the server returns the ``operationTime`` in
+To support causal consistency the server returns the ``operationTime`` in
 responses it sends to the driver (for both read and write operations).
 
 .. code:: typescript
@@ -291,7 +291,7 @@ Sessions Specification for details.
 Causally consistent read commands
 =================================
 
-For causally consistent reads the driver MUST send the ``operationTime`` saved in
+For causal consistency the driver MUST send the ``operationTime`` saved in
 the ``ClientSession`` as the value of the ``afterClusterTime`` field of the
 ``readConcern`` field:
 
@@ -314,7 +314,7 @@ property of the ``ReadConcern`` of the ``ClientSession`` is null then the driver
 set the level field to "local" in the combined ``ReadConcern`` value sent to the
 server. Drivers MUST NOT attempt to verify whether the server supports causally
 consistent reads or not for a given read concern level. The server will return
-an error if a given level does not support causally consistent reads.
+an error if a given level does not support causal consistency.
 
 The Read and Write Concern specification states that when a user has not specified a
 ``ReadConcern`` or has specified the server's default ``ReadConcern``, drivers MUST
@@ -335,7 +335,7 @@ when connected to a standalone.
 Unacknowledged writes
 =====================
 
-The implementation of causally consistent reads relies on the ``operationTime``
+The implementation of causal consistency relies on the ``operationTime``
 returned by the server in the acknowledgement of a write. Since unacknowledged
 writes don't receive a response from the server (or don't wait for a response)
 the ``ClientSession``'s ``operationTime`` is not updated after an unacknowledged write.
@@ -357,7 +357,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
 2.  The first read in a causally consistent session must not send
     ``afterClusterTime`` to the server (because the ``operationTime`` has not yet
     been determined)
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * ``document = collection.anyReadOperation(session, ...)``
         * capture the command sent to the server (using APM or other mechanism)
         * assert that the command does not have an ``afterClusterTime``
@@ -374,7 +374,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
     include the ``operationTime`` returned by the server for the first operation in
     the ``afterClusterTime`` parameter of the second operation
         * skip this test if connected to a standalone
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * ``collection.findOne(session, {})``
         * ``operationTime = session.operationTime``
         * ``collection.anyReadOperation(session, ...)``
@@ -386,7 +386,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
     parameter of the second operation, including the case where the first operation
     returned an error
         * skip this test if connected to a standalone
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * ``collection.anyWriteOperation(session, ...) // test with errors also where possible``
         * ``operationTime = session.operationTime``
         * ``collection.findOne(session, {})``
@@ -397,7 +397,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
     should not include the ``afterClusterTime`` parameter in the command sent to the
     server
         * skip this test if connected to a standalone
-        * ``session = client.startSession(causallyConsistentReads = false)``
+        * ``session = client.startSession(causalConsistency = false)``
         * ``collection.anyReadOperation(session, {})``
         * ``operationTime = session.operationTime``
         * capture the command sent to the server (using APM or other mechanism)
@@ -406,7 +406,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
 7.  A read operation in a causally consistent session against a standalone does
     not include the ``afterClusterTime`` parameter in the command sent to the server
         * skip this test when not connected to a standalone server
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * ``collection.anyReadOperation(session, {})``
         * capture the command sent to the server (using APM or other mechanism)
         * assert that the command does not have an ``afterClusterTime`` field
@@ -414,7 +414,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
 8.  When using the default server ``ReadConcern`` the ``readConcern`` parameter in the
     command sent to the server should default to ``level : "local"``
         * skip this test if connected to a standalone
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * configure ``collection`` to use default server ``ReadConcern``
         * ``collection.findOne(session, {})``
         * ``operationTime = session.operationTime``
@@ -427,7 +427,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
     the server should be a merger of the ``ReadConcern`` value and the ``afterClusterTime``
     field
         * skip this test if connected to a standalone
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * configure collection to use a custom ReadConcern
         * ``collection.findOne(session, {})``
         * ``operationTime = session.operationTime``
@@ -439,7 +439,7 @@ Below is a list of test cases to write. Note that some tests are only relevant t
 10. When an unacknowledged write is executed in a causally consistent
     ``ClientSession`` the ``operationTime`` property of the ``ClientSession`` is
     not updated
-        * ``session = client.startSession(causallyConsistentReads = true)``
+        * ``session = client.startSession(causalConsistency = true)``
         * configure the collection to use ``{ w : 0 }`` unacknowledged writes
         * ``collection.anyWriteOperation(session, ...)``
         * assert ``session.operationTime`` does not have a value
@@ -461,15 +461,15 @@ Below is a list of test cases to write. Note that some tests are only relevant t
 Motivation 
 ==========
 
-To support causally consistent reads. Only supported with server version 3.6 or newer. 
+To support causal consistency. Only supported with server version 3.6 or newer. 
 
 Design Rationale
 ================
 
 The goal is to modify the driver API as little as possible so that existing
-programs that don't need causally consistent reads don't have to be changed.
+programs that don't need causal consistency don't have to be changed.
 This goal is met by defining a ``SessionOptions`` field that applications use to
-create a ``ClientSession`` that can be used for causally consistent reads. Any read
+create a ``ClientSession`` that can be used for causal consistency. Any read
 operations performed against ``MongoDatabase`` or ``MongoCollection`` instances
 associated with such a session are implicitly causally consistent.
 
@@ -485,7 +485,7 @@ Backwards Compatibility
 
 The API changes to support sessions extend the existing API but do not
 introduce any backward breaking changes. Existing programs that don't use
-causally consistent reads continue to compile and run correctly.
+causal consistency continue to compile and run correctly.
 
 Reference Implementation
 ========================
@@ -503,3 +503,5 @@ Q&A
 
 Changelog
 =========
+
+2017-09-13 Renamed "causally consistent reads" to "causal consistency"
