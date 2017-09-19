@@ -263,6 +263,62 @@
       }
     },
     {
+      "description": "BulkWrite with unordered execution",
+      "operation": {
+        "name": "bulkWrite",
+        "arguments": {
+          "requests": [
+            {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 1,
+                  "x": 11
+                }
+              }
+            },
+            {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 2,
+                  "x": 22
+                }
+              }
+            }
+          ],
+          "options": {
+            "ordered": false
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {
+            "0": 1,
+            "1": 2
+          },
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
       "description": "InsertMany succeeds after one network error",
       "failPoint": {
         "times": 1
@@ -305,6 +361,47 @@
             {
               "_id": 3,
               "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertMany with unordered execution",
+      "operation": {
+        "name": "insertMany",
+        "arguments": {
+          "documents": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ],
+          "options": {
+            "ordered": false
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedIds": {
+            "0": 1,
+            "1": 2
+          }
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
             }
           ]
         }
