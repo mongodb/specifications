@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-08-29
-:Version: 1.0
+:Last Modified: 2017-09-19
+:Version: 1.0.1
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -32,6 +32,12 @@ domain to return a list of host names. Supporting this feature would assist
 our users by decreasing maintenance load, primarily by removing the need to
 maintain seed lists at an application level.
 
+This specification builds on the `Connection String`_ specification. It adds a
+new protocol schema and modifies how the `Host Information`_ is interpreted.
+
+.. _`Connection String`: ../connection-string/connection-string-spec.rst
+.. _`Host Information`: ../connection-string/connection-string-spec.rst#host-information
+
 META
 ====
 
@@ -45,7 +51,7 @@ Specification
 The connection string parser in the driver is extended with a new protocol
 ``mongodb+srv`` as a logical pre-processing step before it considers the
 connection string and SDAM specifications. In this protocol, the comma
-separated list of hostnames is replaced with a single (domain name). The
+separated list of host names is replaced with a single host name. The
 format is::
 
     mongodb+srv://servername.example.com/{options}
@@ -72,6 +78,11 @@ found. This error MUST be raised only when the application attempts any
 operation which requires a server, in the same way as other server selection
 errors.
 
+Clients SHOULD respect the default domain and current domain when looking up
+the SRV record. For example, when using the non-FQDN ``servername`` and the
+default domain set to ``example.com``, a Client should end up requesting the
+SRV record for ``servername.example.com``.
+
 
 Example
 =======
@@ -96,10 +107,14 @@ following URI was used instead::
 Test Plan
 =========
 
-See README.rst in the accompanying test directory.
+See README.rst in the accompanying `test directory`_.
 
-Additionally, see the "mongodb+srv" tests invalid-uris.yml in the Connection
-String Spec tests.
+.. _`test directory`: tests
+
+Additionally, see the ``mongodb+srv`` test ``invalid-uris.yml`` in the `Connection
+String Spec`_ tests.
+
+.. _`Connection String Spec`: ../connection-string/tests
 
 Motivation
 ==========
@@ -135,5 +150,10 @@ SRV records, or to use SRV records to do MongoS discovery.
 ChangeLog
 =========
 
-2017-09-01: Updated test plan with YAML tests, and moved prose tests for
-  URI parsing into invalid-uris.yml in the Connection String Spec tests.
+2017-09-19
+    Clarify that hostnames in `mongo+srv://` URLs work like normal host
+    specifications.
+
+2017-09-01
+    Updated test plan with YAML tests, and moved prose tests for URI parsing
+    into invalid-uris.yml in the Connection String Spec tests.
