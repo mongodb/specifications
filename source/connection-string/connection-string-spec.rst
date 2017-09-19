@@ -60,7 +60,17 @@ connection string supports multiple hosts.
 ------
 Scheme
 ------
-The scheme mongodb represents that this is a connection string for a MongoClient.
+The scheme ``mongodb`` represents that this is a connection string for a MongoClient.
+
+Other schemes are also possible and are introduced through additional
+specifications. These additional schemes build on top of the connection string
+as documented in this specification.
+
+For example the ``mongodb+srv`` specification, introduced with `Initial DNS
+Seedlist Discovery`_, obtains information from DNS in addition to just the
+connection string.
+
+.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
 
 -------------------
 Userinfo (optional)
