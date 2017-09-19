@@ -8,36 +8,43 @@ that drivers can use to prove their conformance to the Retryable Writes spec.
 Server Fail Point
 =================
 
-The tests depend on a server fail point, ``disconnectAfterWrite``, which allows
-us to force a network error after the server executes a write command but before
-it would return a write result. The fail point may be configured like so::
+The tests depend on a server fail point, ``onPrimaryTransactionalWrite``, which
+allows us to force a network error after the server executes and commits a write
+but before it would return a write result. The fail point may be configured like
+so::
 
     db.runCommand({
-        configureFailPoint: "disconnectAfterWrite",
-        mode: { times: <integer> },
-        data: { errorOnFirstAttemptOnly: <boolean> }
+        configureFailPoint: "onPrimaryTransactionalWrite",
+        mode: <string|document>
     });
 
-The ``times`` option is a generic fail point option and specifies the number of
-times that the fail point remains on before it deactivates. Each write command
-will count towards the ``times`` limit regardless of whether a network error
-occurs.
+``mode`` is a generic fail point option and may be assigned a string or document
+value. The string values ``"alwaysOn"`` and ``"off"`` may be used to enable or
+disable the fail point, respectively. A document may be used to specify either
+``times`` or ``skip``, which are mutually exclusive.
 
-The ``errorOnFirstAttemptOnly`` option defaults to ``false``, but may be set to
-``true`` to have the fail point allow retry attempts to succeed. This is needed
-to test a bulk write operation consisting of multiple write commands, so that we
-can expect one network error for each command in the batch and still expect the
-entire bulk write operation to succeed.
+``{ times: <integer> }`` may be used to limit the number of times the fail point
+may trigger before transitioning to ``"off"``.
+
+``{ skip: <integer> }`` may be used to defer the first trigger of a fail point,
+after which it will transition to ``"alwaysOn"``.
+
+The ``onPrimaryTransactionalWrite`` fail point cannot currently be used to test
+a multi-statement write operation where each command in the sequence fails on
+the first attempt but succeeds on the second. This is being tracked in
+`SERVER-31142`_
+
+.. _SERVER-31142: https://jira.mongodb.org/browse/SERVER-31142
 
 Disabling Fail Point after Test Failure
 ---------------------------------------
 
 In the event of a test failure, drivers should disable the
-``disconnectAfterWrite`` fail point to avoid spurious failures in subsequent
-tests. The fail point may be disabled like so::
+``onPrimaryTransactionalWrite`` fail point to avoid spurious failures in
+subsequent tests. The fail point may be disabled like so::
 
     db.runCommand({
-        configureFailPoint: "disconnectAfterWrite",
+        configureFailPoint: "onPrimaryTransactionalWrite",
         mode: "off"
     });
 
@@ -73,9 +80,6 @@ Each YAML file has the following keys:
 
     - ``times``: The number of times that the fail point remains on before it
       deactivates.
-
-    - ``errorOnFirstAttemptOnly``: Whether network errors should occur on only
-      the first attempt of each write command.
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a

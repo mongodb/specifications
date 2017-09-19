@@ -137,8 +137,7 @@
     {
       "description": "BulkWrite succeeds after one network error for each command",
       "failPoint": {
-        "times": 5,
-        "errorOnFirstAttemptOnly": true
+        "times": 5
       },
       "operation": {
         "name": "bulkWrite",
