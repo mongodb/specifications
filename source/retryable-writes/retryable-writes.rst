@@ -229,8 +229,8 @@ Supported single-statement write operations include ``insertOne()``,
 ``findOneAndReplace()``, and ``findOneAndUpdate()``.
 
 Supported multi-statement write operations include ``insertMany()`` and
-``bulkWrite()`` where the ordered option is ``true`` and, in the case of
-``bulkWrite()``, the requests parameter does not include ``UpdateMany`` or
+``bulkWrite()``. The ordered option may be ``true`` or ``false``. In the case of
+``bulkWrite()``, the requests parameter may not include ``UpdateMany`` or
 ``DeleteMany`` operations.
 
 These methods above are defined in the `CRUD`_ specification.
@@ -268,24 +268,13 @@ if they fail to return a response.
 .. _update: https://docs.mongodb.com/manual/reference/command/update/
 .. _delete: https://docs.mongodb.com/manual/reference/command/delete/
 
-Write commands containing multiple statements and unordered execution will not
-be initially supported by MongoDB 3.6, although this may change in the future.
-This includes an `insert`_, `update`_, or `delete`_ command where the
-``ordered`` option is ``false``. In the context of the `CRUD`_ specification,
-this includes the ``insertMany()`` and ``bulkWrite()`` methods where the
-``ordered`` option is ``false`` (even if execution would result in a sequence of
-single-statement write commands). Drivers MUST NOT add a transaction ID to any
-write commands specifying unordered execution and MUST NOT retry those commands
-if they fail due return a response.
-
-.. _insert: https://docs.mongodb.com/manual/reference/command/insert/
-
 Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
 will not be initially supported by MongoDB 3.6, although this may change in the
 future. This includes, but is not limited to, an `aggregate`_ command using the
 ``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to these
 commands and MUST NOT retry these commands if they fail to return a response.
 
+.. _insert: https://docs.mongodb.com/manual/reference/command/insert/
 .. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
 .. _aggregate: https://docs.mongodb.com/manual/reference/command/aggregate/
 
@@ -342,8 +331,8 @@ enabled:
 * Exercise supported single-statement write operations (i.e. deleteOne,
   insertOne, replaceOne, updateOne, and findAndModify).
 * Exercise supported multi-statement insertMany and bulkWrite operations, which
-  specify ordered execution and contain only supported single-statement write
-  operations.
+  contain only supported single-statement write operations. Both ordered and
+  unordered execution should be tested.
 
 If possible, drivers should test that transaction IDs are never included in
 commands for unsupported write operations:
@@ -353,8 +342,6 @@ commands for unsupported write operations:
   - ``updateMany()``
   - ``deleteMany()``
 * Unsupported multi-statement write operations
-  - ``insertMany()`` where ``ordered`` is ``false``
-  - ``bulkWrite()`` where ``ordered`` is ``false``
   - ``bulkWrite()`` that includes ``UpdateMany`` or ``DeleteMany``
 * Unsupported write commands
   - ``aggregate`` with ``$out`` pipeline operator
@@ -510,13 +497,12 @@ How will users know which operations are supported?
 
 The initial list of supported operations is already quite permissive. Most
 `CRUD`_ operations are supported apart from ``updateMany()``, ``deleteMany()``,
-and ``aggregate()`` with ``$out``. Unordered bulk writes are rare and other
-write operations (e.g. ``renameCollection``) are rarer still.
+and ``aggregate()`` with ``$out``. Other write operations
+(e.g. ``renameCollection``) are rare.
 
 That said, drivers will need to clearly document exactly which operations
-support retryable behavior. In the case of bulk write operations such as
-``insertMany()`` and ``bulkWrite()``, which may or may not support retryability,
-drivers should discuss how elegibility is determined.
+support retryable behavior. In the case ``bulkWrite()``, which may or may not
+support retryability, drivers should discuss how elegibility is determined.
 
 Why does the retryWrites MongoClient option default to false?
 -------------------------------------------------------------
