@@ -46,11 +46,11 @@ Converting to JSON
 ------------------
 
 There are many YAML to JSON converters. There are even several converters called
-``yaml2json`` in NPM. The specific ``yaml2json`` command we use is provided by
-the `yaml-to-json <https://www.npmjs.com/package/yaml-to-json>`_ package.
-Use only that converter, so that JSON is formatted consistently.
+``yaml2json`` in NPM.  Alas, we are not using ``yaml2json`` anymore, but instead
+the `js-yaml <https://www.npmjs.com/package/js-yaml>`_ package. Use only that
+converter, so that JSON is formatted consistently.
 
-Run ``npm install yaml-to-json``, then run ``make`` in the ``source`` directory
+Run ``npm install -g js-yaml``, then run ``make`` in the ``source`` directory
 at the top level of this repository to convert all YAML test files to JSON.
 
 Licensing
