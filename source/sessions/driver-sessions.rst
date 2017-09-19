@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 28-Aug-2017
+:Last Modified: 16-Sep-2017
 
 .. contents::
 
@@ -434,7 +434,8 @@ Sending the session ID to the server on all commands
 ====================================================
 
 When connected to a server that supports sessions a driver MUST append the
-session ID to every command it sends to the server. It does this by adding a
+session ID to every command it sends to the server (with the exceptions noted
+in the following section). It does this by adding a
 top level ``lsid`` field to the command sent to the server. A driver MUST do this
 without modifying any data supplied by the application (e.g. the command
 document passed to runCommand).:
@@ -442,6 +443,18 @@ document passed to runCommand).:
 .. code:: typescript
 
     { commandName: ..., lsid : { id : <UUID> } }
+
+Exceptions to sending the session ID to the server on all commands
+==================================================================
+
+There are some exceptions to the rule that a driver MUST append the session ID to
+every command it sends to the server.
+
+A driver MUST NOT append a session ID to any command sent during the process of
+opening and authenticating a connection.
+
+A driver MAY omit a session ID in isMaster commands sent solely for the purposes
+of monitoring the state of a deployment.
 
 Server Commands
 ===============
@@ -772,3 +785,6 @@ Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of
 
 Change log
 ==========
+
+2017-09-13 If causalConsistency option is ommitted assume true
+2017-09-16 Omit session ID when opening and authenticating a connection
