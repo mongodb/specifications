@@ -64,6 +64,8 @@ tests:
                     - { _id: 5, x: 56 }
     -
         description: "BulkWrite succeeds after one network error for each command"
+        # This test depends on https://jira.mongodb.org/browse/SERVER-31142
+        #
         # Fail point will repeat 5 times, but only the first attempt of each
         # write command will yield a network error. This will allow for the
         # following exchange:
@@ -76,7 +78,6 @@ tests:
         #  6. update is retried and succeeds
         failPoint:
             times: 5
-            errorOnFirstAttemptOnly: true
         operation:
             name: "bulkWrite"
             arguments:
