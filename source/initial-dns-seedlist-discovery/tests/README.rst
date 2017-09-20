@@ -37,6 +37,11 @@ example with this shell script:
   SRV _mongodb._tcp.test2.test.build.10gen.cc localhost 27018
   SRV _mongodb._tcp.test2.test.build.10gen.cc localhost 27019
   SRV _mongodb._tcp.test3.test.build.10gen.cc localhost 27017
+  SRV _mongodb._tcp.test5.test.build.10gen.cc localhost 27017
+  SRV _mongodb._tcp.test6.test.build.10gen.cc localhost 27017
+  TXT test5.test.build.10gen.cc "connectTimeoutMS=300000&socketTimeoutMS=300000"
+  TXT test6.test.build.10gen.cc "connectTimeoutMS=200000"
+  TXT test6.test.build.10gen.cc "socketTimeoutMS=200000"
   EOF
 
   export LD_PRELOAD=`pwd`/resolv_wrapper_build/src/libresolv_wrapper.so
@@ -44,9 +49,14 @@ example with this shell script:
 
 You can debug the library by exporting ``RESOLV_WRAPPER_DEBUGLEVEL=3``.
 
-If you choose instead to configure a real name server with SRV records, adapt
-the records shown above to your domain name, and update the "uri" field in the
-YAML or JSON files in this directory with the actual domain.
+Please note that CWRAP does not return more than one record per type/host
+combination. It also does not understand TXT records, so your mileage may
+vary.
+
+If you choose instead to configure a real name server with SRV and TXT
+records, adapt the records shown above to your domain name, and update the
+"uri" field in the YAML or JSON files in this directory with the actual
+domain.
 
 Test Format and Use
 -------------------
@@ -56,8 +66,11 @@ These YAML and JSON files contain the following fields:
 - ``uri``: a mongodb+srv connection string
 - ``seeds``: the expected set of initial seeds discovered from the SRV record
 - ``hosts``: the discovered topology's list of hosts once SDAM completes a scan
+- ``options``: the parsed connection string options as discovered from URI and
+  TXT records
 
 For each file, create MongoClient initialized with the mongodb+srv connection
-string. You SHOULD verify the client's initial seed list matches the list of
-seeds. You MUST verify the set of ServerDescriptions in the client's
-TopologyDescription eventually matches the list of hosts.
+string. You SHOULD verify that the client's initial seed list matches the list of
+seeds. You MUST verify that the set of ServerDescriptions in the client's
+TopologyDescription eventually matches the list of hosts. You MUST verify that
+the set of Connection String Options matches the client's parsed set.

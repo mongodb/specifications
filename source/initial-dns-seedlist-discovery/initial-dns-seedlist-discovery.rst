@@ -56,6 +56,9 @@ format is::
 
     mongodb+srv://servername.example.com/{options}
 
+Seedlist Discovery
+------------------
+
 In this preprocessing step, the driver will query the DNS server for the SRV
 record ``_mongodb._tcp.servername.example.com``. This DNS query is expected to
 respond with one or more SRV records. From the DNS result, the driver now MUST
@@ -83,13 +86,53 @@ the SRV record. For example, when using the non-FQDN ``servername`` and the
 default domain set to ``example.com``, a Client should end up requesting the
 SRV record for ``servername.example.com``.
 
+Default Connection String Options
+---------------------------------
+
+A Client MUST also query the DNS server for TXT records. If available, these
+TXT records provide default connection string options. In most cases only one
+TXT record is necessary, unless the default options exceed the maximum length
+of 255 characters that TXT records allow for. To allow for this case, a Client
+MUST allow for multiple TXT records for the same host name and consider the
+options in all of them.
+
+Information returned with each TXT record is a simple URI string, just like
+the options in a connection string.
+
+Although options in a connection string are separated by a ``&``, this
+character MUST NOT be present to separate options between TXT record strings
+as a separation is implied by using multiple TXT records.
+
+TXT records MAY be queried before SRV records because for example they could
+include the ``replicaSet`` option to define the replica set name.
+
+A Client MUST use options specified in the Connection String to override
+options provided through TXT records.
+
+.. _`Connection String spec`: ../connection-string/connection-string-spec.rst#defining-connection-options
+
+If any connection string options in a TXT record is incorrectly formatted, a
+Client must throw a parse exception.
+
+This specification does not change the behaviour of handling unknown keys or
+incorrect values as is set out in the `Connection String spec`_. Unknown keys
+or incorrect values in default options specified through TXT records MUST be
+handled in the same way as unknown keys or incorrect values directly specified
+through a Connection String.
+
+In case two TXT records for the same host name include the same connection
+string option, a Client SHOULD warn the user. DNS does not guarantee the order
+in which records are returned and hence this can cause conflicts. This
+is especially important for options (such as readPreferenceTags) which may
+occur multiple times and for which the order in which they appear is
+important.
 
 Example
 =======
 
 If we provide the following URI::
 
-    mongodb+srv://server.mongodb.com/?connectTimeoutMS=300000
+    mongodb+srv://server.mongodb.com/
 
 The driver needs to request the DNS server for the SRV record
 ``_mongodb._tcp.server.mongodb.com``. This could return::
@@ -98,11 +141,27 @@ The driver needs to request the DNS server for the SRV record
     _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.mongodb.com.
     _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
 
+The driver also needs to request the DNS server for the TXT records on
+``server.mongodb.com``. This could return::
 
-From the DNS result, the driver now MUST treat the host information as if the
+    Record              TTL   Class    Text
+    server.mongodb.com. 86400 IN TXT   "ssl=true&connectTimeoutMS=250000"
+    server.mongodb.com. 86400 IN TXT   "readPreference=secondaryPreferred&readPreferenceTags=dc:ny,rack:1"
+
+From the DNS results, the driver now MUST treat the host information as if the
 following URI was used instead::
 
-    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?connectTimeoutMS=300000
+    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&connectTimeoutMS=250000&readPreference=secondaryPreferred&readPreferenceTags=dc:ny,rack:1
+
+If we provide the following URI with the same DNS (SRV and TXT) records::
+
+    mongodb+srv://server.mongodb.com/?connectTimeoutMS=300000
+
+Then the default in the TXT record for ``connectTimeoutMS`` is not used as
+the value in the connection string overrides it. The Client MUST treat the host
+information as if the following URI was used instead::
+
+    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&connectTimeoutMS=300000&readPreference=secondaryPreferred&readPreferenceTags=dc:ny,rack:1
 
 Test Plan
 =========
