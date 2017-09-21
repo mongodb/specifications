@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 16-Sep-2017
+:Last Modified: 19-Sep-2017
 
 .. contents::
 
@@ -657,6 +657,34 @@ Whenever a driver sends a command to a mongos node it MUST include the highest
 seen cluster time in a top level field called ``$clusterTime``, in the same format
 as it was received in (but see Gossipping with mixed mongos versions below).
 
+How to compute the $clusterTime to send to a server
+---------------------------------------------------
+
+When starting a ``ClientSession``, applications can optionally initialize the
+causal consistency properties of the ``ClientSession`` by setting the
+``initialClustertime`` (and ``initialOperationTime``) properties of
+``SessionOptions``. If these values are not valid they can cause errors. In
+order to protect itself a driver must use these values only with the
+``ClientSession`` in which they are defined. Only ``$clusterTime`` values that come
+directly from a server should be allowed to propagate to the ``MongoClient``.
+
+The safe way to compute the ``$clusterTime`` to send to a server is:
+
+1. when the ``ClientSession`` is first started its ``clusterTime`` is set to
+``initialClusterTime``
+
+2. when the driver sends ``$clusterTime`` to the server it should send the
+greater of the ``ClientSession`` ``clusterTime`` and the ``MongoClient``
+``clusterTime` (either one could be null)
+
+3. when the driver receives a ``$clusterTime`` from the server it should update
+both the ``ClientSession`` and the ``MongoClient`` ``clusterTime``
+
+This sequence ensures that if the ``initialClusterTime`` is invalid only that
+one session will be affected. The ``MongoClient`` ``clusterTime`` is only
+updated with ``$clusterTime`` values known to be valid because they were
+received directly from a server.
+
 Tracking the highest seen cluster time does not require checking the cluster topology or the server version
 -----------------------------------------------------------------------------------------------------------
 
@@ -788,3 +816,4 @@ Change log
 
 2017-09-13 If causalConsistency option is ommitted assume true
 2017-09-16 Omit session ID when opening and authenticating a connection
+2017-09-19 How to safely use initialClusterTime
