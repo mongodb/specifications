@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: September 6, 2017
-:Version: 1.4
+:Last Modified: September 21, 2017
+:Version: 1.5
 
 .. contents::
 
@@ -262,7 +262,7 @@ ChangeStream
 
 A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a method to close the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``.
 
-A change stream MUST track the last resume token returned by the iterator to the user, caching it locally for use in future attempts to resume.  A driver MUST raise an error on the first response received without a resume token (e.g. the user has removed it with a pipeline stage).  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
+A change stream MUST track the last resume token returned by the iterator to the user, caching it locally for use in future attempts to resume.  A driver MUST raise an error on the first response received without a resume token (e.g. the user has removed it with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error.  A change stream MUST NOT attempt to resume on any other type of error, with the exception of a “not master” server error.  If a driver receives a “not master” error (for instance, because the primary it was connected to is stepping down), it will treat the error as a resumable error and attempt to resume.
 
@@ -424,16 +424,18 @@ Reference Implementations
 
 Changelog
 =========
-+------------+---------------------------------------------------+
-| 2017-08-03 | Initial commit                                    |
-+------------+---------------------------------------------------+
-| 2017-08-07 | Fixed typo in command format                      |
-+------------+---------------------------------------------------+
-| 2017-08-16 | Added clarification regarding Resumable errors    |
-+----------------------------------------------------------------+
-| 2017-08-16 | Fixed formatting of resume process                |
-+----------------------------------------------------------------+
-| 2017-08-22 | Clarified killing cursors during resume process   |
-+----------------------------------------------------------------+
-| 2017-09-06 | Remove `desired user experience` example          |
-+----------------------------------------------------------------+
++------------+------------------------------------------------------------+
+| 2017-08-03 | Initial commit                                             |
++------------+------------------------------------------------------------+
+| 2017-08-07 | Fixed typo in command format                               |
++------------+------------------------------------------------------------+
+| 2017-08-16 | Added clarification regarding Resumable errors             |
++-------------------------------------------------------------------------+
+| 2017-08-16 | Fixed formatting of resume process                         |
++-------------------------------------------------------------------------+
+| 2017-08-22 | Clarified killing cursors during resume process            |
++-------------------------------------------------------------------------+
+| 2017-09-06 | Remove `desired user experience` example                   |
++-------------------------------------------------------------------------+
+| 2017-09-21 | Clarified that we need to close the cursor on missing token|
++-------------------------------------------------------------------------+
