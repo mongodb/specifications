@@ -143,7 +143,7 @@ MongoClient where retryable writes have been enabled, drivers MUST increment the
 transaction number for the corresponding server session and include the server
 session ID and transaction number in top-level ``lsid`` and ``txnNum`` fields,
 respectively. ``lsid`` is a BSON value (discussed in the Driver Session
-specification). ``txnNum`` MUST be an unsigned integer; the server will accept
+specification). ``txnNum`` MUST be a positive integer; the server will accept
 32-bit (BSON type 0x10) or 64-bit (0x12) values.
 
 The following example illustrates a possible write command for an
