@@ -32,7 +32,7 @@ after which it will transition to ``"alwaysOn"``.
 The ``onPrimaryTransactionalWrite`` fail point cannot currently be used to test
 a multi-statement write operation where each command in the sequence fails on
 the first attempt but succeeds on the second. This is being tracked in
-`SERVER-31142`_
+`SERVER-31142`_.
 
 .. _SERVER-31142: https://jira.mongodb.org/browse/SERVER-31142
 
