@@ -33,7 +33,7 @@ our users by decreasing maintenance load, primarily by removing the need to
 maintain seed lists at an application level.
 
 This specification builds on the `Connection String`_ specification. It adds a
-new protocol schema and modifies how the `Host Information`_ is interpreted.
+new protocol scheme and modifies how the `Host Information`_ is interpreted.
 
 .. _`Connection String`: ../connection-string/connection-string-spec.rst
 .. _`Host Information`: ../connection-string/connection-string-spec.rst#host-information
