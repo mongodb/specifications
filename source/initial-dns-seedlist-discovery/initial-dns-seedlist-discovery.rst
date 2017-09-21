@@ -103,15 +103,17 @@ Although options in a connection string are separated by a ``&``, this
 character MUST NOT be present to separate options between TXT record strings
 as a separation is implied by using multiple TXT records.
 
-TXT records MAY be queried before SRV records because for example they could
-include the ``replicaSet`` option to define the replica set name.
+TXT records MAY be queried either before, in parallel, or after SRV records.
+Clients MUST query both the SRV and the TXT records before attempting any
+connection to MongoDB.
 
-A Client MUST use options specified in the Connection String to override
-options provided through TXT records.
+A Client MUST use options specified in the Connection String, and options
+passed in as parameters in code to the MongoClient constructor (or equivalent
+API for each driver), to override options provided through TXT records.
 
 .. _`Connection String spec`: ../connection-string/connection-string-spec.rst#defining-connection-options
 
-If any connection string options in a TXT record is incorrectly formatted, a
+If any connection string option in a TXT record is incorrectly formatted, a
 Client must throw a parse exception.
 
 This specification does not change the behaviour of handling unknown keys or
