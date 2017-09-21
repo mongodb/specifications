@@ -29,7 +29,7 @@ specifications define various ways in which sessions are used (e.g. causally
 consistent reads, retriable writes, or transactions).
 
 This specification also discusses how drivers participate in distributing the
-cluster time throughout a sharded cluster, a process known as "gossipping the
+cluster time throughout a deployment, a process known as "gossipping the
 cluster time". While gossipping the cluster time is somewhat orthogonal to
 sessions, any driver that implements sessions MUST also implement gossipping
 the cluster time, so it is included in this specification.
@@ -51,6 +51,10 @@ ClientSession
     The driver object representing a client session and the operations that can
     be performed on it. Depending on the language a driver is written in this
     might be an interface or a class. See also ``ServerSession``.
+
+Deployment
+    A set of servers that are all part of a single MongoDB cluster. We avoid the
+    word "cluster" because some people interpret "cluster" to mean "sharded cluster".
 
 MongoClient
     The root object of a driver's API. MAY be named differently in some drivers.
@@ -79,6 +83,9 @@ Session
     operations executed by an application that are related in some way. Other
     specifications define the various ways in which operations can be related,
     but examples include causally consistent reads and retryable writes.
+
+Topology
+    The current configuration and state of a deployment. 
 
 Specification
 =============
@@ -374,7 +381,7 @@ The motivation for using an implied ``ClientSession`` for all methods that don't
 already take a session parameter is to make sure that all commands that are
 sent to the server are tagged with a session ID. This improves the ability of
 an operations team to monitor (and kill if necessary) long running operations.
-Tagging an operation with a session ID is specially useful if a cluster wide
+Tagging an operation with a session ID is specially useful if a deployment wide
 operation needs to be killed.
 
 MongoCollection changes
@@ -468,7 +475,7 @@ The ``startSession`` server command has the following format:
 
     { startSession : 1, $clusterTime : ... }
 
-The ``$clusterTime`` field should only be sent when connected to a mongos. See the
+The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section "Gossipping the cluster time" for information on ``$clusterTime``.
 
 The server response has the following format:
@@ -503,7 +510,7 @@ The ``endSessions`` server command has the following format:
 
     { endSessions : 1, ids : [ id1, id2, … ], $clusterTime : ... }
 
-The ``$clusterTime`` field should only be sent when connected to a mongos. See the
+The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section of "Gossipping the cluster time" for information on ``$clusterTime``.
 
 The server response has the following format:
@@ -611,20 +618,23 @@ Algorithm to return a ServerSession instance to the server session pool
 Gossipping the cluster time
 ===========================
 
-Drivers MUST gossip the cluster time when connected to sharded clusters through
-mongos nodes.
+Drivers MUST gossip the cluster time when connected to a deployment that uses
+cluster times.
 
 Gossipping the cluster time is a process in which the driver participates in
-distributing the logical cluster time in a sharded cluster. Drivers learn the
-current cluster time (from a particular mongos node's perspective) in responses
-they receive from mongos nodes. Drivers in turn forward the highest cluster
-time they have seen so far to any mongos nodes they subsequently send commands
+distributing the logical cluster time in a deployment. Drivers learn the
+current cluster time (from a particular server's perspective) in responses
+they receive from servers. Drivers in turn forward the highest cluster
+time they have seen so far to any server they subsequently send commands
 to.
+
+A driver detects that it MUST participate in gossipping the cluster time when it sees
+a $clusterTime in a response received from a server.
 
 Receiving the current cluster time
 ----------------------------------
 
-When connected to a mongos, drivers MUST examine all responses to server
+Drivers MUST examine all responses to server
 commands to see if they contain a top level field named ``$clusterTime`` formatted
 as follows:
 
@@ -642,8 +652,8 @@ as follows:
         ...
     }
 
-Whenever a driver receives a cluster time from a mongos it MUST compare it to
-the current highest seen cluster time for the cluster. If the new cluster time
+Whenever a driver receives a cluster time from a server it MUST compare it to
+the current highest seen cluster time for the deployment. If the new cluster time
 is higher than the highest seen cluster time it MUST become the new highest
 seen cluster time. Two cluster times are compared using only the BsonTimestamp
 value of the ``clusterTime`` embedded field (be sure to include both the timestamp
@@ -653,9 +663,9 @@ does not participate in the comparison.
 Sending the highest seen cluster time
 -------------------------------------
 
-Whenever a driver sends a command to a mongos node it MUST include the highest
+Whenever a driver sends a command to a server it MUST include the highest
 seen cluster time in a top level field called ``$clusterTime``, in the same format
-as it was received in (but see Gossipping with mixed mongos versions below).
+as it was received in (but see Gossipping with mixed server versions below).
 
 How to compute the $clusterTime to send to a server
 ---------------------------------------------------
@@ -685,26 +695,23 @@ one session will be affected. The ``MongoClient`` ``clusterTime`` is only
 updated with ``$clusterTime`` values known to be valid because they were
 received directly from a server.
 
-Tracking the highest seen cluster time does not require checking the cluster topology or the server version
------------------------------------------------------------------------------------------------------------
+Tracking the highest seen cluster time does not require checking the deployment topology or the server version
+--------------------------------------------------------------------------------------------------------------
 
-Drivers do not need to check the cluster topology or the server version they
+Drivers do not need to check the deployment topology or the server version they
 are connected to in order to track the highest seen ``$clusterTime``. They simply
 need to check for the presence of the ``$clusterTime`` field in responses received
-from servers. As a performance optimization, drivers MAY choose to skip this
-check when not connected to a mongos.
+from servers.
 
-Gossipping with mixed mongos versions
+Gossipping with mixed server versions
 -------------------------------------
 
-Drivers MUST check that the mongos they are sending a command to supports
-``$clusterTime`` before adding ``$clusterTime`` to the command. Mongos supports
-``$clusterTime`` when the ``maxWireVersion`` >= 6. This supports the (presumably short
-lived) scenario where the shards themselves have already been upgraded to 3.6
-but the mongos routers are in the process of being upgraded. The server upgrade
-process requires that the shards be upgraded to 3.6 before the mongos routers,
-so we will never face the scenario where mongos is at version 3.6 but one of
-the servers behind it is not.
+Drivers MUST check that the server they are sending a command to supports
+``$clusterTime`` before adding ``$clusterTime`` to the command. A server supports
+``$clusterTime`` when the ``maxWireVersion`` >= 6.
+
+This supports the (presumably short lived) scenario where not all servers have
+been upgraded to 3.6.
 
 Test Plan
 =========
@@ -720,7 +727,7 @@ Test Plan
     * Turn ``heartbeatFrequencyMS`` up to a very large number.
     * Register a command-started and a command-succeeded APM listener. 
     * Send a ``ping`` command to the server with the generic ``runCommand`` method. 
-    * Assert that the command passed to the command-started listener includes ``$clusterTime`` if and only if ``maxWireVersion`` >= 6 and the topology is sharded.
+    * Assert that the command passed to the command-started listener includes ``$clusterTime`` if and only if ``maxWireVersion`` >= 6.
     * Record the ``$clusterTime``, if any, in the reply passed to the command-succeeded APM listener.
     * Send another ``ping`` command.
     * Assert that ``$clusterTime`` in the command passed to the command-started listener, if any, equals the ``$clusterTime`` in the previous server reply. (Turning ``heartbeatFrequencyMS`` up prevents an intervening heartbeat from advancing the ``$clusterTime`` between these final two steps.)
@@ -730,7 +737,7 @@ Test Plan
         * A find command from the ``find`` helper method
         * An insert command from the ``insert_one`` helper method
 
-3. Test that session argument is for the right cluster
+3. Test that session argument is for the right client
     * Create ``client1`` and ``client2``
     * Get ``database`` from ``client1``
     * Get ``collection`` from ``database``
@@ -816,4 +823,5 @@ Change log
 
 2017-09-13 If causalConsistency option is ommitted assume true
 2017-09-16 Omit session ID when opening and authenticating a connection
+2017-09-18 Drivers MUST gossip the cluster time when they see a $clusterTime
 2017-09-19 How to safely use initialClusterTime
