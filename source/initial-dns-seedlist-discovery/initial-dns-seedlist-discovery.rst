@@ -192,6 +192,28 @@ Design Rationale
 The design specifically calls for a pre-processing stage of the processing of
 connection URLs to minimize the impact on existing functionality.
 
+Justifications
+==============
+
+Why Are Multiple Key-Value Pairs Allowed in One TXT Record?
+-----------------------------------------------------------
+
+One could imagine an alternative design in which each TXT record would allow
+only one URI option. No ``&`` character would be allowed as a delimiter within
+TXT records.
+
+In this spec we allow multiple key-value pairs within one TXT record,
+delimited by ``&``, because it will be common for all options to fit in a
+single 255-character TXT record, and it is much more convenient to configure
+one record in this case than to configure several.
+
+Secondly, in some cases the order in which options occur is important. For
+example, readPreferenceTags can appear both multiple times, and the order in
+which they appear is significant. Because DNS servers may return TXT records
+in any order, it is only possible to guarantee the order in which
+readPreferenceTags keys appear by having them in the same TXT record.
+
+
 Reference Implementation
 ========================
 
