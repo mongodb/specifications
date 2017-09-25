@@ -234,6 +234,14 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     useCursor: Optional<Boolean>;
+   
+   /**
+     * Enables users to specify an arbitrary string to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     */
+    comment : Optional<String>;
   }
 
   class CountOptions {
