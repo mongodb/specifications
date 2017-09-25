@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: January 15, 2015
-:Version: 0.3
+:Last Modified: 2017-09-20
+:Version: 0.4
 
 .. contents::
 
@@ -226,6 +226,17 @@ driver MAY alternatively implement it as::
     fall back to querying system.indexes, and return each returned document
     as an element
 
+Error code 26 indicates that the collection does not exist, and error codes 59
+and 13390 are used to indicate that the command being called (``listIndexes``
+in this case) does not exist.
+
+A Client MUST handle error codes 59 and 13390 as shown in the algorithms
+above.
+
+A Client MAY bubble up an exception if code 26 is encountered, or it MAY
+swallow the exception to preserve backwards compatibility with an existing
+API.
+
 Driver methods
 --------------
 
@@ -369,16 +380,16 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 
-Version 0.3 Changes
+0.4 - 2017-09-20
+    Allow more leniency for handling error code 26 (collection does not
+    exist).
 
-    - Put preferred method name for listing indexes with a cursor as return
-      value.
+0.3 - 2015-01-14
+    Put preferred method name for listing indexes with a cursor as return
+    value.
 
-Version 0.2 Changes
+0.2
+    Update with the server change to return a cursor for ``listIndexes``.
 
-    - Update with the server change to return a cursor for
-      ``listIndexes``.
-
-Version 0.1 Changes
-
-    - Initial draft
+0.1
+    Initial draft

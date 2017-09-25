@@ -11,8 +11,8 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: May 19, 2016
-:Version: 1.2
+:Last Modified: Oct 11, 2016
+:Version: 1.5
 
 .. contents::
 
@@ -71,8 +71,7 @@ All drivers MUST offer at least one of the sections of operations, the Standard 
 Operation Parameters
 --------------------
 
-All drivers MUST include the specified parameters in each operation, with the exception of the options parameter which is OPTIONAL.
-
+All drivers MUST include the specified parameters in each operation, with the exception of the options parameter which is OPTIONAL. As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates options passed to the createIndexes command -- drivers should be aware when testing that passing arbitrary options when the driver does not validate them could fail on the server.
 
 Naming
 ------
@@ -90,6 +89,7 @@ Index Name Generation
 
 When the client generates a name for an index based on the keys, The driver MUST generate the name as key-direction pairs, separated by underscores. For example, the key ``{ name: 1, dob: -1 }`` MUST generate an index name of ``name_1_dob_-1``.
 
+Note there is one exception to this rule on the ``_id`` field. The server uses an index name with no direction, ``_id_``, which cannot be overridden.
 
 ------------
 Standard API
@@ -131,6 +131,9 @@ Standard API
      *
      * Note that in MongoDB server versions >= 3.0.0, the server will create the
      * indexes in parallel.
+     *
+     * As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates
+     * options passed to the createIndexes command.
      *
      * @return The names of all the indexes that were created.
      */
@@ -582,6 +585,9 @@ Common API Components
      * Optionally specify a specific name for the index outside of the default generated
      * name. If none is provided then the name is generated in the format "[field]_[direction]".
      *
+     * Note that if an index is created for the same key pattern with different collations,
+     * a name must be provided by the user to avoid ambiguity.
+     *
      * @example For an index of name: 1, age: -1, the generated name would be "name_1_age_-1".
      */
     name: String;
@@ -672,8 +678,8 @@ Common API Components
 
     /**
      * Optionally specifies a collation to use for the index in MongoDB 3.4 and higher.
-     * If not specified, the default collation of the driver collection object is used,
-     * if one is defined. Otherwise, the default collation of the collection server-side is used.
+     * If not specified, no collation is sent and the default collation of the collection
+     * server-side is used.
      */
     collation: Document;
   }
@@ -687,6 +693,17 @@ This specification makes no attempts to be backwards compatible as the target dr
 
 
 ---------
+Q & A
+---------
+
+Q: Where is write concern?
+  The createIndexes and dropIndexes commands take a write concern that indicates how the write is acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different index operations on the same collection would use a different write concern. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
+
+  However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but the driver may need to provide a separate parameter for some helpers, since the writeConcern is a top-level command option, not part of an indexModel's indexOptions. For example, whereas the write concern could possibly be included in the indexOptions parameter for createIndex() and extracted in the method implementation, it would be ambiguous to specify write concern for one or more models passed to createIndexes(). The driver would therefore most likely choose to allow the option as a separate parameter for createIndexes().
+
+Q: Do the index operations support maxTimeMS?
+  The listIndexes(), createIndexes() and dropIndexes() commands allow the maxTimeMS option, though supporting it as an option is not addressed by this specification. As is discussed above for write concern, the driver may choose to expose this top-level command option; however, for some helpers, the driver may need a separate command options parameter. For other helpers, it may choose to extract maxTimeMS from the indexOptions.
+
 Changelog
 ---------
 
@@ -695,3 +712,13 @@ Changelog
   - Fixed "provides" typo.
 19 MAY 2016:
   - Added ``collation`` attribute to ``IndexOptions`` in order to support setting a collation on an index.
+8 AUG 2016:
+  - Fixed ``collation`` language to not mention a collection default.
+11 OCT 2016:
+  - Added note on 3.4 servers validation options passed to ``createIndexes``.
+11 OCT 2016:
+  - Add note on server generated name for the _id index.
+31 MAY 2017:
+  - Add Q & A addressing write concern and maxTimeMS option.
+7 JUN 2017:
+  - Include listIndexes() in Q&A about maxTimeMS.

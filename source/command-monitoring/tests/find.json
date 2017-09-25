@@ -51,7 +51,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
@@ -86,7 +86,9 @@
           "sort": {
             "_id": 1
           },
-          "skip": {"$numberLong": "2"},
+          "skip": {
+            "$numberLong": "2"
+          },
           "modifiers": {
             "$comment": "test",
             "$hint": {
@@ -119,7 +121,9 @@
               "sort": {
                 "_id": 1
               },
-              "skip": {"$numberLong": "2"},
+              "skip": {
+                "$numberLong": "2"
+              },
               "comment": "test",
               "hint": {
                 "_id": 1
@@ -143,7 +147,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
@@ -179,7 +183,9 @@
           "sort": {
             "_id": 1
           },
-          "batchSize": {"$numberLong": "3"}
+          "batchSize": {
+            "$numberLong": "3"
+          }
         }
       },
       "expectations": [
@@ -195,7 +201,9 @@
               "sort": {
                 "_id": 1
               },
-              "batchSize": {"$numberLong": "3"}
+              "batchSize": {
+                "$numberLong": "3"
+              }
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
@@ -204,7 +212,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -236,7 +244,9 @@
                 "$numberLong": "42"
               },
               "collection": "test",
-              "batchSize": {"$numberLong": "3"}
+              "batchSize": {
+                "$numberLong": "3"
+              }
             },
             "command_name": "getMore",
             "database_name": "command-monitoring-tests"
@@ -245,7 +255,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"
@@ -282,8 +292,12 @@
           "sort": {
             "_id": 1
           },
-          "batchSize": {"$numberLong": "3"},
-          "limit": {"$numberLong": "4"}
+          "batchSize": {
+            "$numberLong": "3"
+          },
+          "limit": {
+            "$numberLong": "4"
+          }
         }
       },
       "expectations": [
@@ -299,8 +313,12 @@
               "sort": {
                 "_id": 1
               },
-              "batchSize": {"$numberLong": "3"},
-              "limit": {"$numberLong": "4"}
+              "batchSize": {
+                "$numberLong": "3"
+              },
+              "limit": {
+                "$numberLong": "4"
+              }
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
@@ -309,7 +327,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -341,7 +359,9 @@
                 "$numberLong": "42"
               },
               "collection": "test",
-              "batchSize": {"$numberLong": "1"}
+              "batchSize": {
+                "$numberLong": "1"
+              }
             },
             "command_name": "getMore",
             "database_name": "command-monitoring-tests"
@@ -350,7 +370,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -384,7 +404,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursorsUnknown": [
                 {
                   "$numberLong": "42"
@@ -399,7 +419,9 @@
     {
       "description": "A successful find event with a getmore and the server kills the cursor",
       "ignore_if_server_version_less_than": "3.1",
-      "ignore_if_topology_type" : ["sharded"],
+      "ignore_if_topology_type": [
+        "sharded"
+      ],
       "operation": {
         "name": "find",
         "arguments": {
@@ -411,8 +433,12 @@
           "sort": {
             "_id": 1
           },
-          "batchSize": {"$numberLong": "3"},
-          "limit": {"$numberLong": "4"}
+          "batchSize": {
+            "$numberLong": "3"
+          },
+          "limit": {
+            "$numberLong": "4"
+          }
         }
       },
       "expectations": [
@@ -428,8 +454,12 @@
               "sort": {
                 "_id": 1
               },
-              "batchSize": {"$numberLong": "3"},
-              "limit": {"$numberLong": "4"}
+              "batchSize": {
+                "$numberLong": "3"
+              },
+              "limit": {
+                "$numberLong": "4"
+              }
             },
             "command_name": "find",
             "database_name": "command-monitoring-tests"
@@ -438,7 +468,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "42"
@@ -470,7 +500,9 @@
                 "$numberLong": "42"
               },
               "collection": "test",
-              "batchSize": {"$numberLong": "1"}
+              "batchSize": {
+                "$numberLong": "1"
+              }
             },
             "command_name": "getMore",
             "database_name": "command-monitoring-tests"
@@ -479,7 +511,7 @@
         {
           "command_succeeded_event": {
             "reply": {
-              "ok": 1.0,
+              "ok": 1,
               "cursor": {
                 "id": {
                   "$numberLong": "0"

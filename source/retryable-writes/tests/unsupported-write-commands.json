@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    }
+  ],
+  "minServerVersion": "3.6",
+  "tests": [
+    {
+      "description": "Aggregate with $out is not supported",
+      "operation": {
+        "name": "aggregate",
+        "arguments": {
+          "pipeline": [
+            {
+              "$match": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            {
+              "$out": "other_test_collection"
+            }
+          ]
+        }
+      },
+      "outcome": {
+        "error": true
+      }
+    }
+  ]
+}

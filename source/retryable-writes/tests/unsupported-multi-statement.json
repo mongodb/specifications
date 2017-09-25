@@ -1,0 +1,122 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    }
+  ],
+  "minServerVersion": "3.6",
+  "tests": [
+    {
+      "description": "DeleteMany in BulkWrite is not supported",
+      "operation": {
+        "name": "bulkWrite",
+        "arguments": {
+          "requests": [
+            {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 3,
+                  "x": 33
+                }
+              }
+            },
+            {
+              "name": "deleteMany",
+              "arguments": {
+                "filter": {
+                  "x": {
+                    "$gt": 10
+                  }
+                }
+              }
+            }
+          ],
+          "options": {
+            "ordered": true
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "UpdateMany in BulkWrite is not supported",
+      "operation": {
+        "name": "bulkWrite",
+        "arguments": {
+          "requests": [
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            },
+            {
+              "name": "updateMany",
+              "arguments": {
+                "filter": {
+                  "x": {
+                    "$gt": 10
+                  }
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            }
+          ],
+          "options": {
+            "ordered": true
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 12
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

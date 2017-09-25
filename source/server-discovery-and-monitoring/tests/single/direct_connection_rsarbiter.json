@@ -1,32 +1,36 @@
 {
-    "description": "Connect to RSArbiter", 
-    "phases": [
-        {
-            "outcome": {
-                "servers": {
-                    "a:27017": {
-                        "setName": "rs", 
-                        "type": "RSArbiter"
-                    }
-                }, 
-                "setName": null, 
-                "topologyType": "Single"
-            }, 
-            "responses": [
-                [
-                    "a:27017", 
-                    {
-                        "arbiterOnly": true, 
-                        "hosts": [
-                            "a:27017"
-                        ], 
-                        "ismaster": false, 
-                        "ok": 1, 
-                        "setName": "rs"
-                    }
-                ]
-            ]
-        }
-    ], 
-    "uri": "mongodb://a"
+  "description": "Connect to RSArbiter",
+  "uri": "mongodb://a",
+  "phases": [
+    {
+      "responses": [
+        [
+          "a:27017",
+          {
+            "ok": 1,
+            "ismaster": false,
+            "arbiterOnly": true,
+            "hosts": [
+              "a:27017",
+              "b:27017"
+            ],
+            "setName": "rs",
+            "minWireVersion": 0,
+            "maxWireVersion": 6
+          }
+        ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSArbiter",
+            "setName": "rs"
+          }
+        },
+        "topologyType": "Single",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": null
+      }
+    }
+  ]
 }

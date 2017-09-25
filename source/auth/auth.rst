@@ -12,7 +12,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 1.8
-:Last Modified: February 2nd, 2015
+:Last Modified: 2017-08-23
 
 .. contents::
 
@@ -73,6 +73,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 
 username (string)
 	* Applies to all mechanisms.
+	* Optional for MONGODB-X509.
 source (string)
 	* Applies to all mechanisms.
 	* Always '$external' for GSSAPI, MONGODB-X509, and PLAIN.
@@ -103,7 +104,7 @@ Naming of mechanism properties MUST be case-insensitive. For instance, SERVICE_N
 Authentication
 --------------
 
-This section augments the `Server Discovery and Monitoring Spec <http://emptysqua.re/server-discovery-and-monitoring.html>`_.
+This section augments the `Server Discovery and Monitoring Spec <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`_.
 
 A MongoClient instance MUST be considered a single logical connection to the server/deployment. Hence, all credentials given to an instance of a MongoClient should apply to every currently opened socket. Drivers SHOULD require all credentials to be specified upon construction of the MongoClient. This is defined as eager authentication and drivers MUST support this mode.
 
@@ -114,13 +115,8 @@ Connection Handshake
 Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively, an authentication failure is equivalent to a network or socket error in that we have failed to establish a connection with the server. The steps to support this are below:
 
 #. If credentials exist
-	#. Upon opening a socket, drivers MUST send an isMaster command immediately. This allows a driver to determine whether the server is an Arbiter.
-	#. A driver MUST perform authentication with all supplied credentials for the following server types as defined in the Server Discovery and Monitoring Specification.
-
-		* Standalone
-		* Mongos
-		* RSPrimary
-		* RSSecondary
+	#. Upon opening a socket, drivers MUST issue `MongoDB Handshake <../mongodb-handshake/handshake.rst>`_ immediately. This allows a driver to determine whether the server is an Arbiter.
+	#. A driver MUST perform authentication with all supplied credentials for all server types with the exception of RSArbiter.
 	#. A single invalid credential is the same as all credentials being invalid.
 
 
@@ -231,26 +227,41 @@ MONGODB-X509
 ~~~~~~~~~~~~
 
 :since: 2.6
+:changed: 3.4
 
-MONGODB-X509 is the usage of X-509 certificates to validate a client.  The server will use the distinguished subject name of the client certificate in the SSL negotiation to authenticate. The driver will be required to supply the distinguished subject name outside of the SSL negotiation to the server using the "authenticate" command.
+
+MONGODB-X509 is the usage of X.509 certificates to validate a client where the
+distinguished subject name of the client certificate acts as the username.
+
+When connected to MongoDB 3.4:
+  * You MUST NOT raise an error when the application only provides an X.509 certificate and no username.
+  * If the application does not provide a username you MUST NOT send a username to the server.
+  * If the application provides a username you MUST send that username to the server.
+When connected to MongoDB 3.2 or earlier:
+  * You MUST send a username to the server.
+  * If no username is provided by the application, you MAY extract the username from the X.509 certificate instead of requiring the application to provide it.
+  * If you choose not to automatically extract the username from the certificate you MUST error when no username is provided by the application.
+
 
 Conversation
 ````````````
 
-#. Send ``authenticate`` command
-	* ``username = openssl x509 -in client.pem -inform PEM -subject -nameopt RFC2253``
-	* :javascript:`{ authenticate: 1, user: username, mechanism: "MONGODB-X509" }`
+#. Send ``authenticate`` command (MongoDB 3.4+)
+	* C: :javascript:`{"authenticate": 1, "mechanism": "MONGODB-X509"}`
+	* S: :javascript:`{"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}`
 
-As an example, given a certificate with the RFC2253 subject of "CN=client,OU=kerneluser,O=10Gen,L=New York City,ST=New York,C=US", the conversation would appears as follows:
+#. Send ``authenticate`` command with username:
+	* ``username = openssl x509 -subject -nameopt RFC2253 -noout -inform PEM -in my-cert.pem``
+	* C: :javascript:`{authenticate: 1, mechanism: "MONGODB-X509", user: "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client"}`
+	* S: :javascript:`{"dbname" : "$external", "user" : "C=IS,ST=Reykjavik,L=Reykjavik,O=MongoDB,OU=Drivers,CN=client", "ok" : 1}`
 
-| C: :javascript:`{authenticate: 1, mechanism: "MONGODB-X509", user: "CN=client,OU=kerneluser,O=10Gen,L=New York City,ST=New York,C=US"}`
-| S: :javascript:`{ok: 1}`
 
 `MongoCredential`_ Properties
 `````````````````````````````
 
 username
-	MUST be specified as RFC2253 form.
+	SHOULD NOT be provided for MongoDB 3.4+
+	MUST be specified for MongoDB prior to 3.4
 
 source
 	MUST be $external.
@@ -367,7 +378,7 @@ mechanism_properties
 
 
 SCRAM-SHA-1
-~~~~~~~~~~
+~~~~~~~~~~~
 
 :since: 3.0
 
@@ -476,7 +487,7 @@ Test Plan
 
 Tests have been defined in the associated files:
 
-* `Connection String <tests\connection-string.js>`_.
+* `Connection String <tests/connection-string.json>`_.
 
 
 Backwards Compatibility
@@ -505,9 +516,18 @@ Q: I've heard ``isMaster`` will require authentication in the future. Should we 
 Q: It's possible to continue using authenticated sockets even if new sockets fail authentication. Why can't we do that so that applications continue to work.
 	Yes, that's technically true. The issue with doing that is for drivers using connection pooling. An application would function normally until an operation needed an additional connection(s) during a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to understand for a user.
 
+Q: Should a driver support multiple credentials?
+    The server supports multiple credentials. If a driver wants to support all of the server, then it needs to support multiple credentials. However, since multiple authentications are not supported against a single database, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the $external database). 
+
 
 Version History
 ===============
+
+2017-08-23: Changed the list of server types requiring authentication.
+
+2016-11-01: Made providing username for X509 authentication optional.
+
+2016-08-17: Added FAQ regarding multiple credentials.
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism

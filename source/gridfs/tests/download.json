@@ -13,11 +13,8 @@
         "md5": "d41d8cd98f00b204e9800998ecf8427e",
         "filename": "length-0",
         "contentType": "application/octet-stream",
-        "aliases": [
-
-        ],
-        "metadata": {
-        }
+        "aliases": [],
+        "metadata": {}
       },
       {
         "_id": {
@@ -31,11 +28,8 @@
         "md5": "d41d8cd98f00b204e9800998ecf8427e",
         "filename": "length-0-with-empty-chunk",
         "contentType": "application/octet-stream",
-        "aliases": [
-
-        ],
-        "metadata": {
-        }
+        "aliases": [],
+        "metadata": {}
       },
       {
         "_id": {
@@ -49,11 +43,8 @@
         "md5": "c700ed4fdb1d27055aa3faa2c2432283",
         "filename": "length-2",
         "contentType": "application/octet-stream",
-        "aliases": [
-
-        ],
-        "metadata": {
-        }
+        "aliases": [],
+        "metadata": {}
       },
       {
         "_id": {
@@ -67,11 +58,8 @@
         "md5": "dd254cdc958e53abaa67da9f797125f5",
         "filename": "length-8",
         "contentType": "application/octet-stream",
-        "aliases": [
-
-        ],
-        "metadata": {
-        }
+        "aliases": [],
+        "metadata": {}
       },
       {
         "_id": {
@@ -85,11 +73,8 @@
         "md5": "57d83cd477bfb1ccd975ab33d827a92b",
         "filename": "length-10",
         "contentType": "application/octet-stream",
-        "aliases": [
-
-        ],
-        "metadata": {
-        }
+        "aliases": [],
+        "metadata": {}
       }
     ],
     "chunks": [
@@ -188,8 +173,7 @@
           "id": {
             "$oid": "000000000000000000000001"
           },
-          "options": {
-          }
+          "options": {}
         }
       },
       "assert": {
@@ -206,8 +190,7 @@
           "id": {
             "$oid": "000000000000000000000002"
           },
-          "options": {
-          }
+          "options": {}
         }
       },
       "assert": {
@@ -224,8 +207,7 @@
           "id": {
             "$oid": "000000000000000000000003"
           },
-          "options": {
-          }
+          "options": {}
         }
       },
       "assert": {
@@ -242,8 +224,7 @@
           "id": {
             "$oid": "000000000000000000000004"
           },
-          "options": {
-          }
+          "options": {}
         }
       },
       "assert": {
@@ -260,8 +241,7 @@
           "id": {
             "$oid": "000000000000000000000005"
           },
-          "options": {
-          }
+          "options": {}
         }
       },
       "assert": {
@@ -278,8 +258,7 @@
           "id": {
             "$oid": "000000000000000000000000"
           },
-          "options": {
-          }
+          "options": {}
         }
       },
       "assert": {
