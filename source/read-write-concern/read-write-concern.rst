@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: June 17, 2016
-:Version: 1.2
+:Last Modified: March 13, 2017
+:Version: 1.4
 
 .. contents::
 
@@ -111,7 +111,7 @@ When a user has not specified a ``ReadConcern`` or has specified the server’s 
 Generic Command Method
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``ReadConcern`` MUST not be applied automatically to any command. A user wishing to use a ``ReadConcern`` in a generic command must supply it manually.
+If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``ReadConcern`` MUST NOT be applied automatically to any command. A user wishing to use a ``ReadConcern`` in a generic command must supply it manually.
 
 
 Errors
@@ -282,13 +282,55 @@ All other ``WriteConcerns``, including the ``Unacknowledged WriteConcern``, MUST
 Generic Command Method
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``WriteConcern`` MUST not be applied automatically to any command. A user wishing to use a ``WriteConcern`` in a generic command must supply it manually.
+If your driver offers a generic ``RunCommand`` method on your ``database`` object, ``WriteConcern`` MUST NOT be applied automatically to any command. A user wishing to use a ``WriteConcern`` in a generic command must manually include it in the command document passed to the method.
 
+The generic command method MUST NOT check the user's command document for a ``WriteConcern`` nor check whether the server is new enough to support a write concern for the command. The method simply sends the user's command to the server as-is.
+
+Find And Modify
+~~~~~~~~~~~~~~~
+
+The ``findAndModify`` command takes a named parameter, ``writeConcern``. See command documentation for further examples.
+
+If writeConcern is specified for the Collection, ``writeConcern`` MUST be omitted when sending ``findAndModify`` with MaxWireVersion < 4.
+
+If the findAndModify helper accepts writeConcern as a parameter, the driver MUST raise an error with MaxWireVersion < 4.
+
+.. note ::
+    Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
+
+Other commands that write
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Command helper methods for commands that write, other than those discussed above,
+MAY accept a write concern or write concern options in their parameter list.
+If the helper accepts a write concern, the driver MUST error if the selected server's MaxWireVersion < 5 and a
+write concern has explicitly been specified.
+
+Helper methods that apply the write concern inherited from the Collection or Database, SHOULD check whether the
+selected server's MaxWireVersion >= 5 and if so, include the inherited write concern in the command on the wire.
+If the selected server's MaxWireVersion < 5, these methods SHOULD silently omit the write concern from the command
+on the wire.
+
+These commands that write are:
+  * ``aggregate`` with ``$out``
+  * ``copydb``
+  * ``create``
+  * ``createIndexes``
+  * ``drop``
+  * ``dropDatabase``
+  * ``dropIndexes``
+  * ``mapReduce`` with ``$out``
+  * ``clone``
+  * ``cloneCollection``
+  * ``cloneCollectionAsCapped``
+  * ``collMod``
+  * ``convertToCapped``
+  * ``renameCollection``
 
 Errors
 ~~~~~~
 
-Errors associated with ``WriteConcern`` return successful responses with a ``writeConcernError`` field indicating the issue. For example,
+Server errors associated with ``WriteConcern`` return successful responses with a ``writeConcernError`` field indicating the issue. For example,
 
 .. code:: typescript
 
@@ -304,47 +346,18 @@ Errors associated with ``WriteConcern`` return successful responses with a ``wri
         }
     }
 
+Drivers SHOULD parse server replies for a "writeConcernError" field and report the error
+only in the command-specific helper methods for commands that write, from the list above.
+For example, helper methods for "findAndModify" or "aggregate" SHOULD parse the server reply
+for "writeConcernError".
 
+Drivers SHOULD report writeConcernErrors however they report other server errors:
+by raising an exception, returning "false", or another idiom that is consistent with other server errors.
 
+Drivers SHOULD NOT parse server replies for "writeConcernError" in generic command methods.
 
-
-Find And Modify
-~~~~~~~~~~~~~~~
-
-The ``findAndModify`` command takes a named parameter, ``writeConcern``. See command documentation for further examples.
-
-With MaxWireVersion < 4, ``writeConcern`` MUST be omitted when sending ``findAndModify``. 
-
-.. note ::
-    Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated ``WriteConcern`` may cause performance degradation when using ``findAndModify``. This is because ``findAndModify`` will now be honoring a potentially high latency setting where it did not before.
-
-Other commands that write
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Commands that write other than those discussed above, SHOULD support a ``writeConcern`` parameter for MongoDB >= 3.4 (MaxWireVersion >= 5).
-
-These commands are:
-  * ``aggregate`` with ``$out``
-  * ``copydb``
-  * ``create``
-  * ``createIndexes``
-  * ``drop``
-  * ``dropDatabase``
-  * ``dropIndexes``
-  * ``mapReduce`` with ``$out``
-  * ``clone``
-  * ``cloneCollection``
-  * ``cloneCollectionAsCapped``
-  * ``collMod``
-  * ``convertToCapped``
-  * ``emptyCapped``
-  * ``renameCollection``
-  * ``appendoplognote``
-  * ``godInsert``
-  * ``capTrunc``
-  * ``reindex``
-  * ``mergechunk``
-
+(Reporting of writeConcernErrors is more complex for bulk operations,
+see the Bulk API Spec.)
 
 Location Specification
 ----------------------
@@ -374,6 +387,9 @@ For example:
 
     // col3's writeConcern is the server’s default write concern.
     var col3 = db2.getCollection("col_name", { writeConcern: { } });
+
+    // Override col3's writeConcern.
+    col3.drop({ writeConcern: { w: 3 } });
 
 
 Via Connection String
@@ -450,3 +466,15 @@ Version History
   - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
   - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
   - 2016-06-17: Added "linearizable" to ReadConcern levels.
+  - 2016-07-15: Command-specific helper methods for commands that write SHOULD check the server's MaxWireVersion
+    and decide whether to send writeConcern.
+    Advise drivers to parse server replies for writeConcernError
+    and raise an exception if found,
+    only in command-specific helper methods that take a writeConcern parameter,
+    not in generic command methods.
+    Don't mention obscure commands with no helpers.
+  - 2016-08-06: Further clarify that command-specific helper methods for commands that write
+    take write concern options in their parameter lists, and relax from SHOULD to MAY.
+  - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns
+    an error if writeConcern is included with MongoDB 3.5+. See
+    `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.

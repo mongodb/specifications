@@ -1,0 +1,193 @@
+data:
+    - { _id: 1, x: 11 }
+
+minServerVersion: '3.6'
+
+# Each test expects a network error for first attempt of each write command in
+# the batch. The second attempt of each command should return without error,
+# which allows multi-command batches to ultimately succeed.
+tests:
+    -
+        description: "BulkWrite succeeds after one network error for first command"
+        failPoint:
+            times: 1
+        operation:
+            name: "bulkWrite"
+            arguments:
+                requests:
+                    -
+                        name: "deleteOne"
+                        arguments:
+                            filter: { _id: 1 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 3, x: 33 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 4, x: 44 }
+                    -
+                        name: "replaceOne"
+                        arguments:
+                            filter: { _id: 3 }
+                            replacement: { _id: 3, x: 333 }
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 4 }
+                            update: { $inc: { x : 1 }}
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 5, x: 55 }
+                            update: { $inc: { x : 1 }}
+                            upsert: true
+                options: { ordered: true }
+        outcome:
+            result:
+                deletedCount: 1
+                insertedIds: { 1: 2, 2: 3, 3: 4 }
+                matchedCount: 2
+                modifiedCount: 2
+                upsertedCount: 1
+                upsertedIds: { 6: 5 }
+            collection:
+                data:
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 333 }
+                    - { _id: 4, x: 45 }
+                    - { _id: 5, x: 56 }
+    -
+        description: "BulkWrite succeeds after one network error for each command"
+        # This test depends on https://jira.mongodb.org/browse/SERVER-31142
+        #
+        # Fail point will repeat 5 times, but only the first attempt of each
+        # write command will yield a network error. This will allow for the
+        # following exchange:
+        #
+        #  1. delete fails
+        #  2. delete is retried and succeeds
+        #  3. insert fails
+        #  4. insert is retried and succeeds
+        #  5. update fails (fail point deactivates)
+        #  6. update is retried and succeeds
+        failPoint:
+            times: 5
+        operation:
+            name: "bulkWrite"
+            arguments:
+                requests:
+                    -
+                        name: "deleteOne"
+                        arguments:
+                            filter: { _id: 1 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 3, x: 33 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 4, x: 44 }
+                    -
+                        name: "replaceOne"
+                        arguments:
+                            filter: { _id: 3 }
+                            replacement: { _id: 3, x: 333 }
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 4 }
+                            update: { $inc: { x : 1 }}
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 5, x: 55 }
+                            update: { $inc: { x : 1 }}
+                            upsert: true
+                options: { ordered: true }
+        outcome:
+            result:
+                deletedCount: 1
+                insertedIds: { 1: 2, 2: 3, 3: 4 }
+                matchedCount: 2
+                modifiedCount: 2
+                upsertedCount: 1
+                upsertedIds: { 6: 5 }
+            collection:
+                data:
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 333 }
+                    - { _id: 4, x: 45 }
+                    - { _id: 5, x: 56 }
+    -
+        description: "BulkWrite with unordered execution"
+        operation:
+            name: "bulkWrite"
+            arguments:
+                requests:
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 1, x: 11 }
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                options: { ordered: false }
+        outcome:
+            result:
+                deletedCount: 0
+                insertedIds: { 0: 1, 1: 2 }
+                matchedCount: 0
+                modifiedCount: 0
+                upsertedCount: 0
+                upsertedIds: { }
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+    -
+        description: "InsertMany succeeds after one network error"
+        failPoint:
+            times: 1
+        operation:
+            name: "insertMany"
+            arguments:
+                documents:
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }
+                options: { ordered: true }
+        outcome:
+            result:
+                insertedIds: { 0: 2, 1: 3 }
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }
+    -
+        description: "InsertMany with unordered execution"
+        operation:
+            name: "insertMany"
+            arguments:
+                documents:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+                options: { ordered: false }
+        outcome:
+            result:
+                insertedIds: { 0: 1, 1: 2 }
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }

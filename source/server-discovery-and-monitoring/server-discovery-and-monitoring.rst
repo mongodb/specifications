@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.1
-:Last Modified: May 4, 2016
+:Version: 2.11
+:Last Modified: August 11, 2017
 
 .. contents::
 
@@ -143,12 +143,9 @@ Round trip time
 
 Also known as RTT.
 
-The client's measurement of the duration of an ismaster call.
-The round trip time is used to support the "secondaryAcceptableLatencyMS"
-option in the Read Preferences spec.
-Even though this measurement is called "ping time" in that spec,
-`drivers MUST NOT use the "ping" command`_ to measure this duration.
-`This spec does not mandate how round trip time is averaged`_.
+The client's measurement of the duration of one ismaster call.
+The round trip time is used to support the "localThresholdMS" [1]_
+option in the Server Selection Spec.
 
 ismaster outcome
 ````````````````
@@ -205,6 +202,14 @@ This spec uses these enums and structs in order to describe driver **behavior**,
 not to mandate how a driver represents the topology,
 nor to mandate an API.
 
+Constants
+`````````
+
+clientMinWireVersion and clientMaxWireVersion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Integers. The wire protocol range supported by the client.
+
 Enums
 `````
 
@@ -236,8 +241,7 @@ The client's representation of everything it knows about the deployment's topolo
 
 Fields:
 
-* type: a `TopologyType`_ enum value.
-  The default is Unknown.
+* type: a `TopologyType`_ enum value. See `initial TopologyType`_.
 * setName: the replica set name. Default null.
 * maxSetVersion: an integer or null. The largest setVersion ever reported by
   a primary. Default null.
@@ -247,12 +251,15 @@ Fields:
   Default contains one server: "localhost:27017", ServerType Unknown.
 * stale: a boolean for single-threaded clients, whether the topology must
   be re-scanned.
+  (Not related to maxStalenessSeconds, nor to `stale primaries`_.)
 * compatible: a boolean.
   False if any server's wire protocol version range
   is incompatible with the client's.
   Default true.
 * compatibilityError: a string.
   The error message if "compatible" is false, otherwise null.
+* logicalSessionTimeoutMinutes: integer or null. Default null. See
+  `logical session timeout`_.
 
 ServerDescription
 `````````````````
@@ -273,6 +280,12 @@ Fields:
   from the address the client uses.
 * error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the ismaster call. Default null.
+* lastWriteDate: a 64-bit BSON datetime or null.
+  The "lastWriteDate" from the server's most recent ismaster response.
+* opTime: an ObjectId or null.
+  The last opTime reported by the server; an ObjectId or null.
+  (Only mongos and shard servers record this field when monitoring
+  config servers as replica sets.)
 * type: a `ServerType`_ enum value. Default Unknown.
 * minWireVersion, maxWireVersion:
   the wire protocol version range supported by the server.
@@ -292,14 +305,11 @@ Fields:
   Default null.
 * primary: an address. This server's opinion of who the primary is.
   Default null.
+* lastUpdateTime: when this server was last checked. Default "infinity ago".
+* logicalSessionTimeoutMinutes: integer or null. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
-
-Single-threaded clients need an additional field
-to implement the `single-threaded monitoring`_ algorithm:
-
-* lastUpdateTime: when this server was last checked. Default "infinity ago".
 
 .. _configured:
 
@@ -332,13 +342,16 @@ The hostname portion of each address MUST be normalized to lower-case.
 Initial TopologyType
 ~~~~~~~~~~~~~~~~~~~~
 
-The user MUST be able to set the initial TopologyType to Single or Unknown.
+The user MUST be able to set the initial TopologyType to Single.
 
 The user MAY be able to initialize it to ReplicaSetNoPrimary.
 This provides the user a way to tell the client
 it can only connect to replica set members.
 Similarly the user MAY be able to initialize it to Sharded,
 to connect only to mongoses.
+
+The user MAY be able to initialize it to Unknown, to allow for discovery of any
+topology type based only on ismaster responses.
 
 The API for initializing TopologyType is not specified here.
 Drivers might already have a convention, e.g. a single seed means Single,
@@ -376,28 +389,21 @@ Drivers MUST enforce:
 heartbeatFrequencyMS
 ````````````````````
 
-The interval between server `checks`_.
+The interval between server `checks`_, counted from the end of the previous
+check until the beginning of the next one.
+
 For multi-threaded and asynchronous drivers
-it MUST default to 10 seconds and MAY be configurable.
+it MUST default to 10 seconds and MUST be configurable.
 For single-threaded drivers it MUST default to 60 seconds
 and MUST be configurable.
 It MUST be called heartbeatFrequencyMS
 unless this breaks backwards compatibility.
 
+For both multi- and single-threaded drivers,
+the driver MUST NOT permit users to configure it less than minHeartbeatFrequencyMS (500ms).
+
 (See `heartbeatFrequencyMS defaults to 10 seconds or 60 seconds`_
 and `what's the point of periodic monitoring?`_)
-
-socketCheckIntervalMS
-`````````````````````
-
-If a socket has not been used recently,
-a single-threaded client MUST check it, by using it for an ismaster call,
-before using it for any operation.
-The default MUST be 5 seconds, and it MAY be configurable.
-
-Only for single-threaded clients.
-
-(See `what is the purpose of socketCheckIntervalMS?`_).
 
 Client construction
 '''''''''''''''''''
@@ -432,9 +438,9 @@ when the first operation is attempted.
 Monitoring
 ''''''''''
 
-The client monitors servers by `checking`_ them
-roughly every `heartbeatFrequencyMS`_,
-or in response to certain events.
+The client monitors servers by `checking`_ them periodically,
+pausing `heartbeatFrequencyMS`_ between checks.
+Clients check servers sooner in response to certain events.
 
 The socket used to check a server MUST use the same
 `connectTimeoutMS <http://docs.mongodb.org/manual/reference/connection-string/>`_
@@ -490,7 +496,7 @@ Servers are checked periodically
 Each monitor `checks`_ its server and notifies the client of the outcome
 so the client can update the TopologyDescription.
 
-Checks SHOULD be scheduled every `heartbeatFrequencyMS`_;
+After each check, the next check SHOULD be scheduled `heartbeatFrequencyMS`_ later;
 a check MUST NOT run while a previous check is still in progress.
 
 .. _request an immediate check:
@@ -504,7 +510,7 @@ If the monitor is sleeping when this request arrives,
 it MUST wake and check as soon as possible.
 If an ismaster call is already in progress,
 the request MUST be ignored.
-If the previous check was less than `minHeartbeatFrequencyMS`_ ago,
+If the previous check ended less than `minHeartbeatFrequencyMS`_ ago,
 the monitor MUST sleep until the minimum delay has passed,
 then check the server.
 
@@ -519,6 +525,16 @@ As an optimization, the client MAY leave threads blocked
 if a check completes without detecting any change besides
 `round trip time`_: no operation that was blocked will
 be able to proceed anyway.
+
+Clients update the topology from each handshake
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a client successfully calls ismaster to handshake a new connection for application
+operations, it SHOULD use the ismaster reply to update the ServerDescription
+and TopologyDescription, the same as with an ismaster reply on a monitoring
+socket. If the ismaster call fails, the client SHOULD mark the server Unknown
+and update its TopologyDescription, the same as a failed server check on
+monitoring socket.
 
 .. _st-monitoring:
 
@@ -542,7 +558,7 @@ Scanning
 Single-threaded clients MUST `scan`_ all servers synchronously,
 inline with regular application operations.
 Before each operation, the client checks if `heartbeatFrequencyMS`_ has
-passed since the previous scan or if the topology is marked "stale";
+passed since the previous scan ended, or if the topology is marked "stale";
 if so it scans all the servers before
 selecting a server and performing the operation.
 
@@ -632,7 +648,7 @@ minHeartbeatFrequencyMS
 
 If a client frequently rechecks a server,
 it MUST wait at least minHeartbeatFrequencyMS milliseconds
-since the previous check to avoid pointless effort.
+since the previous check ended, to avoid pointless effort.
 This value MUST be 500 ms, and it MUST NOT be configurable.
 (See `no knobs`_.)
 
@@ -743,8 +759,8 @@ roundTripTime
 `````````````
 
 Drivers MUST record the server's `round trip time`_ (RTT)
-after each successful call to ismaster,
-but `this spec does not mandate how round trip time is averaged`_.
+after each successful call to ismaster. The Server Selection Spec describes how
+RTT is averaged and how it is used in server selection.
 
 If an ismaster call fails, the RTT is not updated.
 Furthermore, while a server's type is Unknown its RTT is null,
@@ -752,6 +768,25 @@ and if it changes from a known type to Unknown its RTT is set to null.
 However, if it changes from one known type to another
 (e.g. from RSPrimary to RSSecondary) its RTT is updated normally,
 not set to null nor restarted from scratch.
+
+lastWriteDate and opTime
+````````````````````````
+
+The isMaster response of a replica set member running MongoDB 3.4 and later
+contains a ``lastWrite`` subdocument with fields ``lastWriteDate`` and ``opTime``
+(`SERVER-8858`_).
+If these fields are available, parse them from the ismaster response,
+otherwise set them to null.
+
+Clients MUST NOT attempt to compensate for the network latency between when the server
+generated its isMaster response and when the client records ``lastUpdateTime``.
+
+.. _SERVER-8858: https://jira.mongodb.org/browse/SERVER-8858
+
+lastUpdateTime
+``````````````
+
+Clients SHOULD set lastUpdateTime with a monotonic clock.
 
 Hostnames are normalized to lower-case
 ``````````````````````````````````````
@@ -768,6 +803,14 @@ responds that "a" is in the replica set.
 
     Domain Name System (DNS) names are "case insensitive".
 
+logicalSessionTimeoutMinutes
+````````````````````````````
+
+MongoDB 3.6 and later include a ``logicalSessionTimeoutMinutes`` field if
+logical sessions are enabled in the deployment. Clients MUST check for this
+field and set the ServerDescription's logicalSessionTimeoutMinutes field to this
+value, or to null otherwise.
+
 Other ServerDescription fields
 ``````````````````````````````
 
@@ -775,8 +818,8 @@ Other required fields
 defined in the `ServerDescription`_ data structure
 are parsed from the ismaster response in the obvious way.
 
-Network error when calling ismaster
-'''''''''''''''''''''''''''''''''''
+Network error during server check
+'''''''''''''''''''''''''''''''''
 
 When a server `check`_ fails due to a network error,
 the client SHOULD clear its connection pool for the server:
@@ -786,6 +829,9 @@ if the monitor's socket is bad it is likely that all are.
 Once a server is connected, the client MUST change its type
 to Unknown
 only after it has retried the server once.
+(This rule applies to server checks during monitoring.
+It does *not* apply when multi-threaded
+`clients update the topology from each handshake`_.)
 
 In this pseudocode, "description" is the prior ServerDescription::
 
@@ -802,7 +848,7 @@ In this pseudocode, "description" is the prior ServerDescription::
             else:
                 # We've been connected to this server in the past, retry once.
                 try:
-                    call ismaster
+                    reconnect and call ismaster
                     return new ServerDescription
                 except NetworkError as e1:
                     return new ServerDescription with type=Unknown, error=e1
@@ -839,14 +885,39 @@ the ServerDescription in TopologyDescription.servers
 is replaced with the new ServerDescription.
 
 .. _is compatible:
-.. _updates the "compatible" and "compatibilityError" fields:
 
-If the server's wire protocol version range overlaps with the client's,
-TopologyDescription.compatible is set to true.
-Otherwise it is set to false
-and the "compatibilityError" field is filled out like,
-"Server at HOST:PORT uses wire protocol versions SERVER_MIN through SERVER_MAX,
-but CLIENT only supports CLIENT_MIN through CLIENT_MAX."
+Checking wire protocol compatibility
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ServerDescription is incompatible if:
+
+* minWireVersion > clientMaxWireVersion, or
+* maxWireVersion < clientMinWireVersion
+
+If any ServerDescription is incompatible, the client MUST set the
+TopologyDescription's "compatible" field to false and fill out the
+TopologyDescription's "compatibilityError" field like so:
+
+- if ServerDescription.minWireVersion > clientMaxWireVersion:
+
+  "Server at $host:$port requires wire version $minWireVersion, but this version
+  of $driverName only supports up to $clientMaxWireVersion."
+
+- if ServerDescription.maxWireVersion < clientMinWireVersion:
+
+  "Server at $host:$port reports wire version $maxWireVersion, but this version
+  of $driverName requires at least $clientMinWireVersion (MongoDB
+  $mongoVersion)."
+
+Replace $mongoVersion with the appropriate MongoDB minor version, for example if
+clientMinWireVersion is 2 and it connects to MongoDB 2.4, format the error like:
+
+  "Server at example.com:27017 reports wire version 0, but this version
+  of My Driver requires at least 2 (MongoDB 2.6)."
+
+In this second case, the exact required MongoDB version is known and can be
+named in the error message, whereas in the first case the implementor does not
+know which MongoDB versions will be compatible or incompatible in the future.
 
 Verifying setName with TopologyType Single
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -866,8 +937,10 @@ it creates a new ServerDescription with the proper `ServerType`_.
 It replaces the server's previous description in TopologyDescription.servers
 with the new one.
 
+Apply the logic for `checking wire protocol compatibility`_ to each
+ServerDescription in the topology.
 If any server's wire protocol version range does not overlap with the client's,
-the client `updates the "compatible" and "compatibilityError" fields`_
+the client updates the "compatible" and "compatibilityError" fields
 as described above for TopologyType Single.
 Otherwise "compatible" is set to true.
 
@@ -1019,15 +1092,15 @@ updateRSWithoutPrimary
             add new default ServerDescription of type "Unknown"
             begin monitoring the new server
 
-    if description.address != description.me:
-        remove this server from topologyDescription and stop monitoring it
-        return
-
     if description.primary is not null:
         find the ServerDescription in topologyDescription.servers whose
         address equals description.primary
 
         if its type is Unknown, change its type to PossiblePrimary
+
+    if description.address != description.me:
+        remove this server from topologyDescription and stop monitoring it
+        return
 
   Unlike `updateRSFromPrimary`_,
   this subroutine does **not** remove any servers from the TopologyDescription.
@@ -1186,26 +1259,57 @@ remove
   Once the check completes, this server's ismaster outcome MUST be ignored,
   and the monitor SHOULD halt.
 
+Logical Session Timeout
+```````````````````````
+
+Whenever a client updates the TopologyDescription from an ismaster response,
+it MUST set TopologyDescription.logicalSessionTimeoutMinutes to the smallest
+logicalSessionTimeoutMinutes value among all ServerDescriptions of
+known ServerType. If any ServerDescription of known ServerType has a null
+logicalSessionTimeoutMinutes, then
+TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.
+
+See the Driver Sessions Spec for the purpose of this value.
+
 .. _drivers update their topology view in response to errors:
 
 Error handling
 ''''''''''''''
 
 This section is about errors when reading or writing to a server.
-For errors when checking servers, see `network error when calling ismaster`_.
+For errors when checking servers, see `network error during server check`_.
 
 Network error when reading or writing
 `````````````````````````````````````
 
-When an application operation fails because of
-any network error besides a socket timeout,
+To describe how the client responds to network errors during application operations,
+we distinguish two phases of connecting to a server and using it for application operations:
+
+- *Before the handshake completes*: the client establishes a new connection to the server
+  and completes an initial handshake by calling "isMaster" and reading the response,
+  and optionally completing authentication
+- *After the handshake completes*: the client uses the established connection for
+  application operations
+
+If there is a network error or timeout on the connection before the handshake completes,
 the client MUST replace the server's description
 with a default ServerDescription of type Unknown,
 and fill the ServerDescription's error field with useful information.
 
-The Unknown ServerDescription is sent through the same process for
+If there is a network timeout on the connection after the handshake completes,
+the client MUST NOT mark the server Unknown.
+(A timeout may indicate a slow operation on the server,
+rather than an unavailable server.)
+If, however, there is some other network error on the connection after the handshake completes,
+the client MUST replace the server's description
+with a default ServerDescription of type Unknown,
+and fill the ServerDescription's error field with useful information,
+the same as if an error or timeout occurred before the handshake completed.
+
+When the client marks a server Unknown due to a network error or timeout,
+the Unknown ServerDescription MUST be sent through the same process for
 `updating the TopologyDescription`_ as if it had been a failed ismaster outcome
-from a monitor: for example, if the TopologyType is ReplicaSetWithPrimary
+from a server check: for example, if the TopologyType is ReplicaSetWithPrimary
 and a write to the RSPrimary server fails because of a network error
 (other than timeout), then a new ServerDescription is created for the primary,
 with type Unknown, and the client executes the proper subroutine for an
@@ -1214,12 +1318,7 @@ referring to the table above we see the subroutine is `checkIfHasPrimary`_.
 The result is the TopologyType changes to ReplicaSetNoPrimary.
 See the test scenario called "Network error writing to primary".
 
-The specific operation that discovered the error
-MUST abort and raise an exception if it was a write.
-It MAY be retried if it was a read.
-(The Server Selection spec describes retry options for reads.)
-
-The client SHOULD clear its connection pool for the server:
+The client SHOULD close all idle sockets in its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
 Clients MUST NOT request an immediate check of the server;
@@ -1317,7 +1416,7 @@ Monitoring SDAM events
 
 The required driver specification for providing lifecycle hooks into server
 discovery and monitoring for applications to consume can be found in the
-`SDAM Monitoring Specification <https://github.com/mongodb/specifications/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`_.
+`SDAM Monitoring Specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`_.
 
 Implementation notes
 ''''''''''''''''''''
@@ -1342,7 +1441,7 @@ When a client that uses `single-threaded monitoring`_
 fails to select a suitable server for any operation,
 it `scans`_ the servers, then attempts selection again,
 to see if the scan discovered suitable servers. It repeats, waiting
-`minHeartbeatFrequencyMS`_ between scans, until a timeout.
+`minHeartbeatFrequencyMS`_ after each scan, until a timeout.
 
 Documentation
 `````````````
@@ -1579,12 +1678,10 @@ Many drivers have different values. The time has come to standardize.
 Lacking a rigorous methodology for calculating the best frequency,
 this spec chooses 10 seconds for multi-threaded or asynchronous drivers
 because some already use that value.
-It MAY be configurable, but it need not be.
 
 Because scanning has a greater impact on
 the performance of single-threaded drivers,
-they MUST default to a longer frequency (60 seconds)
-and the frequency MUST be configurable.
+they MUST default to a longer frequency (60 seconds).
 
 An alternative is to check servers less and less frequently
 the longer they remain unchanged.
@@ -1617,26 +1714,6 @@ In this state, the client should check the server very frequently,
 to give it ample opportunity to connect to the server before
 timing out in server selection.
 
-What is the purpose of socketCheckIntervalMS?
-'''''''''''''''''''''''''''''''''''''''''''''
-
-Single-threaded clients need to make a compromise:
-if they check servers too frequently it slows down regular operations,
-but if they check too rarely they cannot proactively avoid errors.
-
-Errors are more disruptive for single-threaded clients than for multi-threaded.
-If one thread in a multi-threaded process encounters an error,
-it warns the other threads not to use the disconnected server.
-But single-threaded clients are deployed as many independent processes
-per application server, and each process must throw an error
-until all have discovered that a server is down.
-
-The compromise specified here
-balances the cost of frequent checks against the disruption of many errors.
-The client preemptively checks individual sockets
-that have not been used in the last `socketCheckIntervalMS`_,
-which is more frequent by default than `heartbeatFrequencyMS`_.
-
 No knobs
 ''''''''
 
@@ -1660,27 +1737,6 @@ Only support replica set members running MongoDB 1.6.2 or later
 
 Replica set members began reporting their setNames in that version.
 Supporting earlier versions is impractical.
-
-Drivers must not use the "ping" command
-'''''''''''''''''''''''''''''''''''''''
-
-Since discovery and monitoring require calling the "ismaster" command anyway,
-drivers MUST standardize on the ismaster command instead of the "ping" command
-to measure round-trip time to each server.
-
-Additionally, the ismaster command is widely viewed as a special command used
-when a client makes its initial connection to the server,
-so it is less likely than "ping" to require authentication soon.
-
-This spec does not mandate how round trip time is averaged
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-The Read Preferences spec requires drivers to calculate a round trip time
-for each server to support the secondaryAcceptableLatencyMS option.
-That spec calls this measurement the "ping time".
-The measurement probably should be a moving average of some sort,
-but it is not in the scope of this spec to mandate how drivers
-should average the measurements.
 
 TopologyType remains Unknown when an RSGhost is discovered
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -1814,6 +1870,8 @@ but it MUST NOT remove servers from the TopologyDescription.
 
 Eventually, when a primary is discovered, any hosts not in the primary's host
 list are removed.
+
+.. _stale primaries:
 
 Using setVersion and electionId to detect stale primaries
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -1996,6 +2054,50 @@ than error codes.
 The substring method has worked for drivers for years
 so this spec does not propose a new method.
 
+Clients use the hostnames listed in the replica set config, not the seed list
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Very often users have DNS aliases they use in their `seed list`_ instead of
+the hostnames in the replica set config. For example, the name "host_alias"
+might refer to a server also known as "host1", and the URI is::
+
+  mongodb://host_alias/?replicaSet=rs
+
+When the client connects to "host_alias", its ismaster response includes the
+list of hostnames from the replica set config, which does not include the seed::
+
+   {
+      hosts: ["host1:27017", "host2:27017"],
+      setName: "rs",
+      ... other ismaster response fields ...
+   }
+
+This spec requires clients to connect to the hostnames listed in the ismaster
+response. Furthermore, if the response is from a primary, the client MUST
+remove all hostnames not listed. In this case, the client disconnects from
+"host_alias" and tries "host1" and "host2". (See `updateRSFromPrimary`_.)
+
+Thus, replica set members must be reachable from the client by the hostnames
+listed in the replica set config.
+
+An alternative proposal is for clients to continue using the hostnames in the
+seed list. It could add new hosts from the ismaster response, and where a host
+is known by two names, the client can deduplicate them using the "me" field and
+prefer the name in the seed list.
+
+This proposal was rejected because it does not support key features of replica
+sets: failover and zero-downtime reconfiguration.
+
+In our example, if "host1" and "host2" are not reachable from the client, the
+client continues to use "host_alias" only. If that server goes down or is
+removed by a replica set reconfig, the client is suddenly unable to reach the
+replica set at all: by allowing the client to use the alias, we have hidden the
+fact that the replica set's failover feature will not work in a crisis or
+during a reconfig.
+
+In conclusion, to support key features of replica sets, we require that the
+hostnames used in a replica set config are reachable from the client.
+
 Backwards Compatibility
 -----------------------
 
@@ -2108,3 +2210,41 @@ Changes
 2015-06-16: Added cooldownMS.
 
 2016-05-04: Added link to SDAM monitoring.
+
+2016-07-18: Replace mentions of the "Read Preferences Spec" with "Server Selection Spec",
+  and "secondaryAcceptableLatencyMS" with "localThresholdMS".
+
+.. [1] "localThresholdMS" was called "secondaryAcceptableLatencyMS" in the Read Preferences Spec,
+  before it was superseded by the Server Selection Spec.
+
+2016-07-21: Updated for Max Staleness support.
+
+2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
+
+2016-08-31: Multi-threaded clients SHOULD use ismaster replies to update the topology
+  when they handshake application connections.
+
+2016-10-06: in updateRSWithoutPrimary the isMaster response's "primary" field
+  should be used to update the topology description, even if address != me.
+
+2016-10-29: Allow for idleWritePeriodMS to change someday.
+
+2016-11-01: "Unknown" is no longer the default TopologyType, the default is now
+  explicitly unspecified. Update instructions for setting the initial
+  TopologyType when running the spec tests.
+
+2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+future.
+
+2017-02-28: Update "network error when reading or writing": timeout while
+connecting does mark a server Unknown, unlike a timeout while reading or
+writing. Justify the different behaviors, and also remove obsolete reference
+to auto-retry.
+
+2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
+
+2017-08-01: Parse logicalSessionTimeoutMinutes from isMaster reply.
+
+2017-08-11: Clearer specification of "incompatible" logic.
+
+2017-09-01: Improved incompatibility error messages.

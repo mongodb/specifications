@@ -8,11 +8,11 @@ Connection String Spec
 :Spec: 104
 :Title: Connection String Spec
 :Authors: Ross Lawley
-:Advisors: A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
+:Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: Sept. 14, 2015
-:Version: 1.0
+:Last Modified: June 10, 2017
+:Version: 1.2
 
 .. contents::
 
@@ -60,7 +60,17 @@ connection string supports multiple hosts.
 ------
 Scheme
 ------
-The scheme mongodb represents that this is a connection string for a MongoClient.
+The scheme ``mongodb`` represents that this is a connection string for a MongoClient.
+
+Other schemes are also possible and are introduced through additional
+specifications. These additional schemes build on top of the connection string
+as documented in this specification.
+
+For example the ``mongodb+srv`` specification, introduced with `Initial DNS
+Seedlist Discovery`_, obtains information from DNS in addition to just the
+connection string.
+
+.. _`Initial DNS Seedlist Discovery`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
 
 -------------------
 Userinfo (optional)
@@ -69,9 +79,7 @@ The user information if present, is followed by a commercial at-sign ("@") that 
 
 A password may be supplied as part of the user information and is anything after the first colon (":") up until the end of the user information.
 
-If the username section contains either an at-sign ("@") or a colon (":") it MUST be URL encoded.
-
-If the user information contains an at-sign ("@") or more than one colon (":") then an exception MUST be thrown informing the user that the username and password must be URL encoded.
+Both username and password MUST be encoded according to `RFC 3986 Section 2.1, "Percent-Encoding" <https://tools.ietf.org/html/rfc3986#section-2.1>`_. If the user information contains an at-sign ("@") or more than one colon (":") then an exception MUST be thrown informing the user that the username and password must be URL encoded. (For historical reasons, this spec does not require drivers to throw an exception if other characters listed in RFC 3986 as delimiters appear in the username or password.)
 
 ----------------
 Host Information
@@ -104,12 +112,16 @@ This specification does not define how host types should be differentiated (e.g.
 
 Port (optional)
 ~~~~~~~~~~~~~~~
-The port is an integer between 0 and 65535 that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
+The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
+
+.. _database contains no prohibited characters:
 
 ------------------------
 Auth Database (optional)
 ------------------------
 The database to authenticate against. If provided it is everything after the Host Information (ending with "/") and up to the first question mark ("?") or end of string. The auth database MUST be URL decoded by the parser.
+
+The following characters MUST NOT appear in the database name, once it has been decoded: slash ("/"), backslash ("\\"), space (" "), double-quote ("""), or dollar sign ("$"). The MongoDB Manual `says that <https://docs.mongodb.com/manual/reference/limits/#Restrictions-on-Field-Names>`_ period (".") is also prohibited, but drivers MAY allow periods in order to express a namespace (database and collection name, perhaps containing multiple periods) in this part of the URL.
 
 -----------------------------
 Connection Options (optional)
@@ -141,7 +153,7 @@ When defining and documenting keys, specifications should follow the camelCase n
 
 A WARN level logging message MUST be issued. For example::
 
-  Unsupported option 'connectMS' on URI 'mongodb://localhost?connectMS=1'. Keys should be descriptive and follow existing conventions:
+  Unsupported option 'connectMS'. Keys should be descriptive and follow existing conventions:
 
 
 Time based keys
@@ -265,7 +277,7 @@ Given the string ``mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-270
 
 1. Validate and remove the scheme prefix ``mongodb://``, leaving: ``foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock/admin?w=1``
 
-2. Split the string by the last, unescaped ``/`` (if any), yielding:
+2. Split the string by the first, unescaped ``/`` (if any), yielding:
 
    1. User information and host identifers: ``foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock``.
 
@@ -289,7 +301,9 @@ Given the string ``mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-270
 
 7. URL decode the auth database. In this example, the auth database is ``admin``.
 
-8. Validate, split, and URL decode the connection options. In this example, the connection options are ``{w: 1}``.
+8. Validate the `database contains no prohibited characters`_.
+
+9. Validate, split, and URL decode the connection options. In this example, the connection options are ``{w: 1}``.
 
 ---
 Q&A
@@ -326,12 +340,12 @@ Q: Can the connection string contain non-ASCII characters?
 Q: Why does reference implementation check for a ``.sock`` suffix when parsing a socket path and possible auth database?
   To simplify parsing of a socket path followed by an auth database, we rely on MongoDB's `naming restrictions <http://docs.mongodb.org/manual/reference/limits/#naming-restrictions>`_), which do not allow database names to contain a dot character, and the fact that socket paths must end with ``.sock``. This allows us to differentiate the last part of a socket path from a database name. While we could immediately rule out an auth database on the basis of the dot alone, this specification is primarily concerned with breaking down the components of a URI (e.g. hosts, auth database, options) in a deterministic manner, rather than applying strict validation to those parts (e.g. host types, database names, allowed values for an option). Additionally, some drivers might allow a namespace (e.g. ``"db.collection"``) for the auth database part, so we do not want to be more strict than is necessary for parsing.
 
-Q: Why throw an exception if the userinfo contains an at-sign ("@") or more than one colon (":")?
+Q: Why throw an exception if the userinfo contains a percent sign ("%"), at-sign ("@"), or more than one colon (":")?
   This is done to help users format the connection string correctly. Although at-signs ("@") or colons (":") in the username must be URL encoded, users may not be aware of that requirement. Take the following example::
 
     mongodb://anne:bob:pass@localhost:27017
 
-  Is the username ``anne`` and the password ``bob:pass`` or is the username ``anne:bob`` and the password ``pass``?  Accepting this as the userinfo could cause authentication to fail, causing confusion for the user as to why. By throwing an exception users are made aware and then update the connection string so to be explicit about what forms the username and password.
+  Is the username ``anne`` and the password ``bob:pass`` or is the username ``anne:bob`` and the password ``pass``? Accepting this as the userinfo could cause authentication to fail, causing confusion for the user as to why. Allowing unescaped at-sign and percent symbols would invite further ambiguity. By throwing an exception users are made aware and then update the connection string so to be explicit about what forms the username and password.
 
 Q: Why must UNIX domain sockets be URL encoded?
   This has been done to reduce ambiguity between the socket name and the database name. Take the following example::
@@ -350,3 +364,9 @@ Q: Why must the auth database be URL decoded by the parser?
 -------
 Changes
 -------
+
+- 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
+- 2016-07-22: In Port section, clarify that zero is not an acceptable port.
+- 2017-06-10: In Userinfo section, require username and password to be fully URI
+  encoded, not just "%", "@", and ":". In Auth Database, list the prohibited
+  characters. In Reference Implementation, split at the first "/", not the last.

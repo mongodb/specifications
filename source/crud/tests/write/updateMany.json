@@ -13,6 +13,7 @@
       "x": 33
     }
   ],
+  "minServerVersion": "2.6",
   "tests": [
     {
       "description": "UpdateMany when many documents match",
@@ -34,7 +35,8 @@
       "outcome": {
         "result": {
           "matchedCount": 2,
-          "modifiedCount": 2
+          "modifiedCount": 2,
+          "upsertedCount": 0
         },
         "collection": {
           "data": [
@@ -72,7 +74,8 @@
       "outcome": {
         "result": {
           "matchedCount": 1,
-          "modifiedCount": 1
+          "modifiedCount": 1,
+          "upsertedCount": 0
         },
         "collection": {
           "data": [
@@ -110,7 +113,8 @@
       "outcome": {
         "result": {
           "matchedCount": 0,
-          "modifiedCount": 0
+          "modifiedCount": 0,
+          "upsertedCount": 0
         },
         "collection": {
           "data": [
@@ -150,6 +154,7 @@
         "result": {
           "matchedCount": 0,
           "modifiedCount": 0,
+          "upsertedCount": 1,
           "upsertedId": 4
         },
         "collection": {

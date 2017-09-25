@@ -7,27 +7,6 @@ to prove their conformance to the Server Selection spec. The tests
 are provided in both YAML and JSON formats, and drivers may test against
 whichever format is more convenient for them.
 
-Converting to JSON
-------------------
-
-The Server Selection tests were originally written in YAML. YAML has
-a standard comment format, which makes it more human-readable than JSON,
-and it also has language features for expressing duplicated information
-more concisely. A JSON-converted version of each YAML test is included
-here, but if you change the YAML, you will need to re-convert to JSON.
-One way of converting YAML to JSON is with
-`jsonwidget-python <http://jsonwidget.org/wiki/Jsonwidget-python>`_::
-
-    pip install PyYAML urwid jsonwidget
-    make
-
-Or instead of "make"::
-
-    for i in `find . -iname '*.yml'`; do
-        echo "${i%.*}"
-        jwc yaml2json $i > ${i%.*}.json
-    done
-
 Version
 -------
 

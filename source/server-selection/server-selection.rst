@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: August 10, 2015
-:Version: 1.2
+:Last Modified: June 13, 2017
+:Version: 1.6
 
 .. contents::
 
@@ -116,8 +116,8 @@ Terms
 .. _eligible:
 
 **Eligible**
-    Describes candidate servers that also meet the criterion specified by the
-    ``tag_sets`` read preference parameter.
+    Describes candidate servers that also meet the criteria specified by the
+    ``tag_sets`` and ``maxStalenessSeconds`` read preference parameters.
 
 **Immediate topology check**
     For a multi-threaded or asynchronous client, this means waking all
@@ -147,7 +147,7 @@ Terms
 
 **Read preference**
     The parameters describing which servers in a deployment can receive
-    read operations, including ``mode`` and ``tag_sets``.
+    read operations, including ``mode``, ``tag_sets``, and ``maxStalenessSeconds``.
 
 **RS**
     Abbreviation for "replica set".
@@ -163,6 +163,9 @@ Terms
 
 **Secondary**
     A server of type RSSecondary.
+
+**Staleness**
+    A worst-case estimate of how far a secondary's replication lags behind the primary's last write.
 
 **Server**
     A mongod or mongos process.
@@ -309,12 +312,34 @@ Multi-threaded drivers MUST NOT provide this mode.
 and the rationale for a `"try once" mode`_.)
 
 heartbeatFrequencyMS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 This controls when topology updates are scheduled.
-See `heartbeatFrequencyMS
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms>`_
-in the `Server Discovery and Monitoring`_ spec for details.
+See `heartbeatFrequencyMS`_ in the `Server Discovery and Monitoring`_ spec for details.
+
+socketCheckIntervalMS
+~~~~~~~~~~~~~~~~~~~~~
+
+Only for single-threaded drivers.
+
+The default socketCheckIntervalMS MUST be 5000 (5 seconds), and it MAY be
+configurable. If socket has been idle for at least this long, it must be
+checked before being used again.
+
+See `checking an idle socket after socketCheckIntervalMS`_ and `what is the
+purpose of socketCheckIntervalMS?`_.
+
+idleWritePeriodMS
+~~~~~~~~~~~~~~~~~
+
+A constant, how often an idle primary writes a no-op to the oplog.
+See `idleWritePeriodMS`_ in the `Max Staleness`_ spec for details.
+
+smallestMaxStalenessSeconds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A constant, 90 seconds. See "Smallest allowed value for maxStalenessSeconds"
+in the Max Staleness Spec.
 
 Read Preference
 ---------------
@@ -330,14 +355,15 @@ section.
 Components of a read preference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A read preference is a document with a ``mode`` field and an optional
-``tag_sets`` field.  The ``mode`` field prioritizes between primaries and
-secondaries to produce either a single, suitable server or a list of candidate
-servers.  The ``tag_sets`` field might then be applied in some cases to determine
-which candidate servers are considered eligible for selection.
+A read preference consists of a ``mode`` and optional
+``tag_sets`` and ``maxStalenessSeconds``.  The ``mode`` prioritizes between primaries and
+secondaries to produce either a single suitable server or a list of candidate
+servers.  If ``tag_sets`` and ``maxStalenessSeconds`` are set, they determine
+which candidate servers are eligible for selection.
 
-The ``mode`` field defaults to 'primary'.  The ``tag_sets`` field defaults
-to a list with an empty document ``[{}]``.
+The default ``mode`` is 'primary'.  The default ``tag_sets``
+is a list with an empty tag set: ``[{}]``. The default ``maxStalenessSeconds``
+is -1 or null, depending on the language.
 
 Each is explained in greater detail below.
 
@@ -356,7 +382,7 @@ Clients MUST support these modes:
 
 **secondary**
     All secondaries (and *only* secondaries) are candidates, but only
-    `eligible`_ candidates (i.e. after applying ``tag_sets``) are suitable.
+    `eligible`_ candidates (i.e. after applying ``tag_sets`` and ``maxStalenessSeconds``) are suitable.
 
 **primaryPreferred**
     If a primary is available, only the primary is suitable.  Otherwise,
@@ -374,6 +400,74 @@ Clients MUST support these modes:
 *Note on other server types*: The `Server Discovery and Monitoring`_ spec defines
 several other server types that could appear in a replica set.  Such types are never
 candidates, eligible or suitable.
+
+.. _algorithm for filtering by staleness:
+
+maxStalenessSeconds
+```````````````````
+
+The maximum replication lag, in wall clock time, that a secondary can suffer
+and still be eligible.
+
+The default is no maximum staleness.
+
+A ``maxStalenessSeconds`` of -1 MUST mean "no maximum". Drivers are also free to use
+None, null, or other representations of "no value" to represent "no max staleness".
+
+Drivers MUST raise an error if ``maxStalenessSeconds`` is a positive number
+and the ``mode`` field is 'primary'.
+
+A driver MUST raise an error
+if the TopologyType is ReplicaSetWithPrimary or ReplicaSetNoPrimary
+and either of these conditions is false::
+
+  maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
+  maxStalenessSeconds >= smallestMaxStalenessSeconds
+
+``heartbeatFrequencyMS`` is defined in the `Server Discovery and Monitoring`_ spec,
+and ``idleWritePeriodMS`` is defined to be 10 seconds in the `Max Staleness`_ spec.
+
+See "Smallest allowed value for maxStalenessSeconds" in the Max Staleness Spec.
+
+mongos MUST reject a read with ``maxStalenessSeconds`` provided and a ``mode`` of 'primary'.
+
+mongos MUST reject a read with ``maxStalenessSeconds`` that is not a positive integer.
+
+mongos MUST reject a read if ``maxStalenessSeconds`` is less than smallestMaxStalenessSeconds,
+with error code 160 (SERVER-24421).
+
+During server selection,
+drivers (but not mongos) MUST raise an error if ``maxStalenessSeconds`` is a positive number,
+and any server's ``maxWireVersion`` is less than 5. [#]_
+
+After filtering servers according to ``mode``, and before filtering with ``tag_sets``,
+eligibility MUST be determined from ``maxStalenessSeconds`` as follows:
+
+- If ``maxStalenessSeconds`` is not a positive number, then all servers are eligible.
+
+- Otherwise, calculate staleness. Non-secondary servers (including Mongos
+  servers) have zero staleness.
+  If TopologyType is ReplicaSetWithPrimary,
+  a secondary's staleness is calculated using its ServerDescription "S"
+  and the primary's ServerDescription "P"::
+
+    (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
+
+  (All datetime units are in milliseconds.)
+
+  If TopologyType is ReplicaSetNoPrimary,
+  a secondary's staleness is calculated using its ServerDescription "S"
+  and the ServerDescription of the secondary with the greatest lastWriteDate,
+  "SMax"::
+
+    SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
+
+  Servers with staleness less than or equal to ``maxStalenessSeconds`` are eligible.
+
+See the Max Staleness Spec for overall description and justification of this
+feature.
+
+.. _algorithm for filtering by tag_sets:
 
 tag_sets
 ````````
@@ -395,9 +489,12 @@ A tag set that is an empty document matches any server, because the empty
 tag set is a subset of any tag set.  This means the default ``tag_sets``
 parameter (``[{}]``) matches all servers.
 
-Eligibility MUST be determined as follows:
+Tag sets are applied after filtering servers by ``mode`` and ``maxStalenessSeconds``,
+and before selecting one server within the latency window.
 
-- If the ``tag_sets`` list is empty then all candidates servers are eligible
+Eligibility MUST be determined from ``tag_sets`` as follows:
+
+- If the ``tag_sets`` list is empty then all candidate servers are eligible
   servers.  (Note, the default of ``[{}]`` means an empty list probably won't
   often be seen, but if the client does not forbid an empty list, this rule
   MUST be implemented to handle that case.)
@@ -418,8 +515,8 @@ Drivers MUST allow users to configure a default read preference on a
 preference on a ``Database`` or ``Collection`` object.
 
 A read preference MAY be specified as an object, document or individual
-``mode`` and ``tag_sets`` parameters, depending on what is most idiomatic for
-the language.
+``mode``, ``tag_sets``, and ``maxStalenessSeconds`` parameters,
+depending on what is most idiomatic for the language.
 
 If more than one object has a default read preference, the default of the most
 specific object takes precedence.  I.e. ``Collection`` is preferred over
@@ -430,8 +527,11 @@ basis similar to how ``addSpecial``, ``hint``, or ``batchSize`` are set. E.g.,
 in Python::
 
     db.collection.find({}, read_preference=ReadPreference.SECONDARY)
-    db.collection.find({},
-        read_preference=ReadPreference.NEAREST, tag_sets=[{'dc': 'ny'}])
+    db.collection.find(
+        {},
+        read_preference=ReadPreference.NEAREST,
+        tag_sets=[{'dc': 'ny'}],
+        maxStalenessSeconds=120)
 
 If a driver API allows users to potentially set both the legacy ``slaveOK``
 configuration option and a default read preference configuration option,
@@ -464,7 +564,8 @@ Therefore, when sending queries to a mongos, the following rules apply:
     and MUST also use ``$readPreference``
 
   - For mode 'secondaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag.
-    If the read preference contains a non-empty ``tag_sets`` parameter, drivers MUST
+    If the read preference contains a non-empty ``tag_sets`` parameter,
+    or ``maxStalenessSeconds`` is a positive integer, drivers MUST
     use ``$readPreference``; otherwise, drivers MUST NOT use ``$readPreference``
 
   - For mode 'nearest', drivers MUST set the ``slaveOK`` wire protocol flag
@@ -484,7 +585,8 @@ the query MUST be provided using the ``$query`` modifier like so::
         },
         $readPreference: {
             mode: 'secondary',
-            tags: [ { 'dc': 'ny' } ]
+            tags: [ { 'dc': 'ny' } ],
+            maxStalenessSeconds: 120
         }
     }
 
@@ -499,14 +601,18 @@ A valid ``$readPreference`` document for mongos has the following requirements:
     - 'secondaryPreferred'
     - 'nearest'
 
-2.  If the ``mode`` field is "primary", the ``tags`` field MUST be absent.
+2.  If the ``mode`` field is "primary", the ``tags`` and ``maxStalenessSeconds`` fields MUST be absent.
 
     Otherwise, for other ``mode`` values, the ``tags`` field MUST either be
     absent or be present exactly once and have an array value containing at
     least one document. It MUST contain only documents, no other type.
 
+    The ``maxStalenessSeconds`` field MUST be either be absent or be present
+    exactly once with an integer value.
+
 Mongos receiving a query with ``$readPreference`` SHOULD validate the
-``mode`` and ``tags`` fields, but SHOULD ignore unrecognized fields for
+``mode``, ``tags``, and ``maxStalenessSeconds`` fields according to rules 1 and 2 above,
+but SHOULD ignore unrecognized fields for
 forward-compatibility rather than throwing an error.
 
 Use of read preferences with commands
@@ -678,7 +784,7 @@ as follows:
 
 2. Record the maximum time as start time plus ``serverSelectionTimeoutMS``
 
-3. If the topology has not been scanned in ``heartBeatFrequencyMS``
+3. If the topology has not been scanned in ``heartbeatFrequencyMS``
    milliseconds, mark the topology stale
 
 4. If the topology is stale, proceed as follows:
@@ -774,13 +880,31 @@ Read operations
 ```````````````
 
 For the purpose of selecting a server for read operations, the same rules apply
-to both topology types.
+to both ReplicaSetWithPrimary and ReplicaSetNoPrimary.
 
-Servers are suitable if they meet the requirements of the ``mode`` and
-``tag_sets`` read preference parameters (whether explicit or default).
+To select from the topology a server that matches the user's Read Preference:
 
-If more than one server is suitable, clients MUST randomly select a suitable server
-within the latency window.
+If ``mode`` is 'primary', select the primary server.
+
+If ``mode`` is 'secondary' or 'nearest':
+
+  #. Select all secondaries if ``mode`` is 'secondary', or all secondaries and
+     the primary if ``mode`` is 'nearest'.
+  #. From these, filter out servers staler than ``maxStalenessSeconds`` if it is a positive number.
+  #. From the remaining servers, select servers matching the ``tag_sets``.
+  #. From these, select one server within the latency window.
+
+(See `algorithm for filtering by staleness`_, `algorithm for filtering by
+tag_sets`_, and `selecting servers within the latency window`_ for details
+on each step, and `why is maxStalenessSeconds applied before tag_sets?`_.)
+
+If ``mode`` is 'secondaryPreferred', attempt the selection algorithm with
+``mode`` 'secondary' and the user's ``maxStalenessSeconds`` and ``tag_sets``. If
+no server matches, select the primary.
+
+If ``mode`` is 'primaryPreferred', select the primary if it is known, otherwise
+attempt the selection algorithm with ``mode`` 'secondary' and the user's
+``maxStalenessSeconds`` and ``tag_sets``.
 
 For all read preferences modes except 'primary', clients MUST set the ``slaveOK`` wire
 protocol flag to ensure that any suitable server can handle the request.  Clients
@@ -802,8 +926,8 @@ Topology type: Sharded
 A deployment of topology type Sharded contains one or more servers of type
 Mongos or Unknown.
 
-For read operations, all servers of type Mongos are suitable; the ``mode``
-and ``tag_sets`` read preference parameters are ignored for selecting a
+For read operations, all servers of type Mongos are suitable; the ``mode``,
+``tag_sets``, and ``maxStalenessSeconds`` read preference parameters are ignored for selecting a
 server, but are passed through to mongos. See `Passing read preference to mongos`_.
 
 For write operations, all servers of type Mongos are suitable.
@@ -861,6 +985,52 @@ In other words, the suitable server with the shortest average RTT is **always**
 a possible choice.  Other servers could be chosen if their average RTTs are no
 more than ``localThresholdMS`` more than the shortest average RTT.
 
+Checking an Idle Socket After socketCheckIntervalMS
+---------------------------------------------------
+
+Only for single-threaded drivers.
+
+If a server is selected that has an existing connection that has been idle for
+socketCheckIntervalMS, the driver MUST check the connection with the "ping"
+command. If the ping succeeds, use the selected connection. If not, set the
+server's type to Unknown and update the Topology Description according to the
+Server Discovery and Monitoring Spec, and attempt **once** more to select a
+server.
+
+The logic is expressed in this pseudocode. The algorithm for the "getServer"
+function is suggested below, in `Single-threaded server selection
+implementation`_::
+
+    def getConnection(criteria):
+        # Get a server for writes, or a server matching read prefs, by
+        # running the server selection algorithm.
+        server = getServer(criteria)
+        if not server:
+            throw server selection error
+
+        connection = server.connection
+        if connection is NULL:
+            connect to server and return connection
+        else if connection has been idle < socketCheckIntervalMS:
+            return connection
+        else:
+            try:
+                use connection for "ping" command
+                return connection
+            except network error:
+                close connection
+                mark server Unknown and update Topology Description
+
+                # Attempt *once* more to select.
+                server = getServer(criteria)
+                if not server:
+                    throw server selection error
+
+                connect to server and return connection
+
+
+See `What is the purpose of socketCheckIntervalMS?`_.
+
 Requests and Pinning Deprecated
 -------------------------------
 
@@ -901,15 +1071,15 @@ camel case must be used as described above in `Passing read preference to
 mongos`_.
 
 primaryPreferred and secondaryPreferred
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 'primaryPreferred' is equivalent to selecting a server with read preference mode
-'primary' (without ``tag_sets``), or, if that fails, falling back to selecting
-with read preference mode 'secondary' (with ``tag_sets``, if provided).
+'primary' (without ``tag_sets`` or ``maxStalenessSeconds``), or, if that fails, falling back to selecting
+with read preference mode 'secondary' (with ``tag_sets`` and ``maxStalenessSeconds``, if provided).
 
 'secondaryPreferred' is the inverse: selecting with mode 'secondary' (with
-``tag_sets``) and falling back to selecting with mode 'primary' (without
-``tag_sets``).
+``tag_sets`` and ``maxStalenessSeconds``) and falling back to selecting with mode 'primary' (without
+``tag_sets`` or ``maxStalenessSeconds``).
 
 Depending on the implementation, this may result in cleaner code.
 
@@ -921,16 +1091,16 @@ locality or absolute lowest latency, neither of which are true.
 
 Instead, and unlike the other read preference modes, 'nearest' does not favor
 either primaries or secondaries; instead all servers are candidates and are
-filtered by ``tag_sets``.
+filtered by ``tag_sets`` and ``maxStalenessSeconds``.
 
 To always select the server with the lowest RTT, users should use mode 'nearest'
-without ``tag_sets`` and set ``localThresholdMS`` to zero.
+without ``tag_sets`` or ``maxStalenessSeconds`` and set ``localThresholdMS`` to zero.
 
 To distribute reads across all members evenly regardless of RTT, users should
-use mode 'nearest' without ``tag_sets`` and set ``localThresholdMS`` very high so
+use mode 'nearest' without ``tag_sets`` or ``maxStalenessSeconds`` and set ``localThresholdMS`` very high so
 that all servers fall within the latency window.
 
-In both cases, ``tag_sets`` could be used to further restrict the set of eligible
+In both cases, ``tag_sets`` and ``maxStalenessSeconds`` could be used to further restrict the set of eligible
 servers, if desired.
 
 Tag set lists
@@ -960,6 +1130,17 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                 client.lock.release()
                 throw invalid wire protocol range error with details
 
+            if maxStalenessSeconds is set:
+                if any server's maxWireVersion < 5:
+                    client.lock.release()
+                    throw error
+
+                if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
+                    if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
+                        maxStalenessSeconds < smallestMaxStalenessSeconds):
+                    client.lock.release()
+                    throw error
+
             servers = all servers in topologyDescription matching criteria
 
             if servers is not empty:
@@ -988,7 +1169,6 @@ Single-threaded server selection implementation
 Pseudocode for `single-threaded server selection`_::
 
     def getServer(criteria):
-
         startTime = gettime()
         loopEndTime = startTime
         maxTime = startTime + serverSelectionTimeoutMS/1000
@@ -1024,6 +1204,15 @@ Pseudocode for `single-threaded server selection`_::
                 topologyDescription.stale = true
                 throw invalid wire version range error with details
 
+            if maxStalenessSeconds is set:
+                if any server's maxWireVersion < 5:
+                    throw error
+
+                if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
+                    if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
+                        maxStalenessSeconds < smallestMaxStalenessSeconds):
+                    throw error
+
             servers = all servers in topologyDescription matching criteria
 
             if servers is not empty:
@@ -1052,7 +1241,7 @@ For example, when there are no members matching the ReadPreference:
 
 - "No server available for query with ReadPreference primary"
 - "No server available for query with ReadPreference secondary"
-- "No server available for query with ReadPreference " + mode + " and tag set list " + tag_sets
+- "No server available for query with ReadPreference " + mode + ", tag set list " + tag_sets + ", and ``maxStalenessSeconds`` " + maxStalenessSeconds
 
 Or, if authentication failed:
 
@@ -1243,6 +1432,33 @@ can turn the "try once" mode off.
 Then driver rescans the topology every minHeartbeatFrequencyMS
 until a suitable server is found or the serverSelectionTimeoutMS expires.
 
+What is the purpose of socketCheckIntervalMS?
+---------------------------------------------
+
+Single-threaded clients need to make a compromise: if they check servers too
+frequently it slows down regular operations, but if they check too rarely they
+cannot proactively avoid errors.
+
+Errors are more disruptive for single-threaded clients than for multi-threaded.
+If one thread in a multi-threaded process encounters an error, it warns the
+other threads not to use the disconnected server. But single-threaded clients
+are deployed as many independent processes per application server, and each
+process must throw an error until all have discovered that a server is down.
+
+The compromise specified here balances the cost of frequent checks against the
+disruption of many errors. The client preemptively checks individual sockets
+that have not been used in the last `socketCheckIntervalMS`_, which is more
+frequent by default than `heartbeatFrequencyMS` defined in the Server Discovery
+and Monitoring Spec.
+
+The client checks the socket with a "ping" command, rather than "ismaster",
+because it is not checking the server's full state as in the Server Discovery
+and Monitoring Spec, it is only verifying that the connection is still open. We
+might also consider a `select` or `poll` call to check if the socket layer
+considers the socket closed, without requiring a round-trip to the server.
+However, this technique usually will not detect an uncleanly shutdown server or
+a network outage.
+
 Backwards Compatibility
 =======================
 
@@ -1386,6 +1602,32 @@ do so, such as:
 Driver-common rules for retrying operations (and configuring such retries)
 could be the topic of a different, future specification.
 
+Why is maxStalenessSeconds applied before tag_sets?
+---------------------------------------------------
+
+The intention of read preference's list of tag sets is to allow a user to prefer
+the first tag set but fall back to members matching later tag sets. In order to
+know whether to fall back or not, we must first filter by all other criteria.
+
+Say you have two secondaries:
+
+  - Node 1, tagged `{'tag': 'value1'}`, estimated staleness 5 minutes
+  - Node 2, tagged `{'tag': 'value2'}`, estimated staleness 1 minute
+
+And a read preference:
+
+  - mode: "secondary"
+  - maxStalenessSeconds: 120 (2 minutes)
+  - tag_sets: `[{'tag': 'value1'}, {'tag': 'value2'}]`
+
+If tag sets were applied before maxStalenessSeconds, we would select Node 1 since it
+matches the first tag set, then filter it out because it is too stale, and be
+left with no eligible servers.
+
+The user's intent in specifying two tag sets was to fall back to the second set
+if needed, so we filter by maxStalenessSeconds first, then tag_sets, and select
+Node 2.
+
 References
 ==========
 
@@ -1393,8 +1635,10 @@ References
 - `Driver Authentication`_ specification
 
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
+.. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
+.. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
+.. _idleWritePeriodMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWritePeriodMS
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
-
 
 Changes
 =======
@@ -1406,3 +1650,25 @@ happens at least once under serverSelectionTryOnce if selection fails.
 Removed the general selection algorithm and put full algorithms for each of
 the single- and multi-threaded sections. Added a requirement that
 single-threaded drivers document selection time expectations.
+
+2016-07-21: Updated for Max Staleness support.
+
+2016-08-03: Clarify selection algorithm, in particular that maxStalenessMS
+comes before tag_sets.
+
+2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
+
+2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS
+to heartbeatFrequencyMS + idleWritePeriodMS (with proper conversions of course).
+
+2016-11-01: Update formula for secondary staleness estimate with the
+equivalent, and clearer, expression of this formula from the Max Staleness Spec
+
+2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the
+future, require maxStalenessSeconds to be at least 90.
+
+2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
+must retry selection after checking an idle socket and discovering it is broken.
+
+.. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
+   so it does no additional wire version checks related to maxStalenessSeconds.

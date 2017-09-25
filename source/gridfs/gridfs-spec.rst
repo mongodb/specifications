@@ -9,8 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: May 10, 2016
-:Version: 1.0
+:Last Modified: October 7, 2016
+:Version: 1.1
 
 .. contents::
 
@@ -119,6 +119,10 @@ Files collection document
   add arbitrary fields to the files collection document at the root level. New
   implementations of GridFS will not allow this, but must be prepared to
   handle existing files collection documents that might have additional fields.
+
+  Note: drivers SHOULD store length as Int64 and chunkSize as Int32 when creating new GridFS files. However, drivers MUST
+  be able to handle existing GridFS files where the length and chunkSize fields might have been stored using a
+  different numeric data type.
 
 Orphaned chunk
   A document in the chunks collections for which the
@@ -271,6 +275,11 @@ Configurable GridFSBucket class
      * The write concern. Defaults to the write concern of the database.
      */
     writeConcern : WriteConcern optional;
+
+    /**
+     * The read concern. Defaults to the read concern of the database.
+     */
+    readConcern : ReadConcern optional;
     
     /**
      * The read preference. Defaults to the read preference of the database.
@@ -305,17 +314,21 @@ configurable:
   reformat existing files in the system that use a different chunk
   size. Defaults to 255KB.
 
-IF a driver supports configuring writeConcern or readPreference at the
-database or collection level, then GridFSBucket objects MUST also allow
+IF a driver supports configuring readConcern, readPreference or writeConcern
+at the database or collection level, then GridFSBucket objects MUST also allow
 the following options to be configurable:
 
-- **writeConcern:** defaults to the write concern on the parent
-  database (or client object if the parent database has no write
+- **readConcern:** defaults to the read concern on the parent
+  database (or client object if the parent database has no read
   concern).
 
 - **readPreference:** defaults to the read preference on the parent
   database (or client object if the parent database has no read
   preference).
+
+- **writeConcern:** defaults to the write concern on the parent
+  database (or client object if the parent database has no write
+  concern).
 
 GridFSBucket instances are immutable. Their properties MUST NOT be
 changed after the instance has been created. If your driver provides a
@@ -1134,4 +1147,7 @@ files be updated to use a more secure algorithm, like SHA-1 or SHA-256.
 Changes
 =======
 
-2016-05-10 Support custom file ids
+- 2016-05-10 Support custom file ids
+- 2016-10-07 Drivers SHOULD handle any numeric type of length and chunkSize
+- 2016-10-07 Added ReadConcern to the GridFS spec
+- 2016-10-07 Modified a JSON test that was testing optional behavior

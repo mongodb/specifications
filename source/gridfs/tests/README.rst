@@ -4,26 +4,6 @@ GridFS Tests
 The YAML and JSON files in this directory are platform-independent tests
 meant to exercise a driver's implementation of GridFS.
 
-Converting to JSON
-==================
-
-The tests are written in YAML because it is easier for humans to write
-and read, and because YAML supports a standard comment format. Each test
-is also provided in JSON format because in some languages it is easier
-to parse JSON than YAML.
-
-If you modify any test, you should modify the YAML file and then
-regenerate the JSON file from it. 
-	
-One way to convert the files is using an online web page. I used:
-
-http://www.json2yaml.com/
-
-It's advertised as a JSON to YAML converter but it can be used in either direction.
-
-Note: the yaml2json utility from npm is not capable of converting these YAML tests
-because it doesn't implement the full YAML spec.
-	
 Format
 ======
 
