@@ -1571,6 +1571,7 @@ Q: Where is ``save``?
 Changes
 =======
 
+* 2017-09-25: Added comment option to AggregateOptions.
 * 2017-08-31: Added arrayFilters to bulk write update models.
 * 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
 * 2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
