@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: January 15, 2015
-:Version: 0.3
+:Last Modified: September 25, 2017
+:Version: 0.3.1
 
 .. contents::
 
@@ -244,7 +244,7 @@ All methods:
 
 - SHOULD be on the database object.
 - MUST allow a filter to be passed to include only requested collections.
-- MAY allow the ``cursor.firstBatch`` option to be passed.
+- MAY allow the ``cursor.batchSize`` option to be passed.
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 
@@ -386,6 +386,11 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.3.1 Changes
+
+    - Fix typos.
+    - Clarify reason for filtering collection names containing '$'.
 
 Version 0.3 Changes
 
