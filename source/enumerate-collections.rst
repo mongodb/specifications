@@ -13,7 +13,7 @@ Enumerating Collections
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
 :Last Modified: September 25, 2017
-:Version: 0.3
+:Version: 0.3.1
 
 .. contents::
 
@@ -386,6 +386,11 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.3.1 Changes
+
+    - Fix typos.
+    - Clarify reason for filtering collection names containing '$'.
 
 Version 0.3 Changes
 
