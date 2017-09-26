@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: July 17, 2017
+:Last Modified: September 26, 2017
 
 .. contents::
 
@@ -234,6 +234,14 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     useCursor: Optional<Boolean>;
+    
+    /**
+     * Enables users to specify an arbitrary string to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     */
+    comment: Optional<String>;
   }
 
   class CountOptions {
@@ -1563,6 +1571,7 @@ Q: Where is ``save``?
 Changes
 =======
 
+* 2017-09-25: Added comment option to AggregateOptions.
 * 2017-08-31: Added arrayFilters to bulk write update models.
 * 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
 * 2017-06-27: Added arrayFilters to UpdateOptions and FindOneAndUpdateOptions.
