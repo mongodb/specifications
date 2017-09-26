@@ -219,6 +219,7 @@ Driver API
 
   }
 
+**NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
 
 Helper Method
 -------------
@@ -438,4 +439,6 @@ Changelog
 | 2017-09-06 | Remove `desired user experience` example                   |
 +-------------------------------------------------------------------------+
 | 2017-09-21 | Clarified that we need to close the cursor on missing token|
++-------------------------------------------------------------------------+
+| 2017-09-26 | Clarified that change stream options may be added later    |
 +-------------------------------------------------------------------------+
