@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: September 26, 2017
+:Last Modified: September 27, 2017
 
 .. contents::
 
@@ -242,6 +242,15 @@ Read
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     comment: Optional<String>;
+
+    /**
+     * The index to use for the aggregation. The hint does not apply to $lookup and $graphLookup stages.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/ 
+     */
+    hint: Optional<(String | Document)>;
   }
 
   class CountOptions {
@@ -1571,6 +1580,7 @@ Q: Where is ``save``?
 Changes
 =======
 
+* 2017-09-26: Added hint option to AggregateOptions.  
 * 2017-09-25: Added comment option to AggregateOptions.
 * 2017-08-31: Added arrayFilters to bulk write update models.
 * 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
