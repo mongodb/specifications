@@ -51,8 +51,8 @@ Cluster time
     "gossipping the cluster time") by sending the highest ``$clusterTime`` it has seen
     so far in messages it sends to mongos servers. The current cluster time is a
     logical time, but is digitally signed to prevent malicious clients from
-    propagating invalid cluster times. Cluster time is only used in sharded
-    clusters.
+    propagating invalid cluster times. Cluster time is only used in replica sets
+    and sharded clusters.
 
 Logical time
     A time-like quantity that can be used to determine the order in which events
@@ -274,7 +274,7 @@ responses it sends to the driver (for both read and write operations).
         ok : 1 or 0,
         ... // the rest of the command reply
         operationTime : <BsonTimestamp>
-        $clusterTime : <BsonDocument> // only exists in sharded cluster
+        $clusterTime : <BsonDocument> // only in deployments that support cluster times
     }
 
 The ``operationTime`` MUST be stored in the ``ClientSession`` to later be passed as the
@@ -289,7 +289,7 @@ When connected to a standalone node command replies do not include an
 ``operationTime`` field. All operations against a standalone node are causally
 consistent automatically because there is only one node.
 
-When connected to a sharded cluster the command response also includes a field
+When connected to a deployment that supports cluster times the command response also includes a field
 called ``$clusterTime`` that drivers MUST use to gossip the cluster time. See the
 Sessions Specification for details.
 
@@ -334,8 +334,8 @@ The same is true for causal consistency, so commands that are run using ``runCom
 MUST NOT have an ``afterClusterTime`` field added to them.
 
 When executing a causally consistent read, the ``afterClusterTime`` field MUST be
-sent when connected to a replica set or a sharded cluster, and MUST NOT be sent
-when connected to a standalone.
+sent when connected to a deployment that supports cluster times, and MUST NOT be sent
+when connected to a deployment that does not support cluster times.
 
 Unacknowledged writes
 =====================
@@ -412,7 +412,7 @@ replica set or a sharded cluster supports cluster times.
         * capture the command sent to the server (using APM or other mechanism)
         * assert that the command does not have an ``afterClusterTime`` field
 
-7.  A read operation in a causally consistent session against a deployment that does not support cluster time does
+7.  A read operation in a causally consistent session against a deployment that does not support cluster times does
     not include the ``afterClusterTime`` parameter in the command sent to the server
         * skip this test if connected to a deployment that does support cluster times
         * ``session = client.startSession(causalConsistency = true)``
@@ -453,16 +453,16 @@ replica set or a sharded cluster supports cluster times.
         * ``collection.anyWriteOperation(session, ...)``
         * assert ``session.operationTime`` does not have a value
 
-11. When connected to a deployment that does not support cluster time messages sent to
+11. When connected to a deployment that does not support cluster times messages sent to
     the server should not include ``$clusterTime``
-        * skip this test when connected to a deployment that does support cluster time
+        * skip this test when connected to a deployment that does support cluster times
         * ``document = collection.findOne({})``
         * capture the command sent to the server
         * assert that the command does not include a ``$clusterTime`` field
 
-12. When connected to a deployment that does support cluster time messages sent to the server should
+12. When connected to a deployment that does support cluster times messages sent to the server should
     include ``$clusterTime``
-        * skip this test when connected to a deployment that does not support cluster time
+        * skip this test when connected to a deployment that does not support cluster times
         * ``document = collection.findOne({})``
         * capture the command sent to the server
         * assert that the command includes a ``$clusterTime`` field
@@ -515,4 +515,4 @@ Changelog
 :2017-09-13: Renamed "causally consistent reads" to "causal consistency"
 :2017-09-13: If no value is supplied for ``causallyConsistent`` assume true
 :2017-09-28: Remove remaining references to collections being associated with sessions
-:2017-09-28: Update tests to reflect that replica sets use $clusterTime also now
+:2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
