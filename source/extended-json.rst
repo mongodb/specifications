@@ -310,7 +310,7 @@ in which case it SHOULD follow these rules:
   the corresponding type.
 
 * If the **keys** of the parsed object exactly match the **keys** of a type
-  wrapper in the Conversion table, but any the **values** are of an incorrect
+  wrapper in the Conversion table, but any of the **values** are of an incorrect
   type, then the parser MUST report an error.
 
 .. _regex: https://docs.mongodb.com/manual/reference/operator/query/regex/
