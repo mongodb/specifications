@@ -353,7 +353,11 @@ are not causally consistent with unacknowledged writes.
 Test Plan
 =========
 
-Below is a list of test cases to write. Note that some tests are only relevant to certain deployments.
+Below is a list of test cases to write.
+
+Note: some tests are only relevant to certain deployments. For the purpose of deciding
+which tests to run assume that any deployment that is version 3.6 or higher and is either a
+replica set or a sharded cluster supports cluster times.
 
 1.  When a ``ClientSession`` is first created the ``operationTime`` has no value
         * ``session = client.startSession()``
@@ -508,7 +512,7 @@ Q&A
 Changelog
 =========
 
-2017-09-13 Renamed "causally consistent reads" to "causal consistency"
-2017-09-13 If no value is supplied for ``causallyConsistent`` assume true
-2017-09-28 Remove remaining references to collections being associated with sessions
-2017-09-28 Update tests to reflect that replica sets use $clusterTime also now
+:2017-09-13: Renamed "causally consistent reads" to "causal consistency"
+:2017-09-13: If no value is supplied for ``causallyConsistent`` assume true
+:2017-09-28: Remove remaining references to collections being associated with sessions
+:2017-09-28: Update tests to reflect that replica sets use $clusterTime also now
