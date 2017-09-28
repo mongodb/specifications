@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 29-Aug-2017
+:Last Modified: 28-Sep-2017
 
 Abstract
 ========
@@ -37,7 +37,7 @@ Terms
 
 Causal consistency
     A property that guarantees that an application can read its own writes and that
-    a later read will never observe a version of the database that is older than an
+    a later read will never observe a version of the data that is older than an
     earlier read.
 
 ClientSession
@@ -474,11 +474,10 @@ Design Rationale
 The goal is to modify the driver API as little as possible so that existing
 programs that don't need causal consistency don't have to be changed.
 This goal is met by defining a ``SessionOptions`` field that applications use to
-create a ``ClientSession`` that can be used for causal consistency. Any read
-operations performed against ``MongoDatabase`` or ``MongoCollection`` instances
-associated with such a session are implicitly causally consistent.
+start a ``ClientSession`` that can be used for causal consistency. Any
+operations performed with such a session are then causally consistent.
 
-``operationTime`` is tracked on a per ``ClientSession`` basis. This allows each
+The ``operationTime`` is tracked on a per ``ClientSession`` basis. This allows each
 ``ClientSession`` to have an ``operationTime`` that is sufficiently new to guarantee
 causal consistency for that session, but no newer. Using an ``operationTime`` that
 is newer than necessary can cause reads to block longer than necessary when
@@ -511,3 +510,4 @@ Changelog
 
 2017-09-13 Renamed "causally consistent reads" to "causal consistency"
 2017-09-13 If no value is supplied for ``causallyConsistent`` assume true
+2017-09-28 Remove remaining references to collections being associated with sessions
