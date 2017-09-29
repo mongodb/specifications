@@ -415,7 +415,7 @@ Sessions and Cursors
 When an operation using a session returns a cursor, all subsequent ``GETMORE``
 commands for that cursor MUST be run using the same session ID.
 
-If a driver decides to run a ``KILLCURSORS`` command on the cursor, it also MUST be
+If a driver decides to run a ``KILLCURSORS`` command on the cursor, it also MAY be
 run using the same session ID. See the Exceptions below for when it is permissible to not
 include a session ID in a ``KILLCURSORS`` command.
 
@@ -464,8 +464,13 @@ opening and authenticating a connection.
 A driver MAY omit a session ID in isMaster commands sent solely for the purposes
 of monitoring the state of a deployment.
 
-A driver MAY omit a session ID in ``KILLCURSORS`` commands intended to reap cursors
-that have gone out of scope.
+A driver MAY omit a session ID in ``KILLCURSORS`` commands for two reasons.
+First, killCursors is only ever sent to a particular server, so operation teams
+wouldn't need the lsid for cluster-wide killOp. An admin can manually kill the op with
+its operation id in the case that it is slow. Secondly, some drivers have a background
+cursor reaper to kill cursors that aren't exhausted and closed. Due to GC semantics,
+it can't use the same lsid for killCursors as was used for a cursor's find and getMore,
+so there's no point in using any lsid at all.
 
 Server Commands
 ===============
