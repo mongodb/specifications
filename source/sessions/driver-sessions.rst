@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 19-Sep-2017
+:Last Modified: 29-Sep-2017
 
 .. contents::
 
@@ -830,8 +830,8 @@ Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of
 Change log
 ==========
 
-2017-09-29 Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
 2017-09-13 If causalConsistency option is ommitted assume true
 2017-09-16 Omit session ID when opening and authenticating a connection
 2017-09-18 Drivers MUST gossip the cluster time when they see a $clusterTime
 2017-09-19 How to safely use initialClusterTime
+2017-09-29 Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
