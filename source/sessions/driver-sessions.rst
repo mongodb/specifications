@@ -830,6 +830,7 @@ Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of
 Change log
 ==========
 
+2017-09-29 Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
 2017-09-13 If causalConsistency option is ommitted assume true
 2017-09-16 Omit session ID when opening and authenticating a connection
 2017-09-18 Drivers MUST gossip the cluster time when they see a $clusterTime
