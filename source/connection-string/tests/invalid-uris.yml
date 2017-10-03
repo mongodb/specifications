@@ -168,14 +168,6 @@ tests:
         auth: ~
         options: ~
     -
-        description: "Username with password containing an unescaped colon"
-        uri: "mongodb://alice:foo:bar@127.0.0.1"
-        valid: false
-        warning: ~
-        hosts: ~
-        auth: ~
-        options: ~
-    -
         description: "Username containing an unescaped at-sign"
         uri: "mongodb://alice@@127.0.0.1"
         valid: false
