@@ -11,7 +11,7 @@ Initial DNS Seedlist Discovery
 :Status: Draft
 :Type: Standards
 :Last Modified: 2017-09-19
-:Version: 1.0.1
+:Version: 1.0.2
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -145,10 +145,16 @@ Future Work
 ===========
 
 In the future we could consider using the priority and weight fields of the
-SRV records, or to use SRV records to do MongoS discovery.
+SRV records.
 
 ChangeLog
 =========
+
+2017-10-03
+    Removed from `Future Work`_ the line about multiple MongoS discovery. The
+    current specification already allows for it, as multiple host names which
+    are all MongoS servers is already allowed under SDAM. And this
+    specification does not modify SDAM.
 
 2017-09-19
     Clarify that hostnames in `mongo+srv://` URLs work like normal host
