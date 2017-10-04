@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 03-Oct-2017
+:Last Modified: 04-Oct-2017
 
 .. contents::
 
@@ -234,9 +234,11 @@ ClientSession interface summary
 
     interface ClientSession {
         MongoClient client;
+        Optional<BsonDocument> clusterTime;
         SessionOptions options;
         BsonDocument sessionId;
 
+        void advanceClusterTime(BsonDocument clusterTime);
         void endSession();
     }
 
@@ -251,6 +253,17 @@ client
 This property returns the ``MongoClient`` that was used to start this
 ``ClientSession``.
 
+clusterTime
+-----------
+
+This property returns the most recent cluster time seen by this session. If no
+operations have been executed using this session this value will be null unless
+``advanceClusterTime`` has been called. This value will also be null when a
+cluster does not report cluster times.
+
+When a driver is gossiping the cluster time it should send the more recent 
+``clusterTimer`` of the ``ClientSession`` and the ``MongoClient``.
+
 options
 -------
 
@@ -263,6 +276,22 @@ sessionId
 This property returns the session ID of this session. Note that if server
 sessions are pooled, different ``ClientSession`` instances will have the same session ID,
 but never at the same time.
+
+advanceClusterTime
+------------------
+
+This method advances the ``clusterTime`` for a session. If the new
+``clusterTime`` is greater than the session's current ``clusterTime`` then the
+session's ``clusterTime`` MUST be advanced to the new ``clusterTime``. If the
+new ``clusterTime`` is less than or equal to the session's current
+``clusterTime`` then the session's ``clusterTime`` MUST NOT be changed.
+
+This method MUST NOT advance the ``clusterTime`` in ``MongoClient`` because we
+have no way of verifying that the supplied ``clusterTime`` is valid. If the
+``clusterTime`` in ``MongoClient`` were set to an invalid value all future
+operations with this ``MongoClient`` would result in the server returning an
+error. The ``clusterTime`` in ``MongoClient`` should only be advanced with a
+``$clusterTime`` received directly from a server.
 
 endSession
 ----------
@@ -642,7 +671,7 @@ time they have seen so far to any server they subsequently send commands
 to.
 
 A driver detects that it MUST participate in gossipping the cluster time when it sees
-a $clusterTime in a response received from a server.
+a ``$clusterTime`` in a response received from a server.
 
 Receiving the current cluster time
 ----------------------------------
@@ -683,27 +712,34 @@ as it was received in (but see Gossipping with mixed server versions below).
 How to compute the $clusterTime to send to a server
 ---------------------------------------------------
 
-When starting a ``ClientSession``, applications can optionally initialize the
-causal consistency properties of the ``ClientSession`` by setting the
-``initialClustertime`` (and ``initialOperationTime``) properties of
-``SessionOptions``. If these values are not valid they can cause errors. In
-order to protect itself a driver must use these values only with the
-``ClientSession`` in which they are defined. Only ``$clusterTime`` values that come
-directly from a server should be allowed to propagate to the ``MongoClient``.
+When sending ``$clusterTime`` to the server the driver MUST send the greater of
+the ``clusterTime`` values from ``MongoClient`` and ``ClientSession``. Normally
+a session's ``clusterTime`` will be less than or equal to the ``clusterTime``
+in ``MongoClient``, but it could be greater than the ``clusterTime`` in
+``MongoClient`` if ``advanceClusterTime`` was called with a ``clusterTime``
+that came from somewhere else.
+
+A driver MUST NOT use the ``clusterTime`` of a ``ClientSession`` anywhere else
+except when executing an operation with this session. This rule protects the
+driver from the scenario where ``advanceClusterTime`` was called with an
+invalid ``clusterTime`` by limiting the resulting server errors to the one
+session. The ``clusterTime`` of a ``MongoClient`` MUST NOT be advanced by any
+``clusterTime`` other than a ``$clusterTime`` received directly from a server.
 
 The safe way to compute the ``$clusterTime`` to send to a server is:
 
-1. when the ``ClientSession`` is first started its ``clusterTime`` is set to
-``initialClusterTime``
+1. When the ``ClientSession`` is first started its ``clusterTime`` is set to
+null.
 
-2. when the driver sends ``$clusterTime`` to the server it should send the
+2. When the driver sends ``$clusterTime`` to the server it should send the
 greater of the ``ClientSession`` ``clusterTime`` and the ``MongoClient``
-``clusterTime` (either one could be null)
+``clusterTime`` (either one could be null).
 
-3. when the driver receives a ``$clusterTime`` from the server it should update
-both the ``ClientSession`` and the ``MongoClient`` ``clusterTime``
+3. When the driver receives a ``$clusterTime`` from the server it should advance
+both the ``ClientSession`` and the ``MongoClient`` ``clusterTime``. The ``clusterTime``
+of a ``ClientSession`` can also be advanced by calling ``advanceClusterTime``.
 
-This sequence ensures that if the ``initialClusterTime`` is invalid only that
+This sequence ensures that if the ``clusterTime`` of a ``ClientSession`` is invalid only that
 one session will be affected. The ``MongoClient`` ``clusterTime`` is only
 updated with ``$clusterTime`` values known to be valid because they were
 received directly from a server.
@@ -834,10 +870,11 @@ Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of
 Change log
 ==========
 
-2017-09-13 If causalConsistency option is ommitted assume true
-2017-09-16 Omit session ID when opening and authenticating a connection
-2017-09-18 Drivers MUST gossip the cluster time when they see a $clusterTime
-2017-09-19 How to safely use initialClusterTime
-2017-09-29 Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
-2017-10-03 startSession and endSessions commands MUST be sent to the admin database
-2017-10-03 Fix format of endSessions command
+:2017-09-13: If causalConsistency option is ommitted assume true
+:2017-09-16: Omit session ID when opening and authenticating a connection
+:2017-09-18: Drivers MUST gossip the cluster time when they see a $clusterTime
+:2017-09-19: How to safely use initialClusterTime
+:2017-09-29: Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
+:2017-10-03: startSession and endSessions commands MUST be sent to the admin database
+:2017-10-03: Fix format of endSessions command
+:2017-10-04: Added advanceClusterTime

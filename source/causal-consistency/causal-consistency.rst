@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 28-Sep-2017
+:Last Modified: 04-Oct-2017
 
 Abstract
 ========
@@ -145,8 +145,6 @@ SessionOptions changes
 
     class SessionOptions {
         Optional<bool> causalConsistency;
-        Optional<BsonDocument> initialClusterTime;
-        Optional<BsonTimestamp> initialOperationTime;
 
         // other options defined by other specs
     }
@@ -156,10 +154,6 @@ In order to support causal consistency a new property named
 ``causalConsistency`` when starting a client session to indicate
 whether they want causal consistency. All read operations performed
 using that client session are then causally consistent.
-
-The optional ``initialClusterTime`` and ``initialOperationTime`` options allow a
-session to be started in a way that is causally consistent with operations that
-occurred elsewhere (even in another process) before this session was started.
 
 Each new member is documented below.
 
@@ -175,21 +169,13 @@ this property is ``not supplied``. If no value is supplied for
 from the global default which is defined to be true. In the future it *might*
 be inherited from client settings.
 
-initialClusterTime
-------------------
-
-An application wishing a session to be causally consistent with operations that
-occurred earlier in some other session (either in this process or some other
-process) can provide a value for the ``initialClusterTime`` property when calling
-``startSession``.
-
-initialOperationTime property
------------------------------
-
-An application wishing a session to be causally consistent with operations that
-occurred earlier in some other session (either in this process or some other
-process) can provide a value for the ``initialOperationTime`` property when calling
-``startSession``.
+Causal consistency is provided at the session level by tracking the ``clusterTime``
+and ``operationTime`` for each session. In some cases an application may wish
+subsequent operations in one session to be causally consistent with operations
+that were executed in a different session. In that case the application can call
+the ``advanceClusterTime`` and ``advanceOperationTime`` methods in ``ClientSession`` to
+advance the ``clusterTime`` and ``operationTime`` of one session to the ``clusterTime`` and
+``operationTime`` from another session.
 
 ClientSession changes
 =====================
@@ -199,33 +185,32 @@ ClientSession changes
 .. code:: typescript
 
     interface ClientSession {
-        Optional<BsonDocument> clusterTime;
         Optional<BsonTimestamp> operationTime;
+
+        void advanceOperationTime(BsonTimestamp operationTime);
 
         // other members as defined in other specs
     }
 
 Each new member is documented below.
 
-clusterTime
------------
-
-This property returns the most recent cluster time seen by this session. For a
-session that has just been started this value will be null unless an
-``initialClusterTime`` was provided in the options argument passed to ``startSession``.
-This value will also be null when a cluster does not report cluster times.
-
-When a driver is gossiping the cluster time it should send the more recent of
-the session and the ``MongoClient`` cluster times.
-
 operationTime
 -------------
 
 This property returns the operation time of the most recent operation performed
-using this session. For a session that has just been started this value will be
-null unless an ``initialOperationTime`` was provided in the options argument passed
-to ``startSession``. This value will also be null when the cluster does not report
+using this session. If no operations have been performed using this session the value will be
+null unless ``advanceOperationTime`` has been called.
+This value will also be null when the cluster does not report
 operation times.
+
+advanceOperationTime
+--------------------
+
+This method advances the ``operationTime`` for a session. If the new
+``operationTime`` is greater than the session's current ``operationTime`` then the
+session's ``operationTime`` MUST be advanced to the new ``operationTime``. If the
+new ``operationTime`` is less than or equal to the session's current
+``operationTime`` then the session's ``operationTime`` MUST NOT be changed.
 
 MongoDatabase changes
 =====================
@@ -516,3 +501,4 @@ Changelog
 :2017-09-13: If no value is supplied for ``causallyConsistent`` assume true
 :2017-09-28: Remove remaining references to collections being associated with sessions
 :2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
+:2017-10-04: Added advanceOperationTime
