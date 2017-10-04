@@ -519,7 +519,7 @@ The ``endSessions`` server command has the following format:
 
 .. code:: typescript
 
-    { endSessions : 1, ids : [ id1, id2, … ], $clusterTime : ... }
+    { endSessions : [ { id : <UUID> }, { id : <UUID> }, ... ], $clusterTime : ... }
 
 The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section of "Gossipping the cluster time" for information on ``$clusterTime``.
@@ -840,3 +840,4 @@ Change log
 2017-09-19 How to safely use initialClusterTime
 2017-09-29 Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
 2017-10-03 startSession and endSessions commands MUST be sent to the admin database
+2017-10-03 Fix format of endSessions command
