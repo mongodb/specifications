@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 29-Sep-2017
+:Last Modified: 03-Oct-2017
 
 .. contents::
 
@@ -487,6 +487,8 @@ The ``startSession`` server command has the following format:
 The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section "Gossipping the cluster time" for information on ``$clusterTime``.
 
+The ``startSession`` command MUST be sent to the ``admin`` database.
+
 The server response has the following format:
 
 .. code:: typescript
@@ -521,6 +523,8 @@ The ``endSessions`` server command has the following format:
 
 The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section of "Gossipping the cluster time" for information on ``$clusterTime``.
+
+The ``endSessions`` command MUST be sent to the ``admin`` database.
 
 The server response has the following format:
 
@@ -835,3 +839,4 @@ Change log
 2017-09-18 Drivers MUST gossip the cluster time when they see a $clusterTime
 2017-09-19 How to safely use initialClusterTime
 2017-09-29 Add an exception to the rule that ``KILLCURSORS`` commands always require a session id
+2017-10-03 startSession and endSessions commands MUST be sent to the admin database
