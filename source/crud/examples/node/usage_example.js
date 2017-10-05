@@ -22,7 +22,7 @@
   col.aggregate([
       { $match : { x: 1 } },
       { $skip: 10 }    
-    ], {useCursor: true}).toArray(function(err, docs) {
+    ]).toArray(function(err, docs) {
   });
 
 // count
