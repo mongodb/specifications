@@ -28,48 +28,52 @@
     {
       "description": "BulkWrite with arrayFilters",
       "operation": {
+        "name": "bulkWrite",
         "arguments": {
-          "options": {
-            "ordered": true
-          },
           "requests": [
             {
-              "arguments": {
+              "updateOne": {
+                "filter": {},
+                "update": {
+                  "$set": {
+                    "y.$[i].b": 2
+                  }
+                },
                 "arrayFilters": [
                   {
                     "i.b": 3
                   }
-                ],
+                ]
+              }
+            },
+            {
+              "updateMany": {
                 "filter": {},
                 "update": {
                   "$set": {
                     "y.$[i].b": 2
                   }
-                }
-              },
-              "name": "updateOne"
-            },
-            {
-              "arguments": {
+                },
                 "arrayFilters": [
                   {
                     "i.b": 1
                   }
-                ],
-                "filter": {},
-                "update": {
-                  "$set": {
-                    "y.$[i].b": 2
-                  }
-                }
-              },
-              "name": "updateMany"
+                ]
+              }
             }
-          ]
-        },
-        "name": "bulkWrite"
+          ],
+          "ordered": true
+        }
       },
       "outcome": {
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {},
+          "matchedCount": 3,
+          "modifiedCount": 3,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
         "collection": {
           "data": [
             {
@@ -95,14 +99,6 @@
               ]
             }
           ]
-        },
-        "result": {
-          "deletedCount": 0,
-          "insertedIds": {},
-          "matchedCount": 3,
-          "modifiedCount": 3,
-          "upsertedCount": 0,
-          "upsertedIds": {}
         }
       }
     }

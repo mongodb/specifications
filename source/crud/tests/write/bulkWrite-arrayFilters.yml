@@ -11,25 +11,21 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        # UpdateOne when one document matches arrayFilters
-                        name: "updateOne"
-                        arguments:
-                            filter: {}
-                            update:
-                                $set: {"y.$[i].b": 2}
-                            arrayFilters:
-                              - {i.b: 3}
-                    -
-                        # UpdateMany when multiple documents match arrayFilters
-                        name: "updateMany"
-                        arguments:
-                            filter: {}
-                            update:
-                                $set: {"y.$[i].b": 2}
-                            arrayFilters:
-                              - {i.b: 1}
-                options: { ordered: true }
+                    # UpdateOne when one document matches arrayFilters
+                    - updateOne:
+                        filter: {}
+                        update:
+                            $set: {"y.$[i].b": 2}
+                        arrayFilters:
+                          - {i.b: 3}
+                    # UpdateMany when multiple documents match arrayFilters
+                    - updateMany:
+                        filter: {}
+                        update:
+                            $set: {"y.$[i].b": 2}
+                        arrayFilters:
+                          - {i.b: 1}
+                ordered: true
         outcome:
             result:
                 deletedCount: 0
