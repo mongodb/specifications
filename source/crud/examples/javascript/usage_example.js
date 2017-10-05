@@ -14,9 +14,7 @@
 	col.aggregate([
 			{$match : {x: 1}},
 			{$skip: 10}
-		],
-		{ useCursor: true }
-	);
+		]);
 
 	col.aggregate()
 		.match({x:1})

@@ -224,16 +224,6 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     maxTimeMS: Optional<Int64>;
-
-    /**
-     * Indicates whether the command will request that the server provide results using a cursor.
-     *
-     * If true, this option is sent with a value of "cursor: {}". The default value is true.
-     * For servers < 2.6, this option is ignored and not sent as aggregation cursors are not available.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/aggregate/
-     */
-    useCursor: Optional<Boolean>;
     
     /**
      * Enables users to specify an arbitrary string to help trace the operation through
@@ -1577,9 +1567,13 @@ Q: Where did modifiers go in FindOptions?
 Q: Where is ``save``?
   Drivers have historically provided a ``save`` method, which was syntactic sugar for upserting or inserting a document based on whether it contained an identifier, respectively. While the ``save`` method may be convenient for interactive environments, such as the shell, it was intentionally excluded from the CRUD specification for language drivers for several reasons. The ``save`` method promotes a design pattern of "fetch, modify, replace" and invites race conditions in application logic. Additionally, the split nature of ``save`` makes it difficult to discern at a glance if application code will perform an insert or potentially dangerous full-document replacement. Instead of relying on ``save``, application code should know whether document already has an identifier and explicitly call ``insertOne`` or ``replaceOne`` with the ``upsert`` option.
 
+Q: Where is ``useCursor`` in AggregateOptions?
+  Inline aggregation results are no longer supported in server 3.5.2+. The `aggregate command <https://docs.mongodb.com/manual/reference/command/aggregate/>`_ must be provided either the ``cursor`` document or the ``explain`` boolean. AggregateOptions does not define an ``explain`` option. If a driver does support an ``explain`` option, the ``cursor`` document should be omitted if ``explain`` is ``true``. Otherwise a ``cursor`` document must be added to the ``aggregate`` command. Regardless, ``useCursor`` is no longer needed. Removing ``useCursor`` is a backwards breaking change, so drivers should first deprecate this option in a minor release, and remove it in a major release.
+
 Changes
 =======
 
+* 2017-10-05: Removed useCursor option from AggregateOptions.
 * 2017-09-26: Added hint option to AggregateOptions.  
 * 2017-09-25: Added comment option to AggregateOptions.
 * 2017-08-31: Added arrayFilters to bulk write update models.
