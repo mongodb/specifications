@@ -1575,7 +1575,7 @@ Q: Where is write concern?
 
   However, it might be that a driver needs to expose write concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
-Q: How do I throttle unacknowledged writes now that write concern is longer defined on a per operation basis?
+Q: How do I throttle unacknowledged writes now that write concern is no longer defined on a per operation basis?
   Some users used to throttle unacknowledged writes by using an acknowledged write concern every X number of operations. Going forward, the proper way to handle this is by using the bulk write API.
 
 Q: What is the logic for adding "One" or "Many" into the method and model names?
