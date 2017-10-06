@@ -626,7 +626,7 @@ Basic
      * @throws InvalidArgumentException if documents is empty
      * @throws BulkWriteException
      */
-    insertMany(Iterable<Document> documents, options: Optional<InsertManyOptions>): InsertManyResult;
+    insertMany(documents: Iterable<Document>, options: Optional<InsertManyOptions>): InsertManyResult;
 
     /**
      * Deletes one document.
