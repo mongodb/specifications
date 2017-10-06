@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 04-Oct-2017
+:Last Modified: 05-Oct-2017
 
 Abstract
 ========
@@ -241,9 +241,9 @@ causal consistency is implemented by:
    whether the operation succeeded or not and drivers MUST save the ``operationTime``
    in the ``ClientSession`` whether the operation succeeded or not.
 
-2. Passing that ``operationTime`` in the ``afterClusterTime`` field of the ``ReadConcern``
+2. Passing that ``operationTime`` in the ``afterClusterTime`` field of the ``readConcern`` field
    for subsequent causally consistent read operations (for all commands that
-   support a ``ReadConcern``)
+   support a ``readConcern``)
 
 3. Gossiping clusterTime (described in the Driver Session Specification)
 
@@ -263,7 +263,7 @@ responses it sends to the driver (for both read and write operations).
     }
 
 The ``operationTime`` MUST be stored in the ``ClientSession`` to later be passed as the
-``afterClusterTime`` read concern parameter in subsequent read operations. The
+``afterClusterTime`` field of the ``readConcern`` field in subsequent read operations. The
 ``operationTime`` is returned whether the command succeeded or not and MUST be
 stored in either case.
 
@@ -292,16 +292,17 @@ the ``ClientSession`` as the value of the ``afterClusterTime`` field of the
         ... // the rest of the command parameters
         readConcern :
         {
-            level : ..., // from the operation's ReadConcern
+            level : ..., // from the operation's read concern (only if specified)
             afterClusterTime : <BsonTimestamp>
         }
     }
 
 The driver MUST merge the ``ReadConcern`` specified for the operation with the
 ``operationTime`` from the ``ClientSession`` (which goes in the ``afterClusterTime`` field)
-to generate the combined ``ReadConcern`` to send to the server. If the level
-property of the ``ReadConcern`` of the ``ClientSession`` is null then the driver MUST
-set the level field to "local" in the combined ``ReadConcern`` value sent to the
+to generate the combined ``readConcern`` to send to the server. If the level
+property of the read concern for the operation is null then the driver MUST NOT
+include a ``level`` field alongside the ``afterClusterTime`` of the ``readConcern``
+value sent to the
 server. Drivers MUST NOT attempt to verify whether the server supports causally
 consistent reads or not for a given read concern level. The server will return
 an error if a given level does not support causal consistency.
@@ -406,7 +407,7 @@ replica set or a sharded cluster supports cluster times.
         * assert that the command does not have an ``afterClusterTime`` field
 
 8.  When using the default server ``ReadConcern`` the ``readConcern`` parameter in the
-    command sent to the server should default to ``level : "local"``
+    command sent to the server should not include a ``level`` field
         * skip this test if connected to a deployment that does not support cluster times
         * ``session = client.startSession(causalConsistency = true)``
         * configure ``collection`` to use default server ``ReadConcern``
@@ -414,7 +415,7 @@ replica set or a sharded cluster supports cluster times.
         * ``operationTime = session.operationTime``
         * ``collection.anyReadOperation(session, ...)``
         * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command has a ```level`` field with a value of ``"local"``
+        * assert that the command does not have a ```level`` field
         * assert that the command has a ``afterClusterTime`` field with a value of ``operationTime``
 
 9.  When using a custom ``ReadConcern`` the ``readConcern`` field in the command sent to
@@ -497,8 +498,9 @@ Q&A
 Changelog
 =========
 
-:2017-09-13: Renamed "causally consistent reads" to "causal consistency"
-:2017-09-13: If no value is supplied for ``causallyConsistent`` assume true
-:2017-09-28: Remove remaining references to collections being associated with sessions
-:2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
-:2017-10-04: Added advanceOperationTime
+- 2017-09-13: Renamed "causally consistent reads" to "causal consistency"
+- 2017-09-13: If no value is supplied for ``causallyConsistent`` assume true
+- 2017-09-28: Remove remaining references to collections being associated with sessions
+- 2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
+- 2017-10-04: Added advanceOperationTime
+- 2017-10-05: How to handle default read concern
