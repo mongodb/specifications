@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 05-Oct-2017
+:Last Modified: 06-Oct-2017
 
 Abstract
 ========
@@ -211,6 +211,14 @@ This method advances the ``operationTime`` for a session. If the new
 session's ``operationTime`` MUST be advanced to the new ``operationTime``. If the
 new ``operationTime`` is less than or equal to the session's current
 ``operationTime`` then the session's ``operationTime`` MUST NOT be changed.
+
+Drivers MUST NOT attempt to validate the supplied ``operationTime``. While the
+server requires that ``operationTime`` be less than or equal to ``clusterTime``
+we don't want to check that when ``advanceOperationTime`` is called. This
+allows an application to call ``advanceClusterTime`` and
+``advanceOperationTime`` in any order, or perhaps to not call
+``advanceClusterTime`` at all and let the ``clusterTime`` that is sent to the
+server be implied by the ``clusterTime`` in ``MongoClient``.
 
 MongoDatabase changes
 =====================
@@ -504,3 +512,4 @@ Changelog
 - 2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
 - 2017-10-04: Added advanceOperationTime
 - 2017-10-05: How to handle default read concern
+- 2017-10-06: advanceOperation MUST NOT validate operationTime
