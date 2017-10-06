@@ -11,7 +11,7 @@ Driver CRUD API
 :Advisors: Jeremy Mikola, Jeff Yemin
 :Status: Approved
 :Type: Standards
-:Minimum Server Version: 2.4
+:Minimum Server Version: 2.6
 :Last Modified: October 9, 2017
 
 .. contents::
@@ -189,7 +189,6 @@ Read
      * The number of documents to return per batch.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     * For servers < 2.6, this option is ignored and should not be sent as aggregation cursors are not available.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
@@ -619,8 +618,7 @@ Basic
      * An error MUST be raised if the documents parameter is empty.
      *
      * Note that this uses the bulk insert command underneath and should not
-     * use OP_INSERT. This will be slow on < 2.6 servers, so document
-     * your driver appropriately.
+     * use OP_INSERT.
      *
      * @see https://docs.mongodb.com/manual/reference/command/insert/
      * @throws InvalidArgumentException if documents is empty
@@ -1578,7 +1576,7 @@ Q: Where is write concern?
   However, it might be that a driver needs to expose write concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
 Q: How do I throttle unacknowledged writes now that write concern is longer defined on a per operation basis?
-  Some users used to throttle unacknowledged writes by using a write concern every X number of operations. The proper way to handle this on >= 2.6 servers is to use the bulk write API. Users working with servers < 2.6 should manually send a ``getLastError`` command every X number of operations if the driver does not support write concerns per operation.
+  Some users used to throttle unacknowledged writes by using an acknowledged write concern every X number of operations. Going forward, the proper way to handle this is by using the bulk write API.
 
 Q: What is the logic for adding "One" or "Many" into the method and model names?
   If the maximum number of documents affected can only be one, we added "One" into the name. This makes it explicit that the maximum number of documents that could be affected is one vs. infinite.
@@ -1611,6 +1609,7 @@ Q: Where is ``useCursor`` in AggregateOptions?
 Changes
 =======
 
+* 2017-10-09: Bumped minimum server version to 2.6 and removed references to older versions in spec and tests.
 * 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
 * 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC implications for drivers using option classes.
 * 2017-10-05: Removed useCursor option from AggregateOptions.
