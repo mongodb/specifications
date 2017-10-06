@@ -79,8 +79,8 @@ Each YAML file has the following keys:
     the individual operation.
 
   - ``failPoint``: Document describing options for configuring the
-    ``disconnectAfterWrite`` fail point. This will have some or all of the
-    following fields:
+    ``onPrimaryTransactionalWrite`` fail point. This will have some or all of
+    the following fields:
 
     - ``times``: The number of times that the fail point remains on before it
       deactivates.
