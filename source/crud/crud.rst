@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: September 27, 2017
+:Last Modified: October 9, 2017
 
 .. contents::
 
@@ -79,7 +79,7 @@ A non-exhaustive list of acceptable deviations are as follows:
 
 * Using named parameters instead of an options hash. For instance, ``collection.find({x:1}, sort: {a: -1})``.
 
-* When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``UpdateOptions`` as the options for ``UpdateOne``, ``UpdateMany``, and ``ReplaceOne``.
+* When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``UpdateOptions`` as the options for ``UpdateOne`` and ``UpdateMany``.
 
 * Using a fluent style builder for find or aggregate:
 
@@ -644,7 +644,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    replaceOne(filter: Document, replacement: Document, options: Optional<UpdateOptions>): UpdateResult;
+    replaceOne(filter: Document, replacement: Document, options: Optional<ReplaceOptions>): UpdateResult;
 
     /**
      * Updates one document.
@@ -725,6 +725,38 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     arrayFilters: Optional<Array<Document>>;
+
+    /**
+     * If true, allows the write to opt-out of document level validation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.2, this option is ignored and not sent as document validation is not available.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     */
+    bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Specifies a collation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    collation: Optional<Document>;
+
+    /**
+     * When true, creates a new document if no document matches the query.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    upsert: Optional<Boolean>;
+  }
+
+  class ReplaceOptions {
 
     /**
      * If true, allows the write to opt-out of document level validation.
@@ -1573,6 +1605,7 @@ Q: Where is ``useCursor`` in AggregateOptions?
 Changes
 =======
 
+* 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC implications for drivers using option classes.
 * 2017-10-05: Removed useCursor option from AggregateOptions.
 * 2017-09-26: Added hint option to AggregateOptions.  
 * 2017-09-25: Added comment option to AggregateOptions.
