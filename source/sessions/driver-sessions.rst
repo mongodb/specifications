@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 04-Oct-2017
+:Last Modified: 06-Oct-2017
 
 .. contents::
 
@@ -56,8 +56,16 @@ Deployment
     A set of servers that are all part of a single MongoDB cluster. We avoid the
     word "cluster" because some people interpret "cluster" to mean "sharded cluster".
 
+Explicit session
+    A session that was started explicitly by the application by calling ``startSession`` 
+    and passed as an argument to an operation.
+
 MongoClient
     The root object of a driver's API. MAY be named differently in some drivers.
+
+Implicit session
+    A session that was started implicitly by the driver because the application
+    called an operation without providing an explicit session.
 
 MongoCollection
     The driver object representing a collection and the operations that can be
@@ -200,6 +208,23 @@ Session Pool section).
 
 ``startSession`` MUST report an error if sessions are not supported by the
 deployment (see How to Check Whether a Deployment Supports Sessions).
+
+Explicit vs implicit sessions
+-----------------------------
+
+An explicit session is one started explicitly by the application by calling
+``startSession``. An implicit session is one started implicitly by the driver
+because the application called an operation without providing an explicit
+session. Internally, a driver must be able to distinguish between explicit and
+implicit sessions, but no public API for this is necessary because an
+application will never see an implicit session.
+
+The motivation for starting an implicit session for all methods that don't
+take an explicit session parameter is to make sure that all commands that are
+sent to the server are tagged with a session ID. This improves the ability of
+an operations team to monitor (and kill if necessary) long running operations.
+Tagging an operation with a session ID is specially useful if a deployment wide
+operation needs to be killed.
 
 Authentication
 ~~~~~~~~~~~~~~
@@ -384,10 +409,15 @@ If a driver is unable to generate a version 4 UUID it MAY instead run the
 MongoDatabase changes
 =====================
 
+All ``MongoDatabase`` methods that talk to the server MUST send a session ID
+with the command when connected to a deployment that supports sessions so that
+the server can associate the operation with a session ID.
+
+New database methods that take an explicit session
+--------------------------------------------------
+
 All ``MongoDatabase`` methods that talk to the server SHOULD be overloaded to take
-a new session parameter. When sending commands to the server, the session ID
-MUST be included so that the server can associate the operation with a session
-ID.
+an explicit session parameter.
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -398,6 +428,9 @@ Methods that have a session parameter MUST check that the session argument is
 not null and was created by the same ``MongoClient`` that this ``MongoDatabase`` came
 from and report an error if they do not match.
 
+Existing database methods that start an implicit session
+--------------------------------------------------------
+
 When an existing ``MongoDatabase`` method that does not take a session is called,
 the driver MUST check whether the deployment supports sessions (See How to
 Check Whether a Deployment Supports Session). If sessions are supported, the
@@ -406,20 +439,18 @@ operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec.
 
-The motivation for using an implied ``ClientSession`` for all methods that don't
-already take a session parameter is to make sure that all commands that are
-sent to the server are tagged with a session ID. This improves the ability of
-an operations team to monitor (and kill if necessary) long running operations.
-Tagging an operation with a session ID is specially useful if a deployment wide
-operation needs to be killed.
-
 MongoCollection changes
 =======================
 
+All ``MongoCollection`` methods that talk to the server MUST send a session ID
+with the command when connected to a deployment that supports sessions so that
+the server can associate the operation with a session ID.
+
+New collection methods that take an explicit session
+----------------------------------------------------
+
 All ``MongoCollection`` methods that talk to the server SHOULD be overloaded to
-take a new session parameter. When sending commands to the server, the session
-ID MUST be included so that the server can associate the operation with a
-session ID.
+take an explicit session parameter.
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -429,6 +460,9 @@ structure.
 Methods that have a session parameter MUST check that the session argument is
 not null and was created by the same ``MongoClient`` that this ``MongoCollection`` came
 from and report an error if they do not match.
+
+Existing collection methods that start an implicit session
+----------------------------------------------------------
 
 When an existing ``MongoCollection`` method that does not take a session is called,
 the driver MUST check whether the deployment supports sessions (See How to
@@ -878,3 +912,4 @@ Change log
 :2017-10-03: startSession and endSessions commands MUST be sent to the admin database
 :2017-10-03: Fix format of endSessions command
 :2017-10-04: Added advanceClusterTime
+:2017-10-06: Added descriptions of explicit and implicit sessions
