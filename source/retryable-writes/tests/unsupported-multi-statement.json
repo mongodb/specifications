@@ -18,8 +18,7 @@
         "arguments": {
           "requests": [
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 3,
                   "x": 33
@@ -27,8 +26,7 @@
               }
             },
             {
-              "name": "deleteMany",
-              "arguments": {
+              "deleteMany": {
                 "filter": {
                   "x": {
                     "$gt": 10
@@ -69,8 +67,7 @@
         "arguments": {
           "requests": [
             {
-              "name": "updateOne",
-              "arguments": {
+              "updateOne": {
                 "filter": {
                   "_id": 1
                 },
@@ -82,8 +79,7 @@
               }
             },
             {
-              "name": "updateMany",
-              "arguments": {
+              "updateMany": {
                 "filter": {
                   "x": {
                     "$gt": 10

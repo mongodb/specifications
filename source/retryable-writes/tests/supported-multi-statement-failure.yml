@@ -17,15 +17,11 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        name: "updateOne"
-                        arguments:
-                            filter: { _id: 1 }
-                            update: { $inc: { x : 1 }}
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 2, x: 22 }
+                    - updateOne:
+                        filter: { _id: 1 }
+                        update: { $inc: { x : 1 }}
+                    - insertOne:
+                        document: { _id: 2, x: 22 }
                 options: { ordered: true }
         outcome:
             error: true

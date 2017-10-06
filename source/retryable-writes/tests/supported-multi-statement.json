@@ -17,16 +17,14 @@
         "arguments": {
           "requests": [
             {
-              "name": "deleteOne",
-              "arguments": {
+              "deleteOne": {
                 "filter": {
                   "_id": 1
                 }
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 2,
                   "x": 22
@@ -34,8 +32,7 @@
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 3,
                   "x": 33
@@ -43,8 +40,7 @@
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 4,
                   "x": 44
@@ -52,8 +48,7 @@
               }
             },
             {
-              "name": "replaceOne",
-              "arguments": {
+              "replaceOne": {
                 "filter": {
                   "_id": 3
                 },
@@ -64,8 +59,7 @@
               }
             },
             {
-              "name": "updateOne",
-              "arguments": {
+              "updateOne": {
                 "filter": {
                   "_id": 4
                 },
@@ -77,8 +71,7 @@
               }
             },
             {
-              "name": "updateOne",
-              "arguments": {
+              "updateOne": {
                 "filter": {
                   "_id": 5,
                   "x": 55
@@ -144,16 +137,14 @@
         "arguments": {
           "requests": [
             {
-              "name": "deleteOne",
-              "arguments": {
+              "deleteOne": {
                 "filter": {
                   "_id": 1
                 }
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 2,
                   "x": 22
@@ -161,8 +152,7 @@
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 3,
                   "x": 33
@@ -170,8 +160,7 @@
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 4,
                   "x": 44
@@ -179,8 +168,7 @@
               }
             },
             {
-              "name": "replaceOne",
-              "arguments": {
+              "replaceOne": {
                 "filter": {
                   "_id": 3
                 },
@@ -191,8 +179,7 @@
               }
             },
             {
-              "name": "updateOne",
-              "arguments": {
+              "updateOne": {
                 "filter": {
                   "_id": 4
                 },
@@ -204,8 +191,7 @@
               }
             },
             {
-              "name": "updateOne",
-              "arguments": {
+              "updateOne": {
                 "filter": {
                   "_id": 5,
                   "x": 55
@@ -268,8 +254,7 @@
         "arguments": {
           "requests": [
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 1,
                   "x": 11
@@ -277,8 +262,7 @@
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
+              "insertOne": {
                 "document": {
                   "_id": 2,
                   "x": 22
