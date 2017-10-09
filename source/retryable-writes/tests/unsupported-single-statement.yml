@@ -1,6 +1,6 @@
 data:
     - { _id: 1, x: 11 }
-    - { _id: 1, x: 22 }
+    - { _id: 2, x: 22 }
 
 minServerVersion: '3.6'
 
@@ -19,7 +19,7 @@ tests:
             collection:
                 data:
                     - { _id: 1, x: 11 }
-                    - { _id: 1, x: 22 }
+                    - { _id: 2, x: 22 }
     -
         description: "UpdateMany is not supported"
         operation:
@@ -32,4 +32,4 @@ tests:
             collection:
                 data:
                     - { _id: 1, x: 11 }
-                    - { _id: 1, x: 22 }
+                    - { _id: 2, x: 22 }
