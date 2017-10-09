@@ -589,6 +589,8 @@ Basic
     /**
      * Sends a batch of writes to the server at the same time.
      *
+     * An error MUST be raised if the requests parameter is empty.
+     *
      * For servers < 3.4, if a collation was explicitly set for any request, an error MUST be raised
      * and no documents sent.
      *
@@ -596,6 +598,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      * @see https://docs.mongodb.com/manual/reference/command/insert/
      * @see https://docs.mongodb.com/manual/reference/command/update/
+     * @throws InvalidArgumentException if requests is empty
      * @throws BulkWriteException
      */
     bulkWrite(requests: WriteModel[], options: Optional<BulkWriteOptions>): BulkWriteResult;
@@ -613,14 +616,17 @@ Basic
      * Inserts the provided documents. If any documents are missing an identifier,
      * the driver should generate them.
      *
+     * An error MUST be raised if the documents parameter is empty.
+     *
      * Note that this uses the bulk insert command underneath and should not
      * use OP_INSERT. This will be slow on < 2.6 servers, so document
      * your driver appropriately.
      *
      * @see https://docs.mongodb.com/manual/reference/command/insert/
+     * @throws InvalidArgumentException if documents is empty
      * @throws BulkWriteException
      */
-    insertMany(Iterable<Document> documents, options: Optional<InsertManyOptions>): InsertManyResult;
+    insertMany(documents: Iterable<Document>, options: Optional<InsertManyOptions>): InsertManyResult;
 
     /**
      * Deletes one document.
@@ -1605,6 +1611,7 @@ Q: Where is ``useCursor`` in AggregateOptions?
 Changes
 =======
 
+* 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
 * 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC implications for drivers using option classes.
 * 2017-10-05: Removed useCursor option from AggregateOptions.
 * 2017-09-26: Added hint option to AggregateOptions.  
