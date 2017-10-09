@@ -510,7 +510,7 @@ Read
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
-    showRecordId: Optional<Document>;
+    showRecordId: Optional<Boolean>;
 
     /**
      * The number of documents to skip before returning.
