@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-08-31
+:Last Modified: 2017-10-08
 
 .. contents::
 
@@ -50,9 +50,9 @@ Terms
 Transaction ID
    The transaction ID identifies the transaction as part of which the command is
    running. In a write command where the client has requested retryable
-   behavior, it is expressed by the top-level ``lsid`` and ``txnNum`` fields.
+   behavior, it is expressed by the top-level ``lsid`` and ``txnNumber`` fields.
    The ``lsid`` component is the corresponding server session ID. which is a
-   BSON value defined in the Driver Session specification. The ``txnNum``
+   BSON value defined in the Driver Session specification. The ``txnNumber``
    component is a monotonically increasing (per server session), positive 64-bit
    integer.
 
@@ -141,10 +141,10 @@ Constructing Write Commands
 When constructing a supported write command that will be executed within a
 MongoClient where retryable writes have been enabled, drivers MUST increment the
 transaction number for the corresponding server session and include the server
-session ID and transaction number in top-level ``lsid`` and ``txnNum`` fields,
-respectively. ``lsid`` is a BSON value (discussed in the Driver Session
-specification). ``txnNum`` MUST be a positive integer; the server will accept
-32-bit (BSON type 0x10) or 64-bit (0x12) values.
+session ID and transaction number in top-level ``lsid`` and ``txnNumber``
+fields, respectively. ``lsid`` is a BSON value (discussed in the Driver Session
+specification). ``txnNumber`` MUST be a positive 64-bit integer (BSON type
+0x12).
 
 The following example illustrates a possible write command for an
 ``updateOne()`` operation:
@@ -154,7 +154,7 @@ The following example illustrates a possible write command for an
   {
     update: "coll",
     lsid: { ... },
-    txnNum: 100,
+    txnNumber: 100,
     updates: [
       { q: { x: 1 }, u: { $inc: { y: 1 } }, multi: false, upsert: false },
     ],
@@ -532,6 +532,9 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-10-08: Renamed ``txnNum`` to ``txnNumber`` and noted that it must be a
+64-bit integer (BSON type 0x12).
 
 2017-08-25: Drivers will maintain a whitelist so that only supported write
 operations may be retried. Transaction IDs will not be included in unsupported
