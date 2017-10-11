@@ -29,9 +29,11 @@ these tests::
   test6.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=200000"
   test6.test.build.10gen.cc.                86400  IN TXT  "socketTimeoutMS=200000"
 
-Note that "test4" is omitted deliberately to test what happens with no SRV record.
+Note that ``test4`` is omitted deliberately to test what happens with no SRV
+record.
 
-In our tests we have used "localhost.build.10gen.cc" as the domain, and then configured "localhost.build.10gen.cc" to resolve to 127.0.0.1.
+In our tests we have used "localhost.build.10gen.cc" as the domain, and then
+configured "localhost.build.10gen.cc" to resolve to 127.0.0.1.
 
 You need to adapt the records shown above to replace ``build.10gen.cc`` with
 your own domain name, and update the "uri" field in the YAML or JSON files in
