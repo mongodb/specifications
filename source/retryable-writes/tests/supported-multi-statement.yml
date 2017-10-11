@@ -15,38 +15,24 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        name: "deleteOne"
-                        arguments:
-                            filter: { _id: 1 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 2, x: 22 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 3, x: 33 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 4, x: 44 }
-                    -
-                        name: "replaceOne"
-                        arguments:
-                            filter: { _id: 3 }
-                            replacement: { _id: 3, x: 333 }
-                    -
-                        name: "updateOne"
-                        arguments:
-                            filter: { _id: 4 }
-                            update: { $inc: { x : 1 }}
-                    -
-                        name: "updateOne"
-                        arguments:
-                            filter: { _id: 5, x: 55 }
-                            update: { $inc: { x : 1 }}
-                            upsert: true
+                    - deleteOne:
+                        filter: { _id: 1 }
+                    - insertOne:
+                        document: { _id: 2, x: 22 }
+                    - insertOne:
+                        document: { _id: 3, x: 33 }
+                    - insertOne:
+                        document: { _id: 4, x: 44 }
+                    - replaceOne:
+                        filter: { _id: 3 }
+                        replacement: { _id: 3, x: 333 }
+                    - updateOne:
+                        filter: { _id: 4 }
+                        update: { $inc: { x : 1 }}
+                    - updateOne:
+                        filter: { _id: 5, x: 55 }
+                        update: { $inc: { x : 1 }}
+                        upsert: true
                 options: { ordered: true }
         outcome:
             result:
@@ -82,38 +68,24 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        name: "deleteOne"
-                        arguments:
-                            filter: { _id: 1 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 2, x: 22 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 3, x: 33 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 4, x: 44 }
-                    -
-                        name: "replaceOne"
-                        arguments:
-                            filter: { _id: 3 }
-                            replacement: { _id: 3, x: 333 }
-                    -
-                        name: "updateOne"
-                        arguments:
-                            filter: { _id: 4 }
-                            update: { $inc: { x : 1 }}
-                    -
-                        name: "updateOne"
-                        arguments:
-                            filter: { _id: 5, x: 55 }
-                            update: { $inc: { x : 1 }}
-                            upsert: true
+                    - deleteOne:
+                        filter: { _id: 1 }
+                    - insertOne:
+                        document: { _id: 2, x: 22 }
+                    - insertOne:
+                        document: { _id: 3, x: 33 }
+                    - insertOne:
+                        document: { _id: 4, x: 44 }
+                    - replaceOne:
+                        filter: { _id: 3 }
+                        replacement: { _id: 3, x: 333 }
+                    - updateOne:
+                        filter: { _id: 4 }
+                        update: { $inc: { x : 1 }}
+                    - updateOne:
+                        filter: { _id: 5, x: 55 }
+                        update: { $inc: { x : 1 }}
+                        upsert: true
                 options: { ordered: true }
         outcome:
             result:
@@ -135,14 +107,10 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 1, x: 11 }
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 2, x: 22 }
+                    - insertOne:
+                        document: { _id: 1, x: 11 }
+                    - insertOne:
+                        document: { _id: 2, x: 22 }
                 options: { ordered: false }
         outcome:
             result:

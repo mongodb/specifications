@@ -17,14 +17,10 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        name: "insertOne"
-                        arguments:
-                            document: { _id: 3, x: 33 }
-                    -
-                        name: "deleteMany"
-                        arguments:
-                            filter: { x: { $gt: 10 }}
+                    - insertOne:
+                        document: { _id: 3, x: 33 }
+                    - deleteMany:
+                        filter: { x: { $gt: 10 }}
                 options: { ordered: true }
         outcome:
             error: true
@@ -39,16 +35,12 @@ tests:
             name: "bulkWrite"
             arguments:
                 requests:
-                    -
-                        name: "updateOne"
-                        arguments:
-                            filter: { _id: 1 }
-                            update: { $inc: { x : 1 }}
-                    -
-                        name: "updateMany"
-                        arguments:
-                            filter: { x: { $gt: 10 }}
-                            update: { $inc: { x : 1 }}
+                    - updateOne:
+                        filter: { _id: 1 }
+                        update: { $inc: { x : 1 }}
+                    - updateMany:
+                        filter: { x: { $gt: 10 }}
+                        update: { $inc: { x : 1 }}
                 options: { ordered: true }
         outcome:
             error: true

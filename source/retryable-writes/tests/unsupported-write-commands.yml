@@ -10,7 +10,7 @@ tests:
     -
         description: "Aggregate with $out is not supported"
         operation:
-            name: aggregate
+            name: "aggregate"
             arguments:
                 pipeline:
                     - $match: { _id: { $gt: 1 }}
