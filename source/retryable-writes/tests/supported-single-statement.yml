@@ -1,15 +1,18 @@
 data:
     - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
 
 minServerVersion: '3.6'
 
-# Each test expects a network error for first attempt of the write command. The
-# second attempt should return without error.
+# Each test expects a network error for the first attempt of the write
+# operation. The second attempt should return without error. Observation of the
+# collection state will assert that the write occurred exactly once, regardless
+# of whether the write was committed on the first or second attempt.
 tests:
     -
-        description: "DeleteOne succeeds after one network error"
+        description: "DeleteOne is committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
         operation:
             name: "deleteOne"
             arguments:
@@ -18,67 +21,155 @@ tests:
             result:
                 deletedCount: 1
             collection:
-                data: []
+                data:
+                    - { _id: 2, x: 22 }
     -
-        description: "FindOneAndDelete succeeds after one network error"
+        description: "DeleteOne is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
         operation:
-            name: "FindOneAndDelete"
+            name: "deleteOne"
             arguments:
                 filter: { _id: 1 }
         outcome:
+            result:
+                deletedCount: 1
+            collection:
+                data:
+                    - { _id: 2, x: 22 }
+    -
+        description: "FindOneAndDelete is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
+        operation:
+            name: "findOneAndDelete"
+            arguments:
+                filter: { x: { $gte: 11 }}
+                sort: { x: 1 }
+        outcome:
             result: { _id: 1, x: 11 }
             collection:
-                data: []
+                data:
+                    - { _id: 2, x: 22 }
     -
-        description: "FindOneAndReplace succeeds after one network error"
+        description: "FindOneAndDelete is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
         operation:
-            name: "FindOneAndReplace"
+            name: "findOneAndDelete"
+            arguments:
+                filter: { x: { $gte: 11 }}
+                sort: { x: 1 }
+        outcome:
+            result: { _id: 1, x: 11 }
+            collection:
+                data:
+                    - { _id: 2, x: 22 }
+    -
+        description: "FindOneAndReplace is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
+        operation:
+            name: "findOneAndReplace"
             arguments:
                 filter: { _id: 1 }
                 replacement: { _id: 1, x: 111 }
-                returnDocument: Before
+                returnDocument: "Before"
         outcome:
             result: { _id: 1, x: 11 }
             collection:
                 data:
                     - { _id: 1, x: 111 }
+                    - { _id: 2, x: 22 }
     -
-        description: "FindOneAndUpdate succeeds after one network error"
+        description: "FindOneAndReplace is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
         operation:
-            name: "FindOneAndUpdate"
+            name: "findOneAndReplace"
+            arguments:
+                filter: { _id: 1 }
+                replacement: { _id: 1, x: 111 }
+                returnDocument: "Before"
+        outcome:
+            result: { _id: 1, x: 11 }
+            collection:
+                data:
+                    - { _id: 1, x: 111 }
+                    - { _id: 2, x: 22 }
+    -
+        description: "FindOneAndUpdate is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
+        operation:
+            name: "findOneAndUpdate"
             arguments:
                 filter: { _id: 1 }
                 update: { $inc: { x : 1 }}
+                returnDocument: "Before"
         outcome:
             result: { _id: 1, x: 11 }
             collection:
                 data:
                     - { _id: 1, x: 12 }
+                    - { _id: 2, x: 22 }
     -
-        description: "InsertOne succeeds after one network error"
+        description: "FindOneAndUpdate is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
+        operation:
+            name: "findOneAndUpdate"
+            arguments:
+                filter: { _id: 1 }
+                update: { $inc: { x : 1 }}
+                returnDocument: "Before"
+        outcome:
+            result: { _id: 1, x: 11 }
+            collection:
+                data:
+                    - { _id: 1, x: 12 }
+                    - { _id: 2, x: 22 }
+    -
+        description: "InsertOne is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
         operation:
             name: "insertOne"
             arguments:
-                document: { _id: 2, x: 22 }
+                document: { _id: 3, x: 33 }
         outcome:
             result:
-                insertedId: 2
+                insertedId: 3
             collection:
                 data:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }
     -
-        description: "ReplaceOne succeeds after one network error"
+        description: "InsertOne is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
+        operation:
+            name: "insertOne"
+            arguments:
+                document: { _id: 3, x: 33 }
+        outcome:
+            result:
+                insertedId: 3
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }
+    -
+        description: "ReplaceOne is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
         operation:
             name: "replaceOne"
             arguments:
@@ -92,10 +183,30 @@ tests:
             collection:
                 data:
                     - { _id: 1, x: 111 }
+                    - { _id: 2, x: 22 }
     -
-        description: "UpdateOne succeeds after one network error"
+        description: "ReplaceOne is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
+        operation:
+            name: "replaceOne"
+            arguments:
+                filter: { _id: 1 }
+                replacement: { _id: 1, x: 111 }
+        outcome:
+            result:
+                matchedCount: 1
+                modifiedCount: 1
+                upsertedCount: 0
+            collection:
+                data:
+                    - { _id: 1, x: 111 }
+                    - { _id: 2, x: 22 }
+    -
+        description: "UpdateOne is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
         operation:
             name: "updateOne"
             arguments:
@@ -109,14 +220,34 @@ tests:
             collection:
                 data:
                     - { _id: 1, x: 12 }
+                    - { _id: 2, x: 22 }
     -
-        description: "UpdateOne succeeds with upsert after one network error"
+        description: "UpdateOne is not committed on first attempt"
         failPoint:
-            times: 1
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
         operation:
             name: "updateOne"
             arguments:
-                filter: { _id: 2, x: 22 }
+                filter: { _id: 1 }
+                update: { $inc: { x : 1 }}
+        outcome:
+            result:
+                matchedCount: 1
+                modifiedCount: 1
+                upsertedCount: 0
+            collection:
+                data:
+                    - { _id: 1, x: 12 }
+                    - { _id: 2, x: 22 }
+    -
+        description: "UpdateOne with upsert is committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
+        operation:
+            name: "updateOne"
+            arguments:
+                filter: { _id: 3, x: 33 }
                 update: { $inc: { x : 1 }}
                 upsert: true
         outcome:
@@ -124,8 +255,31 @@ tests:
                 matchedCount: 0
                 modifiedCount: 0
                 upsertedCount: 1
-                upsertedId: 2
+                upsertedId: 3
             collection:
                 data:
                     - { _id: 1, x: 11 }
-                    - { _id: 2, x: 23 }
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 34 }
+    -
+        description: "UpdateOne with upsert is not committed on first attempt"
+        failPoint:
+            mode: { times: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
+        operation:
+            name: "updateOne"
+            arguments:
+                filter: { _id: 3, x: 33 }
+                update: { $inc: { x : 1 }}
+                upsert: true
+        outcome:
+            result:
+                matchedCount: 0
+                modifiedCount: 0
+                upsertedCount: 1
+                upsertedId: 3
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+                    - { _id: 3, x: 34 }

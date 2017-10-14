@@ -3,121 +3,29 @@
     {
       "_id": 1,
       "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
     }
   ],
   "minServerVersion": "3.6",
   "tests": [
     {
-      "description": "DeleteOne fails after multiple network errors",
+      "description": "DeleteOne is never committed",
       "failPoint": {
-        "times": 2
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
       },
       "operation": {
         "name": "deleteOne",
         "arguments": {
           "filter": {
             "_id": 1
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": []
-        }
-      }
-    },
-    {
-      "description": "FindOneAndDelete fails after multiple network errors",
-      "failPoint": {
-        "times": 2
-      },
-      "operation": {
-        "name": "FindOneAndDelete",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": []
-        }
-      }
-    },
-    {
-      "description": "FindOneAndReplace fails after multiple network errors",
-      "failPoint": {
-        "times": 2
-      },
-      "operation": {
-        "name": "FindOneAndReplace",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          },
-          "replacement": {
-            "_id": 1,
-            "x": 111
-          },
-          "returnDocument": "Before"
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 111
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "FindOneAndUpdate fails after multiple network errors",
-      "failPoint": {
-        "times": 2
-      },
-      "operation": {
-        "name": "FindOneAndUpdate",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          },
-          "update": {
-            "$inc": {
-              "x": 1
-            }
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 12
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "InsertOne fails after multiple network errors",
-      "failPoint": {
-        "times": 2
-      },
-      "operation": {
-        "name": "insertOne",
-        "arguments": {
-          "document": {
-            "_id": 2,
-            "x": 22
           }
         }
       },
@@ -138,9 +46,166 @@
       }
     },
     {
-      "description": "ReplaceOne fails after multiple network errors",
+      "description": "FindOneAndDelete is never committed",
       "failPoint": {
-        "times": 2
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "findOneAndDelete",
+        "arguments": {
+          "filter": {
+            "x": {
+              "$gte": 11
+            }
+          },
+          "sort": {
+            "x": 1
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "FindOneAndReplace is never committed",
+      "failPoint": {
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "findOneAndReplace",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          },
+          "replacement": {
+            "_id": 1,
+            "x": 111
+          },
+          "returnDocument": "Before"
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "FindOneAndUpdate is never committed",
+      "failPoint": {
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "findOneAndUpdate",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          },
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne is never committed",
+      "failPoint": {
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "ReplaceOne is never committed",
+      "failPoint": {
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
       },
       "operation": {
         "name": "replaceOne",
@@ -160,16 +225,25 @@
           "data": [
             {
               "_id": 1,
-              "x": 111
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
             }
           ]
         }
       }
     },
     {
-      "description": "UpdateOne fails after multiple network errors",
+      "description": "UpdateOne is never committed",
       "failPoint": {
-        "times": 2
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
       },
       "operation": {
         "name": "updateOne",
@@ -190,23 +264,32 @@
           "data": [
             {
               "_id": 1,
-              "x": 12
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
             }
           ]
         }
       }
     },
     {
-      "description": "UpdateOne fails with upsert after multiple network errors",
+      "description": "UpdateOne with upsert is never committed",
       "failPoint": {
-        "times": 2
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
       },
       "operation": {
         "name": "updateOne",
         "arguments": {
           "filter": {
-            "_id": 2,
-            "x": 22
+            "_id": 3,
+            "x": 33
           },
           "update": {
             "$inc": {
@@ -226,7 +309,7 @@
             },
             {
               "_id": 2,
-              "x": 23
+              "x": 22
             }
           ]
         }

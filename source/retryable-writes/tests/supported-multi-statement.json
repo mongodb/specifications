@@ -8,22 +8,16 @@
   "minServerVersion": "3.6",
   "tests": [
     {
-      "description": "BulkWrite succeeds after one network error for first command",
+      "description": "First command is retried",
       "failPoint": {
-        "times": 1
+        "mode": {
+          "times": 1
+        }
       },
       "operation": {
         "name": "bulkWrite",
         "arguments": {
           "requests": [
-            {
-              "name": "deleteOne",
-              "arguments": {
-                "filter": {
-                  "_id": 1
-                }
-              }
-            },
             {
               "name": "insertOne",
               "arguments": {
@@ -34,40 +28,10 @@
               }
             },
             {
-              "name": "insertOne",
-              "arguments": {
-                "document": {
-                  "_id": 3,
-                  "x": 33
-                }
-              }
-            },
-            {
-              "name": "insertOne",
-              "arguments": {
-                "document": {
-                  "_id": 4,
-                  "x": 44
-                }
-              }
-            },
-            {
-              "name": "replaceOne",
-              "arguments": {
-                "filter": {
-                  "_id": 3
-                },
-                "replacement": {
-                  "_id": 3,
-                  "x": 333
-                }
-              }
-            },
-            {
               "name": "updateOne",
               "arguments": {
                 "filter": {
-                  "_id": 4
+                  "_id": 2
                 },
                 "update": {
                   "$inc": {
@@ -77,18 +41,11 @@
               }
             },
             {
-              "name": "updateOne",
+              "name": "deleteOne",
               "arguments": {
                 "filter": {
-                  "_id": 5,
-                  "x": 55
-                },
-                "update": {
-                  "$inc": {
-                    "x": 1
-                  }
-                },
-                "upsert": true
+                  "_id": 1
+                }
               }
             }
           ],
@@ -101,62 +58,53 @@
         "result": {
           "deletedCount": 1,
           "insertedIds": {
-            "1": 2,
-            "2": 3,
-            "3": 4
+            "1": 2
           },
-          "matchedCount": 2,
-          "modifiedCount": 2,
-          "upsertedCount": 1,
-          "upsertedIds": {
-            "6": 5
-          }
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedCount": 0,
+          "upsertedIds": {}
         },
         "collection": {
           "data": [
             {
               "_id": 2,
-              "x": 22
-            },
-            {
-              "_id": 3,
-              "x": 333
-            },
-            {
-              "_id": 4,
-              "x": 45
-            },
-            {
-              "_id": 5,
-              "x": 56
+              "x": 23
             }
           ]
         }
       }
     },
     {
-      "description": "BulkWrite succeeds after one network error for each command",
+      "description": "All commands are retried",
       "failPoint": {
-        "times": 5
+        "mode": {
+          "times": 3
+        }
       },
       "operation": {
         "name": "bulkWrite",
         "arguments": {
           "requests": [
             {
-              "name": "deleteOne",
-              "arguments": {
-                "filter": {
-                  "_id": 1
-                }
-              }
-            },
-            {
               "name": "insertOne",
               "arguments": {
                 "document": {
                   "_id": 2,
                   "x": 22
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 2
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
                 }
               }
             },
@@ -170,11 +118,26 @@
               }
             },
             {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 4,
+                  "x": 44
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                },
+                "upsert": true
+              }
+            },
+            {
               "name": "insertOne",
               "arguments": {
                 "document": {
-                  "_id": 4,
-                  "x": 44
+                  "_id": 5,
+                  "x": 55
                 }
               }
             },
@@ -191,31 +154,11 @@
               }
             },
             {
-              "name": "updateOne",
+              "name": "deleteOne",
               "arguments": {
                 "filter": {
-                  "_id": 4
-                },
-                "update": {
-                  "$inc": {
-                    "x": 1
-                  }
+                  "_id": 1
                 }
-              }
-            },
-            {
-              "name": "updateOne",
-              "arguments": {
-                "filter": {
-                  "_id": 5,
-                  "x": 55
-                },
-                "update": {
-                  "$inc": {
-                    "x": 1
-                  }
-                },
-                "upsert": true
               }
             }
           ],
@@ -228,22 +171,22 @@
         "result": {
           "deletedCount": 1,
           "insertedIds": {
-            "1": 2,
+            "0": 2,
             "2": 3,
-            "3": 4
+            "4": 5
           },
           "matchedCount": 2,
           "modifiedCount": 2,
           "upsertedCount": 1,
           "upsertedIds": {
-            "6": 5
+            "3": 4
           }
         },
         "collection": {
           "data": [
             {
               "_id": 2,
-              "x": 22
+              "x": 23
             },
             {
               "_id": 3,
@@ -255,7 +198,161 @@
             },
             {
               "_id": 5,
-              "x": 56
+              "x": 55
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Both commands are retried after their first statement fails",
+      "failPoint": {
+        "mode": {
+          "times": 2
+        }
+      },
+      "operation": {
+        "name": "bulkWrite",
+        "arguments": {
+          "requests": [
+            {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 2,
+                  "x": 22
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 2
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            }
+          ],
+          "options": {
+            "ordered": true
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {
+            "1": 2
+          },
+          "matchedCount": 2,
+          "modifiedCount": 2,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 12
+            },
+            {
+              "_id": 2,
+              "x": 23
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Second command is retried after its second statement fails",
+      "failPoint": {
+        "mode": {
+          "skip": 2
+        }
+      },
+      "operation": {
+        "name": "bulkWrite",
+        "arguments": {
+          "requests": [
+            {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 2,
+                  "x": 22
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 2
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            }
+          ],
+          "options": {
+            "ordered": true
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {
+            "1": 2
+          },
+          "matchedCount": 2,
+          "modifiedCount": 2,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 12
+            },
+            {
+              "_id": 2,
+              "x": 23
             }
           ]
         }
@@ -263,6 +360,11 @@
     },
     {
       "description": "BulkWrite with unordered execution",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        }
+      },
       "operation": {
         "name": "bulkWrite",
         "arguments": {
@@ -271,8 +373,8 @@
               "name": "insertOne",
               "arguments": {
                 "document": {
-                  "_id": 1,
-                  "x": 11
+                  "_id": 2,
+                  "x": 22
                 }
               }
             },
@@ -280,8 +382,8 @@
               "name": "insertOne",
               "arguments": {
                 "document": {
-                  "_id": 2,
-                  "x": 22
+                  "_id": 3,
+                  "x": 33
                 }
               }
             }
@@ -295,8 +397,8 @@
         "result": {
           "deletedCount": 0,
           "insertedIds": {
-            "0": 1,
-            "1": 2
+            "0": 2,
+            "1": 3
           },
           "matchedCount": 0,
           "modifiedCount": 0,
@@ -312,6 +414,10 @@
             {
               "_id": 2,
               "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ]
         }
@@ -320,7 +426,9 @@
     {
       "description": "InsertMany succeeds after one network error",
       "failPoint": {
-        "times": 1
+        "mode": {
+          "times": 1
+        }
       },
       "operation": {
         "name": "insertMany",
@@ -367,17 +475,22 @@
     },
     {
       "description": "InsertMany with unordered execution",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        }
+      },
       "operation": {
         "name": "insertMany",
         "arguments": {
           "documents": [
             {
-              "_id": 1,
-              "x": 11
-            },
-            {
               "_id": 2,
               "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ],
           "options": {
@@ -388,8 +501,8 @@
       "outcome": {
         "result": {
           "insertedIds": {
-            "0": 1,
-            "1": 2
+            "0": 2,
+            "1": 3
           }
         },
         "collection": {
@@ -401,6 +514,10 @@
             {
               "_id": 2,
               "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ]
         }

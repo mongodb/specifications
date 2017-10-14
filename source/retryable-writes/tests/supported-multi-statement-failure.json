@@ -8,19 +8,33 @@
   "minServerVersion": "3.6",
   "tests": [
     {
-      "description": "BulkWrite fails after multiple network errors for first command",
+      "description": "First insertOne is never committed",
       "failPoint": {
-        "times": 2
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
       },
       "operation": {
         "name": "bulkWrite",
         "arguments": {
           "requests": [
             {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 2,
+                  "x": 22
+                }
+              }
+            },
+            {
               "name": "updateOne",
               "arguments": {
                 "filter": {
-                  "_id": 1
+                  "_id": 2
                 },
                 "update": {
                   "$inc": {
@@ -30,11 +44,10 @@
               }
             },
             {
-              "name": "insertOne",
+              "name": "deleteOne",
               "arguments": {
-                "document": {
-                  "_id": 2,
-                  "x": 22
+                "filter": {
+                  "_id": 1
                 }
               }
             }
@@ -50,28 +63,55 @@
           "data": [
             {
               "_id": 1,
-              "x": 12
+              "x": 11
             }
           ]
         }
       }
     },
     {
-      "description": "InsertMany fails after multiple network errors",
+      "description": "Second updateOne is never committed",
       "failPoint": {
-        "times": 2
+        "mode": {
+          "skip": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
       },
       "operation": {
-        "name": "insertMany",
+        "name": "bulkWrite",
         "arguments": {
-          "documents": [
+          "requests": [
             {
-              "_id": 2,
-              "x": 22
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 2,
+                  "x": 22
+                }
+              }
             },
             {
-              "_id": 3,
-              "x": 33
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 2
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            },
+            {
+              "name": "deleteOne",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                }
+              }
             }
           ],
           "options": {
@@ -90,10 +130,121 @@
             {
               "_id": 2,
               "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Third updateOne is never committed",
+      "failPoint": {
+        "mode": {
+          "skip": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "bulkWrite",
+        "arguments": {
+          "requests": [
+            {
+              "name": "insertOne",
+              "arguments": {
+                "document": {
+                  "_id": 2,
+                  "x": 22
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 1
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            },
+            {
+              "name": "updateOne",
+              "arguments": {
+                "filter": {
+                  "_id": 2
+                },
+                "update": {
+                  "$inc": {
+                    "x": 1
+                  }
+                }
+              }
+            }
+          ],
+          "options": {
+            "ordered": true
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 12
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertMany fails after multiple network errors",
+      "failPoint": {
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "insertMany",
+        "arguments": {
+          "documents": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
               "_id": 3,
               "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ],
+          "options": {
+            "ordered": true
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
             }
           ]
         }
