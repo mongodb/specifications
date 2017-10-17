@@ -74,10 +74,6 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
-  - ``writeConcern``: Document describing the write concern for the operation.
-    This may be applied to the collection object or, if supported by the driver,
-    the individual operation.
-
   - ``failPoint``: Document describing options for configuring the
     ``onPrimaryTransactionalWrite`` fail point. This will have some or all of
     the following fields:
