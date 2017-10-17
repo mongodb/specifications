@@ -168,19 +168,27 @@ transaction number for each supported write command in the batch.
 Retrying Write Commands
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Drivers MUST NOT attempt to retry any write command that returns a response.
+Drivers MUST NOT attempt to retry any write command that receives a response,
+unless the response indicates that the node is no longer a primary (e.g. "not
+master" or "node is recovering" errors).
 
-When a write command fails to return a response (e.g. network error), drivers
-currently raise an error to the user. In the case of a multi-statement write
-operation split across multiple write commands, such an error will also
-interrupt execution of any additional write commands.
+When a write command fails to return a response due to a network error or
+receives a response indicating that the node is no longer a primary, drivers
+currently update their topology according to the SDAM spec (see:
+`Error Handling`_), abort the write operation and raise the error to the user.
+In the case of a multi-statement write operation split across multiple write
+commands, such a failure will also interrupt execution of any additional write
+commands (regardless of the ordered option).
 
-If a write command including a transaction ID fails to return a response on the
-first attempt, the driver MUST update its topology according to the SDAM spec
-(see: `Network error when reading or writing`_), reselect a writable server, and
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+
+If the first attempt of a write command including a transaction ID fails to
+receive a response due to a network error or receives a response indicating that
+the node is on longer a primary, the driver MUST update its topology according
+to the SDAM spec (see: `Error Handling`_), reselect a writable server, and
 execute the command again. Consider the following pseudo-code:
 
-.. _Network error when reading or writing: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 .. code:: typescript
 
@@ -195,6 +203,8 @@ execute the command again. Consider the following pseudo-code:
       return executeCommand(server, command);
     } catch (NetworkException e) {
       updateTopologyDescriptionForNetworkError(server, e);
+    } catch (NotMasterException e) {
+      updateTopologyDescriptionForNotMasterError(server, e);
     }
 
     server = selectServer("writable");
@@ -208,7 +218,7 @@ execute the command again. Consider the following pseudo-code:
   }
 
 When selecting a writable server for the first attempt of a retryable write
-operation, drivers MUST raise a client-side error if the server’s maximum wire
+command, drivers MUST raise a client-side error if the server’s maximum wire
 version does not support retryable writes. If the server selected for a retry
 attempt does not support retryable writes (e.g. mixed-version cluster), retrying
 is not possible and drivers MUST raise the original network error to the user.
@@ -216,8 +226,9 @@ is not possible and drivers MUST raise the original network error to the user.
 When retrying a write command, drivers MUST resend the command with the same
 transaction ID. Drivers MAY resend the original wire protocol message (see:
 `Can drivers resend the same wire protocol message on retry attempts?`_). If the
-second attempt also fails with a network error, drivers MUST raise its
-corresponding error to the user.
+second attempt also fails with a network error or response indicating that the
+node is no longer a primary, drivers MUST update their topology according to the
+SDAM spec (see: `Error Handling`_) and raise that error to the user.
 
 Supported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
