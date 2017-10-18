@@ -12,129 +12,14 @@
   "minServerVersion": "3.6",
   "tests": [
     {
-      "description": "DeleteOne is never committed",
+      "description": "UpdateOne is committed on first attempt",
       "failPoint": {
         "mode": {
-          "times": 2
-        },
-        "data": {
-          "failBeforeCommitExceptionCode": 1
+          "times": 1
         }
       },
       "operation": {
-        "name": "deleteOne",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "FindOneAndDelete is never committed",
-      "failPoint": {
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failBeforeCommitExceptionCode": 1
-        }
-      },
-      "operation": {
-        "name": "findOneAndDelete",
-        "arguments": {
-          "filter": {
-            "x": {
-              "$gte": 11
-            }
-          },
-          "sort": {
-            "x": 1
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "FindOneAndReplace is never committed",
-      "failPoint": {
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failBeforeCommitExceptionCode": 1
-        }
-      },
-      "operation": {
-        "name": "findOneAndReplace",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          },
-          "replacement": {
-            "_id": 1,
-            "x": 111
-          },
-          "returnDocument": "Before"
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "FindOneAndUpdate is never committed",
-      "failPoint": {
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failBeforeCommitExceptionCode": 1
-        }
-      },
-      "operation": {
-        "name": "findOneAndUpdate",
+        "name": "updateOne",
         "arguments": {
           "filter": {
             "_id": 1
@@ -147,12 +32,16 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedCount": 0
+        },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,
@@ -163,69 +52,39 @@
       }
     },
     {
-      "description": "InsertOne is never committed",
+      "description": "UpdateOne is not committed on first attempt",
       "failPoint": {
         "mode": {
-          "times": 2
+          "times": 1
         },
         "data": {
           "failBeforeCommitExceptionCode": 1
         }
       },
       "operation": {
-        "name": "insertOne",
-        "arguments": {
-          "document": {
-            "_id": 3,
-            "x": 33
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "ReplaceOne is never committed",
-      "failPoint": {
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failBeforeCommitExceptionCode": 1
-        }
-      },
-      "operation": {
-        "name": "replaceOne",
+        "name": "updateOne",
         "arguments": {
           "filter": {
             "_id": 1
           },
-          "replacement": {
-            "_id": 1,
-            "x": 111
+          "update": {
+            "$inc": {
+              "x": 1
+            }
           }
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedCount": 0
+        },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,
@@ -269,6 +128,103 @@
             {
               "_id": 2,
               "x": 22
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "UpdateOne with upsert is committed on first attempt",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        }
+      },
+      "operation": {
+        "name": "updateOne",
+        "arguments": {
+          "filter": {
+            "_id": 3,
+            "x": 33
+          },
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          },
+          "upsert": true
+        }
+      },
+      "outcome": {
+        "result": {
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedCount": 1,
+          "upsertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 34
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "UpdateOne with upsert is not committed on first attempt",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 1
+        }
+      },
+      "operation": {
+        "name": "updateOne",
+        "arguments": {
+          "filter": {
+            "_id": 3,
+            "x": 33
+          },
+          "update": {
+            "$inc": {
+              "x": 1
+            }
+          },
+          "upsert": true
+        }
+      },
+      "outcome": {
+        "result": {
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedCount": 1,
+          "upsertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 34
             }
           ]
         }

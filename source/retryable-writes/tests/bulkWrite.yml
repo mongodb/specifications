@@ -3,9 +3,6 @@ data:
 
 minServerVersion: '3.6'
 
-# Each test expects a network error for the first attempt of some write
-# command(s) in the batch. The second attempt should return without error,
-# which allows the batch to ultimately succeed.
 tests:
     -
         description: "First command is retried"
@@ -199,40 +196,89 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
-        description: "InsertMany succeeds after one network error"
+        description: "First insertOne is never committed"
         failPoint:
-            mode: { times: 1 }
+            mode: { times: 2 }
+            data: { failBeforeCommitExceptionCode: 1 }
         operation:
-            name: "insertMany"
+            name: "bulkWrite"
             arguments:
-                documents:
-                    - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }
+                requests:
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 2 }
+                            update: { $inc: { x : 1 }}
+                    -
+                        name: "deleteOne"
+                        arguments:
+                            filter: { _id: 1 }
                 options: { ordered: true }
         outcome:
-            result:
-                insertedIds: { 0: 2, 1: 3 }
+            error: true
             collection:
                 data:
                     - { _id: 1, x: 11 }
-                    - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }
     -
-        description: "InsertMany with unordered execution"
+        description: "Second updateOne is never committed"
         failPoint:
-            mode: { times: 1 }
+            mode: { skip: 1 }
+            data: { failBeforeCommitExceptionCode: 1 }
         operation:
-            name: "insertMany"
+            name: "bulkWrite"
             arguments:
-                documents:
-                    - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }
-                options: { ordered: false }
+                requests:
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 2 }
+                            update: { $inc: { x : 1 }}
+                    -
+                        name: "deleteOne"
+                        arguments:
+                            filter: { _id: 1 }
+                options: { ordered: true }
         outcome:
-            result:
-                insertedIds: { 0: 2, 1: 3 }
+            error: true
             collection:
                 data:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }
+    -
+        description: "Third updateOne is never committed"
+        failPoint:
+            mode: { skip: 2 }
+            data: { failBeforeCommitExceptionCode: 1 }
+        operation:
+            name: "bulkWrite"
+            arguments:
+                requests:
+                    -
+                        name: "insertOne"
+                        arguments:
+                            document: { _id: 2, x: 22 }
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 1 }
+                            update: { $inc: { x : 1 }}
+                    -
+                        name: "updateOne"
+                        arguments:
+                            filter: { _id: 2 }
+                            update: { $inc: { x : 1 }}
+                options: { ordered: true }
+        outcome:
+            error: true
+            collection:
+                data:
+                    - { _id: 1, x: 12 }
+                    - { _id: 2, x: 22 }

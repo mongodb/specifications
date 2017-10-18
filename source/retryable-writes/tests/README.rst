@@ -125,6 +125,42 @@ Running these as integration tests will require a running mongod server. Each of
 these tests is valid against a standalone mongod, a replica set, and a sharded
 system for server version 3.6.0 or later.
 
+Network Error Tests
+===================
+
+The YAML tests exercise the following test scenarios:
+
+- Single-statement write operations
+
+  - Each test expecting a write result will encounter at-most one network error
+    for the write command. Retry attempts should return without error and allow
+    operation to succeed. Observation of the collection state will assert that
+    the write occurred at-most once.
+
+  - Each test expecting an error will encounter successive network errors for
+    the write command. Observation of the collection state will assert that the
+    write was never committed on the server.
+
+- Multi-statement write operations
+
+  - Each test expecting a write result will encounter at-most one network error
+    for some write command(s) in the batch. Retry attempts should return without
+    error and allow the batch to ultimately succeed. Observation of the
+    collection state will assert that each write occurred at-most once.
+
+  - Each test expecting an error will encounter successive network errors for
+    some write command in the batch. The batch will ultimately fail with an
+    error, but observation of the collection state will assert that the failing
+    write was never committed on the server. We may observe that earlier writes
+    in the batch occurred at-most once.
+
+We cannot test a scenario where the first and second attempts both encounter
+network errors but the write does actually commit during one of those attempts.
+This is because (1) the fail point only triggers when a write would be committed
+and (2) the skip and times options are mutually exclusive. That said, such a
+test would mainly assert the server's correctness for at-most once semantics and
+is not essential to assert driver correctness.
+
 Replica Set Failover Test
 =========================
 
