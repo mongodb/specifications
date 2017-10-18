@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: October 9, 2017
+:Last Modified: October 17, 2017
 
 .. contents::
 
@@ -407,6 +407,10 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this is combined with batchSize to create the wire protocol numberToReturn value.
+     *
+     * A negative limit implies that the caller has requested a single batch of results. For servers >= 3.2, singleBatch
+     * should be set to true and limit should be converted to a positive value. For servers < 3.2, the wire protocol
+     * numberToReturn value may be negative.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
@@ -1606,9 +1610,13 @@ Q: Where is ``save``?
 Q: Where is ``useCursor`` in AggregateOptions?
   Inline aggregation results are no longer supported in server 3.5.2+. The `aggregate command <https://docs.mongodb.com/manual/reference/command/aggregate/>`_ must be provided either the ``cursor`` document or the ``explain`` boolean. AggregateOptions does not define an ``explain`` option. If a driver does support an ``explain`` option, the ``cursor`` document should be omitted if ``explain`` is ``true``. Otherwise a ``cursor`` document must be added to the ``aggregate`` command. Regardless, ``useCursor`` is no longer needed. Removing ``useCursor`` is a backwards breaking change, so drivers should first deprecate this option in a minor release, and remove it in a major release.
 
+Q: Where is ``singleBatch`` in FindOptions?
+  Drivers have historically allowed users to request a single batch of results (after which the cursor is closed) by specifying a negative value for the ``limit`` option. For servers < 3.2, a single batch may be requested by specifying a negative value in the ``numberToReturn`` wire protocol field. For servers >= 3.2, the ``find`` command defines ``limit`` as a non-negative integer option but introduces a ``singleBatch`` boolean option. Rather than introduce a ``singleBatch`` option to FindOptions, the spec preserves the existing API for ``limit`` and instructs drivers to convert negative values accordingly for servers >= 3.2.
+
 Changes
 =======
 
+* 2017-10-17: Document negative limit for FindOptions.
 * 2017-10-09: Bumped minimum server version to 2.6 and removed references to older versions in spec and tests.
 * 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
 * 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC implications for drivers using option classes.
