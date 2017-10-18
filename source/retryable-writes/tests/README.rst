@@ -13,32 +13,42 @@ Server Fail Point
 =================
 
 The tests depend on a server fail point, ``onPrimaryTransactionalWrite``, which
-allows us to force a network error after the server executes and commits a write
-but before it would return a write result. The fail point may be configured like
-so::
+allows us to force a network error before the server would return a write result
+to the client. The fail point also allows control whether the server will
+successfully commit the write via its ``failBeforeCommitExceptionCode`` option.
+The fail point is described in `SERVER-29606`_.
+
+.. _SERVER-29606: https://jira.mongodb.org/browse/SERVER-29606
+
+The fail point may be configured like so::
 
     db.runCommand({
         configureFailPoint: "onPrimaryTransactionalWrite",
-        mode: <string|document>
+        mode: <string|document>,
+        data: <document>
     });
 
 ``mode`` is a generic fail point option and may be assigned a string or document
 value. The string values ``"alwaysOn"`` and ``"off"`` may be used to enable or
 disable the fail point, respectively. A document may be used to specify either
-``times`` or ``skip``, which are mutually exclusive.
+``times`` or ``skip``, which are mutually exclusive:
 
-``{ times: <integer> }`` may be used to limit the number of times the fail point
-may trigger before transitioning to ``"off"``.
+- ``{ times: <integer> }`` may be used to limit the number of times the fail
+  point may trigger before transitioning to ``"off"``.
+- ``{ skip: <integer> }`` may be used to defer the first trigger of a fail
+  point, after which it will transition to ``"alwaysOn"``.
 
-``{ skip: <integer> }`` may be used to defer the first trigger of a fail point,
-after which it will transition to ``"alwaysOn"``.
+The ``data`` option is a document that may be used to specify options that
+control the fail point's behavior. As noted in `SERVER-29606`_,
+``onPrimaryTransactionalWrite`` supports the following ``data`` options, which
+may be combined if desired:
 
-The ``onPrimaryTransactionalWrite`` fail point cannot currently be used to test
-a multi-statement write operation where each command in the sequence fails on
-the first attempt but succeeds on the second. This is being tracked in
-`SERVER-31142`_.
-
-.. _SERVER-31142: https://jira.mongodb.org/browse/SERVER-31142
+- ``closeConnection``: Boolean option, which defaults to ``true``. If ``true``,
+  the connection on which the write is executed will be closed before a result
+  can be returned.
+- ``failBeforeCommitExceptionCode``: Integer option, which is unset by default.
+  If set, the specified exception code will be thrown and the write will not be
+  committed. If unset, the write will be allowed to commit.
 
 Disabling Fail Point after Test Failure
 ---------------------------------------
@@ -75,11 +85,9 @@ Each YAML file has the following keys:
   - ``description``: The name of the test.
 
   - ``failPoint``: Document describing options for configuring the
-    ``onPrimaryTransactionalWrite`` fail point. This will have some or all of
-    the following fields:
-
-    - ``times``: The number of times that the fail point remains on before it
-      deactivates.
+    ``onPrimaryTransactionalWrite`` fail point. This document should be merged
+    with the ``{ configureFailPoint: "onPrimaryTransactionalWrite" }`` command
+    document.
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a
@@ -116,6 +124,42 @@ Use as Integration Tests
 Running these as integration tests will require a running mongod server. Each of
 these tests is valid against a standalone mongod, a replica set, and a sharded
 system for server version 3.6.0 or later.
+
+Network Error Tests
+===================
+
+The YAML tests exercise the following test scenarios:
+
+- Single-statement write operations
+
+  - Each test expecting a write result will encounter at-most one network error
+    for the write command. Retry attempts should return without error and allow
+    operation to succeed. Observation of the collection state will assert that
+    the write occurred at-most once.
+
+  - Each test expecting an error will encounter successive network errors for
+    the write command. Observation of the collection state will assert that the
+    write was never committed on the server.
+
+- Multi-statement write operations
+
+  - Each test expecting a write result will encounter at-most one network error
+    for some write command(s) in the batch. Retry attempts should return without
+    error and allow the batch to ultimately succeed. Observation of the
+    collection state will assert that each write occurred at-most once.
+
+  - Each test expecting an error will encounter successive network errors for
+    some write command in the batch. The batch will ultimately fail with an
+    error, but observation of the collection state will assert that the failing
+    write was never committed on the server. We may observe that earlier writes
+    in the batch occurred at-most once.
+
+We cannot test a scenario where the first and second attempts both encounter
+network errors but the write does actually commit during one of those attempts.
+This is because (1) the fail point only triggers when a write would be committed
+and (2) the skip and times options are mutually exclusive. That said, such a
+test would mainly assert the server's correctness for at-most once semantics and
+is not essential to assert driver correctness.
 
 Replica Set Failover Test
 =========================
