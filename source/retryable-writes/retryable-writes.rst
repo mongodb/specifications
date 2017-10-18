@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-10-08
+:Last Modified: 2017-10-18
 
 .. contents::
 
@@ -548,6 +548,8 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-10-18: Also retry writes after a "not master" error.
 
 2017-10-08: Renamed ``txnNum`` to ``txnNumber`` and noted that it must be a
 64-bit integer (BSON type 0x12).
