@@ -262,6 +262,12 @@ server may not support retryable writes if the
 cluster; however, that can only be reported as a server-side error (discussed
 later).
 
+Write commands executed on a standalone server do not support retryable behavior
+as standalone servers do not have an oplog. Drivers MUST NOT consider the server
+type when deciding to include a transaction ID in a supported write command and
+instead rely on the server to raise an error in this case. Such an error will
+inform users that the driver has been misconfigured.
+
 Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
 not support retryable behavior. Drivers MUST NOT add a transaction ID to any
 write command with an unacknowledged write concern executed within a MongoClient
@@ -294,8 +300,9 @@ commands and MUST NOT retry these commands if they fail to return a response.
 
 Retryable write commands may not be supported at all in MongoDB 3.6 if the
 ``{setFeatureCompatibilityVersion: 3.6}`` admin command has not been run on the
-cluster. Drivers cannot anticipate this scenario and MUST rely on the server to
-raise an error if 3.6 feature compatibility is not enabled.
+cluster. Additionally, retryable write commands may not be supported on a shard
+cluster where one or more shards is a standalone server. Drivers cannot
+anticipate these scenarios and MUST rely on the server to raise an error.
 
 Logging Retry Attempts
 ======================
@@ -548,6 +555,8 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-10-18: Standalone servers do not support retryable writes.
 
 2017-10-18: Also retry writes after a "not master" error.
 

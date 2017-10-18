@@ -127,14 +127,19 @@ Each YAML file has the following keys:
 Use as Integration Tests
 ========================
 
-Running these as integration tests will require a running mongod server. Each of
-these tests is valid against a standalone mongod, a replica set, and a sharded
-system for server version 3.6.0 or later.
+Running these as integration tests will require a running MongoDB cluster with
+server versions 3.6.0 or later. The ``{setFeatureCompatibilityVersion: 3.6}``
+admin command will also need to have been executed to enable support for
+retryable writes on the cluster.
 
 Network Error Tests
 ===================
 
-The YAML tests exercise the following test scenarios:
+The YAML tests may be used to test a replica set. The tests cannot be run
+against a shard cluster because mongos does not support the necessary fail
+point.
+
+The tests exercise the following scenarios:
 
 - Single-statement write operations
 
