@@ -28,17 +28,17 @@ executed within the context of a server session.
 Additionally, MongoDB 3.6 will utilize server sessions to allow some write
 commands to specify a transaction ID to enforce at-most-once semantics for the
 write operation(s) and allow for retrying the operation if the driver fails to
-obtain a command result (e.g. network error after a replica set failover). This
-specification will outline how an API for retryable write operations will be
-implemented in drivers. The specification will define an option to enable
-retryable writes for an application and describe how a transaction ID will be
-provided to write commands executed therein.
+obtain a write result (e.g. network error or "not master" error after a replica
+set failover). This specification will outline how an API for retryable write
+operations will be implemented in drivers. The specification will define an
+option to enable retryable writes for an application and describe how a
+transaction ID will be provided to write commands executed therein.
 
 META
 ====
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
-“SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 Specification
@@ -62,6 +62,14 @@ ClientSession
    session; however, drivers will pool server sessions so that creating a
    ClientSession will not always entail creation of a new server session. The
    name of this object MAY vary across drivers.
+
+Retryable Error
+   Any network exception or a write command response with an error indicating
+   that the node is no longer a primary (e.g. "not master" or "node is
+   recovering" errors). Such errors correspond to those discussed in the SDAM
+   spec's section on `Error Handling`_.
+
+   .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 Additional terms may be defined in the Driver Session specification.
 
@@ -108,7 +116,7 @@ operation. Drivers will be responsible for maintaining a monotonically
 increasing transaction number for each server session used by a ClientSession
 object. Drivers that pool server sessions MUST preserve the transaction number
 when reusing a server session from the pool with a new ClientSession (this can
-be tracked as another property on the driver’s object for the server session).
+be tracked as another property on the driver's object for the server session).
 
 Drivers MUST ensure that each retryable write command specifies a transaction
 number larger than any previously used transaction number for its session ID.
@@ -128,9 +136,9 @@ writes have been enabled.
 .. _CRUD: ../crud/crud.rst
 
 If your driver offers a generic command method on your database object (e.g.
-``runCommand()``), it MUST NOT check the user’s command document to determine if
+``runCommand()``), it MUST NOT check the user's command document to determine if
 it is a supported write operation and MUST NOT automatically add a transaction
-ID. The method should send the user’s command document to the server as-is.
+ID. The method should send the user's command document to the server as-is.
 
 This specification does not affect write commands executed within a MongoClient
 where retryable writes have not been enabled.
@@ -168,19 +176,15 @@ transaction number for each supported write command in the batch.
 Retrying Write Commands
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Drivers MUST NOT attempt to retry any write command that returns a response.
+Drivers MUST only attempt to retry a write command that encounters a retryable
+error. Drivers MUST NOT attempt to retry a write command on any other error.
 
-When a write command fails to return a response (e.g. network error), drivers
-currently raise an error to the user. In the case of a multi-statement write
-operation split across multiple write commands, such an error will also
-interrupt execution of any additional write commands.
+If the first attempt of a write command including a transaction ID encounters a
+retryable error, the driver MUST update its topology according to the SDAM spec
+(see: `Error Handling`_), reselect a writable server, and execute the command
+again. Consider the following pseudo-code:
 
-If a write command including a transaction ID fails to return a response on the
-first attempt, the driver MUST update its topology according to the SDAM spec
-(see: `Network error when reading or writing`_), reselect a writable server, and
-execute the command again. Consider the following pseudo-code:
-
-.. _Network error when reading or writing: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 .. code:: typescript
 
@@ -195,11 +199,13 @@ execute the command again. Consider the following pseudo-code:
       return executeCommand(server, command);
     } catch (NetworkException e) {
       updateTopologyDescriptionForNetworkError(server, e);
+    } catch (NotMasterException e) {
+      updateTopologyDescriptionForNotMasterError(server, e);
     }
 
     server = selectServer("writable");
 
-    // If the new server is too old, throw original network error
+    // If the new server is too old, throw original error
     if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
       throw e;
     }
@@ -208,16 +214,24 @@ execute the command again. Consider the following pseudo-code:
   }
 
 When selecting a writable server for the first attempt of a retryable write
-operation, drivers MUST raise a client-side error if the server’s maximum wire
+command, drivers MUST raise a client-side error if the server's maximum wire
 version does not support retryable writes. If the server selected for a retry
 attempt does not support retryable writes (e.g. mixed-version cluster), retrying
-is not possible and drivers MUST raise the original network error to the user.
+is not possible and drivers MUST raise the original error to the user.
 
 When retrying a write command, drivers MUST resend the command with the same
 transaction ID. Drivers MAY resend the original wire protocol message (see:
 `Can drivers resend the same wire protocol message on retry attempts?`_). If the
-second attempt also fails with a network error, drivers MUST raise its
-corresponding error to the user.
+second attempt also fails with retryable error, drivers MUST update their
+topology according to the SDAM spec (see: `Error Handling`_) and raise that
+error to the user. Drivers MUST NOT attempt to retry a write command with the
+same transaction ID more than once.
+
+In the case of a multi-statement write operation split across multiple write
+commands, a failed retry attempt will also interrupt execution of any additional
+write operations in the batch (regardless of the ordered option). This is no
+different than if a retryable error had been encountered without retryable
+behavior enabled or supported by the driver.
 
 Supported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,7 +255,7 @@ Unsupported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When selecting a writable server for the first attempt of a retryable write
-operation, drivers MUST raise a client-side error if the server’s maximum wire
+operation, drivers MUST raise a client-side error if the server's maximum wire
 version does not support retryable writes. It is still possible that a 3.6
 server may not support retryable writes if the
 ``{setFeatureCompatibilityVersion: 3.6}`` admin command has not been run on the
@@ -295,8 +309,8 @@ Command Monitoring
 In accordance with the `Command Monitoring`_ specification, drivers MUST
 guarantee that each ``CommandStartedEvent`` has either a correlating
 ``CommandSucceededEvent`` or ``CommandFailedEvent``. If the first attempt of a
-retryable write operation fails to return a response, drivers MUST fire a
-``CommandFailedEvent`` for the network error and fire a separate
+retryable write operation encounters a retryable error, drivers MUST fire a
+``CommandFailedEvent`` for the retryable error and fire a separate
 ``CommandStartedEvent`` when executing the subsequent retry attempt. Note that
 the second ``CommandStartedEvent`` may have a different ``connectionId``, since
 a writable server is reselected for the retry attempt.
@@ -308,8 +322,8 @@ Each attempt of a retryable write operation SHOULD report a different
 one another.
 
 The `Command Monitoring`_ specification states that the ``operationId`` field is
-a driver-generated, 64-bit integer and may be “used to link events together such
-as bulk write operations.” Each attempt of a retryable write operation SHOULD
+a driver-generated, 64-bit integer and may be "used to link events together such
+as bulk write operations." Each attempt of a retryable write operation SHOULD
 report the same ``operationId``; however, drivers SHOULD NOT use the
 ``operationId`` field to relay information about a transaction ID. A bulk write
 operation may consist of multiple write commands, each of which may specify a
@@ -408,17 +422,18 @@ Q & A
 Why are write operations only retried once?
 -------------------------------------------
 
-The spec concerns itself with retrying write operations that fail to return a
-response due to a network error, which may be classified as either a transient
-error (e.g. dropped connection, replica set failover) or persistent outage. In
-the case of a transient error, the driver will mark the server as “unknown” per
-the `SDAM`_ spec. A subsequent retry attempt will allow the driver to rediscover
-the primary within the designated server selection timeout period (30 seconds by
-default). If server selection times out during this retry attempt, we can
-reasonably assume that there is a persistent outage. In the case of a persistent
-outage, multiple retry attempts are fruitless and would waste time. See
-`How To Write Resilient MongoDB Applications`_ for additional discussion on this
-strategy.
+The spec concerns itself with retrying write operations that encounter a
+retryable error (i.e. no response due to network error or a response indicating
+that the node is no longer a primary). A retryable error may be classified as
+either a transient error (e.g. dropped connection, replica set failover) or
+persistent outage. In the case of a transient error, the driver will mark the
+server as "unknown" per the `SDAM`_ spec. A subsequent retry attempt will allow
+the driver to rediscover the primary within the designated server selection
+timeout period (30 seconds by default). If server selection times out during
+this retry attempt, we can reasonably assume that there is a persistent outage.
+In the case of a persistent outage, multiple retry attempts are fruitless and
+would waste time. See `How To Write Resilient MongoDB Applications`_ for
+additional discussion on this strategy.
 
 .. _SDAM: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst
 .. _How To Write Resilient MongoDB Applications: https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/
@@ -447,15 +462,16 @@ concerns.
 
 When using ``OP_QUERY`` to issue a write command to the server, a command
 response is always returned. A write command with an unacknowledged write
-concern (i.e. ``{w: 0}``) will return a response of ``{ok: 1}``. If a network
-error is encountered attempting to read that response, the driver could attempt
-to retry the operation by executing it again with the same transaction ID.
+concern (i.e. ``{w: 0}``) will return a response of ``{ok: 1}``. If a retryable
+error is encountered (either a network error or "not master" response), the
+driver could attempt to retry the operation by executing it again with the same
+transaction ID.
 
 Some drivers fall back to legacy opcodes (e.g. ``OP_INSERT``) to execute write
 operations with an unacknowledged write concern. In the future, ``OP_MSG`` may
 allow the server to avoid returning any response for write operations sent with
 an unacknowledged write concern. In both of these cases, there is no response
-for which the driver might encounter a network error and decide to retry the
+for which the driver might encounter a retryable error and decide to retry the
 operation.
 
 Rather than depend on an implementation detail to determine if retryable
