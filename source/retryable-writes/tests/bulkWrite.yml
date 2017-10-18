@@ -29,7 +29,7 @@ tests:
         outcome:
             result:
                 deletedCount: 1
-                insertedIds: { 1: 2 }
+                insertedIds: { 0: 2 }
                 matchedCount: 1
                 modifiedCount: 1
                 upsertedCount: 0
@@ -121,7 +121,7 @@ tests:
         outcome:
             result:
                 deletedCount: 0
-                insertedIds: { 1: 2 }
+                insertedIds: { 0: 2 }
                 matchedCount: 2
                 modifiedCount: 2
                 upsertedCount: 0
@@ -156,7 +156,7 @@ tests:
         outcome:
             result:
                 deletedCount: 0
-                insertedIds: { 1: 2 }
+                insertedIds: { 0: 2 }
                 matchedCount: 2
                 modifiedCount: 2
                 upsertedCount: 0
