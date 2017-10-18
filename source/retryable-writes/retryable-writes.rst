@@ -37,8 +37,8 @@ transaction ID will be provided to write commands executed therein.
 META
 ====
 
-The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
-“SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 Specification
@@ -116,7 +116,7 @@ operation. Drivers will be responsible for maintaining a monotonically
 increasing transaction number for each server session used by a ClientSession
 object. Drivers that pool server sessions MUST preserve the transaction number
 when reusing a server session from the pool with a new ClientSession (this can
-be tracked as another property on the driver’s object for the server session).
+be tracked as another property on the driver's object for the server session).
 
 Drivers MUST ensure that each retryable write command specifies a transaction
 number larger than any previously used transaction number for its session ID.
@@ -136,9 +136,9 @@ writes have been enabled.
 .. _CRUD: ../crud/crud.rst
 
 If your driver offers a generic command method on your database object (e.g.
-``runCommand()``), it MUST NOT check the user’s command document to determine if
+``runCommand()``), it MUST NOT check the user's command document to determine if
 it is a supported write operation and MUST NOT automatically add a transaction
-ID. The method should send the user’s command document to the server as-is.
+ID. The method should send the user's command document to the server as-is.
 
 This specification does not affect write commands executed within a MongoClient
 where retryable writes have not been enabled.
@@ -214,7 +214,7 @@ again. Consider the following pseudo-code:
   }
 
 When selecting a writable server for the first attempt of a retryable write
-command, drivers MUST raise a client-side error if the server’s maximum wire
+command, drivers MUST raise a client-side error if the server's maximum wire
 version does not support retryable writes. If the server selected for a retry
 attempt does not support retryable writes (e.g. mixed-version cluster), retrying
 is not possible and drivers MUST raise the original error to the user.
@@ -255,7 +255,7 @@ Unsupported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When selecting a writable server for the first attempt of a retryable write
-operation, drivers MUST raise a client-side error if the server’s maximum wire
+operation, drivers MUST raise a client-side error if the server's maximum wire
 version does not support retryable writes. It is still possible that a 3.6
 server may not support retryable writes if the
 ``{setFeatureCompatibilityVersion: 3.6}`` admin command has not been run on the
@@ -322,8 +322,8 @@ Each attempt of a retryable write operation SHOULD report a different
 one another.
 
 The `Command Monitoring`_ specification states that the ``operationId`` field is
-a driver-generated, 64-bit integer and may be “used to link events together such
-as bulk write operations.” Each attempt of a retryable write operation SHOULD
+a driver-generated, 64-bit integer and may be "used to link events together such
+as bulk write operations." Each attempt of a retryable write operation SHOULD
 report the same ``operationId``; however, drivers SHOULD NOT use the
 ``operationId`` field to relay information about a transaction ID. A bulk write
 operation may consist of multiple write commands, each of which may specify a
@@ -427,7 +427,7 @@ retryable error (i.e. no response due to network error or a response indicating
 that the node is no longer a primary). A retryable error may be classified as
 either a transient error (e.g. dropped connection, replica set failover) or
 persistent outage. In the case of a transient error, the driver will mark the
-server as “unknown” per the `SDAM`_ spec. A subsequent retry attempt will allow
+server as "unknown" per the `SDAM`_ spec. A subsequent retry attempt will allow
 the driver to rediscover the primary within the designated server selection
 timeout period (30 seconds by default). If server selection times out during
 this retry attempt, we can reasonably assume that there is a persistent outage.
