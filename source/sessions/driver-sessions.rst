@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 17-Oct-2017
+:Last Modified: 19-Oct-2017
 
 .. contents::
 
@@ -501,6 +501,44 @@ includes at least one connected server
 one connected server a driver can now determine whether sessions are supported
 by inspecting the ``logicalSessionTimeoutMinutes`` property
 
+Possible race conditions when checking whether a deployment supports sessions
+-----------------------------------------------------------------------------
+
+There are some possible race conditions that can happen between the time the
+driver checks whether sessions are supported and subsequently sends a command
+to the server:
+
+* The TopologyDescription might be stale and no longer be accurate because it
+  has been a few seconds since the last heartbeat
+
+* The TopologyDescription might be accurate at the time the driver checks
+  whether sessions are supported, but by the time the driver sends a command to
+  the server it might no longer be accurate
+
+* The TopologyDescription might be based on connections to a subset of the
+  servers and it is possible that as the driver connects to more servers the
+  driver might discover that sessions aren't supported after all
+
+* The server might have supported sessions at the time the connection was first
+  opened (and reported a value for logicalSessionTimeoutMinutes in the initial
+  response to ismaster), but have subsequently been downgraded to not support
+  sessions. The server does not close the socket in this scenario, and the driver
+  will forever conclude that the server at the other end of this connection
+  supports sessions. This scenario will only be a problem until the next hearbeat
+  against that server.
+
+These race conditions are particulary insidious when the driver decides to
+start an implicit session based on the conclusion that sessions are supported.
+We don't want existing applications that don't use explicit sessions to fail
+when using implicit sessions.
+
+To handle these race conditions, the driver MUST ignore any implicit session if
+at the point it is sending a command to a specific server it turns out that
+that particular server doesn't support sessions after all. This handles the
+first three race conditions. There is nothing that the driver can do about the
+final race condition, and the server will just return an error in this
+scenario.
+
 Sending the session ID to the server on all commands
 ====================================================
 
@@ -959,3 +997,4 @@ Change log
 :2017-10-04: Added advanceClusterTime
 :2017-10-06: Added descriptions of explicit and implicit sessions
 :2017-10-17: Implicit sessions MUST NOT be used when multiple users authenticated
+:2017-10-19: Possible race conditions when checking whether a deployment supports sessions
