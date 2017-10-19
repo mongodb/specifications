@@ -121,9 +121,9 @@ Each YAML file has the following keys:
 Use as Integration Tests
 ========================
 
-Running these as integration tests will require a running mongod server. Each of
-these tests is valid against a standalone mongod, a replica set, and a sharded
-system for server version 3.6.0 or later.
+Running these as integration tests require a running replica set with server 
+versions 3.6.0 or later. The ``failPoint`` command will fail when run against 
+a standalone mongod or a mongos.
 
 Network Error Tests
 ===================
