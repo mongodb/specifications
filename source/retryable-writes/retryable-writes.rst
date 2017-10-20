@@ -361,12 +361,18 @@ If possible, drivers should test that transaction IDs are never included in
 commands for unsupported write operations:
 
 * Write commands with unacknowledged write concerns (e.g. ``{w: 0}``)
+
 * Unsupported single-statement write operations
+
   - ``updateMany()``
   - ``deleteMany()``
+
 * Unsupported multi-statement write operations
+
   - ``bulkWrite()`` that includes ``UpdateMany`` or ``DeleteMany``
+
 * Unsupported write commands
+
   - ``aggregate`` with ``$out`` pipeline operator
 
 Drivers may also be able to verify at-most-once semantics as described above by

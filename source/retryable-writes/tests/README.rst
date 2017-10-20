@@ -246,18 +246,25 @@ Drivers should test that transaction IDs are never included in commands for
 unsupported write operations:
 
 * Write commands with unacknowledged write concerns (e.g. ``{w: 0}``)
+
 * Unsupported single-statement write operations
+
   - ``updateMany()``
   - ``deleteMany()``
+
 * Unsupported multi-statement write operations
+
   - ``bulkWrite()`` that includes ``UpdateMany`` or ``DeleteMany``
+
 * Unsupported write commands
+
   - ``aggregate`` with ``$out`` pipeline operator
 
 Drivers should test that transactions IDs are always included in commands for
 supported write operations:
 
 * Supported single-statement write operations
+
   - ``insertOne()``
   - ``updateOne()``
   - ``replaceOne()``
@@ -265,7 +272,9 @@ supported write operations:
   - ``findOneAndDelete()``
   - ``findOneAndReplace()``
   - ``findOneAndUpdate()``
+
 * Supported multi-statement write operations
+
   - ``insertMany()`` with ``ordered=true``
   - ``insertMany()`` with ``ordered=false``
   - ``bulkWrite()`` with ``ordered=true`` (no ``UpdateMany`` or ``DeleteMany``)
