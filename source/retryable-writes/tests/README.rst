@@ -85,9 +85,9 @@ Each YAML file has the following keys:
   - ``description``: The name of the test.
 
   - ``failPoint``: Document describing options for configuring the
-    ``onPrimaryTransactionalWrite`` fail point. This document should be merged
-    with the ``{ configureFailPoint: "onPrimaryTransactionalWrite" }`` command
-    document.
+    ``onPrimaryTransactionalWrite`` fail point on the primary server. This
+    document should be merged with the
+    ``{ configureFailPoint: "onPrimaryTransactionalWrite" }`` command document.
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a
