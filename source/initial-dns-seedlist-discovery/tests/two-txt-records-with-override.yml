@@ -1,6 +1,6 @@
 uri: "mongodb+srv://test6.test.build.10gen.cc/?replicaSet=repl0&connectTimeoutMS=250000"
 seeds:
-    - localhost:27017
+    - localhost.build.10gen.cc:27017
 hosts:
     - localhost:27017
     - localhost:27018

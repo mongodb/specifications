@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-10-04
-:Version: 1.1.1
+:Last Modified: 2017-10-18
+:Version: 1.1.2
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -77,9 +77,7 @@ returned its results.
 If the DNS result returns no SRV records, or no records at all, or a DNS error
 happens, an error MUST be raised indicating that the URI could not be used to
 find hostnames. The error SHALL include the reason why they could not be
-found. This error MUST be raised only when the application attempts any
-operation which requires a server, in the same way as other server selection
-errors.
+found.
 
 Clients SHOULD respect the default domain and current domain when looking up
 the SRV record. For example, when using the non-FQDN ``servername`` and the
@@ -235,6 +233,9 @@ SRV records.
 
 ChangeLog
 =========
+
+2017-10-18 — 1.1.2
+    Removed prohibition of raising DNS related errors when parsing the URI.
 
 2017-10-04 — 1.1.1
     Removed from `Future Work`_ the line about multiple MongoS discovery. The
