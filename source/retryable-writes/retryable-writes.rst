@@ -52,14 +52,16 @@ Transaction ID
    running. In a write command where the client has requested retryable
    behavior, it is expressed by the top-level ``lsid`` and ``txnNumber`` fields.
    The ``lsid`` component is the corresponding server session ID. which is a
-   BSON value defined in the Driver Session specification. The ``txnNumber``
+   BSON value defined in the `Driver Session`_ specification. The ``txnNumber``
    component is a monotonically increasing (per server session), positive 64-bit
    integer.
 
+   .. _Driver Session: ../sessions/driver-sessions.rst
+
 ClientSession
-   Driver object representing a client session, which is defined in the Driver
-   Session specification. This object is always associated with a server
-   session; however, drivers will pool server sessions so that creating a
+   Driver object representing a client session, which is defined in the
+   `Driver Session`_ specification. This object is always associated with a
+   server session; however, drivers will pool server sessions so that creating a
    ClientSession will not always entail creation of a new server session. The
    name of this object MAY vary across drivers.
 
@@ -71,7 +73,7 @@ Retryable Error
 
    .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
-Additional terms may be defined in the Driver Session specification.
+Additional terms may be defined in the `Driver Session`_ specification.
 
 Naming Deviations
 -----------------
@@ -150,9 +152,9 @@ When constructing a supported write command that will be executed within a
 MongoClient where retryable writes have been enabled, drivers MUST increment the
 transaction number for the corresponding server session and include the server
 session ID and transaction number in top-level ``lsid`` and ``txnNumber``
-fields, respectively. ``lsid`` is a BSON value (discussed in the Driver Session
-specification). ``txnNumber`` MUST be a positive 64-bit integer (BSON type
-0x12).
+fields, respectively. ``lsid`` is a BSON value (discussed in the
+`Driver Session`_ specification). ``txnNumber`` MUST be a positive 64-bit
+integer (BSON type 0x12).
 
 The following example illustrates a possible write command for an
 ``updateOne()`` operation:
@@ -381,7 +383,7 @@ support this behavior.
 Design Rationale
 ================
 
-The design of this specification piggy-backs that of the Driver Session
+The design of this specification piggy-backs that of the `Driver Session`_
 specification in that it modifies the driver API as little as possible to
 introduce the concept of at-most-once semantics and retryable behavior for write
 operations. A transaction ID will be included in all supported write commands
