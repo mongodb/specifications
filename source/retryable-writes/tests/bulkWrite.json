@@ -58,7 +58,7 @@
         "result": {
           "deletedCount": 1,
           "insertedIds": {
-            "1": 2
+            "0": 2
           },
           "matchedCount": 1,
           "modifiedCount": 1,
@@ -260,7 +260,7 @@
         "result": {
           "deletedCount": 0,
           "insertedIds": {
-            "1": 2
+            "0": 2
           },
           "matchedCount": 2,
           "modifiedCount": 2,
@@ -337,7 +337,7 @@
         "result": {
           "deletedCount": 0,
           "insertedIds": {
-            "1": 2
+            "0": 2
           },
           "matchedCount": 2,
           "modifiedCount": 2,
@@ -475,6 +475,14 @@
       },
       "outcome": {
         "error": true,
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {},
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
         "collection": {
           "data": [
             {
@@ -537,6 +545,16 @@
       },
       "outcome": {
         "error": true,
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {
+            "0": 2
+          },
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
         "collection": {
           "data": [
             {
@@ -608,6 +626,16 @@
       },
       "outcome": {
         "error": true,
+        "result": {
+          "deletedCount": 0,
+          "insertedIds": {
+            "0": 2
+          },
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedCount": 0,
+          "upsertedIds": {}
+        },
         "collection": {
           "data": [
             {
