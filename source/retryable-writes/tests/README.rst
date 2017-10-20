@@ -50,10 +50,10 @@ may be combined if desired:
   If set, the specified exception code will be thrown and the write will not be
   committed. If unset, the write will be allowed to commit.
 
-Disabling Fail Point after Test Failure
----------------------------------------
+Disabling Fail Point after Test Execution
+-----------------------------------------
 
-In the event of a test failure, drivers should disable the
+After each test that configures a fail point, drivers should disable the
 ``onPrimaryTransactionalWrite`` fail point to avoid spurious failures in
 subsequent tests. The fail point may be disabled like so::
 
