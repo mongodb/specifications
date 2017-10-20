@@ -2,12 +2,23 @@
 Retryable Write Tests
 =====================
 
+.. contents::
+
+----
+
+Introduction
+============
+
 The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the Retryable Writes spec.
 
-Additionally, a prose test for retrying writes in the event of a replica set
-failover is presented later in this file. It is not expressed in YAML and will
-need to be manually implemented by each driver.
+Several prose tests, which are not easily expressed in YAML, are also presented
+in this file. Those tests will need to be manually implemented by each driver.
+
+Tests will require a MongoClient with ``retryWrites`` enabled. Integration tests
+will require a running MongoDB cluster with server versions 3.6.0 or later. The
+``{setFeatureCompatibilityVersion: 3.6}`` admin command will also need to have
+been executed to enable support for retryable writes on the cluster.
 
 Server Fail Point
 =================
@@ -62,8 +73,48 @@ subsequent tests. The fail point may be disabled like so::
         mode: "off"
     });
 
-Format
-======
+Network Error Tests
+===================
+
+Network error tests are expressed in YAML and should be run against a replica
+set. These tests cannot be run against a shard cluster because mongos does not
+support the necessary fail point.
+
+The tests exercise the following scenarios:
+
+- Single-statement write operations
+
+  - Each test expecting a write result will encounter at-most one network error
+    for the write command. Retry attempts should return without error and allow
+    operation to succeed. Observation of the collection state will assert that
+    the write occurred at-most once.
+
+  - Each test expecting an error will encounter successive network errors for
+    the write command. Observation of the collection state will assert that the
+    write was never committed on the server.
+
+- Multi-statement write operations
+
+  - Each test expecting a write result will encounter at-most one network error
+    for some write command(s) in the batch. Retry attempts should return without
+    error and allow the batch to ultimately succeed. Observation of the
+    collection state will assert that each write occurred at-most once.
+
+  - Each test expecting an error will encounter successive network errors for
+    some write command in the batch. The batch will ultimately fail with an
+    error, but observation of the collection state will assert that the failing
+    write was never committed on the server. We may observe that earlier writes
+    in the batch occurred at-most once.
+
+We cannot test a scenario where the first and second attempts both encounter
+network errors but the write does actually commit during one of those attempts.
+This is because (1) the fail point only triggers when a write would be committed
+and (2) the skip and times options are mutually exclusive. That said, such a
+test would mainly assert the server's correctness for at-most once semantics and
+is not essential to assert driver correctness.
+
+Test Format
+-----------
 
 Each YAML file has the following keys:
 
@@ -123,54 +174,6 @@ Each YAML file has the following keys:
 
       - ``data``: The data that should exist in the collection after the
         operation has been run.
-
-Use as Integration Tests
-========================
-
-Running these as integration tests will require a running MongoDB cluster with
-server versions 3.6.0 or later. The ``{setFeatureCompatibilityVersion: 3.6}``
-admin command will also need to have been executed to enable support for
-retryable writes on the cluster.
-
-Network Error Tests
-===================
-
-The YAML tests may be used to test a replica set. The tests cannot be run
-against a shard cluster because mongos does not support the necessary fail
-point.
-
-The tests exercise the following scenarios:
-
-- Single-statement write operations
-
-  - Each test expecting a write result will encounter at-most one network error
-    for the write command. Retry attempts should return without error and allow
-    operation to succeed. Observation of the collection state will assert that
-    the write occurred at-most once.
-
-  - Each test expecting an error will encounter successive network errors for
-    the write command. Observation of the collection state will assert that the
-    write was never committed on the server.
-
-- Multi-statement write operations
-
-  - Each test expecting a write result will encounter at-most one network error
-    for some write command(s) in the batch. Retry attempts should return without
-    error and allow the batch to ultimately succeed. Observation of the
-    collection state will assert that each write occurred at-most once.
-
-  - Each test expecting an error will encounter successive network errors for
-    some write command in the batch. The batch will ultimately fail with an
-    error, but observation of the collection state will assert that the failing
-    write was never committed on the server. We may observe that earlier writes
-    in the batch occurred at-most once.
-
-We cannot test a scenario where the first and second attempts both encounter
-network errors but the write does actually commit during one of those attempts.
-This is because (1) the fail point only triggers when a write would be committed
-and (2) the skip and times options are mutually exclusive. That said, such a
-test would mainly assert the server's correctness for at-most once semantics and
-is not essential to assert driver correctness.
 
 Replica Set Failover Test
 =========================
