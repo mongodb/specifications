@@ -311,11 +311,11 @@ server may not support retryable writes if the
 cluster; however, that can only be reported as a server-side error (discussed
 later).
 
-Write commands executed on a standalone server do not support retryable behavior
-as standalone servers do not have an oplog. Drivers MUST NOT consider the server
-type when deciding to include a transaction ID in a supported write command and
-instead rely on the server to raise an error in this case. Such an error will
-inform users that the driver has been misconfigured.
+Write commands executed on a standalone server do not support retryable
+behavior. Drivers MUST NOT consider the server type when deciding to include a
+transaction ID in a supported write command and instead rely on the server to
+raise an error in this case. Such an error will inform users that the driver has
+been misconfigured.
 
 Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
 not support retryable behavior. Drivers MUST NOT add a transaction ID to any
