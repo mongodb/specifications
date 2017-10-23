@@ -300,6 +300,12 @@ These methods above are defined in the `CRUD`_ specification.
 
 Later versions of MongoDB may add support for additional write operations.
 
+Drivers MUST document operations that support retryable behavior and the
+conditions for which retryability is determined (see:
+`How will users know which operations are supported?`_). Drivers are not
+required to exhaustively document all operations that do not support retryable
+behavior.
+
 Unsupported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -610,6 +616,8 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-10-23: Drivers must document operations that support retryability.
 
 2017-10-23: Raise the original retryable error if server selection or wire
 protocol checks fail during the retry attempt. Encourage drivers to provide
