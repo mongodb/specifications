@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-10-18
+:Last Modified: 2017-10-23
 
 .. contents::
 
@@ -181,53 +181,98 @@ Retrying Write Commands
 Drivers MUST only attempt to retry a write command that encounters a retryable
 error. Drivers MUST NOT attempt to retry a write command on any other error.
 
+When selecting a writable server for the first attempt of a retryable write
+command, drivers MUST allow a server selection error to propagate. If the
+selected server's maximum wire version does not support retryable writes,
+drivers MUST raise a client-side error. In both cases, the caller is able to
+infer that no attempt was made.
+
 If the first attempt of a write command including a transaction ID encounters a
 retryable error, the driver MUST update its topology according to the SDAM spec
-(see: `Error Handling`_), reselect a writable server, and execute the command
-again. Consider the following pseudo-code:
+(see: `Error Handling`_) and capture this original retryable error. Drivers
+should then proceed with selecting a writable server for the retry attempt.
 
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+
+If the driver cannot select a server for the retry attempt or the selected
+server does not support retryable writes (e.g. mixed-version cluster), retrying
+is not possible and drivers MUST raise the original retryable error. In both
+cases, the caller is able to infer that an attempt was made.
+
+If the retry attempt also fails, drivers MUST update their topology according to
+the SDAM spec (see: `Error Handling`_) and raise any ensuing error to the user.
+In this case, the error from the retry attempt is just as relevant as the
+original retryable error and the caller is still able to infer that an attempt
+was made.
+
+Drivers MUST NOT attempt to retry a write command with the same transaction ID
+more than once.
+
+Consider the following pseudo-code:
 
 .. code:: typescript
 
   function executeRetryableWrite(command) {
+    /* Allow ServerSelectionException to propagate to our caller, which can then
+     * assume that no attempts were made. */
     server = selectServer("writable");
 
+    /* UnsupportedException will inform the caller of a configuration error in
+     * their application (i.e. using retryWrites=true with an old cluster) */
     if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
       throw new UnsupportedException();
     }
 
+    /* NetworkException and NotMasterException are both retryable errors. If
+     * caught, remember the exception, update SDAM accordingly, and proceed with
+     * retrying the operation. */
     try {
       return executeCommand(server, command);
-    } catch (NetworkException e) {
-      updateTopologyDescriptionForNetworkError(server, e);
-    } catch (NotMasterException e) {
-      updateTopologyDescriptionForNotMasterError(server, e);
+    } catch (NetworkException originalError) {
+      updateTopologyDescriptionForNetworkError(server, originalError);
+    } catch (NotMasterException originalError) {
+      updateTopologyDescriptionForNotMasterError(server, originalError);
     }
 
-    server = selectServer("writable");
+    /* If we cannot select a writable server, do not proceed with retrying and
+     * throw the original error. The caller can then infer that an attempt was
+     * made and failed. */
+    try {
+      server = selectServer("writable");
+    } catch (Exception ignoredError) {
+      throw originalError;
+    }
 
-    // If the new server is too old, throw original error
+    /* If the server selected for retrying is too old, throw the original error.
+     * The caller can then infer that an attempt was made and failed. This case
+     * is very rare, and likely means that the cluster has mixed versions, just
+     * experienced a fail over, and we missed the error that retryable writes
+     * were not supported during the first attempt (3.6 feature compatibility
+     * could not have been enabled). */
     if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
-      throw e;
+      throw originalError;
     }
 
-    return executeCommand(server, command);
+    /* Allow any retryable error from the second attempt to propagate to our
+     * caller, as it will be just as relevant (if not more relevant) than the
+     * original error. For any other exception, we should raise the original
+     * error. */
+    try {
+      return executeCommand(server, command);
+    } catch (NetworkException secondError) {
+      updateTopologyDescriptionForNetworkError(server, secondError);
+      throw secondError;
+    } catch (NotMasterException secondError) {
+      updateTopologyDescriptionForNotMasterError(server, secondError);
+      throw secondError;
+    } catch (Exception ignoredError) {
+      throw originalError;
+    }
   }
-
-When selecting a writable server for the first attempt of a retryable write
-command, drivers MUST raise a client-side error if the server's maximum wire
-version does not support retryable writes. If the server selected for a retry
-attempt does not support retryable writes (e.g. mixed-version cluster), retrying
-is not possible and drivers MUST raise the original error to the user.
 
 When retrying a write command, drivers MUST resend the command with the same
 transaction ID. Drivers MAY resend the original wire protocol message (see:
-`Can drivers resend the same wire protocol message on retry attempts?`_). If the
-second attempt also fails with retryable error, drivers MUST update their
-topology according to the SDAM spec (see: `Error Handling`_) and raise that
-error to the user. Drivers MUST NOT attempt to retry a write command with the
-same transaction ID more than once.
+`Can drivers resend the same wire protocol message on retry attempts?`_).
 
 In the case of a multi-statement write operation split across multiple write
 commands, a failed retry attempt will also interrupt execution of any additional
@@ -563,6 +608,9 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-10-23: Raise the original retryable error if server selection or wire
+protocol checks fail during the retry attempt.
 
 2017-10-18: Standalone servers do not support retryable writes.
 
