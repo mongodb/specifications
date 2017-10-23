@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: October 17, 2017
+:Last Modified: October 23, 2017
 
 .. contents::
 
@@ -1253,6 +1253,14 @@ Below are defined the exceptions that should be thrown from the various write me
     unprocessedRequests: Optional<Iterable<WriteModel>>;
 
     /**
+     * The intermediary write result for any operations that succeeded before
+     * the bulk write was interrupted.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
+     */
+    writeResult: Optional<BulkWriteResult>;
+
+    /**
      * The error that occured on account of write concern failure. If the error was a Write Concern related, this field must be present.
      */
     writeConcernError: Optional<WriteConcernError>;
@@ -1616,6 +1624,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2017-10-23: Allow BulkWriteException to provide an intermediary write result.
 * 2017-10-17: Document negative limit for FindOptions.
 * 2017-10-09: Bumped minimum server version to 2.6 and removed references to older versions in spec and tests.
 * 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.

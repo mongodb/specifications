@@ -278,7 +278,9 @@ In the case of a multi-statement write operation split across multiple write
 commands, a failed retry attempt will also interrupt execution of any additional
 write operations in the batch (regardless of the ordered option). This is no
 different than if a retryable error had been encountered without retryable
-behavior enabled or supported by the driver.
+behavior enabled or supported by the driver. Drivers are encouraged to provide
+access to an intermediary write result (e.g. BulkWriteResult, InsertManyResult)
+through the BulkWriteException, in accordance with the `CRUD`_ specification.
 
 Supported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -610,7 +612,8 @@ Changes
 =======
 
 2017-10-23: Raise the original retryable error if server selection or wire
-protocol checks fail during the retry attempt.
+protocol checks fail during the retry attempt. Encourage drivers to provide
+intermediary write results after an unrecoverable failure during a bulk write.
 
 2017-10-18: Standalone servers do not support retryable writes.
 
