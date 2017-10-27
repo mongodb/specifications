@@ -395,58 +395,26 @@ The **find** command returns the documents 86-95 and the **getMore** returns the
 Mapping OP_QUERY behavior to the find command limit and batchSize fields
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The way that limit, batchSize and singleBatch are defined for the find command differs from how these were specified in OP_QUERY and the CRUD spec.  The following  mappings from legacy definitions MUST be performed for the find command.
+The way that limit, batchSize and singleBatch are defined for the find command differs from how these were specified in OP_QUERY and the CRUD spec.
 
-.. list-table:: Limit and batchSize
-   :widths: 15 15 30
-   :header-rows: 1
+Specifically, *negative* values for **limit** and **batchSize** are no longer allowed and the **singleBatch** option is used instead of negative values.
 
-   * - Value
-     - Translates to
-     - Description
-   * - limit < 0
-     - limit = Math.abs(limit)
-       singleBatch = true
-     - Negative values for limit is not allowed
-   * - limit == 0
-     - Omit limit from command
-     - Returns all document available for the query.
-   * - limit > 0
-     - N/A
-     -
-   * - batchSize < 0
-     - batchSize = Math.abs(batchSize)
-       singleBatch= true
-     - Negative values for batchSize is not allowed
-   * - batchSize == 0
-     - Omit batchSize from command
-     - Allow server to apply the default batchSize.
-   * - batchSize > 0
-     - N/A
-     -
+In order to have consistency between old and new applications, the following transformations MUST be performed before adding options to the **find** command:
 
-Special handling of limit < 0 and batchSize < 0
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. code::
 
-If both **limit** and **batchSize** are negative the values should be handled in the following way.
+    singleBatch = (limit < 0) || (batchSize < 0)
+    limit       = abs(limit)
+    if singleBatch:
+        batchSize = (limit == 0) ? abs(batchSize) : limit
+    else:
+        batchSize = abs(batchSize)
 
-.. list-table:: Limit and batchSize both negative
-   :widths: 15 15 30
-   :header-rows: 1
+Further, after these transformation:
 
-   * - Value
-     - Translates to
-     - Description
-   * - limit <= batchSize
-     - limit = Math.abs(limit)
-       batchSize = Math.abs(limit)
-       singleBatch = true
-     - No special treatment needed
-   * - limit > batchSize
-     - limit = Math.abs(limit)
-       batchSize = Math.abs(limit)
-       singleBatch = true
-     - No special treatment needed
+* If **limit** is zero, it MUST be omitted from **find** options
+* If **batchSize** is zero, it MUST be omitted from **find** options
+* If **singleBatch** is false, it MUST be omitted from **find** options
 
 BatchSize of 1
 ^^^^^^^^^^^^^^
