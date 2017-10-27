@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-10-23
+:Last Modified: 2017-10-26
 
 .. contents::
 
@@ -200,10 +200,13 @@ is not possible and drivers MUST raise the original retryable error. In both
 cases, the caller is able to infer that an attempt was made.
 
 If the retry attempt also fails, drivers MUST update their topology according to
-the SDAM spec (see: `Error Handling`_) and raise any ensuing error to the user.
-In this case, the error from the retry attempt is just as relevant as the
-original retryable error and the caller is still able to infer that an attempt
-was made.
+the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
+to infer that an attempt was made (e.g. connection pool exception originating
+from the driver), the original error should be raised. If the retry failed due
+to another retryable error or some other error originating from the server, that
+error should be raised instead as the caller can infer that an attempt was made
+and the second error is likely more relevant (with respect to the current
+topology state).
 
 Drivers MUST NOT attempt to retry a write command with the same transaction ID
 more than once.
@@ -255,8 +258,10 @@ Consider the following pseudo-code:
 
     /* Allow any retryable error from the second attempt to propagate to our
      * caller, as it will be just as relevant (if not more relevant) than the
-     * original error. For any other exception, we should raise the original
-     * error. */
+     * original error. For exceptions that originate from the driver (e.g. no
+     * socket available from the connection pool), we should raise the original
+     * error. Other exceptions originating from the server should be allowed to
+     * propagate. */
     try {
       return executeCommand(server, command);
     } catch (NetworkException secondError) {
@@ -265,7 +270,7 @@ Consider the following pseudo-code:
     } catch (NotMasterException secondError) {
       updateTopologyDescriptionForNotMasterError(server, secondError);
       throw secondError;
-    } catch (Exception ignoredError) {
+    } catch (DriverException ignoredError) {
       throw originalError;
     }
   }
@@ -616,6 +621,9 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-10-26: Errors when retrying may be raised instead of the original error
+provided they allow the user to infer that an attempt was made.
 
 2017-10-23: Drivers must document operations that support retryability.
 
