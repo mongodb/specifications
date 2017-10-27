@@ -33,5 +33,4 @@ Server Wire version and Feature List
 |                |              | Logical Sessions                      |
 +----------------+--------------+---------------------------------------+
 
-For more information see MongoDB Server repo_.
-.. _repo : https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
+For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
