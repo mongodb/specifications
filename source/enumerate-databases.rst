@@ -127,7 +127,7 @@ result. This method SHOULD be named ``listDatabases``.
 Drivers MAY report ``totalSize`` (e.g. through an additional output variable on
 the ``listDatabases`` method), but this is not necessary.
 
-Drivers SHOULD implement the ``filter`` option when implementing this method. 
+Drivers SHOULD support the ``filter`` option when implementing this method. 
 
 Enumerating Database Names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,7 +157,7 @@ Older versions of the server that do not support the ``nameOnly`` option for the
 drivers SHOULD always specify the ``nameOnly`` option when they only intend to
 access database names from the ``listDatabases`` command result.
 
-Drivers SHOULD implement the ``filter`` option when implementing this method. 
+Drivers SHOULD support the ``filter`` option when implementing this method. 
 
 Enumerating MongoDatabase Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +174,7 @@ MongoDatabase through MongoClient (e.g. read preference, write concern).
 Drivers SHOULD specify the ``nameOnly`` option when executing the
 ``listDatabases`` command for this method.
 
-Drivers SHOULD implement the ``filter`` option when implementing this method. 
+Drivers SHOULD support the ``filter`` option when implementing this method. 
 
 Replica Sets
 ------------
@@ -264,4 +264,4 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
-2017-10-30 Adding filter option to listDatabases command
+2017-10-30 Support filter option in listDatabases command
