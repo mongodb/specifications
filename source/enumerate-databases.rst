@@ -264,4 +264,4 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
-2017-10-30 Adding filter option listDatabases
+2017-10-30 Adding filter option to listDatabases command
