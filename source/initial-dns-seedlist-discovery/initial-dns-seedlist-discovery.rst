@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-10-18
-:Version: 1.1.2
+:Last Modified: 2017-10-31
+:Version: 1.1.3
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -70,6 +70,10 @@ The priority and weight fields in returned SRV records MUST be ignored.
 It is an error to specify a port in a connection string with the
 ``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST NOT
 do DNS resolution or contact hosts.
+
+It is an error to specify more than one host name in a connection string with
+the ``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST
+NOT do DNS resolution or contact hosts.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has
 returned its results.
@@ -234,6 +238,10 @@ SRV records.
 ChangeLog
 =========
 
+2017-10-31 — 1.1.3
+    Added a clause that specifying two host names with a `mongodb+srv://`` URI
+    is not allowed. Added a few more test cases.
+
 2017-10-18 — 1.1.2
     Removed prohibition of raising DNS related errors when parsing the URI.
 
@@ -247,7 +255,7 @@ ChangeLog
     Added support for connection string options through TXT records.
 
 2017-09-19
-    Clarify that hostnames in `mongo+srv://` URLs work like normal host
+    Clarify that host names in `mongodb+srv://` URLs work like normal host
     specifications.
 
 2017-09-01

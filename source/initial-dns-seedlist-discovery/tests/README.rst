@@ -23,11 +23,19 @@ these tests::
   _mongodb._tcp.test3.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test5.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test6.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
+  _mongodb._tcp.test7.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
+  _mongodb._tcp.test8.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
+  _mongodb._tcp.test9.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
+  _mongodb._tcp.test10.test.build.10gen.cc. 86400  IN SRV  27017  localhost.build.10gen.cc.
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=300000&socketTimeoutMS=300000"
   test6.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=200000"
   test6.test.build.10gen.cc.                86400  IN TXT  "socketTimeoutMS=200000"
+  test7.test.build.10gen.cc.                86400  IN TXT  "readPreference=secondaryPreferred&readPreferenceTags=🥃"
+  test8.test.build.10gen.cc.                86400  IN TXT  "readPreference"
+  test9.test.build.10gen.cc.                86400  IN TXT  "unknownKey=foo"
+  test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=thisShouldBeAnInt"
 
 Note that ``test4`` is omitted deliberately to test what happens with no SRV
 record.
@@ -49,9 +57,13 @@ These YAML and JSON files contain the following fields:
 - ``hosts``: the discovered topology's list of hosts once SDAM completes a scan
 - ``options``: the parsed connection string options as discovered from URI and
   TXT records
+- ``error``: indicates that the parsing of the URI, or the resolving or
+  contents of the SRV or TXT records included errors.
+- ``comment``: a comment to indicate why a test would fail.
 
 For each file, create MongoClient initialized with the mongodb+srv connection
 string. You SHOULD verify that the client's initial seed list matches the list of
 seeds. You MUST verify that the set of ServerDescriptions in the client's
 TopologyDescription eventually matches the list of hosts. You MUST verify that
-the set of Connection String Options matches the client's parsed set.
+the set of Connection String Options matches the client's parsed set. You MUST
+verify that an error has been thrown if ``error`` is present.
