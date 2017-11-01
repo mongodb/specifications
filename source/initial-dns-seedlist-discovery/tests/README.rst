@@ -27,6 +27,7 @@ these tests::
   _mongodb._tcp.test8.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test9.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test10.test.build.10gen.cc. 86400  IN SRV  27017  localhost.build.10gen.cc.
+  _mongodb._tcp.test11.test.build.10gen.cc. 86400  IN SRV  27017  localhost.build.10gen.cc.
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=300000&socketTimeoutMS=300000"
@@ -36,6 +37,7 @@ these tests::
   test8.test.build.10gen.cc.                86400  IN TXT  "readPreference"
   test9.test.build.10gen.cc.                86400  IN TXT  "unknownKey=foo"
   test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=thisShouldBeAnInt"
+  test11.test.build.10gen.cc.               86400  IN TXT  "connectTime" "outMS=150000" "&socketT" "imeoutMS" "=" "250000"
 
 Note that ``test4`` is omitted deliberately to test what happens with no SRV
 record.

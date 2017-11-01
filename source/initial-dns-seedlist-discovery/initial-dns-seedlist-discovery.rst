@@ -10,8 +10,7 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-10-31
-:Version: 1.1.3
+:Version: 1.1.4
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -93,16 +92,21 @@ Default Connection String Options
 
 A Client MUST also query the DNS server for TXT records. If available, these
 TXT records provide default connection string options. In most cases only one
-TXT record is necessary, unless the default options exceed the maximum length
-of 255 characters that TXT records allow for. To allow for this case, a Client
-MUST allow for multiple TXT records for the same host name and consider the
-options in all of them.
+TXT record is necessary. The maximum length of a TXT record string is 255
+characters, but there can be multiple strings per TXT record. A Client MUST
+support multiple TXT record strings and concatenate them as if they were one
+single string in the order they are defined in each TXT record. The order of
+multiple character strings in each TXT record is guaranteed. The maximum
+total length of all strings in a single TXT record is about 65535 characters,
+but DNS providers and software might arbitrarily limit this to a smaller
+number. To allow for this case, a Client MUST allow for multiple TXT records
+for the same host name and consider the options in all of them.
 
 Information returned with each TXT record is a simple URI string, just like
 the options in a connection string.
 
 Although options in a connection string are separated by a ``&``, this
-character MUST NOT be present to separate options between TXT record strings
+character MUST NOT be present to separate options between TXT records
 as a separation is implied by using multiple TXT records.
 
 TXT records MAY be queried either before, in parallel, or after SRV records.
@@ -237,6 +241,9 @@ SRV records.
 
 ChangeLog
 =========
+
+2017-11-01 — 1.1.4
+    Clarified that individual TXT records can have multiple strings.
 
 2017-10-31 — 1.1.3
     Added a clause that specifying two host names with a `mongodb+srv://`` URI
