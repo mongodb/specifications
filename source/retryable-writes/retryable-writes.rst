@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Draft (awaiting reference implementation)
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-10-26
+:Last Modified: 2017-11-02
 
 .. contents::
 
@@ -106,8 +106,96 @@ default to false, which implies no change in write behavior.
 This option MUST NOT be configurable at the level of a database object,
 collection object, or at the level of an individual write operation.
 
+Requirements for Retryable Writes
+---------------------------------
+
+Supported Server Versions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Like sessions, retryable writes require a MongoDB 3.6 replica set or shard
+cluster operating with feature compatibility version 3.6 (i.e. the
+``{setFeatureCompatibilityVersion: 3.6}`` administrative command has been run on
+the cluster). Drivers SHOULD verify server eligibility by ensuring that
+``maxWireVersion`` is at least six, the ``logicalSessionTimeoutMinutes``
+field is present in the server's ``isMaster`` response, and the server type is
+not standalone.
+
+If the server selected for the first attempt of a retryable write operation does
+not support retryable writes, drivers MUST execute the write as if retryable
+writes were not enabled. Drivers MUST NOT include a transaction ID in the write
+command and MUST not retry the command under any circumstances.
+
+In a shard cluster, it is possible that mongos may appear to support retryable
+writes but an individual shard in the cluster does not (e.g. replica set's
+feature compatibility version is downgraded, standalone is added a new shard).
+In these rare cases, a write command that fans out to a shard that does not
+support retryable writes may partially fail and an error may be reported in the
+write result from mongos (e.g. ``writeErrors`` array in the bulk write result).
+This does not constitute a retryable error. Drivers MUST relay such errors to
+the user.
+
+Supported Write Operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+MongoDB 3.6 will support retryability for some, but not all, write operations.
+
+Supported single-statement write operations include ``insertOne()``,
+``updateOne()``, ``replaceOne()``, ``deleteOne()``, ``findOneAndDelete()``,
+``findOneAndReplace()``, and ``findOneAndUpdate()``.
+
+Supported multi-statement write operations include ``insertMany()`` and
+``bulkWrite()``. The ordered option may be ``true`` or ``false``. In the case of
+``bulkWrite()``, the requests parameter may not include ``UpdateMany`` or
+``DeleteMany`` operations.
+
+These methods above are defined in the `CRUD`_ specification.
+
+Later versions of MongoDB may add support for additional write operations.
+
+Drivers MUST document operations that support retryable behavior and the
+conditions for which retryability is determined (see:
+`How will users know which operations are supported?`_). Drivers are not
+required to exhaustively document all operations that do not support retryable
+behavior.
+
+Unsupported Write Operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
+not support retryable behavior. Drivers MUST NOT add a transaction ID to any
+write command with an unacknowledged write concern executed within a MongoClient
+where retryable writes have been enabled. Drivers MUST NOT retry these commands.
+
+Write commands where a single statement might affect multiple documents will not
+be initially supported by MongoDB 3.6, although this may change in the future.
+This includes an `update`_ command where any statement in the updates sequence
+specifies a ``multi`` option of ``true`` or a `delete`_ command where any
+statement in the ``deletes`` sequence specifies a ``limit`` option of ``0``. In
+the context of the `CRUD`_ specification, this includes the ``updateMany()`` and
+``deleteMany()`` methods as well as ``bulkWrite()`` where the requests parameter
+includes an ``UpdateMany`` or ``DeleteMany`` operation. Drivers MUST NOT add a
+transaction ID to any single- or multi-statement write commands that include one
+or more multi-document write operations. Drivers MUST NOT retry these commands
+if they fail to return a response.
+
+.. _update: https://docs.mongodb.com/manual/reference/command/update/
+.. _delete: https://docs.mongodb.com/manual/reference/command/delete/
+
+Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
+will not be initially supported by MongoDB 3.6, although this may change in the
+future. This includes, but is not limited to, an `aggregate`_ command using the
+``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to these
+commands and MUST NOT retry these commands if they fail to return a response.
+
+.. _insert: https://docs.mongodb.com/manual/reference/command/insert/
+.. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
+.. _aggregate: https://docs.mongodb.com/manual/reference/command/aggregate/
+
+Implementing Retryable Writes
+-----------------------------
+
 Generating Transaction IDs
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The server requires each retryable write operation to provide a unique
 transaction ID in its command document. The transaction ID consists of a server
@@ -128,12 +216,12 @@ thread at a time, drivers should not need to worry about race conditions when
 incrementing the transaction number.
 
 Behavioral Changes for Write Commands
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MUST automatically add a transaction ID to all supported write commands
 executed via a specific `CRUD`_ method (e.g. ``updateOne()``) or write command
 method (e.g. ``executeWriteCommand()``) within a MongoClient where retryable
-writes have been enabled.
+writes have been enabled and when the selected server supports retryable writes.
 
 .. _CRUD: ../crud/crud.rst
 
@@ -175,17 +263,22 @@ When constructing multiple write commands for a multi-statement write operation
 (i.e. ``insertMany()`` and ``bulkWrite()``), drivers MUST increment the
 transaction number for each supported write command in the batch.
 
-Retrying Write Commands
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Drivers MUST only attempt to retry a write command that encounters a retryable
-error. Drivers MUST NOT attempt to retry a write command on any other error.
+Executing Retryable Write Commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When selecting a writable server for the first attempt of a retryable write
-command, drivers MUST allow a server selection error to propagate. If the
-selected server's maximum wire version does not support retryable writes,
-drivers MUST raise a client-side error. In both cases, the caller is able to
-infer that no attempt was made.
+command, drivers MUST allow a server selection error to propagate. In this case,
+the caller is able to infer that no attempt was made.
+
+If retryable writes is not enabled or the selected server does not support
+retryable writes, drivers MUST NOT include a transaction ID in the command and
+MUST attempt to execute the write command exactly once and allow any errors to
+propagate. In this case, the caller is able to infer that an attempt was made.
+
+If retryable writes are enabled and the selected server supports retryable
+writes, drivers MUST add a transaction ID to the command. Drivers MUST only
+attempt to retry a write command if the first attempt yields a retryable error.
+Drivers MUST NOT attempt to retry a write command on any other error.
 
 If the first attempt of a write command including a transaction ID encounters a
 retryable error, the driver MUST update its topology according to the SDAM spec
@@ -195,9 +288,9 @@ should then proceed with selecting a writable server for the retry attempt.
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 If the driver cannot select a server for the retry attempt or the selected
-server does not support retryable writes (e.g. mixed-version cluster), retrying
-is not possible and drivers MUST raise the original retryable error. In both
-cases, the caller is able to infer that an attempt was made.
+server does not support retryable writes, retrying is not possible and drivers
+MUST raise the original retryable error. In both cases, the caller is able to
+infer that an attempt was made.
 
 If the retry attempt also fails, drivers MUST update their topology according to
 the SDAM spec (see: `Error Handling`_). If an error would not allow the caller
@@ -215,22 +308,50 @@ Consider the following pseudo-code:
 
 .. code:: typescript
 
-  function executeRetryableWrite(command) {
+  /**
+   * Checks if a server supports retryable writes.
+   */
+  function isRetryableWritesSupported(server) {
+    if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
+      return false;
+    }
+
+    if ( ! server.hasLogicalSessionTimeoutMinutes()) {
+      return false;
+    }
+
+    if (server.isStandalone()) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Executes a write command in the context of a MongoClient where retryable
+   * writes have been enabled. The session parameter may be an implicit or
+   * explicit client session (depending on how the CRUD method was invoked).
+   */
+  function executeRetryableWrite(command, session) {
     /* Allow ServerSelectionException to propagate to our caller, which can then
      * assume that no attempts were made. */
     server = selectServer("writable");
 
-    /* UnsupportedException will inform the caller of a configuration error in
-     * their application (i.e. using retryWrites=true with an old cluster) */
-    if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
-      throw new UnsupportedException();
+    /* If the server does not support retryable writes, execute the write as if
+     * retryable writes are not enabled. */
+    if ( ! isRetryableWritesSupported()) {
+      return executeCommand(server, command);
     }
+
+    /* Incorporate lsid and txnNumber fields into the command document. These
+     * values will be derived from the implicit or explicit session object. */
+    retryableCommand = addTransactionIdToCommand(command, session);
 
     /* NetworkException and NotMasterException are both retryable errors. If
      * caught, remember the exception, update SDAM accordingly, and proceed with
      * retrying the operation. */
     try {
-      return executeCommand(server, command);
+      return executeCommand(server, retryableCommand);
     } catch (NetworkException originalError) {
       updateTopologyDescriptionForNetworkError(server, originalError);
     } catch (NotMasterException originalError) {
@@ -248,11 +369,9 @@ Consider the following pseudo-code:
 
     /* If the server selected for retrying is too old, throw the original error.
      * The caller can then infer that an attempt was made and failed. This case
-     * is very rare, and likely means that the cluster has mixed versions, just
-     * experienced a fail over, and we missed the error that retryable writes
-     * were not supported during the first attempt (3.6 feature compatibility
-     * could not have been enabled). */
-    if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
+     * is very rare, and likely means that the cluster is in the midst of a
+     * downgrade. */
+    if ( ! isRetryableWritesSupported()) {
       throw originalError;
     }
 
@@ -263,7 +382,7 @@ Consider the following pseudo-code:
      * error. Other exceptions originating from the server should be allowed to
      * propagate. */
     try {
-      return executeCommand(server, command);
+      return executeCommand(server, retryableCommand);
     } catch (NetworkException secondError) {
       updateTopologyDescriptionForNetworkError(server, secondError);
       throw secondError;
@@ -286,83 +405,6 @@ different than if a retryable error had been encountered without retryable
 behavior enabled or supported by the driver. Drivers are encouraged to provide
 access to an intermediary write result (e.g. BulkWriteResult, InsertManyResult)
 through the BulkWriteException, in accordance with the `CRUD`_ specification.
-
-Supported Write Operations
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-MongoDB 3.6 will support retryability for some, but not all, write operations.
-
-Supported single-statement write operations include ``insertOne()``,
-``updateOne()``, ``replaceOne()``, ``deleteOne()``, ``findOneAndDelete()``,
-``findOneAndReplace()``, and ``findOneAndUpdate()``.
-
-Supported multi-statement write operations include ``insertMany()`` and
-``bulkWrite()``. The ordered option may be ``true`` or ``false``. In the case of
-``bulkWrite()``, the requests parameter may not include ``UpdateMany`` or
-``DeleteMany`` operations.
-
-These methods above are defined in the `CRUD`_ specification.
-
-Later versions of MongoDB may add support for additional write operations.
-
-Drivers MUST document operations that support retryable behavior and the
-conditions for which retryability is determined (see:
-`How will users know which operations are supported?`_). Drivers are not
-required to exhaustively document all operations that do not support retryable
-behavior.
-
-Unsupported Write Operations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When selecting a writable server for the first attempt of a retryable write
-operation, drivers MUST raise a client-side error if the server's maximum wire
-version does not support retryable writes. It is still possible that a 3.6
-server may not support retryable writes if the
-``{setFeatureCompatibilityVersion: 3.6}`` admin command has not been run on the
-cluster; however, that can only be reported as a server-side error (discussed
-later).
-
-Write commands executed on a standalone server do not support retryable
-behavior. Drivers MUST NOT consider the server type when deciding to include a
-transaction ID in a supported write command and instead rely on the server to
-raise an error in this case. Such an error will inform users that the driver has
-been misconfigured.
-
-Write commands specifying an unacknowledged write concern (e.g. ``{w: 0})``) do
-not support retryable behavior. Drivers MUST NOT add a transaction ID to any
-write command with an unacknowledged write concern executed within a MongoClient
-where retryable writes have been enabled. Drivers MUST NOT retry these commands.
-
-Write commands where a single statement might affect multiple documents will not
-be initially supported by MongoDB 3.6, although this may change in the future.
-This includes an `update`_ command where any statement in the updates sequence
-specifies a ``multi`` option of ``true`` or a `delete`_ command where any
-statement in the ``deletes`` sequence specifies a ``limit`` option of ``0``. In
-the context of the `CRUD`_ specification, this includes the ``updateMany()`` and
-``deleteMany()`` methods as well as ``bulkWrite()`` where the requests parameter
-includes an ``UpdateMany`` or ``DeleteMany`` operation. Drivers MUST NOT add a
-transaction ID to any single- or multi-statement write commands that include one
-or more multi-document write operations. Drivers MUST NOT retry these commands
-if they fail to return a response.
-
-.. _update: https://docs.mongodb.com/manual/reference/command/update/
-.. _delete: https://docs.mongodb.com/manual/reference/command/delete/
-
-Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
-will not be initially supported by MongoDB 3.6, although this may change in the
-future. This includes, but is not limited to, an `aggregate`_ command using the
-``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to these
-commands and MUST NOT retry these commands if they fail to return a response.
-
-.. _insert: https://docs.mongodb.com/manual/reference/command/insert/
-.. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
-.. _aggregate: https://docs.mongodb.com/manual/reference/command/aggregate/
-
-Retryable write commands may not be supported at all in MongoDB 3.6 if the
-``{setFeatureCompatibilityVersion: 3.6}`` admin command has not been run on the
-cluster. Additionally, retryable write commands may not be supported on a shard
-cluster where one or more shards is a standalone server. Drivers cannot
-anticipate these scenarios and MUST rely on the server to raise an error.
 
 Logging Retry Attempts
 ======================
@@ -621,6 +663,11 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2017-11-02: Drivers should not raise errors if selected server does not support
+retryable writes and instead fall back to non-retryable behavior. In addition to
+wire protocol version, drivers may check for ``logicalSessionTimeoutMinutes`` to
+determine if a server supports sessions and retryable writes.
 
 2017-10-26: Errors when retrying may be raised instead of the original error
 provided they allow the user to infer that an attempt was made.
