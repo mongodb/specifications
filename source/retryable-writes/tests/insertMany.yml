@@ -45,12 +45,18 @@ tests:
     -
         description: "InsertMany fails after multiple network errors"
         failPoint:
-            mode: { times: 2 }
+            # Normally, a mongod will insert the documents as a batch with a
+            # single commit. If this fails, mongod may try to insert each
+            # document one at a time depending on the failure. Therefore our
+            # single insert command may trigger the failpoint twice on each
+            # driver attempt. This test permanently enables the fail point to
+            # ensure the retry attempt always fails.
+            mode: "alwaysOn"
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
             name: "insertMany"
             arguments:
-                documents: 
+                documents:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
                     - { _id: 4, x: 44 }

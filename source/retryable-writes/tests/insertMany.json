@@ -110,9 +110,7 @@
     {
       "description": "InsertMany fails after multiple network errors",
       "failPoint": {
-        "mode": {
-          "times": 2
-        },
+        "mode": "alwaysOn",
         "data": {
           "failBeforeCommitExceptionCode": 1
         }
