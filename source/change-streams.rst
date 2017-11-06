@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: September 21, 2017
+:Last Modified: November 06, 2017
 :Version: 1.5
 
 .. contents::
@@ -228,7 +228,7 @@ The driver API consists of one helper method located on a driver’s Collection 
 
 The helper method must construct an aggregation command with a REQUIRED initial ``$changeStream`` stage.  A driver MUST NOT throw a custom exception if multiple ``$changeStream`` stages are present (e.g. if a user also passed ``$changeStream`` in the pipeline supplied to the helper), as the server will return an error.
 
-The aggregation command MUST use the inherited read concern of the collection it is being run against, in accordance with the `Read and Write Concern specification <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code>`_ .  The initial implementation of change streams on the server requires a “majority” read concern, drivers MUST document this requirement.  Drivers SHALL NOT throw an exception if any other read concern is specified, but instead should depend on the server to return an error.
+The helper method MUST determine a read concern for the operation in accordance with the `Read and Write Concern specification <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code>`_.  The initial implementation of change streams on the server requires a “majority” read concern, drivers MUST document this requirement.  Drivers SHALL NOT throw an exception if any other read concern is specified, but instead should depend on the server to return an error.
 
 The stage has the following shape:
 
@@ -431,14 +431,17 @@ Changelog
 | 2017-08-07 | Fixed typo in command format                               |
 +------------+------------------------------------------------------------+
 | 2017-08-16 | Added clarification regarding Resumable errors             |
-+-------------------------------------------------------------------------+
++------------+------------------------------------------------------------+
 | 2017-08-16 | Fixed formatting of resume process                         |
-+-------------------------------------------------------------------------+
++------------+------------------------------------------------------------+
 | 2017-08-22 | Clarified killing cursors during resume process            |
-+-------------------------------------------------------------------------+
++------------+------------------------------------------------------------+
 | 2017-09-06 | Remove `desired user experience` example                   |
-+-------------------------------------------------------------------------+
++------------+------------------------------------------------------------+
 | 2017-09-21 | Clarified that we need to close the cursor on missing token|
-+-------------------------------------------------------------------------+
++------------+------------------------------------------------------------+
 | 2017-09-26 | Clarified that change stream options may be added later    |
-+-------------------------------------------------------------------------+
++------------+------------------------------------------------------------+
+| 2017-11-06 | Defer to Read and Write concern spec for determining a read|
+|            | concern for the helper method.                             |
++------------+------------------------------------------------------------+
