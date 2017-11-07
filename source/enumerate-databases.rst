@@ -60,6 +60,27 @@ SHOULD use the defined names. However, where a driver or language’s naming
 conventions would conflict, drivers SHOULD honor their existing conventions. For
 example, a driver may use ``list_databases`` instead of ``listDatabases``.
 
+Filters
+-------
+Drivers SHOULD support the ``filter`` option when implementing the `listDatabases`_ 
+database command. The ``filter`` option is a query predicate that determines which 
+databases are listed in the command result. You can specify a condition on any of the
+database fields returned in the command output: 
+
+.. _listDatabases: https://docs.mongodb.com/manual/reference/command/listDatabases/
+
+- ``name``
+- ``sizeOnDisk``
+- ``empty``
+- ``shards``
+ 
+
+For example, to list only databases whose names begin with "foo":
+
+::
+
+  > db.adminCommand({listDatabases: 1, filter: {name: /^foo/}});
+
 Driver Methods
 --------------
 
@@ -106,6 +127,8 @@ result. This method SHOULD be named ``listDatabases``.
 Drivers MAY report ``totalSize`` (e.g. through an additional output variable on
 the ``listDatabases`` method), but this is not necessary.
 
+Drivers SHOULD support the ``filter`` option when implementing this method. 
+
 Enumerating Database Names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -134,6 +157,8 @@ Older versions of the server that do not support the ``nameOnly`` option for the
 drivers SHOULD always specify the ``nameOnly`` option when they only intend to
 access database names from the ``listDatabases`` command result.
 
+Drivers SHOULD support the ``filter`` option when implementing this method. 
+
 Enumerating MongoDatabase Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -148,6 +173,8 @@ MongoDatabase through MongoClient (e.g. read preference, write concern).
 
 Drivers SHOULD specify the ``nameOnly`` option when executing the
 ``listDatabases`` command for this method.
+
+Drivers SHOULD support the ``filter`` option when implementing this method. 
 
 Replica Sets
 ------------
@@ -237,4 +264,4 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
-Nothing yet.
+2017-10-30 Support filter option in listDatabases command
