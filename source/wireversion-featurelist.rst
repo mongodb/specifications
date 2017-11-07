@@ -9,10 +9,6 @@ Server Wire version and Feature List
      - Wire version
      - Feature List
 
-   * - 2.4 and before
-     - 0
-     - Text search
-
    * - 2.6
      - 1
      - | Aggregation cursor
@@ -33,6 +29,8 @@ Server Wire version and Feature List
    * - 3.2
      - 4
      - | (find/getMore/killCursors) commands
+       | currentOp command
+       | fsyncUnlock command
        | findAndModify take write concern
        | Commands take read concern
        | Document-level validation
