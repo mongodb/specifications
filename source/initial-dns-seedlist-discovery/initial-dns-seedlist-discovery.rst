@@ -10,7 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Version: 1.1.4
+:Last Modified: 2017-11-07
+:Version: 1.1.5
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -117,6 +118,12 @@ A Client MUST use options specified in the Connection String, and options
 passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), to override options provided through TXT records.
 
+If listable options, such as ``readPreferenceTags``, are present in a TXT
+record AND in MongoClient constructor (URI, or options passed in code), then a
+Client MUST discard *all* elements of this listable option obtained through
+the TXT record(s) and *only* use these elements from the MongoClient
+constructor.
+
 .. _`Connection String spec`: ../connection-string/connection-string-spec.rst#defining-connection-options
 
 If any connection string option in a TXT record is incorrectly formatted, a
@@ -182,9 +189,9 @@ See README.rst in the accompanying `test directory`_.
 .. _`test directory`: tests
 
 Additionally, see the ``mongodb+srv`` test ``invalid-uris.yml`` in the `Connection
-String Spec`_ tests.
+String Spec tests`_.
 
-.. _`Connection String Spec`: ../connection-string/tests
+.. _`Connection String Spec tests`: ../connection-string/tests
 
 Motivation
 ==========
@@ -241,6 +248,11 @@ SRV records.
 
 ChangeLog
 =========
+
+2017-11-07 — 1.1.5
+    Clarified that all parts of listable options such as readPreferenceTags
+    are ignored if they are also present in options to the MongoClient
+    constructor.
 
 2017-11-01 — 1.1.4
     Clarified that individual TXT records can have multiple strings.

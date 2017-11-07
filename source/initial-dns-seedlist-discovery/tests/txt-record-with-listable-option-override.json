@@ -1,5 +1,5 @@
 {
-  "uri": "mongodb+srv://test7.test.build.10gen.cc/?replicaSet=repl0",
+  "uri": "mongodb+srv://test7.test.build.10gen.cc/?replicaSet=repl0&readPreferenceTags=dc:fr,item:🧀&readPreferenceTags=dc:de,item:🌭",
   "seeds": [
     "localhost.build.10gen.cc:27017"
   ],
@@ -13,7 +13,12 @@
     "readPreference": "secondaryPreferred",
     "readPreferenceTags": [
       {
-        "item": "🥃"
+        "dc": "fr",
+        "item": "🧀"
+      },
+      {
+        "dc": "de",
+        "item": "🌭"
       }
     ]
   }

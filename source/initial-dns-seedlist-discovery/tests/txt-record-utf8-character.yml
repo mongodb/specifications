@@ -8,4 +8,5 @@ hosts:
 options:
     replicaSet: repl0
     readPreference: secondaryPreferred
-    readPreferenceTags: 🥃
+    readPreferenceTags:
+        - item: 🥃

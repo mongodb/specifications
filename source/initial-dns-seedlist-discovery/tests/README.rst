@@ -33,7 +33,7 @@ these tests::
   test5.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=300000&socketTimeoutMS=300000"
   test6.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=200000"
   test6.test.build.10gen.cc.                86400  IN TXT  "socketTimeoutMS=200000"
-  test7.test.build.10gen.cc.                86400  IN TXT  "readPreference=secondaryPreferred&readPreferenceTags=🥃"
+  test7.test.build.10gen.cc.                86400  IN TXT  "readPreference=secondaryPreferred&readPreferenceTags=item:🥃"
   test8.test.build.10gen.cc.                86400  IN TXT  "readPreference"
   test9.test.build.10gen.cc.                86400  IN TXT  "unknownKey=foo"
   test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=thisShouldBeAnInt"
