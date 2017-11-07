@@ -21,8 +21,8 @@ Server Wire version and Feature List
   
    * - 3.0
      - 3
-     - | List collections
-       | List indexes
+     - | listCollections
+       | listIndexes
        | SCRAM-SHA1
        | explain command 
 
@@ -47,6 +47,7 @@ Server Wire version and Feature List
        | Retryable Writes
        | Causally Consistent Reads
        | Logical Sessions
+       | listDatabases
 
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
