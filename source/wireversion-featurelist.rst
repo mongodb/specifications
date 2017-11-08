@@ -23,7 +23,7 @@ Server Wire version and Feature List
      - 3
      - | listCollections
        | listIndexes
-       | SCRAM-SHA1
+       | SCRAM-SHA-1
        | explain command 
 
    * - 3.2
