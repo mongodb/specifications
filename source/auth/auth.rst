@@ -6,13 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
+:Spec Version: 1.3
 :Title: Driver Authentication
 :Author: Craig Wilson
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
-:Minimum Server Version: 1.8
-:Last Modified: 2017-08-23
+:Minimum Server Version: 2.6
+:Last Modified: 2017-11-10
 
 .. contents::
 
@@ -118,39 +119,6 @@ Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively,
 	#. Upon opening a socket, drivers MUST issue `MongoDB Handshake <../mongodb-handshake/handshake.rst>`_ immediately. This allows a driver to determine whether the server is an Arbiter.
 	#. A driver MUST perform authentication with all supplied credentials for all server types with the exception of RSArbiter.
 	#. A single invalid credential is the same as all credentials being invalid.
-
-
-Lazy Authentication
-~~~~~~~~~~~~~~~~~~~
-
-Some drivers need to support lazy authentication for backwards compatibility. A credential cache MUST be employed to handle authentication within a MongoClient. When a user has requested authentication against a particular database, those credentials MUST be remembered. When a new socket is created, all the existing authentications MUST be applied to the new socket. In addition, when an existing socket is checked out, any authentications that have taken place since its last use MUST also be applied. Should a user request authentication with different credentials against a database that already exists in the credential cache, an error MUST be raised.
-
-.. code:: python
-
-	db = client.getDB("foo")
- 
-	## this will send the authentication against the "foo" database
-	db.auth(user: "user1", password: "password")
-
-	## this should NOT raise an error because the credential is the same against the "foo" database
-	db.auth(user: "user1", password: "password")
-
-	## this should raise an error as the credential is different
-	db.auth(user: "user2", password: "password")
-	 
-	## this should also raise an error even though the "db" instance we are working with is not
-	## the "foo" database, "foo" is the database the authentication should be tested against.
-	db = client.getDB("bar")
-	db.auth(user: "user2", password: "password", source: "foo")
-
-	## logout allows the user to log in to a database with a different credential
-	db = db.client.getDB("foo");
-	db.logout();
-	db.auth(user: "user2", password: "password")
-
-In addition, drivers supporting lazy authentication may need to support logout as well. In practice, it works exactly the opposite of authenticate. When logout is called, those credentials MUST be forgotten. When an existing socket is checked out, any forgotten credential must be de-authenticated on that socket.
-
-If the initial authentication fails, an error SHOULD be raised and the credentials SHOULD NOT be added to the credential cache. However, when authentication fails using credentials from the credential cache, all open connections MUST be closed and the server type set to ``Unknown``.
 
 
 --------------------------------
@@ -493,13 +461,15 @@ Tests have been defined in the associated files:
 Backwards Compatibility
 =======================
 
-There should be no backwards compatibility concerns. Drivers currently supporting late-bound authentication only should be able to migrate to eager authentication while still allowing lazy authentication.
+Drivers may need to remove support for association of more than one credential with a MongoClient, including
 
+	* Deprecation and removal of MongoClient constructors that take as an argument more than a single credential
+	* Deprecation and removal of methods that allow lazy authentication (i.e post-MongoClient construction)
 
 Reference Implementation
 ========================
 
-The .NET driver currently uses eager authentication and abides by this specification. The Java driver abides by this specification and uses a mix of eager and lazy authentication.
+The Java and .NET drivers currently uses eager authentication and abide by this specification.
 
 Q & A
 =====
@@ -517,17 +487,35 @@ Q: It's possible to continue using authenticated sockets even if new sockets fai
 	Yes, that's technically true. The issue with doing that is for drivers using connection pooling. An application would function normally until an operation needed an additional connection(s) during a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to understand for a user.
 
 Q: Should a driver support multiple credentials?
-    The server supports multiple credentials. If a driver wants to support all of the server, then it needs to support multiple credentials. However, since multiple authentications are not supported against a single database, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the $external database). 
+    No. 
 
+    Historically, the MongoDB server and drivers have supported multiple credentials, one per authSource, on a single connection.  It was necessary because early versions of MongoDB allowed a user to be granted privileges 
+    to access the database in which the user was defined (or all databases in the special case of the "admin" database).  But with the introduction of role-based access control in MongoDB 2.6, that restriction was 
+    removed and it became possible to create applications that access multiple databases with a single authenticated user.
+
+    Role-based access control also introduces the potential for accidental privilege escalation.  An application may, for example, authenticate user A from authSource X, and user B from authSource Y, thinking that 
+    user A has privileges only on collections in X and user B has privileges only on collections in Y.  But with role-based access control that restriction no longer exists, and it's possible that user B has, for example,
+    more privileges on collections in X than user A does.  Due to this risk it's generally safer to create a single user with only the privileges required for a given application, and authenticate only that one user
+    in the application.
+
+    In addition, since only a single credential is supported per authSource, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the "$external" database). 
+
+    Finally, MongoDB 3.6 introduces sessions, and allows at most a single authenticated user on any connection which makes use of one. Therefore any application that requires multiple authenticated users will not be able to make use of any feature that builds on sessions (e.g. retryable writes).  
+    
+    Drivers should therefore guide application creators in the right direction by supporting the association of at most one credential with a MongoClient instance. 
+
+Q: Should a driver support lazy authentication?
+    No, for the same reasons as given in the previous section, as lazy authentication is another mechanism for allowing multiple credentials to be associated with a single MongoClient instance.
 
 Version History
 ===============
 
-2017-08-23: Changed the list of server types requiring authentication.
-
-2016-11-01: Made providing username for X509 authentication optional.
-
-2016-08-17: Added FAQ regarding multiple credentials.
+Version 1.3 Changes
+	* Updated minimum server version to 2.6
+	* Updated the Q & A to recommend support for at most a single credential per MongoClient
+	* Removed lazy authentication section
+	* Changed the list of server types requiring authentication
+	* Made providing username for X509 authentication optional
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
