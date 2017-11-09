@@ -469,7 +469,7 @@ Drivers may need to remove support for association of more than one credential w
 Reference Implementation
 ========================
 
-The Java and .NET drivers currently uses eager authentication and abides by this specification.
+The Java and .NET drivers currently uses eager authentication and abide by this specification.
 
 Q & A
 =====
