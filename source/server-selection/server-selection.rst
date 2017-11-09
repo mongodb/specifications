@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: June 13, 2017
-:Version: 1.6
+:Last Modified: November 10, 2017
+:Version: 1.7
 
 .. contents::
 
@@ -340,6 +340,14 @@ smallestMaxStalenessSeconds
 
 A constant, 90 seconds. See "Smallest allowed value for maxStalenessSeconds"
 in the Max Staleness Spec.
+
+serverSelector
+~~~~~~~~~~~~~~
+
+An optional, application-provided function that augments the server selection
+rules.  The functions takes as a parameter a list of server descriptions representing
+the suitable servers for the read or write operation, and returns a list of server
+descriptions that should still be considered suitable.
 
 Read Preference
 ---------------
@@ -750,17 +758,20 @@ as follows:
 
 3. Find suitable servers by topology type and operation type
 
-4. If there are any suitable servers, choose one at random from those
+4. Filter the suitable servers by calling the optional, application-provided server
+   selector.
+
+5. If there are any suitable servers, choose one at random from those
    within the latency window and return it; otherwise, continue to step #5
 
-5. Request an immediate topology check, then block the server selection
+6. Request an immediate topology check, then block the server selection
    thread until the topology changes or until the server selection
    timeout has elapsed
 
-6. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
+7. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
    the selection start time, raise a `server selection error`_
 
-7. Goto Step #2
+8. Goto Step #2
 
 Single-threaded server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -804,18 +815,21 @@ as follows:
 
 6. Find suitable servers by topology type and operation type
 
-7. If there are any suitable servers, choose one at random from those
+7. Filter the suitable servers by calling the optional, application-provided
+   server selector.
+
+8. If there are any suitable servers, choose one at random from those
    within the latency window and return it; otherwise, mark the topology
    stale and continue to step #8
 
-8. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
+9. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
    the selection start time, raise a `server selection error`_; otherwise,
    goto Step #4
 
-9. If the current time exceeds the maximum time, raise a
+10. If the current time exceeds the maximum time, raise a
    `server selection error`_
 
-10. Goto Step #4
+11. Goto Step #4
 
 Before using a socket to the selected server, drivers MUST check whether
 the socket has been used in `socketCheckIntervalMS
@@ -1143,6 +1157,9 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
 
             servers = all servers in topologyDescription matching criteria
 
+            if serverSelector is not null and servers is not empty:
+                servers = serverSelector(servers)
+
             if servers is not empty:
                 in_window = servers within the latency window
                 selected = random entry from in_window
@@ -1214,6 +1231,9 @@ Pseudocode for `single-threaded server selection`_::
                     throw error
 
             servers = all servers in topologyDescription matching criteria
+
+            if serverSelector is not null and servers is not empty:
+                servers = serverSelector(servers)
 
             if servers is not empty:
                 in_window = servers within the latency window
@@ -1642,6 +1662,8 @@ References
 
 Changes
 =======
+
+2017-11-10: Added application-configurated server selector.
 
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
