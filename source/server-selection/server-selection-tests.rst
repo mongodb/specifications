@@ -8,7 +8,7 @@ Server Selection -- Test Plan
 :Advisors: David Golden
 :Status: Draft
 :Type: Standards
-:Last Modified: February 2, 2015
+:Last Modified: November 15, 2017
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -256,3 +256,16 @@ return a set of three suitable servers within the latency window::
 
 Drivers SHOULD check that their implementation selects one of ``primary``, ``secondary_1``,
 and ``secondary_2`` at random.
+
+Application-Provided Server Selector
+====================================
+
+The Server Selection spec allows drivers to configure registration of a server selector
+function that filters the list of suitable servers.  Drivers implementing this part
+of the spec MUST test that the application-provided server selector is executed
+as part of the server selection process.
+
+For example, execute a test against a replica set: Register a server selector that selects
+the suitable server with the highest port number. Execute 10 queries with nearest read
+preference and, using command monitoring, assert that all the operations execute on the
+member with the highest port number.
