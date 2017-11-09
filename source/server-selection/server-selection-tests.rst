@@ -262,5 +262,5 @@ Application-Provided Server Selector
 
 The Server Selection spec allows drivers to configure registration of a server selector
 function that filters the list of suitable servers.  Drivers implementing this part
-of the spec MUST test that the applicaton-provided server selector is executed
+of the spec MUST test that the application-provided server selector is executed
 as part of the server selection process.
