@@ -1,0 +1,15 @@
+uri: "mongodb+srv://test7.test.build.10gen.cc/?replicaSet=repl0&readPreferenceTags=dc:fr,item:🧀&readPreferenceTags=dc:de,item:🌭"
+seeds:
+    - localhost.build.10gen.cc:27017
+hosts:
+    - localhost:27017
+    - localhost:27018
+    - localhost:27019
+options:
+    replicaSet: repl0
+    readPreference: secondaryPreferred
+    readPreferenceTags:
+        - dc: "fr"
+          item: "🧀"
+        - dc: "de"
+          item: "🌭"

@@ -10,7 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Version: 1.1.4
+:Last Modified: 2017-11-07
+:Version: 1.1.5
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -53,13 +54,14 @@ connection string and SDAM specifications. In this protocol, the comma
 separated list of host names is replaced with a single host name. The
 format is::
 
-    mongodb+srv://servername.example.com/{options}
+    mongodb+srv://{hostname}/{options}
 
 Seedlist Discovery
 ------------------
 
-In this preprocessing step, the driver will query the DNS server for the SRV
-record ``_mongodb._tcp.servername.example.com``. This DNS query is expected to
+In this preprocessing step, the driver will query the DNS server for SRV
+records on the ``{hostname}``, prefixed with ``_mongodb._tcp.``:
+``_mongodb._tcp.{hostname}``. This DNS query is expected to
 respond with one or more SRV records. From the DNS result, the driver now MUST
 behave the same as if an ``mongodb://`` URI was provided with all the host names
 and port numbers that were returned as part of the DNS SRV query result.
@@ -90,7 +92,8 @@ SRV record for ``servername.example.com``.
 Default Connection String Options
 ---------------------------------
 
-A Client MUST also query the DNS server for TXT records. If available, these
+As a second preprocessing step, a Client MUST also query the DNS server for
+TXT records on the ``{hostname}``. If available, these
 TXT records provide default connection string options. In most cases only one
 TXT record is necessary. The maximum length of a TXT record string is 255
 characters, but there can be multiple strings per TXT record. A Client MUST
@@ -116,6 +119,12 @@ connection to MongoDB.
 A Client MUST use options specified in the Connection String, and options
 passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), to override options provided through TXT records.
+
+If listable options, such as ``readPreferenceTags``, are present in a TXT
+record AND in MongoClient constructor (URI, or options passed in code), then a
+Client MUST discard *all* elements of this listable option obtained through
+the TXT record(s) and *only* use these elements from the MongoClient
+constructor.
 
 .. _`Connection String spec`: ../connection-string/connection-string-spec.rst#defining-connection-options
 
@@ -182,9 +191,9 @@ See README.rst in the accompanying `test directory`_.
 .. _`test directory`: tests
 
 Additionally, see the ``mongodb+srv`` test ``invalid-uris.yml`` in the `Connection
-String Spec`_ tests.
+String Spec tests`_.
 
-.. _`Connection String Spec`: ../connection-string/tests
+.. _`Connection String Spec tests`: ../connection-string/tests
 
 Motivation
 ==========
@@ -241,6 +250,13 @@ SRV records.
 
 ChangeLog
 =========
+
+2017-11-07 — 1.1.5
+    Clarified that all parts of listable options such as readPreferenceTags
+    are ignored if they are also present in options to the MongoClient
+    constructor.
+
+    Clarified which host names to use for SRV and TXT DNS queries.
 
 2017-11-01 — 1.1.4
     Clarified that individual TXT records can have multiple strings.
