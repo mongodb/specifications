@@ -345,7 +345,7 @@ serverSelector
 ~~~~~~~~~~~~~~
 
 Implementations MAY allow configuration of an optional, application-provided function
-that augments the server selection rules.  The functions takes as a parameter a list
+that augments the server selection rules.  The function takes as a parameter a list
 of server descriptions representingthe suitable servers for the read or write operation,
 and returns a list of server descriptions that should still be considered suitable.
 
