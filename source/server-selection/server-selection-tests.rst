@@ -264,3 +264,8 @@ The Server Selection spec allows drivers to configure registration of a server s
 function that filters the list of suitable servers.  Drivers implementing this part
 of the spec MUST test that the application-provided server selector is executed
 as part of the server selection process.
+
+For example, execute a test against a replica set: Register a server selector that selects
+the suitable server with the highest port number. Execute 10 queries with nearest read
+preference and, using command monitoring, assert that all the operations execute on the
+member with the highest port number.
