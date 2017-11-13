@@ -489,13 +489,15 @@ A driver can determine whether a deployment supports sessions by checking
 whether the ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription``
 has a value or not. If it has a value the deployment supports sessions.
 However, in order for this determination to be valid, the driver MUST be
-connected to at least one server. Therefore, the detailed steps to determine
+connected to at least one server of a type that is able to report a value for
+``logicalSessionTimeoutMinutes``. Therefore, the detailed steps to determine
 whether sessions are supported are: 
 
 1. If the ``TopologyDescription`` indicates that the driver is not connected to
-any servers, a driver must do a server selection for any server. Server
-selection will either time out or result in a ``TopologyDescription`` that
-includes at least one connected server
+any servers, or only connected to servers of type RSArbiter or RSGhost, a driver must do
+a server selection for any server whose type is neither RSArbiter nor RSGhost. Server
+selection will either time out or result in a ``TopologyDescription`` that includes
+at least one connected server
 
 2. Having verified in step 1 that the ``TopologyDescription`` includes at least
 one connected server a driver can now determine whether sessions are supported
