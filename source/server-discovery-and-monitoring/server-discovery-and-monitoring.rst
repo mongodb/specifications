@@ -1264,10 +1264,9 @@ Logical Session Timeout
 
 Whenever a client updates the TopologyDescription from an ismaster response,
 it MUST set TopologyDescription.logicalSessionTimeoutMinutes to the smallest
-logicalSessionTimeoutMinutes value among all ServerDescriptions of
-known ServerType. If any ServerDescription of known ServerType has a null
-logicalSessionTimeoutMinutes, then
-TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.
+logicalSessionTimeoutMinutes value among ServerDescriptions of all ServerTypes
+except RSArbiter or RSGhost . If any have a null logicalSessionTimeoutMinutes,
+then TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.
 
 See the Driver Sessions Spec for the purpose of this value.
 
