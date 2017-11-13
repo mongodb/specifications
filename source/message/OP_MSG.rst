@@ -10,9 +10,9 @@ OP_MSG
 :Informed: Bryan Reinero, Chris Hendel, drivers@
 :Status: Approved
 :Type: Standards
-:Last Modified: 2017-08-17
+:Last Modified: 2017-11-12
 :Minimum Server Version: 3.6
-:Version: 1.0.1
+:Version: 1.1
 
 
 
@@ -322,11 +322,15 @@ $db                                       The database name to execute the
                                           command on. MUST be provided and
                                           be a valid database name.
 --------------- ------------------------- ---------------------------------
-$readPreference ``{ "mode": "primary" }`` Determines server selection. MUST
-                                          be provided when different then
-                                          default, regardless of ServerType.
-                                          MUST NOT be provided when using
-                                          default read preferences.
+$readPreference ``{ "mode": "primary" }`` Determines server selection, and
+                                          also whether a secondary server
+                                          permits reads or responds "not
+                                          master". See Server Selection Spec
+                                          for rules about when read preference
+                                          must or must not be included, and for
+                                          rules about when read preference
+                                          "primaryPreferred" must be added
+                                          automatically.
 =============== ========================= =================================
 
 Additional global arguments are likely to be introduced in the future and
@@ -571,7 +575,6 @@ Q & A
 Changelog
 =========
 
-
+- 2017-11-12 Specify read preferences for OP_MSG with direct connection
 - 2017-08-17 Added the ``User originating command`` section
 - 2017-07-18 Published 1.0.0
-

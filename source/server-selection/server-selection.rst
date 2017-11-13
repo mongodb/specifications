@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: June 13, 2017
-:Version: 1.6
+:Last Modified: November 12, 2017
+:Version: 1.7
 
 .. contents::
 
@@ -859,15 +859,16 @@ to the server differently:
 - Type Mongos: the read preference is sent to the server using the rules
   for `Passing read preference to mongos`_.
 
-- For all other types: clients MUST always set the ``slaveOK`` wire
+- For all other types, using OP_QUERY: clients MUST always set the ``slaveOK`` wire
   protocol flag on reads to ensure that any server type can handle the
   request.
 
-The single server is always suitable for write operations if it is available.
+- For all other types, using OP_MSG: If no read preference is configured by the
+  application, or if the application read preference is Primary, then
+  $readPreference MUST be set to ``{ "mode": "primaryPreferred" }`` to ensure
+  that any server type can handle the request.
 
-If the server is a secondary, write operations will fail with a "not master"
-error from the server; this is by design and is a consequence of using a direct
-connection to a secondary.
+The single server is always suitable for write operations if it is available.
 
 Topology types: ReplicaSetWithPrimary or ReplicaSetNoPrimary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1669,6 +1670,10 @@ future, require maxStalenessSeconds to be at least 90.
 
 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
 must retry selection after checking an idle socket and discovering it is broken.
+
+2017-11-12: Specify read preferences for OP_MSG with direct connection, and
+delete obsolete comment direct connections to secondaries getting "not master"
+errors by design.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
