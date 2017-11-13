@@ -498,7 +498,7 @@ Therefore, the detailed steps to determine whether sessions are supported are:
 * the driver is not connected to any servers, OR
 * is not a direct connection AND is not connected to a data-bearing server
 
-then a driver must do a server selection for any server whose type data-bearing.
+then a driver must do a server selection for any server whose type is data-bearing.
 Server selection will either time out or result in a ``TopologyDescription`` that
 includes at least one connected, data-bearing server
 
