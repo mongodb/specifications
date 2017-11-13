@@ -216,7 +216,7 @@
           }
         },
         "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": 1,
+        "logicalSessionTimeoutMinutes": 2,
         "setName": "rs"
       }
     },

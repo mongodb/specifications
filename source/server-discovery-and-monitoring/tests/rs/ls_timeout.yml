@@ -157,7 +157,7 @@ phases: [
             setName: "rs",
         }
     },
-    # An RSOther responds with an even lower logicalSessionTimeoutMinutes
+    # An RSOther responds with an even lower logicalSessionTimeoutMinutes, which is ignored
     {
         responses: [
             ["c:27017", {
@@ -193,7 +193,7 @@ phases: [
               }
             },
             topologyType: "ReplicaSetWithPrimary",
-            logicalSessionTimeoutMinutes: 1,
+            logicalSessionTimeoutMinutes: 2,
             setName: "rs",
         }
     },

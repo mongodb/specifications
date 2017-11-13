@@ -138,6 +138,16 @@ Seed list
 Server addresses provided to the client in its initial configuration,
 for example from the `connection string`_.
 
+Data-Bearing Server Type
+````````````````````````
+
+A server type from which a client can receive application data:
+
+* Mongos
+* RSPrimary
+* RSSecondary
+* Standalone
+
 Round trip time
 ```````````````
 
@@ -1264,8 +1274,8 @@ Logical Session Timeout
 
 Whenever a client updates the TopologyDescription from an ismaster response,
 it MUST set TopologyDescription.logicalSessionTimeoutMinutes to the smallest
-logicalSessionTimeoutMinutes value among ServerDescriptions of all ServerTypes
-except RSArbiter or RSGhost . If any have a null logicalSessionTimeoutMinutes,
+logicalSessionTimeoutMinutes value among ServerDescriptions of all data-bearing
+server types. If any have a null logicalSessionTimeoutMinutes,
 then TopologyDescription.logicalSessionTimeoutMinutes MUST be set to null.
 
 See the Driver Sessions Spec for the purpose of this value.
