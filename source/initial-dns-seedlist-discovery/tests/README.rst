@@ -25,7 +25,6 @@ these tests::
   _mongodb._tcp.test6.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test7.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test8.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
-  _mongodb._tcp.test9.test.build.10gen.cc.  86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test10.test.build.10gen.cc. 86400  IN SRV  27017  localhost.build.10gen.cc.
   _mongodb._tcp.test11.test.build.10gen.cc. 86400  IN SRV  27017  localhost.build.10gen.cc.
 
@@ -35,7 +34,6 @@ these tests::
   test6.test.build.10gen.cc.                86400  IN TXT  "socketTimeoutMS=200000"
   test7.test.build.10gen.cc.                86400  IN TXT  "readPreference=secondaryPreferred&readPreferenceTags=item:🥃"
   test8.test.build.10gen.cc.                86400  IN TXT  "readPreference"
-  test9.test.build.10gen.cc.                86400  IN TXT  "unknownKey=foo"
   test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=thisShouldBeAnInt"
   test11.test.build.10gen.cc.               86400  IN TXT  "connectTime" "outMS=150000" "&socketT" "imeoutMS" "=" "250000"
 
