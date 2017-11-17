@@ -305,7 +305,7 @@ the ``ClientSession`` as the value of the ``afterClusterTime`` field of the
         }
     }
 
-For the list commands that support causally consistent reads, see `ReadConcern`_ spec.
+For the lists of commands that support causally consistent reads, see `ReadConcern`_ spec.
 
 .. _ReadConcern: https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#read-concern/ 
 
@@ -517,4 +517,4 @@ Changelog
 - 2017-10-04: Added advanceOperationTime
 - 2017-10-05: How to handle default read concern
 - 2017-10-06: advanceOperationTime MUST NOT validate operationTime
-- 2017-11-17 : Added link to ReadConcern spec which list commands that support readConcern
+- 2017-11-17 : Added link to ReadConcern spec which lists commands that support readConcern
