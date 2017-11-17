@@ -516,5 +516,5 @@ Changelog
 - 2017-09-28: Update spec to reflect that replica sets use $clusterTime also now
 - 2017-10-04: Added advanceOperationTime
 - 2017-10-05: How to handle default read concern
-- 2017-10-06: advanceOperation MUST NOT validate operationTime
+- 2017-10-06: advanceOperationTime MUST NOT validate operationTime
 - 2017-11-17 : Added link to ReadConcern spec which list commands that support readConcern

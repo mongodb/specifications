@@ -80,13 +80,15 @@ For naming and deviation guidance, see the `CRUD specification <https://github.c
 
 The read concern option is available for the following operations: 
 - ``find`` command
-- ``aggregate`` command and the ``db.collection.aggregate()`` method
-- `` distinct`` command
+- ``aggregate`` command
+- ``distinct`` command
 - ``count`` command
 - ``parallelCollectionScan`` command
 - ``geoNear`` command
 - ``geoSearch`` command
 - ``mapReduce`` command with {out : inline} output option
+
+``aggregate`` command with $out and ``mapReduce`` command with "out" set to anything other than "inline" do not support readConcern.
 
 Unknown Levels and Additional Options for String Based ReadConcerns
 -------------------------------------------------------------------
