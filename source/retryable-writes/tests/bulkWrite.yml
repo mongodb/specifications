@@ -43,7 +43,7 @@ tests:
         # fail on the first attempt and succeed on the second, retry attempt.
         description: "All commands are retried"
         failPoint:
-            mode: { times: 3 }
+            mode: { times: 7 }
         operation:
             name: "bulkWrite"
             arguments:
