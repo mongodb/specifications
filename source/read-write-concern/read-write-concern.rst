@@ -79,6 +79,7 @@ For naming and deviation guidance, see the `CRUD specification <https://github.c
   }
 
 The read concern option is available for the following operations: 
+
 - ``find`` command
 - ``aggregate`` command
 - ``distinct`` command
