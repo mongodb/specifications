@@ -11,7 +11,7 @@ Initial DNS Seedlist Discovery
 :Status: Draft
 :Type: Standards
 :Last Modified: 2017-11-17
-:Version: 1.1.6
+:Version: 1.2.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -54,19 +54,29 @@ connection string and SDAM specifications. In this protocol, the comma
 separated list of host names is replaced with a single host name. The
 format is::
 
-    mongodb+srv://{hostname}/{options}
+    mongodb+srv://{hostname}.{domainname}/{options}
 
 Seedlist Discovery
 ------------------
 
 In this preprocessing step, the driver will query the DNS server for SRV
-records on the ``{hostname}``, prefixed with ``_mongodb._tcp.``:
-``_mongodb._tcp.{hostname}``. This DNS query is expected to
+records on ``{hostname}.{domainname}``, prefixed with ``_mongodb._tcp.``:
+``_mongodb._tcp.{hostname}.{domainname}``. This DNS query is expected to
 respond with one or more SRV records. From the DNS result, the driver now MUST
-behave the same as if an ``mongodb://`` URI was provided with all the host names
-and port numbers that were returned as part of the DNS SRV query result.
+behave the same as if an ``mongodb://`` URI was provided with all the host
+names and port numbers that were returned as part of the DNS SRV query result.
 
 The priority and weight fields in returned SRV records MUST be ignored.
+
+A driver MUST verify that in addition to the ``{hostname}``, the
+``{domainname}`` consists of at least two parts: the domain name, and a TLD.
+Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV
+or TXT records if the full URI does not consists of at least three parts.
+
+A driver MUST verify that the host names returned through SRV records have the
+same parent ``{domainname}``. Drivers MUST raise an error and MUST NOT
+initiate a connection to any returned host name which does not share the same
+``{domainname}``.
 
 It is an error to specify a port in a connection string with the
 ``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST NOT
@@ -93,7 +103,7 @@ Default Connection String Options
 ---------------------------------
 
 As a second preprocessing step, a Client MUST also query the DNS server for
-TXT records on the ``{hostname}``. If available, these
+TXT records on ``{hostname}.{domainname}``. If available, these
 TXT records provide default connection string options. In most cases only one
 TXT record is necessary. The maximum length of a TXT record string is 255
 characters, but there can be multiple strings per TXT record. A Client MUST
@@ -162,6 +172,10 @@ The driver needs to request the DNS server for the SRV record
     Record                            TTL   Class    Priority Weight Port  Target
     _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27317 mongodb1.mongodb.com.
     _mongodb._tcp.server.mongodb.com. 86400 IN SRV   0        5      27017 mongodb2.mongodb.com.
+
+The returned host names (``mongodb1.mongodb.com`` and
+``mongodb2.mongodb.com``) must share the same parent domain name
+(``mongodb.com``) as the provided host name (``server.mongodb.com``).
 
 The driver also needs to request the DNS server for the TXT records on
 ``server.mongodb.com``. This could return::
@@ -260,6 +274,10 @@ SRV records.
 
 ChangeLog
 =========
+
+2017-11-17 — 1.2.0
+    Add new rule that indicates that host names in returned SRV records MUST
+	share the same parent domain name as the given host name.
 
 2017-11-17 — 1.1.6
     Remove language and tests for non-ASCII characters.
