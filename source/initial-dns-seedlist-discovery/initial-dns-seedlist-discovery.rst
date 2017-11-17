@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-11-07
-:Version: 1.1.5
+:Last Modified: 2017-11-17
+:Version: 1.1.6
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -103,7 +103,9 @@ multiple character strings in each TXT record is guaranteed. The maximum
 total length of all strings in a single TXT record is about 65535 characters,
 but DNS providers and software might arbitrarily limit this to a smaller
 number. To allow for this case, a Client MUST allow for multiple TXT records
-for the same host name and consider the options in all of them.
+for the same host name and consider the options in all of them. Internally,
+drivers should join multiple TXT records with a ``&`` and treat them as if
+they were one connection string.
 
 Information returned with each TXT record is a simple URI string, just like
 the options in a connection string.
@@ -231,6 +233,14 @@ which they appear is significant. Because DNS servers may return TXT records
 in any order, it is only possible to guarantee the order in which
 readPreferenceTags keys appear by having them in the same TXT record.
 
+Why Is There No Mention of UTF-8 Characters?
+--------------------------------------------
+
+Although DNS TXT records allow any octet to exist in its value, many DNS
+providers do not allow non-ASCII characters to be configured. As it is
+unlikely that any option names or values in the connection string have
+non-ASCII characters, we left the behaviour of supporting UTF-8 characters as
+unspecified.
 
 Reference Implementation
 ========================
@@ -250,6 +260,9 @@ SRV records.
 
 ChangeLog
 =========
+
+2017-11-17 — 1.1.6
+    Remove language and tests for non-ASCII characters.
 
 2017-11-07 — 1.1.5
     Clarified that all parts of listable options such as readPreferenceTags
