@@ -12,7 +12,7 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: March 13, 2017
+:Last Modified: November 17, 2017
 :Version: 1.4
 
 .. contents::
@@ -78,6 +78,15 @@ For naming and deviation guidance, see the `CRUD specification <https://github.c
     level: Optional<ReadConcernLevel | String>
   }
 
+The read concern option is available for the following operations: 
+- ``find`` command
+- ``aggregate`` command and the ``db.collection.aggregate()`` method
+- `` distinct`` command
+- ``count`` command
+- ``parallelCollectionScan`` command
+- ``geoNear`` command
+- ``geoSearch`` command
+- ``mapReduce`` command with {out : inline} output option
 
 Unknown Levels and Additional Options for String Based ReadConcerns
 -------------------------------------------------------------------
@@ -478,3 +487,4 @@ Version History
   - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns
     an error if writeConcern is included with MongoDB 3.5+. See
     `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
+  - 2017-11-17 : Added list of commands that support readConcern 

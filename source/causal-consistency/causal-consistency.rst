@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 06-Oct-2017
+:Last Modified: 17-Nov-2017
 
 Abstract
 ========
@@ -305,6 +305,10 @@ the ``ClientSession`` as the value of the ``afterClusterTime`` field of the
         }
     }
 
+For the list commands that support causally consistent reads, see `ReadConcern`_ spec.
+
+.. _ReadConcern: https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#read-concern/ 
+
 The driver MUST merge the ``ReadConcern`` specified for the operation with the
 ``operationTime`` from the ``ClientSession`` (which goes in the ``afterClusterTime`` field)
 to generate the combined ``readConcern`` to send to the server. If the level
@@ -513,3 +517,4 @@ Changelog
 - 2017-10-04: Added advanceOperationTime
 - 2017-10-05: How to handle default read concern
 - 2017-10-06: advanceOperation MUST NOT validate operationTime
+- 2017-11-17 : Added link to ReadConcern spec which list commands that support readConcern
