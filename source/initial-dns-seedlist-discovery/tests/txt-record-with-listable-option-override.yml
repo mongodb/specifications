@@ -1,6 +1,6 @@
-uri: "mongodb+srv://test7.test.build.10gen.cc/?replicaSet=repl0&readPreferenceTags=dc:fr,item:🧀&readPreferenceTags=dc:de,item:🌭"
+uri: "mongodb+srv://test7.test.build.10gen.cc/?replicaSet=repl0&readPreferenceTags=dc:fr,item:cheese&readPreferenceTags=dc:de,item:hotdog"
 seeds:
-    - localhost.build.10gen.cc:27017
+    - localhost.test.build.10gen.cc:27017
 hosts:
     - localhost:27017
     - localhost:27018
@@ -10,6 +10,6 @@ options:
     readPreference: secondaryPreferred
     readPreferenceTags:
         - dc: "fr"
-          item: "🧀"
+          item: "cheese"
         - dc: "de"
-          item: "🌭"
+          item: "hotdog"
