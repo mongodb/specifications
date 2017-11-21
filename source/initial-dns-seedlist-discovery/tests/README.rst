@@ -9,7 +9,8 @@ Test Setup
 ----------
 
 Start a three-node replica set on localhost, on ports 27017, 27018, and 27019,
-with replica set name "repl0".
+with replica set name "repl0". The replica set MUST be started with SSL
+enabled.
 
 To run the tests that accompany this spec, you need to configure the SRV and
 TXT records with a real name server. The following records are required for
@@ -42,13 +43,13 @@ these tests::
   _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
 
   Record                                    TTL    Class   Text
-  test5.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=300000&socketTimeoutMS=300000"
-  test6.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=200000"
-  test6.test.build.10gen.cc.                86400  IN TXT  "socketTimeoutMS=200000"
-  test7.test.build.10gen.cc.                86400  IN TXT  "readPreference=secondaryPreferred&readPreferenceTags=item:glass"
-  test8.test.build.10gen.cc.                86400  IN TXT  "readPreference"
-  test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=thisShouldBeAnInt"
-  test11.test.build.10gen.cc.               86400  IN TXT  "connectTime" "outMS=150000" "&socketT" "imeoutMS" "=" "250000"
+  test5.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0&authSource=thisDB"
+  test6.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0"
+  test6.test.build.10gen.cc.                86400  IN TXT  "authSource=otherDB"
+  test7.test.build.10gen.cc.                86400  IN TXT  "ssl=false"
+  test8.test.build.10gen.cc.                86400  IN TXT  "authSource"
+  test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=500"
+  test11.test.build.10gen.cc.               86400  IN TXT  "replicaS" "et=rep" "l0"
 
 Note that ``test4`` is omitted deliberately to test what happens with no SRV
 record. ``test9`` is missing because it was deleted during the development of
@@ -80,5 +81,7 @@ For each file, create MongoClient initialized with the mongodb+srv connection
 string. You SHOULD verify that the client's initial seed list matches the list of
 seeds. You MUST verify that the set of ServerDescriptions in the client's
 TopologyDescription eventually matches the list of hosts. You MUST verify that
-the set of Connection String Options matches the client's parsed set. You MUST
-verify that an error has been thrown if ``error`` is present.
+each of the values of the Connection String Options under ``options`` match the
+Client's parsed value for that option. There may be other options parsed by
+the Client as well, which a test does not verify. You MUST verify that an
+error has been thrown if ``error`` is present.
