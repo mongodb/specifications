@@ -38,6 +38,8 @@ these tests::
   _mongodb._tcp.test16.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.not-10gen.cc.
   _mongodb._tcp.test17.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.not-cc.
   _mongodb._tcp.test18.test.build.10gen.cc. 86400  IN SRV  27017  localhost.sub.test.build.10gen.cc.
+  _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.evil.build.10gen.cc.
+  _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "connectTimeoutMS=300000&socketTimeoutMS=300000"
