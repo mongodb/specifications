@@ -175,6 +175,37 @@ Each YAML file has the following keys:
       - ``data``: The data that should exist in the collection after the
         operation has been run.
 
+Split Batch Tests
+=================
+
+The YAML tests specify bulk write operations that are split by command type
+(e.g. sequence of insert, update, and delete commands). Multi-statement write
+operations may also be split due to ``maxWriteBatchSize``,
+``maxBsonObjectSize``, or ``maxMessageSizeBytes``.
+
+For instance, an insertMany operation with five 10 MB documents executed using
+OP_MSG payload type 0 (i.e. entire command in one document) would be split into
+five insert commands in order to respect the 16 MB ``maxBsonObjectSize`` limit.
+The same insertMany operation executed using OP_MSG payload type 1 (i.e. command
+arguments pulled out into a separate payload vector) would be split into two
+insert commands in order to respect the 48 MB ``maxMessageSizeBytes`` limit.
+
+Noting when a driver might split operations, the ``onPrimaryTransactionalWrite``
+fail point's ``skip`` option may be used to control when the fail point first
+triggers. Once triggered, the fail point will transition to the ``alwaysOn``
+state until disabled. Driver authors should also note that the server attempts
+to process all documents in a single insert command within a single commit (i.e.
+one insert command with five documents may only trigger the fail point once).
+This behavior is unique to insert commands (each statement in an update and
+delete command is processed independently).
+
+If testing an insert that is split into two commands, a ``skip`` of one will
+allow the fail point to trigger on the second insert command (because all
+documents in the first command will be processed in the same commit). When
+testing an update or delete that is split into two commands, the ``skip`` should
+be set to the number of statements in the first command to allow the fail point
+to trigger on the second command.
+
 Replica Set Failover Test
 =========================
 
