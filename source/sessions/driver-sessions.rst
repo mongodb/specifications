@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 19-Oct-2017
+:Last Modified: 21-Nov-2017
 
 .. contents::
 
@@ -94,6 +94,12 @@ Session
 
 Topology
     The current configuration and state of a deployment. 
+
+Unacknowledged writes
+    Unacknowledged writes are write operations that are sent to the server
+    without waiting for a reply acknowledging the write. See the "When using
+    unacknowledged writes" section below for information on how unacknowledged
+    writes interact with sessions.
 
 Specification
 =============
@@ -598,6 +604,18 @@ that an implicit session is started, then the driver MUST ignore any implicit
 sessions that subsequently end up being used on a connection that has multiple
 users authenticated.
 
+When using unacknowledged writes
+--------------------------------
+
+A session ID MUST NOT be used simultaneously by more than one operation. Since
+drivers don't wait for a response for an unacknowledged write a driver would
+not know when the session ID could be reused. In theory a driver could use a
+new session ID for each unacknowledged write, but that would result in many
+orphaned sessions building up at the server. Rather than prohibit using
+unacknowledged writes with sessions we choose instead to specify that a driver
+MUST NOT send a session ID with unacknowledged writes. This is true for both
+implicit and explicit sessions.
+
 Server Commands
 ===============
 
@@ -1003,3 +1021,4 @@ Change log
 :2017-10-06: Added descriptions of explicit and implicit sessions
 :2017-10-17: Implicit sessions MUST NOT be used when multiple users authenticated
 :2017-10-19: Possible race conditions when checking whether a deployment supports sessions
+:2017-11-21: Drivers MUST NOT send a session ID for unacknowledged writes
