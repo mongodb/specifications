@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-11-17
-:Version: 1.2.0
+:Last Modified: 2017-11-21
+:Version: 1.3.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -68,10 +68,16 @@ names and port numbers that were returned as part of the DNS SRV query result.
 
 The priority and weight fields in returned SRV records MUST be ignored.
 
+If ``mongodb+srv`` is used, a driver MUST implicitly also enable TLS. Clients
+can turn this off by passing ``ssl=false`` in either the Connection String,
+or options passed in as parameters in code to the MongoClient constructor (or
+equivalent API for each driver), but not through a TXT record (discussed in
+the next section).
+
 A driver MUST verify that in addition to the ``{hostname}``, the
 ``{domainname}`` consists of at least two parts: the domain name, and a TLD.
 Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV
-or TXT records if the full URI does not consists of at least three parts.
+(or TXT records) if the full URI does not consists of at least three parts.
 
 A driver MUST verify that the host names returned through SRV records have the
 same parent ``{domainname}``. Drivers MUST raise an error and MUST NOT
@@ -94,35 +100,28 @@ happens, an error MUST be raised indicating that the URI could not be used to
 find hostnames. The error SHALL include the reason why they could not be
 found.
 
-Clients SHOULD respect the default domain and current domain when looking up
-the SRV record. For example, when using the non-FQDN ``servername`` and the
-default domain set to ``example.com``, a Client should end up requesting the
-SRV record for ``servername.example.com``.
-
 Default Connection String Options
 ---------------------------------
 
 As a second preprocessing step, a Client MUST also query the DNS server for
-TXT records on ``{hostname}.{domainname}``. If available, these
-TXT records provide default connection string options. In most cases only one
-TXT record is necessary. The maximum length of a TXT record string is 255
+TXT records on ``{hostname}.{domainname}``. If available, a TXT record
+provides default connection string options. The maximum length of a TXT record
+string is 255
 characters, but there can be multiple strings per TXT record. A Client MUST
 support multiple TXT record strings and concatenate them as if they were one
 single string in the order they are defined in each TXT record. The order of
-multiple character strings in each TXT record is guaranteed. The maximum
-total length of all strings in a single TXT record is about 65535 characters,
-but DNS providers and software might arbitrarily limit this to a smaller
-number. To allow for this case, a Client MUST allow for multiple TXT records
-for the same host name and consider the options in all of them. Internally,
-drivers should join multiple TXT records with a ``&`` and treat them as if
-they were one connection string.
+multiple character strings in each TXT record is guaranteed.
+A Client MUST NOT allow multiple TXT records for the same host name and MUST
+raise an error when multiple TXT records are encountered.
 
-Information returned with each TXT record is a simple URI string, just like
-the options in a connection string.
+Information returned within a TXT record is a simple URI string, just like
+the ``{options}`` in a connection string.
 
-Although options in a connection string are separated by a ``&``, this
-character MUST NOT be present to separate options between TXT records
-as a separation is implied by using multiple TXT records.
+A Client MUST only support the ``authSource`` and ``replicaSet`` options
+through a TXT record, and MUST raise an error if any other option is
+encountered. Although using ``mongodb+srv://`` implicitly enables TLS, a
+Client MUST NOT allow the ``ssl`` option to be set through a TXT record
+option.
 
 TXT records MAY be queried either before, in parallel, or after SRV records.
 Clients MUST query both the SRV and the TXT records before attempting any
@@ -132,32 +131,18 @@ A Client MUST use options specified in the Connection String, and options
 passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), to override options provided through TXT records.
 
-If listable options, such as ``readPreferenceTags``, are present in a TXT
-record AND in MongoClient constructor (URI, or options passed in code), then a
-Client MUST discard *all* elements of this listable option obtained through
-the TXT record(s) and *only* use these elements from the MongoClient
-constructor.
-
 .. _`Connection String spec`: ../connection-string/connection-string-spec.rst#defining-connection-options
 
 If any connection string option in a TXT record is incorrectly formatted, a
-Client must throw a parse exception.
-
-Authentication credentials MUST NOT be supported as options through TXT
-records.
+Client MUST throw a parse exception.
 
 This specification does not change the behaviour of handling unknown keys or
 incorrect values as is set out in the `Connection String spec`_. Unknown keys
 or incorrect values in default options specified through TXT records MUST be
 handled in the same way as unknown keys or incorrect values directly specified
-through a Connection String.
-
-In case two TXT records for the same host name include the same connection
-string option, a Client SHOULD warn the user. DNS does not guarantee the order
-in which records are returned and hence this can cause conflicts. This
-is especially important for options (such as readPreferenceTags) which may
-occur multiple times and for which the order in which they appear is
-important.
+through a Connection String. For example, if a driver that does not support
+the ``authSource`` option finds ``authSource=db`` in a TXT record, it MUST handle
+the unknown option according to the rules in the Connection String spec.
 
 Example
 =======
@@ -181,23 +166,22 @@ The driver also needs to request the DNS server for the TXT records on
 ``server.mongodb.com``. This could return::
 
     Record              TTL   Class    Text
-    server.mongodb.com. 86400 IN TXT   "ssl=true&connectTimeoutMS=250000"
-    server.mongodb.com. 86400 IN TXT   "readPreference=secondaryPreferred&readPreferenceTags=dc:ny,rack:1"
+    server.mongodb.com. 86400 IN TXT   "replicaSet=replProduction&authSource=authDB"
 
 From the DNS results, the driver now MUST treat the host information as if the
 following URI was used instead::
 
-    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&connectTimeoutMS=250000&readPreference=secondaryPreferred&readPreferenceTags=dc:ny,rack:1
+    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replicaSet=replProduction&authSource=authDB
 
 If we provide the following URI with the same DNS (SRV and TXT) records::
 
-    mongodb+srv://server.mongodb.com/?connectTimeoutMS=300000
+    mongodb+srv://server.mongodb.com/?authSource=otherDB
 
-Then the default in the TXT record for ``connectTimeoutMS`` is not used as
+Then the default in the TXT record for ``authSource`` is not used as
 the value in the connection string overrides it. The Client MUST treat the host
 information as if the following URI was used instead::
 
-    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&connectTimeoutMS=300000&readPreference=secondaryPreferred&readPreferenceTags=dc:ny,rack:1
+    mongodb://mongodb1.mongodb.com:27317,mongodb2.mongodb.com:27107/?ssl=true&replicaSet=replProduction&authSource=otherDB
 
 Test Plan
 =========
@@ -275,9 +259,15 @@ SRV records.
 ChangeLog
 =========
 
+2017-11-21 — 1.3.0
+    Add clause that using ``mongodb+srv://`` implies enabling TLS. Add
+    restriction that only ``authSource`` and ``replicaSet`` are allows in TXT
+    records. Add restriction that only one TXT record is supported share
+    the same parent domain name as the given host name.
+
 2017-11-17 — 1.2.0
     Add new rule that indicates that host names in returned SRV records MUST
-	share the same parent domain name as the given host name.
+    share the same parent domain name as the given host name.
 
 2017-11-17 — 1.1.6
     Remove language and tests for non-ASCII characters.

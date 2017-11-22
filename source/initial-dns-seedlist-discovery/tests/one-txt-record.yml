@@ -1,4 +1,4 @@
-uri: "mongodb+srv://test5.test.build.10gen.cc/?replicaSet=repl0"
+uri: "mongodb+srv://test5.test.build.10gen.cc/"
 seeds:
     - localhost.test.build.10gen.cc:27017
 hosts:
@@ -6,6 +6,6 @@ hosts:
     - localhost:27018
     - localhost:27019
 options:
-    connectTimeoutMS: 300000
     replicaSet: repl0
-    socketTimeoutMS: 300000
+    authSource: thisDB
+    ssl: true

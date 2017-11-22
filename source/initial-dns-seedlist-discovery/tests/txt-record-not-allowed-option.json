@@ -3,5 +3,5 @@
   "seeds": [],
   "hosts": [],
   "error": true,
-  "comment": "Should fail because the value of socketTimeoutMS is not an integer."
+  "comment": "Should fail because socketTimeoutMS is not an allowed option."
 }
