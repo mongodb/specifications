@@ -11,7 +11,7 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Nov 2, 2016
+:Last Modified: Nov 22, 2016
 :Version: 1.6
 
 .. contents::
@@ -22,6 +22,8 @@ Specification
 =============
 
 The performance monitoring specification defines a set of behaviour in the drivers for providing runtime information about commands to any 3rd party APM library as well internal driver use, such as logging.
+
+This specification intends to abstract the wire protocol so listeners receive similar events no matter what version of MongoDB the driver is connected to.
 
 -----------
 Definitions
@@ -116,7 +118,7 @@ split the upconverted commands and leave the original upconversion intact.
 Bulk Writes
 -----------
 
-This specification defines the monitoring of inidividual commands and in that respect MUST generate
+This specification defines the monitoring of individual commands and in that respect MUST generate
 an event for each command a bulk write executes. Each of these commands, however, must be linked
 together via the same ``operationId``.
 
@@ -158,6 +160,22 @@ assert these conversions take place.
    * - ``OP_DELETE``
      - delete command
 
+When a driver sends an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in CommandStartedEvent.command. The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver sends an "update" command using OP_MSG, and sends a document sequence as a separate section of payload type 1 with identifier "updates", the driver MUST include the documents as a BSON array in CommandStartedEvent.command with field name "updates".
+
+When a driver receives an OP_MSG with a document sequence, it MUST include the document sequence as a BSON array in CommandSucceededEvent.reply. The array's field name MUST be the OP_MSG sequence identifier. For example, if the driver receives an OP_MSG reply to a "find" command with a section of payload type 1 with identifier "cursor.firstBatch", it MUST include the documents as a BSON array in CommandSucceededEvent.reply like:
+
+.. code:: javascript
+
+  {
+      cursor: {
+          firstBatch: [ { document 1 }, { document 2 }, ... ]
+      }
+  }
+
+A document sequence in an OP_MSG reply to "aggregate" or "getMore" MUST be similarly included in CommandSucceededEvent.reply.
+
+See "Why are document sequences included as BSON arrays?" in the `rationale`_.
+
 Read Preference
 ^^^^^^^^^^^^^^^
 
@@ -190,6 +208,10 @@ custom logic around particular commands to determine what failure or success mea
 command. Implementators of the API are free to handle these events as they see fit, which may include
 code that futher interprets replies to specific commands based on the presence or absence of other
 fields in the reply beyond the ‘ok’ field.
+
+*3. Why are document sequences included as BSON arrays?*
+
+The OP_MSG wire protocol was introduced in MongoDB 3.6, with document sequences as an optimization for bulk writes. The same optimization will be introduced for "find" and "aggregate" replies in 3.8. We have chosen to represent these OP_MSGs as single command or reply documents for now, until a need for a more accurate (and perhaps better-performing) command monitoring API for document sequences has been demonstrated.
 
 --------
 Security
@@ -378,6 +400,9 @@ See the README in the test directory for requirements and guidance.
 
 Changelog
 =========
+
+22 NOV 2015:
+  - Specify how to merge OP_MSG document sequences into command-started events.
 
 16 SEP 2015:
   - Removed ``limit`` from find test with options to support 3.2.
