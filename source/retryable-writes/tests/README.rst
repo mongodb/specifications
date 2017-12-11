@@ -27,7 +27,9 @@ The tests depend on a server fail point, ``onPrimaryTransactionalWrite``, which
 allows us to force a network error before the server would return a write result
 to the client. The fail point also allows control whether the server will
 successfully commit the write via its ``failBeforeCommitExceptionCode`` option.
-The fail point is described in `SERVER-29606`_.
+Keep in mind that the fail point only triggers for transaction writes (i.e. write
+commands including ``txnNumber`` and ``lsid`` fields). See `SERVER-29606`_ for
+more information.
 
 .. _SERVER-29606: https://jira.mongodb.org/browse/SERVER-29606
 
@@ -142,7 +144,7 @@ Each YAML file has the following keys:
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a
-    driver session that has been created with the ``retryWrites=true`` option.
+    client that has been created with the ``retryWrites=true`` option.
     This will have some or all of the following fields:
 
     - ``name``: The name of the operation as defined in the CRUD specification.
