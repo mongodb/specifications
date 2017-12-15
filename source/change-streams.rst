@@ -343,10 +343,10 @@ Imagine a scenario in which a user wants to process each change to a collection 
   localChange = getChangeFromLocalStorage()
   if localChange:
     processChange(localChange)
-    resumeToken = localChange[‘_id’]
+    resumeToken = localChange['_id']
 
   try:
-      for change in db.collection.watch([...], resumeAfter=resumeToken)
+      for change in db.collection.watch([...], resumeAfter=resumeToken):
           persistToLocalStorage(change)
           processChange(change)
   except Exception:
@@ -363,7 +363,7 @@ The specification used to include this overspecified example of the "desired use
 .. code:: python
 
   try:
-      for change in db.collection.watch(...)
+      for change in db.collection.watch(...):
           print(change)
   except Exception:
       # We know for sure it's unrecoverable:
