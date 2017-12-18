@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: November 17, 2017
-:Version: 1.4
+:Last Modified: December 18, 2017
+:Version: 1.5
 
 .. contents::
 
@@ -69,6 +69,11 @@ For naming and deviation guidance, see the `CRUD specification <https://github.c
        * This is rendered as "linearizable" (lower-case) on the wire.
        */
       linearizable
+
+      /**
+       * This is rendered as "available" (lower-case) on the wire.
+       */
+      available
   }
 
   class ReadConcern {
@@ -491,3 +496,4 @@ Version History
     an error if writeConcern is included with MongoDB 3.5+. See
     `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
   - 2017-11-17 : Added list of commands that support readConcern 
+  - 2017-12-18 : Added "available" to Readconcern level. 
