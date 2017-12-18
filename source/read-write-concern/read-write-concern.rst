@@ -496,4 +496,4 @@ Version History
     an error if writeConcern is included with MongoDB 3.5+. See
     `SERVER-27891 <https://jira.mongodb.org/browse/SERVER-27891>`_.
   - 2017-11-17 : Added list of commands that support readConcern 
-  - 2017-12-18 : Added "available" to Readconcern levels. 
+  - 2017-12-18 : Added "available" to Readconcern level. 
