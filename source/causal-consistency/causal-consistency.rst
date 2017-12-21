@@ -14,6 +14,10 @@ Causal Consistency Specification
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
 :Last Modified: 17-Nov-2017
 
+.. contents::
+
+--------
+
 Abstract
 ========
 
