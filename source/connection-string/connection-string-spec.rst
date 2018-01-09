@@ -361,12 +361,16 @@ Q: Why must the auth database be URL decoded by the parser?
 
   In this case the auth database would be ``admin?`` and the connection options  ``w=1``.
 
+Q: How should the space character be encoded in a connection string?
+  Space characters SHOULD be encoded as ``%20`` rather than ``+``, this will portable across all implementations. Implementations MAY support decoding ``+`` into a space, as many languages treat strings as ``x-www-form-urlencoded`` data by default.
+
 -------
 Changes
 -------
 
-- 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
 - 2016-07-22: In Port section, clarify that zero is not an acceptable port.
+- 2017-01-09: In Userinfo section, clarify that percent signs must be encoded.
 - 2017-06-10: In Userinfo section, require username and password to be fully URI
   encoded, not just "%", "@", and ":". In Auth Database, list the prohibited
   characters. In Reference Implementation, split at the first "/", not the last.
+- 2018-01-09: Clarified that space characters should be encoded to ``%20``.
