@@ -362,7 +362,7 @@ Q: Why must the auth database be URL decoded by the parser?
   In this case the auth database would be ``admin?`` and the connection options  ``w=1``.
 
 Q: How should the space character be encoded in a connection string?
-  Space characters SHOULD be encoded as ``%20`` rather than ``+``, this will portable across all implementations. Implementations MAY support decoding ``+`` into a space, as many languages treat strings as ``x-www-form-urlencoded`` data by default.
+  Space characters SHOULD be encoded as ``%20`` rather than ``+``, this will be portable across all implementations. Implementations MAY support decoding ``+`` into a space, as many languages treat strings as ``x-www-form-urlencoded`` data by default.
 
 -------
 Changes
