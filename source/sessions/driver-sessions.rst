@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 21-Nov-2017
+:Last Modified: 10-Jan-2018
 
 .. contents::
 
@@ -186,6 +186,11 @@ MongoClient changes
 
 Each new member is documented below.
 
+While it is not part of the public API, ``MongoClient`` also needs a private
+(or internal) ``clusterTime`` member (containing either a BSON document or
+null) to record the highest ``clusterTime`` observed in a deployment (as
+described below in `Gossipping the cluster time`_).
+
 startSession
 ------------
 
@@ -293,7 +298,7 @@ operations have been executed using this session this value will be null unless
 cluster does not report cluster times.
 
 When a driver is gossiping the cluster time it should send the more recent 
-``clusterTimer`` of the ``ClientSession`` and the ``MongoClient``.
+``clusterTime`` of the ``ClientSession`` and the ``MongoClient``.
 
 options
 -------
@@ -889,7 +894,7 @@ Test Plan
 
 2. ``$clusterTime`` in commands
     * Turn ``heartbeatFrequencyMS`` up to a very large number.
-    * Register a command-started and a command-succeeded APM listener. 
+    * Register a command-started and a command-succeeded APM listener.  If the driver has no APM support, inspect commands/replies in another idiomatic way, such as monkey-patching or a mock server.
     * Send a ``ping`` command to the server with the generic ``runCommand`` method. 
     * Assert that the command passed to the command-started listener includes ``$clusterTime`` if and only if ``maxWireVersion`` >= 6.
     * Record the ``$clusterTime``, if any, in the reply passed to the command-succeeded APM listener.
@@ -1022,3 +1027,5 @@ Change log
 :2017-10-17: Implicit sessions MUST NOT be used when multiple users authenticated
 :2017-10-19: Possible race conditions when checking whether a deployment supports sessions
 :2017-11-21: Drivers MUST NOT send a session ID for unacknowledged writes
+:2018-01-10: Note that MongoClient must retain highest clusterTime
+:2018-01-10: Update test plan for drivers without APM
