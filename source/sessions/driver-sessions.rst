@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 10-Jan-2018
+:Last Modified: 11-Jan-2018
 
 .. contents::
 
@@ -33,6 +33,8 @@ cluster time throughout a deployment, a process known as "gossipping the
 cluster time". While gossipping the cluster time is somewhat orthogonal to
 sessions, any driver that implements sessions MUST also implement gossipping
 the cluster time, so it is included in this specification.
+
+This feature is only available in replica sets and sharded clusters.
 
 Definitions
 ===========
@@ -496,7 +498,9 @@ include a session ID in a ``KILLCURSORS`` command.
 How to Check Whether a Deployment Supports Sessions
 ===================================================
 
-A driver can determine whether a deployment supports sessions by checking
+Standalone servers do not support sessions.
+
+A driver can determine whether a replica set or sharded cluster deployment supports sessions by checking
 whether the ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription``
 has a value or not. If it has a value the deployment supports sessions.
 However, in order for this determination to be valid, the driver MUST be
@@ -515,7 +519,7 @@ includes at least one connected, data-bearing server
 
 2. Having verified in step 1 that the ``TopologyDescription`` includes at least
 one connected server a driver can now determine whether sessions are supported
-by inspecting the ``logicalSessionTimeoutMinutes`` property
+by inspecting the ``TopologyType`` and ``logicalSessionTimeoutMinutes`` property
 
 Possible race conditions when checking whether a deployment supports sessions
 -----------------------------------------------------------------------------
@@ -885,6 +889,9 @@ been upgraded to 3.6.
 Test Plan
 =========
 
+The test plan SHOULD be run against both replica set and sharded cluster
+topologies.  It MUST NOT be run against a standalone server.
+
 1. Pool is LIFO.
     * This test applies to drivers with session pools. 
     * Call ``MongoClient.startSession`` twice to create two sessions, let us call them ``A`` and ``B``. 
@@ -1029,3 +1036,4 @@ Change log
 :2017-11-21: Drivers MUST NOT send a session ID for unacknowledged writes
 :2018-01-10: Note that MongoClient must retain highest clusterTime
 :2018-01-10: Update test plan for drivers without APM
+:2018-01-11: Clarify that sessions require replica sets or sharded clusters
