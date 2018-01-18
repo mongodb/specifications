@@ -85,8 +85,8 @@ seeds. You MUST verify that the set of ServerDescriptions in the client's
 TopologyDescription eventually matches the list of hosts. You MUST verify that
 each of the values of the Connection String Options under ``options`` match the
 Client's parsed value for that option. There may be other options parsed by
-the Client as well, which a test does not verify. In ``uri-with-auth`` the uri
+the Client as well, which a test does not verify. In ``uri-with-auth`` the URI
 contains a user/password set and additional options are provided in
 ``parsed_options`` so that tests can verify authentication is maintained when
-evaluating uris. You MUST verify that an error has been thrown if ``error`` is
+evaluating URIs. You MUST verify that an error has been thrown if ``error`` is
 present.
