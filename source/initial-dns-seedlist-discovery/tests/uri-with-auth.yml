@@ -6,8 +6,7 @@ hosts:
     - localhost:27017
     - localhost:27018
     - localhost:27019
-options:
-    auth:
-      user: auser
-      password: apass
+parsed_options:
+    user: auser
+    password: apass
 comment: Should preserve auth credentials
