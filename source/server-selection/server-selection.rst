@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: November 15, 2017
-:Version: 1.7
+:Last Modified: January 22, 2018
+:Version: 1.8
 
 .. contents::
 
@@ -583,7 +583,7 @@ The ``$readPreference`` query modifier sends the read preference as part of the
 query.  The read preference fields ``tag_sets`` is represented in a ``$readPreference``
 document using the field name ``tags``.
 
-When any ``$`` modifier is used, including the ``$readPreference`` modifier,
+When sending a read operation via OP_QUERY and any ``$`` modifier is used, including the ``$readPreference`` modifier,
 the query MUST be provided using the ``$query`` modifier like so::
 
     {
@@ -1696,6 +1696,8 @@ must retry selection after checking an idle socket and discovering it is broken.
 2017-11-12: Specify read preferences for OP_MSG with direct connection, and
 delete obsolete comment direct connections to secondaries getting "not master"
 errors by design.
+
+2018-01-22: Clarify that $query wrapping is only for OP_QUERY
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
