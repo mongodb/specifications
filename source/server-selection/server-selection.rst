@@ -10,7 +10,7 @@ Server Selection
 :Status: Accepted
 :Type: Standards
 :Last Modified: January 22, 2018
-:Version: 1.8
+:Version: 1.9
 
 .. contents::
 
@@ -706,7 +706,9 @@ the command and how it is invoked:
       database or collection configuration.
 
       The aggregate command succeeds on a secondary unless $out is specified.
-      It is the user's responsibility not to aggregate with $out on a secondary.
+      When $out is specified, follow the "$out Aggregation Pipeline Operator"
+      spec, which requires treating aggregate with $out as a write command
+      and warning if the read preference is not 'primary'.
 
       If a client provides a specific helper for inline mapreduce, then it is
       "may-use-secondary" and the *regular* mapreduce helper is "must use
@@ -1698,6 +1700,9 @@ delete obsolete comment direct connections to secondaries getting "not master"
 errors by design.
 
 2018-01-22: Clarify that $query wrapping is only for OP_QUERY
+
+2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation
+Pipeline Operator" spec and warns if read preference is not primary.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
