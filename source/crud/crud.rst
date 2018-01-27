@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: October 23, 2017
+:Last Modified: January 26, 2018
 
 .. contents::
 
@@ -198,7 +198,7 @@ Read
      * If true, allows the write to opt-out of document level validation. This only applies
      * when the $out stage is specified.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
@@ -683,7 +683,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      */
@@ -695,7 +695,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      */
@@ -707,7 +707,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      */
@@ -737,7 +737,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      */
@@ -769,7 +769,7 @@ Basic
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      */
@@ -1367,7 +1367,7 @@ Find And Modify
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
@@ -1449,7 +1449,7 @@ Find And Modify
     /**
      * If true, allows the write to opt-out of document level validation.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
      */
     bypassDocumentValidation: Optional<Boolean>;
@@ -1624,6 +1624,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
 * 2017-10-23: Allow BulkWriteException to provide an intermediary write result.
 * 2017-10-17: Document negative limit for FindOptions.
 * 2017-10-09: Bumped minimum server version to 2.6 and removed references to older versions in spec and tests.
