@@ -100,6 +100,9 @@ Commands that executed on the server and return a status of ``{ ok: 1.0 }`` are 
 successful commands and MUST fire a ``CommandSucceededEvent``. Commands that have write errors
 are included since the actual command did succeed, only writes failed.
 
+``CommandSucceededEvent`` and ``CommandFailedEvent`` events MUST have a ``requestId`` that matches their
+originating ``CommandStartedEvent``.
+
 Error Handling
 --------------
 
