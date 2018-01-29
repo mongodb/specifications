@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: January 22, 2018
-:Version: 1.9
+:Last Modified: January 29, 2018
+:Version: 1.10
 
 .. contents::
 
@@ -651,6 +651,10 @@ the command and how it is invoked:
     preference, e.g.  not calling ``renameCollection`` with a ``mode`` of
     'secondary'.
 
+    N.B.: "used for server selection" does not supercede rules for server
+    selection on "Standalone" topologies, which ignore any requested read
+    preference.
+
 3.  Command-specific helper: methods that wrap database commands, like
     ``count``, ``distinct``, ``listCollections`` or ``renameCollection``.
 
@@ -706,9 +710,9 @@ the command and how it is invoked:
       database or collection configuration.
 
       The aggregate command succeeds on a secondary unless $out is specified.
-      When $out is specified, follow the "$out Aggregation Pipeline Operator"
-      spec, which requires treating aggregate with $out as a write command
-      and warning if the read preference is not 'primary'.
+      When $out is specified, the command must be treated as a write command.
+      If the read preference is not 'primary', the driver SHOULD warn if $out
+      is use.
 
       If a client provides a specific helper for inline mapreduce, then it is
       "may-use-secondary" and the *regular* mapreduce helper is "must use
@@ -1703,6 +1707,9 @@ errors by design.
 
 2018-01-22: Clarify that $out on aggregate follows the "$out Aggregation
 Pipeline Operator" spec and warns if read preference is not primary.
+
+2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand
+selection rules.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
