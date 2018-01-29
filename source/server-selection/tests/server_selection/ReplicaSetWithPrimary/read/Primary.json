@@ -30,10 +30,7 @@
   },
   "operation": "read",
   "read_preference": {
-    "mode": "Primary",
-    "tag_sets": [
-      {}
-    ]
+    "mode": "Primary"
   },
   "suitable_servers": [
     {
