@@ -51,7 +51,7 @@ array of test case objects, each of which have the following keys:
 
 - ``description``: A string describing the test.
 - ``uri``: A string containing the URI to be parsed.
-- ``valid:``: a boolean indicating if parsing the uri should result in an error.
+- ``valid:``: a boolean indicating if the write concern created from the document is valid.
 - ``writeConcern:`` A document indicating the write concern to use.
 - ``writeConcernDocument:`` A document indicating the write concern to be sent to the server.
 - ``readConcern:`` A document indicating the read concern to use.
