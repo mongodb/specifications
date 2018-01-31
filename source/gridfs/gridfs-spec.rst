@@ -9,8 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: October 7, 2016
-:Version: 1.1
+:Last Modified: January 31, 2018
+:Version: 1.2
 
 .. contents::
 
@@ -109,7 +109,7 @@ Files collection document
   :chunkSize: the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is 255KB.
   :uploadDate: the date and time this file was added to GridFS, stored as a BSON datetime value. The value of this
     field MUST be the datetime when the upload completed, not the datetime when it was begun.
-  :md5: a hash of the contents of the stored file
+  :md5: DEPRECATED, a hash of the contents of the stored file
   :filename: the name of this stored file; this does not need to be unique
   :contentType: DEPRECATED, any MIME type, for application use only
   :aliases: DEPRECATED, for application use only
@@ -286,6 +286,14 @@ Configurable GridFSBucket class
      */
     readPreference : ReadPreference optional;
     
+    /**
+     * TRANSITIONAL: This option is provided for backwards compatibility.
+     * It MUST be supported while a driver supports MD5 and MUST be removed
+     * (or made into a no-op) when a driver removes MD5 support entirely.
+     * When true, the GridFS implementation will not compute MD5 checksums
+     * of uploaded files. Defaults to false.
+     */
+    disableMD5: Boolean
   }
 
   class GridFSBucket {
@@ -329,6 +337,15 @@ the following options to be configurable:
 - **writeConcern:** defaults to the write concern on the parent
   database (or client object if the parent database has no write
   concern).
+
+The following option is transitional:
+
+- **disableMD5:** this allows users to disable MD5 when operating under
+  FIPS restrictions.  It is provided to allow a transition period as
+  drivers remove MD5 support.  Until a driver removes MD5 support,
+  drivers MUST support this option.  Following a driver's normal
+  feature removal cycle, when MD5 support is removed, this option MUST be
+  removed or otherwise made into a no-op option.
 
 GridFSBucket instances are immutable. Their properties MUST NOT be
 changed after the instance has been created. If your driver provides a
@@ -530,8 +547,13 @@ as follows:
   the last one must be exactly 'chunkSizeBytes' long. The last chunk can be smaller, 
   and should only be as large as necessary.
 
-While streaming the user file, drivers compute an MD5 digest. This MD5
-digest will later be stored in the files collection document.
+Historically, while streaming the user file, drivers computed an MD5 digest for
+the (now deprecated) 'md5' field of the files collection document.  If drivers
+preserve this behavior for backwards compatibility, they MUST provide the
+'disableMD5' member of GridFSBucketOptions.  When 'disableMD5' is true, drivers
+MUST NOT compute an MD5 digest or include it in the files collection document.
+If drivers no longer support the deprecated 'md5' field, they MUST NOT provide
+the 'disableMD5' member (or it MUST be a no-op) and MUST NOT compute MD5.
 
 After storing all chunk documents generated for the user file in the
 ‘chunks’ collection, drivers create a files collection document for the
@@ -543,7 +565,7 @@ collection document are set as follows:
   option is named ‘chunkSizeBytes’ for clarity, for legacy reasons, the files collection document
   uses only ‘chunkSize’.
 :uploadDate: a BSON datetime object for the current time, in UTC, when the files collection document was created.
-:md5: MD5 checksum for this user file, computed from the file’s data, stored as a hex string.
+:md5: MD5 checksum for this user file, computed from the file’s data, stored as a hex string, if computed, otherwise omitted.
 :filename: the filename passed to this function, UTF-8 encoded.
 :contentType: the ‘contentType’ passed in the options, if provided; otherwise omitted.
 :aliases: the array passed in the options, if provided; otherwise omitted.
@@ -970,7 +992,7 @@ Why is there no way to perform arbitrary updates on the files collection?
   is a complicated task. We leave the decision of how best to provide this
   functionality to a future spec.
 
-What is the ‘md5’ field of a files collection document and how is it used?
+What is the ‘md5’ field of a files collection document and how was it used?
   ‘md5’ holds an MD5 checksum that is computed from the original contents
   of a user file. Historically, GridFS did not use acknowledged writes, so
   this checksum was necessary to ensure that writes went through properly.
@@ -993,6 +1015,15 @@ Why store the MD5 checksum instead of creating the hash as-needed?
   the stored MD5 checksum guarantees that the stored file matches the
   original and no corruption has occurred.
 
+Why are MD5 checksums now deprecated?  What should users do instead?
+  MD5 is prohibited by FIPS 140-2.  Operating systems and libraries operating
+  in FIPS mode do not provide the MD5 algorithm.  To avoid a broken
+  GridFS feature on such systems, the use of MD5 with GridFS is deprecated,
+  should not be added to new implementations and should be removed from
+  existing implementations according to the deprecation policy of individual
+  drivers.  Applications that desire a file digest should implement it
+  outside GridFS and store it with other file metadata.
+
 Why do drivers no longer need to call the filemd5 command on upload?
   When a chunk is inserted and no error occurs the application can assume
   that the chunk was correctly inserted. No other operations that insert
@@ -1007,7 +1038,7 @@ What about write concern?
   object, to enforce a single write concern for all GridFS operations, or
   to do something different.
 
-If a user has given GridFS a write concern of 0, should we perform MD5 calculations?
+If a user has given GridFS a write concern of 0, should we perform MD5 calculations? (If supported for backwards compatibility)
   Yes, because the checksum is used for detecting future corruption or
   misuse of GridFS collections.
 
@@ -1141,9 +1172,6 @@ functionality is not in-scope for this spec (see ‘Why can’t I alter
 documents once they are in the system?’) it is a potential area of
 growth for the future.
 
-It has also been suggested that the MD5 hashing performed on stored
-files be updated to use a more secure algorithm, like SHA-1 or SHA-256.
-
 Changes
 =======
 
@@ -1151,3 +1179,4 @@ Changes
 - 2016-10-07 Drivers SHOULD handle any numeric type of length and chunkSize
 - 2016-10-07 Added ReadConcern to the GridFS spec
 - 2016-10-07 Modified a JSON test that was testing optional behavior
+- 2018-01-31 Deprecated MD5, and specified an option to disable MD5 until removed
