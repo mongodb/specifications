@@ -1019,10 +1019,10 @@ Why are MD5 checksums now deprecated?  What should users do instead?
   MD5 is prohibited by FIPS 140-2.  Operating systems and libraries operating
   in FIPS mode do not provide the MD5 algorithm.  To avoid a broken
   GridFS feature on such systems, the use of MD5 with GridFS is deprecated,
-  should not be added to new implementations and should be removed from
+  should not be added to new implementations, and should be removed from
   existing implementations according to the deprecation policy of individual
   drivers.  Applications that desire a file digest should implement it
-  outside GridFS and store it with other file metadata.
+  outside of GridFS and store it with other file metadata.
 
 Why do drivers no longer need to call the filemd5 command on upload?
   When a chunk is inserted and no error occurs the application can assume
