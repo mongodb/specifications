@@ -53,7 +53,7 @@ tests:
       arguments:
         requests:
           - insertOne: 
-              document: { _id: 4, x: 44 }
+              document: { _id: -4, x: 44 }
         ordered: false
         writeConcern: { w: 0 }
     expectations:
@@ -62,7 +62,7 @@ tests:
           command:
             insert: *collection_name
             documents:
-              - { _id: 4, x: 44 }
+              - { _id: -4, x: 44 }
             ordered: false
             writeConcern: { w: 0 }
           command_name: "insert"
