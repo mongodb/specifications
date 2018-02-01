@@ -696,14 +696,17 @@ the command and how it is invoked:
 
       The current list of "may-use-secondary" commands includes:
 
-        - group
-        - mapreduce (with out: {inline: 1})
         - aggregate (without $out specified)
-        - collStats, dbStats
-        - count, distinct
-        - geoNear, geoSearch, geoWalk
+        - collStats
+        - count
+        - dbStats
+        - distinct
+        - find
+        - geoNear
+        - geoSearch
+        - group
+        - mapReduce, mapreduce (with out: {inline: 1})
         - parallelCollectionScan
-        - text (but see caveats under `The 'text' command and mongos`_)
 
       Associated command-specific helpers SHOULD take a read preference
       argument and otherwise MUST use the default read preference from client,
