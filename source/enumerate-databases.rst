@@ -3,13 +3,13 @@ Enumerating Databases
 =====================
 
 :Spec Title: Enumerating Databases
-:Spec Ticket: SPEC-587
+:Spec Ticket: SPEC-865
 :Spec Version: 1.0
 :Author: Jeremy Mikola
-:Status: Draft (awaiting reference implementation)
+:Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-08-28
+:Last Modified: 2018-02-02
 
 .. contents::
 
