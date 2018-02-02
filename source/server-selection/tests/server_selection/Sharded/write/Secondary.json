@@ -14,7 +14,7 @@
       }
     ]
   },
-  "operation": "read",
+  "operation": "write",
   "read_preference": {
     "mode": "Secondary",
     "tag_sets": [
