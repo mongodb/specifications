@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 26, 2018
+:Last Modified: February 6, 2018
 
 .. contents::
 
@@ -189,6 +189,8 @@ Read
      * The number of documents to return per batch.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * If specified, drivers SHOULD apply this option to both the original aggregate command and subsequent
+     * getMore operations on the cursor.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
@@ -358,6 +360,8 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, this is combined with limit to create the wire protocol numberToReturn value.
+     * If specified, drivers SHOULD apply this option to both the original query operation and subsequent
+     * getMore operations on the cursor.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
@@ -1624,6 +1628,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.
 * 2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
 * 2017-10-23: Allow BulkWriteException to provide an intermediary write result.
 * 2017-10-17: Document negative limit for FindOptions.
