@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2017-11-21
-:Version: 1.3.0
+:Last Modified: 2018-02-08
+:Version: 1.3.1
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -55,6 +55,11 @@ separated list of host names is replaced with a single host name. The
 format is::
 
     mongodb+srv://{hostname}.{domainname}/{options}
+
+
+``{options}`` refers to the optional elements from the `Connection String`_
+specification following the ``Host Information``. This includes the ``Auth
+database`` and ``Connection Options``.
 
 Seedlist Discovery
 ------------------
@@ -258,6 +263,10 @@ SRV records.
 
 ChangeLog
 =========
+
+2018-02-08 — 1.3.1
+    Clarify that ``{options}}`` in the Specification_ section includes all the
+    optional elements from the Connection String specification.
 
 2017-11-21 — 1.3.0
     Add clause that using ``mongodb+srv://`` implies enabling TLS. Add

@@ -73,11 +73,14 @@ These YAML and JSON files contain the following fields:
 - ``hosts``: the discovered topology's list of hosts once SDAM completes a scan
 - ``options``: the parsed connection string options as discovered from URI and
   TXT records
-- ``parsed_options``: additional options present in the URI such as user/password
-credentials
+- ``parsed_options``: additional options present in the `Connection String`_
+  URI such as ``Userinfo`` (as ``user`` and ``password``), and ``Auth
+  database`` (as ``auth_database``).
 - ``error``: indicates that the parsing of the URI, or the resolving or
   contents of the SRV or TXT records included errors.
 - ``comment``: a comment to indicate why a test would fail.
+
+.. _`Connection String`: ../../connection-string/connection-string-spec.rst
 
 For each file, create MongoClient initialized with the mongodb+srv connection
 string. You SHOULD verify that the client's initial seed list matches the list of
