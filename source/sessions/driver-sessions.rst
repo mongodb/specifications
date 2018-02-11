@@ -758,6 +758,15 @@ recently and should be the first to be reused. The back of the queue holds
 ``ServerSession`` instances that have not been used recently and that potentially will be
 discarded if they are not used again before they expire.
 
+An implicit session MUST be returned to the pool immediately following the completion of
+an operation.  When an implicit session is associated with a cursor for use with ``getMore``
+operations, the session MUST be returned to the pool immediately following a ``getMore``
+operation that indicates that the cursor has been exhausted. In particular, it MUST not wait
+until all documents have been iterated by the application or until the application disposes
+of the cursor.  For language runtimes that provide the ability to attach finalizers to objects
+that are run prior to garbage collection, the cursor class SHOULD return an implicit session
+to the pool in the finalizer if the cursor has not already been exhausted.
+
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
 
@@ -944,6 +953,10 @@ topologies.  It MUST NOT be run against a standalone server.
     * Call ``findOne`` with no explicit session
     * Capture the command sent to the server
     * Assert that the command sent to the server does not have an ``lsid`` field
+
+6. At the end of every individual functional test of the driver, there SHOULD be an assertion that
+there are no remaining sessions checked out from the pool.  This may require changes to existing tests to
+ensure that they close any explicit client sessions and any unexhausted cursors.
 
 Tests that only apply to drivers that allow authentication to be changed on the fly
 -----------------------------------------------------------------------------------
