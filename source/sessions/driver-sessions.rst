@@ -954,9 +954,23 @@ topologies.  It MUST NOT be run against a standalone server.
     * Capture the command sent to the server
     * Assert that the command sent to the server does not have an ``lsid`` field
 
-6. At the end of every individual functional test of the driver, there SHOULD be an assertion that
+6. Client-side cursor that exhausts the results on the initial query immediately returns implicit session
+to pool.
+    * Insert one document into a collection
+    * Execute a find operation on the collection
+    * Assert that the implicit session is returned to the pool prior to iterating the cursor
+
+7. Client-side cursor that exhausts the results after a ``getMore`` immediately returns implicit session
+to pool.
+    * Insert four documents into a collection
+    * Execute a find operation on the collection with batch size of 2
+    * Iterate past the first three documents, forcing the final ``getMore`` operation
+    * Assert that the implicit session is returned to the pool prior to iterating past the last document
+
+8. At the end of every individual functional test of the driver, there SHOULD be an assertion that
 there are no remaining sessions checked out from the pool.  This may require changes to existing tests to
 ensure that they close any explicit client sessions and any unexhausted cursors.
+
 
 Tests that only apply to drivers that allow authentication to be changed on the fly
 -----------------------------------------------------------------------------------
