@@ -954,7 +954,7 @@ topologies.  It MUST NOT be run against a standalone server.
     * Capture the command sent to the server
     * Assert that the command sent to the server does not have an ``lsid`` field
 
-6. Client-side cursor that exhausts the results on the initial query immediately returns implicit session
+6. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
 to pool.
     * Insert two documents into a collection
     * Execute a find operation on the collection and iterate past the first document
@@ -963,7 +963,7 @@ to pool.
       * Track the lsid used for the find operation (e.g. with APM) and then do another operation and
         assert that the same lsid is used as for the find operation.
 
-7. Client-side cursor that exhausts the results after a ``getMore`` immediately returns implicit session
+7. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
 to pool.
     * Insert four documents into a collection
     * Execute a find operation on the collection with batch size of 2
