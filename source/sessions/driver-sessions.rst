@@ -955,7 +955,7 @@ topologies.  It MUST NOT be run against a standalone server.
     * Assert that the command sent to the server does not have an ``lsid`` field
 
 6. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
-to pool.
+to the pool.
     * Insert two documents into a collection
     * Execute a find operation on the collection and iterate past the first document
     * Assert that the implicit session is returned to the pool. This can be done in several ways:
@@ -964,7 +964,7 @@ to pool.
         assert that the same lsid is used as for the find operation.
 
 7. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
-to pool.
+to the pool.
     * Insert four documents into a collection
     * Execute a find operation on the collection with batch size of 2
     * Iterate past the first three documents, forcing the final ``getMore`` operation
