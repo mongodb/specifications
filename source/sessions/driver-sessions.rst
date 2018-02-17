@@ -620,10 +620,23 @@ A session ID MUST NOT be used simultaneously by more than one operation. Since
 drivers don't wait for a response for an unacknowledged write a driver would
 not know when the session ID could be reused. In theory a driver could use a
 new session ID for each unacknowledged write, but that would result in many
-orphaned sessions building up at the server. Rather than prohibit using
-unacknowledged writes with sessions we choose instead to specify that a driver
-MUST NOT send a session ID with unacknowledged writes. This is true for both
-implicit and explicit sessions.
+orphaned sessions building up at the server.
+
+Therefore drivers MUST NOT send a session ID with unacknowledged writes under
+any circumstances:
+
+* For unacknowledged writes with an explicit session, drivers SHOULD raise an
+  error.  If a driver allows users to provide an explicit session with an
+  unacknowledged write (e.g. for backwards compatibility), the driver MUST NOT
+  send the session ID.
+
+* For unacknowledged writes without an explicit session, drivers SHOULD NOT use
+  an implicit session.  If a driver creates an implicit session for
+  unacknowledged writes without an explicit session, the driver MUST NOT send
+  the session ID.
+
+Drivers MUST document the behavior of unacknowledged writes for both explicit
+and implicit sessions.
 
 Server Commands
 ===============
@@ -1082,3 +1095,4 @@ Change log
 :2018-01-10: Update test plan for drivers without APM
 :2018-01-11: Clarify that sessions require replica sets or sharded clusters
 :2018-02-20: Add implicit/explicit session tests
+:2018-02-20: Drivers SHOULD error if unacknowledged writes are used with sessions
