@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 11-Jan-2018
+:Last Modified: 16-Feb-2018
 
 .. contents::
 
@@ -620,10 +620,11 @@ A session ID MUST NOT be used simultaneously by more than one operation. Since
 drivers don't wait for a response for an unacknowledged write a driver would
 not know when the session ID could be reused. In theory a driver could use a
 new session ID for each unacknowledged write, but that would result in many
-orphaned sessions building up at the server. Rather than prohibit using
-unacknowledged writes with sessions we choose instead to specify that a driver
-MUST NOT send a session ID with unacknowledged writes. This is true for both
-implicit and explicit sessions.
+orphaned sessions building up at the server. A driver MUST NOT send a session
+ID with unacknowledged writes. Drivers SHOULD raise an error if users request
+an unacknowledged write with a session.  Drivers MUST document the behavior
+of unacknowledged writes with a session.  This is true for both implicit and
+explicit sessions.
 
 Server Commands
 ===============
@@ -1067,3 +1068,4 @@ Change log
 :2018-01-10: Note that MongoClient must retain highest clusterTime
 :2018-01-10: Update test plan for drivers without APM
 :2018-01-11: Clarify that sessions require replica sets or sharded clusters
+:2018-02-16: Drivers SHOULD error if unacknowledged writes are used with sessions
