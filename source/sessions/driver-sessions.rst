@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 11-Jan-2018
+:Last Modified: 20-Feb-2018
 
 .. contents::
 
@@ -922,7 +922,21 @@ topologies.  It MUST NOT be run against a standalone server.
         * A find command from the ``find`` helper method
         * An insert command from the ``insert_one`` helper method
 
-3. Test that session argument is for the right client
+3. Test explicit and implicit session arguments
+    * Register a command-started APM listener.  If the driver has no APM support, inspect commands in another idiomatic way, such as monkey-patching or a mock server.
+    * Create ``client1``
+    * Get ``database`` from ``client1``
+    * Get ``collection`` from ``database``
+    * Start ``session`` from ``client1``
+    * Call ``collection.insertOne(session,...)``
+    * Assert that the command passed to the command-started listener contained the session ``lsid`` from ``session``.
+    * Call ``collection.insertOne(,...)`` (*without* a session argument)
+    * Assert that the command passed to the command-started listener contained a session ``lsid``.
+
+    Repeat for:
+        * All methods that take a session parameter.
+
+4. Test that session argument is for the right client
     * Create ``client1`` and ``client2``
     * Get ``database`` from ``client1``
     * Get ``collection`` from ``database``
@@ -933,7 +947,7 @@ topologies.  It MUST NOT be run against a standalone server.
     Repeat for:
         * All methods that take a session parameter.
 
-4. Test that no further operations can be performed using a session after ``endSession`` has been called
+5. Test that no further operations can be performed using a session after ``endSession`` has been called
     * Start a ``session``
     * End the ``session``
     * Call ``collection.InsertOne(session, ...)``
@@ -947,14 +961,14 @@ topologies.  It MUST NOT be run against a standalone server.
     sufficient to only test the disposal pattern since that ends up calling
     ``endSession``).
 
-5. Authenticating as multiple users suppresses implicit sessions
+6. Authenticating as multiple users suppresses implicit sessions
     * Skip this test if your driver does not allow simultaneous authentication with multiple users
     * Authenticate as two users
     * Call ``findOne`` with no explicit session
     * Capture the command sent to the server
     * Assert that the command sent to the server does not have an ``lsid`` field
 
-6. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
+7. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
 to the pool.
     * Insert two documents into a collection
     * Execute a find operation on the collection and iterate past the first document
@@ -963,14 +977,14 @@ to the pool.
       * Track the lsid used for the find operation (e.g. with APM) and then do another operation and
         assert that the same lsid is used as for the find operation.
 
-7. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
+8. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
 to the pool.
     * Insert four documents into a collection
     * Execute a find operation on the collection with batch size of 2
     * Iterate past the first three documents, forcing the final ``getMore`` operation
     * Assert that the implicit session is returned to the pool prior to iterating past the last document
 
-8. At the end of every individual functional test of the driver, there SHOULD be an assertion that
+9. At the end of every individual functional test of the driver, there SHOULD be an assertion that
 there are no remaining sessions checked out from the pool.  This may require changes to existing tests to
 ensure that they close any explicit client sessions and any unexhausted cursors.
 
@@ -1067,3 +1081,4 @@ Change log
 :2018-01-10: Note that MongoClient must retain highest clusterTime
 :2018-01-10: Update test plan for drivers without APM
 :2018-01-11: Clarify that sessions require replica sets or sharded clusters
+:2018-02-20: Add implicit/explicit session tests
