@@ -620,11 +620,15 @@ A session ID MUST NOT be used simultaneously by more than one operation. Since
 drivers don't wait for a response for an unacknowledged write a driver would
 not know when the session ID could be reused. In theory a driver could use a
 new session ID for each unacknowledged write, but that would result in many
-orphaned sessions building up at the server. A driver MUST NOT send a session
-ID with unacknowledged writes. Drivers SHOULD raise an error if users request
-an unacknowledged write with a session.  Drivers MUST document the behavior
-of unacknowledged writes with a session.  This is true for both implicit and
-explicit sessions.
+orphaned sessions building up at the server.  Therefore, unacknowledged writes
+are only allowed outside the session mechanism.  Drivers MUST NOT send a
+session ID with unacknowledged writes.  This means that drivers MUST NOT use an
+implicit session when sending an unacknowledged write and drivers SHOULD raise
+an error if users provide an explicit session for an unacknowledged write.
+Drivers MAY silently ignore an explicit session with an unacknowledged write
+only where required for backwards compatibility.  Drivers MUST document the
+behavior of unacknowledged writes with explicit sessions and MUST document that
+implicit sessions are not supported with unacknowledged writes.
 
 Server Commands
 ===============
