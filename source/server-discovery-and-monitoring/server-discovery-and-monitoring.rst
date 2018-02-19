@@ -1112,8 +1112,10 @@ updateRSWithoutPrimary
         remove this server from topologyDescription and stop monitoring it
         return
 
-  Unlike `updateRSFromPrimary`_,
-  this subroutine does **not** remove any servers from the TopologyDescription.
+  Unlike `updateRSFromPrimary`_,	
+  this subroutine does **not** remove any servers from the TopologyDescription
+  based on the list of servers in isMaster.hosts. The only server that might be
+  removed is the server itself that the isMaster response is from.
 
   The special handling of description.primary
   ensures that a single-threaded client
