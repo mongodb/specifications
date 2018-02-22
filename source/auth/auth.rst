@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.3
+:Spec Version: 1.4
 :Title: Driver Authentication
-:Author: Craig Wilson
+:Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2017-11-10
+:Last Modified: 2018-03-01
 
 .. contents::
 
@@ -120,6 +120,64 @@ Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively,
 	#. A driver MUST perform authentication with all supplied credentials for all server types with the exception of RSArbiter.
 	#. A single invalid credential is the same as all credentials being invalid.
 
+Mechanism Negotiation via Handshake
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:since: 4.0
+
+If an application provides a username but does not provide an authentication
+mechanism, drivers MUST issue an ``isMaster`` command requesting a user's
+supported SASL mechanisms::
+
+    {isMaster: 1, saslSupportedMechs: "<dbname>.<username>"}
+
+In this example ``<dbname>`` is the authentication database name (default
+'admin') and ``<username>`` is the username provided in the auth credential.
+The username MUST NOT be modified from the form provided by the user (i.e.  do
+not normalize with SASLprep), as the server uses the raw form to look for
+conflicts with legacy credentials.
+
+If the ``isMaster`` command fails with error code 11 (UserNotFound), drivers
+must consider authentication to have failed.  In such a case, drivers MUST
+raise an error that is equivalent to what they would have raised if the
+authentication mechanism were specified and the server responded the same way.
+
+If the ``isMaster`` command succeeds and the response includes a
+``saslSupportedMechs`` field, then drivers MUST use the contents of that field
+to select a default mechanism as described later.  If the command succeeds and
+the response does not include a ``saslSupportedMechs`` field, then drivers MUST
+use the legacy default mechanism rules for servers older than 4.0.
+
+Single-credential drivers
+`````````````````````````
+
+Drivers that allow only a single credential per client MUST perform mechanism
+negotiation on the initial connection handshake when the authentication
+mechanism is not specified.  This lets authentication proceed without a
+separate negotiation round-trip exchange with the server.
+
+Multi-credential drivers
+````````````````````````
+
+The use of multiple credentials within a driver is discouraged, but some
+legacy drivers still allow this.  Such drivers may not have user credentials
+when connections are opened and thus will not be able to do negotiation.
+
+Drivers with a list of credentials at the time a connection is opened MAY do
+mechanism negotiation on the initial handshake, but only for the first
+credential in the list of credentials.
+
+When authenticating each credential, if the authentication mechanism is not
+specified and has not been negotiated for that credential:
+
+- If the connection handshake results indicate the server version is 4.0 or
+  later, drivers MUST send a new ``isMaster`` negotiation command for the
+  credential to determine the default authentication mechanism.
+
+- Otherwise, when the server version is earlier than 4.0, the driver MUST
+  select a default authentication mechanism for the credential following the
+  instructions for when the ``saslSupportedMechs`` field is not present in
+  an ``isMaster`` response.
 
 --------------------------------
 Supported Authentication Methods
@@ -129,18 +187,39 @@ Defaults
 --------
 
 :since: 3.0
+:revised: 4.0
 
-If the user did not provide a mechanism via the connection string or via code, SCRAM-SHA-1 MUST be used when talking to servers >= 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
+If the user did not provide a mechanism via the connection string or via code,
+the following logic describes how to select a default.
 
-When a user has specified a mechanism, regardless of the server version, the driver MUST honor this and attempt to authenticate.
+If a ``saslSupportedMechs`` field was present in the ``isMaster`` results for
+mechanism negotiation, then it MUST be inspected to select a default
+mechanism::
+
+    {
+        "ismaster" : true,
+        "saslSupportedMechs": ["SCRAM-SHA-1", "SCRAM-SHA-256"],
+        ...
+        "ok" : 1
+    }
+
+If SCRAM-SHA-256 is present in the list of mechanism, then it MUST be
+used as the default; otherwise, SCRAM-SHA-1 MUST be used as the default,
+regardless of whether SCRAM-SHA-1 is in the list.  Drivers MUST NOT
+attempt to use any other mechanism (e.g. PLAIN) as the default.
+
+If ``saslSupportedMechs`` is not present in the ``isMaster`` results for
+mechanism negotiation, then SCRAM-SHA-1 MUST be used when talking to servers >=
+3.0. Prior to server 3.0, MONGODB-CR MUST be used.
+
+When a user has specified a mechanism, regardless of the server version, the
+driver MUST honor this and attempt to authenticate.
 
 Determining Server Version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some drivers use the ``buildinfo`` command to determine server version. Occasionally, it might be enough to check the wire version. Checking the wire version is only possible when the server has bumped it in accordance with what needs to be checked.
-
-For instance, checking the wire version to determine whether or not the server supports SCRAM-SHA-1 is only possible if the server bumps the wire version when they release server 3.0.
-
+Drivers SHOULD use the server's wire version ranges to determine the server's
+version.
 
 MongoDB Custom Mechanisms
 -------------------------
@@ -150,6 +229,7 @@ MONGODB-CR
 
 :since: 1.4
 :deprecated: 3.0
+:removed: 4.0
 
 MongoDB Challenge Response is a nonce and MD5 based system. The driver sends a `getNonce` command, encodes and hashes the password using the returned nonce, and then sends an `authenticate` command.
 
@@ -352,7 +432,18 @@ SCRAM-SHA-1
 
 SCRAM-SHA-1 is defined in `RFC 5802 <http://tools.ietf.org/html/rfc5802>`_.
 
-`Page 8 of the RFC <http://tools.ietf.org/html/rfc5802#page-8>`_ identifies the "SaltedPassword" as ``:= Hi(Normalize(password), salt, i)``. The ``password`` variable MUST be the mongodb hashed variant. The mongo hashed variant is computed as :javascript:`hash = HEX( MD5( UTF8( username + ':mongo:' + plain_text_password )))`, where ``plain_text_password`` is actually plain text. For example, to compute the ClientKey according to the RFC:
+`Page 11 of the RFC <http://tools.ietf.org/html/rfc5802#page-11>`_ specifies
+that user names be prepared with SASLprep, but drivers MUST NOT do so.
+
+`Page 8 of the RFC <http://tools.ietf.org/html/rfc5802#page-8>`_ identifies the
+"SaltedPassword" as ``:= Hi(Normalize(password), salt, i)``. The ``password``
+variable MUST be the mongodb hashed variant. The mongo hashed variant is
+computed as :javascript:`hash = HEX( MD5( UTF8( username + ':mongo:' +
+plain_text_password )))`, where ``plain_text_password`` is actually plain text.
+The ``username`` and ``password`` MUST NOT be prepared with SASLprep before
+hashing.
+
+For example, to compute the ClientKey according to the RFC:
 
 .. code:: javascript
 
@@ -363,13 +454,26 @@ SCRAM-SHA-1 is defined in `RFC 5802 <http://tools.ietf.org/html/rfc5802>`_.
 		clientKey = HMAC(saltedPassword, "Client Key");
 	}
 
-In addition, SCRAM-SHA-1 requires that a client create a randomly generated nonce. It is imperative, for security sake, that this be as secure and truly random as possible. For instance, java provides both a Random class as well as a SecureRandom class. SecureRandom is cryptographically generated while Random is just a pseudo-random generator with predictable outcomes.
+In addition, SCRAM-SHA-1 requires that a client create a randomly generated
+nonce. It is imperative, for security sake, that this be as secure and truly
+random as possible. For instance, Java provides both a Random class as well as
+a SecureRandom class. SecureRandom is cryptographically generated while Random
+is just a pseudo-random generator with predictable outcomes.
 
+Additionally, drivers MUST enforce a minimum iteration count of 4096 and MUST
+error if the authentication conversation specifies a lower count.  This
+mitigates downgrade attacks by a man-in-the-middle attacker.
+
+Drivers MUST NOT advertise support for channel binding, as the server does
+not support it and legacy servers may fail authentication if drivers advertise
+support. I.e. the client-first-message MUST start with ``n,``.
 
 Conversation
 ````````````
 
-As an example, given a username of "user" and a password of "pencil" and an r value of "fyko+d2lbbFgONRv9qkxdawL", the scram conversation would appear as follows:
+As an example, given a username of "user" and a password of "pencil" and an r
+value of "fyko+d2lbbFgONRv9qkxdawL", a SCRAM-SHA-1 conversation would appear as
+follows:
 
 | C: ``n,,n=user,r=fyko+d2lbbFgONRv9qkxdawL``
 | S: ``r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,s=rQ9ZY3MntBeuP3E1TDVC4w==,i=10000``
@@ -388,7 +492,6 @@ This same conversation over mongodb's sasl implementation would appear as follow
 .. note::
 
 	There is an extra round trip due to an implementation decision on the server. This is accomplished by sending no bytes back to the server for what is effectively a no-op.
-
 
 `MongoCredential`_ Properties
 `````````````````````````````
@@ -409,6 +512,58 @@ mechanism_properties
 	MUST NOT be specified.
 
 
+SCRAM-SHA-256
+~~~~~~~~~~~~~
+
+:since: 4.0
+
+SCRAM-SHA-256 extends `RFC 5802 <http://tools.ietf.org/html/rfc5802>`_ and
+is formally defined in `RFC 7677 <https://tools.ietf.org/html/rfc7677>`_.
+
+The MongoDB SCRAM-SHA-256 mechanism works similarly to the SCRAM-SHA-1
+mechanism, with the following changes:
+
+- The SCRAM algorithm MUST use SHA-256 as the hash function instead of SHA-1.
+- User names MUST be prepared with SASLprep, per RFC 5802.
+- Passwords MUST be prepared with SASLprep, per RFC 5802.  Passwords are
+  used directly for key derivation ; they MUST NOT be digested as they are in
+  SCRAM-SHA-1.
+
+Additionally, drivers MUST enforce a minimum iteration count of 4096 and MUST
+error if the authentication conversation specifies a lower count.  This
+mitigates downgrade attacks by a man-in-the-middle attacker.
+
+Conversation
+````````````
+
+As an example, given a username of "user" and a password of "pencil" and an r
+value of "rOprNGfwEbeRWgbNEkqO", a SCRAM-SHA-256 conversation would appear as
+follows:
+
+| C: ``n,,n=user,r=rOprNGfwEbeRWgbNEkqO``
+| S: ``r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096``
+| C: ``c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=``
+| S: ``v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4=``
+
+`MongoCredential`_ Properties
+`````````````````````````````
+
+username
+	MUST be specified.
+
+source
+	MUST be specified.
+
+password
+	MUST be specified.
+
+mechanism
+	MUST be "SCRAM-SHA-256"
+
+mechanism_properties
+	MUST NOT be specified.
+
+
 -------------------------
 Connection String Options
 -------------------------
@@ -420,9 +575,9 @@ Auth Related Options
 --------------------
 
 authMechanism
-	MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1
+	MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256
 
-	Sets the Mechanism property on the MongoCredential. The default is MONGODB-CR if <= 2.6, otherwise SCRAM-SHA-1.
+	Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
 
 authSource
 	Sets the Source property on the MongoCredential. This overrides the database name on the connection string for where authentication occurs. The default is admin.
@@ -453,10 +608,88 @@ Implementation
 Test Plan
 =========
 
-Tests have been defined in the associated files:
+Connection string tests have been defined in the associated files:
 
 * `Connection String <tests/connection-string.json>`_.
 
+---------------------------------------
+SCRAM-SHA-256 and mechanism negotiation
+---------------------------------------
+
+Testing SCRAM-SHA-256 requires server version 3.7.3 or later with
+``featureCompatibilityVersion`` of "4.0" or later.
+
+Drivers that allow specifying auth parameters in code as well as via
+connection string should test both for the test cases described below.
+
+Step 1
+------
+
+Create three test users, one with only SHA-1, one with only SHA-256 and one
+with both.  For example::
+
+    db.runCommand({createUser: 'sha1', pwd: 'sha1', roles: ['root'], mechanisms: ['SCRAM-SHA-1']})
+    db.runCommand({createUser: 'sha256', pwd: 'sha256', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
+    db.runCommand({createUser: 'both', pwd: 'both', roles: ['root'], mechanisms: ['SCRAM-SHA-1', 'SCRAM-SHA-256']})
+
+Step 2
+------
+
+For each test user, verify that you can connect and run a command requiring
+authentication for the following cases:
+
+- Explicitly specifying each mechanism the user supports.
+- Specifying no mechanism and relying on mechanism negotiation.
+
+For the example users above, the ``dbstats`` command could be used as a test
+command.
+
+For a test user supporting both SCRAM-SHA-1 and SCRAM-SHA-256, drivers should
+verify that negotation selects SCRAM-SHA-256.  This may require monkey
+patching, manual log analysis, etc.
+
+Step 3
+------
+
+For test users that support only one mechanism, verify that explictly specifying
+the other mechanism fails.
+
+For a non-existent username, verify that not specifying a mechanism when
+connecting fails with the same error type that would occur with a correct
+username but incorrect password or mechanism.  (Because negotiation with a
+non-existent user name causes an isMaster error, we want to verify this is
+seen by users as similar to other authentication errors, not as a network or
+database command error.)
+
+
+Step 4
+------
+
+To test SASLprep behavior, create a user with username and password equal to
+the Unicode character ROMAN NUMERAL NINE.  To create the user, use the
+(post-SASLprep) username and password "IX" and specify SCRAM-SHA-256
+credentials:
+
+    db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
+
+Verify that the driver can authenticate with the username and password in
+each of the following forms, both of which normalize via SASLprep to "IX":
+
+- "\u2168"
+- "I\u00ADX"
+
+As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
+
+- mongodb://%E2%85%A8:%E2%85%A8@mongodb.example.com/admin
+- mongodb://I%C2%ADX:I%C2%ADX@mongodb.example.com/admin
+
+-----------------------
+Minimum iteration count
+-----------------------
+
+For SCRAM-SHA-1 and SCRAM-SHA-256, test that the minimum iteration count
+is respected.  This may be done via unit testing of an underlying SCRAM
+library.
 
 Backwards Compatibility
 =======================
@@ -509,6 +742,12 @@ Q: Should a driver support lazy authentication?
 
 Version History
 ===============
+
+Version 1.4 Changes
+	* Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
+	* Updated default mechanism determination
+	* Clarified SCRAM-SHA-1 rules around SASLprep
+	* Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a minimum iteration count
 
 Version 1.3 Changes
 	* Updated minimum server version to 2.6
