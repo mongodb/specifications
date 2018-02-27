@@ -50,7 +50,6 @@ Each YAML file contains an object with a single ``tests`` key. This key is an
 array of test case objects, each of which have the following keys:
 
 - ``description``: A string describing the test.
-- ``uri``: A string containing the URI to be parsed.
 - ``valid:``: a boolean indicating if the write concern created from the document is valid.
 - ``writeConcern:`` A document indicating the write concern to use.
 - ``writeConcernDocument:`` A document indicating the write concern to be sent to the server.
