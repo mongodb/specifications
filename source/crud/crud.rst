@@ -445,7 +445,7 @@ Read
     maxAwaitTimeMS: Optional<Int64>;
 
     /**
-     * Deprecated:4.0.Maximum number of documents or index keys to scan when executing the query.
+     * Deprecated : 4.0. Maximum number of documents or index keys to scan when executing the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
