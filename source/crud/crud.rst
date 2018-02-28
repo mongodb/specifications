@@ -1629,7 +1629,7 @@ Changes
 =======
 
 * 2018-02-28: Deprecate maxScan query option. 
- 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.
+* 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.
 * 2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
 * 2017-10-23: Allow BulkWriteException to provide an intermediary write result.
 * 2017-10-17: Document negative limit for FindOptions.
