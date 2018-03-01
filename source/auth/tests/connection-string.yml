@@ -1,0 +1,225 @@
+tests:
+   -
+        description: "should use the default source and mechanism"
+        uri: "mongodb://user:password@localhost"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password" 
+            db: "admin"
+        options: ~
+   -
+        description: "should use the database when no authSource is specified"
+        uri: "mongodb://user:password@localhost/foo"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password" 
+            db: "foo"
+        options: ~
+   -
+        description: "should use the authSource when specified"
+        uri: "mongodb://user:password@localhost/foo?authSource=bar"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password" 
+            db: "bar"
+        options: ~
+   -
+        description: "should recognise the mechanism (GSSAPI)"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user@DOMAIN.COM"
+            password: ~ 
+            db: "$external"
+        options: ~
+   -
+        description: "should recognise the mechanism where authSource $external (GSSAPI)"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/foo?authMechanism=GSSAPI&authSource=$external"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user@DOMAIN.COM"
+            password: ~ 
+            db: "$external"
+        options: ~
+   -
+        description: "should accept generic mechanism property (GSSAPI)"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:true"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user@DOMAIN.COM"
+            password: ~ 
+            db: "$external"
+        options:
+          authmechanism: "GSSAPI"
+          authmechanismproperties: 
+            SERVICE_NAME: "other"
+            CANONICALIZE_HOST_NAME: true
+   -
+        description: "should accept legacy gssapiServiceName (GSSAPI)"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&gssapiServiceName=other"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user@DOMAIN.COM"
+            password: ~ 
+            db: "$external"
+        options:
+          authmechanism: "GSSAPI"
+          authmechanismproperties:
+            SERVICE_NAME: "other"
+   -
+        description: "should throw an exception when an authMechanism (GSSAPI) has an authSource other than $external"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/foo?authMechanism=GSSAPI&authSource=bar"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
+   -
+        description: "should throw an exception when an authMechanism (GSSAPI) is specified with no username"
+        uri: "mongodb://localhost/?authMechanism=GSSAPI"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
+   -
+        description: "should recognize the mechanism (MONGODB-CR)"
+        uri: "mongodb://user:password@localhost/?authMechanism=MONGODB-CR"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password" 
+            db: "admin"
+        options:
+          authmechanism: "MONGODB-CR"
+   -
+        description: "should throw an exception when an authMechanism (MONGODB-CR) is specified with no username"
+        uri: "mongodb://localhost/?authMechanism=MONGODB-CR"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
+   -
+        description: "should recognize the mechanism (MONGODB-X509)"
+        uri: "mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/?authMechanism=MONGODB-X509"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "CN=myName,OU=myOrgUnit,O=myOrg,L=myLocality,ST=myState,C=myCountry"
+            password: ~
+            db: "$external"
+        options:
+          authmechanism: MONGODB-X509
+   -
+        description: "should recognize the mechanism where authSource $external (MONGODB-X509)"
+        uri: "mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/foo?authMechanism=MONGODB-X509&authSource=$external"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "CN=myName,OU=myOrgUnit,O=myOrg,L=myLocality,ST=myState,C=myCountry"
+            password: ~
+            db: "$external"
+        options:
+          authmechanism: MONGODB-X509
+   -
+        description: "should throw an exception when an authMechanism (MONGODB-X509) has an authSource other than $external"
+        uri: "mongodb://CN%3DmyName%2COU%3DmyOrgUnit%2CO%3DmyOrg%2CL%3DmyLocality%2CST%3DmyState%2CC%3DmyCountry@localhost/foo?authMechanism=MONGODB-X509&authSource=bar"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
+   -
+        description: "should recognize the mechanism (MONGODB-X509) with no username"
+        uri: "mongodb://localhost/?authMechanism=MONGODB-X509"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: ~
+            password: ~
+            db: "$external"
+        options:
+          authmechanism: "MONGODB-X509"
+   -
+        description: "should recognize the mechanism (PLAIN)"
+        uri: "mongodb://user:password@localhost/?authMechanism=PLAIN"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+          username: "user"
+          password: "password"
+          db: "admin"        
+        options:
+          authmechanism: "PLAIN"
+   -
+        description: "should throw an exception when an authMechanism (PLAIN) is specified with no username"
+        uri: "mongodb://localhost/?authMechanism=PLAIN"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
+   -
+        description: "should recognize the mechanism (SCRAM-SHA-1)"
+        uri: "mongodb://user:password@localhost/?authMechanism=SCRAM-SHA-1"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password" 
+            db: "admin"
+        options:
+          authmechanism: "SCRAM-SHA-1"
+   -
+        description: "should throw an exception when an authMechanism (SCRAM-SHA-1) is specified with no username"
+        uri: "mongodb://localhost/?authMechanism=SCRAM-SHA-1"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
+   -
+        description: "should recognize the mechanism (SCRAM-SHA-256)"
+        uri: "mongodb://user:password@localhost/?authMechanism=SCRAM-SHA-256"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password" 
+            db: "admin"
+        options:
+          authmechanism: "SCRAM-SHA-256"
+   -
+        description: "should throw an exception when an authMechanism (SCRAM-SHA-256) is specified with no username"
+        uri: "mongodb://localhost/?authMechanism=SCRAM-SHA-256"
+        hosts: ~
+        valid: false
+        warning: true
+        auth: ~
+        options: ~
