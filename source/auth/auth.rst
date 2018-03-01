@@ -678,7 +678,10 @@ authMechanism
 	Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
 
 authSource
-	Sets the Source property on the MongoCredential. This overrides the database name on the connection string for where authentication occurs. The default is admin.
+	Sets the Source property on the MongoCredential.
+
+	For GSSAPI, MONGODB-X509 and PLAIN authMechanisms, the authSource defaults to ``$external``.
+	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
 authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
 	A generic method to set mechanism properties in the connection string. 
