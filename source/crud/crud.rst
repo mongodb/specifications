@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: March 1, 2018
+:Last Modified: March 5, 2018
 
 .. contents::
 
@@ -536,6 +536,7 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
+     * @deprecated 4.0
      */
     snapshot: Optional<Boolean>;
 
@@ -1629,6 +1630,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-03-05: Deprecate snapshot option
 * 2018-03-01: Deprecate maxScan query option. 
 * 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.
 * 2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
