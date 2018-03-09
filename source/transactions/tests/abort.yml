@@ -1,0 +1,253 @@
+data: []
+
+tests:
+  - description: abort
+
+    skipReason: Server must implement abortTransaction
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber: 2
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber: 2
+            stmtId: 1
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data: []
+
+  - description: implicit abort
+
+    skipReason: Server must implement abortTransaction
+
+    operations:
+      # Start a transaction but don't commit - the driver calls abortTransaction
+      # from ClientSession.endSession().
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data: []
+
+  - description: two aborts
+
+    skipReason: Server must implement abortTransaction
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+      - name: abortTransaction
+        arguments:
+          session: session0
+        result:
+          # TODO: replace with actual server error message once we know it.
+          errorContains: no such transaction
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event: &abort_transaction_1
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+      - *abort_transaction_1
+
+    outcome:
+      collection:
+        data: []
+
+  - description: abort without start
+
+    operations:
+      - name: abortTransaction
+        arguments:
+          session: session0
+        result:
+          # Client-side error.
+          errorContains: no transaction in progress
+
+    expectations: []
+
+    outcome:
+      collection:
+        data: []
+
+  - description: commit after abort
+
+    skipReason: Server must implement abortTransaction
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+      - name: commitTransaction
+        arguments:
+          session: session0
+        result:
+          # Client-side error.
+          errorContains: no transaction in progress
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data: []

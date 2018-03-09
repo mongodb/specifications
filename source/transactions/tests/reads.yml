@@ -1,0 +1,190 @@
+# Test all read operations' txnNumbers and stmtIds.
+# Aggregate not yet supported in transactions.
+data: &data
+  - {_id: 1}
+  - {_id: 2}
+  - {_id: 3}
+  - {_id: 4}
+
+common:
+  - &startTransaction
+    name: startTransaction
+    arguments:
+      session: session0
+  - &commitTransaction
+    name: commitTransaction
+    arguments:
+      session: session0
+
+tests:
+  - description: count
+
+    # Invariant failure
+    # !_planYielding->getOpCtx()->lockState()->inAWriteUnitOfWork()
+    # src/mongo/db/query/plan_yield_policy.cpp 77
+    skipReason: "TODO: Crashes server"
+
+    operations:
+      - *startTransaction
+      - &count
+        name: count
+        arguments:
+          filter:
+            _id: 1
+          session: session0
+        result: 1
+      - *count
+      - *commitTransaction
+
+    expectations:
+      - command_started_event:
+          command:
+            count: test
+            filter:
+              - _id: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: count
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            count: test
+            filter:
+              - _id: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            autocommit:
+            writeConcern:
+          command_name: count
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 2
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin
+
+    outcome: &outcome
+      collection:
+        data:
+          *data
+
+  - description: find
+
+    skipReason: Await transactions support for find
+
+    operations:
+      - *startTransaction
+      - &find
+        name: find
+        arguments:
+          batchSize: 3
+          session: session0
+        result: *data
+      - *find
+      - *commitTransaction
+
+    expectations:
+      - command_started_event:
+          command:
+            find: test
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+          command_name: find
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            getMore:
+              # 42 is a fake placeholder value for the cursorId.
+              $numberLong: '42'
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            autocommit:
+          command_name: getMore
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            find: test
+            lsid: session0
+            txnNumber: 1
+            stmtId: 2
+            autocommit:
+          command_name: find
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            getMore:
+              $numberLong: '42'
+            lsid: session0
+            txnNumber: 1
+            stmtId: 3
+            autocommit:
+          command_name: getMore
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 4
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin
+
+    outcome: *outcome
+
+  - description: distinct
+
+    skipReason: Distinct with readConcern level snapshot, SERVER-33354
+
+    operations:
+      - *startTransaction
+      - name: distinct
+        arguments:
+          fieldName: _id
+          session: session0
+        result: [1]
+      - *commitTransaction
+
+    expectations:
+      - command_started_event:
+          command:
+            distinct: test
+            lsid: session0
+            txnNumber: 1
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: distinct
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            distinct: test
+            lsid: session0
+            txnNumber: 1
+            stmtId: 1
+            autocommit:
+            writeConcern:
+          command_name: distinct
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber: 1
+            stmtId: 2
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin
+
+    outcome: *outcome
