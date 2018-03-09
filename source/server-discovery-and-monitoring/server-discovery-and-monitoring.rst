@@ -200,6 +200,16 @@ address
 
 The hostname or IP address, and port number, of a MongoDB server.
 
+network error
+`````````````
+
+An error that occurs while reading from or writing to a network socket.
+
+network timeout
+```````````````
+
+A timeout that occurs while reading from or writing to a network socket.
+
 Data structures
 '''''''''''''''
 
