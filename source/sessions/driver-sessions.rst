@@ -992,9 +992,9 @@ to the pool.
 
 8. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
 to the pool.
-    * Insert four documents into a collection
-    * Execute a find operation on the collection with batch size of 2
-    * Iterate past the first three documents, forcing the final ``getMore`` operation
+    * Insert five documents into a collection
+    * Execute a find operation on the collection with batch size of 3
+    * Iterate past the first four documents, forcing the final ``getMore`` operation
     * Assert that the implicit session is returned to the pool prior to iterating past the last document
 
 9. At the end of every individual functional test of the driver, there SHOULD be an assertion that
