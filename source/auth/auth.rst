@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.4
+:Spec Version: 1.4.1
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-03-01
+:Last Modified: 2018-03-13
 
 .. contents::
 
@@ -383,6 +383,63 @@ mechanism_properties
 	SERVICE_REALM
 		Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support cross-realm authentication where the user exists in one realm and the service in another.
 
+Hostname Canonicalization
+`````````````````````````
+
+If CANONICALIZE_HOST_NAME is true, the client MUST canonicalize the name of each host it uses for authentication. There are two options. First, if the client's underlying GSSAPI library provides hostname canonicalization, the client MAY rely on it. For example, MIT Kerberos has `a configuration option for canonicalization <https://web.mit.edu/kerberos/krb5-1.13/doc/admin/princ_dns.html#service-principal-canonicalization>`_.
+
+Second, the client MAY implement its own canonicalization. If so, the canonicalization algorithm MUST be::
+
+  addresses = fetch addresses for host
+  if no addresses:
+    throw error
+
+  address = first result in addresses
+
+  while true:
+    cnames = fetch CNAME records for host
+    if no cnames:
+      break
+
+    # Unspecified which CNAME is used if > 1.
+    host = one of the records in cnames
+
+  reversed = do a reverse DNS lookup for address
+  if reversed:
+    canonicalized = lowercase(reversed)
+  else:
+    canonicalized = lowercase(host)
+
+For example, here is a Python implementation of this algorithm using ``getaddrinfo`` (for address and CNAME resolution) and ``getnameinfo`` (for reverse DNS).
+
+.. code-block:: python
+
+  from socket import *
+  import sys
+
+
+  def canonicalize(host):
+      # Get a CNAME for host, if any.
+      af, socktype, proto, canonname, sockaddr = getaddrinfo(
+          host, None, 0, 0, IPPROTO_TCP, AI_CANONNAME)[0]
+
+      print('address from getaddrinfo: [%s]' % (sockaddr[0],))
+      print('canonical name from getaddrinfo: [%s]' % (canonname,))
+
+      try:
+          # NI_NAMEREQD requests an error if getnameinfo fails.
+          name = getnameinfo(sockaddr, NI_NAMEREQD)
+      except gaierror as exc:
+          print('getname info failed: "%s"' % (exc,))
+          return canonname.lower()
+
+      return name[0].lower()
+
+
+  canonicalized = canonicalize(sys.argv[1])
+  print('canonicalized: [%s]' % (canonicalized,))
+
+Beware of a bug in older glibc where ``getaddrinfo`` uses PTR records instead of CNAMEs if the address family hint is AF_INET6, and beware of a bug in older MIT Kerberos that causes it to always do reverse DNS lookup even if the ``rdns`` configuration option is set to ``false``.
 
 PLAIN
 ~~~~~
@@ -742,6 +799,9 @@ Q: Should a driver support lazy authentication?
 
 Version History
 ===============
+
+Version 1.4.1 Changes
+    * Describe CANONICALIZE_HOST_NAME algorithm.
 
 Version 1.4 Changes
 	* Added SCRAM-SHA-256 and mechanism negotiation as provided by server 4.0
