@@ -841,10 +841,7 @@ as follows:
 11. Goto Step #4
 
 Before using a socket to the selected server, drivers MUST check whether
-the socket has been used in `socketCheckIntervalMS
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#socketcheckintervalms>`_
-milliseconds (as
-defined in the `Server Discovery and Monitoring`_ specification).  If the
+the socket has been used in `socketCheckIntervalMS`_ milliseconds.  If the
 socket has been idle for longer, the driver MUST update the
 ServerDescription for the selected server.  After updating, if the server
 is no longer suitable, the driver MUST repeat the server selection
