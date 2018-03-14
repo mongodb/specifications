@@ -836,7 +836,7 @@ as follows:
    goto Step #4
 
 10. If the current time exceeds the maximum time, raise a
-   `server selection error`_
+    `server selection error`_
 
 11. Goto Step #4
 
