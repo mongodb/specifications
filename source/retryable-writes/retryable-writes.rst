@@ -7,10 +7,10 @@ Retryable Writes
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
-:Status: Draft (awaiting reference implementation)
+:Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2017-11-02
+:Last Modified: 2018-03-14
 
 .. contents::
 
@@ -125,14 +125,14 @@ not support retryable writes, drivers MUST execute the write as if retryable
 writes were not enabled. Drivers MUST NOT include a transaction ID in the write
 command and MUST not retry the command under any circumstances.
 
-In a shard cluster, it is possible that mongos may appear to support retryable
-writes but an individual shard in the cluster does not (e.g. replica set's
-feature compatibility version is downgraded, standalone is added a new shard).
-In these rare cases, a write command that fans out to a shard that does not
-support retryable writes may partially fail and an error may be reported in the
-write result from mongos (e.g. ``writeErrors`` array in the bulk write result).
-This does not constitute a retryable error. Drivers MUST relay such errors to
-the user.
+In a sharded cluster, it is possible that mongos may appear to support retryable
+writes but one or more shards in the cluster do not (e.g. replica set shard is
+configured with feature compatibility version 3.4, a standalone is added as a
+new shard). In these rare cases, a write command that fans out to a shard that
+does not support retryable writes may partially fail and an error may be
+reported in the write result from mongos (e.g. ``writeErrors`` array in the bulk
+write result). This does not constitute a retryable error. Drivers MUST relay
+such errors to the user.
 
 Supported Write Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -663,6 +663,8 @@ may report the same ``requestId``.
 
 Changes
 =======
+
+2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.
 
 2017-11-02: Drivers should not raise errors if selected server does not support
 retryable writes and instead fall back to non-retryable behavior. In addition to
