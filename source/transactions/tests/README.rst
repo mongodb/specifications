@@ -64,7 +64,8 @@ For each YAML file, for each element in ``tests``:
 
 #. Drop the test collection, using writeConcern "majority".
 #. Execute the "create" command to recreate the collection, using writeConcern
-   "majority".
+   "majority". (Creating the collection inside a transaction is prohibited, so
+   create it explicitly.)
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
 #. Create a MongoClient ``client``, with Command Monitoring listeners enabled.
@@ -114,7 +115,6 @@ TODO:
   reading?
 - need some way to clean up sessions and transactions, killAllSessions: []
   didn't seem to work, will it ever?
-- test all write operations, especially all bulk writes and statement ids
 - test writeConcernErrors
 - test readConcern everywhere
 - test retryable writes in transaction
