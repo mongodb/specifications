@@ -109,6 +109,7 @@ For each YAML file, for each element in ``tests``:
      exactly the documents in the ``data`` array.
 
 TODO:
+- test findAndModify once SERVER-33559 is done
 - why does writeConcern "majority" prevent races where writeConcern {w: 3} does
   not, for a 3-node set? Does "majority" prevent races with secondary snapshot
   reads too, given that not all nodes must replicate the data before we start
