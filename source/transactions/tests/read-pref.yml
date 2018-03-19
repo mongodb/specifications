@@ -3,8 +3,6 @@ data: []
 tests:
   - description: primary
 
-    skipReason: Implement read preference rules
-
     operations:
       - name: startTransaction
         arguments:
@@ -36,8 +34,6 @@ tests:
   # "Violate rule 1" example from spec.
   - description: write and read
 
-    skipReason: Implement read preference rules
-
     operations:
       - name: startTransaction
         arguments:
@@ -55,9 +51,11 @@ tests:
             mode: secondary
           session: session0
         result:
-          errorContains: >-
-            cannot use read preference "secondary" in a transaction that began
-            with a write
+          # Client-side error.
+          errorContains: transaction readPreference changed
+      - name: commitTransaction
+        arguments:
+          session: session0
 
     outcome:
       collection:
@@ -66,8 +64,6 @@ tests:
 
   # "Violate rule 2" example from spec.
   - description: conflict
-
-    skipReason: Implement read preference rules
 
     operations:
       - name: startTransaction
@@ -85,9 +81,11 @@ tests:
             mode: primary
           session: session0
         result:
-          errorContains: >-
-            read preference "primary" does not match the transaction's original
-            read preference "primaryPreferred"
+          # Client-side error.
+          errorContains: transaction readPreference changed
+      - name: commitTransaction
+        arguments:
+          session: session0
 
     outcome:
       collection:
@@ -96,7 +94,7 @@ tests:
   # "Violate rule 3" example from spec.
   - description: read and write
 
-    skipReason: Implement read preference rules
+    skipReason: Server changes needed for commitTransaction on secondary.
 
     operations:
       - name: startTransaction
@@ -114,9 +112,11 @@ tests:
             _id: 1
           session: session0
         result:
-          errorContains: >-
-            cannot write in a transaction that began with read preference
-            "secondary"
+          # Client-side error.
+          errorContains: transaction readPreference changed
+      - name: commitTransaction
+        arguments:
+          session: session0
 
     outcome:
       collection:
