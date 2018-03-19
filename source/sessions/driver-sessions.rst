@@ -315,6 +315,9 @@ This property returns the session ID of this session. Note that if server
 sessions are pooled, different ``ClientSession`` instances will have the same session ID,
 but never at the same time.
 
+After a ``ClientSession`` has ended, accessing ``sessionId`` MUST either return
+a null value or raise an exception.
+
 advanceClusterTime
 ------------------
 
