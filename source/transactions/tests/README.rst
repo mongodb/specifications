@@ -114,10 +114,7 @@ TODO:
 - drivers MUST add txnNumber/stmtId to all commands in a transaction
 - test findAndModify once SERVER-33559 is done
 - test that stmtId is incremented after any failed write or read
-- why does writeConcern "majority" prevent races where writeConcern {w: 3} does
-  not, for a 3-node set? Does "majority" prevent races with secondary snapshot
-  reads too, given that not all nodes must replicate the data before we start
-  reading?
+- ensure first test operation is causally consistent with create-collection command
 - need some way to clean up sessions and transactions, killAllSessions: []
   didn't seem to work, will it ever?
 - test writeConcernErrors
