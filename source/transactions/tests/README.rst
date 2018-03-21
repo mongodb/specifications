@@ -109,6 +109,9 @@ For each YAML file, for each element in ``tests``:
      exactly the documents in the ``data`` array.
 
 TODO:
+- drivers MUST NOT retry writes in a transaction even when retryWrites=true, needs to use failpoint.
+- drivers MUST retry commit/abort, needs to use failpoint.
+- drivers MUST add txnNumber/stmtId to all commands in a transaction
 - test findAndModify once SERVER-33559 is done
 - test that stmtId is incremented after any failed write or read
 - why does writeConcern "majority" prevent races where writeConcern {w: 3} does
