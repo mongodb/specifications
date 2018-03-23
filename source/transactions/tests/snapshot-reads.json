@@ -177,7 +177,9 @@
             "command": {
               "count": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false
             },
@@ -190,7 +192,9 @@
             "command": {
               "find": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "autocommit": null
             },
@@ -205,7 +209,9 @@
                 "$numberLong": "42"
               },
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 2,
               "autocommit": null
             },
@@ -218,7 +224,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 3,
               "writeConcern": null
             },
@@ -272,7 +280,9 @@
             "command": {
               "count": "test",
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 0,
               "autocommit": false
             },
@@ -285,7 +295,9 @@
             "command": {
               "find": "test",
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 1,
               "autocommit": null
             },
@@ -300,7 +312,9 @@
                 "$numberLong": "42"
               },
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 2,
               "autocommit": null
             },
@@ -313,7 +327,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 3,
               "writeConcern": null
             },
@@ -467,7 +483,9 @@
             "command": {
               "count": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false
             },
@@ -480,7 +498,9 @@
             "command": {
               "find": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "autocommit": null
             },
@@ -495,7 +515,9 @@
                 "$numberLong": "42"
               },
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 2,
               "autocommit": null
             },
@@ -508,7 +530,9 @@
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "writeConcern": null
             },
             "command_name": "abortTransaction",
@@ -759,7 +783,9 @@
             "command": {
               "count": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false
             },
@@ -772,7 +798,9 @@
             "command": {
               "find": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "autocommit": null
             },
@@ -787,7 +815,9 @@
                 "$numberLong": "42"
               },
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 2,
               "autocommit": null
             },
@@ -800,7 +830,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 3,
               "writeConcern": null
             },
@@ -854,7 +886,9 @@
             "command": {
               "count": "test",
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 0,
               "autocommit": false
             },
@@ -867,7 +901,9 @@
             "command": {
               "find": "test",
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 1,
               "autocommit": null
             },
@@ -882,7 +918,9 @@
                 "$numberLong": "42"
               },
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 2,
               "autocommit": null
             },
@@ -895,7 +933,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 3,
               "writeConcern": null
             },
@@ -1055,7 +1095,9 @@
             "command": {
               "count": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false
             },
@@ -1068,7 +1110,9 @@
             "command": {
               "find": "test",
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "autocommit": null
             },
@@ -1083,7 +1127,9 @@
                 "$numberLong": "42"
               },
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 2,
               "autocommit": null
             },
@@ -1096,7 +1142,9 @@
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "writeConcern": null
             },
             "command_name": "abortTransaction",

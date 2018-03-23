@@ -43,7 +43,8 @@ tests:
             filter:
               - _id: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -55,7 +56,8 @@ tests:
             filter:
               - _id: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             autocommit:
             writeConcern:
@@ -65,7 +67,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 2
             writeConcern:
           command_name: commitTransaction
@@ -96,7 +99,8 @@ tests:
           command:
             find: test
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
           command_name: find
@@ -107,7 +111,8 @@ tests:
               # 42 is a fake placeholder value for the cursorId.
               $numberLong: '42'
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             autocommit:
           command_name: getMore
@@ -116,7 +121,8 @@ tests:
           command:
             find: test
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 2
             autocommit:
           command_name: find
@@ -126,7 +132,8 @@ tests:
             getMore:
               $numberLong: '42'
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 3
             autocommit:
           command_name: getMore
@@ -135,7 +142,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 4
             writeConcern:
           command_name: commitTransaction
@@ -161,7 +169,8 @@ tests:
           command:
             distinct: test
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -171,7 +180,8 @@ tests:
           command:
             distinct: test
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             autocommit:
             writeConcern:
@@ -181,7 +191,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 2
             writeConcern:
           command_name: commitTransaction

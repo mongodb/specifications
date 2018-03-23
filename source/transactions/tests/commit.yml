@@ -39,7 +39,8 @@ tests:
               - _id: 1
             ordered: true
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -49,7 +50,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             writeConcern:
           command_name: commitTransaction
@@ -61,7 +63,8 @@ tests:
               - _id: 2
             ordered: true
             lsid: session0
-            txnNumber: 2
+            txnNumber:
+              $numberLong: "2"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -71,7 +74,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 2
+            txnNumber:
+              $numberLong: "2"
             stmtId: 1
             writeConcern:
           command_name: commitTransaction
@@ -114,7 +118,8 @@ tests:
               - _id: 1
             ordered: true
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -124,7 +129,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             writeConcern:
           command_name: commitTransaction

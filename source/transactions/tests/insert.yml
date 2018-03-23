@@ -53,7 +53,8 @@ tests:
             documents:
               - _id: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -67,7 +68,8 @@ tests:
               - _id: 3
             ordered: true
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             autocommit:
             writeConcern:
@@ -79,7 +81,8 @@ tests:
             documents:
               - _id: 4
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 3 # Skip statement id 2.
             autocommit:
             writeConcern:
@@ -89,7 +92,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 4
             writeConcern:
           command_name: commitTransaction
@@ -101,7 +105,8 @@ tests:
               - _id: 5
             ordered: true
             lsid: session0
-            txnNumber: 2
+            txnNumber:
+              $numberLong: "2"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -111,7 +116,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 2
+            txnNumber:
+              $numberLong: "2"
             stmtId: 1
             writeConcern:
           command_name: commitTransaction

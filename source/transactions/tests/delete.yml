@@ -46,7 +46,8 @@ tests:
               - q: {_id: 1}
                 limit: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -60,7 +61,8 @@ tests:
       #           limit: 0
       #       ordered: true
       #       lsid: session0
-      #       txnNumber: 1
+      #       txnNumber:
+      #         $numberLong: "1"
       #       stmtId: 1
       #       autocommit:
       #       writeConcern:
@@ -73,7 +75,8 @@ tests:
               - q: {_id: 4}
                 limit: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1 # This will be stmtId 2 once deleteMany is supported.
             autocommit:
             writeConcern:
@@ -83,7 +86,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 2
             writeConcern:
           command_name: commitTransaction

@@ -82,7 +82,8 @@ tests:
             documents:
               - _id: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -95,7 +96,8 @@ tests:
               - q: {_id: 1}
                 limit: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             autocommit:
             writeConcern:
@@ -109,7 +111,8 @@ tests:
               - _id: 1
             ordered: true
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 2
             autocommit:
             writeConcern:
@@ -132,7 +135,8 @@ tests:
                 multi: false
                 upsert: false
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 3
             autocommit:
             writeConcern:
@@ -148,7 +152,8 @@ tests:
               - _id: 6
             ordered: true
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 6
             autocommit:
             writeConcern:
@@ -163,7 +168,8 @@ tests:
               - q: {_id: 4}
                 limit: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 10
             autocommit:
             writeConcern:
@@ -173,7 +179,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 12
             writeConcern:
           command_name: commitTransaction

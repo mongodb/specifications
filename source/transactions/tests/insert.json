@@ -96,7 +96,9 @@
                 }
               ],
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false,
               "writeConcern": null
@@ -119,7 +121,9 @@
               ],
               "ordered": true,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "autocommit": null,
               "writeConcern": null
@@ -138,7 +142,9 @@
                 }
               ],
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 3,
               "autocommit": null,
               "writeConcern": null
@@ -152,7 +158,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 4,
               "writeConcern": null
             },
@@ -171,7 +179,9 @@
               ],
               "ordered": true,
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 0,
               "autocommit": false,
               "writeConcern": null
@@ -185,7 +195,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 2,
+              "txnNumber": {
+                "$numberLong": "2"
+              },
               "stmtId": 1,
               "writeConcern": null
             },

@@ -61,7 +61,8 @@ tests:
                 multi: false
                 upsert: true
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 0
             autocommit: false
             writeConcern:
@@ -76,7 +77,8 @@ tests:
                 multi: false
                 upsert: false
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 1
             autocommit:
             writeConcern:
@@ -91,7 +93,8 @@ tests:
       #           multi: true
       #           upsert: false
       #       lsid: session0
-      #       txnNumber: 1
+      #       txnNumber:
+      #         $numberLong: "1"
       #       stmtId: 2
       #       autocommit:
       #       writeConcern:
@@ -101,7 +104,8 @@ tests:
           command:
             commitTransaction: 1
             lsid: session0
-            txnNumber: 1
+            txnNumber:
+              $numberLong: "1"
             stmtId: 2 # This will be stmtId 3 once updateMany is supported.
             writeConcern:
           command_name: commitTransaction

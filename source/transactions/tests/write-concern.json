@@ -43,7 +43,9 @@
                 }
               ],
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false,
               "writeConcern": null
@@ -57,7 +59,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "writeConcern": {
                 "w": "majority"
@@ -117,7 +121,9 @@
                 }
               ],
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autocommit": false,
               "writeConcern": null
@@ -131,7 +137,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 1,
               "writeConcern": null
             },
@@ -193,7 +201,9 @@
                 }
               ],
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autoabort": false,
               "writeConcern": null
@@ -207,7 +217,9 @@
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "writeConcern": {
                 "w": "majority"
               }
@@ -267,7 +279,9 @@
                 }
               ],
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "stmtId": 0,
               "autoabort": false,
               "writeConcern": null
@@ -281,7 +295,9 @@
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": 1,
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "writeConcern": null
             },
             "command_name": "abortTransaction",
