@@ -164,8 +164,6 @@ tests:
 
   - description: abort
 
-    skipReason: Server must implement abortTransaction
-
     transactionOptions:
       session0:
         autoStartTransaction: true

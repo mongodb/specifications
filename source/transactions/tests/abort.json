@@ -3,7 +3,6 @@
   "tests": [
     {
       "description": "abort",
-      "skipReason": "Server must implement abortTransaction",
       "operations": [
         {
           "name": "startTransaction",
@@ -138,7 +137,6 @@
     },
     {
       "description": "implicit abort",
-      "skipReason": "Server must implement abortTransaction",
       "operations": [
         {
           "name": "startTransaction",
@@ -206,7 +204,6 @@
     },
     {
       "description": "two aborts",
-      "skipReason": "Server must implement abortTransaction",
       "operations": [
         {
           "name": "startTransaction",
@@ -322,7 +319,6 @@
     },
     {
       "description": "commit after abort",
-      "skipReason": "Server must implement abortTransaction",
       "operations": [
         {
           "name": "startTransaction",

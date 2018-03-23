@@ -225,8 +225,6 @@ tests:
 
   - description: primary abort
 
-    skipReason: Server must implement abortTransaction
-
     operations:
       - name: startTransaction
         arguments:
@@ -423,8 +421,6 @@ tests:
     outcome: *outcome
 
   - description: secondary abort
-
-    skipReason: Server must implement abortTransaction
 
     operations:
       - name: startTransaction

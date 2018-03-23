@@ -102,8 +102,6 @@ tests:
 
   - description: abort with majority
 
-    skipReason: Server must implement abortTransaction
-
     operations:
       - name: startTransaction
         arguments:
@@ -152,8 +150,6 @@ tests:
           - _id: 1
 
   - description: abort with default
-
-    skipReason: Server must implement abortTransaction
 
     operations:
       - name: startTransaction

@@ -400,7 +400,6 @@
     },
     {
       "description": "primary abort",
-      "skipReason": "Server must implement abortTransaction",
       "operations": [
         {
           "name": "startTransaction",
@@ -1006,7 +1005,6 @@
     },
     {
       "description": "secondary abort",
-      "skipReason": "Server must implement abortTransaction",
       "operations": [
         {
           "name": "startTransaction",

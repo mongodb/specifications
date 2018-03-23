@@ -3,8 +3,6 @@ data: []
 tests:
   - description: abort
 
-    skipReason: Server must implement abortTransaction
-
     operations:
       - name: startTransaction
         arguments:
@@ -89,8 +87,6 @@ tests:
 
   - description: implicit abort
 
-    skipReason: Server must implement abortTransaction
-
     operations:
       # Start a transaction but don't commit - the driver calls abortTransaction
       # from ClientSession.endSession().
@@ -136,8 +132,6 @@ tests:
         data: []
 
   - description: two aborts
-
-    skipReason: Server must implement abortTransaction
 
     operations:
       - name: startTransaction
@@ -208,8 +202,6 @@ tests:
         data: []
 
   - description: commit after abort
-
-    skipReason: Server must implement abortTransaction
 
     operations:
       - name: startTransaction
