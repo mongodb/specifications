@@ -278,17 +278,19 @@
           }
         },
         {
-          "command": {
-            "abortTransaction": 1,
-            "lsid": "session0",
-            "txnNumber": {
-              "$numberLong": "1"
+          "command_started_event": {
+            "command": {
+              "abortTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "stmtId": 1,
+              "writeConcern": null
             },
-            "stmtId": 1,
-            "writeConcern": null
-          },
-          "command_name": "abortTransaction",
-          "database_name": "admin"
+            "command_name": "abortTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {

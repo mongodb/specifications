@@ -179,7 +179,7 @@ tests:
             writeConcern:
           command_name: abortTransaction
           database_name: admin
-      - *abort_transaction_1
+      - command_started_event: *abort_transaction_1
 
     outcome:
       collection:
