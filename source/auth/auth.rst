@@ -568,6 +568,18 @@ mechanism
 mechanism_properties
 	MUST NOT be specified.
 
+Caching credentials
+`````````````````````
+
+Drivers MUST maintain a cache of computed SCRAM credentials, where each cache
+entry's key is the tuple of ``(mongo_hashed_password, salt, i)``. Drivers SHOULD
+also include the name of the authentication mechanism, i.e. "SCRAM-SHA-1", as
+part of the key; this allows a single cache to be used for all current and 
+future SCRAM authentication mechanisms that drivers may implement.
+
+The cache entry value MUST be either the ``saltedPassword`` parameter, the
+combination of the ``clientKey`` and ``serverKey`` parameters, or the ``storedKey``
+result.
 
 SCRAM-SHA-256
 ~~~~~~~~~~~~~
@@ -620,6 +632,18 @@ mechanism
 mechanism_properties
 	MUST NOT be specified.
 
+Caching credentials
+`````````````````````
+
+Drivers MUST maintain a cache of computed SCRAM credentials, where each cache
+entry's key is the tuple of ``(mongo_hashed_password, salt, i)``. Drivers SHOULD
+also include the name of the authentication mechanism, i.e. "SCRAM-SHA-256", as
+part of the key; this allows a single cache to be used for all current and 
+future SCRAM authentication mechanisms that drivers may implement.
+
+The cache entry value MUST be either the ``saltedPassword`` parameter, the
+combination of the ``clientKey`` and ``serverKey`` parameters, or the ``storedKey``
+result.
 
 -------------------------
 Connection String Options
