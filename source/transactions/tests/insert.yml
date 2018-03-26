@@ -52,6 +52,7 @@ tests:
             insert: test
             documents:
               - _id: 1
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -80,6 +81,7 @@ tests:
             insert: test
             documents:
               - _id: 4
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"

@@ -42,6 +42,7 @@
                   "_id": 1
                 }
               ],
+              "ordered": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -120,6 +121,7 @@
                   "_id": 1
                 }
               ],
+              "ordered": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -199,6 +201,7 @@
                   "_id": 1
                 }
               ],
+              "ordered": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -219,6 +222,7 @@
               "txnNumber": {
                 "$numberLong": "1"
               },
+              "stmtId": 1,
               "writeConcern": {
                 "w": "majority"
               }
@@ -272,6 +276,7 @@
                   "_id": 1
                 }
               ],
+              "ordered": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -292,6 +297,7 @@
               "txnNumber": {
                 "$numberLong": "1"
               },
+              "stmtId": 1,
               "writeConcern": null
             },
             "command_name": "abortTransaction",

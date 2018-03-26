@@ -95,6 +95,7 @@
                   "_id": 1
                 }
               ],
+              "ordered": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -141,6 +142,7 @@
                   "_id": 4
                 }
               ],
+              "ordered": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"

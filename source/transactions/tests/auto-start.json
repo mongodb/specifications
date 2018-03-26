@@ -460,6 +460,7 @@
               "txnNumber": {
                 "$numberLong": "1"
               },
+              "stmtId": 1,
               "writeConcern": null
             },
             "command_name": "commitTransaction",
@@ -555,6 +556,9 @@
           "command_started_event": {
             "command": {
               "find": "test",
+              "filter": {
+                "_id": 1
+              },
               "lsid": "session1",
               "txnNumber": null,
               "stmtId": null,
@@ -572,6 +576,7 @@
               "txnNumber": {
                 "$numberLong": "1"
               },
+              "stmtId": 1,
               "writeConcern": null
             },
             "command_name": "commitTransaction",
@@ -582,6 +587,9 @@
           "command_started_event": {
             "command": {
               "find": "test",
+              "filter": {
+                "_id": 1
+              },
               "lsid": "session1",
               "txnNumber": null,
               "stmtId": null,
