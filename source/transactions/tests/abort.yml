@@ -151,7 +151,7 @@ tests:
         arguments:
           session: session0
         result:
-          errorContains: no transaction in progress
+          errorContains: no transaction started
 
     expectations:
       - command_started_event:
@@ -190,8 +190,7 @@ tests:
         arguments:
           session: session0
         result:
-          # Client-side error.
-          errorContains: no transaction in progress
+          errorContains: no transaction started
 
     expectations: []
 
@@ -219,8 +218,7 @@ tests:
         arguments:
           session: session0
         result:
-          # Client-side error.
-          errorContains: no transaction in progress
+          errorContains: no transaction started
 
     expectations:
       - command_started_event:
