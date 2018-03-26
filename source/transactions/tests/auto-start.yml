@@ -2,7 +2,7 @@ data: []
 tests:
   - description: commit
 
-    transactionOptions:
+    sessionOptions:
       session0:
         autoStartTransaction: true
 
@@ -108,7 +108,7 @@ tests:
 
   - description: explicit start
 
-    transactionOptions:
+    sessionOptions:
       session0:
         autoStartTransaction: true
 
@@ -164,7 +164,7 @@ tests:
 
   - description: abort
 
-    transactionOptions:
+    sessionOptions:
       session0:
         autoStartTransaction: true
 
@@ -246,7 +246,7 @@ tests:
 
   - description: commit empty transaction
 
-    transactionOptions:
+    sessionOptions:
       session0:
         autoStartTransaction: true
 
@@ -304,7 +304,7 @@ tests:
 
   - description: isolation
 
-    transactionOptions:
+    sessionOptions:
       session0:
         autoStartTransaction: true
 

@@ -3,7 +3,7 @@
   "tests": [
     {
       "description": "commit",
-      "transactionOptions": {
+      "sessionOptions": {
         "session0": {
           "autoStartTransaction": true
         }
@@ -174,7 +174,7 @@
     },
     {
       "description": "explicit start",
-      "transactionOptions": {
+      "sessionOptions": {
         "session0": {
           "autoStartTransaction": true
         }
@@ -259,7 +259,7 @@
     },
     {
       "description": "abort",
-      "transactionOptions": {
+      "sessionOptions": {
         "session0": {
           "autoStartTransaction": true
         }
@@ -389,7 +389,7 @@
     },
     {
       "description": "commit empty transaction",
-      "transactionOptions": {
+      "sessionOptions": {
         "session0": {
           "autoStartTransaction": true
         }
@@ -479,7 +479,7 @@
     },
     {
       "description": "isolation",
-      "transactionOptions": {
+      "sessionOptions": {
         "session0": {
           "autoStartTransaction": true
         }
