@@ -204,7 +204,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
-              "autoabort": false,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -230,11 +230,7 @@
       ],
       "outcome": {
         "collection": {
-          "data": [
-            {
-              "_id": 1
-            }
-          ]
+          "data": []
         }
       }
     },
@@ -281,7 +277,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
-              "autoabort": false,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -305,11 +301,7 @@
       ],
       "outcome": {
         "collection": {
-          "data": [
-            {
-              "_id": 1
-            }
-          ]
+          "data": []
         }
       }
     }
