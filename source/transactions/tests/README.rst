@@ -111,7 +111,6 @@ For each YAML file, for each element in ``tests``:
 TODO:
 - drivers MUST NOT retry writes in a transaction even when retryWrites=true, needs to use failpoint.
 - drivers MUST retry commit/abort, needs to use failpoint.
-- drivers MUST add txnNumber/stmtId to all commands in a transaction
 - test findAndModify once SERVER-33559 is done
 - test that stmtId is incremented after any failed write or read
 - ensure first test operation is causally consistent with create-collection command
