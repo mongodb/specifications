@@ -442,7 +442,7 @@
               "ordered": true,
               "lsid": "session0",
               "txnNumber": {
-                "$numberLong": "1"
+                "$numberLong": "2"
               },
               "stmtId": 0,
               "autocommit": false,
@@ -458,7 +458,7 @@
               "commitTransaction": 1,
               "lsid": "session0",
               "txnNumber": {
-                "$numberLong": "1"
+                "$numberLong": "2"
               },
               "stmtId": 1,
               "writeConcern": null
