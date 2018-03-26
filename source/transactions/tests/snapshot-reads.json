@@ -1005,6 +1005,7 @@
     },
     {
       "description": "secondary abort",
+      "skipReason": "Server must implements abort on secondary",
       "operations": [
         {
           "name": "startTransaction",
@@ -1029,6 +1030,9 @@
               "_id": 1
             },
             "batchSize": 3,
+            "readPreference": {
+              "mode": "secondary"
+            },
             "session": "session0"
           },
           "result": [

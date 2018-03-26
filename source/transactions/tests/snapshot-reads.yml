@@ -422,6 +422,8 @@ tests:
 
   - description: secondary abort
 
+    skipReason: Server must implements abort on secondary
+
     operations:
       - name: startTransaction
         arguments:
@@ -438,6 +440,8 @@ tests:
           sort:
             _id: 1
           batchSize: 3
+          readPreference:
+            mode: secondary
           session: session0
         result: *data
       - name: abortTransaction
