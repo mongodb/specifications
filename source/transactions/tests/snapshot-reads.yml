@@ -340,7 +340,7 @@ tests:
 
   - description: secondary
 
-    skipReason: Implement transaction pinning
+    skipReason: Await abortTransaction on secondaries, SERVER-34004
 
     operations:
       - name: startTransaction
@@ -426,7 +426,7 @@ tests:
 
   - description: secondary abort
 
-    skipReason: Server must implements abort on secondary
+    skipReason: Await abortTransaction on secondaries, SERVER-34004
 
     operations:
       - name: startTransaction
