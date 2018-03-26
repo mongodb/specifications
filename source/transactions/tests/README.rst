@@ -58,7 +58,10 @@ Each YAML file has the following keys:
 Use as integration tests
 ========================
 
-Run a MongoDB replica set with server version 4.0 or later.
+Run a MongoDB replica set with a primary, two secondaries, and an arbiter,
+server version 4.0 or later. (Including two secondaries ensures that transaction
+pinning works properly. Include an arbiter to ensure no new bugs have been
+introduced related to arbiters.)
 
 For each YAML file, for each element in ``tests``:
 
