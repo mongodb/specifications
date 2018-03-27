@@ -45,6 +45,9 @@ tests:
             deletes:
               - q: {_id: 1}
                 limit: 1
+            ordered: true
+            readConcern:
+              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -74,6 +77,7 @@ tests:
             deletes:
               - q: {_id: 4}
                 limit: 1
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"

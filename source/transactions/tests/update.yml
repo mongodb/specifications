@@ -60,6 +60,9 @@ tests:
                 u: {$inc: {x: 1}}
                 multi: false
                 upsert: true
+            ordered: true
+            readConcern:
+              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -76,6 +79,7 @@ tests:
                 u: {y: 1}
                 multi: false
                 upsert: false
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -92,6 +96,7 @@ tests:
       #           u: {$set: {x: 1}}
       #           multi: true
       #           upsert: false
+      #       ordered: true
       #       lsid: session0
       #       txnNumber:
       #         $numberLong: "1"

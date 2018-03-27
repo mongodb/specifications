@@ -53,6 +53,8 @@ tests:
             documents:
               - _id: 1
             ordered: true
+            readConcern:
+              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -106,6 +108,8 @@ tests:
             documents:
               - _id: 5
             ordered: true
+            readConcern:
+              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "2"

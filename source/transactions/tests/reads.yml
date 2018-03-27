@@ -42,6 +42,8 @@ tests:
             count: test
             filter:
               - _id: 1
+            readConcern:
+              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -98,6 +100,8 @@ tests:
       - command_started_event:
           command:
             find: test
+            readConcern:
+              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -169,6 +173,8 @@ tests:
           command:
             distinct: test
             lsid: session0
+            readConcern:
+              level: "snapshot"
             txnNumber:
               $numberLong: "1"
             stmtId: 0
