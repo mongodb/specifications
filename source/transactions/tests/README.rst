@@ -125,8 +125,6 @@ TODO:
 - test readConcern everywhere
 - test retryable writes in transaction
 - test interaction of transactions and causal consistency
-- prose or YAML test of secondary snapshot reads, test all commands go to same
-  secondary, including commit/abortTransaction commands
 
 Command-Started Events
 ``````````````````````
