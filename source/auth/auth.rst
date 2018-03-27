@@ -220,6 +220,18 @@ specified and has not been negotiated for that credential:
   instructions for when the ``saslSupportedMechs`` field is not present in
   an ``isMaster`` response.
 
+Caching credentials in SCRAM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the implementation of SCRAM authentication mechanisms (e.g. SCRAM-SHA-1
+and SCRAM-SHA-2), drivers MUST maintain a cache of computed SCRAM credentials.
+The cache entries SHOULD be identified by some combination of the password, 
+salt, iteration count, and a value that uniquely identifies the authentication
+mechanism (e.g. "SHA1" or "SCRAM-SHA-2").
+
+The cache entry value MUST be either the ``saltedPassword`` parameter or the
+combination of the ``clientKey`` and ``serverKey`` parameters.
+
 --------------------------------
 Supported Authentication Methods
 --------------------------------
@@ -608,19 +620,6 @@ mechanism
 
 mechanism_properties
 	MUST NOT be specified.
-
-Caching credentials
-`````````````````````
-
-Drivers MUST maintain a cache of computed SCRAM credentials, where each cache
-entry's key is the tuple of ``(mongo_hashed_password, salt, i)``. Drivers SHOULD
-also include the name of the authentication mechanism, i.e. "SCRAM-SHA-1", as
-part of the key; this allows a single cache to be used for all current and 
-future SCRAM authentication mechanisms that drivers may implement.
-
-The cache entry value MUST be either the ``saltedPassword`` parameter, the
-combination of the ``clientKey`` and ``serverKey`` parameters, or the ``storedKey``
-result.
 
 SCRAM-SHA-256
 ~~~~~~~~~~~~~
