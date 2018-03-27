@@ -38,10 +38,6 @@ tests:
                 filter: {_id: 2}
                 update: {$set: {x: 2}}
                 upsert: true # Produces upsertedIds: {2: 2} in the result.
-            - name: replaceOne
-              arguments:
-                filter: {_id: 1}
-                replacement: {y: 1}
             - name: insertOne
               arguments:
                 document: {_id: 3}
@@ -54,6 +50,16 @@ tests:
             - name: insertOne
               arguments:
                 document: {_id: 6}
+            # Keep replaces segregated from updates, so that drivers that aren't able to coalesce
+            # adjacent updates and replaces into a single update command will still pass this test
+            - name: replaceOne
+              arguments:
+                filter: {_id: 1}
+                replacement: {y: 1}
+            - name: replaceOne
+              arguments:
+                filter: {_id: 2}
+                replacement: {y: 2}
             - name: deleteOne
               arguments:
                 filter: {_id: 3}
@@ -66,9 +72,9 @@ tests:
           session: session0
         result:
           deletedCount: 2
-          insertedIds: {0: 1, 4: 3, 5: 4, 6: 5, 7: 6}
-          matchedCount: 2
-          modifiedCount: 2
+          insertedIds: {0: 1, 3: 3, 4: 4, 5: 5, 6: 6}
+          matchedCount: 3
+          modifiedCount: 3
           upsertedCount: 1
           upsertedIds: {2: 2}
       - name: commitTransaction
@@ -81,6 +87,7 @@ tests:
             insert: test
             documents:
               - _id: 1
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -95,6 +102,7 @@ tests:
             deletes:
               - q: {_id: 1}
                 limit: 1
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -130,10 +138,7 @@ tests:
                 u: {$set: {x: 2}}
                 multi: false
                 upsert: true
-              - q: {_id: 1}
-                u: {y: 1}
-                multi: false
-                upsert: false
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -154,10 +159,31 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 6
+            stmtId: 5
             autocommit:
             writeConcern:
           command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            update: test
+            updates:
+              - q: {_id: 1}
+                u: {y: 1}
+                multi: false
+                upsert: false
+              - q: {_id: 2}
+                u: {y: 2}
+                multi: false
+                upsert: false
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 9
+            autocommit:
+            writeConcern:
+          command_name: update
           database_name: transaction-tests
       - command_started_event:
           command:
@@ -167,10 +193,11 @@ tests:
                 limit: 1
               - q: {_id: 4}
                 limit: 1
+            ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 10
+            stmtId: 11
             autocommit:
             writeConcern:
           command_name: delete
@@ -181,7 +208,7 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 12
+            stmtId: 13
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -190,6 +217,6 @@ tests:
       collection:
         data:
           - {_id: 1, y: 1}
-          - {_id: 2, x: 2}
+          - {_id: 2, y: 2}
           - {_id: 5}
           - {_id: 6}
