@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.4.1
+:Spec Version: 1.5
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-03-13
+:Last Modified: 2018-03-28
 
 .. contents::
 
@@ -105,29 +105,69 @@ Naming of mechanism properties MUST be case-insensitive. For instance, SERVICE_N
 Authentication
 --------------
 
-This section augments the `Server Discovery and Monitoring Spec <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`_.
+A MongoClient instance MUST be considered a single logical connection to
+the server/deployment.
 
-A MongoClient instance MUST be considered a single logical connection to the server/deployment. Hence, all credentials given to an instance of a MongoClient should apply to every currently opened socket. Drivers SHOULD require all credentials to be specified upon construction of the MongoClient. This is defined as eager authentication and drivers MUST support this mode.
+Socket connections from a MongoClient to deployment members can be one
+of two types:
 
+* Monitoring-only socket: multi-threaded drivers maintain monitoring
+  sockets separate from sockets in connection pools.
 
-Connection Handshake
-~~~~~~~~~~~~~~~~~~~~
+* General-use socket: for multi-threaded drivers, these are sockets in
+  connection pools used for (non-monitoring) user operations; in
+  single-threaded drivers, these are used for both monitoring and user
+  operations.
 
-Drivers MUST consider a server ``Unknown`` if authentication fails. Effectively, an authentication failure is equivalent to a network or socket error in that we have failed to establish a connection with the server. The steps to support this are below:
+Authentication (including mechanism negotiation) MUST NOT happen on
+monitoring-only sockets.
 
-#. If credentials exist
-	#. Upon opening a socket, drivers MUST issue `MongoDB Handshake <../mongodb-handshake/handshake.rst>`_ immediately. This allows a driver to determine whether the server is an Arbiter.
-	#. A driver MUST perform authentication with all supplied credentials for all server types with the exception of RSArbiter.
-	#. A single invalid credential is the same as all credentials being invalid.
+If one or more credentials are provided to a MongoClient, then whenever
+a general-use socket is opened, drivers MUST immediately conduct an
+authentication handshake over that socket.
+
+Drivers SHOULD require all credentials to be specified upon construction
+of the MongoClient.  This is defined as eager authentication and drivers
+MUST support this mode.
+
+Authentication Handshake
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+An authentication handshake consists of an initial ``isMaster`` command
+possibly followed by one or more authentication conversations.
+
+Drivers MUST follow the following steps for an authentication
+handshake:
+
+#. Upon opening a general-use socket to a server for a given
+   MongoClient, drivers MUST issue a `MongoDB Handshake
+   <../mongodb-handshake/handshake.rst>`_ immediately.  This allows a
+   driver to determine the server type.  If the ``isMaster`` of the
+   MongoDB Handshake fails with an error, drivers MUST treat this an
+   an authentication error.
+
+#  If the server is not of type Standalone, RSPrimary, RSSecondary or
+   Mongos, no authentication is possible and the handshake is complete.
+
+#. If credentials exist:
+
+    #. A driver MUST authenticate with all credentials provided to the
+           MongoClient.
+
+    #. A single invalid credential is the same as all credentials being
+           invalid.
+
+If the authentication handshake fails for a socket, drivers MUST close all
+other general-use sockets connected to the same server.
 
 Mechanism Negotiation via Handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :since: 4.0
 
-If an application provides a username but does not provide an authentication
-mechanism, drivers MUST issue an ``isMaster`` command requesting a user's
-supported SASL mechanisms::
+If an application provides a username but does not provide an
+authentication mechanism, drivers MUST negotiate a mechanism via an
+``isMaster`` command requesting a user's supported SASL mechanisms::
 
     {isMaster: 1, saslSupportedMechs: "<dbname>.<username>"}
 
@@ -151,10 +191,11 @@ use the legacy default mechanism rules for servers older than 4.0.
 Single-credential drivers
 `````````````````````````
 
-Drivers that allow only a single credential per client MUST perform mechanism
-negotiation on the initial connection handshake when the authentication
-mechanism is not specified.  This lets authentication proceed without a
-separate negotiation round-trip exchange with the server.
+When the authentication mechanism is not specied, drivers that allow
+only a single credential per client MUST perform mechanism negotiation
+as part of the MongoDB Handshake portion of the authentication
+handshake.  This lets authentication proceed without a separate
+negotiation round-trip exchange with the server.
 
 Multi-credential drivers
 ````````````````````````
@@ -764,14 +805,11 @@ The Java and .NET drivers currently uses eager authentication and abide by this 
 Q & A
 =====
 
-Q: According to `Connection Handshake`_, we are calling isMaster for every socket. Isn't this a lot?
+Q: According to `Authentication Handshake`_, we are calling isMaster for every socket. Isn't this a lot?
 	Drivers should be pooling connections and, as such, new sockets getting opened should be relatively infrequent. It's simply part of the protocol for setting up a socket to be used.
 
 Q: Where is information related to user management?
 	Not here currently. Should it be? This is about authentication, not user management. Perhaps a new spec is necessary.
-
-Q: I've heard ``isMaster`` will require authentication in the future. Should we consider that here?
-	Not right now. We don't know what the future looks like yet and, as such, any preparation would be a guess. This spec will be augmented when the server changes connection protocols.
 
 Q: It's possible to continue using authenticated sockets even if new sockets fail authentication. Why can't we do that so that applications continue to work.
 	Yes, that's technically true. The issue with doing that is for drivers using connection pooling. An application would function normally until an operation needed an additional connection(s) during a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to understand for a user.
@@ -799,6 +837,10 @@ Q: Should a driver support lazy authentication?
 
 Version History
 ===============
+
+Version 1.5 Changes
+    * Clarify auth handshake and that it only applies to non-monitoring
+      sockets.
 
 Version 1.4.1 Changes
     * Describe CANONICALIZE_HOST_NAME algorithm.
