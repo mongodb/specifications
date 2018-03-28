@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.11
-:Last Modified: August 11, 2017
+:Version: 2.12
+:Last Modified: March 28, 2018
 
 .. contents::
 
@@ -478,6 +478,10 @@ The client begins monitoring a server when:
 * ... `updateRSWithoutPrimary`_ or `updateRSFromPrimary`_
   discovers new replica set members.
 
+When checking a server, clients MUST NOT include SCRAM mechanism
+negotiation requests with the ``isMaster`` command, as doing so would
+make monitoring checks more expensive for the server.
+
 The following subsections specify how monitoring works,
 first in multi-threaded or asynchronous clients,
 and second in single-threaded clients.
@@ -509,6 +513,8 @@ Servers are monitored with dedicated sockets
 to acquire a socket;
 it uses a dedicated socket that does not count toward the pool's
 maximum size.
+
+Drivers MUST NOT authenticate on sockets used for monitoring.
 
 Servers are checked periodically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2143,7 +2149,6 @@ which will require updates to this spec:
 
 * Eventually consistent collections (SERVER-2956)
 * Mongos discovery (SERVER-1834)
-* Require auth for ismaster command (SERVER-12143)
 * Put individual databases into maintenance mode,
   instead of the whole server (SERVER-7826)
 * Put setVersion in write-command responses (SERVER-13909)
@@ -2269,3 +2274,6 @@ to auto-retry.
 2017-08-11: Clearer specification of "incompatible" logic.
 
 2017-09-01: Improved incompatibility error messages.
+
+2018-03-28: Specify that monitoring must not do mechanism negotiation or
+authentication.
