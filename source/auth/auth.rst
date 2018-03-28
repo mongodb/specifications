@@ -142,7 +142,9 @@ handshake:
 #. Upon opening a general-use socket to a server for a given
    MongoClient, drivers MUST issue a `MongoDB Handshake
    <../mongodb-handshake/handshake.rst>`_ immediately.  This allows a
-   driver to determine the server type.
+   driver to determine the server type.  If the ``isMaster`` of the
+   MongoDB Handshake fails with an error, drivers MUST treat this an
+   an authentication error.
 
 #  If the server is not of type Standalone, RSPrimary, RSSecondary or
    Mongos, no authentication is possible and the handshake is complete.
@@ -154,6 +156,9 @@ handshake:
 
     #. A single invalid credential is the same as all credentials being
            invalid.
+
+If the authentication handshake fails for a socket, drivers MUST close all
+other general-use sockets connected to the same server.
 
 Mechanism Negotiation via Handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
