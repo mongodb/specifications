@@ -120,7 +120,7 @@ of two types:
   operations.
 
 Authentication (including mechanism negotiation) MUST NOT happen on
-monitoring-only socket.
+monitoring-only sockets.
 
 If one or more credentials are provided to a MongoClient, then whenever
 a general-use socket is opened, drivers MUST immediately conduct an
