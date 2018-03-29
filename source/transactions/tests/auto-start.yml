@@ -70,6 +70,7 @@ tests:
             ordered: true
             readConcern:
               level: "snapshot"
+              afterClusterTime: 42
             lsid: session0
             txnNumber:
               $numberLong: "2"
@@ -231,6 +232,7 @@ tests:
             ordered: true
             readConcern:
               level: "snapshot"
+              afterClusterTime: 42
             txnNumber:
               $numberLong: "2"
             stmtId: 0

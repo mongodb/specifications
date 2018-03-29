@@ -110,6 +110,7 @@ tests:
             ordered: true
             readConcern:
               level: "snapshot"
+              afterClusterTime: 42
             lsid: session0
             txnNumber:
               $numberLong: "2"

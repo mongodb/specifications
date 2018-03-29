@@ -124,7 +124,6 @@ TODO:
 - test writeConcernErrors
 - test readConcern everywhere
 - test retryable writes in transaction
-- test interaction of transactions and causal consistency
 
 Command-Started Events
 ``````````````````````
@@ -153,3 +152,9 @@ that MUST be ignored. (In the Command Monitoring Spec tests, fake cursorIds are
 correlated with real ones, but that is not necessary for Transactions Spec
 tests.)
 
+afterClusterTime
+^^^^^^^^^^^^^^^^
+
+A ``readConcern.afterClusterTime`` value of ``42`` in a command-started event
+is a fake cluster time. Drivers MUST assert that the actual command includes an
+afterClusterTime.
