@@ -56,7 +56,47 @@ Additional Values
 The expected events provide the minimum data that is required and can be tested. It is
 possible for more values to be present in the events, such as extra data provided when
 using sharded clusters or ``nModified`` field in updates. The driver MUST assert the
-expected data is present and also MUST allow for additional data to be present as well.
+expected data is present and also MUST allow for additional data to be present as well
+at the top level of the command document or reply document.
+
+For example, say the client sends a causally-consistent "distinct" command with
+readConcern level "majority", like::
+
+  {
+    "distinct": "collection",
+    "key": "key",
+    "readConcern":{
+      "afterClusterTime": {"$timestamp":{"t":1522336030,"i":1}},
+      "level":"majority"
+    },
+    "$clusterTime": {
+      "clusterTime": { "$timestamp": { "i": 1, "t": 1522335530 } },
+      "signature": {
+        "hash": { "$binary": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=", "$type": "00" },
+        "keyId": { "$numberLong": "0" }
+      }
+    },
+    "lsid": {
+      "id": { "$binary": "RaigP3oASqu+galPvRAfcg==", "$type": "04" }
+    }
+  }
+
+Then it would pass a command-started event like the following YAML, because the
+fields not mentioned in the YAML are ignored::
+
+  command:
+    distinct: collection
+    key: key
+
+However, if there are fields in command subdocuments that are not mentioned in
+the YAML, then the command does *not* pass the test::
+
+  command:
+    distinct: collection
+    key: key
+    # Fails because the expected readConcern has no "afterClusterTime".
+    readConcern:
+      level: majority
 
 Ignoring Tests Based On Server Version
 ``````````````````````````````````````
