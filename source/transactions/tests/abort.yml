@@ -257,6 +257,83 @@ tests:
           command_name: abortTransaction
           database_name: admin
 
+  - description: abort ignores TransactionAborted
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      # Abort the server transaction with a duplicate key error.
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          errorContains: "duplicate key error"
+      # TODO: SERVER-34051 Make sure the server aborted the transaction.
+      # - name: insertOne
+      #   arguments:
+      #     document:
+      #       _id: 1
+      #     session: session0
+      #   result:
+      #     errorContains: "transaction isn't in progressss"
+      # abortTransaction must ignore the TransactionAborted and succeed.
+      - name: abortTransaction
+        arguments:
+          session: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+              level: "snapshot"
+            lsid: session0
+            txnNumber:
+               $numberLong: "1"
+            stmtId: 0
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+               $numberLong: "1"
+            stmtId: 1
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 2
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+
+
     outcome:
       collection:
         data: []
