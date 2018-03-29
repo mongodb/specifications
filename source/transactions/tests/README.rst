@@ -30,8 +30,10 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
-  - ``transactionOptions``: Optional, parameters to pass to
-    ClientSession.startTransaction().
+  - ``clientOptions``: Optional, parameters to pass to MongoClient().
+
+  - ``sessionOptions``: Optional, parameters to pass to
+    MongoClient.startSession().
 
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
@@ -74,9 +76,9 @@ For each YAML file, for each element in ``tests``:
 #. Create a MongoClient ``client``, with Command Monitoring listeners enabled.
    (Using a new MongoClient for each test ensures a fresh session pool that
    hasn't executed any transactions previously, so the tests can assert actual
-   txnNumbers, starting from 1.)
+   txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if present.
 #. Call ``client.startSession`` twice to create ClientSession objects
-   ``session0`` and ``session1``, using the test's "transactionOptions" if they
+   ``session0`` and ``session1``, using the test's "sessionOptions" if they
    are present. Save their lsids so they are available after calling
    ``endSession``, see `Logical Session Id`.
 #. For each element in ``operations``:
