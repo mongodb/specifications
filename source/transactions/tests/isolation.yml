@@ -60,10 +60,6 @@ tests:
 
   - description: two transactions
 
-    # TODO: Crashes server.
-    # Invariant failure !_planYielding->getOpCtx()->lockState()->inAWriteUnitOfWork() src/mongo/db/query/plan_yield_policy.cpp 77
-    skipReason: "TODO: Crashes server."
-
     operations:
       - name: startTransaction
         arguments:

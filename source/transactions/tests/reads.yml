@@ -19,11 +19,6 @@ common:
 tests:
   - description: count
 
-    # Invariant failure
-    # !_planYielding->getOpCtx()->lockState()->inAWriteUnitOfWork()
-    # src/mongo/db/query/plan_yield_policy.cpp 77
-    skipReason: "TODO: Crashes server"
-
     operations:
       - *startTransaction
       - &count
@@ -40,8 +35,8 @@ tests:
       - command_started_event:
           command:
             count: test
-            filter:
-              - _id: 1
+            query:
+              _id: 1
             readConcern:
               level: "snapshot"
             lsid: session0
@@ -55,8 +50,8 @@ tests:
       - command_started_event:
           command:
             count: test
-            filter:
-              - _id: 1
+            query:
+              _id: 1
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -83,7 +78,7 @@ tests:
 
   - description: find
 
-    skipReason: Await transactions support for find
+    skipReason: "Skip until find supports stmtId, SERVER-33213"
 
     operations:
       - *startTransaction
@@ -157,15 +152,13 @@ tests:
 
   - description: distinct
 
-    skipReason: Distinct with readConcern level snapshot, SERVER-33354
-
     operations:
       - *startTransaction
       - name: distinct
         arguments:
           fieldName: _id
           session: session0
-        result: [1]
+        result: [1, 2, 3, 4]
       - *commitTransaction
 
     expectations:
@@ -184,22 +177,12 @@ tests:
           database_name: transaction-tests
       - command_started_event:
           command:
-            distinct: test
+            commitTransaction: 1
             lsid: session0
+            readConcern:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
-            autocommit:
-            writeConcern:
-          command_name: distinct
-          database_name: transaction-tests
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            stmtId: 2
             writeConcern:
           command_name: commitTransaction
           database_name: admin
