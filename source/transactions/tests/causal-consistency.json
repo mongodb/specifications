@@ -7,7 +7,7 @@
   ],
   "tests": [
     {
-      "description": "casual consistency",
+      "description": "causal consistency",
       "operations": [
         {
           "name": "updateOne",
@@ -156,7 +156,7 @@
       }
     },
     {
-      "description": "casual consistency disabled",
+      "description": "causal consistency disabled",
       "sessionOptions": {
         "session0": {
           "causalConsistency": false

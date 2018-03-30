@@ -3,7 +3,7 @@ data:
     count: 0
 
 tests:
-  - description: casual consistency
+  - description: causal consistency
 
     operations:
       # Update a document without a transaction.
@@ -84,7 +84,7 @@ tests:
         data:
           - _id: 1
             count: 2
-  - description: casual consistency disabled
+  - description: causal consistency disabled
 
     sessionOptions:
       session0:
@@ -93,7 +93,7 @@ tests:
     operations:
       # Update a document without a transaction.
       - *updateOne
-      # Updating the same document inside a transaction without casual
+      # Updating the same document inside a transaction without causal
       # consistency results in a transaction snapshot that is causally
       # before the first updateOne.
       - name: startTransaction
