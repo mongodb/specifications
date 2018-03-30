@@ -19,14 +19,13 @@ tests:
           session: session0
         result:
           deletedCount: 1
-      # TODO: awaits server support
-      # - name: deleteMany
-      #   arguments:
-      #     filter:
-      #       _id: {$lte: 3}
-      #     session: session0
-      #   result:
-      #     deletedCount: 2
+      - name: deleteMany
+        arguments:
+          filter:
+            _id: {$lte: 3}
+          session: session0
+        result:
+          deletedCount: 2
       - name: deleteOne
         arguments:
           filter:
@@ -56,21 +55,21 @@ tests:
             writeConcern:
           command_name: delete
           database_name: transaction-tests
-      # - command_started_event:
-      #     command:
-      #       delete: test
-      #       deletes:
-      #         - q: {_id: {$lte: 3}}
-      #           limit: 0
-      #       ordered: true
-      #       lsid: session0
-      #       txnNumber:
-      #         $numberLong: "1"
-      #       stmtId: 1
-      #       autocommit:
-      #       writeConcern:
-      #     command_name: delete
-      #     database_name: transaction-tests
+      - command_started_event:
+          command:
+            delete: test
+            deletes:
+              - q: {_id: {$lte: 3}}
+                limit: 0
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 1
+            autocommit:
+            writeConcern:
+          command_name: delete
+          database_name: transaction-tests
       - command_started_event:
           command:
             delete: test
@@ -81,7 +80,7 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1 # This will be stmtId 2 once deleteMany is supported.
+            stmtId: 2
             autocommit:
             writeConcern:
           command_name: delete
@@ -92,7 +91,7 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2
+            stmtId: 3
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -100,6 +99,4 @@ tests:
     outcome:
       collection:
         data:
-          - _id: 2
-          - _id: 3
           - _id: 5

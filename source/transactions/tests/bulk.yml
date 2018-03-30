@@ -50,6 +50,9 @@ tests:
             - name: insertOne
               arguments:
                 document: {_id: 6}
+            - name: insertOne
+              arguments:
+                document: {_id: 7}
             # Keep replaces segregated from updates, so that drivers that aren't able to coalesce
             # adjacent updates and replaces into a single update command will still pass this test
             - name: replaceOne
@@ -68,11 +71,13 @@ tests:
                 filter: {_id: 4}
             # TODO: awaiting server support
             # - name: updateMany
-            # - name: deleteMany
+            - name: deleteMany
+              arguments:
+                filter: {_id: {$gte: 6}}
           session: session0
         result:
-          deletedCount: 2
-          insertedIds: {0: 1, 3: 3, 4: 4, 5: 5, 6: 6}
+          deletedCount: 4
+          insertedIds: {0: 1, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
           matchedCount: 3
           modifiedCount: 3
           upsertedCount: 1
@@ -157,6 +162,7 @@ tests:
               - _id: 4
               - _id: 5
               - _id: 6
+              - _id: 7
             ordered: true
             lsid: session0
             txnNumber:
@@ -182,7 +188,7 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 9
+            stmtId: 10
             autocommit:
             writeConcern:
           command_name: update
@@ -195,11 +201,13 @@ tests:
                 limit: 1
               - q: {_id: 4}
                 limit: 1
+              - q: {_id: {$gte: 6}}
+                limit: 0
             ordered: true
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 11
+            stmtId: 12
             autocommit:
             writeConcern:
           command_name: delete
@@ -210,7 +218,7 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 13
+            stmtId: 15
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -221,4 +229,3 @@ tests:
           - {_id: 1, y: 1}
           - {_id: 2, y: 2}
           - {_id: 5}
-          - {_id: 6}
