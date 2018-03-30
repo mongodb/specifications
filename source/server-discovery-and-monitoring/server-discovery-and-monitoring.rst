@@ -1358,85 +1358,66 @@ It will be refreshed by the next periodic check or,
 if an application operation needs the server sooner than that,
 then a re-check will be triggered by the server selection algorithm.
 
-"not master" and "node is recovering"
-`````````````````````````````````````
+Transient Server Errors
+```````````````````````
 
-These errors are detected from a getLastError response,
-write command response, or query response. Clients MUST consider a server
-error to be a "node is recovering" error if the substrings "node is recovering"
-or "not master or secondary" are anywhere in the error message.
-Otherwise, if the substring "not master" is in the error message it is a
-"not master" error::
+Server errors are detected from a getLastError response, write command
+response, or query response. The following errors indicate a server
+role change:
 
-    def is_recovering(message):
-        return ("not master or secondary" in message
-            or "node is recovering" in message)
+.. list-table::
+  :header-rows: 1
 
-    def is_notmaster(message):
-        if is_recovering(message):
-            return false
-        return ("not master" in message)
+  * - Error Name
+    - Error Code
+  * - InterruptedAtShutdown
+    - 11600
+  * - InterruptedDueToReplStateChange
+    - 11602
+  * - NotMaster
+    - 10107
+  * - NotMasterNoSlaveOk
+    - 13435
+  * - NotMasterOrSecondary
+    - 13436
+  * - PrimarySteppedDown
+    - 189
+  * - ShutdownInProgress
+    - 91
 
-    def is_notmaster_or_recovering(message):
-        return is_recovering(message) or is_notmaster(message)
+See the test scenario called "parsing 'not master' and 'node is recovering'
+errors" for example response documents.
 
-    def parse_gle(response):
-        if "err" in response:
-            if is_notmaster_or_recovering(response["err"]):
-                handle_not_master_or_recovering(response["err"])
+When the client sees one of the above errors it MUST replace the server's
+description with a default ServerDescription of type Unknown. It MUST store
+useful information in the new ServerDescription's error field, including the
+error message from the server.
 
-    # Parse response to any command besides getLastError.
-    def parse_command_response(response):
-        if not response["ok"]:
-            if is_notmaster_or_recovering(response["errmsg"]):
-                handle_not_master_or_recovering(response["errmsg"])
+Multi-threaded and asynchronous clients MUST `request an immediate check`_ of
+the server. Unlike in the "network error" scenario above, a server error means
+the server is available but the client is either wrong about its type or the
+server encountered a (possibly) transient error. Thus an immediate re-check is
+likely to provide useful information.
 
-    def parse_query_response(response):
-        if the "QueryFailure" bit is set in response flags:
-            if is_notmaster_or_recovering(response["$err"]):
-                handle_not_master_or_recovering(response["$err"])
+For single-threaded clients, only the following subset of the above errors
+MUST immediately check the server (see `checking a single server`_).
 
-    def handle_not_master_or_recovering(message):
-        replace server's description with
-        new ServerDescription(type=Unknown, error=message)
+.. list-table::
+  :header-rows: 1
 
-        if multi-threaded:
-            request immediate check
-        else:
-            # Check right now if this is "not master", since it might be a
-            # useful secondary. If it's "node is recovering" leave it for the
-            # next full scan.
-            if is_notmaster(message):
-                check failing server
+  * - Error Name
+    - Error Code
+  * - NotMaster
+    - 10107
+  * - NotMasterNoSlaveOk
+    - 13435
 
-        clear connection pool for server
-
-See the test scenario called
-"parsing 'not master' and 'node is recovering' errors"
-for example response documents.
-
-When the client sees a "not master" or "node is recovering" error
-it MUST replace the server's description
-with a default ServerDescription of type Unknown.
-It MUST store useful information in the new ServerDescription's error field,
-including the error message from the server.
-
-Multi-threaded and asynchronous clients MUST `request an immediate check`_
-of the server.
-Unlike in the "network error" scenario above,
-a "not master" or "node is recovering" error means the server is available
-but the client is wrong about its type,
-thus an immediate re-check is likely to provide useful information.
-
-For single-threaded clients, in the case of a "not master" error, the client
-MUST check the server immediately (see `checking a single server`_).  For a
-"node is recovering" error, single-threaded clients MUST NOT check the server,
+For other errors, single-threaded clients MUST NOT check the server,
 as an immediate server check is unlikely to find a usable server.
 
 The client SHOULD clear its connection pool for the server.
 
-(See `when does a client see "not master" or "node is recovering"?`_.
-and `use error messages to detect "not master" and "node is recovering"`_.)
+(See `when does a client see "not master" or "node is recovering"?`_.)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2068,18 +2049,6 @@ Marking the server Unknown in this case costs unnecessary effort.
 However,
 if the server still doesn't respond when the monitor attempts to reconnect,
 then it is probably down.
-
-Use error messages to detect "not master" and "node is recovering"
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-An alternative idea is to determine all relevant server error codes,
-instead of searching for substrings in the error message.
-But for "not master" and "node is recovering" errors,
-driver authors have found the substrings to be **more** stable
-than error codes.
-
-The substring method has worked for drivers for years
-so this spec does not propose a new method.
 
 Clients use the hostnames listed in the replica set config, not the seed list
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
