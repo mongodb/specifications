@@ -392,6 +392,8 @@ tests:
             find: test
             filter:
               _id: 1
+            readConcern:
+              afterClusterTime: 42
             lsid: session1
             txnNumber:
             stmtId:
