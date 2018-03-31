@@ -72,13 +72,13 @@ tests:
       - name: count
         arguments:
           readPreference:
-            mode: primaryPreferred
+            mode: primary
           session: session0
         result: 0
       - name: count
         arguments:
           readPreference:
-            mode: primary
+            mode: secondary
           session: session0
         result:
           # Client-side error.
