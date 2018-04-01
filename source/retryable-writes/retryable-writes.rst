@@ -88,6 +88,8 @@ Retryable Error
      * - SocketException
        - 9001
 
+   See `What do the additional error codes mean?`_ for the reasoning behind these errors.
+
    .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 Additional terms may be defined in the `Driver Session`_ specification.
@@ -523,6 +525,16 @@ While this approach will allow applications to take advantage of retryable write
 behavior with minimal code changes, it also presents a documentation challenge.
 Users must understand exactly what can and will be retried (see: `How will users
 know which operations are supported?`_).
+
+----------------------------------------
+What do the additional error codes mean?
+----------------------------------------
+
+The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
+`SocketException` may be returned from mongos during problems routing to a
+shard. These may be transient, or localized to that mongos. The
+`WriteConcernFailed` error is returned if the write concern constraints could
+not be met.
 
 Backwards Compatibility
 =======================

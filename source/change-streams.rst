@@ -67,6 +67,8 @@ Resumable errors consist of:
     * - CursorNotFound
       - 43
 
+  See `What do the additional error codes mean?`_ for the reasoning behind these errors.
+
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 --------
@@ -401,6 +403,16 @@ It was decided to remove this example from the specification for the following r
 - Tailable + awaitData cursors behave differently in existing supported drivers.
 - There are considerations to be made for languages that do not permit interruptible I/O (such as Java), where a change stream which blocks forever in a separate thread would necessitate killing the thread.
 - There is something to be said for an API that allows cooperation by default. The model in which a call to next only blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g. interaction with other event loops).
+
+----------------------------------------
+What do the additional error codes mean?
+----------------------------------------
+
+The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
+`SocketException` may be returned from mongos during problems routing to a
+shard. These may be transient, or localized to that mongos. The
+`CursorNotFound` error is returned if the connected server no longer knows
+about the cursor, e.g. if the `killCursors` command was executed.
 
 Test Plan
 =========
