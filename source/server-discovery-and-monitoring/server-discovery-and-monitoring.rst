@@ -1401,7 +1401,7 @@ If no error code is included in the response, clients MUST instead check the
 error message. The error is considered a "node is recovering" error if the
 substrings "node is recovering" or "not master or secondary" are anywhere in
 the error message. Otherwise, if the substring "not master" is in the error
-message it is a "not master" error.
+message it is a "not master" error::
 
     recovering_codes = [11600, 11602, 13436, 189, 91]
     notmaster_codes = [10107, 13435]
@@ -1409,7 +1409,7 @@ message it is a "not master" error.
     def is_recovering(message, code):
         if code:
             return code in recovering_codes
-        # if no error code was returned, use the error message.    
+        # if no error code was returned, use the error message.
         return ("not master or secondary" in message
             or "node is recovering" in message)
 
@@ -1480,7 +1480,7 @@ as an immediate server check is unlikely to find a usable server.
 The client SHOULD clear its connection pool for the server.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
-error messages to detect "not master" and "node is recovering"`_, and `Other
+error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_.)
 
 Monitoring SDAM events
@@ -2130,19 +2130,19 @@ do not imply the connected server should be marked as "Unknown". For example,
 the following errors may be returned from a mongos when it cannot route to a
 shard:
 
-   .. list-table::
-     :header-rows: 1
+  .. list-table::
+    :header-rows: 1
 
-     * - Error Name
-       - Error Code
-     * - HostNotFound
-       - 7
-     * - HostUnreachable
-       - 6
-     * - NetworkTimeout
-       - 89
-     * - SocketException
-       - 9001 and the change streams spec lists some of these, e.g.
+    * - Error Name
+      - Error Code
+    * - HostNotFound
+      - 7
+    * - HostUnreachable
+      - 6
+    * - NetworkTimeout
+      - 89
+    * - SocketException
+      - 9001 and the change streams spec lists some of these, e.g.
 
 When these are returned, the mongos should *not* be marked as "Unknown", since
 it is more likely an issue with the shard.
