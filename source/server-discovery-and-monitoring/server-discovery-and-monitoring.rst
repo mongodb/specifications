@@ -1360,41 +1360,85 @@ then a re-check will be triggered by the server selection algorithm.
 
 "not master" and "node is recovering"
 `````````````````````````````````````
-
 These errors are detected from a getLastError response,
-write command response, or query response. Clients MUST consider a server
-error to be a "node is recovering" error if the substrings "node is recovering"
-or "not master or secondary" are anywhere in the error message.
-Otherwise, if the substring "not master" is in the error message it is a
-"not master" error::
+write command response, or query response. Clients MUST check if the server
+error is a "node is recovering" error or a "not master" error.
 
-    def is_recovering(message):
+If the response includes an error code, it MUST be used to determine if the
+error message is a "node is recovering" or "not master" error.
+
+The following error codes indicate a "node is recovering" error:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - InterruptedAtShutdown
+    - 11600
+  * - InterruptedDueToReplStateChange
+    - 11602
+  * - NotMasterOrSecondary
+    - 13436
+  * - PrimarySteppedDown
+    - 189
+  * - ShutdownInProgress
+    - 91
+
+And the following error codes indicate a "not master" error:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - NotMaster
+    - 10107
+  * - NotMasterNoSlaveOk
+    - 13435
+
+If no error code is included in the response, clients MUST instead check the
+error message. The error is considered a "node is recovering" error if the
+substrings "node is recovering" or "not master or secondary" are anywhere in
+the error message. Otherwise, if the substring "not master" is in the error
+message it is a "not master" error.
+
+    recovering_codes = [11600, 11602, 13436, 189, 91]
+    notmaster_codes = [10107, 13435]
+
+    def is_recovering(message, code):
+        if code:
+            return code in recovering_codes
+        # if no error code was returned, use the error message.    
         return ("not master or secondary" in message
             or "node is recovering" in message)
 
-    def is_notmaster(message):
-        if is_recovering(message):
+    def is_notmaster(message, code):
+        if code:
+          return code in nonmaster_codes
+        # if no error code was returned, use the error message.
+        if is_recovering(message, None):
             return false
         return ("not master" in message)
 
-    def is_notmaster_or_recovering(message):
-        return is_recovering(message) or is_notmaster(message)
+    def is_notmaster_or_recovering(message, code):
+        return is_recovering(message, code) or is_notmaster(message, code)
 
     def parse_gle(response):
         if "err" in response:
             if is_notmaster_or_recovering(response["err"]):
-                handle_not_master_or_recovering(response["err"])
+                handle_not_master_or_recovering(response["err"], response["code"])
 
     # Parse response to any command besides getLastError.
     def parse_command_response(response):
         if not response["ok"]:
             if is_notmaster_or_recovering(response["errmsg"]):
-                handle_not_master_or_recovering(response["errmsg"])
+                handle_not_master_or_recovering(response["errmsg"], response["code"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:
             if is_notmaster_or_recovering(response["$err"]):
-                handle_not_master_or_recovering(response["$err"])
+                handle_not_master_or_recovering(response["$err"], response["code"])
 
     def handle_not_master_or_recovering(message):
         replace server's description with

@@ -41,7 +41,33 @@ Terms
 Resumable Error
 ^^^^^^^^^^^^^^^
 
-Any error encountered which is not a server error, with the exception of server responses with the message “not master” or error code 43 (cursor not found).  An example might be a timeout error, or network error.
+Resumable errors consist of:
+
+- any error encountered which is not a server error (e.g. a timeout error or
+  network error)
+
+- server responses classified as "not master" or "node is recovering" errors
+  discussed in the SDAM spec's section on `Error Handling`_
+
+- server responses with any of the following error codes:
+
+  .. list-table::
+    :header-rows: 1
+
+    * - Error Name
+      - Error Code
+    * - HostNotFound
+      - 7
+    * - HostUnreachable
+      - 6
+    * - NetworkTimeout
+      - 89
+    * - SocketException
+      - 9001
+    * - CursorNotFound
+      - 43
+
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
 --------
 Guidance

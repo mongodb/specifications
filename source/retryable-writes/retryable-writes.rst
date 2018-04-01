@@ -66,10 +66,27 @@ ClientSession
    name of this object MAY vary across drivers.
 
 Retryable Error
-   Any network exception or a write command response with an error indicating
-   that the node is no longer a primary (e.g. "not master" or "node is
+   A network exception or write command response error that is possibly transient
+   or indicates that the node is no longer a primary (e.g. "not master" or "node is
    recovering" errors). Such errors correspond to those discussed in the SDAM
-   spec's section on `Error Handling`_.
+   spec's section on `Error Handling`_. Additionally, the following error codes are
+   considered retryable errors:
+
+   .. list-table::
+     :header-rows: 1
+
+     * - Error Name
+       - Error Code
+     * - WriteConcernFailed
+       - 64
+     * - HostNotFound
+       - 7
+     * - HostUnreachable
+       - 6
+     * - NetworkTimeout
+       - 89
+     * - SocketException
+       - 9001
 
    .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
