@@ -2130,19 +2130,19 @@ do not imply the connected server should be marked as "Unknown". For example,
 the following errors may be returned from a mongos when it cannot route to a
 shard:
 
-  .. list-table::
-    :header-rows: 1
+.. list-table::
+  :header-rows: 1
 
-    * - Error Name
-      - Error Code
-    * - HostNotFound
-      - 7
-    * - HostUnreachable
-      - 6
-    * - NetworkTimeout
-      - 89
-    * - SocketException
-      - 9001 and the change streams spec lists some of these, e.g.
+  * - Error Name
+    - Error Code
+  * - HostNotFound
+    - 7
+  * - HostUnreachable
+    - 6
+  * - NetworkTimeout
+    - 89
+  * - SocketException
+    - 9001 and the change streams spec lists some of these, e.g.
 
 When these are returned, the mongos should *not* be marked as "Unknown", since
 it is more likely an issue with the shard.
