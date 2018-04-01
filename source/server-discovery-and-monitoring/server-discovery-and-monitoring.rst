@@ -1479,8 +1479,9 @@ as an immediate server check is unlikely to find a usable server.
 
 The client SHOULD clear its connection pool for the server.
 
-(See `when does a client see "not master" or "node is recovering"?`_.
-and `use error messages to detect "not master" and "node is recovering"`_.)
+(See `when does a client see "not master" or "node is recovering"?`_, `use
+error messages to detect "not master" and "node is recovering"`_, and `Other
+transient errors`_.)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2116,14 +2117,35 @@ then it is probably down.
 Use error messages to detect "not master" and "node is recovering"
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-An alternative idea is to determine all relevant server error codes,
-instead of searching for substrings in the error message.
-But for "not master" and "node is recovering" errors,
-driver authors have found the substrings to be **more** stable
-than error codes.
+When error codes are not available, error messages are checked for the
+substrings "not master" and "node is recovering". This is because driver
+authors have found the substrings to be **more** stable than error codes.
 
-The substring method has worked for drivers for years
-so this spec does not propose a new method.
+Other transient errors
+''''''''''''''''''''''
+
+There are other transient errors a server may return, e.g. retryable errors
+listed in the retryable writes spec. SDAM does not consider these because they
+do not imply the connected server should be marked as "Unknown". For example,
+the following errors may be returned from a mongos when it cannot route to a
+shard:
+
+   .. list-table::
+     :header-rows: 1
+
+     * - Error Name
+       - Error Code
+     * - HostNotFound
+       - 7
+     * - HostUnreachable
+       - 6
+     * - NetworkTimeout
+       - 89
+     * - SocketException
+       - 9001 and the change streams spec lists some of these, e.g.
+
+When these are returned, the mongos should *not* be marked as "Unknown", since
+it is more likely an issue with the shard.
 
 Clients use the hostnames listed in the replica set config, not the seed list
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
