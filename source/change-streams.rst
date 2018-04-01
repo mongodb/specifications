@@ -41,41 +41,7 @@ Terms
 Resumable Error
 ^^^^^^^^^^^^^^^
 
-Resumable errors consist of:
-
-- any error encountered which is not a server error (e.g. a timeout error or network error)
-
-- server responses with any of the following error codes:
-
-.. list-table::
-  :header-rows: 1
-
-  * - Error Name
-    - Error Code
-  * - InterruptedAtShutdown
-    - 11600
-  * - InterruptedDueToReplStateChange
-    - 11602
-  * - NotMaster
-    - 10107
-  * - NotMasterNoSlaveOk
-    - 13435
-  * - NotMasterOrSecondary
-    - 13436
-  * - PrimarySteppedDown
-    - 189
-  * - ShutdownInProgress
-    - 91
-  * - HostNotFound
-    - 7
-  * - HostUnreachable
-    - 6
-  * - NetworkTimeout
-    - 89
-  * - SocketException
-    - 9001
-  * - CursorNotFound
-    - 43
+Any error encountered which is not a server error, with the exception of server responses with the message “not master” or error code 43 (cursor not found).  An example might be a timeout error, or network error.
 
 --------
 Guidance
