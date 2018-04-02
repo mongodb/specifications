@@ -66,29 +66,50 @@ ClientSession
    name of this object MAY vary across drivers.
 
 Retryable Error
-   A network exception or write command response error that is possibly transient
-   or indicates that the node is no longer a primary (e.g. "not master" or "node is
-   recovering" errors). Such errors correspond to those discussed in the SDAM
-   spec's section on `Error Handling`_. Additionally, the following error codes are
-   considered retryable errors:
+   An error is considered retryable if it meets any of the following criteria:
 
-   .. list-table::
-     :header-rows: 1
+   - any network exception (e.g. socket timeout or error)
 
-     * - Error Name
-       - Error Code
-     * - WriteConcernFailed
-       - 64
-     * - HostNotFound
-       - 7
-     * - HostUnreachable
-       - 6
-     * - NetworkTimeout
-       - 89
-     * - SocketException
-       - 9001
+   - a server error response with any the following codes:
 
-   See `What do the additional error codes mean?`_ for the reasoning behind these errors.
+    .. list-table::
+      :header-rows: 1
+
+       * - Error Name
+         - Error Code
+       * - InterruptedAtShutdown
+         - 11600
+       * - InterruptedDueToReplStateChange
+         - 11602
+       * - NotMaster
+         - 10107
+       * - NotMasterNoSlaveOk
+         - 13435
+       * - NotMasterOrSecondary
+         - 13436
+       * - PrimarySteppedDown
+         - 189
+       * - ShutdownInProgress
+         - 91
+       * - WriteConcernFailed
+         - 64
+       * - HostNotFound
+         - 7
+       * - HostUnreachable
+         - 6
+       * - NetworkTimeout
+         - 89
+       * - SocketException
+         - 9001
+
+   - a server error response without an error code or one different from those
+     listed above, but with an error message containing the substring "not
+     master" or "node is recovering"
+
+   The criteria for retryable errors is similar to the discussion in the SDAM
+   spec's section on `Error Handling`_, but includes additional error codes. See
+   `What do the additional error codes mean?`_ for the reasoning behind these
+   additional errors.
 
    .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 
