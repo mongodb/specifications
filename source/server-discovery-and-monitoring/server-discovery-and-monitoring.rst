@@ -1367,7 +1367,8 @@ error is a "node is recovering" error or a "not master" error.
 If the response includes an error code, it MUST be used to determine if the
 error message is a "node is recovering" or "not master" error.
 
-The following error codes indicate a "node is recovering" error:
+The following error codes indicate a replica set member is temporarily
+unusable. These are called "node is recovering" errors:
 
 .. list-table::
   :header-rows: 1
@@ -2118,8 +2119,9 @@ Use error messages to detect "not master" and "node is recovering"
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 When error codes are not available, error messages are checked for the
-substrings "not master" and "node is recovering". This is because driver
-authors have found the substrings to be **more** stable than error codes.
+substrings "not master" and "node is recovering". This is because older server
+versions returned unstable error codes or no error codes in many
+circumstances.
 
 Other transient errors
 ''''''''''''''''''''''
