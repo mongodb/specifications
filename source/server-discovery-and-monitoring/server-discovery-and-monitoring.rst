@@ -1427,23 +1427,23 @@ message it is a "not master" error::
 
     def parse_gle(response):
         if "err" in response:
-            if is_notmaster_or_recovering(response["err"]):
-                handle_not_master_or_recovering(response["err"], response["code"])
+            if is_notmaster_or_recovering(response["err"], response["code"]):
+                handle_notmaster_or_recovering(response["err"], response["code"])
 
     # Parse response to any command besides getLastError.
     def parse_command_response(response):
         if not response["ok"]:
-            if is_notmaster_or_recovering(response["errmsg"]):
-                handle_not_master_or_recovering(response["errmsg"], response["code"])
+            if is_notmaster_or_recovering(response["errmsg"], response["code"]):
+                handle_notmaster_or_recovering(response["errmsg"], response["code"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:
-            if is_notmaster_or_recovering(response["$err"]):
-                handle_not_master_or_recovering(response["$err"], response["code"])
+            if is_notmaster_or_recovering(response["$err"], response["code"]):
+                handle_notmaster_or_recovering(response["$err"], response["code"])
 
-    def handle_not_master_or_recovering(message):
+    def handle_notmaster_or_recovering(message, code):
         replace server's description with
-        new ServerDescription(type=Unknown, error=message)
+        new ServerDescription(type=Unknown, error=message, code=code)
 
         if multi-threaded:
             request immediate check
