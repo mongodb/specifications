@@ -1415,7 +1415,7 @@ message it is a "not master" error::
 
     def is_notmaster(message, code):
         if code:
-          return code in nonmaster_codes
+            return code in nonmaster_codes
         # if no error code was returned, use the error message.
         if is_recovering(message, None):
             return false
@@ -2142,7 +2142,7 @@ shard:
   * - NetworkTimeout
     - 89
   * - SocketException
-    - 9001 and the change streams spec lists some of these, e.g.
+    - 9001
 
 When these are returned, the mongos should *not* be marked as "Unknown", since
 it is more likely an issue with the shard.
