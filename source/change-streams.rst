@@ -51,6 +51,8 @@ An error is considered resumable if it meets any of the following criteria:
   .. list-table::
     :header-rows: 1
 
+    * - Error Name
+      - Error Code
     * - HostUnreachable
       - 6
     * - HostNotFound
@@ -89,10 +91,10 @@ An error is considered resumable if it meets any of the following criteria:
     * - Interrupted
       - 11601
 
-  The criteria for retryable errors is similar to the discussion in the SDAM
-  spec's section on `Error Handling`_, but includes additional error codes. See
-  `What do the additional error codes mean?`_ for the reasoning behind these
-  additional errors.
+The criteria for retryable errors is similar to the discussion in the SDAM
+spec's section on `Error Handling`_, but includes additional error codes. See
+`What do the additional error codes mean?`_ for the reasoning behind these
+additional errors.
 
 .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
 

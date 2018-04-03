@@ -72,35 +72,35 @@ Retryable Error
 
    - a server error response with any the following codes:
 
-    .. list-table::
-      :header-rows: 1
+     .. list-table::
+       :header-rows: 1
 
-       * - Error Name
-         - Error Code
-       * - InterruptedAtShutdown
-         - 11600
-       * - InterruptedDueToReplStateChange
-         - 11602
-       * - NotMaster
-         - 10107
-       * - NotMasterNoSlaveOk
-         - 13435
-       * - NotMasterOrSecondary
-         - 13436
-       * - PrimarySteppedDown
-         - 189
-       * - ShutdownInProgress
-         - 91
-       * - WriteConcernFailed
-         - 64
-       * - HostNotFound
-         - 7
-       * - HostUnreachable
-         - 6
-       * - NetworkTimeout
-         - 89
-       * - SocketException
-         - 9001
+        * - Error Name
+          - Error Code
+        * - InterruptedAtShutdown
+          - 11600
+        * - InterruptedDueToReplStateChange
+          - 11602
+        * - NotMaster
+          - 10107
+        * - NotMasterNoSlaveOk
+          - 13435
+        * - NotMasterOrSecondary
+          - 13436
+        * - PrimarySteppedDown
+          - 189
+        * - ShutdownInProgress
+          - 91
+        * - WriteConcernFailed
+          - 64
+        * - HostNotFound
+          - 7
+        * - HostUnreachable
+          - 6
+        * - NetworkTimeout
+          - 89
+        * - SocketException
+          - 9001
 
    - a server error response without an error code or one different from those
      listed above, but with an error message containing the substring "not

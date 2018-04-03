@@ -1364,7 +1364,7 @@ These errors are detected from a getLastError response,
 write command response, or query response. Clients MUST check if the server
 error is a "node is recovering" error or a "not master" error.
 
-If the response includes an error code, it MUST be checked first to attampt
+If the response includes an error code, it MUST be checked first to attempt
 to determine if error is a "node is recovering" or "not master" error.
 
 The following error codes indicate a replica set member is temporarily
