@@ -12,7 +12,7 @@
   ],
   "tests": [
     {
-      "description": "update",
+      "description": "findOneAndReplace",
       "operations": [
         {
           "name": "startTransaction",
@@ -21,41 +21,37 @@
           }
         },
         {
-          "name": "updateOne",
+          "name": "findOneAndReplace",
+          "arguments": {
+            "filter": {
+              "_id": 3
+            },
+            "replacement": {
+              "x": 1
+            },
+            "returnDocument": "Before",
+            "session": "session0"
+          },
+          "result": {
+            "_id": 3
+          }
+        },
+        {
+          "name": "findOneAndReplace",
           "arguments": {
             "filter": {
               "_id": 4
             },
-            "update": {
-              "$inc": {
-                "x": 1
-              }
-            },
-            "upsert": true,
-            "session": "session0"
-          },
-          "result": {
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 1,
-            "upsertedId": 4
-          }
-        },
-        {
-          "name": "replaceOne",
-          "arguments": {
-            "filter": {
+            "replacement": {
               "x": 1
             },
-            "replacement": {
-              "y": 1
-            },
+            "upsert": true,
+            "returnDocument": "After",
             "session": "session0"
           },
           "result": {
-            "matchedCount": 1,
-            "modifiedCount": 1,
-            "upsertedCount": 0
+            "_id": 4,
+            "x": 1
           }
         },
         {
@@ -69,63 +65,51 @@
         {
           "command_started_event": {
             "command": {
-              "update": "test",
-              "updates": [
-                {
-                  "q": {
-                    "_id": 4
-                  },
-                  "u": {
-                    "$inc": {
-                      "x": 1
-                    }
-                  },
-                  "multi": false,
-                  "upsert": true
-                }
-              ],
-              "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
+              "findAndModify": "test",
+              "query": {
+                "_id": 3
               },
+              "update": {
+                "x": 1
+              },
+              "new": false,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "stmtId": 0,
               "autocommit": false,
+              "readConcern": {
+                "level": "snapshot"
+              },
               "writeConcern": null
             },
-            "command_name": "update",
+            "command_name": "findAndModify",
             "database_name": "transaction-tests"
           }
         },
         {
           "command_started_event": {
             "command": {
-              "update": "test",
-              "updates": [
-                {
-                  "q": {
-                    "x": 1
-                  },
-                  "u": {
-                    "y": 1
-                  },
-                  "multi": false,
-                  "upsert": false
-                }
-              ],
-              "ordered": true,
+              "findAndModify": "test",
+              "query": {
+                "_id": 4
+              },
+              "update": {
+                "x": 1
+              },
+              "new": true,
+              "upsert": true,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "stmtId": 1,
               "autocommit": null,
+              "readConcern": null,
               "writeConcern": null
             },
-            "command_name": "update",
+            "command_name": "findAndModify",
             "database_name": "transaction-tests"
           }
         },
@@ -138,6 +122,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 2,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "commitTransaction",
@@ -155,11 +140,12 @@
               "_id": 2
             },
             {
-              "_id": 3
+              "_id": 3,
+              "x": 1
             },
             {
               "_id": 4,
-              "y": 1
+              "x": 1
             }
           ]
         }

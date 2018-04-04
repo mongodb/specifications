@@ -47,9 +47,6 @@ tests:
       - name: commitTransaction
         arguments:
           session: session0
-      - name: startTransaction
-        arguments:
-          session: session0
 
     expectations:
       - command_started_event:
