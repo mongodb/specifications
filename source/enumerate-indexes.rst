@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2017-09-20
-:Version: 0.4
+:Last Modified: 2018-04-05
+:Version: 0.4.1
 
 .. contents::
 
@@ -251,7 +251,7 @@ adding new methods.
 All methods:
 
 - MUST be on the collection object.
-- MAY allow the ``cursor.firstBatch`` option to be passed.
+- MAY allow the ``cursor.batchSize`` option to be passed.
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MAY emulate returning a cursor for pre-2.8.0-rc3 servers.
@@ -379,6 +379,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+0.4.1 - 2018-04-05
+    Fix typo.
 
 0.4 - 2017-09-20
     Allow more leniency for handling error code 26 (collection does not
