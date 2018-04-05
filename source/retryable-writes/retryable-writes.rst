@@ -75,32 +75,32 @@ Retryable Error
      .. list-table::
        :header-rows: 1
 
-        * - Error Name
-          - Error Code
-        * - InterruptedAtShutdown
-          - 11600
-        * - InterruptedDueToReplStateChange
-          - 11602
-        * - NotMaster
-          - 10107
-        * - NotMasterNoSlaveOk
-          - 13435
-        * - NotMasterOrSecondary
-          - 13436
-        * - PrimarySteppedDown
-          - 189
-        * - ShutdownInProgress
-          - 91
-        * - WriteConcernFailed
-          - 64
-        * - HostNotFound
-          - 7
-        * - HostUnreachable
-          - 6
-        * - NetworkTimeout
-          - 89
-        * - SocketException
-          - 9001
+       * - Error Name
+         - Error Code
+       * - InterruptedAtShutdown
+         - 11600
+       * - InterruptedDueToReplStateChange
+         - 11602
+       * - NotMaster
+         - 10107
+       * - NotMasterNoSlaveOk
+         - 13435
+       * - NotMasterOrSecondary
+         - 13436
+       * - PrimarySteppedDown
+         - 189
+       * - ShutdownInProgress
+         - 91
+       * - WriteConcernFailed
+         - 64
+       * - HostNotFound
+         - 7
+       * - HostUnreachable
+         - 6
+       * - NetworkTimeout
+         - 89
+       * - SocketException
+         - 9001
 
    - a server error response without an error code or one different from those
      listed above, but with an error message containing the substring "not
@@ -547,16 +547,6 @@ behavior with minimal code changes, it also presents a documentation challenge.
 Users must understand exactly what can and will be retried (see: `How will users
 know which operations are supported?`_).
 
-----------------------------------------
-What do the additional error codes mean?
-----------------------------------------
-
-The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
-`SocketException` may be returned from mongos during problems routing to a
-shard. These may be transient, or localized to that mongos. The
-`WriteConcernFailed` error is returned if the write concern constraints could
-not be met.
-
 Backwards Compatibility
 =======================
 
@@ -583,6 +573,15 @@ sessions and could be implemented independently of retryable writes.
 
 Q & A
 =====
+
+What do the additional error codes mean?
+----------------------------------------
+
+The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
+`SocketException` may be returned from mongos during problems routing to a
+shard. These may be transient, or localized to that mongos. The
+`WriteConcernFailed` error is returned if the write concern constraints could
+not be met.
 
 Why are write operations only retried once?
 -------------------------------------------
