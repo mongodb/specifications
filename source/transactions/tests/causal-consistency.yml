@@ -111,7 +111,7 @@ tests:
           upsert: false
           session: session0
         result:
-          errorContains: "WriteConflict"
+          errorCodeName: WriteConflict
       - name: abortTransaction
         arguments:
           session: session0

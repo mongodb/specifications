@@ -292,15 +292,15 @@ tests:
             _id: 1
           session: session0
         result:
-          errorContains: "duplicate key error"
-      # TODO: SERVER-34051 Make sure the server aborted the transaction.
-      # - name: insertOne
-      #   arguments:
-      #     document:
-      #       _id: 1
-      #     session: session0
-      #   result:
-      #     errorContains: "transaction isn't in progressss"
+          errorCodeName: DuplicateKey
+      # Make sure the server aborted the transaction.
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          errorCodeName: NoSuchTransaction
       # abortTransaction must ignore the TransactionAborted and succeed.
       - name: abortTransaction
         arguments:
@@ -342,11 +342,27 @@ tests:
           database_name: transaction-tests
       - command_started_event:
           command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+               $numberLong: "1"
+            stmtId: 2
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
             abortTransaction: 1
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2
+            stmtId: 3
             startTransaction:
             autocommit: false
             writeConcern:

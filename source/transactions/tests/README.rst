@@ -44,7 +44,8 @@ Each YAML file has the following keys:
 
       - ``result``: The return value from the operation, if any. If the
         operation is expected to return an error, the ``result`` has one field,
-        ``errorContains``, which is a substring of the expected error message.
+        ``errorContains``, which is a substring of the expected error message
+        or ``errorCodeName``, which is the expected server error "codeName".
 
   - ``expectations``: Optional list of command-started events.
 
@@ -94,14 +95,17 @@ For each YAML file, for each element in ``tests``:
      If ``arguments`` contains no "session", pass no explicit session to the
      method. If ``arguments`` includes "readPreference", configure the specified
      read preference in whatever manner the driver supports.
+   - If the driver throws an exception / returns an error while executing this
+     series of operations, store the error message and server error code.
    - If the result document has an "errorContains" field, verify that the
      method threw an exception or returned an error, and that the value of the
-     "errorContains" field matches the error string. Otherwise, compare the
-     method's return value to ``result`` using the same logic as the CRUD Spec
-     Tests runner. key is a substring (case-insensitive) of the actual error
-     message. If the
-   - If the driver throws an exception / returns an error while executing this
-     series of operations, store the error message.
+     "errorContains" field matches the error string. If the result document has
+     an "errorCodeName" field, verify that the method threw a command failed
+     exception or returned an error, and that the value of the "errorCodeName"
+     field matches the "codeName" in the server error response.
+     Otherwise, compare the method's return value to ``result`` using the same
+     logic as the CRUD Spec Tests runner. key is a substring (case-insensitive)
+     of the actual error message.
 
 #. Call ``session0.endSession()`` and ``session1.endSession``.
 #. If the test includes a list of command-started events in ``expectations``,
