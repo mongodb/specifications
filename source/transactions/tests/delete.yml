@@ -51,6 +51,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: delete
@@ -66,7 +67,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: delete
           database_name: transaction-tests
@@ -81,7 +83,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 2
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: delete
           database_name: transaction-tests
@@ -92,6 +95,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 3
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin

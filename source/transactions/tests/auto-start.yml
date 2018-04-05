@@ -48,6 +48,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -59,6 +60,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -75,6 +78,7 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -89,7 +93,8 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 1
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -100,6 +105,8 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 2
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -149,6 +156,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -160,6 +168,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -210,6 +220,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -221,6 +232,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: abortTransaction
           database_name: admin
@@ -236,6 +249,7 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -247,6 +261,8 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -297,6 +313,7 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -308,6 +325,8 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -362,6 +381,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -374,6 +394,7 @@ tests:
             lsid: session1
             txnNumber:
             stmtId:
+            startTransaction:
             autocommit:
           command_name: find
           database_name: transaction-tests
@@ -384,6 +405,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -397,6 +420,7 @@ tests:
             lsid: session1
             txnNumber:
             stmtId:
+            startTransaction:
             autocommit:
           command_name: find
           database_name: transaction-tests

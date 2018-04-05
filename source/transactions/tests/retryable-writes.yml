@@ -65,6 +65,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -76,6 +77,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin
@@ -90,6 +93,7 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId:
+            startTransaction:
             autocommit:
             writeConcern:
           command_name: insert
@@ -107,6 +111,7 @@ tests:
             txnNumber:
               $numberLong: "3"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -118,6 +123,8 @@ tests:
             txnNumber:
               $numberLong: "3"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: abortTransaction
           database_name: admin
@@ -133,6 +140,7 @@ tests:
             txnNumber:
               $numberLong: "4"
             stmtId:
+            startTransaction:
             autocommit:
             writeConcern:
           command_name: insert

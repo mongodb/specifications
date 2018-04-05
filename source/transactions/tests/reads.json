@@ -80,6 +80,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false,
               "writeConcern": null
             },
@@ -99,7 +100,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 1,
-              "autocommit": null,
+              "startTransaction": null,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "count",
@@ -115,6 +117,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 2,
+              "startTransaction": null,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "commitTransaction",
@@ -213,6 +217,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false
             },
             "command_name": "find",
@@ -230,7 +235,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 1,
-              "autocommit": null
+              "startTransaction": null,
+              "autocommit": false
             },
             "command_name": "getMore",
             "database_name": "transaction-tests"
@@ -245,7 +251,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 2,
-              "autocommit": null
+              "startTransaction": null,
+              "autocommit": false
             },
             "command_name": "find",
             "database_name": "transaction-tests"
@@ -262,7 +269,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 3,
-              "autocommit": null
+              "startTransaction": null,
+              "autocommit": false
             },
             "command_name": "getMore",
             "database_name": "transaction-tests"
@@ -277,6 +285,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 4,
+              "startTransaction": null,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "commitTransaction",
@@ -345,6 +355,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false,
               "writeConcern": null
             },
@@ -362,6 +373,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 1,
+              "startTransaction": null,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "commitTransaction",

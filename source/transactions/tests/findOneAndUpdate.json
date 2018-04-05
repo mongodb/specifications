@@ -146,6 +146,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false,
               "readConcern": {
                 "level": "snapshot"
@@ -175,7 +176,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 1,
-              "autocommit": null,
+              "startTransaction": null,
+              "autocommit": false,
               "readConcern": null,
               "writeConcern": null
             },
@@ -192,6 +194,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 2,
+              "startTransaction": null,
+              "autocommit": false,
               "readConcern": null,
               "writeConcern": null
             },
@@ -217,6 +221,7 @@
                 "$numberLong": "2"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false,
               "readConcern": {
                 "level": "snapshot",
@@ -237,6 +242,8 @@
                 "$numberLong": "2"
               },
               "stmtId": 1,
+              "startTransaction": null,
+              "autocommit": false,
               "readConcern": null,
               "writeConcern": null
             },
@@ -262,6 +269,7 @@
                 "$numberLong": "3"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false,
               "readConcern": {
                 "level": "snapshot",
@@ -282,6 +290,8 @@
                 "$numberLong": "3"
               },
               "stmtId": 1,
+              "startTransaction": null,
+              "autocommit": false,
               "readConcern": null,
               "writeConcern": null
             },

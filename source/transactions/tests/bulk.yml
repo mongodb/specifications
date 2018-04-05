@@ -99,6 +99,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             writeConcern:
           command_name: insert
@@ -114,7 +115,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: delete
           database_name: transaction-tests
@@ -129,7 +131,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 2
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -150,7 +153,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 3
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: update
           database_name: transaction-tests
@@ -168,7 +172,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 5
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -189,7 +194,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 10
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: update
           database_name: transaction-tests
@@ -208,7 +214,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 12
-            autocommit:
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: delete
           database_name: transaction-tests
@@ -219,6 +226,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 15
+            startTransaction:
+            autocommit: false
             writeConcern:
           command_name: commitTransaction
           database_name: admin

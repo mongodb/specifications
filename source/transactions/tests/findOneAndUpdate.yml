@@ -72,6 +72,7 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             readConcern:
               level: "snapshot"
@@ -89,7 +90,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 1
-            autocommit:
+            startTransaction:
+            autocommit: false
             readConcern:
             writeConcern:
           command_name: findAndModify
@@ -101,6 +103,8 @@ tests:
             txnNumber:
               $numberLong: "1"
             stmtId: 2
+            startTransaction:
+            autocommit: false
             readConcern:
             writeConcern:
           command_name: commitTransaction
@@ -115,6 +119,7 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             readConcern:
               level: "snapshot"
@@ -129,6 +134,8 @@ tests:
             txnNumber:
               $numberLong: "2"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             readConcern:
             writeConcern:
           command_name: commitTransaction
@@ -143,6 +150,7 @@ tests:
             txnNumber:
               $numberLong: "3"
             stmtId: 0
+            startTransaction: true
             autocommit: false
             readConcern:
               level: "snapshot"
@@ -157,6 +165,8 @@ tests:
             txnNumber:
               $numberLong: "3"
             stmtId: 1
+            startTransaction:
+            autocommit: false
             readConcern:
             writeConcern:
           command_name: abortTransaction

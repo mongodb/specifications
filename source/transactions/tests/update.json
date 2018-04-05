@@ -93,6 +93,7 @@
                 "$numberLong": "1"
               },
               "stmtId": 0,
+              "startTransaction": true,
               "autocommit": false,
               "writeConcern": null
             },
@@ -122,7 +123,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 1,
-              "autocommit": null,
+              "startTransaction": null,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "update",
@@ -138,6 +140,8 @@
                 "$numberLong": "1"
               },
               "stmtId": 2,
+              "startTransaction": null,
+              "autocommit": false,
               "writeConcern": null
             },
             "command_name": "commitTransaction",
