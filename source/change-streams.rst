@@ -94,6 +94,8 @@ An error is considered resumable if it meets any of the following criteria:
       - 11601
     * - CappedPositionLost
       - 136
+    * - CursorKilled
+      - 237
 
 The criteria for retryable errors is similar to the discussion in the SDAM
 spec's section on `Error Handling`_, but includes additional error codes. See
@@ -441,9 +443,12 @@ What do the additional error codes mean?
 
 The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
 `SocketException` may be returned from mongos during problems routing to a
-shard. These may be transient, or localized to that mongos. The
-`CursorNotFound` error is returned if the connected server no longer knows
-about the cursor, e.g. if the `killCursors` command was executed.
+shard. These may be transient, or localized to that mongos.
+
+The `CursorKilled` error implies implies some other actor killed the cursor.
+
+The `CappedPositionLost` error implies the falling off of the back of the
+oplog, so resuming is impossible.
 
 Test Plan
 =========
