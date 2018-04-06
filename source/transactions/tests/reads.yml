@@ -82,8 +82,6 @@ tests:
 
   - description: find
 
-    skipReason: "Skip until find supports stmtId, SERVER-33213"
-
     operations:
       - *startTransaction
       - &find
