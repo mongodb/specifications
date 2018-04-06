@@ -99,6 +99,7 @@ tests:
       - command_started_event:
           command:
             find: test
+            batchSize: 3
             readConcern:
               level: "snapshot"
             lsid: session0
@@ -114,6 +115,8 @@ tests:
             getMore:
               # 42 is a fake placeholder value for the cursorId.
               $numberLong: '42'
+            collection: test
+            batchSize: 3
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -125,6 +128,7 @@ tests:
       - command_started_event:
           command:
             find: test
+            batchSize: 3
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -137,6 +141,8 @@ tests:
           command:
             getMore:
               $numberLong: '42'
+            collection: test
+            batchSize: 3
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -175,6 +181,7 @@ tests:
       - command_started_event:
           command:
             distinct: test
+            key: _id
             lsid: session0
             readConcern:
               level: "snapshot"
