@@ -447,8 +447,8 @@ shard. These may be transient, or localized to that mongos.
 
 The `CursorKilled` error implies implies some other actor killed the cursor.
 
-The `CappedPositionLost` error implies the falling off of the back of the
-oplog, so resuming is impossible.
+The `CappedPositionLost` error implies falling off of the back of the oplog,
+so resuming is impossible.
 
 Test Plan
 =========
