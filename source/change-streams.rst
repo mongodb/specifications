@@ -75,6 +75,8 @@ An error is considered resumable if it meets any of the following criteria:
       - 50
     * - RetryChangeStream
       - 234
+    * - ElectionInProgress
+      - 216
 
 - a server error response without an error code or one different from those
   listed above, but with an error message containing the substring "not
@@ -90,6 +92,8 @@ An error is considered resumable if it meets any of the following criteria:
       - Error Code
     * - Interrupted
       - 11601
+    * - CappedPositionLost
+      - 136
 
 The criteria for retryable errors is similar to the discussion in the SDAM
 spec's section on `Error Handling`_, but includes additional error codes. See
