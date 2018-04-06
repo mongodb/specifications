@@ -31,19 +31,17 @@ tests:
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
-
-      # TODO: awaiting server.
-      # - name: updateMany
-      #   arguments:
-      #     filter:
-      #       _id: {$gte: 3}
-      #     update:
-      #       $set: {x: 1}
-      #     session: session0
-      #   result:
-      #     matchedCount: 2
-      #     modifiedCount: 1
-      #     upsertedCount: 0
+      - name: updateMany
+        arguments:
+          filter:
+            _id: {$gte: 3}
+          update:
+            $set: {z: 1}
+          session: session0
+        result:
+          matchedCount: 2
+          modifiedCount: 2
+          upsertedCount: 0
       - name: commitTransaction
         arguments:
           session: session0
@@ -87,30 +85,31 @@ tests:
             writeConcern:
           command_name: update
           database_name: transaction-tests
-      # - command_started_event:
-      #     command:
-      #       update: test
-      #       updates:
-      #         - q: {_id: {$gte: 3}}
-      #           u: {$set: {x: 1}}
-      #           multi: true
-      #           upsert: false
-      #       ordered: true
-      #       lsid: session0
-      #       txnNumber:
-      #         $numberLong: "1"
-      #       stmtId: 2
-      #       autocommit:
-      #       writeConcern:
-      #     command_name: update
-      #     database_name: transaction-tests
+      - command_started_event:
+          command:
+            update: test
+            updates:
+              - q: {_id: {$gte: 3}}
+                u: {$set: {z: 1}}
+                multi: true
+                upsert: false
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 2
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: update
+          database_name: transaction-tests
       - command_started_event:
           command:
             commitTransaction: 1
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2 # This will be stmtId 3 once updateMany is supported.
+            stmtId: 3
             startTransaction:
             autocommit: false
             writeConcern:
@@ -122,5 +121,5 @@ tests:
         data:
           - {_id: 1}
           - {_id: 2}
-          - {_id: 3}
-          - {_id: 4, y: 1}
+          - {_id: 3, z: 1}
+          - {_id: 4, y: 1, z: 1}
