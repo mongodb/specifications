@@ -1360,45 +1360,90 @@ then a re-check will be triggered by the server selection algorithm.
 
 "not master" and "node is recovering"
 `````````````````````````````````````
-
 These errors are detected from a getLastError response,
-write command response, or query response. Clients MUST consider a server
-error to be a "node is recovering" error if the substrings "node is recovering"
-or "not master or secondary" are anywhere in the error message.
-Otherwise, if the substring "not master" is in the error message it is a
-"not master" error::
+write command response, or query response. Clients MUST check if the server
+error is a "node is recovering" error or a "not master" error.
 
-    def is_recovering(message):
+If the response includes an error code, it MUST be checked first to attempt
+to determine if error is a "node is recovering" or "not master" error.
+
+The following error codes indicate a replica set member is temporarily
+unusable. These are called "node is recovering" errors:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - InterruptedAtShutdown
+    - 11600
+  * - InterruptedDueToReplStateChange
+    - 11602
+  * - NotMasterOrSecondary
+    - 13436
+  * - PrimarySteppedDown
+    - 189
+  * - ShutdownInProgress
+    - 91
+
+And the following error codes indicate a "not master" error:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - NotMaster
+    - 10107
+  * - NotMasterNoSlaveOk
+    - 13435
+
+If any other error code is included in the response, or an error code is
+omitted, clients MUST check the error message. The error is considered a "node
+is recovering" error if the substrings "node is recovering" or "not master or
+secondary" are anywhere in the error message. Otherwise, if the substring "not
+master" is in the error message it is a "not master" error::
+
+    recovering_codes = [11600, 11602, 13436, 189, 91]
+    notmaster_codes = [10107, 13435]
+
+    def is_recovering(message, code):
+        if code and code in recovering_codes:
+            return true
+        # if no code or an unrecognized code, use the error message.
         return ("not master or secondary" in message
             or "node is recovering" in message)
 
-    def is_notmaster(message):
-        if is_recovering(message):
+    def is_notmaster(message, code):
+        if code and code in nonmaster_codes:
+            return true
+        # if no code or an unrecognized code, use the error message.
+        if is_recovering(message, None):
             return false
         return ("not master" in message)
 
-    def is_notmaster_or_recovering(message):
-        return is_recovering(message) or is_notmaster(message)
+    def is_notmaster_or_recovering(message, code):
+        return is_recovering(message, code) or is_notmaster(message, code)
 
     def parse_gle(response):
         if "err" in response:
-            if is_notmaster_or_recovering(response["err"]):
-                handle_not_master_or_recovering(response["err"])
+            if is_notmaster_or_recovering(response["err"], response["code"]):
+                handle_notmaster_or_recovering(response["err"], response["code"])
 
     # Parse response to any command besides getLastError.
     def parse_command_response(response):
         if not response["ok"]:
-            if is_notmaster_or_recovering(response["errmsg"]):
-                handle_not_master_or_recovering(response["errmsg"])
+            if is_notmaster_or_recovering(response["errmsg"], response["code"]):
+                handle_notmaster_or_recovering(response["errmsg"], response["code"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:
-            if is_notmaster_or_recovering(response["$err"]):
-                handle_not_master_or_recovering(response["$err"])
+            if is_notmaster_or_recovering(response["$err"], response["code"]):
+                handle_notmaster_or_recovering(response["$err"], response["code"])
 
-    def handle_not_master_or_recovering(message):
+    def handle_notmaster_or_recovering(message, code):
         replace server's description with
-        new ServerDescription(type=Unknown, error=message)
+        new ServerDescription(type=Unknown, error=message, code=code)
 
         if multi-threaded:
             request immediate check
@@ -1435,8 +1480,9 @@ as an immediate server check is unlikely to find a usable server.
 
 The client SHOULD clear its connection pool for the server.
 
-(See `when does a client see "not master" or "node is recovering"?`_.
-and `use error messages to detect "not master" and "node is recovering"`_.)
+(See `when does a client see "not master" or "node is recovering"?`_, `use
+error messages to detect "not master" and "node is recovering"`_, and `other
+transient errors`_.)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2072,14 +2118,36 @@ then it is probably down.
 Use error messages to detect "not master" and "node is recovering"
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-An alternative idea is to determine all relevant server error codes,
-instead of searching for substrings in the error message.
-But for "not master" and "node is recovering" errors,
-driver authors have found the substrings to be **more** stable
-than error codes.
+When error codes are not available, error messages are checked for the
+substrings "not master" and "node is recovering". This is because older server
+versions returned unstable error codes or no error codes in many
+circumstances.
 
-The substring method has worked for drivers for years
-so this spec does not propose a new method.
+Other transient errors
+''''''''''''''''''''''
+
+There are other transient errors a server may return, e.g. retryable errors
+listed in the retryable writes spec. SDAM does not consider these because they
+do not imply the connected server should be marked as "Unknown". For example,
+the following errors may be returned from a mongos when it cannot route to a
+shard:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - HostNotFound
+    - 7
+  * - HostUnreachable
+    - 6
+  * - NetworkTimeout
+    - 89
+  * - SocketException
+    - 9001
+
+When these are returned, the mongos should *not* be marked as "Unknown", since
+it is more likely an issue with the shard.
 
 Clients use the hostnames listed in the replica set config, not the seed list
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
