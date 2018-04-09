@@ -26,7 +26,7 @@ clients. A session is an abstract concept that represents a set of sequential
 operations executed by an application that are related in some way. This
 specification is limited to how applications start and end sessions. Other
 specifications define various ways in which sessions are used (e.g. causally
-consistent reads, retriable writes, or transactions).
+consistent reads, retryable writes, or transactions).
 
 This specification also discusses how drivers participate in distributing the
 cluster time throughout a deployment, a process known as "gossipping the
