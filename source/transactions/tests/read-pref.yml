@@ -31,7 +31,6 @@ tests:
         data:
           - _id: 1
 
-  # "Violate rule 1" example from spec.
   - description: write and read
 
     operations:
@@ -52,7 +51,7 @@ tests:
           session: session0
         result:
           # Client-side error.
-          errorContains: transaction readPreference changed
+          errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         arguments:
           session: session0
@@ -62,7 +61,28 @@ tests:
         data:
           - _id: 1
 
-  # "Violate rule 2" example from spec.
+  - description: non-primary readPreference 
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: count
+        arguments:
+          readPreference:
+            mode: secondary
+          session: session0
+        result:
+          # Client-side error.
+          errorContains: read preference in a transaction must be primary
+      - name: commitTransaction
+        arguments:
+          session: session0
+
+    outcome:
+      collection:
+        data: []
+
   - description: conflict
 
     operations:
@@ -82,7 +102,7 @@ tests:
           session: session0
         result:
           # Client-side error.
-          errorContains: transaction readPreference changed
+          errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         arguments:
           session: session0
@@ -91,7 +111,6 @@ tests:
       collection:
         data: []
 
-  # "Violate rule 3" example from spec.
   - description: read and write
 
     skipReason: Server changes needed for commitTransaction on secondary.
