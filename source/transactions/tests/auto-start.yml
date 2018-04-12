@@ -298,8 +298,6 @@ tests:
       - name: commitTransaction
         arguments:
           session: session0
-        result:
-          errorContains: no transaction started
 
     expectations:
       - command_started_event:

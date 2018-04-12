@@ -457,9 +457,6 @@
           "name": "commitTransaction",
           "arguments": {
             "session": "session0"
-          },
-          "result": {
-            "errorContains": "no transaction started"
           }
         }
       ],
