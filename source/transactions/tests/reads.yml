@@ -6,21 +6,14 @@ data: &data
   - {_id: 3}
   - {_id: 4}
 
-common:
-  - &startTransaction
-    name: startTransaction
-    arguments:
-      session: session0
-  - &commitTransaction
-    name: commitTransaction
-    arguments:
-      session: session0
-
 tests:
   - description: count
 
     operations:
-      - *startTransaction
+      - &startTransaction
+        name: startTransaction
+        arguments:
+          session: session0
       - &count
         name: count
         arguments:
@@ -29,7 +22,11 @@ tests:
           session: session0
         result: 1
       - *count
-      - *commitTransaction
+      - &commitTransaction
+        name: commitTransaction
+        arguments:
+          session: session0
+
 
     expectations:
       - command_started_event:
