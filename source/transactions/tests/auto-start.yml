@@ -246,6 +246,7 @@ tests:
             readConcern:
               level: "snapshot"
               afterClusterTime: 42
+            lsid: session0
             txnNumber:
               $numberLong: "2"
             stmtId: 0
