@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.5
+:Spec Version: 1.6
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-03-28
+:Last Modified: 2018-04-13
 
 .. contents::
 
@@ -622,7 +622,8 @@ The MongoDB SCRAM-SHA-256 mechanism works similarly to the SCRAM-SHA-1
 mechanism, with the following changes:
 
 - The SCRAM algorithm MUST use SHA-256 as the hash function instead of SHA-1.
-- User names MUST be prepared with SASLprep, per RFC 5802.
+- User names MUST NOT be prepared with SASLprep.  This intentionally
+  contravenes the "SHOULD" provision of RFC 5802.
 - Passwords MUST be prepared with SASLprep, per RFC 5802.  Passwords are
   used directly for key derivation ; they MUST NOT be digested as they are in
   SCRAM-SHA-1.
@@ -763,23 +764,29 @@ database command error.)
 Step 4
 ------
 
-To test SASLprep behavior, create a user with username and password equal to
-the Unicode character ROMAN NUMERAL NINE.  To create the user, use the
-(post-SASLprep) username and password "IX" and specify SCRAM-SHA-256
-credentials:
+To test SASLprep behavior, create two users:
+
+#. username: "IX", password "IX"
+#. username: "\u2168" (ROMAN NUMERAL NINE), password "\u2163" (ROMAN NUMERAL FOUR)
+
+To create the users, use the exact bytes for username and password without
+SASLprep or other normalization and specify SCRAM-SHA-256 credentials:
 
     db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
+    db.runCommand({createUser: '\u2168', pwd: '\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 
-Verify that the driver can authenticate with the username and password in
-each of the following forms, both of which normalize via SASLprep to "IX":
+For each user, verify that the driver can authenticate with the password in
+both SASLprep normalized and non-normalized forms:
 
-- "\u2168"
-- "I\u00ADX"
+- User "IX": use password forms "IX" and "I\u00ADX"
+- User "\u2168": use password forms "IV" and "I\u00ADV"
 
 As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 
-- mongodb://%E2%85%A8:%E2%85%A8@mongodb.example.com/admin
-- mongodb://I%C2%ADX:I%C2%ADX@mongodb.example.com/admin
+- mongodb://IX:IX@mongodb.example.com/admin
+- mongodb://IX:I%C2%ADX@mongodb.example.com/admin
+- mongodb://%E2%85%A8:IV@mongodb.example.com/admin
+- mongodb://%E2%85%A8:I%C2%ADV@mongodb.example.com/admin
 
 -----------------------
 Minimum iteration count
@@ -837,6 +844,11 @@ Q: Should a driver support lazy authentication?
 
 Version History
 ===============
+
+Version 1.6 Changes
+    * Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized;
+      this follows a change in the server design and should be available in
+      server 4.0-rc0.
 
 Version 1.5 Changes
     * Clarify auth handshake and that it only applies to non-monitoring
