@@ -129,6 +129,7 @@ TODO:
 - test writeConcernErrors
 - test readConcern everywhere
 - test retryable writes in transaction
+- test aggregate
 
 Command-Started Events
 ``````````````````````
