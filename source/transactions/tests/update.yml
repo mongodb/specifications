@@ -130,8 +130,9 @@ tests:
       - name: startTransaction
         arguments:
           session: session0
-          writeConcern:
-            w: majority         
+          options:
+            writeConcern:
+              w: majority
       - name: updateOne
         arguments:
           filter: {_id: 4}
@@ -139,7 +140,7 @@ tests:
             $inc: {x: 1}
           upsert: true
           writeConcern:
-            w: majority         
+            w: majority
           session: session0
         result:
           matchedCount: 0
@@ -151,7 +152,7 @@ tests:
           filter: {x: 1}
           replacement: {y: 1}
           writeConcern:
-            w: majority         
+            w: majority
           session: session0
         result:
           matchedCount: 1
@@ -164,7 +165,7 @@ tests:
           update:
             $set: {z: 1}
           writeConcern:
-            w: majority         
+            w: majority
           session: session0
         result:
           matchedCount: 2
@@ -241,6 +242,6 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
-              w: majority         
+              w: majority
           command_name: commitTransaction
           database_name: admin

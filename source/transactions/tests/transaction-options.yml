@@ -272,10 +272,11 @@ tests:
       - name: startTransaction
         arguments:
           session: session0
-          readConcern:
-            level: snapshot
-          writeConcern:
-            w: majority
+          options:
+            readConcern:
+              level: snapshot
+            writeConcern:
+              w: majority
       - name: insertOne
         arguments:
           document:
@@ -289,10 +290,11 @@ tests:
       - name: startTransaction
         arguments:
           session: session0
-          readConcern:
-            level: snapshot
-          writeConcern:
-            w: majority
+          options:
+            readConcern:
+              level: snapshot
+            writeConcern:
+              w: majority
       - name: insertOne
         arguments:
           document:

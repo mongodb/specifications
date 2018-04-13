@@ -92,8 +92,9 @@ tests:
       - name: startTransaction
         arguments:
           session: session0
-          writeConcern:
-            w: majority
+          options:
+            writeConcern:
+              w: majority
       - name: findOneAndReplace
         arguments:
           filter: {_id: 3}
