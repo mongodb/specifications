@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.5
+:Spec Version: 1.6
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-03-28
+:Last Modified: 2018-04-13
 
 .. contents::
 
@@ -622,7 +622,8 @@ The MongoDB SCRAM-SHA-256 mechanism works similarly to the SCRAM-SHA-1
 mechanism, with the following changes:
 
 - The SCRAM algorithm MUST use SHA-256 as the hash function instead of SHA-1.
-- User names MUST be prepared with SASLprep, per RFC 5802.
+- User names MUST NOT be prepared with SASLprep.  This intentionally
+  contravenes the "SHOULD" provision of RFC 5802.
 - Passwords MUST be prepared with SASLprep, per RFC 5802.  Passwords are
   used directly for key derivation ; they MUST NOT be digested as they are in
   SCRAM-SHA-1.
@@ -763,23 +764,29 @@ database command error.)
 Step 4
 ------
 
-To test SASLprep behavior, create a user with username and password equal to
-the Unicode character ROMAN NUMERAL NINE.  To create the user, use the
-(post-SASLprep) username and password "IX" and specify SCRAM-SHA-256
-credentials:
+To test SASLprep behavior, create two users:
+
+#. username: "IX", password "IX"
+#. username: "\u2168" (ROMAN NUMERAL NINE), password "\u2163" (ROMAN NUMERAL FOUR)
+
+To create the users, use the exact bytes for username and password without
+SASLprep or other normalization and specify SCRAM-SHA-256 credentials:
 
     db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
+    db.runCommand({createUser: '\u2168', pwd: '\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 
-Verify that the driver can authenticate with the username and password in
-each of the following forms, both of which normalize via SASLprep to "IX":
+For each user, verify that the driver can authenticate with the password in
+both SASLprep normalized and non-normalized forms:
 
-- "\u2168"
-- "I\u00ADX"
+- User "IX": use password forms "IX" and "I\u00ADX"
+- User "\u2168": use password forms "IV" and "I\u00ADV"
 
 As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 
-- mongodb://%E2%85%A8:%E2%85%A8@mongodb.example.com/admin
-- mongodb://I%C2%ADX:I%C2%ADX@mongodb.example.com/admin
+- mongodb://IX:IX@mongodb.example.com/admin
+- mongodb://IX:I%C2%ADX@mongodb.example.com/admin
+- mongodb://%E2%85%A8:IV@mongodb.example.com/admin
+- mongodb://%E2%85%A8:I%C2%ADV@mongodb.example.com/admin
 
 -----------------------
 Minimum iteration count
@@ -835,8 +842,37 @@ Q: Should a driver support multiple credentials?
 Q: Should a driver support lazy authentication?
     No, for the same reasons as given in the previous section, as lazy authentication is another mechanism for allowing multiple credentials to be associated with a single MongoClient instance.
 
+Q: Why does SCRAM sometimes SASLprep and sometimes not?
+    When MongoDB implemented SCRAM-SHA-1, it required drivers to *NOT* SASLprep
+    usernames and passwords.  The primary reason for this was to allow a smooth
+    upgrade path from MongoDB-CR using existing usernames and passwords.
+    Also, because MongoDB's SCRAM-SHA-1 passwords are hex characters of a digest,
+    SASLprep of passwords was irrelevant.
+
+    With the introduction of SCRAM-SHA-256, MongoDB requires users to
+    explicitly create new SCRAM-SHA-256 credentials distinct from those used
+    for MONGODB-CR and SCRAM-SHA-1.  This means SCRAM-SHA-256 passwords are not
+    digested and any Unicode character could now appear in a password.
+    Therefore, the SCRAM-SHA-256 mechanism requires passwords to be normalized
+    with SASLprep, in accordance with the SCRAM RFC.
+
+    However, usernames must be unique, which creates a similar upgrade path
+    problem.  SASLprep maps multiple byte representations to a single
+    normalized one.  An existing database could have multiple existing users
+    that map to the same SASLprep form, which makes it impossible to find the
+    correct user document for SCRAM authentication given only a SASLprep
+    username.  After considering various options to address or workaround this
+    problem, MongoDB decided that the best user experience on upgrade and
+    lowest technical risk of implementation is to require drivers to continue
+    to not SASLprep usernames in SCRAM-SHA-256.
+
 Version History
 ===============
+
+Version 1.6 Changes
+    * Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized;
+      this follows a change in the server design and should be available in
+      server 4.0-rc0.
 
 Version 1.5 Changes
     * Clarify auth handshake and that it only applies to non-monitoring
