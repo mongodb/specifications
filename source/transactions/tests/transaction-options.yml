@@ -46,7 +46,6 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -76,7 +75,6 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -100,11 +98,11 @@ tests:
         data:
           - _id: 1
 
-  # TODO: test readConcern inherited from client after SERVER-34073.
   - description: transaction options inherited from client
 
     clientOptions:
-      w: "1"
+      w: 1
+      readConcernLevel: local
 
     operations: *commitAbortOperations
 
@@ -122,7 +120,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: local
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -153,7 +151,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: local
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -181,7 +179,7 @@ tests:
       session0:
         defaultTransactionOptions:
           readConcern:
-            level: "snapshot"
+            level: snapshot
           writeConcern:
             w: 1
 
@@ -201,7 +199,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: snapshot
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -232,7 +230,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: snapshot
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -320,7 +318,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: snapshot
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -351,7 +349,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: snapshot
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -403,7 +401,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: snapshot
             writeConcern:
           command_name: insert
           database_name: transaction-tests
@@ -434,7 +432,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
+              level: snapshot
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -451,6 +449,194 @@ tests:
             readConcern:
             writeConcern:
               w: majority
+          command_name: abortTransaction
+          database_name: admin
+
+    outcome: *outcome
+
+  - description: readConcern local in defaultTransactionOptions
+
+    clientOptions:
+      w: "1"
+
+    sessionOptions:
+      session0:
+        defaultTransactionOptions:
+          readConcern:
+            level: local
+
+    operations: *commitAbortOperations
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 0
+            startTransaction: true
+            autocommit: false
+            readConcern:
+              level: local
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 1
+            startTransaction:
+            autocommit: false
+            readConcern:
+            writeConcern:
+              w: 1
+          command_name: commitTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 2
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "2"
+            stmtId: 0
+            startTransaction: true
+            autocommit: false
+            readConcern:
+              level: local
+              afterClusterTime: 42
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "2"
+            stmtId: 1
+            startTransaction:
+            autocommit: false
+            readConcern:
+            writeConcern:
+              w: 1
+          command_name: abortTransaction
+          database_name: admin
+
+    outcome: *outcome
+
+  - description: readConcern local in startTransaction options
+
+    sessionOptions:
+      session0:
+        defaultTransactionOptions:
+          readConcern:
+            level: majority # Overridden.
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+          options:
+            readConcern:
+              level: snapshot
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: commitTransaction
+        arguments:
+          session: session0
+      # Now test abort.
+      - name: startTransaction
+        arguments:
+          session: session0
+          options:
+            readConcern:
+              level: snapshot
+      - name: insertOne
+        arguments:
+          document:
+            _id: 2
+          session: session0
+        result:
+          insertedId: 2
+      - name: abortTransaction
+        arguments:
+          session: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 0
+            startTransaction: true
+            autocommit: false
+            readConcern:
+              level: snapshot
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 1
+            startTransaction:
+            autocommit: false
+            readConcern:
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 2
+            ordered: true
+            lsid: session0
+            txnNumber:
+              $numberLong: "2"
+            stmtId: 0
+            startTransaction: true
+            autocommit: false
+            readConcern:
+              level: snapshot
+              afterClusterTime: 42
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "2"
+            stmtId: 1
+            startTransaction:
+            autocommit: false
+            readConcern:
+            writeConcern:
           command_name: abortTransaction
           database_name: admin
 

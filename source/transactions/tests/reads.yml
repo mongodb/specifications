@@ -35,7 +35,6 @@ tests:
             query:
               _id: 1
             readConcern:
-              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -96,7 +95,6 @@ tests:
             find: test
             batchSize: 3
             readConcern:
-              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -179,7 +177,6 @@ tests:
             key: _id
             lsid: session0
             readConcern:
-              level: "snapshot"
             txnNumber:
               $numberLong: "1"
             stmtId: 0

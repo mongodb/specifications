@@ -37,7 +37,6 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
             writeConcern:
           command_name: findAndModify
           database_name: transaction-tests
@@ -109,7 +108,6 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: "snapshot"
             writeConcern:
           command_name: findAndModify
           database_name: transaction-tests

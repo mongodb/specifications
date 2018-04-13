@@ -57,7 +57,6 @@ tests:
                 upsert: true
             ordered: true
             readConcern:
-              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"
@@ -186,7 +185,6 @@ tests:
                 upsert: true
             ordered: true
             readConcern:
-              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"

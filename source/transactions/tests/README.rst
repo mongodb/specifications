@@ -127,7 +127,6 @@ TODO:
 - need some way to clean up sessions and transactions, killAllSessions: []
   didn't seem to work, will it ever?
 - test writeConcernErrors
-- test readConcern everywhere
 - test retryable writes in transaction
 - test aggregate
 

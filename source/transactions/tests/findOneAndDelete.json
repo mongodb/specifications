@@ -65,9 +65,7 @@
               "stmtId": 0,
               "startTransaction": true,
               "autocommit": false,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "findAndModify",
@@ -180,9 +178,7 @@
               "stmtId": 0,
               "startTransaction": true,
               "autocommit": false,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "findAndModify",
