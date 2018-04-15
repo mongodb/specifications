@@ -121,8 +121,6 @@ TODO:
 
 - drivers MUST NOT retry writes in a transaction even when retryWrites=true, needs to use failpoint.
 - drivers MUST retry commit/abort, needs to use failpoint.
-- ensure first test operation is causally consistent with create-collection command
-- ensure first test operation is causally consistent with the initial data insertion
 - need some way to clean up sessions and transactions, killAllSessions: []
   didn't seem to work, will it ever?
 - test writeConcernErrors
