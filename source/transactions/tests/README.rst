@@ -128,7 +128,6 @@ TODO:
 - drivers MUST NOT retry writes in a transaction even when retryWrites=true, needs to use failpoint.
 - drivers MUST retry commit/abort, needs to use failpoint.
 - test writeConcernErrors
-- test aggregate
 
 Command-Started Events
 ``````````````````````

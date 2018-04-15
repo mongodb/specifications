@@ -159,6 +159,100 @@ tests:
 
     outcome: *outcome
 
+  - description: aggregate
+
+    operations:
+      - *startTransaction
+      - &aggregate
+        name: aggregate
+        arguments:
+          pipeline:
+            - $project:
+                _id: 1
+          batchSize: 3
+          session: session0
+        result: *data
+      - *aggregate
+      - *commitTransaction
+
+    expectations:
+      - command_started_event:
+          command:
+            aggregate: test
+            pipeline:
+              - $project:
+                  _id: 1
+            cursor:
+              batchSize: 3
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 0
+            startTransaction: true
+            autocommit: false
+          command_name: aggregate
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            getMore:
+              # 42 is a fake placeholder value for the cursorId.
+              $numberLong: '42'
+            collection: test
+            batchSize: 3
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 1
+            startTransaction:
+            autocommit: false
+          command_name: getMore
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            aggregate: test
+            pipeline:
+              - $project:
+                  _id: 1
+            cursor:
+              batchSize: 3
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 2
+            startTransaction:
+            autocommit: false
+          command_name: aggregate
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            getMore:
+              $numberLong: '42'
+            collection: test
+            batchSize: 3
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 3
+            startTransaction:
+            autocommit: false
+          command_name: getMore
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            stmtId: 4
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin
+
+    outcome: *outcome
+
   - description: distinct
 
     operations:

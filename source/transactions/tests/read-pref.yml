@@ -22,6 +22,20 @@ tests:
             mode: primary
           session: session0
         result: 1
+      - name: find
+        arguments:
+          session: session0
+        result:
+          - _id: 1
+      - name: aggregate
+        arguments:
+          pipeline:
+            - $project:
+                _id: 1
+          batchSize: 3
+          session: session0
+        result:
+          - _id: 1
       - name: commitTransaction
         arguments:
           session: session0
@@ -52,6 +66,23 @@ tests:
         result:
           # Client-side error.
           errorContains: read preference in a transaction must be primary
+      - name: find
+        arguments:
+          readPreference:
+            mode: secondary
+          session: session0
+        result:
+          errorContains: read preference in a transaction must be primary
+      - name: aggregate
+        arguments:
+          pipeline:
+            - $project:
+                _id: 1
+          readPreference:
+            mode: secondary
+          session: session0
+        result:
+          errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         arguments:
           session: session0
@@ -74,6 +105,23 @@ tests:
           session: session0
         result:
           # Client-side error.
+          errorContains: read preference in a transaction must be primary
+      - name: find
+        arguments:
+          readPreference:
+            mode: secondary
+          session: session0
+        result:
+          errorContains: read preference in a transaction must be primary
+      - name: aggregate
+        arguments:
+          pipeline:
+            - $project:
+                _id: 1
+          readPreference:
+            mode: secondary
+          session: session0
+        result:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         arguments:
@@ -102,6 +150,23 @@ tests:
           session: session0
         result:
           # Client-side error.
+          errorContains: read preference in a transaction must be primary
+      - name: find
+        arguments:
+          session: session0
+          readPreference:
+            mode: secondary
+        result:
+          errorContains: read preference in a transaction must be primary
+      - name: aggregate
+        arguments:
+          pipeline:
+            - $project:
+                _id: 1
+          readPreference:
+            mode: secondary
+          session: session0
+        result:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         arguments:
