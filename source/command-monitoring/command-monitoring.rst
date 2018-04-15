@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Nov 22, 2016
-:Version: 1.6
+:Last Modified: Apr 16, 2018
+:Version: 1.7
 
 .. contents::
 
@@ -216,6 +216,18 @@ fields in the reply beyond the ‘ok’ field.
 
 The OP_MSG wire protocol was introduced in MongoDB 3.6, with document sequences as an optimization for bulk writes. The same optimization will be introduced for "find" and "aggregate" replies in 3.8. We have chosen to represent these OP_MSGs as single command or reply documents for now, until a need for a more accurate (and perhaps better-performing) command monitoring API for document sequences has been demonstrated.
 
+*4. Why is BSON serialization and deserialization optional to include in durations?*
+
+Different drivers will serialize and deserialize BSON at different levels of
+the driver architecture.  For example, some parts of a command (e.g. inserted
+document structs) could be pre-encoded early into a "raw" BSON form and the
+final command with late additions like a session ID could encoded just before
+putting it on the wire.
+
+Rather than specify a duration rule that would be hard to satisfy consistently,
+we allow duration to include BSON serialization/deserialization or not based on
+the architecture needs of each driver.
+
 --------
 Security
 --------
@@ -285,8 +297,8 @@ API
 
     /**
      * Returns the execution time of the event in the highest possible resolution for the platform.
-     * The calculated value MUST be the time to send the message and receive the reply from the server,
-     * including BSON serialization and deserialization. The name can imply the units in which the
+     * The calculated value MUST be the time to send the message and receive the reply from the server
+     * and MAY include BSON serialization and/or deserialization. The name can imply the units in which the
      * value is returned, i.e. durationMS, durationNanos.
      */
     duration: Int64;
@@ -324,8 +336,8 @@ API
 
     /**
      * Returns the execution time of the event in the highest possible resolution for the platform.
-     * The calculated value MUST be the time to send the message and receive the reply from the server,
-     * including BSON serialization and deserialization. The name can imply the units in which the
+     * The calculated value MUST be the time to send the message and receive the reply from the server
+     * and MAY include BSON serialization and/or deserialization. The name can imply the units in which the
      * value is returned, i.e. durationMS, durationNanos.
      */
     duration: Int64;
@@ -427,3 +439,7 @@ Changelog
 
 2 NOV 2016:
   - Added clause for not upconverting commands larger than maxBsonSize.
+
+16 APR 2018:
+  - Made inclusion of BSON serialization/deserialization in command durations
+    to be optional.
