@@ -68,16 +68,22 @@ introduced related to arbiters.)
 
 For each YAML file, for each element in ``tests``:
 
+#. Create a MongoClient and call
+   ``client.admin.runCommand({killAllSessions: []})`` to clean up any open
+   transactions from previous test failures. The command will fail with message
+   "operation was interrupted", because it kills its own implicit session. Catch
+   the exception and continue.
 #. Drop the test collection, using writeConcern "majority".
 #. Execute the "create" command to recreate the collection, using writeConcern
    "majority". (Creating the collection inside a transaction is prohibited, so
    create it explicitly.)
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
-#. Create a MongoClient ``client``, with Command Monitoring listeners enabled.
-   (Using a new MongoClient for each test ensures a fresh session pool that
-   hasn't executed any transactions previously, so the tests can assert actual
-   txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if present.
+#. Create a **new** MongoClient ``client``, with Command Monitoring listeners
+   enabled. (Using a new MongoClient for each test ensures a fresh session pool
+   that hasn't executed any transactions previously, so the tests can assert
+   actual txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if
+   present.
 #. Call ``client.startSession`` twice to create ClientSession objects
    ``session0`` and ``session1``, using the test's "sessionOptions" if they
    are present. Save their lsids so they are available after calling
@@ -121,8 +127,6 @@ TODO:
 
 - drivers MUST NOT retry writes in a transaction even when retryWrites=true, needs to use failpoint.
 - drivers MUST retry commit/abort, needs to use failpoint.
-- need some way to clean up sessions and transactions, killAllSessions: []
-  didn't seem to work, will it ever?
 - test writeConcernErrors
 - test aggregate
 
