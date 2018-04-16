@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.5
+:Spec Version: 1.6
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-03-28
+:Last Modified: 2018-04-16
 
 .. contents::
 
@@ -300,7 +300,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
 	MUST be specified.
@@ -353,7 +353,7 @@ username
 	MUST be specified for MongoDB prior to 3.4
 
 source
-	MUST be $external.
+	MUST be "$external". Defaults to ``$external``.
 
 password
 	MUST NOT be specified.
@@ -406,7 +406,7 @@ username
 	MUST be specified.
 
 source
-	MUST be "$external"
+	MUST be "$external". Defaults to ``$external``.
 
 password
 	MAY be specified.
@@ -511,7 +511,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``$external``.
 
 password
 	MUST be specified.
@@ -598,7 +598,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
 	MUST be specified. 
@@ -650,7 +650,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
 	MUST be specified.
@@ -841,6 +841,10 @@ Q: Should a driver support lazy authentication?
 
 Version History
 ===============
+
+Version 1.6 Changes
+    * Clarify authSource defaults
+    * Fix PLAIN authSource rule to allow user provided values
 
 Version 1.5 Changes
     * Clarify auth handshake and that it only applies to non-monitoring
