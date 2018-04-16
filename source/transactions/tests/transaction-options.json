@@ -485,7 +485,7 @@
       "description": "startTransaction options override defaults",
       "clientOptions": {
         "readConcernLevel": "local",
-        "w": "1"
+        "w": 1
       },
       "sessionOptions": {
         "session0": {
