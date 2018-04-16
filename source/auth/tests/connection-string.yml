@@ -242,11 +242,11 @@ tests:
         auth:
           username: "user"
           password: "password"
-          db: "$external"
+          db: "admin"
         options:
           authmechanism: "PLAIN"
     -
-        description: "should ignore the database (PLAIN)"
+        description: "should use the database when no authSource is specified (PLAIN)"
         uri: "mongodb://user:password@localhost/foo?authMechanism=PLAIN"
         hosts: ~
         valid: true
@@ -254,7 +254,19 @@ tests:
         auth:
             username: "user"
             password: "password"
-            db: "$external"
+            db: "foo"
+        options:
+            authmechanism: "PLAIN"
+    -
+        description: "should use the authSource when specified (PLAIN)"
+        uri: "mongodb://user:password@localhost/foo?authMechanism=PLAIN&authSource=bar"
+        hosts: ~
+        valid: true
+        warning: false
+        auth:
+            username: "user"
+            password: "password"
+            db: "bar"
         options:
             authmechanism: "PLAIN"
     -
@@ -272,14 +284,6 @@ tests:
     -
         description: "should throw an exception if no username (PLAIN)"
         uri: "mongodb://localhost/?authMechanism=PLAIN"
-        hosts: ~
-        valid: false
-        warning: false
-        auth: ~
-        options: ~
-    -
-        description: "should throw an exception if authSource is invalid (PLAIN)"
-        uri: "mongodb://user:password@localhost/?authMechanism=PLAIN&authSource=foo"
         hosts: ~
         valid: false
         warning: false

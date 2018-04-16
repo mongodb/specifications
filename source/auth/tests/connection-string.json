@@ -295,14 +295,14 @@
       "auth": {
         "username": "user",
         "password": "password",
-        "db": "$external"
+        "db": "admin"
       },
       "options": {
         "authmechanism": "PLAIN"
       }
     },
     {
-      "description": "should ignore the database (PLAIN)",
+      "description": "should use the database when no authSource is specified (PLAIN)",
       "uri": "mongodb://user:password@localhost/foo?authMechanism=PLAIN",
       "hosts": null,
       "valid": true,
@@ -310,7 +310,22 @@
       "auth": {
         "username": "user",
         "password": "password",
-        "db": "$external"
+        "db": "foo"
+      },
+      "options": {
+        "authmechanism": "PLAIN"
+      }
+    },
+    {
+      "description": "should use the authSource when specified (PLAIN)",
+      "uri": "mongodb://user:password@localhost/foo?authMechanism=PLAIN&authSource=bar",
+      "hosts": null,
+      "valid": true,
+      "warning": false,
+      "auth": {
+        "username": "user",
+        "password": "password",
+        "db": "bar"
       },
       "options": {
         "authmechanism": "PLAIN"
@@ -334,15 +349,6 @@
     {
       "description": "should throw an exception if no username (PLAIN)",
       "uri": "mongodb://localhost/?authMechanism=PLAIN",
-      "hosts": null,
-      "valid": false,
-      "warning": false,
-      "auth": null,
-      "options": null
-    },
-    {
-      "description": "should throw an exception if authSource is invalid (PLAIN)",
-      "uri": "mongodb://user:password@localhost/?authMechanism=PLAIN&authSource=foo",
       "hosts": null,
       "valid": false,
       "warning": false,

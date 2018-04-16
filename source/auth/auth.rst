@@ -77,7 +77,7 @@ username (string)
 	* Optional for MONGODB-X509.
 source (string)
 	* Applies to all mechanisms.
-	* Always '$external' for GSSAPI, MONGODB-X509, and PLAIN.
+	* Always '$external' for GSSAPI and MONGODB-X509.
 	* This is the database to which the authenticate command will be sent.
 	* This is the database to which sasl authentication commands will be sent.
 password (string)
@@ -511,7 +511,7 @@ username
 	MUST be specified.
 
 source
-	MUST be $external.
+	MUST be specified.
 
 password
 	MUST be specified.
@@ -680,7 +680,8 @@ authMechanism
 authSource
 	Sets the Source property on the MongoCredential.
 
-	For GSSAPI, MONGODB-X509 and PLAIN authMechanisms, the authSource defaults to ``$external``.
+	For GSSAPI and MONGODB-X509 authMechanisms the authSource defaults to ``$external``.
+	For PLAIN the authSource defaults to the database name if supplied on the connection string or ``$external``.
 	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
 authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
