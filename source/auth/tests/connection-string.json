@@ -295,7 +295,7 @@
       "auth": {
         "username": "user",
         "password": "password",
-        "db": "admin"
+        "db": "$external"
       },
       "options": {
         "authmechanism": "PLAIN"
@@ -326,21 +326,6 @@
         "username": "user",
         "password": "password",
         "db": "bar"
-      },
-      "options": {
-        "authmechanism": "PLAIN"
-      }
-    },
-    {
-      "description": "should accept valid authSource (PLAIN)",
-      "uri": "mongodb://user:password@localhost/foo?authMechanism=PLAIN&authSource=$external",
-      "hosts": null,
-      "valid": true,
-      "warning": false,
-      "auth": {
-        "username": "user",
-        "password": "password",
-        "db": "$external"
       },
       "options": {
         "authmechanism": "PLAIN"
