@@ -175,33 +175,3 @@ tests:
     outcome:
       collection:
         data: []
-
-  - description: read and write
-
-    skipReason: Server changes needed for commitTransaction on secondary.
-
-    operations:
-      - name: startTransaction
-        arguments:
-          session: session0
-      - name: count
-        arguments:
-          readPreference:
-            mode: secondary
-          session: session0
-        result: 0
-      - name: insertOne
-        arguments:
-          document:
-            _id: 1
-          session: session0
-        result:
-          # Client-side error.
-          errorContains: transaction readPreference changed
-      - name: commitTransaction
-        arguments:
-          session: session0
-
-    outcome:
-      collection:
-        data: []
