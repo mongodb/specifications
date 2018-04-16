@@ -69,9 +69,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -113,7 +111,6 @@
               ],
               "ordered": true,
               "readConcern": {
-                "level": "snapshot",
                 "afterClusterTime": 42
               },
               "lsid": "session0",
@@ -187,7 +184,117 @@
       }
     },
     {
-      "description": "explicit start",
+      "description": "explicit start succeeds",
+      "sessionOptions": {
+        "session0": {
+          "autoStartTransaction": true
+        }
+      },
+      "operations": [
+        {
+          "name": "startTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        },
+        {
+          "name": "commitTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        },
+        {
+          "name": "startTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        },
+        {
+          "name": "abortTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        },
+        {
+          "name": "startTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        },
+        {
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "_id": 1
+            },
+            "session": "session0"
+          },
+          "result": {
+            "insertedId": 1
+          }
+        },
+        {
+          "name": "commitTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "readConcern": null,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "stmtId": 0,
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "transaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "stmtId": 1,
+              "startTransaction": null,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        }
+      ],
+      "outcome": {
+        "collection": {
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "explicit start fails",
       "sessionOptions": {
         "session0": {
           "autoStartTransaction": true
@@ -233,9 +340,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -333,9 +438,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -377,9 +480,9 @@
               ],
               "ordered": true,
               "readConcern": {
-                "level": "snapshot",
                 "afterClusterTime": 42
               },
+              "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
               },
@@ -456,9 +559,6 @@
           "name": "commitTransaction",
           "arguments": {
             "session": "session0"
-          },
-          "result": {
-            "errorContains": "no transaction started"
           }
         }
       ],
@@ -473,9 +573,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
@@ -579,9 +677,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"

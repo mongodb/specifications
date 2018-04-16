@@ -59,7 +59,6 @@ tests:
                 upsert: false
             ordered: true
             readConcern:
-              level: "snapshot"
               afterClusterTime: 42
             lsid: session0
             txnNumber:
@@ -145,7 +144,6 @@ tests:
                 upsert: false
             ordered: true
             readConcern:
-              level: "snapshot"
             lsid: session0
             txnNumber:
               $numberLong: "1"

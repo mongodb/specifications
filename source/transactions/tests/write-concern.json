@@ -8,8 +8,10 @@
           "name": "startTransaction",
           "arguments": {
             "session": "session0",
-            "writeConcern": {
-              "w": "majority"
+            "options": {
+              "writeConcern": {
+                "w": "majority"
+              }
             }
           }
         },
@@ -43,9 +45,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -128,9 +128,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -179,8 +177,10 @@
           "name": "startTransaction",
           "arguments": {
             "session": "session0",
-            "writeConcern": {
-              "w": "majority"
+            "options": {
+              "writeConcern": {
+                "w": "majority"
+              }
             }
           }
         },
@@ -214,9 +214,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
@@ -295,9 +293,7 @@
                 }
               ],
               "ordered": true,
-              "readConcern": {
-                "level": "snapshot"
-              },
+              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
