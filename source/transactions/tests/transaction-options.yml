@@ -375,7 +375,7 @@ tests:
 
     clientOptions:
       readConcernLevel: local
-      w: "1"
+      w: 1
 
     sessionOptions:
       session0:
@@ -457,7 +457,7 @@ tests:
   - description: readConcern local in defaultTransactionOptions
 
     clientOptions:
-      w: "1"
+      w: 1
 
     sessionOptions:
       session0:
