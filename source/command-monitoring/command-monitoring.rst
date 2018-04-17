@@ -343,6 +343,12 @@ API
     duration: Int64;
 
     /**
+     * Returns the command reply. This will only be empty if the server did not reply at all,
+     * such as in the event of a network error.
+     */
+    reply: Document;
+
+    /**
      * Returns the command name.
      */
     commandName: String;
