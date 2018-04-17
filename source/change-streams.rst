@@ -97,6 +97,9 @@ An error is considered resumable if it meets any of the following criteria:
     * - CursorKilled
       - 237
 
+An error on an aggregate command is not a retryable error. Only errors on a
+getMore command may be considered retryable errors.
+
 The criteria for retryable errors is similar to the discussion in the SDAM
 spec's section on `Error Handling`_, but includes additional error codes. See
 `What do the additional error codes mean?`_ for the reasoning behind these
@@ -521,4 +524,6 @@ Changelog
 |            | concern for the helper method.                             |
 +------------+------------------------------------------------------------+
 | 2017-12-13 | Default read concern is also accepted, not just "majority".|
++------------+------------------------------------------------------------+
+| 2018-04-17 | Clarified that the initial aggregate should not be retried.|
 +------------+------------------------------------------------------------+
