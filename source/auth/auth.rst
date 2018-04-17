@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.6
+:Spec Version: 1.7
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-04-13
+:Last Modified: 2018-04-16
 
 .. contents::
 
@@ -77,7 +77,7 @@ username (string)
 	* Optional for MONGODB-X509.
 source (string)
 	* Applies to all mechanisms.
-	* Always '$external' for GSSAPI, MONGODB-X509, and PLAIN.
+	* Always '$external' for GSSAPI and MONGODB-X509.
 	* This is the database to which the authenticate command will be sent.
 	* This is the database to which sasl authentication commands will be sent.
 password (string)
@@ -300,7 +300,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
 	MUST be specified.
@@ -353,7 +353,7 @@ username
 	MUST be specified for MongoDB prior to 3.4
 
 source
-	MUST be $external.
+	MUST be "$external". Defaults to ``$external``.
 
 password
 	MUST NOT be specified.
@@ -406,7 +406,7 @@ username
 	MUST be specified.
 
 source
-	MUST be "$external"
+	MUST be "$external". Defaults to ``$external``.
 
 password
 	MAY be specified.
@@ -511,7 +511,7 @@ username
 	MUST be specified.
 
 source
-	MUST be $external.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``$external``.
 
 password
 	MUST be specified.
@@ -598,7 +598,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
 	MUST be specified. 
@@ -651,7 +651,7 @@ username
 	MUST be specified.
 
 source
-	MUST be specified.
+	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
 	MUST be specified.
@@ -679,7 +679,11 @@ authMechanism
 	Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
 
 authSource
-	Sets the Source property on the MongoCredential. This overrides the database name on the connection string for where authentication occurs. The default is admin.
+	Sets the Source property on the MongoCredential.
+
+	For GSSAPI and MONGODB-X509 authMechanisms the authSource defaults to ``$external``.
+	For PLAIN the authSource defaults to the database name if supplied on the connection string or ``$external``.
+	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
 authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
 	A generic method to set mechanism properties in the connection string. 
@@ -868,6 +872,10 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.7 Changes
+    * Clarify authSource defaults
+    * Fix PLAIN authSource rule to allow user provided values
 
 Version 1.6 Changes
     * Change SCRAM-SHA-256 rules such that usernames are *NOT* normalized;
