@@ -152,9 +152,6 @@
           "name": "commitTransaction",
           "arguments": {
             "session": "session1"
-          },
-          "result": {
-            "errorCodeName": "NoSuchTransaction"
           }
         }
       ]

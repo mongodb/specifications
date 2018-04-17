@@ -89,11 +89,10 @@ tests:
       - name: commitTransaction
         arguments:
           session: session0
+      # Driver ignores "NoSuchTransaction" error.
       - name: commitTransaction
         arguments:
           session: session1
-        result:
-          errorCodeName: NoSuchTransaction
 
   - description: write conflict abort
 
