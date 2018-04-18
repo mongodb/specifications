@@ -121,12 +121,9 @@ Read commands that support ``ReadConcern`` take a named parameter spelled (case-
 If the ``Client``, ``Database``, or ``Collection`` being operated on either has no ``ReadConcern`` set, or has the server default ``ReadConcern``:
 
 - If the  ``ReadConcern`` specified for the command is the server default, the driver MUST omit that ``ReadConcern`` when sending the command.
-- If the ``ReadConcern`` specified for the command is any ``ReadConcern`` besides the server default, the driver MUST include that ``ReadConcern`` when sending the command.
+- If the ``ReadConcern`` specified for the command is any ``ReadConcern`` besides the server default, including an explicitly specified ``ReadConcern`` of :javascript:`readConcern: { level: "local" }`, the driver MUST include the ``ReadConcern`` when sending the command.
 
 If the ``Client``, ``Database``, or ``Collection`` being operated on has a non-default ``ReadConcern`` specified, then the driver MUST include the command's ``ReadConcern`` when sending the command. This includes if the command specifies the server default ``ReadConcern``, so that the command can override the ``Client``, ``Database``, or ``Collection``'s ``ReadConcern`` to use the server default instead.
-
-.. note::
-    While the default ``ReadConcern`` MUST be omitted, an explicitly specified ``ReadConcern`` of :javascript:`readConcern: { level: “local” }` MUST NOT be omitted.
 
 
 Generic Command Method
