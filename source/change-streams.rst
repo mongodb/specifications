@@ -229,6 +229,29 @@ Driver API
     watch(pipeline: Document[], options: Optional<ChangeStreamOptions>): ChangeStream;
   }
 
+  interface Database {
+    /**
+     * Allows a client to observe all changes in a database.
+     * Excludes system collections.
+     * @returns a change stream on all collections in a database
+     * @since 4.0
+     * @see https://docs.mongodb.com/manual/reference/system-collections/
+     */
+    watch(pipeline: Document[], options: Optional<ChangeStreamOptions>): ChangeStream;
+  }
+
+  interface MongoClient {
+    /**
+     * Allows a client to observe all changes in a cluster.
+     * Excludes system collections.
+     * Excludes the "config", "local", and "admin" databases.
+     * @since 4.0
+     * @returns a change stream on all collections in all databases in a cluster
+     * @see https://docs.mongodb.com/manual/reference/system-collections/
+     */
+    watch(pipeline: Document[], options: Optional<ChangeStreamOptions>): ChangeStream;
+  }
+
   class ChangeStreamOptions {
     /**
      * Allowed values: ‘default’, ‘updateLookup’.  Defaults to ‘default’.  When set to
@@ -282,6 +305,15 @@ Driver API
      */
     collation: Optional<Document>;
 
+    /**
+     * The change stream will only provides changes that occurred after the
+     * specified timestamp. Any command run against the server will return
+     * a cluster time that can be used here. The default value is a
+     * cluster time obtained from the server before the change stream was created.
+     * @since 4.0
+     * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
+     */
+    startAtClusterTime: Optional<Timestamp>;
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -289,11 +321,11 @@ Driver API
 Helper Method
 -------------
 
-The driver API consists of one helper method located on a driver’s Collection type, as well as a new ``ChangeStream`` type.  The helper MUST return a ``ChangeStream`` instance.  Implementers MUST document that helper method is preferred to running a raw aggregation with a ``$changeStream`` stage, for the purpose of supporting resumability.
+The driver API consists of a ``ChangeStream`` type, as well as three helper methods. All helpers MUST return a ``ChangeStream`` instance. Implementers MUST document that helper methods are preferred to running a raw aggregation with a ``$changeStream`` stage, for the purpose of supporting resumability.
 
-The helper method must construct an aggregation command with a REQUIRED initial ``$changeStream`` stage.  A driver MUST NOT throw a custom exception if multiple ``$changeStream`` stages are present (e.g. if a user also passed ``$changeStream`` in the pipeline supplied to the helper), as the server will return an error.
+The helper methods must construct an aggregation command with a REQUIRED initial ``$changeStream`` stage.  A driver MUST NOT throw a custom exception if multiple ``$changeStream`` stages are present (e.g. if a user also passed ``$changeStream`` in the pipeline supplied to the helper), as the server will return an error.
 
-The helper method MUST determine a read concern for the operation in accordance with the `Read and Write Concern specification <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code>`_.  The initial implementation of change streams on the server requires a “majority” read concern or no read concern.  Drivers MUST document this requirement.  Drivers SHALL NOT throw an exception if any other read concern is specified, but instead should depend on the server to return an error.
+The helper methods MUST determine a read concern for the operation in accordance with the `Read and Write Concern specification <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#via-code>`_.  The initial implementation of change streams on the server requires a “majority” read concern or no read concern.  Drivers MUST document this requirement.  Drivers SHALL NOT throw an exception if any other read concern is specified, but instead should depend on the server to return an error.
 
 The stage has the following shape:
 
@@ -301,9 +333,9 @@ The stage has the following shape:
 
   { $changeStream: ChangeStreamOptions }
 
-The first parameter of the helper specifies an array of aggregation pipeline stages which MUST be appended to the initial stage. Drivers MUST support an empty pipeline. Languages which support default parameters MAY specify an empty array as the default value for this parameter. Drivers SHOULD otherwise make specification of a pipeline as similar as possible to the `aggregate <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ CRUD method.
+The first parameter of the helpers specifies an array of aggregation pipeline stages which MUST be appended to the initial stage. Drivers MUST support an empty pipeline. Languages which support default parameters MAY specify an empty array as the default value for this parameter. Drivers SHOULD otherwise make specification of a pipeline as similar as possible to the `aggregate <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ CRUD method.
 
-Additionally, implementors MAY provide a form of this method which requires no parameters, assuming no options and no additional stages beyond the initial ``$changeStream`` stage:
+Additionally, implementors MAY provide a form of these methods which require no parameters, assuming no options and no additional stages beyond the initial ``$changeStream`` stage:
 
 .. code:: python
 
@@ -320,8 +352,58 @@ Presently change streams support only a subset of available aggregation stages:
 
 A driver MUST NOT throw an exception if any unsupported stage is provided, but instead depend on the server to return an error.
 
-The aggregate helper method MUST have no new logic related to the ``$changeStream`` stage. Drivers MUST be capable of handling `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_  cursors from the aggregate command in the same way they handle such cursors from find.
+The aggregate helper methods MUST have no new logic related to the ``$changeStream`` stage. Drivers MUST be capable of handling `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_  cursors from the aggregate command in the same way they handle such cursors from find.
 
+``Collection.watch`` helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a ``ChangeStream`` on a specific collection
+
+Command syntax:
+
+.. code:: typescript
+
+    {
+      aggregate: 'collectionName'
+      pipeline: [{$changeStream: {...}}, ...],
+      ...
+    }
+
+``Database.watch`` helper
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:since: 4.0
+
+Returns a ``ChangeStream`` on all collections in a database.
+
+Command syntax:
+
+.. code:: typescript
+
+    {
+      aggregate: 1
+      pipeline: [{$changeStream: {...}}, ...],
+      ...
+    }
+
+``MongoClient.watch`` helper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:since: 4.0
+
+Returns a ``ChangeStream`` on all collections in all databases in a cluster
+
+Command syntax:
+
+.. code:: typescript
+
+    {
+      aggregate: 1
+      pipeline: [{$changeStream: {allChangesForCluster: true, ...}}, ...],
+      ...
+    }
+
+The helper MUST run the command against the `admin` database
 
 ChangeStream
 ------------
@@ -339,19 +421,54 @@ Single Server Topologies
 
 Presently, change streams cannot be initiated on single server topologies as they do not have an oplog.  Drivers MUST NOT throw an exception in this scenario, but instead rely on an error returned from the server.  This allows for the server to seamlessly introduce support for this in the future, without need to make changes in driver code.
 
+startAtClusterTime
+^^^^^^^^^^^^^^^^^^
+
+:since: 4.0
+
+``startAtClusterTime`` specifies that a ``changeStream`` will only return changes that occurred at or after the specified ``Timestamp``.
+
+The server expects ``startAtClusterTime`` as a bson document of the form
+
+.. code:: typescript
+
+    {
+      ts: Timestamp;
+    }
+
+Drivers MUST allow users to specify a ``startAtClusterTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``, and MUST NOT force users to wrap the timestamp as the server specifies.
+
+``startAtClusterTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtClusterTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
+
+If neither ``startAtClusterTime`` or ``resumeAfter`` are specified, and the server version is >= ``4.0`` drivers MUST set a default ``startAtClusterTime`` value using a ``$clusterTime`` from any server response (ex: ``ismaster``). This allows change streams to be resumed before the first notification is received.
+
 resumeAfter
 ^^^^^^^^^^^
 
-When resuming a change stream after a disconnect, the driver issuing a new ``$changeStream`` request MUST specify a ``resumeAfter`` key with a resume token from the last change it saw.  In this case, the aggregation will return notifications starting with the log entry immediately *after* the provided token.  If the resume token specified does not exist, the server will return an error.  If ``resumeAfter`` is omitted completely, or is null, the most recent oplog entry will be returned.
+``resumeAfter`` is used to resume a changeStream that has been stopped to ensure that only changes starting with the log entry immediately *after* the provided token will be returned. If the resume token specified does not exist, the server will return an error. 
 
 Resume Process
 ^^^^^^^^^^^^^^
 
-Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to resume one time.  The process for resuming MUST follow these steps:
+Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to resume one time. The process for resuming MUST follow these steps:
 
-- Perform server selection
-- Connect to selected server
-- Execute the known aggregation command, specifying a ``resumeAfter`` with the last known ``resumeToken``
+- Perform server selection.
+- Connect to selected server.
+- If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the server version is >= ``4.0``:
+
+    - The driver MUST execute the known aggregation command.
+    - The driver MUST specify the ``startAtClusterTime`` key set to the original timestamp from when the changestream was first created.
+    - The driver MUST NOT set a ``resumeAfter`` key.
+    - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtClusterTime``.
+- Else:
+
+    - The driver MUST execute the known aggregation command.
+    - The driver MUST specify a ``resumeAfter`` with the last known ``resumeToken``.
+    - The driver MUST NOT set a ``startAtClusterTime``.
+    - If a ``startAtClusterTime`` key was part of the original aggregation command, the driver MUST remove it.
+    - In this case, the ``ChangeStream`` will return notifications starting with the oplog entry immediately *after* the provided token.
+
+If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
 A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and MUST NOT attempt to kill the cursor on any other server.
 
@@ -478,6 +595,10 @@ Unit
 
 9. The ``killCursors`` command sent during the “Resume Process” must not be allowed to throw an exception.
 
+10. A fresh ``ChangeStream`` against a server ``>=4.0`` will always include ``startAtClusterTime`` in the ``$changeStream`` stage.
+
+11. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtClusterTime`` when resuming a changestream.
+
 -----------
 Integration
 -----------
@@ -486,7 +607,11 @@ Integration
 
 2. Executing a ``watch`` helper on a Collection results in notifications for changes to the specified collection
 
-3. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
+3. Executing a ``watch`` helper on a Database results in notifications for changes to all collections in the specified database.
+
+4. Executing a ``watch`` helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster, excluding the ``admin``, ``local``, and ``config`` databases.
+
+5. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
 
 Backwards Compatibility
 =======================
@@ -526,4 +651,7 @@ Changelog
 | 2017-12-13 | Default read concern is also accepted, not just "majority".|
 +------------+------------------------------------------------------------+
 | 2018-04-17 | Clarified that the initial aggregate should not be retried.|
++------------+------------------------------------------------------------+
+| 2018-04-18 | Added helpers for Database and MongoClient,                |
+|            | and added ``startAtClusterTime`` option.                   |
 +------------+------------------------------------------------------------+
