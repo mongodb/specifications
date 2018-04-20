@@ -1001,6 +1001,14 @@ to the pool.
 there are no remaining sessions checked out from the pool.  This may require changes to existing tests to
 ensure that they close any explicit client sessions and any unexhausted cursors.
 
+10. For every combination of topology and readPreference, ensure that ``find`` and ``getMore`` both send the same session id
+
+    * Insert three documents into a collection
+    * Execute a ``find`` operation on the collection with a batch size of 2
+    * Assert that the server receives a non-zero lsid
+    * Iterate through enough documents (3) to force a ``getMore``
+    * Assert that the server receives a non-zero lsid equal to the lsid that ``find`` sent.
+
 
 Tests that only apply to drivers that allow authentication to be changed on the fly
 -----------------------------------------------------------------------------------
