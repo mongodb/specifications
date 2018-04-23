@@ -7,7 +7,6 @@ tests:
       - name: startTransaction
         arguments:
           session: session0
-      # A couple of commands to check that bulkWrite uses stmtId 2.
       - name: insertOne
         arguments:
           document:
@@ -28,7 +27,6 @@ tests:
             - name: insertOne
               arguments:
                 document: {_id: 1}
-            # A series of updates allows the driver to skip stmtIds.
             - name: updateOne
               arguments:
                 filter: {_id: 1}
@@ -99,7 +97,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -115,7 +112,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -131,7 +127,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2
             startTransaction:
             autocommit: false
             writeConcern:
@@ -153,7 +148,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 3
             startTransaction:
             autocommit: false
             writeConcern:
@@ -172,7 +166,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 5
             startTransaction:
             autocommit: false
             writeConcern:
@@ -194,7 +187,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 10
             startTransaction:
             autocommit: false
             writeConcern:
@@ -214,7 +206,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 12
             startTransaction:
             autocommit: false
             writeConcern:
@@ -232,7 +223,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 15
             startTransaction:
             autocommit: false
             writeConcern:
@@ -244,7 +234,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 16
             startTransaction:
             autocommit: false
             writeConcern:

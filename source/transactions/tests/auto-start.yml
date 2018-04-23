@@ -46,7 +46,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -58,7 +57,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -75,7 +73,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -90,7 +87,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -102,7 +98,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 2
             startTransaction:
             autocommit: false
             writeConcern:
@@ -160,7 +155,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "3"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -172,7 +166,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "3"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -220,7 +213,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -232,7 +224,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -283,7 +274,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -295,7 +285,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -312,7 +301,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -324,7 +312,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -373,7 +360,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -385,7 +371,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "2"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -440,7 +425,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -453,7 +437,6 @@ tests:
               _id: 1
             lsid: session1
             txnNumber:
-            stmtId:
             startTransaction:
             autocommit:
           command_name: find
@@ -464,7 +447,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -479,7 +461,6 @@ tests:
               afterClusterTime: 42
             lsid: session1
             txnNumber:
-            stmtId:
             startTransaction:
             autocommit:
           command_name: find

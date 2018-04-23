@@ -1,4 +1,3 @@
-# Test all read operations' txnNumbers and stmtIds.
 # Aggregate not yet supported in transactions.
 data: &data
   - {_id: 1}
@@ -38,7 +37,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -52,7 +50,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
@@ -64,7 +61,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2
             startTransaction:
             autocommit: false
             writeConcern:
@@ -98,7 +94,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
           command_name: find
@@ -113,7 +108,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
           command_name: getMore
@@ -125,7 +119,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2
             startTransaction:
             autocommit: false
           command_name: find
@@ -139,7 +132,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 3
             startTransaction:
             autocommit: false
           command_name: getMore
@@ -150,7 +142,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 4
             startTransaction:
             autocommit: false
             writeConcern:
@@ -188,7 +179,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
           command_name: aggregate
@@ -203,7 +193,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
           command_name: getMore
@@ -219,7 +208,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 2
             startTransaction:
             autocommit: false
           command_name: aggregate
@@ -233,7 +221,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 3
             startTransaction:
             autocommit: false
           command_name: getMore
@@ -244,7 +231,6 @@ tests:
             lsid: session0
             txnNumber:
               $numberLong: "1"
-            stmtId: 4
             startTransaction:
             autocommit: false
             writeConcern:
@@ -273,7 +259,6 @@ tests:
             readConcern:
             txnNumber:
               $numberLong: "1"
-            stmtId: 0
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -286,7 +271,6 @@ tests:
             readConcern:
             txnNumber:
               $numberLong: "1"
-            stmtId: 1
             startTransaction:
             autocommit: false
             writeConcern:
