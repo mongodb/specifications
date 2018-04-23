@@ -629,7 +629,7 @@
         "result": {
           "deletedCount": 0,
           "insertedIds": {
-            "0": 2
+            "1": 2
           },
           "matchedCount": 1,
           "modifiedCount": 1,

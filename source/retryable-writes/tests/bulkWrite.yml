@@ -294,7 +294,7 @@ tests:
             error: true
             result:
                 deletedCount: 0
-                insertedIds: { 0: 2 }
+                insertedIds: { 1: 2 }
                 matchedCount: 1
                 modifiedCount: 1
                 upsertedCount: 0
