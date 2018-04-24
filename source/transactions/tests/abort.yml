@@ -353,3 +353,28 @@ tests:
     outcome:
       collection:
         data: []
+
+  - description: abort does not apply writeConcern
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+          options:
+            writeConcern:
+              w: 10
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+        # No CannotSatisfyWriteConcern error.
+
+    outcome:
+      collection:
+        data: []
