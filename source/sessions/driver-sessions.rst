@@ -638,6 +638,40 @@ any circumstances:
 Drivers MUST document the behavior of unacknowledged writes for both explicit
 and implicit sessions.
 
+When wrapping commands in a ``$query`` field
+--------------------------------------------
+
+If the driver is wrapping the command in a ``$query`` field in order to pass a readPreference to a mongos (see `ReadPreference and Mongos <./find_getmore_killcursors_commands.rst#readpreference-and-mongos>`_), the driver SHOULD NOT add the ``lsid`` as a top-level field, and MUST add the ``lsid`` as a field of the ``$query``
+
+.. code:: typescript
+
+    // Wrapped command:
+    {
+      $query: {
+        find: { foo: 1 }
+      },
+      $readPreference: {}
+    }
+
+    // Correct application of lsid
+    {
+      $query: {
+        find: { foo: 1 },
+        lsid: <...>
+      },
+      $readPreference: {}
+    }
+
+    // Incorrect application of lsid.
+    {
+      $query: {
+        find: { foo: 1 }
+      },
+      $readPreference: {},
+      lsid: <...>
+    }
+
+
 Server Commands
 ===============
 
@@ -1000,6 +1034,20 @@ to the pool.
 9. At the end of every individual functional test of the driver, there SHOULD be an assertion that
 there are no remaining sessions checked out from the pool.  This may require changes to existing tests to
 ensure that they close any explicit client sessions and any unexhausted cursors.
+
+10. For every combination of topology and readPreference, ensure that ``find`` and ``getMore`` both send the same session id
+
+    * Insert three documents into a collection
+    * Execute a ``find`` operation on the collection with a batch size of 2
+    * Assert that the server receives a non-zero lsid
+    * Iterate through enough documents (3) to force a ``getMore``
+    * Assert that the server receives a non-zero lsid equal to the lsid that ``find`` sent.
+
+
+Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
+----------------------------------------------------------------------------------------------
+
+1. For a command to a mongos that includes a readPreference, verify that the ``lsid`` on query commands is added inside the ``$query`` field, and NOT as a top-level field
 
 
 Tests that only apply to drivers that allow authentication to be changed on the fly
