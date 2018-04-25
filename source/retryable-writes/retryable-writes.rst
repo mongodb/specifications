@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2018-03-14
+:Last Modified: 2018-04-25
 
 .. contents::
 
@@ -185,8 +185,12 @@ Supported single-statement write operations include ``insertOne()``,
 
 Supported multi-statement write operations include ``insertMany()`` and
 ``bulkWrite()``. The ordered option may be ``true`` or ``false``. In the case of
-``bulkWrite()``, the requests parameter may not include ``UpdateMany`` or
-``DeleteMany`` operations.
+``bulkWrite()``, ``UpdateMany`` or ``DeleteMany`` operations within the
+``requests`` parameter may make some write commands ineligible for retryability.
+Drivers MUST evaluate eligibility for each write command sent as part of the
+``bulkWrite()`` (after order and batch splitting) individually. Drivers MUST NOT
+alter existing logic for order and batch splitting in an attempt to maximize
+retryability for operations within a bulk write.
 
 These methods above are defined in the `CRUD`_ specification.
 
@@ -212,11 +216,12 @@ This includes an `update`_ command where any statement in the updates sequence
 specifies a ``multi`` option of ``true`` or a `delete`_ command where any
 statement in the ``deletes`` sequence specifies a ``limit`` option of ``0``. In
 the context of the `CRUD`_ specification, this includes the ``updateMany()`` and
-``deleteMany()`` methods as well as ``bulkWrite()`` where the requests parameter
-includes an ``UpdateMany`` or ``DeleteMany`` operation. Drivers MUST NOT add a
-transaction ID to any single- or multi-statement write commands that include one
-or more multi-document write operations. Drivers MUST NOT retry these commands
-if they fail to return a response.
+``deleteMany()`` methods and, in some cases, ``bulkWrite()``. Drivers MUST NOT
+add a transaction ID to any single- or multi-statement write commands that
+include one or more multi-document write operations. Drivers MUST NOT retry
+these commands if they fail to return a response. With regard to
+``bulkWrite()``, drivers MUST evaluate eligibility for each write command sent
+as part of the ``bulkWrite()`` (after order and batch splitting) individually.
 
 .. _update: https://docs.mongodb.com/manual/reference/command/update/
 .. _delete: https://docs.mongodb.com/manual/reference/command/delete/
@@ -509,7 +514,8 @@ commands for unsupported write operations:
 
 * Unsupported multi-statement write operations
 
-  - ``bulkWrite()`` that includes ``UpdateMany`` or ``DeleteMany``
+  - commands that include ``UpdateMany`` or ``DeleteMany`` executed as part of a
+    ``bulkWrite()``
 
 * Unsupported write commands
 
@@ -710,8 +716,20 @@ to the client. That said, this approach may have implications for
 `Command Monitoring`_, since the original write command and its retry attempt
 may report the same ``requestId``.
 
+Why can't drivers split bulk write commands to maximize retryability?
+---------------------------------------------------------------------
+
+In `Supported Write Operations`_, the spec prohibits drivers from altering
+existing logic for splits ``bulkWrite()``'s ``requests`` parameter into write
+commands in an attempt to segregate unsupported, multi-document write operations
+and maximize retryability for other, supported write operations. The reasoning
+behind this prohibition is that such behavior would conflict with a primary goal
+of the bulk API in reducing the number of command round-trips to the server.
+
 Changes
 =======
+
+2018-04-25: Evaluate retryable eligibility of bulkWrite() commands individually.
 
 2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.
 
