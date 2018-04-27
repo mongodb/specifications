@@ -62,6 +62,19 @@ The TopologyType MUST remain ReplicaSetWithPrimary.
 A multi-threaded client MUST immediately re-check the former secondary,
 a single-threaded client MUST NOT.
 
+"Node is recovering" error from a write concern error
+-----------------------------------------------------
+
+Scenario: With TopologyType ReplicaSetWithPrimary, a write to the primary responds
+with the following document:
+
+    { ok: 1, writeConcernError: {code: 91, errmsg: "Replication is being shut down"} }
+
+Outcome: The former primary's ServerType MUST become Unknown.
+The TopologyType MUST change to ReplicaSetNoPrimary.
+A multi-threaded client MUST immediately re-check the former secondary,
+a single-threaded client MUST NOT.
+
 Parsing "not master" and "node is recovering" errors
 ----------------------------------------------------
 

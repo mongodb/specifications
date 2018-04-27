@@ -1402,7 +1402,14 @@ If any other error code is included in the response, or an error code is
 omitted, clients MUST check the error message. The error is considered a "node
 is recovering" error if the substrings "node is recovering" or "not master or
 secondary" are anywhere in the error message. Otherwise, if the substring "not
-master" is in the error message it is a "not master" error::
+master" is in the error message it is a "not master" error.
+
+Additionally, if the response includes a write concern error, then the code
+and message of the write concern error MUST be checked the same way a response
+error is checked above.
+
+The following pseudocode checks a response for a "not master" or "node is
+recovering" error::
 
     recovering_codes = [11600, 11602, 13436, 189, 91]
     notmaster_codes = [10107, 13435]
@@ -1435,6 +1442,10 @@ master" is in the error message it is a "not master" error::
         if not response["ok"]:
             if is_notmaster_or_recovering(response["errmsg"], response["code"]):
                 handle_notmaster_or_recovering(response["errmsg"], response["code"])
+        else if response["writeConcernError"]:
+            wce = response["writeConcernError"]
+            if is_notmaster_or_recovering(wce["errmsg"], wce["code"]):
+                handle_notmaster_or_recovering(wce["errmsg"], wce["code"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:

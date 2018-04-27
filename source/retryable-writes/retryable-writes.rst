@@ -106,6 +106,8 @@ Retryable Error
      listed above, but with an error message containing the substring "not
      master" or "node is recovering"
 
+   - a server response with a write concern error meeting the above criteria
+
    The criteria for retryable errors is similar to the discussion in the SDAM
    spec's section on `Error Handling`_, but includes additional error codes. See
    `What do the additional error codes mean?`_ for the reasoning behind these
