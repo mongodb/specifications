@@ -15,10 +15,11 @@ that drivers can use to prove their conformance to the Retryable Writes spec.
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
 
-Tests will require a MongoClient with ``retryWrites`` enabled. Integration tests
-will require a running MongoDB cluster with server versions 3.6.0 or later. The
-``{setFeatureCompatibilityVersion: 3.6}`` admin command will also need to have
-been executed to enable support for retryable writes on the cluster.
+Tests will require a MongoClient created with options defined in the tests.
+Integration tests will require a running MongoDB cluster with server versions
+3.6.0 or later. The ``{setFeatureCompatibilityVersion: 3.6}`` admin command
+will also need to have been executed to enable support for retryable writes on
+the cluster.
 
 Server Fail Point
 =================
@@ -137,6 +138,8 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
+  - ``clientOptions``: Parameters to pass to MongoClient().
+
   - ``failPoint``: Document describing options for configuring the
     ``onPrimaryTransactionalWrite`` fail point on the primary server. This
     document should be merged with the
@@ -144,8 +147,8 @@ Each YAML file has the following keys:
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a
-    client that has been created with the ``retryWrites=true`` option.
-    This will have some or all of the following fields:
+    client that has been created with ``clientOptions``. The operation will have
+    some or all of the following fields:
 
     - ``name``: The name of the operation as defined in the CRUD specification.
 

@@ -6,6 +6,8 @@ minServerVersion: '3.6'
 tests:
     -
         description: "First command is retried"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 1 }
         operation:
@@ -42,6 +44,8 @@ tests:
         # that each write command consists of a single statement, which will
         # fail on the first attempt and succeed on the second, retry attempt.
         description: "All commands are retried"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 7 }
         operation:
@@ -97,6 +101,8 @@ tests:
                     - { _id: 5, x: 55 }
     -
         description: "Both commands are retried after their first statement fails"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 2 }
         operation:
@@ -132,6 +138,8 @@ tests:
                     - { _id: 2, x: 23 }
     -
         description: "Second command is retried after its second statement fails"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { skip: 2 }
         operation:
@@ -167,6 +175,8 @@ tests:
                     - { _id: 2, x: 23 }
     -
         description: "BulkWrite with unordered execution"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 1 }
         operation:
@@ -197,6 +207,8 @@ tests:
                     - { _id: 3, x: 33 }
     -
         description: "First insertOne is never committed"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 2 }
             data: { failBeforeCommitExceptionCode: 1 }
@@ -232,6 +244,8 @@ tests:
                     - { _id: 1, x: 11 }
     -
         description: "Second updateOne is never committed"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { skip: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
@@ -268,6 +282,8 @@ tests:
                     - { _id: 2, x: 22 }
     -
         description: "Third updateOne is never committed"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { skip: 2 }
             data: { failBeforeCommitExceptionCode: 1 }
@@ -309,6 +325,8 @@ tests:
         # affect the initial deleteMany and will trigger once (and only once)
         # for the first insertOne attempt.
         description: "Single-document write following deleteMany is retried"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
@@ -342,6 +360,8 @@ tests:
         # affect the initial updateMany and will trigger once (and only once)
         # for the first insertOne attempt.
         description: "Single-document write following updateMany is retried"
+        clientOptions:
+            retryWrites: true
         failPoint:
             mode: { times: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
