@@ -46,42 +46,6 @@ An error is considered resumable if it meets any of the following criteria:
 - any error encountered which is not a server error (e.g. a timeout error or
   network error)
 
-- a server error response with any of the following error codes:
-
-  .. list-table::
-    :header-rows: 1
-
-    * - Error Name
-      - Error Code
-    * - HostUnreachable
-      - 6
-    * - HostNotFound
-      - 7
-    * - NetworkTimeout
-      - 89
-    * - SocketException
-      - 9001
-    * - NotMaster
-      - 10107
-    * - NotMasterNoSlaveOk
-      - 13435
-    * - NotMasterOrSecondary
-      - 13436
-    * - InterruptedDueToReplStateChange
-      - 11602
-    * - PrimarySteppedDown
-      - 189
-    * - ExceededTimeLimit
-      - 50
-    * - RetryChangeStream
-      - 234
-    * - ElectionInProgress
-      - 216
-
-- a server error response without an error code or one different from those
-  listed above, but with an error message containing the substring "not
-  master" or "node is recovering"
-
 - *any* server error response from a getMore command excluding those
   containing the following error codes
 
@@ -97,10 +61,13 @@ An error is considered resumable if it meets any of the following criteria:
     * - CursorKilled
       - 237
 
-An error on an aggregate command is not a retryable error. Only errors on a
-getMore command may be considered retryable errors.
+- a server error response with an error message containing the substring "not
+  master" or "node is recovering"
 
-The criteria for retryable errors is similar to the discussion in the SDAM
+An error on an aggregate command is not a resumable error. Only errors on a
+getMore command may be considered resumable errors.
+
+The criteria for resumable errors is similar to the discussion in the SDAM
 spec's section on `Error Handling`_, but includes additional error codes. See
 `What do the additional error codes mean?`_ for the reasoning behind these
 additional errors.
@@ -444,11 +411,7 @@ It was decided to remove this example from the specification for the following r
 What do the additional error codes mean?
 ----------------------------------------
 
-The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
-`SocketException` may be returned from mongos during problems routing to a
-shard. These may be transient, or localized to that mongos.
-
-The `CursorKilled` error implies implies some other actor killed the cursor.
+The `CursorKilled` or `Interrupted` error implies implies some other actor killed the cursor.
 
 The `CappedPositionLost` error implies falling off of the back of the oplog,
 so resuming is impossible.
