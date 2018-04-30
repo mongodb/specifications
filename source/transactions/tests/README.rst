@@ -121,7 +121,9 @@ For each YAML file, for each element in ``tests``:
 #. For each element in ``outcome``:
 
    - If ``name`` is "collection", verify that the test collection contains
-     exactly the documents in the ``data`` array.
+     exactly the documents in the ``data`` array. Ensure this find uses
+     Primary read preference even when the MongoClient is configured with
+     another read preference.
 
 TODO:
 
@@ -131,6 +133,9 @@ TODO:
 
 Command-Started Events
 ``````````````````````
+
+The event listener used for these tests MUST ignore the security commands
+listed in the Command Monitoring Spec.
 
 Logical Session Id
 ~~~~~~~~~~~~~~~~~~
