@@ -13,9 +13,11 @@ tests:
       name: "bulkWrite"
       arguments:
         requests:
-          - insertOne: 
+          - name: "insertOne"
+            arguments:
               document: { _id: 4, x: 44 }
-          - updateOne:
+          - name: "updateOne"
+            arguments:
               filter: { _id: 3 }
               update: { $set: { x: 333 } }
     expectations:
