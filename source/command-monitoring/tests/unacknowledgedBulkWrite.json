@@ -16,7 +16,8 @@
         "arguments": {
           "requests": [
             {
-              "insertOne": {
+              "name": "insertOne",
+              "arguments": {
                 "document": {
                   "_id": "unorderedBulkWriteInsertW0",
                   "x": 44
@@ -24,7 +25,9 @@
               }
             }
           ],
-          "ordered": false,
+          "options": {
+            "ordered": false
+          },
           "writeConcern": {
             "w": 0
           }
