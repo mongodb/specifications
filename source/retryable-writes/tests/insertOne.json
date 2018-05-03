@@ -133,6 +133,504 @@
           ]
         }
       }
+    },
+    {
+      "description": "InsertOne succeeds after NotMaster",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 10107,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after NotMasterOrSecondary",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 13436,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after NotMasterNoSlaveOk",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 13435,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after InterruptedDueToReplStateChange",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 11602,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after InterruptedAtShutdown",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 11600,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after PrimarySteppedDown",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 189,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after ShutdownInProgress",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 91,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after HostNotFound",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 7,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after HostUnreachable",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 6,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after SocketException",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 9001,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne succeeds after NetworkTimeout",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 89,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "result": {
+          "insertedId": 3
+        },
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "InsertOne fails after Interrupted",
+      "failPoint": {
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failBeforeCommitExceptionCode": 11601,
+          "closeConnection": false
+        }
+      },
+      "operation": {
+        "name": "insertOne",
+        "arguments": {
+          "document": {
+            "_id": 3,
+            "x": 33
+          }
+        }
+      },
+      "outcome": {
+        "error": true,
+        "collection": {
+          "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
+        }
+      }
     }
   ]
 }
