@@ -140,10 +140,9 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Parameters to pass to MongoClient().
 
-  - ``failPoint``: Document describing options for configuring the
-    ``onPrimaryTransactionalWrite`` fail point on the primary server. This
-    document should be merged with the
-    ``{ configureFailPoint: "onPrimaryTransactionalWrite" }`` command document.
+  - ``failPoint``: The ``configureFailPoint`` command document to run to
+    configure a fail point on the primary server. Drivers must ensure that
+    ``configureFailPoint`` is the first field in the command.
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a

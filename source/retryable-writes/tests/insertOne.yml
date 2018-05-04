@@ -10,6 +10,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
         operation:
             name: "insertOne"
@@ -28,6 +29,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
@@ -47,63 +49,9 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
             data: { failBeforeCommitExceptionCode: 1 }
-        operation:
-            name: "insertOne"
-            arguments:
-                document: { _id: 3, x: 33 }
-        outcome:
-            error: true
-            collection:
-                data:
-                    - { _id: 1, x: 11 }
-                    - { _id: 2, x: 22 }
-    -
-        description: "InsertOne succeeds after InterruptedDueToReplStateChange"
-        failPoint:
-            mode: { times: 1 }
-            data:
-                failBeforeCommitExceptionCode: 11602
-                closeConnection: false
-        operation:
-            name: "insertOne"
-            arguments:
-                document: { _id: 3, x: 33 }
-        outcome:
-            result:
-                insertedId: 3
-            collection:
-                data:
-                    - { _id: 1, x: 11 }
-                    - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }
-    -
-        description: "InsertOne succeeds after InterruptedAtShutdown"
-        failPoint:
-            mode: { times: 1 }
-            data:
-                failBeforeCommitExceptionCode: 11600
-                closeConnection: false
-        operation:
-            name: "insertOne"
-            arguments:
-                document: { _id: 3, x: 33 }
-        outcome:
-            result:
-                insertedId: 3
-            collection:
-                data:
-                    - { _id: 1, x: 11 }
-                    - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }
-    -
-        description: "InsertOne fails after Interrupted"
-        failPoint:
-            mode: { times: 1 }
-            data:
-                failBeforeCommitExceptionCode: 11601
-                closeConnection: false
         operation:
             name: "insertOne"
             arguments:
