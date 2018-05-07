@@ -9,7 +9,7 @@
       "x": 22
     }
   ],
-  "minServerVersion": "3.7.10",
+  "minServerVersion": "3.7.9",
   "tests": [
     {
       "description": "InsertOne succeeds after connection failure",

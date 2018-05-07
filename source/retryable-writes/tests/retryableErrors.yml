@@ -2,7 +2,9 @@ data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
 
-minServerVersion: '3.7.10'
+# The failCommand failpoint will be in the next release after 3.7.9 but the
+# server does not plan to do another release for a few weeks.
+minServerVersion: '3.7.9'
 
 tests:
     -
