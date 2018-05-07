@@ -9,6 +9,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
         operation:
             name: "insertMany"
@@ -30,6 +31,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
         operation:
             name: "insertMany"
@@ -57,6 +59,7 @@ tests:
             # single insert command may trigger the failpoint twice on each
             # driver attempt. This test permanently enables the fail point to
             # ensure the retry attempt always fails.
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: "alwaysOn"
             data: { failBeforeCommitExceptionCode: 1 }
         operation:

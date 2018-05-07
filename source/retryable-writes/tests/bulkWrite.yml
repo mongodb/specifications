@@ -9,6 +9,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
         operation:
             name: "bulkWrite"
@@ -47,6 +48,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 7 }
         operation:
             name: "bulkWrite"
@@ -104,6 +106,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
         operation:
             name: "bulkWrite"
@@ -141,6 +144,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { skip: 2 }
         operation:
             name: "bulkWrite"
@@ -178,6 +182,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
         operation:
             name: "bulkWrite"
@@ -210,6 +215,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
@@ -247,6 +253,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { skip: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
@@ -285,6 +292,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { skip: 2 }
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
@@ -328,6 +336,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
@@ -363,6 +372,7 @@ tests:
         clientOptions:
             retryWrites: true
         failPoint:
+            configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 1 }
             data: { failBeforeCommitExceptionCode: 1 }
         operation:
