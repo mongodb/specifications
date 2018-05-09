@@ -1,3 +1,6 @@
+database_name: &database_name "transaction-tests"
+collection_name: &collection_name "test"
+
 data: []
 tests:
   - description: commit
@@ -34,7 +37,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            insert: test
+            insert: *collection_name
             documents:
               - _id: 1
             ordered: true
@@ -46,7 +49,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: insert
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -60,7 +63,7 @@ tests:
           database_name: admin
       - command_started_event:
           command:
-            insert: test
+            insert: *collection_name
             documents:
               - _id: 2
             ordered: true
@@ -73,7 +76,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: insert
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -118,7 +121,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            insert: test
+            insert: *collection_name
             documents:
               - _id: 1
             ordered: true
@@ -130,7 +133,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: insert
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1

@@ -1,3 +1,6 @@
+database_name: &database_name "transaction-tests"
+collection_name: &collection_name "test"
+
 data:
   - _id: 1
   - _id: 2
@@ -40,7 +43,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            delete: test
+            delete: *collection_name
             deletes:
               - q: {_id: 1}
                 limit: 1
@@ -53,10 +56,10 @@ tests:
             autocommit: false
             writeConcern:
           command_name: delete
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            delete: test
+            delete: *collection_name
             deletes:
               - q: {_id: {$lte: 3}}
                 limit: 0
@@ -68,10 +71,10 @@ tests:
             autocommit: false
             writeConcern:
           command_name: delete
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            delete: test
+            delete: *collection_name
             deletes:
               - q: {_id: 4}
                 limit: 1
@@ -83,7 +86,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: delete
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -134,7 +137,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            delete: test
+            delete: *collection_name
             deletes:
               - q: {_id: 1}
                 limit: 1
@@ -147,10 +150,10 @@ tests:
             autocommit: false
             writeConcern:
           command_name: delete
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            delete: test
+            delete: *collection_name
             deletes:
               - q: {_id: {$lte: 3}}
                 limit: 0
@@ -162,7 +165,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: delete
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1

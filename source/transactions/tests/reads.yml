@@ -1,3 +1,6 @@
+database_name: &database_name "transaction-tests"
+collection_name: &collection_name "test"
+
 data: &data
   - {_id: 1}
   - {_id: 2}
@@ -29,7 +32,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            count: test
+            count: *collection_name
             query:
               _id: 1
             readConcern:
@@ -40,10 +43,10 @@ tests:
             autocommit: false
             writeConcern:
           command_name: count
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            count: test
+            count: *collection_name
             query:
               _id: 1
             lsid: session0
@@ -53,7 +56,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: count
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -87,7 +90,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            find: test
+            find: *collection_name
             batchSize: 3
             readConcern:
             lsid: session0
@@ -96,13 +99,13 @@ tests:
             startTransaction: true
             autocommit: false
           command_name: find
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             getMore:
               # 42 is a fake placeholder value for the cursorId.
               $numberLong: '42'
-            collection: test
+            collection: *collection_name
             batchSize: 3
             lsid: session0
             txnNumber:
@@ -110,10 +113,10 @@ tests:
             startTransaction:
             autocommit: false
           command_name: getMore
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            find: test
+            find: *collection_name
             batchSize: 3
             lsid: session0
             txnNumber:
@@ -121,12 +124,12 @@ tests:
             startTransaction:
             autocommit: false
           command_name: find
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             getMore:
               $numberLong: '42'
-            collection: test
+            collection: *collection_name
             batchSize: 3
             lsid: session0
             txnNumber:
@@ -134,7 +137,7 @@ tests:
             startTransaction:
             autocommit: false
           command_name: getMore
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -168,7 +171,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            aggregate: test
+            aggregate: *collection_name
             pipeline:
               - $project:
                   _id: 1
@@ -181,13 +184,13 @@ tests:
             startTransaction: true
             autocommit: false
           command_name: aggregate
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             getMore:
               # 42 is a fake placeholder value for the cursorId.
               $numberLong: '42'
-            collection: test
+            collection: *collection_name
             batchSize: 3
             lsid: session0
             txnNumber:
@@ -195,10 +198,10 @@ tests:
             startTransaction:
             autocommit: false
           command_name: getMore
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            aggregate: test
+            aggregate: *collection_name
             pipeline:
               - $project:
                   _id: 1
@@ -210,12 +213,12 @@ tests:
             startTransaction:
             autocommit: false
           command_name: aggregate
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             getMore:
               $numberLong: '42'
-            collection: test
+            collection: *collection_name
             batchSize: 3
             lsid: session0
             txnNumber:
@@ -223,7 +226,7 @@ tests:
             startTransaction:
             autocommit: false
           command_name: getMore
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -252,7 +255,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            distinct: test
+            distinct: *collection_name
             key: _id
             lsid: session0
             readConcern:
@@ -262,7 +265,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: distinct
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1

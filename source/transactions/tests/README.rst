@@ -22,6 +22,9 @@ Test Format
 
 Each YAML file has the following keys:
 
+- ``database_name`` and ``collection_name``: The database and collection to use
+  for testing.
+
 - ``data``: The data that should exist in the collection under test before each
   test run.
 
@@ -73,6 +76,8 @@ For each YAML file, for each element in ``tests``:
    transactions from previous test failures. The command will fail with message
    "operation was interrupted", because it kills its own implicit session. Catch
    the exception and continue.
+#. Create a collection object from the MongoClient, using the ``database_name``
+   and ``collection_name`` fields of the YAML file.
 #. Drop the test collection, using writeConcern "majority".
 #. Execute the "create" command to recreate the collection, using writeConcern
    "majority". (Creating the collection inside a transaction is prohibited, so

@@ -1,3 +1,6 @@
+database_name: &database_name "transaction-tests"
+collection_name: &collection_name "test"
+
 data:
   - _id: 1
   - _id: 2
@@ -32,7 +35,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            findAndModify: test
+            findAndModify: *collection_name
             query: {_id: 3}
             update: {x: 1}
             new: false
@@ -44,10 +47,10 @@ tests:
             readConcern:
             writeConcern:
           command_name: findAndModify
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            findAndModify: test
+            findAndModify: *collection_name
             query: {_id: 4}
             update: {x: 1}
             new: true
@@ -60,7 +63,7 @@ tests:
             readConcern:
             writeConcern:
           command_name: findAndModify
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -107,7 +110,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            findAndModify: test
+            findAndModify: *collection_name
             query: {_id: 3}
             update: {x: 1}
             new: false
@@ -119,7 +122,7 @@ tests:
             readConcern:
             writeConcern:
           command_name: findAndModify
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1

@@ -1,3 +1,6 @@
+database_name: &database_name "transaction-tests"
+collection_name: &collection_name "test"
+
 data:
   - _id: 1
     count: 0
@@ -33,7 +36,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            update: test
+            update: *collection_name
             updates:
               - q: {_id: 1}
                 u: {$inc: {count: 1}}
@@ -47,10 +50,10 @@ tests:
             autocommit:
             writeConcern:
           command_name: update
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            update: test
+            update: *collection_name
             updates:
               - q: {_id: 1}
                 u: {$inc: {count: 1}}
@@ -66,7 +69,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: update
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1
@@ -121,7 +124,7 @@ tests:
     expectations:
       - command_started_event:
           command:
-            insert: test
+            insert: *collection_name
             documents:
               - _id: 2
             ordered: true
@@ -131,10 +134,10 @@ tests:
             autocommit:
             writeConcern:
           command_name: insert
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
-            update: test
+            update: *collection_name
             updates:
               - q: {_id: 1}
                 u: {$inc: {count: 1}}
@@ -150,7 +153,7 @@ tests:
             autocommit: false
             writeConcern:
           command_name: update
-          database_name: transaction-tests
+          database_name: *database_name
       - command_started_event:
           command:
             commitTransaction: 1

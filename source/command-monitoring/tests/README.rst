@@ -14,6 +14,12 @@ Testing
 
 Tests are provided in YML and JSON format to assert proper upconversion of commands.
 
+Database and Collection Names
+-----------------------------
+
+The collection under test is specified in each test file with the fields
+``database_name`` and ``collection_name``.
+
 Data
 ----
 
