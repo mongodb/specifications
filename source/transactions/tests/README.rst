@@ -23,7 +23,7 @@ Test Format
 Each YAML file has the following keys:
 
 - ``data``: The data that should exist in the collection under test before each
-  test run. (TODO: not used yet.)
+  test run.
 
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:

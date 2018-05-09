@@ -1,4 +1,3 @@
-# Aggregate not yet supported in transactions.
 data: &data
   - {_id: 1}
   - {_id: 2}
