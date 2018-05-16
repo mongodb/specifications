@@ -13,7 +13,7 @@ Enumerating Collections
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
 :Last Modified: September 25, 2017
-:Version: 0.3.1
+:Version: 0.4
 
 .. contents::
 
@@ -251,8 +251,9 @@ All methods:
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Drivers MAY implement a method to enumerate all collections, and return only
-the collection names.
+MongoDB 4.0 introduced a ``nameOnly`` boolean option to the ``listCollections``
+database command, which limits the command result to only include collection
+names.
 
 Example return::
 
@@ -265,7 +266,17 @@ Example return::
         "system.replset"
     ]
 
-Drivers MUST strip the database name from the returned collection names.
+
+
+Drivers MAY implement a MongoClient method that returns an Iterable of strings,
+each of which corresponds to a name in the collections array of the
+``listCollections`` command result. This method SHOULD be named
+``listCollections``.
+
+Older versions of the server that do not support the ``nameOnly`` option for the
+``listCollections`` command will ignore it without raising an error. Therefore,
+drivers SHOULD always specify the ``nameOnly`` option when they only intend to
+access collection names from the ``listCollections`` command result.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -303,6 +314,8 @@ Example return (a cursor which returns documents, not a simple array)::
 When returning this information as a cursor, a driver SHOULD use the
 method name ``listCollections`` or an idiomatic variant.
 
+Drivers SHOULD specify the nameOnly option when executing the ``listCollections`` command for this method.
+
 Returning a List of Collection Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -319,6 +332,8 @@ Example return (in PHP, but abbreviated)::
       [4] => class MongoCollection#10 { }
       [5] => class MongoCollection#11 { }
     }
+
+Drivers SHOULD specify the nameOnly option when executing the ``listCollections`` command for this method.
 
 Replicasets
 ~~~~~~~~~~~
@@ -386,6 +401,8 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.4 Changes
+    - SPEC-1066: Support nameOnly option in ``listCollections`` command. 
 
 Version 0.3.1 Changes
 
