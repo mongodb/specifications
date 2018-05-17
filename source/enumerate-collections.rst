@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: September 25, 2017
-:Version: 0.3.1
+:Last Modified: May 16, 2018
+:Version: 0.4
 
 .. contents::
 
@@ -34,6 +34,18 @@ interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 Specification
 =============
+
+Terms
+-----
+
+MongoClient
+   Driver object representing a connection to MongoDB. This is the root object
+   of a driver’s API and MAY be named differently in some drivers.
+
+Iterable
+   An object or data structure that is a sequence of elements that can be
+   iterated over. This spec is flexible on what that means as different drivers
+   will have different requirements, types, and idioms.
 
 The driver needs to implement different methods of enumeration depending on
 MongoDB server version. From MongoDB 2.7.6, the server implements a
@@ -251,8 +263,13 @@ All methods:
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Drivers MAY implement a method to enumerate all collections, and return only
-the collection names.
+Drivers MAY implement a MongoClient method that returns an Iterable of strings,
+where each string corresponds to a collection name. This method SHOULD be named
+``listCollections``.
+
+MongoDB 4.0 introduced a ``nameOnly`` boolean option to the ``listCollections``
+database command, which limits the command result to only include collection
+names.
 
 Example return::
 
@@ -265,7 +282,12 @@ Example return::
         "system.replset"
     ]
 
-Drivers MUST strip the database name from the returned collection names.
+
+Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
+the ``nameOnly`` option for the ``listCollections`` command and will ignore it 
+without raising an error. Therefore, drivers MUST always specify the ``nameOnly`` 
+option when they only intend to access collection names from the ``listCollections`` 
+command result.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -303,6 +325,8 @@ Example return (a cursor which returns documents, not a simple array)::
 When returning this information as a cursor, a driver SHOULD use the
 method name ``listCollections`` or an idiomatic variant.
 
+Drivers MAY allow ``nameOnly`` option to be passed when executing the ``listCollections`` command for this method.
+
 Returning a List of Collection Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -319,6 +343,8 @@ Example return (in PHP, but abbreviated)::
       [4] => class MongoCollection#10 { }
       [5] => class MongoCollection#11 { }
     }
+
+Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method.
 
 Replicasets
 ~~~~~~~~~~~
@@ -386,6 +412,8 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.4 Changes
+    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command. 
 
 Version 0.3.1 Changes
 
