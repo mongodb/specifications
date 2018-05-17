@@ -591,14 +591,6 @@ selecting a server and performing the operation.
 Selection failure triggers an immediate scan, see
 `single-threaded server selection`_.
 
-Checking a single server
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Single-threaded clients MUST be able to check an individual server
-on demand (for example, after a "not master" error. See `error handling`_).
-When checking a single server, its Server Description must be updated
-and the topology must be updated based on the new Server Description.
-
 Scanning order
 ~~~~~~~~~~~~~~
 
@@ -1485,9 +1477,10 @@ but the client is wrong about its type,
 thus an immediate re-check is likely to provide useful information.
 
 For single-threaded clients, in the case of a "not master" error, the client
-MUST check the server immediately (see `checking a single server`_).  For a
-"node is recovering" error, single-threaded clients MUST NOT check the server,
-as an immediate server check is unlikely to find a usable server.
+MUST mark the topology as "stale" so the next server selection scans all
+servers. For a "node is recovering" error, single-threaded clients MUST NOT
+mark the topology as "stale". If a node is recovering for some time, an
+immediate scan may not gain useful information.
 
 The client SHOULD clear its connection pool for the server.
 
