@@ -285,7 +285,7 @@ Example return::
 
 Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
 the ``nameOnly`` option for the ``listCollections`` command and will ignore it 
-without raising an error. Therefore, drivers SHOULD always specify the ``nameOnly`` 
+without raising an error. Therefore, drivers MUST always specify the ``nameOnly`` 
 option when they only intend to access collection names from the ``listCollections`` 
 command result.
 
@@ -344,7 +344,7 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers SHOULD specify the ``nameOnly`` option when executing the ``listCollections`` command for this method.
+Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method.
 
 Replicasets
 ~~~~~~~~~~~
