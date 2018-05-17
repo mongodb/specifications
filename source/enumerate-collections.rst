@@ -35,6 +35,18 @@ interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 Specification
 =============
 
+Terms
+-----
+
+MongoClient
+   Driver object representing a connection to MongoDB. This is the root object
+   of a driver’s API and MAY be named differently in some drivers.
+
+Iterable
+   An object or data structure that is a sequence of elements that can be
+   iterated over. This spec is flexible on what that means as different drivers
+   will have different requirements, types, and idioms.
+
 The driver needs to implement different methods of enumeration depending on
 MongoDB server version. From MongoDB 2.7.6, the server implements a
 ``listCollections`` command that MUST be used if available. For the non-MMAP
@@ -250,7 +262,7 @@ All methods:
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Drivers MAY implement a MongoClient method that returns an iterable of strings,
+Drivers MAY implement a MongoClient method that returns an Iterable of strings,
 where each string corresponds to a collection name. This method SHOULD be named
 ``listCollections``.
 
