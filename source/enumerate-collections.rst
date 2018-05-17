@@ -262,6 +262,7 @@ All methods:
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
 Drivers MAY implement a MongoClient method that returns an Iterable of strings,
 where each string corresponds to a collection name. This method SHOULD be named
 ``listCollections``.
@@ -343,7 +344,7 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method.
+Drivers SHOULD specify the ``nameOnly`` option when executing the ``listCollections`` command for this method.
 
 Replicasets
 ~~~~~~~~~~~
