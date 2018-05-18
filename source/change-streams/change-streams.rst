@@ -536,45 +536,23 @@ so resuming is impossible.
 Test Plan
 =========
 
-----
-Unit
-----
+1. ``ChangeStream`` must continuously track the last seen ``resumeToken``
 
-1. ``$changeStream`` must be the first stage in a change stream pipeline sent to the server
+2. ``ChangeStream`` will throw an exception if the server response is missing the resume token
 
-2. The ``watch`` helper must not throw a custom exception when executed against a single server topology, but instead depend on a server error
+3. ``ChangeStream`` will automatically resume one time on a resumable error (including `not master`) with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
 
-3. ``ChangeStream`` must continuously track the last seen ``resumeToken``
+4. ``ChangeStream`` will not attempt to resume on a server error
 
-4. ``ChangeStream`` will throw an exception if the server response is missing the resume token
+5. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
 
-5. ``ChangeStream`` will automatically resume one time on a resumable error (including `not master`) with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
+6. Ensure that a cursor returned from an aggregate command with a cursor id, and an initial empty batch, is not closed on the driver side.
 
-6. ``ChangeStream`` will not attempt to resume on a server error
+7. The ``killCursors`` command sent during the “Resume Process” must not be allowed to throw an exception.
 
-7. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
+8. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtClusterTime`` when resuming a changestream.
 
-8. Ensure that a cursor returned from an aggregate command with a cursor id, and an initial empty batch, is not closed on the driver side.
-
-9. The ``killCursors`` command sent during the “Resume Process” must not be allowed to throw an exception.
-
-10. A fresh ``ChangeStream`` against a server ``>=4.0`` will always include ``startAtClusterTime`` in the ``$changeStream`` stage.
-
-11. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtClusterTime`` when resuming a changestream.
-
------------
-Integration
------------
-
-1. The server returns change stream responses in the specified ``ServerResponse`` format
-
-2. Executing a ``watch`` helper on a Collection results in notifications for changes to the specified collection
-
-3. Executing a ``watch`` helper on a Database results in notifications for changes to all collections in the specified database.
-
-4. Executing a ``watch`` helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster, excluding the ``admin``, ``local``, and ``config`` databases.
-
-5. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
+9. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
 
 Backwards Compatibility
 =======================

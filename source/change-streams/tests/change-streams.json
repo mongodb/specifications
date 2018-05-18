@@ -1,0 +1,296 @@
+{
+  "collection_name": "test",
+  "database_name": "change-stream-tests",
+  "collection_name_2": "test2",
+  "database_name_2": "change-stream-tests-2",
+  "defaults": {
+    "minServerVersion": "3.6.0",
+    "topology": "replicaset",
+    "target": "collection",
+    "numChanges": 1,
+    "result": {},
+    "expectations": [],
+    "operations": [
+      {
+        "database": "change-stream-tests",
+        "collection": "test2",
+        "commandName": "insert",
+        "arguments": [
+          {
+            "x": 1
+          }
+        ]
+      },
+      {
+        "database": "change-stream-tests-2",
+        "collection": "test",
+        "commandName": "insert",
+        "arguments": [
+          {
+            "y": 2
+          }
+        ]
+      },
+      {
+        "database": "change-stream-tests",
+        "collection": "test",
+        "commandName": "insert",
+        "arguments": [
+          {
+            "z": 3
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "`$changeStream` must be the first stage in a change stream pipeline sent to the server",
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "pipeline": [
+                {
+                  "$changeStream": {}
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "The watch helper must not throw a custom exception when executed against a single server topology, but instead depend on a server error",
+      "topology": "single",
+      "operations": [],
+      "result": {
+        "error": {
+          "errmsg": "The $changeStream stage is only supported on replica sets",
+          "code": 40573
+        }
+      }
+    },
+    {
+      "description": "ChangeStream must continuously track the last seen resumeToken",
+      "skip": true
+    },
+    {
+      "description": "ChangeStream will throw an exception if the server response is missing the resume token",
+      "skip": true
+    },
+    {
+      "description": "ChangeStream will automatically resume one time on a resumable error (including not master) with the initial pipeline and options, except for the addition/update of a resumeToken.",
+      "skip": true
+    },
+    {
+      "description": "ChangeStream will not attempt to resume on a server error",
+      "skip": true
+    },
+    {
+      "description": "ChangeStream will perform server selection before attempting to resume, using initial readPreference",
+      "skip": true
+    },
+    {
+      "description": "Ensure that a cursor returned from an aggregate command with a cursor id, and an initial empty batch, is not closed on the driver side.",
+      "skip": true
+    },
+    {
+      "description": "The killCursors command sent during the “Resume Process” must not be allowed to throw an exception.",
+      "skip": true
+    },
+    {
+      "description": "The server returns change stream responses in the specified ``ServerResponse`` format",
+      "result": {
+        "success": [
+          {
+            "_id": {},
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "documentKey": {},
+            "fullDocument": {
+              "z": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "description": "Executing a `watch` helper on a Collection results in notifications for changes to the specified collection",
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "pipeline": [
+                {
+                  "$changeStream": {}
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
+          }
+        }
+      ],
+      "result": [
+        {
+          "success": {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "fullDocument": {
+              "z": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ChangeStream will resume after a `killCursors` command is issued for its child cursor.",
+      "skip": true
+    },
+    {
+      "description": "A fresh ChangeStream against a server >=4.0 will always include `startAtClusterTime` in the `$changeStream` stage.",
+      "minServerVersion": "3.7.3",
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "startAtClusterTime": {}
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "`$changeStream` stage for ChangeStream against a server >=4.0 that has not received any results yet MUST include a `startAtClusterTime` when resuming a changestream.",
+      "skip": true,
+      "minServerVersion": "3.7.3"
+    },
+    {
+      "description": "Executing a `watch` helper on a Database results in notifications for changes to all collections in the specified database.",
+      "minServerVersion": "3.7.3",
+      "target": "db",
+      "numChanges": 2,
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "startAtClusterTime": {}
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
+          }
+        }
+      ],
+      "result": {
+        "success": [
+          {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test2"
+            },
+            "fullDocument": {
+              "x": 1
+            }
+          },
+          {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "fullDocument": {
+              "z": 3
+            }
+          }
+        ]
+      }
+    },
+    {
+      "description": "Executing a `watch` helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster.",
+      "minServerVersion": "3.7.3",
+      "target": "client",
+      "numChanges": 3,
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "allChangesForCluster": true,
+                    "startAtClusterTime": {}
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "admin"
+          }
+        }
+      ],
+      "result": {
+        "success": [
+          {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test2"
+            },
+            "fullDocument": {
+              "x": 1
+            }
+          },
+          {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests-2",
+              "coll": "test"
+            },
+            "fullDocument": {
+              "y": 2
+            }
+          },
+          {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "fullDocument": {
+              "z": 3
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
