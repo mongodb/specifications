@@ -8,7 +8,6 @@
       "description": "The watch helper must not throw a custom exception when executed against a single server topology, but instead depend on a server error",
       "minServerVersion": "3.6.0",
       "target": "collection",
-      "numChanges": 1,
       "topology": [
         "single"
       ],
@@ -25,7 +24,6 @@
       "description": "`$changeStream` must be the first stage in a change stream pipeline sent to the server",
       "minServerVersion": "3.6.0",
       "target": "collection",
-      "numChanges": 1,
       "topology": [
         "replicaset"
       ],
@@ -63,7 +61,6 @@
       "description": "The server returns change stream responses in the specified ``ServerResponse`` format",
       "minServerVersion": "3.6.0",
       "target": "collection",
-      "numChanges": 1,
       "topology": [
         "replicaset"
       ],
@@ -103,7 +100,6 @@
       "description": "Executing a `watch` helper on a Collection results in notifications for changes to the specified collection",
       "minServerVersion": "3.6.0",
       "target": "collection",
-      "numChanges": 1,
       "topology": [
         "replicaset"
       ],
@@ -174,7 +170,6 @@
       "description": "A fresh ChangeStream against a server >=4.0 will always include `startAtClusterTime` in the `$changeStream` stage.",
       "minServerVersion": "3.7.3",
       "target": "collection",
-      "numChanges": 1,
       "topology": [
         "replicaset"
       ],
@@ -214,7 +209,6 @@
       "description": "Executing a `watch` helper on a Database results in notifications for changes to all collections in the specified database.",
       "minServerVersion": "3.7.3",
       "target": "db",
-      "numChanges": 2,
       "topology": [
         "replicaset"
       ],
@@ -303,7 +297,6 @@
       "description": "Executing a `watch` helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster.",
       "minServerVersion": "3.7.3",
       "target": "client",
-      "numChanges": 3,
       "topology": [
         "replicaset"
       ],

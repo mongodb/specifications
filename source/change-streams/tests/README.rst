@@ -57,23 +57,26 @@ Spec Test Runner
 
 The use of the words MATCH and MATCHES, unless otherwise specified, means that every "expected" value is contained in the "actual" value. There may be values present in "actual" that are not present in "expected", but there must not be values in "expected" that are not present in "actual". This is recursive as well: any sub-fields of "expected" must MATCH the corresponding sub-field in "actual"
 
-Before running the tests, create a MongoDB server topology.
+Before running the tests
+
+- Create a MongoDB server topology.
+- Create a MongoClient ``globalClient``, and connect to the server
 
 For each YAML file, for each element in ``tests``:
 
-- If the test has ``skip: true``, or the ``topology`` does not match the topology of the server instance(s), skip this test.
-- Use either a global MongoClient or a temporary MongoClient to:
+- If the ``topology`` does not match the topology of the server instance(s), skip this test.
+- Use ``globalClient`` to
 
   - Drop the database ``database_name``
   - Create the database ``database_name`` and the collection ``database_name.collection_name``
 
 - Create a new MongoClient ``client``, with APM enabled
-- Create a changeStream ``changeStream`` against the specified ``target``
-- Run every operation in ``operations`` in serial against the server
+- Using ``client``, create a changeStream ``changeStream`` against the specified ``target``
+- Using ``globalClient``, run every operation in ``operations`` in serial against the server
 - Wait until either
 
   - An error occurres
-  - All operations have been successful AND the changeStream has received ``numChanges`` changes
+  - All operations have been successful AND the changeStream has received as many changes as there are ``result.success``
 
 - Close ``changeStream``
 - If there was an error
@@ -88,9 +91,20 @@ For each YAML file, for each element in ``tests``:
 
 - If there are any ``expectations``
 
-  - assert that they MATCH the actual APM events
+  - For each APM ``commandStarted`` events on ``client``
+
+    - Filter out any ``ismaster`` events
+
+  - For each (``expected``, ``idx``) in ``expectations``
+
+    - Assert that ``actual[idx]`` MATCHES ``expected``
 
 - Close the MongoClient ``client``
+
+After running all tests
+
+- Close the MongoClient ``globalClient``
+- Shut down the server topology
 
 
 Prose Tests
