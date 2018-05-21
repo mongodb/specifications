@@ -354,6 +354,104 @@ tests:
           command_name: abortTransaction
           database_name: admin
 
+  - description: multiple commits after empty transaction
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+      # Increments txnNumber.
+      - name: startTransaction
+        arguments:
+          session: session0
+      # These commits aren't sent to server, transaction is empty.
+      - name: commitTransaction
+        arguments:
+          session: session0
+      - name: commitTransaction
+        arguments:
+          session: session0
+      # Verify that previous, empty transaction incremented txnNumber.
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            insert: test
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+              afterClusterTime: 42
+            lsid: session0
+            # txnNumber 2 was skipped.
+            txnNumber:
+              $numberLong: "3"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: transaction-tests
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "3"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+
     outcome:
       collection:
         data: []
