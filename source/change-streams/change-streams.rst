@@ -536,23 +536,7 @@ so resuming is impossible.
 Test Plan
 =========
 
-1. ``ChangeStream`` must continuously track the last seen ``resumeToken``
-
-2. ``ChangeStream`` will throw an exception if the server response is missing the resume token
-
-3. ``ChangeStream`` will automatically resume one time on a resumable error (including `not master`) with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
-
-4. ``ChangeStream`` will not attempt to resume on a server error
-
-5. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
-
-6. Ensure that a cursor returned from an aggregate command with a cursor id, and an initial empty batch, is not closed on the driver side.
-
-7. The ``killCursors`` command sent during the “Resume Process” must not be allowed to throw an exception.
-
-8. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtClusterTime`` when resuming a changestream.
-
-9. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
+See `here <tests/README.rst>`_
 
 Backwards Compatibility
 =======================
