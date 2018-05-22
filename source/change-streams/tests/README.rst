@@ -52,10 +52,38 @@ Each YAML files has the following keys:
     - ``error``: Describes an error received during the test
     - ``success``: An array of documents expected to be received from the changeStream
 
+Spec Test Match Function
+========================
+
+The definition of MATCH or MATCHES in the Spec Test Runner is as follows:
+
+- MATCH takes two values, ``expected`` and ``actual``
+- Notation is "Assert [actual] MATCHES [expected]
+- Assertion passes if ``expected`` is a subset of ``actual``
+
+Pseudocode Implementation of ``actual`` MATCHES ``expected``:
+
+- Assert that ``actual`` is of the same JSON type as ``expected``
+- If ``expected`` is a ``number``, ``string``, ``boolean`` or ``null``
+
+  - Assert that ``expected`` equals ``actual``
+
+- Else if ``expected`` is an ``array``
+
+  - for every ``idx``/``value`` in ``expected``
+
+    - Assert that ``value`` MATCHES ``actual[idx]``
+
+- Else
+
+  - for every ``key``/``value`` in ``expected``
+
+    - Assert that ``value`` MATCHES ``actual``
+
+This algorithm means that an expected value of ``{}`` will automatically match any object value, and an expected value of ``[]`` will automatically match any array value.
+
 Spec Test Runner
 ================
-
-The use of the words MATCH and MATCHES, unless otherwise specified, means that every "expected" value is contained in the "actual" value. There may be values present in "actual" that are not present in "expected", but there must not be values in "expected" that are not present in "actual". This is recursive as well: any sub-fields of "expected" must MATCH the corresponding sub-field in "actual"
 
 Before running the tests
 
@@ -64,7 +92,7 @@ Before running the tests
 
 For each YAML file, for each element in ``tests``:
 
-- If the ``topology`` does not match the topology of the server instance(s), skip this test.
+- If ``topology`` does not include the topology of the server instance(s), skip this test.
 - Use ``globalClient`` to
 
   - Drop the database ``database_name``
