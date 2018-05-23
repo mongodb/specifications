@@ -456,7 +456,7 @@ tests:
       collection:
         data: []
 
-  - description: reset session state
+  - description: reset session state commit
 
     operations:
       - name: startTransaction
@@ -483,12 +483,6 @@ tests:
           insertedId: 2
       # Calling commit again should error instead of re-running the commit.
       - name: commitTransaction
-        arguments:
-          session: session0
-        result:
-          errorContains: no transaction started
-      # Calling abort should also error with "no transaction started".
-      - name: abortTransaction
         arguments:
           session: session0
         result:
@@ -539,4 +533,83 @@ tests:
       collection:
         data:
           - _id: 1
+          - _id: 2
+
+  - description: reset session state abort
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+      - name: insertOne
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+      - name: abortTransaction
+        arguments:
+          session: session0
+      # Running any operation after an ended transaction resets the session
+      # state to "no transaction".
+      - name: insertOne
+        arguments:
+          document:
+            _id: 2
+          session: session0
+        result:
+          insertedId: 2
+      # Calling abort should error with "no transaction started" instead of
+      # "cannot call abortTransaction twice".
+      - name: abortTransaction
+        arguments:
+          session: session0
+        result:
+          errorContains: no transaction started
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 2
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+            startTransaction:
+            autocommit:
+          command_name: insert
+          database_name: *database_name
+
+    outcome:
+      collection:
+        data:
           - _id: 2
