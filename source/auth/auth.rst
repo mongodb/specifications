@@ -225,9 +225,9 @@ Caching credentials in SCRAM
 
 In the implementation of SCRAM authentication mechanisms (e.g. SCRAM-SHA-1
 and SCRAM-SHA-256), drivers MUST maintain a cache of computed SCRAM credentials.
-The cache entries SHOULD be identified by some combination of the password, 
-salt, iteration count, and a value that uniquely identifies the authentication
-mechanism (e.g. "SHA1" or "SCRAM-SHA-256").
+The cache entries SHOULD be identified by the password, salt, iteration count, 
+and a value that uniquely identifies the authentication mechanism (e.g. "SHA1" 
+or "SCRAM-SHA-256").
 
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
