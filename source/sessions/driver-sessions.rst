@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.2
+:Spec Version: 1.3
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 20-Feb-2018
+:Last Modified: 23-May-2018
 
 .. contents::
 
@@ -591,6 +591,15 @@ When monitoring the state of a deployment
 A driver MAY omit a session ID in isMaster commands sent solely for the purposes
 of monitoring the state of a deployment.
 
+When sending a parallelCollectionScan command
+---------------------------------------------
+
+Sessions are designed for sequential operations and ``parallelCollectionScan``
+is designed for parallel operation.  Because these are fundamentally
+incompatible goals, drivers MUST NOT append session ID to the
+``parallelCollectionScan`` command so that the resulting cursors have
+no associated session ID and thus can be used in parallel.
+
 When sending a killCursors command
 ----------------------------------
 
@@ -1144,3 +1153,4 @@ Change log
 :2018-01-11: Clarify that sessions require replica sets or sharded clusters
 :2018-02-20: Add implicit/explicit session tests
 :2018-02-20: Drivers SHOULD error if unacknowledged writes are used with sessions
+:2018-05-23: Drivers MUST not use session ID with parallelCollectionScan
