@@ -37,9 +37,10 @@ Each YAML files has the following keys:
     - ``collection``: Watch changes on collection ``database_name.collection_name``
     - ``db``: Watch changes on database ``database_name``
     - ``client``: Watch changes on entire clusters
-  - ``numChanges``: The number of changes to expect on a changeStream
   - ``topology``: An array of server topologies to run the test against
     Valid topologies are ``single``, ``replicaset``, and ``sharded``.
+  - ``changeStreamPipeline``: An array of additional aggregation pipeline stages to add to the change stream
+  - ``changeStreamOptions``: Additional options to add to the changeStream
   - ``operations``: Array of documents, each describing an operation. Each document has the following fields:
     - ``database``: Database to run the operation against
     - ``collection``: Collection to run the operation against
@@ -103,7 +104,7 @@ For each YAML file, for each element in ``tests``:
   - Create the database ``database_name`` and the collection ``database_name.collection_name``
 
 - Create a new MongoClient ``client``, with APM enabled
-- Using ``client``, create a changeStream ``changeStream`` against the specified ``target``
+- Using ``client``, create a changeStream ``changeStream`` against the specified ``target``. Use ``changeStreamPipeline`` and ``changeStreamOptions`` if they are non-empty
 - Using ``globalClient``, run every operation in ``operations`` in serial against the server
 - Wait until either
 
