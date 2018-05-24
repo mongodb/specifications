@@ -275,12 +275,12 @@ Driver API
     /**
      * The change stream will only provides changes that occurred after the
      * specified timestamp. Any command run against the server will return
-     * a cluster time that can be used here. The default value is a
-     * cluster time obtained from the server before the change stream was created.
+     * an operation time that can be used here. The default value is a
+     * operation time obtained from the server before the change stream was created.
      * @since 4.0
      * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
      */
-    startAtClusterTime: Optional<Timestamp>;
+    startAtOperationTime: Optional<Timestamp>;
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -388,14 +388,14 @@ Single Server Topologies
 
 Presently, change streams cannot be initiated on single server topologies as they do not have an oplog.  Drivers MUST NOT throw an exception in this scenario, but instead rely on an error returned from the server.  This allows for the server to seamlessly introduce support for this in the future, without need to make changes in driver code.
 
-startAtClusterTime
+startAtOperationTime
 ^^^^^^^^^^^^^^^^^^
 
 :since: 4.0
 
-``startAtClusterTime`` specifies that a ``changeStream`` will only return changes that occurred at or after the specified ``Timestamp``.
+``startAtOperationTime`` specifies that a ``changeStream`` will only return changes that occurred at or after the specified ``Timestamp``.
 
-The server expects ``startAtClusterTime`` as a bson document of the form
+The server expects ``startAtOperationTime`` as a bson Timestamp
 
 .. code:: typescript
 
@@ -403,11 +403,11 @@ The server expects ``startAtClusterTime`` as a bson document of the form
       ts: Timestamp;
     }
 
-Drivers MUST allow users to specify a ``startAtClusterTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``, and MUST NOT force users to wrap the timestamp as the server specifies.
+Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
 
-``startAtClusterTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtClusterTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
+``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtClusterTime`` or ``resumeAfter`` are specified, and the server version is >= ``4.0`` drivers MUST set a default ``startAtClusterTime`` value using a ``$clusterTime`` from any server response (ex: ``ismaster``). This allows change streams to be resumed before the first notification is received.
+If neither ``startAtOperationTime`` or ``resumeAfter`` are specified, and the server version is >= ``4.0`` drivers MUST set a default ``startAtOperationTime`` value using an ``operationTime`` from any server response (ex: ``ismaster``). This allows change streams to be resumed before the first notification is received.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -424,15 +424,15 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the server version is >= ``4.0``:
 
     - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtClusterTime`` key set to the original timestamp from when the changestream was first created.
+    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp from when the changestream was first created.s
     - The driver MUST NOT set a ``resumeAfter`` key.
-    - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtClusterTime``.
+    - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
 
     - The driver MUST execute the known aggregation command.
     - The driver MUST specify a ``resumeAfter`` with the last known ``resumeToken``.
-    - The driver MUST NOT set a ``startAtClusterTime``.
-    - If a ``startAtClusterTime`` key was part of the original aggregation command, the driver MUST remove it.
+    - The driver MUST NOT set a ``startAtOperationTime``.
+    - If a ``startAtOperationTime`` key was part of the original aggregation command, the driver MUST remove it.
     - In this case, the ``ChangeStream`` will return notifications starting with the oplog entry immediately *after* the provided token.
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
@@ -579,4 +579,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2018-04-18 | Added helpers for Database and MongoClient,                |
 |            | and added ``startAtClusterTime`` option.                   |
++------------+------------------------------------------------------------+
+| 2018-05-24 | Changed ``startatClusterTime`` to ``startAtOperationTime`` |
 +------------+------------------------------------------------------------+

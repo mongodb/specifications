@@ -311,8 +311,8 @@
       }
     },
     {
-      "description": "A fresh ChangeStream against a server >=4.0 will always include `startAtClusterTime` in the `$changeStream` stage.",
-      "minServerVersion": "3.7.3",
+      "description": "A fresh ChangeStream against a server >=4.0 will always include `startAtOperationTime` in the `$changeStream` stage.",
+      "minServerVersion": "4.0.0-rc0",
       "target": "collection",
       "topology": [
         "replicaset"
@@ -340,12 +340,10 @@
                 {
                   "$changeStream": {
                     "fullDocument": "default",
-                    "startAtClusterTime": {
-                      "ts": {
-                        "$timestamp": {
-                          "i": 42,
-                          "t": 42
-                        }
+                    "startAtOperationTime": {
+                      "$timestamp": {
+                        "i": 42,
+                        "t": 42
                       }
                     }
                   }
@@ -361,7 +359,7 @@
     },
     {
       "description": "Executing a `watch` helper on a Database results in notifications for changes to all collections in the specified database.",
-      "minServerVersion": "3.7.3",
+      "minServerVersion": "4.0.0-rc0",
       "target": "db",
       "topology": [
         "replicaset"
@@ -411,12 +409,10 @@
                 {
                   "$changeStream": {
                     "fullDocument": "default",
-                    "startAtClusterTime": {
-                      "ts": {
-                        "$timestamp": {
-                          "i": 42,
-                          "t": 42
-                        }
+                    "startAtOperationTime": {
+                      "$timestamp": {
+                        "i": 42,
+                        "t": 42
                       }
                     }
                   }
@@ -459,7 +455,7 @@
     },
     {
       "description": "Executing a `watch` helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster.",
-      "minServerVersion": "3.7.3",
+      "minServerVersion": "4.0.0-rc0",
       "target": "client",
       "topology": [
         "replicaset"
@@ -510,12 +506,10 @@
                   "$changeStream": {
                     "fullDocument": "default",
                     "allChangesForCluster": true,
-                    "startAtClusterTime": {
-                      "ts": {
-                        "$timestamp": {
-                          "i": 42,
-                          "t": 42
-                        }
+                    "startAtOperationTime": {
+                      "$timestamp": {
+                        "i": 42,
+                        "t": 42
                       }
                     }
                   }
