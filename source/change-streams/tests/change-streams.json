@@ -46,6 +46,7 @@
           "command_started_event": {
             "command": {
               "aggregate": "test",
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {
@@ -148,6 +149,7 @@
           "command_started_event": {
             "command": {
               "aggregate": "test",
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {
@@ -220,6 +222,7 @@
           "command_started_event": {
             "command": {
               "aggregate": "test",
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {
@@ -287,6 +290,7 @@
           "command_started_event": {
             "command": {
               "aggregate": "test",
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {
@@ -336,6 +340,7 @@
           "command_started_event": {
             "command": {
               "aggregate": "test",
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {
@@ -405,6 +410,7 @@
               "aggregate": {
                 "$numberInt": "1"
               },
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {
@@ -501,6 +507,7 @@
               "aggregate": {
                 "$numberInt": "1"
               },
+              "cursor": {},
               "pipeline": [
                 {
                   "$changeStream": {

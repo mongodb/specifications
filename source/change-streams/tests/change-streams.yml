@@ -36,6 +36,7 @@ tests:
         command_started_event:
           command:
             aggregate: *collection_name
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
@@ -107,6 +108,7 @@ tests:
         command_started_event:
           command:
             aggregate: *collection_name
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
@@ -156,6 +158,7 @@ tests:
 
           command:
             aggregate: *collection_name
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
@@ -200,6 +203,7 @@ tests:
 
           command:
             aggregate: *collection_name
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
@@ -234,6 +238,7 @@ tests:
         command_started_event:
           command:
             aggregate: *collection_name
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
@@ -281,6 +286,7 @@ tests:
           command:
             aggregate:
               $numberInt: "1"
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
@@ -345,6 +351,7 @@ tests:
           command:
             aggregate:
               $numberInt: "1"
+            cursor: {}
             pipeline:
               - 
                 $changeStream:
