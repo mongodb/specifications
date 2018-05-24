@@ -27,7 +27,7 @@ tests:
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             x: 1
@@ -55,7 +55,7 @@ tests:
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             x: 1
@@ -84,21 +84,21 @@ tests:
       -
         database: *database_name
         collection: *collection_name_2
-        name: insert
+        name: insertOne
         arguments:
           document:
             x: 1
       -
         database: *database_name_2
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             y: 2
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             z: 3
@@ -139,14 +139,14 @@ tests:
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             y: 2
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             z: 3
@@ -190,7 +190,7 @@ tests:
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             z: 3
@@ -225,7 +225,7 @@ tests:
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             x: 1
@@ -241,8 +241,8 @@ tests:
                   startAtClusterTime:
                     ts:
                       $timestamp:
-                        i: "42"
-                        t: "42"
+                        i: 42
+                        t: 42
           command_name: aggregate
           database_name: *database_name
     result: {}
@@ -258,21 +258,21 @@ tests:
       -
         database: *database_name
         collection: *collection_name_2
-        name: insert
+        name: insertOne
         arguments:
           document:
             x: 1
       -
         database: *database_name_2
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             y: 2
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             z: 3
@@ -289,8 +289,8 @@ tests:
                   startAtClusterTime:
                     ts:
                       $timestamp:
-                        i: "42"
-                        t: "42"
+                        i: 42
+                        t: 42
           command_name: aggregate
           database_name: *database_name
     result:
@@ -323,21 +323,21 @@ tests:
       -
         database: *database_name
         collection: *collection_name_2
-        name: insert
+        name: insertOne
         arguments:
           document:
             x: 1
       -
         database: *database_name_2
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             y: 2
       -
         database: *database_name
         collection: *collection_name
-        name: insert
+        name: insertOne
         arguments:
           document:
             z: 3
@@ -355,8 +355,8 @@ tests:
                   startAtClusterTime:
                     ts:
                       $timestamp:
-                        i: "42"
-                        t: "42"
+                        i: 42
+                        t: 42
           command_name: aggregate
           database_name: admin
     result:

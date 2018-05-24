@@ -33,7 +33,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "x": 1
@@ -74,7 +74,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "x": 1
@@ -115,7 +115,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test2",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "x": 1
@@ -125,7 +125,7 @@
         {
           "database": "change-stream-tests-2",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "y": 2
@@ -135,7 +135,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "z": 3
@@ -197,7 +197,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "y": 2
@@ -207,7 +207,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "z": 3
@@ -274,7 +274,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "z": 3
@@ -323,7 +323,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "x": 1
@@ -343,8 +343,8 @@
                     "startAtClusterTime": {
                       "ts": {
                         "$timestamp": {
-                          "i": "42",
-                          "t": "42"
+                          "i": 42,
+                          "t": 42
                         }
                       }
                     }
@@ -372,7 +372,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test2",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "x": 1
@@ -382,7 +382,7 @@
         {
           "database": "change-stream-tests-2",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "y": 2
@@ -392,7 +392,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "z": 3
@@ -414,8 +414,8 @@
                     "startAtClusterTime": {
                       "ts": {
                         "$timestamp": {
-                          "i": "42",
-                          "t": "42"
+                          "i": 42,
+                          "t": 42
                         }
                       }
                     }
@@ -470,7 +470,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test2",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "x": 1
@@ -480,7 +480,7 @@
         {
           "database": "change-stream-tests-2",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "y": 2
@@ -490,7 +490,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "insert",
+          "name": "insertOne",
           "arguments": {
             "document": {
               "z": 3
@@ -513,8 +513,8 @@
                     "startAtClusterTime": {
                       "ts": {
                         "$timestamp": {
-                          "i": "42",
-                          "t": "42"
+                          "i": 42,
+                          "t": 42
                         }
                       }
                     }
