@@ -59,28 +59,32 @@ The definition of MATCH or MATCHES in the Spec Test Runner is as follows:
 
 - MATCH takes two values, ``expected`` and ``actual``
 - Notation is "Assert [actual] MATCHES [expected]
-- Assertion passes if ``expected`` is a subset of ``actual``
+- Assertion passes if ``expected`` is a subset of ``actual``, with the values ``42`` and ``"42"`` acting as placeholders for "any value"
 
 Pseudocode Implementation of ``actual`` MATCHES ``expected``:
 
-- Assert that ``actual`` is of the same JSON type as ``expected``
-- If ``expected`` is a ``number``, ``string``, ``boolean`` or ``null``
+- If ``expected`` is ``"42"`` or ``42``
 
-  - Assert that ``expected`` equals ``actual``
-
-- Else if ``expected`` is an ``array``
-
-  - for every ``idx``/``value`` in ``expected``
-
-    - Assert that ``value`` MATCHES ``actual[idx]``
+  - Assert that ``actual`` exists (is not ``null`` or ``undefined``)
 
 - Else
 
-  - for every ``key``/``value`` in ``expected``
+  - Assert that ``actual`` is of the same JSON type as ``expected``
+  - If ``expected`` is a ``number``, ``string``, ``boolean`` or ``null``
 
-    - Assert that ``value`` MATCHES ``actual``
+    - Assert that ``expected`` equals ``actual``
 
-This algorithm means that an expected value of ``{}`` will automatically match any object value, and an expected value of ``[]`` will automatically match any array value.
+  - Else if ``expected`` is an ``array``
+
+    - for every ``idx``/``value`` in ``expected``
+
+      - Assert that ``value`` MATCHES ``actual[idx]``
+
+  - Else
+
+    - for every ``key``/``value`` in ``expected``
+
+      - Assert that ``value`` MATCHES ``actual``
 
 Spec Test Runner
 ================

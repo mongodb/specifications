@@ -31,12 +31,12 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "x": 1
             }
-          ]
+          }
         }
       ],
       "expectations": [
@@ -46,7 +46,9 @@
               "aggregate": "test",
               "pipeline": [
                 {
-                  "$changeStream": {}
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
                 }
               ]
             },
@@ -68,20 +70,20 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "x": 1
             }
-          ]
+          }
         }
       ],
       "expectations": [],
       "result": {
         "success": [
           {
-            "_id": {},
-            "documentKey": {},
+            "_id": "42",
+            "documentKey": "42",
             "operationType": "insert",
             "ns": {
               "db": "change-stream-tests",
@@ -107,32 +109,32 @@
         {
           "database": "change-stream-tests",
           "collection": "test2",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "x": 1
             }
-          ]
+          }
         },
         {
           "database": "change-stream-tests-2",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "y": 2
             }
-          ]
+          }
         },
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "z": 3
             }
-          ]
+          }
         }
       ],
       "expectations": [
@@ -142,7 +144,9 @@
               "aggregate": "test",
               "pipeline": [
                 {
-                  "$changeStream": {}
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
                 }
               ]
             },
@@ -151,20 +155,22 @@
           }
         }
       ],
-      "result": [
-        {
-          "success": {
+      "result": {
+        "success": [
+          {
             "operationType": "insert",
             "ns": {
               "db": "change-stream-tests",
               "coll": "test"
             },
             "fullDocument": {
-              "z": 3
+              "z": {
+                "$numberInt": "3"
+              }
             }
           }
-        }
-      ]
+        ]
+      }
     },
     {
       "description": "A fresh ChangeStream against a server >=4.0 will always include `startAtClusterTime` in the `$changeStream` stage.",
@@ -177,12 +183,12 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "x": 1
             }
-          ]
+          }
         }
       ],
       "expectations": [
@@ -193,7 +199,15 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "startAtClusterTime": {}
+                    "fullDocument": "default",
+                    "startAtClusterTime": {
+                      "ts": {
+                        "$timestamp": {
+                          "i": "42",
+                          "t": "42"
+                        }
+                      }
+                    }
                   }
                 }
               ]
@@ -216,32 +230,32 @@
         {
           "database": "change-stream-tests",
           "collection": "test2",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "x": 1
             }
-          ]
+          }
         },
         {
           "database": "change-stream-tests-2",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "y": 2
             }
-          ]
+          }
         },
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "z": 3
             }
-          ]
+          }
         }
       ],
       "expectations": [
@@ -254,7 +268,15 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "startAtClusterTime": {}
+                    "fullDocument": "default",
+                    "startAtClusterTime": {
+                      "ts": {
+                        "$timestamp": {
+                          "i": "42",
+                          "t": "42"
+                        }
+                      }
+                    }
                   }
                 }
               ]
@@ -304,32 +326,32 @@
         {
           "database": "change-stream-tests",
           "collection": "test2",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "x": 1
             }
-          ]
+          }
         },
         {
           "database": "change-stream-tests-2",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "y": 2
             }
-          ]
+          }
         },
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "commandName": "insert",
-          "arguments": [
-            {
+          "name": "insert",
+          "arguments": {
+            "document": {
               "z": 3
             }
-          ]
+          }
         }
       ],
       "expectations": [
@@ -342,10 +364,14 @@
               "pipeline": [
                 {
                   "$changeStream": {
+                    "fullDocument": "default",
                     "allChangesForCluster": true,
                     "startAtClusterTime": {
                       "ts": {
-                        "$timestamp": {}
+                        "$timestamp": {
+                          "i": "42",
+                          "t": "42"
+                        }
                       }
                     }
                   }
