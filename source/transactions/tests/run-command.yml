@@ -45,6 +45,55 @@ tests:
             writeConcern:
           command_name: commitTransaction
           database_name: admin
+
+  - description: run command with secondary read preference in client option and primary read preference in transaction options
+
+    clientOptions:
+      readPreference: secondary
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+          options:
+            readPreference:
+              mode: Primary
+      - name: runCommand
+        arguments:
+          command: 
+            count: *collection_name
+          session: session0
+        result:
+          n: 0 
+      - name: commitTransaction
+        arguments:
+          session: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            count: *collection_name
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: count
+          database_name: *database_name
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: commitTransaction
+          database_name: admin 
+
   - description: run command with explicit primary read preference
 
     operations:
@@ -88,7 +137,7 @@ tests:
             writeConcern:
           command_name: commitTransaction
           database_name: admin
-  - description: run command with explicit secondary read preference
+  - description: run command fails with explicit secondary read preference
 
     operations:
       - name: startTransaction
@@ -102,32 +151,4 @@ tests:
           readPreference:
             mode: Secondary
         result:
-          n: 0 
-      - name: commitTransaction
-        arguments:
-          session: session0
-
-    expectations:
-      - command_started_event:
-          command:
-            count: *collection_name
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
-          command_name: count
-          database_name: *database_name
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            writeConcern:
-          command_name: commitTransaction
-          database_name: admin
+          errorContains: read preference in a transaction must be primary

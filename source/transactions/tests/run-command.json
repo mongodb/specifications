@@ -68,6 +68,78 @@
       ]
     },
     {
+      "description": "run command with secondary read preference in client option and primary read preference in transaction options",
+      "clientOptions": {
+        "readPreference": "secondary"
+      },
+      "operations": [
+        {
+          "name": "startTransaction",
+          "arguments": {
+            "session": "session0",
+            "options": {
+              "readPreference": {
+                "mode": "Primary"
+              }
+            }
+          }
+        },
+        {
+          "name": "runCommand",
+          "arguments": {
+            "command": {
+              "count": "test"
+            },
+            "session": "session0"
+          },
+          "result": {
+            "n": 0
+          }
+        },
+        {
+          "name": "commitTransaction",
+          "arguments": {
+            "session": "session0"
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "test",
+              "readConcern": null,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "count",
+            "database_name": "transaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "startTransaction": null,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
       "description": "run command with explicit primary read preference",
       "operations": [
         {
@@ -135,7 +207,7 @@
       ]
     },
     {
-      "description": "run command with explicit secondary read preference",
+      "description": "run command fails with explicit secondary read preference",
       "operations": [
         {
           "name": "startTransaction",
@@ -155,48 +227,7 @@
             }
           },
           "result": {
-            "n": 0
-          }
-        },
-        {
-          "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "count": "test",
-              "readConcern": null,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "startTransaction": true,
-              "autocommit": false,
-              "writeConcern": null
-            },
-            "command_name": "count",
-            "database_name": "transaction-tests"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
-              "commitTransaction": 1,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "startTransaction": null,
-              "autocommit": false,
-              "writeConcern": null
-            },
-            "command_name": "commitTransaction",
-            "database_name": "admin"
+            "errorContains": "read preference in a transaction must be primary"
           }
         }
       ]
