@@ -1,29 +1,11 @@
 {
   "collection_name": "test",
   "database_name": "change-stream-tests",
-  "collection_name_2": "test2",
-  "database_name_2": "change-stream-tests-2",
+  "collection2_name": "test2",
+  "database2_name": "change-stream-tests-2",
   "tests": [
     {
-      "description": "The watch helper must not throw a custom exception when executed against a single server topology, but instead depend on a server error",
-      "minServerVersion": "3.6.0",
-      "target": "collection",
-      "topology": [
-        "single"
-      ],
-      "changeStreamPipeline": [],
-      "changeStreamOptions": {},
-      "operations": [],
-      "expectations": [],
-      "result": {
-        "error": {
-          "errmsg": "The $changeStream stage is only supported on replica sets",
-          "code": 40573
-        }
-      }
-    },
-    {
-      "description": "`$changeStream` must be the first stage in a change stream pipeline sent to the server",
+      "description": "$changeStream must be the first stage in a change stream pipeline sent to the server",
       "minServerVersion": "3.6.0",
       "target": "collection",
       "topology": [
@@ -60,10 +42,12 @@
           }
         }
       ],
-      "result": {}
+      "result": {
+        "success": []
+      }
     },
     {
-      "description": "The server returns change stream responses in the specified ``ServerResponse`` format",
+      "description": "The server returns change stream responses in the specified server response format",
       "minServerVersion": "3.6.0",
       "target": "collection",
       "topology": [
@@ -104,7 +88,7 @@
       }
     },
     {
-      "description": "Executing a `watch` helper on a Collection results in notifications for changes to the specified collection",
+      "description": "Executing a watch helper on a Collection results in notifications for changes to the specified collection",
       "minServerVersion": "3.6.0",
       "target": "collection",
       "topology": [
@@ -261,62 +245,8 @@
       }
     },
     {
-      "description": "Change Stream should error when an invalid aggregation stage is passed in",
-      "minServerVersion": "3.6.0",
-      "target": "collection",
-      "topology": [
-        "replicaset"
-      ],
-      "changeStreamPipeline": [
-        {
-          "$darmokAndJaladAtTanagra": "SHAKA WHEN THEN WALLS FELL"
-        }
-      ],
-      "changeStreamOptions": {},
-      "operations": [
-        {
-          "database": "change-stream-tests",
-          "collection": "test",
-          "name": "insertOne",
-          "arguments": {
-            "document": {
-              "z": 3
-            }
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "test",
-              "cursor": {},
-              "pipeline": [
-                {
-                  "$changeStream": {
-                    "fullDocument": "default"
-                  }
-                },
-                {
-                  "$darmokAndJaladAtTanagra": "SHAKA WHEN THEN WALLS FELL"
-                }
-              ]
-            },
-            "command_name": "aggregate",
-            "database_name": "change-stream-tests"
-          }
-        }
-      ],
-      "result": {
-        "error": {
-          "errmsg": "Unrecognized pipeline stage name: '$darmokAndJaladAtTanagra'",
-          "code": 40324
-        }
-      }
-    },
-    {
-      "description": "A fresh ChangeStream against a server >=4.0 will always include `startAtOperationTime` in the `$changeStream` stage.",
-      "minServerVersion": "4.0.0-rc0",
+      "description": "A fresh ChangeStream against a server >=4.0 will always include startAtOperationTime in the $changeStream stage.",
+      "minServerVersion": "3.8.0",
       "target": "collection",
       "topology": [
         "replicaset"
@@ -360,12 +290,14 @@
           }
         }
       ],
-      "result": {}
+      "result": {
+        "success": []
+      }
     },
     {
-      "description": "Executing a `watch` helper on a Database results in notifications for changes to all collections in the specified database.",
-      "minServerVersion": "4.0.0-rc0",
-      "target": "db",
+      "description": "Executing a watch helper on a Database results in notifications for changes to all collections in the specified database.",
+      "minServerVersion": "3.8.0",
+      "target": "database",
       "topology": [
         "replicaset"
       ],
@@ -460,8 +392,8 @@
       }
     },
     {
-      "description": "Executing a `watch` helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster.",
-      "minServerVersion": "4.0.0-rc0",
+      "description": "Executing a watch helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster.",
+      "minServerVersion": "3.8.0",
       "target": "client",
       "topology": [
         "replicaset"

@@ -275,7 +275,7 @@ Driver API
     /**
      * The change stream will only provides changes that occurred after the
      * specified timestamp. Any command run against the server will return
-     * an operation time that can be used here. The default value is a
+     * an operation time that can be used here. The default value is an
      * operation time obtained from the server before the change stream was created.
      * @since 4.0
      * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
@@ -393,9 +393,9 @@ startAtOperationTime
 
 :since: 4.0
 
-``startAtOperationTime`` specifies that a ``changeStream`` will only return changes that occurred at or after the specified ``Timestamp``.
+``startAtOperationTime`` specifies that a change stream will only return changes that occurred at or after the specified ``Timestamp``.
 
-The server expects ``startAtOperationTime`` as a bson Timestamp
+The server expects ``startAtOperationTime`` as a BSON Timestamp
 
 .. code:: typescript
 
@@ -407,7 +407,7 @@ Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``C
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` or ``resumeAfter`` are specified, and the server version is >= ``4.0`` drivers MUST set a default ``startAtOperationTime`` value using an ``operationTime`` from any server response (ex: ``ismaster``). This allows change streams to be resumed before the first notification is received.
+If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the server version is >= ``4.0`` drivers MUST set a default ``startAtOperationTime`` (a default timestamp can be obtained from the ``operationTime`` field on any server response, like an ``isMaster``. This allows change streams to be resumed before the first notification is received.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -424,7 +424,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the server version is >= ``4.0``:
 
     - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp from when the changestream was first created.s
+    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp from when the changestream was first created.
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
@@ -536,7 +536,7 @@ so resuming is impossible.
 Test Plan
 =========
 
-See `here <tests/README.rst>`_
+See `tests/README.rst <tests/README.rst>`_
 
 Backwards Compatibility
 =======================
