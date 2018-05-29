@@ -49,11 +49,11 @@ Each YAML file has the following keys:
     - ``commandName``: Name of the command to run
     - ``arguments``: Object of arguments for the command (ex: document to insert)
 
-  - ``expectations``: Optional list of command-started events
+  - ``expectations``: Optional list of command-started events in Extended JSON format
   - ``result``: Document with ONE of the following fields:
 
     - ``error``: Describes an error received during the test
-    - ``success``: An array of documents expected to be received from the changeStream
+    - ``success``: An Extended JSON array of documents expected to be received from the changeStream
 
 Spec Test Match Function
 ========================
@@ -77,9 +77,15 @@ Pseudocode implementation of ``actual`` MATCHES ``expected``:
         Assert that actual[idx] MATCHES value
     Else if expected is a JSON object:
       For every key/value in expected
-        Assert that actual MATCHES value
+        Assert that actual[key] MATCHES value
     Else:
       Assert that expected equals actual
+
+The expected values for ``result.success`` and ``expectations`` are written in Extended JSON. Drivers may adopt any of the following approaches to comparisons, as long as they are consistent:
+
+- Convert ``actual`` to Extended JSON and compare to ``expected``
+- Convert ``expected`` and ``actual`` to BSON, and compare them
+- Convert ``expected`` and ``actual`` to native equivalents of JSON, and compare them
 
 Spec Test Runner
 ================
@@ -99,11 +105,12 @@ For each YAML file, for each element in ``tests``:
   - Create the database ``database2_name`` and the collection ``database2_name.collection2_name``
 
 - Create a new MongoClient ``client``
+- Begin monitoring all APM events for ``client``. (If the driver uses global listeners, filter out all events that do not originate with ``client``). Filter out any "internal" commands (e.g. ``isMaster``)
 - Using ``client``, create a changeStream ``changeStream`` against the specified ``target``. Use ``changeStreamPipeline`` and ``changeStreamOptions`` if they are non-empty
 - Using ``globalClient``, run every operation in ``operations`` in serial against the server
 - Wait until either:
 
-  - An error occurrs
+  - An error occurs
   - All operations have been successful AND the changeStream has received as many changes as there are in ``result.success``
 
 - Close ``changeStream``
@@ -118,10 +125,6 @@ For each YAML file, for each element in ``tests``:
   - Assert that the changes received from ``changeStream`` MATCH the results in ``results.success``
 
 - If there are any ``expectations``
-
-  - For each APM ``commandStarted`` events on ``client``
-
-    - Filter out any ``isMaster`` events
 
   - For each (``expected``, ``idx``) in ``expectations``
 

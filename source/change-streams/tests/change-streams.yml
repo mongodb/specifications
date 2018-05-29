@@ -9,6 +9,8 @@ tests:
     target: collection
     topology: 
       - replicaset
+    changeStreamPipeline: []
+    changeStreamOptions: {}
     operations:
       -
         database: *database_name
