@@ -153,7 +153,7 @@
       }
     },
     {
-      "description": "operation writeConcern ignored for findOneAndReplace",
+      "description": "collection writeConcern ignored for findOneAndReplace",
       "operations": [
         {
           "name": "startTransaction",
@@ -168,6 +168,11 @@
         },
         {
           "name": "findOneAndReplace",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "_id": 3
@@ -176,10 +181,7 @@
               "x": 1
             },
             "returnDocument": "Before",
-            "session": "session0",
-            "writeConcern": {
-              "w": "majority"
-            }
+            "session": "session0"
           },
           "result": {
             "_id": 3

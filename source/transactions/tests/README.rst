@@ -43,6 +43,9 @@ Each YAML file has the following keys:
 
       - ``name``: The name of the operation.
 
+      - ``collectionOptions``: Optional, parameters to pass to the Collection()
+        used for this operation.
+
       - ``arguments``: The names and values of arguments.
 
       - ``result``: The return value from the operation, if any. If the
@@ -108,11 +111,11 @@ For each YAML file, for each element in ``tests``:
      method.    
    - Otherwise, ``name`` refers to a CRUD method, such as ``insertOne``.
      Execute the named method on the "transactions-tests" database on the "test"
-     collection, passing the arguments listed. Pass ``session0`` or ``session1``
-     to the method, depending on which session's name is in the arguments list.
+     collection (with the optional ``collectionOptions``), passing the
+     arguments listed. Pass ``session0`` or ``session1`` to the method,
+     depending on which session's name is in the arguments list.
      If ``arguments`` contains no "session", pass no explicit session to the
-     method. If ``arguments`` includes "readPreference", configure the specified
-     read preference in whatever manner the driver supports.
+     method.
    - If the driver throws an exception / returns an error while executing this
      series of operations, store the error message and server error code.
    - If the result document has an "errorContains" field, verify that the

@@ -22,26 +22,29 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
-          # The driver overrides the operation's read pref with the
+        collectionOptions:
+          # The driver overrides the collection's read pref with the
           # transaction's so count runs with Primary and succeeds.
           readPreference:
             mode: Secondary
+        arguments:
           filter:
             _id: 1
           session: session0
         result: 1
       - name: find
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           batchSize: 3
           session: session0
         result: *insertedDocs
       - name: aggregate
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -76,24 +79,27 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           filter:
             _id: 1
           session: session0
         result: 1
       - name: find
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           batchSize: 3
           session: session0
         result: *insertedDocs
       - name: aggregate
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -128,26 +134,29 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           filter:
             _id: 1
           session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           batchSize: 3
           session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -183,26 +192,29 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           filter:
             _id: 1
           session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           batchSize: 3
           session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -238,26 +250,29 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           filter:
             _id: 1
           session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           batchSize: 3
           session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
-        arguments:
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           pipeline:
             - $project:
                 _id: 1

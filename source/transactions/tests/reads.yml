@@ -8,6 +8,35 @@ data: &data
   - {_id: 4}
 
 tests:
+  - description: collection readConcern without transaction
+
+    operations:
+      - name: find
+        collectionOptions:
+          readConcern:
+            level: majority
+        arguments:
+          session: session0
+        result: *data
+
+    expectations:
+      - command_started_event:
+          command:
+            find: *collection_name
+            readConcern:
+              level: majority
+            lsid: session0
+            txnNumber:
+            startTransaction:
+            autocommit:
+          command_name: find
+          database_name: *database_name
+
+    outcome: &outcome
+      collection:
+        data:
+          *data
+
   - description: count
 
     operations:
@@ -69,10 +98,7 @@ tests:
           command_name: commitTransaction
           database_name: admin
 
-    outcome: &outcome
-      collection:
-        data:
-          *data
+    outcome: *outcome
 
   - description: find
 

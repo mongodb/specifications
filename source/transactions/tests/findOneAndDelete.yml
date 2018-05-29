@@ -75,7 +75,7 @@ tests:
           - {_id: 1}
           - {_id: 2}
 
-  - description: operation writeConcern ignored for findOneAndDelete
+  - description: collection writeConcern ignored for findOneAndDelete
 
     operations:
       - name: startTransaction
@@ -85,11 +85,12 @@ tests:
             writeConcern:
               w: majority
       - name: findOneAndDelete
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter: {_id: 3}
           session: session0
-          writeConcern:
-            w: majority
         result: {_id: 3}
       - name: commitTransaction
         arguments:

@@ -42,10 +42,12 @@
         },
         {
           "name": "count",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
-            },
+            }
+          },
+          "arguments": {
             "filter": {
               "_id": 1
             },
@@ -55,10 +57,12 @@
         },
         {
           "name": "find",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
-            },
+            }
+          },
+          "arguments": {
             "batchSize": 3,
             "session": "session0"
           },
@@ -79,10 +83,12 @@
         },
         {
           "name": "aggregate",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
-            },
+            }
+          },
+          "arguments": {
             "pipeline": [
               {
                 "$project": {
@@ -178,10 +184,12 @@
         },
         {
           "name": "count",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
-            },
+            }
+          },
+          "arguments": {
             "filter": {
               "_id": 1
             },
@@ -191,10 +199,12 @@
         },
         {
           "name": "find",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
-            },
+            }
+          },
+          "arguments": {
             "batchSize": 3,
             "session": "session0"
           },
@@ -215,10 +225,12 @@
         },
         {
           "name": "aggregate",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
-            },
+            }
+          },
+          "arguments": {
             "pipeline": [
               {
                 "$project": {
@@ -314,10 +326,12 @@
         },
         {
           "name": "count",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "filter": {
               "_id": 1
             },
@@ -329,10 +343,12 @@
         },
         {
           "name": "find",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "batchSize": 3,
             "session": "session0"
           },
@@ -342,10 +358,12 @@
         },
         {
           "name": "aggregate",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "pipeline": [
               {
                 "$project": {
@@ -417,10 +435,12 @@
         },
         {
           "name": "count",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "filter": {
               "_id": 1
             },
@@ -432,10 +452,12 @@
         },
         {
           "name": "find",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "batchSize": 3,
             "session": "session0"
           },
@@ -445,10 +467,12 @@
         },
         {
           "name": "aggregate",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "pipeline": [
               {
                 "$project": {
@@ -520,10 +544,12 @@
         },
         {
           "name": "count",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "filter": {
               "_id": 1
             },
@@ -535,10 +561,12 @@
         },
         {
           "name": "find",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "batchSize": 3,
             "session": "session0"
           },
@@ -548,10 +576,12 @@
         },
         {
           "name": "aggregate",
-          "arguments": {
+          "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
-            },
+            }
+          },
+          "arguments": {
             "pipeline": [
               {
                 "$project": {

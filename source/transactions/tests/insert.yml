@@ -141,7 +141,43 @@ tests:
           - _id: 4
           - _id: 5
 
-  - description: operation writeConcern ignored for insert
+  # This test proves that the driver parses the collectionOptions writeConcern.
+  - description: collection writeConcern without transaction
+    operations:
+      - name: insertOne
+        collectionOptions:
+          writeConcern:
+            w: majority
+        arguments:
+          document:
+            _id: 1
+          session: session0
+        result:
+          insertedId: 1
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+            startTransaction:
+            autocommit:
+            writeConcern:
+              w: majority
+          command_name: insert
+          database_name: *database_name
+
+    outcome:
+      collection:
+        data:
+          - _id: 1
+
+  - description: collection writeConcern ignored for insert
     operations:
       - name: startTransaction
         arguments:
@@ -150,22 +186,24 @@ tests:
             writeConcern:
               w: majority
       - name: insertOne
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           document:
             _id: 1
           session: session0
-          writeConcern:
-            w: majority
         result:
           insertedId: 1
       - name: insertMany
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           documents:
             - _id: 2
             - _id: 3
           session: session0
-          writeConcern:
-            w: majority
         result:
           insertedIds: {0: 2, 1: 3}
       - name: commitTransaction
@@ -215,3 +253,10 @@ tests:
               w: majority
           command_name: commitTransaction
           database_name: admin
+
+    outcome:
+      collection:
+        data:
+          - _id: 1
+          - _id: 2
+          - _id: 3

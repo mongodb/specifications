@@ -104,7 +104,7 @@ tests:
         data:
           - _id: 5
 
-  - description: operation writeConcern ignored for delete
+  - description: collection writeConcern ignored for delete
     operations:
       - name: startTransaction
         arguments:
@@ -113,20 +113,22 @@ tests:
             writeConcern:
               w: majority
       - name: deleteOne
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter:
             _id: 1
-          writeConcern:
-            w: majority
           session: session0
         result:
           deletedCount: 1
       - name: deleteMany
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter:
             _id: {$lte: 3}
-          writeConcern:
-            w: majority
           session: session0
         result:
           deletedCount: 2

@@ -223,7 +223,7 @@
       }
     },
     {
-      "description": "operation writeConcern ignored for update",
+      "description": "collection writeConcern ignored for update",
       "operations": [
         {
           "name": "startTransaction",
@@ -238,6 +238,11 @@
         },
         {
           "name": "updateOne",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "_id": 4
@@ -248,9 +253,6 @@
               }
             },
             "upsert": true,
-            "writeConcern": {
-              "w": "majority"
-            },
             "session": "session0"
           },
           "result": {
@@ -262,15 +264,17 @@
         },
         {
           "name": "replaceOne",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "x": 1
             },
             "replacement": {
               "y": 1
-            },
-            "writeConcern": {
-              "w": "majority"
             },
             "session": "session0"
           },
@@ -282,6 +286,11 @@
         },
         {
           "name": "updateMany",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "_id": {
@@ -292,9 +301,6 @@
               "$set": {
                 "z": 1
               }
-            },
-            "writeConcern": {
-              "w": "majority"
             },
             "session": "session0"
           },

@@ -17,6 +17,72 @@
   ],
   "tests": [
     {
+      "description": "collection readConcern without transaction",
+      "operations": [
+        {
+          "name": "find",
+          "collectionOptions": {
+            "readConcern": {
+              "level": "majority"
+            }
+          },
+          "arguments": {
+            "session": "session0"
+          },
+          "result": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            },
+            {
+              "_id": 4
+            }
+          ]
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "readConcern": {
+                "level": "majority"
+              },
+              "lsid": "session0",
+              "txnNumber": null,
+              "startTransaction": null,
+              "autocommit": null
+            },
+            "command_name": "find",
+            "database_name": "transaction-tests"
+          }
+        }
+      ],
+      "outcome": {
+        "collection": {
+          "data": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            },
+            {
+              "_id": 4
+            }
+          ]
+        }
+      }
+    },
+    {
       "description": "count",
       "operations": [
         {

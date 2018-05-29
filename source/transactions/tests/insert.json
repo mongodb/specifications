@@ -238,7 +238,63 @@
       }
     },
     {
-      "description": "operation writeConcern ignored for insert",
+      "description": "collection writeConcern without transaction",
+      "operations": [
+        {
+          "name": "insertOne",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
+          "arguments": {
+            "document": {
+              "_id": 1
+            },
+            "session": "session0"
+          },
+          "result": {
+            "insertedId": 1
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "readConcern": null,
+              "lsid": "session0",
+              "txnNumber": null,
+              "startTransaction": null,
+              "autocommit": null,
+              "writeConcern": {
+                "w": "majority"
+              }
+            },
+            "command_name": "insert",
+            "database_name": "transaction-tests"
+          }
+        }
+      ],
+      "outcome": {
+        "collection": {
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "collection writeConcern ignored for insert",
       "operations": [
         {
           "name": "startTransaction",
@@ -253,14 +309,16 @@
         },
         {
           "name": "insertOne",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "document": {
               "_id": 1
             },
-            "session": "session0",
-            "writeConcern": {
-              "w": "majority"
-            }
+            "session": "session0"
           },
           "result": {
             "insertedId": 1
@@ -268,6 +326,11 @@
         },
         {
           "name": "insertMany",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "documents": [
               {
@@ -277,10 +340,7 @@
                 "_id": 3
               }
             ],
-            "session": "session0",
-            "writeConcern": {
-              "w": "majority"
-            }
+            "session": "session0"
           },
           "result": {
             "insertedIds": {
@@ -363,7 +423,22 @@
             "database_name": "admin"
           }
         }
-      ]
+      ],
+      "outcome": {
+        "collection": {
+          "data": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            }
+          ]
+        }
+      }
     }
   ]
 }

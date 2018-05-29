@@ -180,7 +180,7 @@
       }
     },
     {
-      "description": "operation writeConcern ignored for delete",
+      "description": "collection writeConcern ignored for delete",
       "operations": [
         {
           "name": "startTransaction",
@@ -195,12 +195,14 @@
         },
         {
           "name": "deleteOne",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "_id": 1
-            },
-            "writeConcern": {
-              "w": "majority"
             },
             "session": "session0"
           },
@@ -210,14 +212,16 @@
         },
         {
           "name": "deleteMany",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "_id": {
                 "$lte": 3
               }
-            },
-            "writeConcern": {
-              "w": "majority"
             },
             "session": "session0"
           },

@@ -122,7 +122,7 @@ tests:
           - {_id: 3, z: 1}
           - {_id: 4, y: 1, z: 1}
 
-  - description: operation writeConcern ignored for update
+  - description: collections writeConcern ignored for update
 
     operations:
       - name: startTransaction
@@ -132,13 +132,14 @@ tests:
             writeConcern:
               w: majority
       - name: updateOne
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter: {_id: 4}
           update:
             $inc: {x: 1}
           upsert: true
-          writeConcern:
-            w: majority
           session: session0
         result:
           matchedCount: 0
@@ -146,24 +147,26 @@ tests:
           upsertedCount: 1
           upsertedId: 4
       - name: replaceOne
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter: {x: 1}
           replacement: {y: 1}
-          writeConcern:
-            w: majority
           session: session0
         result:
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
       - name: updateMany
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter:
             _id: {$gte: 3}
           update:
             $set: {z: 1}
-          writeConcern:
-            w: majority
           session: session0
         result:
           matchedCount: 2

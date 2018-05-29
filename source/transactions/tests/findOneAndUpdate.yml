@@ -173,7 +173,7 @@ tests:
           - {_id: 3, x: 2}
           - {_id: 4, x: 1}
 
-  - description: operation writeConcern ignored for findOneAndUpdate
+  - description: collection writeConcern ignored for findOneAndUpdate
 
     operations:
       - name: startTransaction
@@ -183,14 +183,15 @@ tests:
             writeConcern:
               w: majority
       - name: findOneAndUpdate
+        collectionOptions:
+          writeConcern:
+            w: majority
         arguments:
           filter: {_id: 3}
           update:
             $inc: {x: 1}
           returnDocument: Before
           session: session0
-          writeConcern:
-            w: majority
         result: {_id: 3}
       - name: commitTransaction
         arguments:

@@ -313,7 +313,7 @@
       }
     },
     {
-      "description": "operation writeConcern ignored for findOneAndUpdate",
+      "description": "collection writeConcern ignored for findOneAndUpdate",
       "operations": [
         {
           "name": "startTransaction",
@@ -328,6 +328,11 @@
         },
         {
           "name": "findOneAndUpdate",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": "majority"
+            }
+          },
           "arguments": {
             "filter": {
               "_id": 3
@@ -338,10 +343,7 @@
               }
             },
             "returnDocument": "Before",
-            "session": "session0",
-            "writeConcern": {
-              "w": "majority"
-            }
+            "session": "session0"
           },
           "result": {
             "_id": 3
