@@ -11,6 +11,8 @@
       "topology": [
         "replicaset"
       ],
+      "changeStreamPipeline": [],
+      "changeStreamOptions": {},
       "operations": [
         {
           "database": "change-stream-tests",
