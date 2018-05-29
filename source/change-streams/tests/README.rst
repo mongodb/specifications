@@ -72,8 +72,11 @@ Pseudocode implementation of ``actual`` MATCHES ``expected``:
     Assert that actual exists (is not null or undefined)
   Else:
     Assert that actual is of the same JSON type as expected
-    If expected is a JSON array or JSON object:
-      For every key/value in expected:
+    If expected is a JSON array:
+      For every idx/value in expected:
+        Assert that actual[idx] MATCHES value
+    Else if expected is a JSON object:
+      For every key/value in expected
         Assert that actual[key] MATCHES value
     Else:
       Assert that expected equals actual
