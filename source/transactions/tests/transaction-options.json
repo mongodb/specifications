@@ -8,9 +8,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -27,15 +26,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -52,9 +49,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -160,9 +156,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -179,15 +174,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -204,9 +197,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -327,9 +319,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -346,15 +337,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -371,9 +360,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -498,8 +486,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readConcern": {
                 "level": "snapshot"
@@ -525,14 +513,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readConcern": {
                 "level": "snapshot"
@@ -558,9 +545,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -685,9 +671,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -704,15 +689,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -729,9 +712,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -852,9 +834,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -871,15 +852,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -896,9 +875,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -1016,8 +994,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readConcern": {
                 "level": "snapshot"
@@ -1040,14 +1018,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readConcern": {
                 "level": "snapshot"
@@ -1070,9 +1047,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -1180,8 +1156,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "writeConcern": {
                 "w": 1
@@ -1218,9 +1194,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -1284,9 +1259,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -1316,9 +1290,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -1390,9 +1363,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -1422,9 +1394,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -1496,8 +1467,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readPreference": {
                 "mode": "Secondary"
@@ -1533,9 +1504,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [

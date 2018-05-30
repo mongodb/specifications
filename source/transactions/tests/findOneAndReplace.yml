@@ -11,8 +11,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: findOneAndReplace
         object: collection
         arguments:
@@ -31,8 +31,8 @@ tests:
           session: session0
         result: {_id: 4, x: 1}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -91,8 +91,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: majority
@@ -108,8 +108,8 @@ tests:
           session: session0
         result: {_id: 3}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:

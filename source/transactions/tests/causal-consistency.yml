@@ -26,12 +26,12 @@ tests:
       # Casual consistency ensures that the transaction snapshot is causally
       # after the first updateOne.
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - *updateOne
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -105,8 +105,8 @@ tests:
         result:
           insertedId: 2
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: updateOne
         object: collection
         arguments:
@@ -120,8 +120,8 @@ tests:
           modifiedCount: 1
           upsertedCount: 0
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:

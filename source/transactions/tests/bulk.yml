@@ -8,8 +8,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -91,8 +91,8 @@ tests:
           upsertedCount: 1
           upsertedIds: {2: 2}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:

@@ -11,8 +11,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: findOneAndUpdate
         object: collection
         arguments:
@@ -33,11 +33,11 @@ tests:
           session: session0
         result: {_id: 4, x: 1}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       # Test a second time to ensure txnNumber is incremented.
       - name: findOneAndUpdate
         object: collection
@@ -49,12 +49,12 @@ tests:
           session: session0
         result: {_id: 3, x: 1}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       # Test a third time to ensure abort works.
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: findOneAndUpdate
         object: collection
         arguments:
@@ -65,8 +65,8 @@ tests:
           session: session0
         result: {_id: 3, x: 2}
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -181,8 +181,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: majority
@@ -199,8 +199,8 @@ tests:
           session: session0
         result: {_id: 3}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:

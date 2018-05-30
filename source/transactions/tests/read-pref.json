@@ -8,9 +8,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertMany",
@@ -120,9 +119,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "outcome": {
@@ -149,8 +147,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readPreference": {
                 "mode": "Primary"
@@ -266,9 +264,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "outcome": {
@@ -295,8 +292,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readPreference": {
                 "mode": "Secondary"
@@ -392,9 +389,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "outcome": {
@@ -408,8 +404,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readPreference": {
                 "mode": "PrimaryPreferred"
@@ -505,9 +501,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "outcome": {
@@ -521,8 +516,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readPreference": {
                 "mode": "Nearest"
@@ -618,9 +613,8 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "outcome": {
@@ -634,8 +628,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "readPreference": {
                 "mode": "Secondary"
@@ -658,9 +652,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "outcome": {

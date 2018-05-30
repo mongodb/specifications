@@ -11,8 +11,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: updateOne
         object: collection
         arguments:
@@ -49,8 +49,8 @@ tests:
           modifiedCount: 2
           upsertedCount: 0
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -129,8 +129,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: majority
@@ -179,8 +179,8 @@ tests:
           modifiedCount: 2
           upsertedCount: 0
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:

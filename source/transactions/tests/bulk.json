@@ -8,9 +8,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -204,9 +203,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [

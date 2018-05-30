@@ -7,8 +7,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -18,25 +18,25 @@ tests:
         result:
           insertedId: 1
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
         result:
           # Client-side error.
           errorContains: transaction already in progress
       # Just to clean up.
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
   - description: start twice
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
         result:
           # Client-side error.
           errorContains: transaction already in progress
@@ -45,8 +45,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -56,14 +56,14 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
         result:
           # Client-side error.
           errorContains: transaction already in progress
@@ -72,8 +72,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -83,8 +83,8 @@ tests:
         result:
           insertedId: 1
       - name: startTransaction
+        object: session1
         arguments:
-          session: session1
       - name: insertOne
         object: collection
         arguments:
@@ -94,11 +94,11 @@ tests:
         result:
           errorCodeName: WriteConflict
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: commitTransaction
+        object: session1
         arguments:
-          session: session1
         result:
           errorCodeName: NoSuchTransaction
 
@@ -106,8 +106,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -117,8 +117,8 @@ tests:
         result:
           insertedId: 1
       - name: startTransaction
+        object: session1
         arguments:
-          session: session1
       - name: insertOne
         object: collection
         arguments:
@@ -128,9 +128,9 @@ tests:
         result:
           errorCodeName: WriteConflict
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       # Driver ignores "NoSuchTransaction" error.
       - name: abortTransaction
+        object: session1
         arguments:
-          session: session1

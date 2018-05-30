@@ -8,8 +8,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -19,11 +19,11 @@ tests:
         result:
           insertedId: 1
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -33,8 +33,8 @@ tests:
         result:
           insertedId: 1
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -101,8 +101,8 @@ tests:
       # Start a transaction but don't commit - the driver calls abortTransaction
       # from ClientSession.endSession().
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -148,8 +148,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -159,11 +159,11 @@ tests:
         result:
           insertedId: 1
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
         result:
           errorContains: cannot call abortTransaction twice
 
@@ -203,8 +203,8 @@ tests:
 
     operations:
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
         result:
           errorContains: no transaction started
 
@@ -218,11 +218,11 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: abortTransaction  # Error calling abort after no-op commit.
         arguments:
           session: session0
@@ -239,8 +239,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -250,8 +250,8 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: abortTransaction  # Error calling abort after commit.
         arguments:
           session: session0
@@ -295,8 +295,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -325,8 +325,8 @@ tests:
           errorCodeName: NoSuchTransaction
       # abortTransaction must ignore the TransactionAborted and succeed.
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -395,8 +395,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: 10
@@ -409,8 +409,8 @@ tests:
         result:
           insertedId: 1
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
         # No CannotSatisfyWriteConcern error.
 
     outcome:

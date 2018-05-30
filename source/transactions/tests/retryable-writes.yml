@@ -11,8 +11,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -22,8 +22,8 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       # Retryable write should include the next txnNumber
       - name: insertOne
         object: collection
@@ -35,8 +35,8 @@ tests:
           insertedId: 2
       # Next transaction should include the next txnNumber
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -46,8 +46,8 @@ tests:
         result:
           insertedId: 3
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
       # Retryable write should include the next txnNumber
       - name: insertMany
         object: collection

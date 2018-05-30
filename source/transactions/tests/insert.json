@@ -8,9 +8,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -61,15 +60,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -86,9 +83,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [
@@ -303,8 +299,8 @@
       "operations": [
         {
           "name": "startTransaction",
+          "object": "session0",
           "arguments": {
-            "session": "session0",
             "options": {
               "writeConcern": {
                 "w": "majority"
@@ -358,9 +354,8 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ],
       "expectations": [

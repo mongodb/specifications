@@ -10,8 +10,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -42,8 +42,8 @@ tests:
             _id: 1
         result: []
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: find
         object: collection
         arguments:
@@ -69,11 +69,11 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session1
         arguments:
-          session: session1
       - name: insertOne
         object: collection
         arguments:
@@ -104,8 +104,8 @@ tests:
             _id: 1
         result: []
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       # Snapshot isolation in session1, not read-committed.
       - name: find
         object: collection
@@ -122,8 +122,8 @@ tests:
         result:
           - {_id: 1}
       - name: commitTransaction
+        object: session1
         arguments:
-          session: session1
 
     outcome:
       collection:

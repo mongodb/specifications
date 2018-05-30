@@ -8,9 +8,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -27,18 +26,16 @@
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          },
+          "object": "session0",
+          "arguments": null,
           "result": {
             "errorContains": "transaction already in progress"
           }
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         }
       ]
     },
@@ -47,15 +44,13 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          },
+          "object": "session0",
+          "arguments": null,
           "result": {
             "errorContains": "transaction already in progress"
           }
@@ -67,9 +62,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -86,21 +80,18 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          },
+          "object": "session0",
+          "arguments": null,
           "result": {
             "errorContains": "transaction already in progress"
           }
@@ -112,9 +103,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -131,9 +121,8 @@
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session1"
-          }
+          "object": "session1",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -150,15 +139,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session1"
-          },
+          "object": "session1",
+          "arguments": null,
           "result": {
             "errorCodeName": "NoSuchTransaction"
           }
@@ -170,9 +157,8 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -189,9 +175,8 @@
         },
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session1"
-          }
+          "object": "session1",
+          "arguments": null
         },
         {
           "name": "insertOne",
@@ -208,15 +193,13 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0",
+          "arguments": null
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session1"
-          }
+          "object": "session1",
+          "arguments": null
         }
       ]
     }

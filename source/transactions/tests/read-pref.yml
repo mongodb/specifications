@@ -9,8 +9,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertMany
         object: collection
         arguments:
@@ -56,8 +56,8 @@ tests:
           session: session0
         result: *insertedDocs
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     outcome:
       collection:
@@ -67,8 +67,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Primary
@@ -115,8 +115,8 @@ tests:
           session: session0
         result: *insertedDocs
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     outcome:
       collection:
@@ -126,8 +126,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Secondary
@@ -177,8 +177,8 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     outcome:
       collection:
@@ -188,8 +188,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: PrimaryPreferred
@@ -239,8 +239,8 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     outcome:
       collection:
@@ -250,8 +250,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Nearest
@@ -301,8 +301,8 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     outcome:
       collection:
@@ -312,8 +312,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Secondary
@@ -326,8 +326,8 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     outcome:
       collection:

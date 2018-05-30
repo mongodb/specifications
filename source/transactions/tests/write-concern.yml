@@ -9,8 +9,8 @@ tests:
   - description: commit with majority
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: majority
@@ -23,8 +23,8 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -64,8 +64,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -75,8 +75,8 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -116,8 +116,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: majority
@@ -130,8 +130,8 @@ tests:
         result:
           insertedId: 1
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -170,8 +170,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -181,8 +181,8 @@ tests:
         result:
           insertedId: 1
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:

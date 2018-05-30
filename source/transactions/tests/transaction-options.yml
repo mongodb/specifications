@@ -8,8 +8,8 @@ tests:
 
     operations: &commitAbortOperations
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -19,12 +19,12 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       # Now test abort.
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -34,8 +34,8 @@ tests:
         result:
           insertedId: 2
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -261,8 +261,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readConcern:
               level: snapshot
@@ -277,11 +277,11 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readConcern:
               level: snapshot
@@ -296,8 +296,8 @@ tests:
         result:
           insertedId: 2
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -527,8 +527,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readConcern:
               level: snapshot
@@ -541,12 +541,12 @@ tests:
         result:
           insertedId: 1
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
       # Now test abort.
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readConcern:
               level: snapshot
@@ -559,8 +559,8 @@ tests:
         result:
           insertedId: 2
       - name: abortTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -630,8 +630,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             writeConcern:
               w: 1
@@ -651,8 +651,8 @@ tests:
           upsertedCount: 0
           upsertedIds: {}
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -693,8 +693,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -712,8 +712,8 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -762,8 +762,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
       - name: insertOne
         object: collection
         arguments:
@@ -781,8 +781,8 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
@@ -831,8 +831,8 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Secondary
@@ -853,8 +853,8 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
+        object: session0
         arguments:
-          session: session0
 
     expectations:
       - command_started_event:
