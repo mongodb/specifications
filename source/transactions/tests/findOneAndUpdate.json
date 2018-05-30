@@ -24,6 +24,7 @@
           "name": "findOneAndUpdate",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 3
             },
@@ -32,8 +33,7 @@
                 "x": 1
               }
             },
-            "returnDocument": "Before",
-            "session": "session0"
+            "returnDocument": "Before"
           },
           "result": {
             "_id": 3
@@ -43,6 +43,7 @@
           "name": "findOneAndUpdate",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 4
             },
@@ -52,8 +53,7 @@
               }
             },
             "upsert": true,
-            "returnDocument": "After",
-            "session": "session0"
+            "returnDocument": "After"
           },
           "result": {
             "_id": 4,
@@ -72,6 +72,7 @@
           "name": "findOneAndUpdate",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 3
             },
@@ -80,8 +81,7 @@
                 "x": 1
               }
             },
-            "returnDocument": "Before",
-            "session": "session0"
+            "returnDocument": "Before"
           },
           "result": {
             "_id": 3,
@@ -100,6 +100,7 @@
           "name": "findOneAndUpdate",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 3
             },
@@ -108,8 +109,7 @@
                 "x": 1
               }
             },
-            "returnDocument": "Before",
-            "session": "session0"
+            "returnDocument": "Before"
           },
           "result": {
             "_id": 3,
@@ -327,6 +327,7 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 3
             },
@@ -335,8 +336,7 @@
                 "x": 1
               }
             },
-            "returnDocument": "Before",
-            "session": "session0"
+            "returnDocument": "Before"
           },
           "result": {
             "_id": 3

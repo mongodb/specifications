@@ -14,10 +14,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 1
@@ -48,10 +48,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 4
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 4
@@ -69,10 +69,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 5
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 5
@@ -245,10 +245,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 1
@@ -313,10 +313,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 1

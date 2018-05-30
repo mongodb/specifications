@@ -24,10 +24,10 @@
           "name": "findOneAndDelete",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 3
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "_id": 3
@@ -37,10 +37,10 @@
           "name": "findOneAndDelete",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 4
-            },
-            "session": "session0"
+            }
           },
           "result": null
         },
@@ -146,10 +146,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 3
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "_id": 3

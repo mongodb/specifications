@@ -14,11 +14,11 @@ tests:
         name: updateOne
         object: collection
         arguments:
+          session: session0
           filter: {_id: 1}
           update:
             $inc: {count: 1}
           upsert: false
-          session: session0
         result:
           matchedCount: 1
           modifiedCount: 1
@@ -98,9 +98,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 2
-          session: session0
         result:
           insertedId: 2
       - name: startTransaction
@@ -108,11 +108,11 @@ tests:
       - name: updateOne
         object: collection
         arguments:
+          session: session0
           filter: {_id: 1}
           update:
             $inc: {count: 1}
           upsert: false
-          session: session0
         result:
           matchedCount: 1
           modifiedCount: 1

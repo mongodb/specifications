@@ -15,14 +15,14 @@ tests:
       - name: findOneAndDelete
         object: collection
         arguments:
-          filter: {_id: 3}
           session: session0
+          filter: {_id: 3}
         result: {_id: 3}
       - name: findOneAndDelete
         object: collection
         arguments:
-          filter: {_id: 4}
           session: session0
+          filter: {_id: 4}
         result:
       - name: commitTransaction
         object: session0
@@ -90,8 +90,8 @@ tests:
           writeConcern:
             w: majority
         arguments:
-          filter: {_id: 3}
           session: session0
+          filter: {_id: 3}
         result: {_id: 3}
       - name: commitTransaction
         object: session0

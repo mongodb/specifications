@@ -15,21 +15,21 @@ tests:
       - name: findOneAndUpdate
         object: collection
         arguments:
+          session: session0
           filter: {_id: 3}
           update:
             $inc: {x: 1}
           returnDocument: Before
-          session: session0
         result: {_id: 3}
       - name: findOneAndUpdate
         object: collection
         arguments:
+          session: session0
           filter: {_id: 4}
           update:
             $inc: {x: 1}
           upsert: true
           returnDocument: After
-          session: session0
         result: {_id: 4, x: 1}
       - name: commitTransaction
         object: session0
@@ -39,11 +39,11 @@ tests:
       - name: findOneAndUpdate
         object: collection
         arguments:
+          session: session0
           filter: {_id: 3}
           update:
             $inc: {x: 1}
           returnDocument: Before
-          session: session0
         result: {_id: 3, x: 1}
       - name: commitTransaction
         object: session0
@@ -53,11 +53,11 @@ tests:
       - name: findOneAndUpdate
         object: collection
         arguments:
+          session: session0
           filter: {_id: 3}
           update:
             $inc: {x: 1}
           returnDocument: Before
-          session: session0
         result: {_id: 3, x: 2}
       - name: abortTransaction
         object: session0
@@ -186,11 +186,11 @@ tests:
           writeConcern:
             w: majority
         arguments:
+          session: session0
           filter: {_id: 3}
           update:
             $inc: {x: 1}
           returnDocument: Before
-          session: session0
         result: {_id: 3}
       - name: commitTransaction
         object: session0

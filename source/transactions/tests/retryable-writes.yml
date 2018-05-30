@@ -15,9 +15,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
@@ -26,9 +26,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 2
-          session: session0
         result:
           insertedId: 2
       # Next transaction should include the next txnNumber
@@ -37,9 +37,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 3
-          session: session0
         result:
           insertedId: 3
       - name: abortTransaction

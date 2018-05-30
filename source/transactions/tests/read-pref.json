@@ -48,10 +48,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": 1
         },
@@ -64,8 +64,8 @@
             }
           },
           "arguments": {
-            "batchSize": 3,
-            "session": "session0"
+            "session": "session0",
+            "batchSize": 3
           },
           "result": [
             {
@@ -192,10 +192,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": 1
         },
@@ -208,8 +208,8 @@
             }
           },
           "arguments": {
-            "batchSize": 3,
-            "session": "session0"
+            "session": "session0",
+            "batchSize": 3
           },
           "result": [
             {
@@ -336,10 +336,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "errorContains": "read preference in a transaction must be primary"
@@ -354,8 +354,8 @@
             }
           },
           "arguments": {
-            "batchSize": 3,
-            "session": "session0"
+            "session": "session0",
+            "batchSize": 3
           },
           "result": {
             "errorContains": "read preference in a transaction must be primary"
@@ -447,10 +447,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "errorContains": "read preference in a transaction must be primary"
@@ -465,8 +465,8 @@
             }
           },
           "arguments": {
-            "batchSize": 3,
-            "session": "session0"
+            "session": "session0",
+            "batchSize": 3
           },
           "result": {
             "errorContains": "read preference in a transaction must be primary"
@@ -558,10 +558,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "errorContains": "read preference in a transaction must be primary"
@@ -576,8 +576,8 @@
             }
           },
           "arguments": {
-            "batchSize": 3,
-            "session": "session0"
+            "session": "session0",
+            "batchSize": 3
           },
           "result": {
             "errorContains": "read preference in a transaction must be primary"
@@ -635,10 +635,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 1

@@ -15,11 +15,11 @@ tests:
       - name: updateOne
         object: collection
         arguments:
+          session: session0
           filter: {_id: 4}
           update:
             $inc: {x: 1}
           upsert: true
-          session: session0
         result:
           matchedCount: 0
           modifiedCount: 0
@@ -28,9 +28,9 @@ tests:
       - name: replaceOne
         object: collection
         arguments:
+          session: session0
           filter: {x: 1}
           replacement: {y: 1}
-          session: session0
         result:
           matchedCount: 1
           modifiedCount: 1
@@ -38,11 +38,11 @@ tests:
       - name: updateMany
         object: collection
         arguments:
+          session: session0
           filter:
             _id: {$gte: 3}
           update:
             $set: {z: 1}
-          session: session0
         result:
           matchedCount: 2
           modifiedCount: 2
@@ -138,11 +138,11 @@ tests:
           writeConcern:
             w: majority
         arguments:
+          session: session0
           filter: {_id: 4}
           update:
             $inc: {x: 1}
           upsert: true
-          session: session0
         result:
           matchedCount: 0
           modifiedCount: 0
@@ -154,9 +154,9 @@ tests:
           writeConcern:
             w: majority
         arguments:
+          session: session0
           filter: {x: 1}
           replacement: {y: 1}
-          session: session0
         result:
           matchedCount: 1
           modifiedCount: 1
@@ -167,11 +167,11 @@ tests:
           writeConcern:
             w: majority
         arguments:
+          session: session0
           filter:
             _id: {$gte: 3}
           update:
             $set: {z: 1}
-          session: session0
         result:
           matchedCount: 2
           modifiedCount: 2

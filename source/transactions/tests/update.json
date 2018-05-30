@@ -24,6 +24,7 @@
           "name": "updateOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 4
             },
@@ -32,8 +33,7 @@
                 "x": 1
               }
             },
-            "upsert": true,
-            "session": "session0"
+            "upsert": true
           },
           "result": {
             "matchedCount": 0,
@@ -46,13 +46,13 @@
           "name": "replaceOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "x": 1
             },
             "replacement": {
               "y": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "matchedCount": 1,
@@ -64,6 +64,7 @@
           "name": "updateMany",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": {
                 "$gte": 3
@@ -73,8 +74,7 @@
               "$set": {
                 "z": 1
               }
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "matchedCount": 2,
@@ -244,6 +244,7 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 4
             },
@@ -252,8 +253,7 @@
                 "x": 1
               }
             },
-            "upsert": true,
-            "session": "session0"
+            "upsert": true
           },
           "result": {
             "matchedCount": 0,
@@ -271,13 +271,13 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "x": 1
             },
             "replacement": {
               "y": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "matchedCount": 1,
@@ -294,6 +294,7 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": {
                 "$gte": 3
@@ -303,8 +304,7 @@
               "$set": {
                 "z": 1
               }
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "matchedCount": 2,

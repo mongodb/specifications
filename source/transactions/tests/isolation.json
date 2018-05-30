@@ -14,10 +14,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 1
@@ -27,10 +27,10 @@
           "name": "find",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": [
             {
@@ -42,10 +42,10 @@
           "name": "find",
           "object": "collection",
           "arguments": {
+            "session": "session1",
             "filter": {
               "_id": 1
-            },
-            "session": "session1"
+            }
           },
           "result": []
         },
@@ -67,10 +67,10 @@
           "name": "find",
           "object": "collection",
           "arguments": {
+            "session": "session1",
             "filter": {
               "_id": 1
-            },
-            "session": "session1"
+            }
           },
           "result": [
             {
@@ -118,10 +118,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 1
@@ -131,10 +131,10 @@
           "name": "find",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": [
             {
@@ -146,10 +146,10 @@
           "name": "find",
           "object": "collection",
           "arguments": {
+            "session": "session1",
             "filter": {
               "_id": 1
-            },
-            "session": "session1"
+            }
           },
           "result": []
         },
@@ -171,10 +171,10 @@
           "name": "find",
           "object": "collection",
           "arguments": {
+            "session": "session1",
             "filter": {
               "_id": 1
-            },
-            "session": "session1"
+            }
           },
           "result": []
         },

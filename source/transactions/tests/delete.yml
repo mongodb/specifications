@@ -17,25 +17,25 @@ tests:
       - name: deleteOne
         object: collection
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           deletedCount: 1
       - name: deleteMany
         object: collection
         arguments:
+          session: session0
           filter:
             _id: {$lte: 3}
-          session: session0
         result:
           deletedCount: 2
       - name: deleteOne
         object: collection
         arguments:
+          session: session0
           filter:
             _id: 4
-          session: session0
         result:
           deletedCount: 1
       - name: commitTransaction
@@ -119,9 +119,9 @@ tests:
           writeConcern:
             w: majority
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           deletedCount: 1
       - name: deleteMany
@@ -130,9 +130,9 @@ tests:
           writeConcern:
             w: majority
         arguments:
+          session: session0
           filter:
             _id: {$lte: 3}
-          session: session0
         result:
           deletedCount: 2
       - name: commitTransaction

@@ -15,6 +15,7 @@
           "name": "updateOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
             },
@@ -23,8 +24,7 @@
                 "count": 1
               }
             },
-            "upsert": false,
-            "session": "session0"
+            "upsert": false
           },
           "result": {
             "matchedCount": 1,
@@ -40,6 +40,7 @@
           "name": "updateOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
             },
@@ -48,8 +49,7 @@
                 "count": 1
               }
             },
-            "upsert": false,
-            "session": "session0"
+            "upsert": false
           },
           "result": {
             "matchedCount": 1,
@@ -167,10 +167,10 @@
           "name": "insertOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 2
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "insertedId": 2
@@ -184,6 +184,7 @@
           "name": "updateOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
             },
@@ -192,8 +193,7 @@
                 "count": 1
               }
             },
-            "upsert": false,
-            "session": "session0"
+            "upsert": false
           },
           "result": {
             "matchedCount": 1,

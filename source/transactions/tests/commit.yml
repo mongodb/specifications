@@ -11,9 +11,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
@@ -24,9 +24,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 2
-          session: session0
         result:
           insertedId: 2
       - name: commitTransaction
@@ -108,9 +108,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
@@ -157,9 +157,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
@@ -236,9 +236,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
@@ -299,9 +299,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: abortTransaction
@@ -347,9 +347,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: abortTransaction
@@ -368,9 +368,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: abortTransaction
@@ -444,9 +444,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
@@ -456,9 +456,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 2
-          session: session0
         result:
           insertedId: 2
       # Calling commit again should error instead of re-running the commit.
@@ -522,9 +522,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: abortTransaction
@@ -534,9 +534,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 2
-          session: session0
         result:
           insertedId: 2
       # Calling abort should error with "no transaction started" instead of

@@ -30,10 +30,10 @@
           "name": "deleteOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "deletedCount": 1
@@ -43,12 +43,12 @@
           "name": "deleteMany",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": {
                 "$lte": 3
               }
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "deletedCount": 2
@@ -58,10 +58,10 @@
           "name": "deleteOne",
           "object": "collection",
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 4
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "deletedCount": 1
@@ -201,10 +201,10 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": 1
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "deletedCount": 1
@@ -219,12 +219,12 @@
             }
           },
           "arguments": {
+            "session": "session0",
             "filter": {
               "_id": {
                 "$lte": 3
               }
-            },
-            "session": "session0"
+            }
           },
           "result": {
             "deletedCount": 2

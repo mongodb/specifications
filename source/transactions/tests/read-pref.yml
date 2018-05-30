@@ -29,9 +29,9 @@ tests:
           readPreference:
             mode: Secondary
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result: 1
       - name: find
         object: collection
@@ -39,8 +39,8 @@ tests:
           readPreference:
             mode: Secondary
         arguments:
-          batchSize: 3
           session: session0
+          batchSize: 3
         result: *insertedDocs
       - name: aggregate
         object: collection
@@ -87,9 +87,9 @@ tests:
           readPreference:
             mode: Secondary
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result: 1
       - name: find
         object: collection
@@ -97,8 +97,8 @@ tests:
           readPreference:
             mode: Secondary
         arguments:
-          batchSize: 3
           session: session0
+          batchSize: 3
         result: *insertedDocs
       - name: aggregate
         object: collection
@@ -145,9 +145,9 @@ tests:
           readPreference:
             mode: Primary
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
@@ -156,8 +156,8 @@ tests:
           readPreference:
             mode: Primary
         arguments:
-          batchSize: 3
           session: session0
+          batchSize: 3
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
@@ -206,9 +206,9 @@ tests:
           readPreference:
             mode: Primary
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
@@ -217,8 +217,8 @@ tests:
           readPreference:
             mode: Primary
         arguments:
-          batchSize: 3
           session: session0
+          batchSize: 3
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
@@ -267,9 +267,9 @@ tests:
           readPreference:
             mode: Primary
         arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
@@ -278,8 +278,8 @@ tests:
           readPreference:
             mode: Primary
         arguments:
-          batchSize: 3
           session: session0
+          batchSize: 3
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
@@ -314,9 +314,9 @@ tests:
       - name: insertOne
         object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
