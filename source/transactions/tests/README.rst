@@ -41,12 +41,15 @@ Each YAML file has the following keys:
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
 
-      - ``name``: The name of the operation.
+      - ``name``: The name of the operation on ``object``.
+
+      - ``object``: The name of the object to perform the operation on. Can be
+        "collection", "session0", or "session1".
 
       - ``collectionOptions``: Optional, parameters to pass to the Collection()
         used for this operation.
 
-      - ``arguments``: The names and values of arguments.
+      - ``arguments``: Optional, the names and values of arguments.
 
       - ``result``: The return value from the operation, if any. If the
         operation is expected to return an error, the ``result`` has one field,
@@ -99,19 +102,11 @@ For each YAML file, for each element in ``tests``:
 #. For each element in ``operations``:
 
    - Enter a "try" block or your programming language's closest equivalent.
-   - If ``name`` is "startTransaction", "commitTransaction", or
-     "abortTransaction", call the named method on ``session0`` or
-     ``session1``, depending on the "session" argument. 
-   - If ``name`` is "runCommand", call the runCommand method on the database
-     specified in the test. Pass the argument named "command" to the runCommand 
-     method. Pass ``session0`` or ``session1`` to the runCommand method, depending 
-     on which session's name is in the arguments list. If ``arguments`` 
-     contains no "session", pass no explicit session to the method. If ``arguments`` 
-     includes "readPreference", also pass the read preference to the runCommand 
-     method.    
-   - Otherwise, ``name`` refers to a CRUD method, such as ``insertOne``.
-     Execute the named method on the "transactions-tests" database on the "test"
-     collection (with the optional ``collectionOptions``), passing the
+   - Create a collection object from the MongoClient, using the
+     ``database_name`` and ``collection_name`` fields at the top level file.
+     If ``collectionOptions`` is present create the collection object with the
+     provided options. Otherwise create the object with the default options.
+   - Execute the named method on the provided ``object``, passing the
      arguments listed. Pass ``session0`` or ``session1`` to the method,
      depending on which session's name is in the arguments list.
      If ``arguments`` contains no "session", pass no explicit session to the
