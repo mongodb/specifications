@@ -9,7 +9,6 @@ tests:
     operations: &commitAbortOperations
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -20,11 +19,9 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       # Now test abort.
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -35,7 +32,6 @@ tests:
           insertedId: 2
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -278,7 +274,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session0
         arguments:
@@ -297,7 +292,6 @@ tests:
           insertedId: 2
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -542,7 +536,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       # Now test abort.
       - name: startTransaction
         object: session0
@@ -560,7 +553,6 @@ tests:
           insertedId: 2
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -652,7 +644,6 @@ tests:
           upsertedIds: {}
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -694,7 +685,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -713,7 +703,6 @@ tests:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -763,7 +752,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -782,7 +770,6 @@ tests:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -854,7 +841,6 @@ tests:
           errorContains: read preference in a transaction must be primary
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:

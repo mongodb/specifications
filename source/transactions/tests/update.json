@@ -18,8 +18,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "updateOne",
@@ -85,8 +84,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -316,8 +314,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [

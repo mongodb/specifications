@@ -24,7 +24,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -65,7 +64,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -76,7 +74,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -131,7 +128,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -171,7 +167,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -182,7 +177,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:

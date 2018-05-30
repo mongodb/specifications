@@ -9,7 +9,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -20,10 +19,8 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -34,7 +31,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -102,7 +98,6 @@ tests:
       # from ClientSession.endSession().
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -149,7 +144,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -160,10 +154,8 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
       - name: abortTransaction
         object: session0
-        arguments:
         result:
           errorContains: cannot call abortTransaction twice
 
@@ -204,7 +196,6 @@ tests:
     operations:
       - name: abortTransaction
         object: session0
-        arguments:
         result:
           errorContains: no transaction started
 
@@ -219,10 +210,8 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
       - name: abortTransaction  # Error calling abort after no-op commit.
         arguments:
           session: session0
@@ -240,7 +229,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -251,7 +239,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       - name: abortTransaction  # Error calling abort after commit.
         arguments:
           session: session0
@@ -296,7 +283,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -326,7 +312,6 @@ tests:
       # abortTransaction must ignore the TransactionAborted and succeed.
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -410,7 +395,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
         # No CannotSatisfyWriteConcern error.
 
     outcome:

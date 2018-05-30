@@ -8,8 +8,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -62,8 +61,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "find",
@@ -110,13 +108,11 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session1",
-          "arguments": null
+          "object": "session1"
         },
         {
           "name": "insertOne",
@@ -169,8 +165,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "find",
@@ -199,8 +194,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session1",
-          "arguments": null
+          "object": "session1"
         }
       ],
       "outcome": {

@@ -8,8 +8,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertMany",
@@ -119,8 +118,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {
@@ -264,8 +262,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {
@@ -389,8 +386,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {
@@ -501,8 +497,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {
@@ -613,8 +608,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {
@@ -652,8 +646,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {

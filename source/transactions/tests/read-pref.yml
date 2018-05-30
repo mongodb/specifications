@@ -10,7 +10,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertMany
         object: collection
         arguments:
@@ -57,7 +56,6 @@ tests:
         result: *insertedDocs
       - name: commitTransaction
         object: session0
-        arguments:
 
     outcome:
       collection:
@@ -116,7 +114,6 @@ tests:
         result: *insertedDocs
       - name: commitTransaction
         object: session0
-        arguments:
 
     outcome:
       collection:
@@ -178,7 +175,6 @@ tests:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
         object: session0
-        arguments:
 
     outcome:
       collection:
@@ -240,7 +236,6 @@ tests:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
         object: session0
-        arguments:
 
     outcome:
       collection:
@@ -302,7 +297,6 @@ tests:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
         object: session0
-        arguments:
 
     outcome:
       collection:
@@ -327,7 +321,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
 
     outcome:
       collection:

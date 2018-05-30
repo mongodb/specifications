@@ -8,8 +8,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -26,13 +25,11 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -49,8 +46,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -146,8 +142,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -215,8 +210,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -233,13 +227,11 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "abortTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "cannot call abortTransaction twice"
           }
@@ -298,7 +290,6 @@
         {
           "name": "abortTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "no transaction started"
           }
@@ -316,13 +307,11 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "abortTransaction",
@@ -346,8 +335,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -364,8 +352,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "abortTransaction",
@@ -433,8 +420,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -477,8 +463,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -603,8 +588,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "outcome": {

@@ -18,8 +18,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "findOneAndUpdate",
@@ -63,13 +62,11 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "findOneAndUpdate",
@@ -93,13 +90,11 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "findOneAndUpdate",
@@ -123,8 +118,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -350,8 +344,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [

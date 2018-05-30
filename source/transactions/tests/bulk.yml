@@ -9,7 +9,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -92,7 +91,6 @@ tests:
           upsertedIds: {2: 2}
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:

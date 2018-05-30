@@ -8,8 +8,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -26,13 +25,11 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -49,8 +46,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -153,23 +149,19 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -186,8 +178,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -246,8 +237,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -264,18 +254,15 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -391,7 +378,6 @@
         {
           "name": "commitTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorCodeName": "CannotSatisfyWriteConcern"
           }
@@ -413,7 +399,6 @@
         {
           "name": "commitTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "no transaction started"
           }
@@ -431,18 +416,15 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "Cannot call commitTransaction after calling abortTransaction"
           }
@@ -460,8 +442,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -478,13 +459,11 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "Cannot call commitTransaction after calling abortTransaction"
           }
@@ -537,8 +516,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -555,28 +533,23 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -593,8 +566,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -690,8 +662,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -708,8 +679,7 @@
         },
         {
           "name": "commitTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -727,7 +697,6 @@
         {
           "name": "commitTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "no transaction started"
           }
@@ -812,8 +781,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -830,8 +798,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "arguments": null
+          "object": "session0"
         },
         {
           "name": "insertOne",
@@ -849,7 +816,6 @@
         {
           "name": "abortTransaction",
           "object": "session0",
-          "arguments": null,
           "result": {
             "errorContains": "no transaction started"
           }

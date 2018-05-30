@@ -8,7 +8,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -19,24 +18,20 @@ tests:
           insertedId: 1
       - name: startTransaction
         object: session0
-        arguments:
         result:
           # Client-side error.
           errorContains: transaction already in progress
       # Just to clean up.
       - name: commitTransaction
         object: session0
-        arguments:
 
   - description: start twice
 
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session0
-        arguments:
         result:
           # Client-side error.
           errorContains: transaction already in progress
@@ -46,7 +41,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -57,13 +51,10 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session0
-        arguments:
         result:
           # Client-side error.
           errorContains: transaction already in progress
@@ -73,7 +64,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -84,7 +74,6 @@ tests:
           insertedId: 1
       - name: startTransaction
         object: session1
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -95,10 +84,8 @@ tests:
           errorCodeName: WriteConflict
       - name: commitTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session1
-        arguments:
         result:
           errorCodeName: NoSuchTransaction
 
@@ -107,7 +94,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -118,7 +104,6 @@ tests:
           insertedId: 1
       - name: startTransaction
         object: session1
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -129,8 +114,6 @@ tests:
           errorCodeName: WriteConflict
       - name: commitTransaction
         object: session0
-        arguments:
       # Driver ignores "NoSuchTransaction" error.
       - name: abortTransaction
         object: session1
-        arguments:

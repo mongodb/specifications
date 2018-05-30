@@ -14,7 +14,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: deleteOne
         object: collection
         arguments:
@@ -41,7 +40,6 @@ tests:
           deletedCount: 1
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -139,7 +137,6 @@ tests:
           deletedCount: 2
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:

@@ -12,7 +12,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: findOneAndReplace
         object: collection
         arguments:
@@ -32,7 +31,6 @@ tests:
         result: {_id: 4, x: 1}
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -109,7 +107,6 @@ tests:
         result: {_id: 3}
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:

@@ -11,7 +11,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -43,7 +42,6 @@ tests:
         result: []
       - name: commitTransaction
         object: session0
-        arguments:
       - name: find
         object: collection
         arguments:
@@ -70,10 +68,8 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session1
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -105,7 +101,6 @@ tests:
         result: []
       - name: commitTransaction
         object: session0
-        arguments:
       # Snapshot isolation in session1, not read-committed.
       - name: find
         object: collection
@@ -123,7 +118,6 @@ tests:
           - {_id: 1}
       - name: commitTransaction
         object: session1
-        arguments:
 
     outcome:
       collection:

@@ -8,7 +8,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -19,11 +18,9 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       # Again, to verify that txnNumber is incremented.
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -34,7 +31,6 @@ tests:
           insertedId: 2
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -102,17 +98,13 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
       # Rerun the commit (which does not increment the txnNumber).
       - name: commitTransaction
         object: session0
-        arguments:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -123,7 +115,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -163,7 +154,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -174,13 +164,10 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -256,7 +243,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
         result:
           # {
           #   'ok': 1.0,
@@ -278,7 +264,6 @@ tests:
     operations:
       - name: commitTransaction
         object: session0
-        arguments:
         result:
           errorContains: no transaction started
 
@@ -293,13 +278,10 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: abortTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
         result:
           errorContains: Cannot call commitTransaction after calling abortTransaction
 
@@ -314,7 +296,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -325,10 +306,8 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
         result:
           errorContains: Cannot call commitTransaction after calling abortTransaction
 
@@ -365,7 +344,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -376,22 +354,17 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
       # Increments txnNumber.
       - name: startTransaction
         object: session0
-        arguments:
       # These commits aren't sent to server, transaction is empty.
       - name: commitTransaction
         object: session0
-        arguments:
       - name: commitTransaction
         object: session0
-        arguments:
       # Verify that previous, empty transaction incremented txnNumber.
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -402,7 +375,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -469,7 +441,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -480,7 +451,6 @@ tests:
           insertedId: 1
       - name: commitTransaction
         object: session0
-        arguments:
       # Running any operation after an ended transaction resets the session
       # state to "no transaction".
       - name: insertOne
@@ -494,7 +464,6 @@ tests:
       # Calling commit again should error instead of re-running the commit.
       - name: commitTransaction
         object: session0
-        arguments:
         result:
           errorContains: no transaction started
 
@@ -550,7 +519,6 @@ tests:
     operations:
       - name: startTransaction
         object: session0
-        arguments:
       - name: insertOne
         object: collection
         arguments:
@@ -561,7 +529,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        arguments:
       # Running any operation after an ended transaction resets the session
       # state to "no transaction".
       - name: insertOne
@@ -576,7 +543,6 @@ tests:
       # "cannot call abortTransaction twice".
       - name: abortTransaction
         object: session0
-        arguments:
         result:
           errorContains: no transaction started
 

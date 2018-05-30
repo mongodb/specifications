@@ -27,11 +27,9 @@ tests:
       # after the first updateOne.
       - name: startTransaction
         object: session0
-        arguments:
       - *updateOne
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
@@ -106,7 +104,6 @@ tests:
           insertedId: 2
       - name: startTransaction
         object: session0
-        arguments:
       - name: updateOne
         object: collection
         arguments:
@@ -121,7 +118,6 @@ tests:
           upsertedCount: 0
       - name: commitTransaction
         object: session0
-        arguments:
 
     expectations:
       - command_started_event:
