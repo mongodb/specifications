@@ -13,6 +13,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -20,6 +21,7 @@ tests:
         result:
           insertedId: 1
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -27,12 +29,14 @@ tests:
         result:
           - {_id: 1}
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
           session: session1
         result: []
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -41,6 +45,7 @@ tests:
         arguments:
           session: session0
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -48,6 +53,7 @@ tests:
         result:
           - {_id: 1}
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -69,6 +75,7 @@ tests:
         arguments:
           session: session1
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -76,6 +83,7 @@ tests:
         result:
           insertedId: 1
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -83,12 +91,14 @@ tests:
         result:
           - {_id: 1}
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
           session: session1
         result: []
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -98,12 +108,14 @@ tests:
           session: session0
       # Snapshot isolation in session1, not read-committed.
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1
           session: session1
         result: []
       - name: find
+        object: collection
         arguments:
           filter:
             _id: 1

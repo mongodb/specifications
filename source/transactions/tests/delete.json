@@ -30,6 +30,7 @@
         },
         {
           "name": "deleteOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1
@@ -42,6 +43,7 @@
         },
         {
           "name": "deleteMany",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": {
@@ -56,6 +58,7 @@
         },
         {
           "name": "deleteOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 4
@@ -195,6 +198,7 @@
         },
         {
           "name": "deleteOne",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"
@@ -212,6 +216,7 @@
         },
         {
           "name": "deleteMany",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"

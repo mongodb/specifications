@@ -11,6 +11,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -18,6 +19,7 @@ tests:
         result:
           insertedId: 1
       - name: deleteOne
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -25,6 +27,7 @@ tests:
         result:
           deletedCount: 1
       - name: bulkWrite
+        object: collection
         arguments:
           requests:
             - name: insertOne

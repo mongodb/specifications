@@ -11,6 +11,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -18,6 +19,7 @@ tests:
         result:
           insertedId: 1
       - name: insertMany
+        object: collection
         arguments:
           documents:
             - _id: 2
@@ -26,6 +28,7 @@ tests:
         result:
           insertedIds: {0: 2, 1: 3}
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 4
@@ -39,6 +42,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 5
@@ -145,6 +149,7 @@ tests:
   - description: collection writeConcern without transaction
     operations:
       - name: insertOne
+        object: collection
         collectionOptions:
           writeConcern:
             w: majority
@@ -186,6 +191,7 @@ tests:
             writeConcern:
               w: majority
       - name: insertOne
+        object: collection
         collectionOptions:
           writeConcern:
             w: majority
@@ -196,6 +202,7 @@ tests:
         result:
           insertedId: 1
       - name: insertMany
+        object: collection
         collectionOptions:
           writeConcern:
             w: majority

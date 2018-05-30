@@ -21,6 +21,7 @@
       "operations": [
         {
           "name": "find",
+          "object": "collection",
           "collectionOptions": {
             "readConcern": {
               "level": "majority"
@@ -569,6 +570,7 @@
         },
         {
           "name": "distinct",
+          "object": "collection",
           "arguments": {
             "fieldName": "_id",
             "session": "session0"

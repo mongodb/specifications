@@ -14,6 +14,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "arguments": {
             "documents": [
               {
@@ -42,6 +43,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
@@ -57,6 +59,7 @@
         },
         {
           "name": "find",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
@@ -83,6 +86,7 @@
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
@@ -156,6 +160,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "arguments": {
             "documents": [
               {
@@ -184,6 +189,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
@@ -199,6 +205,7 @@
         },
         {
           "name": "find",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
@@ -225,6 +232,7 @@
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Secondary"
@@ -298,6 +306,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "arguments": {
             "documents": [
               {
@@ -326,6 +335,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -343,6 +353,7 @@
         },
         {
           "name": "find",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -358,6 +369,7 @@
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -407,6 +419,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "arguments": {
             "documents": [
               {
@@ -435,6 +448,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -452,6 +466,7 @@
         },
         {
           "name": "find",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -467,6 +482,7 @@
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -516,6 +532,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "arguments": {
             "documents": [
               {
@@ -544,6 +561,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -561,6 +579,7 @@
         },
         {
           "name": "find",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -576,6 +595,7 @@
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "collectionOptions": {
             "readPreference": {
               "mode": "Primary"
@@ -625,6 +645,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1

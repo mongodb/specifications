@@ -11,6 +11,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -24,6 +25,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -102,6 +104,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -148,6 +151,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -238,6 +242,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -293,6 +298,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -301,6 +307,7 @@ tests:
           insertedId: 1
       # Abort the server transaction with a duplicate key error.
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -309,6 +316,7 @@ tests:
           errorCodeName: DuplicateKey
       # Make sure the server aborted the transaction.
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -393,6 +401,7 @@ tests:
             writeConcern:
               w: 10
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1

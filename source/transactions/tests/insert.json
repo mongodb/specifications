@@ -14,6 +14,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -26,6 +27,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "arguments": {
             "documents": [
               {
@@ -46,6 +48,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 4
@@ -70,6 +73,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 5
@@ -242,6 +246,7 @@
       "operations": [
         {
           "name": "insertOne",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"
@@ -309,6 +314,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"
@@ -326,6 +332,7 @@
         },
         {
           "name": "insertMany",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"

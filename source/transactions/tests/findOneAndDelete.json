@@ -24,6 +24,7 @@
         },
         {
           "name": "findOneAndDelete",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 3
@@ -36,6 +37,7 @@
         },
         {
           "name": "findOneAndDelete",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 4
@@ -141,6 +143,7 @@
         },
         {
           "name": "findOneAndDelete",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"

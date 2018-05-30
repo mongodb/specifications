@@ -12,6 +12,7 @@ tests:
 
     operations:
       - name: find
+        object: collection
         collectionOptions:
           readConcern:
             level: majority
@@ -272,6 +273,7 @@ tests:
     operations:
       - *startTransaction
       - name: distinct
+        object: collection
         arguments:
           fieldName: _id
           session: session0

@@ -24,6 +24,7 @@
         },
         {
           "name": "updateOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 4
@@ -45,6 +46,7 @@
         },
         {
           "name": "replaceOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "x": 1
@@ -62,6 +64,7 @@
         },
         {
           "name": "updateMany",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": {
@@ -223,7 +226,7 @@
       }
     },
     {
-      "description": "collection writeConcern ignored for update",
+      "description": "collections writeConcern ignored for update",
       "operations": [
         {
           "name": "startTransaction",
@@ -238,6 +241,7 @@
         },
         {
           "name": "updateOne",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"
@@ -264,6 +268,7 @@
         },
         {
           "name": "replaceOne",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"
@@ -286,6 +291,7 @@
         },
         {
           "name": "updateMany",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"

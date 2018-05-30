@@ -10,6 +10,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -24,6 +25,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2
@@ -112,6 +114,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -162,6 +165,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -243,6 +247,7 @@ tests:
             writeConcern:
               w: 10
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -311,6 +316,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -361,6 +367,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -386,6 +393,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -463,6 +471,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -475,6 +484,7 @@ tests:
       # Running any operation after an ended transaction resets the session
       # state to "no transaction".
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2
@@ -542,6 +552,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -554,6 +565,7 @@ tests:
       # Running any operation after an ended transaction resets the session
       # state to "no transaction".
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2

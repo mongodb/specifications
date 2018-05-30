@@ -14,11 +14,13 @@ tests:
         arguments:
           session: session0
       - name: findOneAndDelete
+        object: collection
         arguments:
           filter: {_id: 3}
           session: session0
         result: {_id: 3}
       - name: findOneAndDelete
+        object: collection
         arguments:
           filter: {_id: 4}
           session: session0
@@ -85,6 +87,7 @@ tests:
             writeConcern:
               w: majority
       - name: findOneAndDelete
+        object: collection
         collectionOptions:
           writeConcern:
             w: majority

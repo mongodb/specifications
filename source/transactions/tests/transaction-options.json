@@ -14,6 +14,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -38,6 +39,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -164,6 +166,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -188,6 +191,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -329,6 +333,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -353,6 +358,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -506,6 +512,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -538,6 +545,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -683,6 +691,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -707,6 +716,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -848,6 +858,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -872,6 +883,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -1015,6 +1027,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -1044,6 +1057,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -1177,6 +1191,7 @@
         },
         {
           "name": "bulkWrite",
+          "object": "collection",
           "arguments": {
             "requests": [
               {
@@ -1275,6 +1290,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -1287,6 +1303,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1
@@ -1379,6 +1396,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -1391,6 +1409,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1
@@ -1488,6 +1507,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -1500,6 +1520,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1

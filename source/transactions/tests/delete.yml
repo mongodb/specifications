@@ -16,6 +16,7 @@ tests:
         arguments:
           session: session0
       - name: deleteOne
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -23,6 +24,7 @@ tests:
         result:
           deletedCount: 1
       - name: deleteMany
+        object: collection
         arguments:
           filter:
             _id: {$lte: 3}
@@ -30,6 +32,7 @@ tests:
         result:
           deletedCount: 2
       - name: deleteOne
+        object: collection
         arguments:
           filter:
             _id: 4
@@ -113,6 +116,7 @@ tests:
             writeConcern:
               w: majority
       - name: deleteOne
+        object: collection
         collectionOptions:
           writeConcern:
             w: majority
@@ -123,6 +127,7 @@ tests:
         result:
           deletedCount: 1
       - name: deleteMany
+        object: collection
         collectionOptions:
           writeConcern:
             w: majority

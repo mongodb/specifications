@@ -167,6 +167,7 @@
       "operations": [
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 2
@@ -185,6 +186,7 @@
         },
         {
           "name": "updateOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1

@@ -11,6 +11,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -25,6 +26,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2
@@ -267,6 +269,7 @@ tests:
             writeConcern:
               w: majority
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -285,6 +288,7 @@ tests:
             writeConcern:
               w: majority
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2
@@ -529,6 +533,7 @@ tests:
             readConcern:
               level: snapshot
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -546,6 +551,7 @@ tests:
             readConcern:
               level: snapshot
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2
@@ -630,6 +636,7 @@ tests:
             writeConcern:
               w: 1
       - name: bulkWrite
+        object: collection
         arguments:
           requests:
             - name: insertOne
@@ -689,6 +696,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -696,6 +704,7 @@ tests:
         result:
           insertedId: 1
       - name: count
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -756,6 +765,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -763,6 +773,7 @@ tests:
         result:
           insertedId: 1
       - name: count
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -826,6 +837,7 @@ tests:
             readPreference:
               mode: Secondary
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -833,6 +845,7 @@ tests:
         result:
           insertedId: 1
       - name: count
+        object: collection
         arguments:
           filter:
             _id: 1

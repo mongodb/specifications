@@ -15,6 +15,7 @@ tests:
             writeConcern:
               w: majority
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -66,6 +67,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -120,6 +122,7 @@ tests:
             writeConcern:
               w: majority
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1
@@ -170,6 +173,7 @@ tests:
         arguments:
           session: session0
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 1

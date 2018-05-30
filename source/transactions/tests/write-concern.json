@@ -19,6 +19,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -100,6 +101,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -184,6 +186,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1
@@ -261,6 +264,7 @@
         },
         {
           "name": "insertOne",
+          "object": "collection",
           "arguments": {
             "document": {
               "_id": 1

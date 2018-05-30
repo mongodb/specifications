@@ -97,6 +97,7 @@ tests:
     operations:
       # Insert a document without a transaction.
       - name: insertOne
+        object: collection
         arguments:
           document:
             _id: 2
@@ -107,6 +108,7 @@ tests:
         arguments:
           session: session0
       - name: updateOne
+        object: collection
         arguments:
           filter: {_id: 1}
           update:

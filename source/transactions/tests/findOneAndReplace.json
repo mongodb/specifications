@@ -24,6 +24,7 @@
         },
         {
           "name": "findOneAndReplace",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 3
@@ -40,6 +41,7 @@
         },
         {
           "name": "findOneAndReplace",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 4
@@ -168,6 +170,7 @@
         },
         {
           "name": "findOneAndReplace",
+          "object": "collection",
           "collectionOptions": {
             "writeConcern": {
               "w": "majority"
