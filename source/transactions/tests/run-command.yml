@@ -165,3 +165,21 @@ tests:
             mode: Secondary
         result:
           errorContains: read preference in a transaction must be primary
+
+  - description: run command fails with secondary read preference from transaction options
+
+    operations:
+      - name: startTransaction
+        arguments:
+          session: session0
+          options:
+            readPreference:
+              mode: secondary
+      - name: runCommand
+        arguments:
+          command: 
+            count: *collection_name
+          session: session0
+        result:
+          errorContains: read preference in a transaction must be primary
+

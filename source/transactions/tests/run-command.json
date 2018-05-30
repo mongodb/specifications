@@ -261,6 +261,34 @@
           }
         }
       ]
+    },
+    {
+      "description": "run command fails with secondary read preference from transaction options",
+      "operations": [
+        {
+          "name": "startTransaction",
+          "arguments": {
+            "session": "session0",
+            "options": {
+              "readPreference": {
+                "mode": "Secondary"
+              }
+            }
+          }
+        },
+        {
+          "name": "runCommand",
+          "arguments": {
+            "command": {
+              "count": "test"
+            },
+            "session": "session0"
+          },
+          "result": {
+            "errorContains": "read preference in a transaction must be primary"
+          }
+        }
+      ]
     }
   ]
 }
