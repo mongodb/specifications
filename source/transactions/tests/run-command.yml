@@ -13,10 +13,12 @@ tests:
       - name: runCommand
         arguments:
           command: 
-            count: *collection_name
+            insert: *collection_name
+            documents:
+              - _id : 1
           session: session0
         result:
-          n: 0 
+          n: 1
       - name: commitTransaction
         arguments:
           session: session0
@@ -24,7 +26,9 @@ tests:
     expectations:
       - command_started_event:
           command:
-            count: *collection_name
+            insert: *collection_name
+            documents: 
+              - _id : 1
             readConcern:
             lsid: session0
             txnNumber:
@@ -32,7 +36,7 @@ tests:
             startTransaction: true
             autocommit: false
             writeConcern:
-          command_name: count
+          command_name: insert
           database_name: *database_name
       - command_started_event:
           command:
@@ -61,10 +65,12 @@ tests:
       - name: runCommand
         arguments:
           command: 
-            count: *collection_name
+            insert: *collection_name
+            documents:
+              - _id : 1
           session: session0
         result:
-          n: 0 
+          n: 1
       - name: commitTransaction
         arguments:
           session: session0
@@ -72,7 +78,9 @@ tests:
     expectations:
       - command_started_event:
           command:
-            count: *collection_name
+            insert: *collection_name
+            documents:
+              - _id : 1
             readConcern:
             lsid: session0
             txnNumber:
@@ -80,7 +88,7 @@ tests:
             startTransaction: true
             autocommit: false
             writeConcern:
-          command_name: count
+          command_name: insert
           database_name: *database_name
       - command_started_event:
           command:
@@ -103,12 +111,14 @@ tests:
       - name: runCommand
         arguments:
           command: 
-            count: *collection_name
+            insert: *collection_name
+            documents:
+              - _id : 1
           session: session0
           readPreference:
             mode: Primary
         result:
-          n: 0 
+          n: 1
       - name: commitTransaction
         arguments:
           session: session0
@@ -116,7 +126,9 @@ tests:
     expectations:
       - command_started_event:
           command:
-            count: *collection_name
+            insert: *collection_name
+            documents:
+              - _id : 1
             readConcern:
             lsid: session0
             txnNumber:
@@ -124,7 +136,7 @@ tests:
             startTransaction: true
             autocommit: false
             writeConcern:
-          command_name: count
+          command_name: insert
           database_name: *database_name
       - command_started_event:
           command:
@@ -137,6 +149,7 @@ tests:
             writeConcern:
           command_name: commitTransaction
           database_name: admin
+
   - description: run command fails with explicit secondary read preference
 
     operations:
