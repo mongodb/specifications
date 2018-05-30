@@ -12,6 +12,7 @@ tests:
       # Update a document without a transaction.
       - &updateOne
         name: updateOne
+        object: collection
         arguments:
           filter: {_id: 1}
           update:

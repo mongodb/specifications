@@ -13,6 +13,7 @@
       "operations": [
         {
           "name": "updateOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1
@@ -37,6 +38,7 @@
         },
         {
           "name": "updateOne",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1

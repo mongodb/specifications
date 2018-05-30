@@ -315,9 +315,7 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          },
+          "object": "session0",
           "result": {
             "errorContains": "Cannot call abortTransaction after calling commitTransaction"
           }
@@ -356,9 +354,7 @@
         },
         {
           "name": "abortTransaction",
-          "arguments": {
-            "session": "session0"
-          },
+          "object": "session0",
           "result": {
             "errorContains": "Cannot call abortTransaction after calling commitTransaction"
           }

@@ -88,12 +88,11 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         },
         {
           "name": "count",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1
@@ -104,6 +103,7 @@
         },
         {
           "name": "count",
+          "object": "collection",
           "arguments": {
             "filter": {
               "_id": 1
@@ -114,9 +114,7 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -200,12 +198,11 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         },
         {
           "name": "find",
+          "object": "collection",
           "arguments": {
             "batchSize": 3,
             "session": "session0"
@@ -227,6 +224,7 @@
         },
         {
           "name": "find",
+          "object": "collection",
           "arguments": {
             "batchSize": 3,
             "session": "session0"
@@ -248,9 +246,7 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -366,12 +362,11 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "arguments": {
             "pipeline": [
               {
@@ -400,6 +395,7 @@
         },
         {
           "name": "aggregate",
+          "object": "collection",
           "arguments": {
             "pipeline": [
               {
@@ -428,9 +424,7 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         }
       ],
       "expectations": [
@@ -564,9 +558,7 @@
       "operations": [
         {
           "name": "startTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         },
         {
           "name": "distinct",
@@ -584,9 +576,7 @@
         },
         {
           "name": "commitTransaction",
-          "arguments": {
-            "session": "session0"
-          }
+          "object": "session0"
         }
       ],
       "expectations": [

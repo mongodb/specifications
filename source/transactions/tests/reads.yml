@@ -43,10 +43,10 @@ tests:
     operations:
       - &startTransaction
         name: startTransaction
-        arguments:
-          session: session0
+        object: session0
       - &count
         name: count
+        object: collection
         arguments:
           filter:
             _id: 1
@@ -55,8 +55,7 @@ tests:
       - *count
       - &commitTransaction
         name: commitTransaction
-        arguments:
-          session: session0
+        object: session0
 
 
     expectations:
@@ -107,6 +106,7 @@ tests:
       - *startTransaction
       - &find
         name: find
+        object: collection
         arguments:
           batchSize: 3
           session: session0
@@ -185,6 +185,7 @@ tests:
       - *startTransaction
       - &aggregate
         name: aggregate
+        object: collection
         arguments:
           pipeline:
             - $project:
