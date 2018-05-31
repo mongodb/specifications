@@ -49,6 +49,10 @@ Each YAML file has the following keys:
       - ``collectionOptions``: Optional, parameters to pass to the Collection()
         used for this operation.
 
+      - ``command_name``: Present only when ``name`` is "runCommand". The name
+        of the command to run. Required for languages that are unable preserve
+        the order keys in the "command" argument when parsing JSON/YAML.
+
       - ``arguments``: Optional, the names and values of arguments.
 
       - ``result``: The return value from the operation, if any. If the
@@ -76,7 +80,6 @@ selection in a transaction works properly. Including an arbiter helps ensure
 that no new bugs have been introduced related to arbiters.)
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
-The parser MUST preserve the order of keys in dictionaries.
 
 Then for each element in ``tests``:
 

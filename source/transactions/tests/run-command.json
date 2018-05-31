@@ -13,6 +13,7 @@
         {
           "name": "runCommand",
           "object": "database",
+          "command_name": "insert",
           "arguments": {
             "session": "session0",
             "command": {
@@ -94,6 +95,7 @@
         {
           "name": "runCommand",
           "object": "database",
+          "command_name": "insert",
           "arguments": {
             "session": "session0",
             "command": {
@@ -165,6 +167,7 @@
         {
           "name": "runCommand",
           "object": "database",
+          "command_name": "insert",
           "arguments": {
             "session": "session0",
             "command": {
@@ -239,6 +242,7 @@
         {
           "name": "runCommand",
           "object": "database",
+          "command_name": "count",
           "arguments": {
             "session": "session0",
             "command": {
@@ -271,6 +275,7 @@
         {
           "name": "runCommand",
           "object": "database",
+          "command_name": "count",
           "arguments": {
             "session": "session0",
             "command": {
