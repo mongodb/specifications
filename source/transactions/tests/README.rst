@@ -44,7 +44,7 @@ Each YAML file has the following keys:
       - ``name``: The name of the operation on ``object``.
 
       - ``object``: The name of the object to perform the operation on. Can be
-        "collection", "session0", or "session1".
+        "database", collection", "session0", or "session1".
 
       - ``collectionOptions``: Optional, parameters to pass to the Collection()
         used for this operation.
@@ -102,9 +102,11 @@ For each YAML file, for each element in ``tests``:
 #. For each element in ``operations``:
 
    - Enter a "try" block or your programming language's closest equivalent.
-   - Create a collection object from the MongoClient, using the
-     ``database_name`` and ``collection_name`` fields at the top level file.
-     If ``collectionOptions`` is present create the collection object with the
+   - Create a Database object from the MongoClient, using the ``database_name``
+     field at the top level of the test file.
+   - Create a Collection object from the Database, using the
+     ``collection_name`` field at the top level of the test file.
+     If ``collectionOptions`` is present create the Collection object with the
      provided options. Otherwise create the object with the default options.
    - Execute the named method on the provided ``object``, passing the
      arguments listed. Pass ``session0`` or ``session1`` to the method,
