@@ -9,9 +9,9 @@ tests:
 
     operations:
       - name: startTransaction
-        arguments:
-          session: session0
+        object: session0
       - name: insertMany
+        object: collection
         arguments:
           documents: &insertedDocs
             - _id: 1
@@ -22,26 +22,32 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
-          # The driver overrides the operation's read pref with the
+        object: collection
+        collectionOptions:
+          # The driver overrides the collection's read pref with the
           # transaction's so count runs with Primary and succeeds.
           readPreference:
             mode: Secondary
+        arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result: 1
       - name: find
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Secondary
-          batchSize: 3
+        arguments:
           session: session0
+          batchSize: 3
         result: *insertedDocs
       - name: aggregate
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -49,8 +55,7 @@ tests:
           session: session0
         result: *insertedDocs
       - name: commitTransaction
-        arguments:
-          session: session0
+        object: session0
 
     outcome:
       collection:
@@ -60,12 +65,13 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Primary
       - name: insertMany
+        object: collection
         arguments:
           documents: &insertedDocs
             - _id: 1
@@ -76,24 +82,30 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result: 1
       - name: find
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Secondary
-          batchSize: 3
+        arguments:
           session: session0
+          batchSize: 3
         result: *insertedDocs
       - name: aggregate
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Secondary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -101,8 +113,7 @@ tests:
           session: session0
         result: *insertedDocs
       - name: commitTransaction
-        arguments:
-          session: session0
+        object: session0
 
     outcome:
       collection:
@@ -112,12 +123,13 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Secondary
       - name: insertMany
+        object: collection
         arguments:
           documents: &insertedDocs
             - _id: 1
@@ -128,26 +140,32 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
-          batchSize: 3
+        arguments:
           session: session0
+          batchSize: 3
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -156,8 +174,7 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
-        arguments:
-          session: session0
+        object: session0
 
     outcome:
       collection:
@@ -167,12 +184,13 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: PrimaryPreferred
       - name: insertMany
+        object: collection
         arguments:
           documents: &insertedDocs
             - _id: 1
@@ -183,26 +201,32 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
-          batchSize: 3
+        arguments:
           session: session0
+          batchSize: 3
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -211,8 +235,7 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
-        arguments:
-          session: session0
+        object: session0
 
     outcome:
       collection:
@@ -222,12 +245,13 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Nearest
       - name: insertMany
+        object: collection
         arguments:
           documents: &insertedDocs
             - _id: 1
@@ -238,26 +262,32 @@ tests:
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
       - name: count
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
+          session: session0
           filter:
             _id: 1
-          session: session0
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
-          batchSize: 3
+        arguments:
           session: session0
+          batchSize: 3
         result:
           errorContains: read preference in a transaction must be primary
       - name: aggregate
-        arguments:
+        object: collection
+        collectionOptions:
           readPreference:
             mode: Primary
+        arguments:
           pipeline:
             - $project:
                 _id: 1
@@ -266,8 +296,7 @@ tests:
         result:
           errorContains: read preference in a transaction must be primary
       - name: abortTransaction
-        arguments:
-          session: session0
+        object: session0
 
     outcome:
       collection:
@@ -277,21 +306,21 @@ tests:
 
     operations:
       - name: startTransaction
+        object: session0
         arguments:
-          session: session0
           options:
             readPreference:
               mode: Secondary
       - name: insertOne
+        object: collection
         arguments:
+          session: session0
           document:
             _id: 1
-          session: session0
         result:
           insertedId: 1
       - name: commitTransaction
-        arguments:
-          session: session0
+        object: session0
 
     outcome:
       collection:
