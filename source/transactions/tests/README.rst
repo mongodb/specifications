@@ -70,12 +70,15 @@ Each YAML file has the following keys:
 Use as integration tests
 ========================
 
-Run a MongoDB replica set with a primary, two secondaries, and an arbiter,
-server version 4.0 or later. (Including two secondaries ensures that transaction
-pinning works properly. Include an arbiter to ensure no new bugs have been
-introduced related to arbiters.)
+Run a MongoDB replica set with a primary, a secondary, and an arbiter,
+server version 4.0 or later. (Including a secondary ensures that server
+selection in a transaction works properly. Including an arbiter helps ensure
+that no new bugs have been introduced related to arbiters.)
 
-For each YAML file, for each element in ``tests``:
+Load each YAML (or JSON) file using a Canonical Extended JSON parser.
+The parser MUST preserve the order of keys in dictionaries.
+
+Then for each element in ``tests``:
 
 #. Create a MongoClient and call
    ``client.admin.runCommand({killAllSessions: []})`` to clean up any open
@@ -117,13 +120,16 @@ For each YAML file, for each element in ``tests``:
      series of operations, store the error message and server error code.
    - If the result document has an "errorContains" field, verify that the
      method threw an exception or returned an error, and that the value of the
-     "errorContains" field matches the error string. If the result document has
-     an "errorCodeName" field, verify that the method threw a command failed
-     exception or returned an error, and that the value of the "errorCodeName"
-     field matches the "codeName" in the server error response.
+     "errorContains" field matches the error string. "errorContains" is a
+     substring (case-insensitive) of the actual error message.
+     If the result document has an "errorCodeName" field, verify that the
+     method threw a command failed exception or returned an error, and that
+     the value of the "errorCodeName" field matches the "codeName" in the
+     server error response.
+     If the operation returns a raw command response, eg from ``runCommand``,
+     then compare only the fields present in the expected result document.
      Otherwise, compare the method's return value to ``result`` using the same
-     logic as the CRUD Spec Tests runner. key is a substring (case-insensitive)
-     of the actual error message.
+     logic as the CRUD Spec Tests runner.
 
 #. Call ``session0.endSession()`` and ``session1.endSession``.
 #. If the test includes a list of command-started events in ``expectations``,
