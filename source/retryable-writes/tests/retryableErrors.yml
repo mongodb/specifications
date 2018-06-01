@@ -2,7 +2,9 @@ data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
 
-minServerVersion: '4.0.0'
+# TODO: this should change to 4.0.0 once a 4.0 version is released that has
+# SERVER-35004.
+minServerVersion: '4.1.0'
 
 tests:
     -
