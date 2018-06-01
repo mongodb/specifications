@@ -17,6 +17,59 @@ tests and the Command Monitoring Spec tests.
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
 
+Server Fail Point
+=================
+
+Some tests depend on a server fail point, expressed in the ``failPoint`` field.
+For example the ``failCommand`` fail point allows the client to force the
+server to return an error. Keep in mind that the fail point only triggers for
+commands listed in the "failCommands" field. See `SERVER-35004`_ for more
+information.
+
+
+The ``failCommand`` fail point may be configured like so::
+
+    db.runCommand({
+        configureFailPoint: "failCommand",
+        mode: <string|document>,
+        data: {
+          failCommands: ["commandName", "commandName2"],
+          closeConnection: <true|false>,
+          errorCode: <Number>,
+          writeConcernError: <document>
+        }
+    });
+
+``mode`` is a generic fail point option and may be assigned a string or document
+value. The string values ``"alwaysOn"`` and ``"off"`` may be used to enable or
+disable the fail point, respectively. A document may be used to specify either
+``times`` or ``skip``, which are mutually exclusive:
+
+- ``{ times: <integer> }`` may be used to limit the number of times the fail
+  point may trigger before transitioning to ``"off"``.
+- ``{ skip: <integer> }`` may be used to defer the first trigger of a fail
+  point, after which it will transition to ``"alwaysOn"``.
+
+The ``data`` option is a document that may be used to specify options that
+control the fail point's behavior. ``failCommand`` supports the following
+``data`` options, which may be combined if desired:
+
+- ``failCommands``: Required, the list of command names to fail.
+- ``closeConnection``: Boolean option, which defaults to ``false``. If
+  ``true``, the connection on which the command is executed will be closed
+  and the client will see a network error.
+- ``errorCode``: Integer option, which is unset by default. If set, the
+  specified command error code will be returned as a command error.
+- ``writeConcernError``: A document, which is unset by default. If set, the
+  server will return this document in the "writeConcernError" field. This
+  failure response only applies to commands that support write concern and
+  happens *after* the command finishes (regardless of success or failure).
+  See `SERVER-35083`_ for more information.
+
+
+.. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
+.. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
+
 Test Format
 ===========
 
@@ -34,6 +87,9 @@ Each YAML file has the following keys:
   - ``description``: The name of the test.
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
+
+  - ``failPoint``: Optional, a server failpoint to enable expressed as the
+    configureFailPoint command to run on the admin database.
 
   - ``sessionOptions``: Optional, parameters to pass to
     MongoClient.startSession().
@@ -56,9 +112,19 @@ Each YAML file has the following keys:
       - ``arguments``: Optional, the names and values of arguments.
 
       - ``result``: The return value from the operation, if any. If the
-        operation is expected to return an error, the ``result`` has one field,
-        ``errorContains``, which is a substring of the expected error message
-        or ``errorCodeName``, which is the expected server error "codeName".
+        operation is expected to return an error, the ``result`` has one of
+        the following fields:
+
+          - ``errorContains``, A substring of the expected error message.
+
+          - ``errorCodeName``, The expected "codeName" field in the server
+            error response.
+
+          - ``errorLabelsContain``, A list of error label strings that the
+            error is expected to have.
+
+          - ``errorLabelsOmit``, A list of error label strings that the
+            error is not expected to have.
 
   - ``expectations``: Optional list of command-started events.
 
@@ -96,6 +162,8 @@ Then for each element in ``tests``:
    create it explicitly.)
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
+#. If ``failPoint`` is specified, its value is a configureFailPoint command.
+   Run the command on the admin database to enable the fail point.
 #. Create a **new** MongoClient ``client``, with Command Monitoring listeners
    enabled. (Using a new MongoClient for each test ensures a fresh session pool
    that hasn't executed any transactions previously, so the tests can assert
@@ -133,12 +201,28 @@ Then for each element in ``tests``:
      then compare only the fields present in the expected result document.
      Otherwise, compare the method's return value to ``result`` using the same
      logic as the CRUD Spec Tests runner.
+     If the result document has an "errorLabelsContain" field, verify that the
+     method threw an exception or returned an error. Verify that all of the
+     error labels in "errorLabelsContain" are present in the error or exception
+     using the ``hasErrorLabel`` method.
+     If the result document has an "errorLabelsOmit" field, verify that the
+     method threw an exception or returned an error. Verify that none of the
+     error labels in "errorLabelsOmit" are present in the error or exception
+     using the ``hasErrorLabel`` method.
 
 #. Call ``session0.endSession()`` and ``session1.endSession``.
 #. If the test includes a list of command-started events in ``expectations``,
    compare them to the actual command-started events using the
    same logic as the Command Monitoring Spec Tests runner, plus the rules in
    the Command-Started Events instructions below.
+#. If ``failPoint`` is specified, disable the fail point to avoid spurious
+   failures in subsequent tests. The fail point may be disabled like so::
+
+    db.adminCommand({
+        configureFailPoint: <fail point name>,
+        mode: "off"
+    });
+
 #. For each element in ``outcome``:
 
    - If ``name`` is "collection", verify that the test collection contains
@@ -148,7 +232,6 @@ Then for each element in ``tests``:
 
 TODO:
 
-- drivers MUST NOT retry writes in a transaction even when retryWrites=true, needs to use failpoint.
 - drivers MUST retry commit/abort, needs to use failpoint.
 - test writeConcernErrors
 
