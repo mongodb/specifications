@@ -693,7 +693,7 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      - name: count
+      - name: find
         object: collection
         arguments:
           session: session0
@@ -760,7 +760,7 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      - name: count
+      - name: find
         object: collection
         arguments:
           session: session0
@@ -831,7 +831,7 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      - name: count
+      - name: find
         object: collection
         arguments:
           session: session0
