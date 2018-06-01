@@ -21,7 +21,7 @@ tests:
           session: session0
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
-      - name: count
+      - name: aggregate
         object: collection
         collectionOptions:
           # The driver overrides the collection's read pref with the
@@ -30,9 +30,12 @@ tests:
             mode: Secondary
         arguments:
           session: session0
-          filter:
-            _id: 1
-        result: 1
+          pipeline:
+            - $match:
+                _id: 1
+            - $count: count
+        result:
+          - count: 1
       - name: find
         object: collection
         collectionOptions:
@@ -81,16 +84,19 @@ tests:
           session: session0
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
-      - name: count
+      - name: aggregate
         object: collection
         collectionOptions:
           readPreference:
             mode: Secondary
         arguments:
           session: session0
-          filter:
-            _id: 1
-        result: 1
+          pipeline:
+            - $match:
+                _id: 1
+            - $count: count
+        result:
+          - count: 1
       - name: find
         object: collection
         collectionOptions:
@@ -139,15 +145,17 @@ tests:
           session: session0
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
-      - name: count
+      - name: aggregate
         object: collection
         collectionOptions:
           readPreference:
             mode: Primary
         arguments:
           session: session0
-          filter:
-            _id: 1
+          pipeline:
+            - $match:
+                _id: 1
+            - $count: count
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
@@ -200,15 +208,17 @@ tests:
           session: session0
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
-      - name: count
+      - name: aggregate
         object: collection
         collectionOptions:
           readPreference:
             mode: Primary
         arguments:
           session: session0
-          filter:
-            _id: 1
+          pipeline:
+            - $match:
+                _id: 1
+            - $count: count
         result:
           errorContains: read preference in a transaction must be primary
       - name: find
@@ -261,15 +271,17 @@ tests:
           session: session0
         result:
           insertedIds: {0: 1, 1: 2, 2: 3, 3: 4}
-      - name: count
+      - name: aggregate
         object: collection
         collectionOptions:
           readPreference:
             mode: Primary
         arguments:
           session: session0
-          filter:
-            _id: 1
+          pipeline:
+            - $match:
+                _id: 1
+            - $count: count
         result:
           errorContains: read preference in a transaction must be primary
       - name: find

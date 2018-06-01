@@ -158,11 +158,11 @@ tests:
         object: session0
       - name: runCommand
         object: database
-        command_name: count
+        command_name: find
         arguments:
           session: session0
           command:
-            count: *collection_name
+            find: *collection_name
           readPreference:
             mode: Secondary
         result:
@@ -179,11 +179,11 @@ tests:
               mode: secondary
       - name: runCommand
         object: database
-        command_name: count
+        command_name: find
         arguments:
           session: session0
           command:
-            count: *collection_name
+            find: *collection_name
         result:
           errorContains: read preference in a transaction must be primary
 

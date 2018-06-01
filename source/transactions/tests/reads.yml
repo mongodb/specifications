@@ -44,19 +44,16 @@ tests:
       - &startTransaction
         name: startTransaction
         object: session0
-      - &count
-        name: count
+      - name: count
         object: collection
         arguments:
           session: session0
           filter:
             _id: 1
-        result: 1
-      - *count
-      - &commitTransaction
-        name: commitTransaction
+        result:
+          errorContains: "Cannot run 'count' in a multi-document transaction"
+      - name: abortTransaction
         object: session0
-
 
     expectations:
       - command_started_event:
@@ -75,27 +72,14 @@ tests:
           database_name: *database_name
       - command_started_event:
           command:
-            count: *collection_name
-            query:
-              _id: 1
+            abortTransaction: 1
             lsid: session0
             txnNumber:
               $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern:
-          command_name: count
-          database_name: *database_name
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            writeConcern:
-          command_name: commitTransaction
+          command_name: abortTransaction
           database_name: admin
 
     outcome: *outcome
@@ -112,7 +96,9 @@ tests:
           batchSize: 3
         result: *data
       - *find
-      - *commitTransaction
+      - &commitTransaction
+        name: commitTransaction
+        object: session0
 
     expectations:
       - command_started_event:
