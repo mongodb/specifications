@@ -11,8 +11,8 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: June 10, 2017
-:Version: 1.2
+:Last Modified: June 04, 2018
+:Version: 1.3
 
 .. contents::
 
@@ -79,7 +79,15 @@ The user information if present, is followed by a commercial at-sign ("@") that 
 
 A password may be supplied as part of the user information and is anything after the first colon (":") up until the end of the user information.
 
-Both username and password MUST be encoded according to `RFC 3986 Section 2.1, "Percent-Encoding" <https://tools.ietf.org/html/rfc3986#section-2.1>`_. If the user information contains an at-sign ("@") or more than one colon (":") then an exception MUST be thrown informing the user that the username and password must be URL encoded. (For historical reasons, this spec does not require drivers to throw an exception if other characters listed in RFC 3986 as delimiters appear in the username or password.)
+RFC 3986 has guidance for encoding user information in `Section 2.1 ("Percent-Encoding") <https://tools.ietf.org/html/rfc3986#section-2.1>`_, `Section 2.2 ("Reserved Characters") <https://tools.ietf.org/html/rfc3986#section-2.1>`_, and `Section 3.2.1 ("User Information") <https://tools.ietf.org/html/rfc3986#section-2.1>`_.
+
+Specifically, Section 3.2.1 provides for the following allowed characters::
+
+    userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
+
+If the user information contains an at-sign ("@"), more than one colon (":"), or a percent-sign ("%") that does not match the rules for "pct-encoded", then an exception MUST be thrown informing the user that the username and password must be URL encoded.
+
+Above and beyond that restriction, drivers SHOULD require connection string user information to follow the "userinfo" encoding rules of RFC 3986 and SHOULD throw an exception if disallowed characters are detected.  However, for backwards-compatibility reasons, drivers MAY allow reserved characters other than "@" and ":" to be present in user information without percent-encoding.
 
 ----------------
 Host Information
@@ -374,3 +382,5 @@ Changes
   encoded, not just "%", "@", and ":". In Auth Database, list the prohibited
   characters. In Reference Implementation, split at the first "/", not the last.
 - 2018-01-09: Clarified that space characters should be encoded to ``%20``.
+- 2018-06-04: Revised Userinfo section to provide an explicit list of allowed
+  characters and clarify rules for exceptions.
