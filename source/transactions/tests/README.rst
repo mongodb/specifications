@@ -97,34 +97,34 @@ Each YAML file has the following keys:
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
 
-      - ``name``: The name of the operation on ``object``.
+    - ``name``: The name of the operation on ``object``.
 
-      - ``object``: The name of the object to perform the operation on. Can be
-        "database", collection", "session0", or "session1".
+    - ``object``: The name of the object to perform the operation on. Can be
+      "database", collection", "session0", or "session1".
 
-      - ``collectionOptions``: Optional, parameters to pass to the Collection()
-        used for this operation.
+    - ``collectionOptions``: Optional, parameters to pass to the Collection()
+      used for this operation.
 
-      - ``command_name``: Present only when ``name`` is "runCommand". The name
-        of the command to run. Required for languages that are unable preserve
-        the order keys in the "command" argument when parsing JSON/YAML.
+    - ``command_name``: Present only when ``name`` is "runCommand". The name
+      of the command to run. Required for languages that are unable preserve
+      the order keys in the "command" argument when parsing JSON/YAML.
 
-      - ``arguments``: Optional, the names and values of arguments.
+    - ``arguments``: Optional, the names and values of arguments.
 
-      - ``result``: The return value from the operation, if any. If the
-        operation is expected to return an error, the ``result`` has one of
-        the following fields:
+    - ``result``: The return value from the operation, if any. If the
+      operation is expected to return an error, the ``result`` has one of
+      the following fields:
 
-          - ``errorContains``, A substring of the expected error message.
+      - ``errorContains``: A substring of the expected error message.
 
-          - ``errorCodeName``, The expected "codeName" field in the server
-            error response.
+      - ``errorCodeName``: The expected "codeName" field in the server
+        error response.
 
-          - ``errorLabelsContain``, A list of error label strings that the
-            error is expected to have.
+      - ``errorLabelsContain``: A list of error label strings that the
+        error is expected to have.
 
-          - ``errorLabelsOmit``, A list of error label strings that the
-            error is not expected to have.
+      - ``errorLabelsOmit``: A list of error label strings that the
+        error is expected not to have.
 
   - ``expectations``: Optional list of command-started events.
 
@@ -132,10 +132,10 @@ Each YAML file has the following keys:
     the collection after the operation is executed. Contains the following
     fields:
 
-      - ``collection``:
+    - ``collection``:
 
-        - ``data``: The data that should exist in the collection after the
-          operations have run.
+      - ``data``: The data that should exist in the collection after the
+        operations have run.
 
 Use as integration tests
 ========================
