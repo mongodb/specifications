@@ -31,7 +31,7 @@ commands listed in the "failCommands" field. See `SERVER-35004`_ and
 
 The ``failCommand`` fail point may be configured like so::
 
-    db.runCommand({
+    db.adminCommand({
         configureFailPoint: "failCommand",
         mode: <string|document>,
         data: {
