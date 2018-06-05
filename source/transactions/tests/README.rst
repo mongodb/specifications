@@ -23,9 +23,11 @@ Server Fail Point
 Some tests depend on a server fail point, expressed in the ``failPoint`` field.
 For example the ``failCommand`` fail point allows the client to force the
 server to return an error. Keep in mind that the fail point only triggers for
-commands listed in the "failCommands" field. See `SERVER-35004`_ for more
-information.
+commands listed in the "failCommands" field. See `SERVER-35004`_ and
+`SERVER-35083`_ for more information.
 
+.. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
+.. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
 
 The ``failCommand`` fail point may be configured like so::
 
@@ -64,11 +66,6 @@ control the fail point's behavior. ``failCommand`` supports the following
   server will return this document in the "writeConcernError" field. This
   failure response only applies to commands that support write concern and
   happens *after* the command finishes (regardless of success or failure).
-  See `SERVER-35083`_ for more information.
-
-
-.. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
-.. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
 
 Test Format
 ===========
