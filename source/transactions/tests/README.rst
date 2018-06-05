@@ -190,22 +190,25 @@ Then for each element in ``tests``:
      method threw an exception or returned an error, and that the value of the
      "errorContains" field matches the error string. "errorContains" is a
      substring (case-insensitive) of the actual error message.
+
      If the result document has an "errorCodeName" field, verify that the
      method threw a command failed exception or returned an error, and that
      the value of the "errorCodeName" field matches the "codeName" in the
      server error response.
-     If the operation returns a raw command response, eg from ``runCommand``,
-     then compare only the fields present in the expected result document.
-     Otherwise, compare the method's return value to ``result`` using the same
-     logic as the CRUD Spec Tests runner.
+
      If the result document has an "errorLabelsContain" field, verify that the
      method threw an exception or returned an error. Verify that all of the
      error labels in "errorLabelsContain" are present in the error or exception
      using the ``hasErrorLabel`` method.
+
      If the result document has an "errorLabelsOmit" field, verify that the
      method threw an exception or returned an error. Verify that none of the
      error labels in "errorLabelsOmit" are present in the error or exception
      using the ``hasErrorLabel`` method.
+   - If the operation returns a raw command response, eg from ``runCommand``,
+     then compare only the fields present in the expected result document.
+     Otherwise, compare the method's return value to ``result`` using the same
+     logic as the CRUD Spec Tests runner.
 
 #. Call ``session0.endSession()`` and ``session1.endSession``.
 #. If the test includes a list of command-started events in ``expectations``,
