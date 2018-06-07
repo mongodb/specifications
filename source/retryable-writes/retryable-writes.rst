@@ -91,8 +91,6 @@ Retryable Error
          - 189
        * - ShutdownInProgress
          - 91
-       * - WriteConcernFailed
-         - 64
        * - HostNotFound
          - 7
        * - HostUnreachable
@@ -587,9 +585,7 @@ What do the additional error codes mean?
 
 The errors `HostNotFound`, `HostUnreachable`, `NetworkTimeout`,
 `SocketException` may be returned from mongos during problems routing to a
-shard. These may be transient, or localized to that mongos. The
-`WriteConcernFailed` error is returned if the write concern constraints could
-not be met.
+shard. These may be transient, or localized to that mongos.
 
 Why are write operations only retried once?
 -------------------------------------------
@@ -730,6 +726,8 @@ of the bulk API in reducing the number of command round-trips to the server.
 
 Changes
 =======
+
+2018-06-07: WriteConcernFailed is not a retryable error code.
 
 2018-04-25: Evaluate retryable eligibility of bulkWrite() commands individually.
 
