@@ -393,7 +393,7 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        # No CannotSatisfyWriteConcern error.
+        # No write concern error.
 
     outcome:
       collection:
