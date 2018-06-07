@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: March 5, 2018
+:Last Modified: June 7, 2018
 
 .. contents::
 
@@ -144,9 +144,26 @@ Read
     /**
      * Gets the number of documents matching the filter.
      *
+     * **This method is DEPRECATED and should not be implemented in new drivers.**
+     *
      * @see https://docs.mongodb.com/manual/reference/command/count/
+       @deprecated 4.0
      */
     count(filter: Document, options: Optional<CountOptions>): Int64;
+
+    /**
+     * Gets the number of documents matching the filter.
+     *
+     * See "Count API Details" section below.
+     */
+    countDocuments(filter: Document, options: Optional<CountOptions>): Int64;
+
+    /**
+     * Gets an estimate of the count of documents in a collection using collection metadata.
+     *
+     * See "Count API Details" section below.
+     */
+    estimatedDocumentCount(options: Optional<EstimatedDocumentCountOptions>): Int64;
 
     /**
      * Finds the distinct values for a specified field across a single collection.
@@ -251,8 +268,6 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/count/
      */
     collation: Optional<Document>;
 
@@ -260,8 +275,6 @@ Read
      * The index to use.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/count/
      */
     hint: Optional<(String | Document)>;
 
@@ -269,17 +282,13 @@ Read
      * The maximum number of documents to count.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/count/
      */
     limit: Optional<Int64>;
 
     /**
-     * The maximum amount of time to allow the query to run.
+     * The maximum amount of time to allow the operation to run.
 
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/count/
      */
     maxTimeMS: Optional<Int64>;
 
@@ -287,10 +296,18 @@ Read
      * The number of documents to skip before counting.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/count/
      */
     skip: Optional<Int64>;
+  }
+
+  class EstimatedDocumentCountOptions {
+
+    /**
+     * The maximum amount of time to allow the operation to run.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     */
+    maxTimeMS: Optional<Int64>;
   }
 
   class DistinctOptions {
@@ -549,6 +566,59 @@ Read
      */
     sort: Optional<Document>;
   }
+
+~~~~~~~~~~~~~~~~~
+Count API Details
+~~~~~~~~~~~~~~~~~
+
+MongoDB drivers provide two helpers for counting the number of documents in a
+collection, estimatedDocumentCount and countDocuments. The names were chosen
+to make it clear how they behave and exactly what they do. The
+estimatedDocumentCount helper returns an estimate of the count of documents
+in the collection using collection metadata, rather than counting the
+documents or consulting an index. The countDocuments helper counts the
+documents that match the provided query filter using an aggregation pipeline.
+
+The count() helper is deprecated. It has always been implemented using the
+`count` command. The behavior of the count command differs depending on the
+options passed to it and may or may not provide an accurate count. When
+no query filter is provided the count command provides an estimate using
+collection metadata. Even when provided with a query filter the count
+command can return inaccurate results with a sharded cluster `if orphaned
+documents exist or if a chunk migration is in progress <
+https://docs.mongodb.com/manual/reference/command/count/#behavior>`_.
+The countDocuments helper avoids these sharded cluster problems entirely
+when used with MongoDB 3.6+, and when using `Primary` read preference with
+older sharded clusters.
+
+~~~~~~~~~~~~~~~~~~~~~~
+estimatedDocumentCount
+~~~~~~~~~~~~~~~~~~~~~~
+
+The estimatedDocumentCount function is implemented using the `count` command
+with no query filter, skip, limit, or other options that would alter the
+results. As documented above, the only supported option is maxTimeMS.
+
+~~~~~~~~~~~~~~
+countDocuments
+~~~~~~~~~~~~~~
+
+The countDocuments function is implemented using the `$group` aggregate
+pipeline stage with `$sum`. Applications must be required to pass a value
+for filter, but an empty document is supported::
+
+  pipeline = [{'$match': filter}]
+  if (skip) {
+    pipeline.push({'$skip': skip})
+  }
+  if (limit) {
+    pipeline.push({'$limit': limit})
+  }
+  pipeline.push({'$group': {'_id': null, 'n': {'$sum': 1}}})
+
+The count of documents is returned in the 'n' field, similar to the `count`
+command. countDocuments options other than filter, skip, and limit are added as
+options to the `aggregate` command.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Combining Limit and Batch Size for the Wire Protocol
@@ -1630,6 +1700,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
 * 2018-03-05: Deprecate snapshot option
 * 2018-03-01: Deprecate maxScan query option. 
 * 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.

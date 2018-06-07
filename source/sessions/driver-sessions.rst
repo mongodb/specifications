@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 23-May-2018
+:Last Modified: 07-June-2018
 
 .. contents::
 
@@ -429,8 +429,9 @@ the server can associate the operation with a session ID.
 New database methods that take an explicit session
 --------------------------------------------------
 
-All ``MongoDatabase`` methods that talk to the server SHOULD be overloaded to take
-an explicit session parameter.
+All ``MongoDatabase`` methods that talk to the server, with the exception of
+`estimatedDocumentCount`, SHOULD be overloaded to take an explicit session
+parameter.
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -440,6 +441,12 @@ structure.
 Methods that have a session parameter MUST check that the session argument is
 not null and was created by the same ``MongoClient`` that this ``MongoDatabase`` came
 from and report an error if they do not match.
+
+The `estimatedDocumentCount` helper does not support an explicit session
+parameter. The underlying command, `count`, is not supported in a transaction,
+so supporting an explicit session would likely confuse application developers.
+The helper returns an estimate of the documents in a collection and
+causal consistency is unlikely to improve the accuracy of the estimate.
 
 Existing database methods that start an implicit session
 --------------------------------------------------------
@@ -1136,6 +1143,8 @@ Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of
 Change log
 ==========
 
+:2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
+:2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
 :2017-09-13: If causalConsistency option is ommitted assume true
 :2017-09-16: Omit session ID when opening and authenticating a connection
 :2017-09-18: Drivers MUST gossip the cluster time when they see a $clusterTime
