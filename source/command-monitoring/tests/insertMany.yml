@@ -19,7 +19,7 @@ tests:
             insert: *collection_name
             documents:
               - { _id: 2, x: 22 }
-            options: { ordered: true }
+            ordered: true
           command_name: "insert"
           database_name: *database_name
       -
@@ -40,7 +40,7 @@ tests:
             insert: *collection_name
             documents:
               - { _id: 1, x: 11 }
-            options: { ordered: true }
+            ordered: true
           command_name: "insert"
           database_name: *database_name
       -
@@ -66,7 +66,7 @@ tests:
             insert: *collection_name
             documents:
               - { _id: 2, x: 22 }
-            options: { ordered: false }
+            ordered: false
           command_name: "insert"
           database_name: *database_name
       -
