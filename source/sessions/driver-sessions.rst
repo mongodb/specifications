@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.3
+:Spec Version: 1.4
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
