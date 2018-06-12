@@ -121,7 +121,7 @@ Events MUST NOT be published concurrently for the same topology id or server id,
 Heartbeats
 ----------
 
-The driver MUST guarantee that every ServerHearbeatStartedEvent has either a correlating ServerHearbeatSucceededEvent or ServerHeartbeatFailedEvent.
+The driver MUST guarantee that every ServerHeartbeatStartedEvent has either a correlating ServerHeartbeatSucceededEvent or ServerHeartbeatFailedEvent.
 
 Error Handling
 --------------
@@ -302,7 +302,7 @@ API
   /**
    * Fired when the server monitor’s ismaster fails, either with an “ok: 0” or a socket exception.
    */
-  interface ServerHearbeatFailedEvent {
+  interface ServerHeartbeatFailedEvent {
 
    /**
      * Returns the execution time of the event in the highest possible resolution for the platform.

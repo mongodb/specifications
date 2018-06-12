@@ -551,7 +551,7 @@ to the server:
   response to ismaster), but have subsequently been downgraded to not support
   sessions. The server does not close the socket in this scenario, and the driver
   will forever conclude that the server at the other end of this connection
-  supports sessions. This scenario will only be a problem until the next hearbeat
+  supports sessions. This scenario will only be a problem until the next heartbeat
   against that server.
 
 These race conditions are particulary insidious when the driver decides to
