@@ -408,7 +408,7 @@ Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``C
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the server version is >= ``4.0`` drivers MUST set a default ``startAtOperationTime``. A default timestamp can be obtained from the ``operationTime`` field on any server response (e.g. ``isMaster``). This allows change streams to be resumed before the first notification is received.
+If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` drivers MUST set a default ``startAtOperationTime``. A default timestamp can be obtained from the ``operationTime`` field on any server response (e.g. ``isMaster``). This allows change streams to be resumed before the first notification is received.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -422,7 +422,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 
 - Perform server selection.
 - Connect to selected server.
-- If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the server version is >= ``4.0``:
+- If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
     - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp from when the changestream was first created.
