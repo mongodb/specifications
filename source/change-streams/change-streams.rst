@@ -279,6 +279,7 @@ Driver API
      * operation time obtained from the server before the change stream was created.
      * @since 4.0
      * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
+     * @note this is an option of the `$changeStream` pipeline stage.
      */
     startAtOperationTime: Optional<Timestamp>;
   }
