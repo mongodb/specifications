@@ -395,15 +395,7 @@ startAtOperationTime
 
 ``startAtOperationTime`` specifies that a change stream will only return changes that occurred at or after the specified ``Timestamp``.
 
-The server expects ``startAtOperationTime`` as a BSON Timestamp
-
-.. code:: typescript
-
-    {
-      ts: Timestamp;
-    }
-
-Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
+The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
