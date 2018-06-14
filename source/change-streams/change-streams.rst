@@ -390,7 +390,7 @@ Single Server Topologies
 Presently, change streams cannot be initiated on single server topologies as they do not have an oplog.  Drivers MUST NOT throw an exception in this scenario, but instead rely on an error returned from the server.  This allows for the server to seamlessly introduce support for this in the future, without need to make changes in driver code.
 
 startAtOperationTime
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
 
 :since: 4.0
 
@@ -408,7 +408,9 @@ Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``C
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` drivers MUST set a default ``startAtOperationTime``. A default timestamp can be obtained from the ``operationTime`` field on any server response (e.g. ``isMaster``). This allows change streams to be resumed before the first notification is received.
+If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` drivers SHOULD set a default ``startAtOperationTime`` using the ``MongoClient`` field ``lastOperationTime`` (see `Causal Consistency <../causal-consistency/causal-consistency.rst#mongoclient-changes>`_.
+
+If the ``lastOperationTime`` is not available, ``startAtOperationTime`` MAY be omitted. If this is the case, then the ``ChangeStream`` MUST save the ``operationTime`` value returned from the server in response to the initial aggregation call issued by the change stream.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -425,7 +427,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp from when the changestream was first created.
+    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp used in the initial aggregation command.
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
