@@ -22,7 +22,7 @@ Driver Transactions Specification
 ------------
 
 Version 4.0 of the server introduces multi-statement transactions.
-This spec builds upon the Driver Sessions Specification to define how an
+This spec builds upon the `Driver Sessions Specification`_ to define how an
 application uses transactions and how a driver interacts with the
 server to implement transactions.
 
@@ -45,11 +45,9 @@ document are to be interpreted as described in \`RFC 2119
 **Terms**
 ~~~~~~~~~
 
-This specification uses the terms defined in the `Driver
-Session <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#terms>`__
-and `Retryable
-Writes <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#terms>`__
-specifications. Additional terms are defined below.
+This specification uses the terms defined in the
+`Driver Sessions Specification`_ and `Retryable Writes Specification`_.
+Additional terms are defined below.
 
 Resource Management Block
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,9 +77,7 @@ operation, see `Aggregate with $out is a read operation`_.
 Retryable Error
 ^^^^^^^^^^^^^^^
 
-An error considered retryable by the `Retryable
-Writes <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#terms>`__
-specification.
+An error considered retryable by the `Retryable Writes Specification`_.
 
 Command Error
 ^^^^^^^^^^^^^
@@ -457,7 +453,7 @@ abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry once
 after abortTransaction fails with a retryable error according to the
-Retryable Writes Specification, regardless of whether retryWrites is set
+`Retryable Writes Specification`_., regardless of whether retryWrites is set
 on the MongoClient or not.
 
 After the retryable write attempt, drivers MUST ignore all errors from
@@ -659,7 +655,7 @@ retryWrites has been enabled on the MongoClient. Drivers MUST retry the
 commitTransaction and abortTransaction commands even when retryWrites
 has been disabled on the MongoClient. commitTransaction and
 abortTransaction are retryable write commands and MUST be retried
-according to the Retryable Writes Specification.
+according to the `Retryable Writes Specification`_.
 
 Retryable writes and transactions both use the ``txnNumber`` associated with
 a ServerSession. For retryable writes, ``txnNumber`` would normally
@@ -845,8 +841,7 @@ The Python driver serves as a reference implementation.
 **Design Rationale**
 --------------------
 
-The design of this specification builds on the `Driver Session
-specification <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst>`__
+The design of this specification builds on the `Driver Sessions Specification`_
 and modifies the driver API as little as possible.
 
 Drivers will rely on the server to yield an error if an unsupported
@@ -959,11 +954,12 @@ directly with minimum additional client-side logic.
 
 This specification depends on:
 
-1. `Driver Session
-      specification <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst>`__
+1. `Driver Sessions Specification`_
+2. `Retryable Writes Specification`_
 
-2. `Retryable writes
-      specification <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst>`__
+.. _Driver Sessions Specification: ../sessions/driver-sessions.rst
+
+.. _Retryable Writes Specification: ../retryable-writes/retryable-writes.rst
 
 **Backwards Compatibility**
 ---------------------------
