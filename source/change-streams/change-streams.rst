@@ -549,7 +549,7 @@ Why do we need to send a default ``startAtOperationTime`` in the ``$changeStream
 -----------------------------------------------------------------------------------------
 
 ``startAtOperationTime`` allows a user to create a resumable change stream even when a result
-(and corresponding resultToken) is not available until a later point in time.
+(and corresponding resumeToken) is not available until a later point in time.
 
 For example:
 
