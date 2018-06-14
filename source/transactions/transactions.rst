@@ -971,10 +971,8 @@ not make use of transactions will continue to compile and run correctly.
 **Reference Implementation**
 ----------------------------
 
-The Python driver MUST implement the transaction API before this
-document is approved. The implementation will include test code and
-documentation. The .NET, Java, and Node.js teams may also implement POCs
-before this document is approved.
+The `Python driver <https://github.com/mongodb/mongo-python-driver/>`_ serves
+as a reference implementation.
 
 **Future work**
 ---------------
