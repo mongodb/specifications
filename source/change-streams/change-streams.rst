@@ -536,6 +536,29 @@ The `CursorKilled` or `Interrupted` error implies implies some other actor kille
 The `CappedPositionLost` error implies falling off of the back of the oplog,
 so resuming is impossible.
 
+-----------------------------------------------------------------------------------------
+Why do we need to send a default ``startAtOperationTime`` in the ``$changeStream`` stage?
+-----------------------------------------------------------------------------------------
+
+``startAtOperationTime`` allows a user to create a change stream that does not return
+results until a later point in time. However, it has the added benefit of allowing
+a change stream to resume and receive all changes that it may have missed since it's first
+creation.
+
+For example:
+
+- A client creates a ``ChangeStream``, and calls ``watch``
+- The ``ChangeStream`` sends out the initial ``aggregate`` call, and receives a response
+with no initial values.
+- The client's network is partitioned from the server, causing the client's ``getMore`` to time out
+- Changes occur on the server.
+- The network is unpartitioned
+- The client attempts to resume the ``ChangeStream``
+
+In the above example, not sending ``startAtOperationTime`` will result in the change stream missing
+the changes that occurred while the server and client are partitioned. By sending ``startAtOperationTime``,
+the server will know to include changes from that previous point in time.
+
 Test Plan
 =========
 
