@@ -173,6 +173,12 @@ Driver API
     private resumeToken: Document;
 
     /**
+     * The most recent operationTime received in a server response at the
+     * time of ChangeStream creation.
+     */
+    private startAtOperationTime: Timestamp;
+
+    /**
      * The pipeline of stages to append to an initial ``$changeStream`` stage
      */
     private pipeline: Array<Document>;
