@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: December 13, 2017
+:Last Modified: June 14, 2018
 :Version: 1.5.1
 
 .. contents::
@@ -416,7 +416,7 @@ Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``C
 
 If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` drivers SHOULD set a default ``startAtOperationTime`` using the ``MongoClient`` field ``lastOperationTime`` (see `Causal Consistency <../causal-consistency/causal-consistency.rst#mongoclient-changes>`_.
 
-If the ``lastOperationTime`` is not available, ``startAtOperationTime`` MAY be omitted. If this is the case, then the ``ChangeStream`` MUST save the ``operationTime`` value returned from the server in response to the initial aggregation call issued by the change stream.
+If the ``lastOperationTime`` is not available, ``startAtOperationTime`` MAY be omitted. If this is the case, then the ``ChangeStream`` MUST save the ``lastOperationTime`` when the initial ``aggregate`` command returns.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -433,7 +433,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp used in the initial aggregation command.
+    - The driver MUST specify the ``startAtOperationTime`` key set to the original ``startAtOperationTime`` member.
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
@@ -546,16 +546,16 @@ so resuming is impossible.
 Why do we need to send a default ``startAtOperationTime`` in the ``$changeStream`` stage?
 -----------------------------------------------------------------------------------------
 
-``startAtOperationTime`` allows a user to create a change stream that does not return
-results until a later point in time. However, it has the added benefit of allowing
-a change stream to resume and receive all changes that it may have missed since it's first
-creation.
+``startAtOperationTime`` allows a user to create a resumable change stream even when a result
+(and corresponding resultToken) is not available until a later point in time. However, 
+it has the added benefit of allowing a change stream to resume and receive all changes that
+it may have missed since it's first creation.
 
 For example:
 
 - A client creates a ``ChangeStream``, and calls ``watch``
 - The ``ChangeStream`` sends out the initial ``aggregate`` call, and receives a response
-with no initial values.
+with no initial values. Because there are no initial values, there is no latest resumeToken.
 - The client's network is partitioned from the server, causing the client's ``getMore`` to time out
 - Changes occur on the server.
 - The network is unpartitioned
@@ -613,4 +613,6 @@ Changelog
 |            | and added ``startAtClusterTime`` option.                   |
 +------------+------------------------------------------------------------+
 | 2018-05-24 | Changed ``startatClusterTime`` to ``startAtOperationTime`` |
++------------+------------------------------------------------------------+
+| 2018-06-14 | Clarified how to calculate ``startAtOperationTime``        |
 +------------+------------------------------------------------------------+
