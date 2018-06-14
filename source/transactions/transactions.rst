@@ -783,8 +783,8 @@ error. In that case, both the driver and the application do not know the
 state of the transaction.
 
 The driver MUST add the "UnknownTransactionCommitResult" error label when
-commitTransaction fails with a network error, server selection error, or
-write concern failed / timeout. (See
+commitTransaction fails with a server selection error, network error, retryable
+writes error, or write concern failed / timeout. (See
 `A server selection error is labeled UnknownTransactionCommitResult`_
 for justification.) The approximate meaning of the
 UnknownTransactionCommitResult label is, "We don't know if your commit
@@ -1171,3 +1171,5 @@ Applications should not run such commands inside a transaction.
 -------------
 
 :2018-06-07: The count command is not supported within transactions.
+:2018-06-14: Any retryable writes error raised by commitTransaction must be
+             labelled "UnknownTransactionCommitResult".
