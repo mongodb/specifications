@@ -173,7 +173,9 @@ Driver API
     private resumeToken: Document;
 
     /**
-     * The most recent operationTime received in a server response at the
+     * An Timestamp that specifies the earliest time at which changes can be received.
+     * Can be specified by the user.
+     * Defaults tothe most recent operationTime received in a server response at the
      * time of ChangeStream creation.
      */
     private startAtOperationTime: Timestamp;
@@ -547,9 +549,7 @@ Why do we need to send a default ``startAtOperationTime`` in the ``$changeStream
 -----------------------------------------------------------------------------------------
 
 ``startAtOperationTime`` allows a user to create a resumable change stream even when a result
-(and corresponding resultToken) is not available until a later point in time. However, 
-it has the added benefit of allowing a change stream to resume and receive all changes that
-it may have missed since it's first creation.
+(and corresponding resultToken) is not available until a later point in time.
 
 For example:
 
