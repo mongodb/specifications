@@ -173,14 +173,6 @@ Driver API
     private resumeToken: Document;
 
     /**
-     * An Timestamp that specifies the earliest time at which changes can be received.
-     * Can be specified by the user.
-     * Defaults tothe most recent operationTime received in a server response at the
-     * time of ChangeStream creation.
-     */
-    private startAtOperationTime: Timestamp;
-
-    /**
      * The pipeline of stages to append to an initial ``$changeStream`` stage
      */
     private pipeline: Array<Document>;
@@ -283,8 +275,7 @@ Driver API
     /**
      * The change stream will only provides changes that occurred after the
      * specified timestamp. Any command run against the server will return
-     * an operation time that can be used here. The default value is an
-     * operation time obtained from the server before the change stream was created.
+     * an operation time that can be used here.
      * @since 4.0
      * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
      * @note this is an option of the `$changeStream` pipeline stage.
@@ -362,6 +353,8 @@ Command syntax:
       ...
     }
 
+Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``collection`` option in subsequent ``getMore`` commands.
+
 ``MongoClient.watch`` helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -380,6 +373,8 @@ Command syntax:
     }
 
 The helper MUST run the command against the `admin` database
+
+Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``collection`` option in subsequent ``getMore`` commands.
 
 ChangeStream
 ------------
@@ -404,21 +399,11 @@ startAtOperationTime
 
 ``startAtOperationTime`` specifies that a change stream will only return changes that occurred at or after the specified ``Timestamp``.
 
-The server expects ``startAtOperationTime`` as a BSON Timestamp
-
-.. code:: typescript
-
-    {
-      ts: Timestamp;
-    }
-
-Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
+The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` drivers SHOULD set a default ``startAtOperationTime`` using the ``MongoClient`` field ``lastOperationTime`` (see `Causal Consistency <../causal-consistency/causal-consistency.rst#mongoclient-changes>`_.
-
-If the ``lastOperationTime`` is not available, ``startAtOperationTime`` MAY be omitted. If this is the case, then the ``ChangeStream`` MUST save the ``lastOperationTime`` when the initial ``aggregate`` command returns.
+If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` the ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` command when it returns.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -435,7 +420,10 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtOperationTime`` key set to the original ``startAtOperationTime`` member.
+    - If the original aggregation command did not include a user-provided ``startAtOperationTime``:
+
+        - The driver MUST specify the ``startAtOperationTime`` key set to the ``operationTime`` saved from the response to the original ``aggregate`` command.
+
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
@@ -544,9 +532,9 @@ The `CursorKilled` or `Interrupted` error implies implies some other actor kille
 The `CappedPositionLost` error implies falling off of the back of the oplog,
 so resuming is impossible.
 
------------------------------------------------------------------------------------------
-Why do we need to send a default ``startAtOperationTime`` in the ``$changeStream`` stage?
------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+Why do we need to send a default ``startAtOperationTime`` when resuming a ``ChangeStream``?
+-------------------------------------------------------------------------------------------
 
 ``startAtOperationTime`` allows a user to create a resumable change stream even when a result
 (and corresponding resumeToken) is not available until a later point in time.
