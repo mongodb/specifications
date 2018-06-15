@@ -399,11 +399,11 @@ startAtOperationTime
 
 ``startAtOperationTime`` specifies that a change stream will only return changes that occurred at or after the specified ``Timestamp``.
 
-The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
+The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` the ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` command when it returns.
+If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7``, and the initial ``aggregate`` command does not return a resumeToken (indicating no results), the ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` command when it returns.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -420,10 +420,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
-    - If the original aggregation command did not include a user-provided ``startAtOperationTime``:
-
-        - The driver MUST specify the ``startAtOperationTime`` key set to the ``operationTime`` saved from the response to the original ``aggregate`` command.
-
+    - IThe driver MUST specify the ``startAtOperationTime`` key set to the ``startAtOperationTime`` provided by the user or saved from the original aggregation.
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
