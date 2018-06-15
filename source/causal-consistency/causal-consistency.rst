@@ -136,12 +136,9 @@ implied. See the ``causalConsistency`` section.
 MongoClient changes
 ===================
 
-There are no public API changes to ``MongoClient`` to support causal consistency.
+There are no API changes to ``MongoClient`` to support causal consistency.
 Applications indicate whether they want causal consistency by setting the
 ``causalConsistency`` field in the options passed to the ``startSession`` method.
-
-While not public, the ``MongoClient`` MUST maintain a private ``lastOperationTime`` member
-containing the most recently observed ``operationTime`` received.
 
 SessionOptions changes
 ======================
@@ -283,9 +280,7 @@ The ``operationTime`` MUST be stored in the ``ClientSession`` to later be passed
 stored in either case.
 
 Drivers MUST examine all responses from the server for the presence of an
-``operationTime`` field and store the value in the ``ClientSession``. Additionally,
-the most recent ``operationTime`` seen MUST be stored in the ``MongoClient`` field
-``lastOperationTime``.
+``operationTime`` field and store the value in the ``ClientSession``.
 
 When connected to a standalone node command replies do not include an
 ``operationTime`` field. All operations against a standalone node are causally
