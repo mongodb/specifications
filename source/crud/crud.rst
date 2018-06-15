@@ -585,8 +585,7 @@ options passed to it and may or may not provide an accurate count. When
 no query filter is provided the count command provides an estimate using
 collection metadata. Even when provided with a query filter the count
 command can return inaccurate results with a sharded cluster `if orphaned
-documents exist or if a chunk migration is in progress <
-https://docs.mongodb.com/manual/reference/command/count/#behavior>`_.
+documents exist or if a chunk migration is in progress <https://docs.mongodb.com/manual/reference/command/count/#behavior>`_.
 The countDocuments helper avoids these sharded cluster problems entirely
 when used with MongoDB 3.6+, and when using `Primary` read preference with
 older sharded clusters.
