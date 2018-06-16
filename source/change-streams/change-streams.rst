@@ -273,7 +273,7 @@ Driver API
     collation: Optional<Document>;
 
     /**
-     * The change stream will only provides changes that occurred after the
+     * The change stream will only provide changes that occurred at or after the
      * specified timestamp. Any command run against the server will return
      * an operation time that can be used here.
      * @since 4.0
@@ -420,7 +420,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
-    - IThe driver MUST specify the ``startAtOperationTime`` key set to the ``startAtOperationTime`` provided by the user or saved from the original aggregation.
+    - The driver MUST specify the ``startAtOperationTime`` key set to the ``startAtOperationTime`` provided by the user or saved from the original aggregation.
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
