@@ -386,15 +386,15 @@ Ruby:
   class LoggingSubscriber
 
     def started(event)
-      Logger.info("COMMAND.#{event.command_name} #{event.connection} STARTED: #{event.command_args.inspect}")
+      Logger.info("COMMAND.#{event.command_name} #{event.address} STARTED: #{event.command.inspect}")
     end
 
     def succeeded(event)
-      Logger.info("COMMAND.#{event.command_name} #{event.connection} COMPLETED: #{event.command_reply.inspect} (#{event.duration}s)")
+      Logger.info("COMMAND.#{event.command_name} #{event.address} COMPLETED: #{event.reply.inspect} (#{event.duration}s)")
     end
 
     def failed(event)
-      Logger.info("COMMAND.#{event.command_name} #{event.connection} FAILED: #{event.message.inspect} (#{event.duration}s)")
+      Logger.info("COMMAND.#{event.command_name} #{event.address} FAILED: #{event.message.inspect} (#{event.duration}s)")
     end
   end
 
