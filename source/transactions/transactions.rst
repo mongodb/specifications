@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 14-June-2018
+:Last Modified: 18-June-2018
 
 .. contents::
 
@@ -226,14 +226,11 @@ readConcern to the first command in a transaction if and only if the
 readConcern is supplied and not the default. Drivers MUST NOT add to
 subsequent commands the readConcern from the transaction or any
 readConcern inherited from the collection, database, or client. If the
-user supplies an explicit readConcern via a method option, however,
-drivers MUST apply the readConcern, which will result in a server error.
-See `Users can pass prohibited options to operations in transactions`_.
+user supplies an explicit readConcern via a method option, the driver MUST
+raise an error with the message "Cannot set read concern after starting a
+transaction."
 
-The server will return an error if read concern level snapshot is
-specified on a command that is not the start of a transaction. Drivers
-MUST rely on the server to report an error if read concern level
-snapshot is used incorrectly.
+See `Users cannot pass readConcern to operations in transactions`_.
 
 writeConcern
 ^^^^^^^^^^^^
@@ -253,7 +250,7 @@ writeConcern inherited from the collection, database, or client to any
 preceding commands in the transaction. If the user supplies an
 explicit writeConcern via a method option, however, drivers MUST apply
 the writeConcern, which will result in a server error.
-See `Users can pass prohibited options to operations in transactions`_.
+See `Users can pass writeConcern to operations in transactions`_.
 
 Drivers MUST raise an error if the user provides or if defaults would
 result in an unacknowledged writeConcern. The Driver Sessions spec
@@ -630,8 +627,12 @@ object, the driver MUST add the ``lsid``, ``autocommit``, and ``txnNumber`` fiel
 If the RunCommand operation is the first operation in a transaction then
 the driver MUST also add the ``startTransaction`` and ``readConcern`` fields. A
 driver MUST do this without modifying any data supplied by the
-application (e.g. the command document passed to RunCommand). The
-RunCommand method is considered a read operation and MUST use the
+application (e.g. the command document passed to RunCommand).
+If the user supplies an explicit readConcern as an argument to the runCommand
+method in a transaction, the client MUST raise an error with the message
+"Cannot set read concern after starting a transaction."
+
+The RunCommand method is considered a read operation and MUST use the
 transaction’s read preference.
 
 The behavior is not defined if the command document passed to RunCommand
@@ -1060,40 +1061,61 @@ we specify now that the readPreference must be checked per-operation.
 (However, we have not completely planned how read preference validation
 will behave in MongoDB 4.2.)
 
-Users can pass prohibited options to operations in transactions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Users cannot pass readConcern to operations in transactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For drivers that allow read concern to be passed to a particular
+If the driver did not prohibit the readConcern parameter to methods in a
+transaction, the following code would be ambiguous:
+
+.. code:: python
+
+   client = MongoClient("mongodb://localhost/?readConcernLevel=majority")
+   with client.start_session() as s:
+       # Transaction uses readConcern majority.
+       with s.start_transaction():
+           # The first command in a transaction. Which readConcern?
+           client.db.collection.distinct(
+               readConcern={'level': 'snapshot'})
+
+In this scenario, the driver must choose which of the two possible readConcerns
+to use for the *first* command in the transaction. The server will accept either
+without error, so the ambiguity MUST be resolved by raising a client-side error.
+
+Users can pass writeConcern to operations in transactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For drivers that allow write concern to be passed to a particular
 operation, this specification says, "If the user supplies an explicit
-readConcern via a method option, however, drivers MUST apply the
-readConcern, which will result in a server error." The same principle
-applies to write concern and read preference. The alternative is to
-silently ignore the user's read concern (or other options) if it is
-prohibited with transactions, but this would be a surprising and
+writeConcern via a method option, however, drivers MUST apply the
+writeConcern, which will result in a server error." The alternative is to
+silently ignore the user's write concern, but this would be a surprising and
 undetectable deviation from the user's intent.
 
 .. code:: python
 
-    client = MongoClient("mongodb://localhost?readPreference=nearest")
+    client = MongoClient("mongodb://localhost")
     with client.start_session() as s:
-        txn_opts = TransactionOptions(read_preference=PRIMARY)
-        with s.start_transaction(txn_opts):
-            # Uses read preference secondary.
-            client.db.collection.find_one(session=s, read_preference=SECONDARY)
+        with s.start_transaction(writeConcern={'w': 1}):
+            # Uses write concern majority, causing server error.
+            client.db.collection.insert_one(
+               {'_id': 1},
+               session=s,
+               writeConcern={'w': 'majority'})
 
-On the other hand, if a user configures the read concern (or other
-options) of a client, database, or collection, and then configures the
-same option on a transaction, the transaction's configuration overrides
-the client's, database's, and collection's configuration:
+On the other hand, if a user configures the write concern of a client, database,
+or collection, and then configures the same option on a transaction, the
+transaction's configuration overrides the inherited
+configuration:
 
 .. code:: python
 
-    client = MongoClient("mongodb://localhost?readPreference=nearest")
+    client = MongoClient("mongodb://localhost/?w=majority")
     with client.start_session() as s:
-        txn_opts = TransactionOptions(read_preference=PRIMARY)
-        with s.start_transaction(txn_opts):
-            # Uses read preference primary.
-            client.db.collection.find_one(session=s)
+        with s.start_transaction(writeConcern={'w': 1}):
+            # Uses w: 1.
+            client.db.collection.insert_one(
+               {'_id': 1},
+               session=s)
 
 In this case the transaction options express a more immediate user
 intent than the client options, so it is not surprising to override the
@@ -1170,6 +1192,8 @@ Applications should not run such commands inside a transaction.
 **Changelog**
 -------------
 
+:2018-06-18: Explicit read concern is prohibited within transactions, with a
+             client-side error.
 :2018-06-07: The count command is not supported within transactions.
 :2018-06-14: Any retryable writes error raised by commitTransaction must be
              labelled "UnknownTransactionCommitResult".
