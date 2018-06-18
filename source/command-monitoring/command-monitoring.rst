@@ -384,17 +384,20 @@ Ruby:
 .. code:: ruby
 
   class LoggingSubscriber
+    def logger
+      Logger.new(STDERR)
+    end
 
     def started(event)
-      Logger.info("COMMAND.#{event.command_name} #{event.address} STARTED: #{event.command.inspect}")
+      logger.info("COMMAND.#{event.command_name} #{event.address} STARTED: #{event.command.inspect}")
     end
 
     def succeeded(event)
-      Logger.info("COMMAND.#{event.command_name} #{event.address} COMPLETED: #{event.reply.inspect} (#{event.duration}s)")
+      logger.info("COMMAND.#{event.command_name} #{event.address} COMPLETED: #{event.reply.inspect} (#{event.duration}s)")
     end
 
     def failed(event)
-      Logger.info("COMMAND.#{event.command_name} #{event.address} FAILED: #{event.message.inspect} (#{event.duration}s)")
+      logger.info("COMMAND.#{event.command_name} #{event.address} FAILED: #{event.message.inspect} (#{event.duration}s)")
     end
   end
 
