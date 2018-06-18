@@ -1079,7 +1079,8 @@ transaction, the following code would be ambiguous:
        with s.start_transaction():
            # The first command in a transaction. Which readConcern?
            client.db.collection.distinct(
-               readConcern={'level': 'snapshot'})
+               readConcern={'level': 'snapshot'},
+               session=s)
 
 In this scenario, the driver must choose which of the two possible readConcerns
 to use for the *first* command in the transaction. The server will accept either
