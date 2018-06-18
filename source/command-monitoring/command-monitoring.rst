@@ -397,7 +397,7 @@ Ruby:
     end
 
     def failed(event)
-      logger.info("COMMAND.#{event.command_name} #{event.address} FAILED: #{event.message.inspect} (#{event.duration}s)")
+      logger.info("COMMAND.#{event.command_name} #{event.address} FAILED: #{event.message.inspect}: #{event.failure.inspect} (#{event.duration}s)")
     end
   end
 
