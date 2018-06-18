@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: December 13, 2017
+:Last Modified: June 14, 2018
 :Version: 1.5.1
 
 .. contents::
@@ -273,10 +273,9 @@ Driver API
     collation: Optional<Document>;
 
     /**
-     * The change stream will only provides changes that occurred after the
+     * The change stream will only provide changes that occurred at or after the
      * specified timestamp. Any command run against the server will return
-     * an operation time that can be used here. The default value is an
-     * operation time obtained from the server before the change stream was created.
+     * an operation time that can be used here.
      * @since 4.0
      * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
      * @note this is an option of the `$changeStream` pipeline stage.
@@ -354,6 +353,8 @@ Command syntax:
       ...
     }
 
+Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``collection`` option in subsequent ``getMore`` commands.
+
 ``MongoClient.watch`` helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -373,6 +374,8 @@ Command syntax:
 
 The helper MUST run the command against the `admin` database
 
+Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``collection`` option in subsequent ``getMore`` commands.
+
 ChangeStream
 ------------
 
@@ -390,25 +393,17 @@ Single Server Topologies
 Presently, change streams cannot be initiated on single server topologies as they do not have an oplog.  Drivers MUST NOT throw an exception in this scenario, but instead rely on an error returned from the server.  This allows for the server to seamlessly introduce support for this in the future, without need to make changes in driver code.
 
 startAtOperationTime
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
 
 :since: 4.0
 
 ``startAtOperationTime`` specifies that a change stream will only return changes that occurred at or after the specified ``Timestamp``.
 
-The server expects ``startAtOperationTime`` as a BSON Timestamp
-
-.. code:: typescript
-
-    {
-      ts: Timestamp;
-    }
-
-Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``Collection.watch`` and ``Database.watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
+The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
 
 ``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7`` drivers MUST set a default ``startAtOperationTime``. A default timestamp can be obtained from the ``operationTime`` field on any server response (e.g. ``isMaster``). This allows change streams to be resumed before the first notification is received.
+If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7``, and the initial ``aggregate`` command does not return a resumeToken (indicating no results), the ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` command when it returns.
 
 resumeAfter
 ^^^^^^^^^^^
@@ -425,7 +420,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
 
     - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtOperationTime`` key set to the original timestamp from when the changestream was first created.
+    - The driver MUST specify the ``startAtOperationTime`` key set to the ``startAtOperationTime`` provided by the user or saved from the original aggregation.
     - The driver MUST NOT set a ``resumeAfter`` key.
     - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
 - Else:
@@ -534,6 +529,27 @@ The `CursorKilled` or `Interrupted` error implies implies some other actor kille
 The `CappedPositionLost` error implies falling off of the back of the oplog,
 so resuming is impossible.
 
+-------------------------------------------------------------------------------------------
+Why do we need to send a default ``startAtOperationTime`` when resuming a ``ChangeStream``?
+-------------------------------------------------------------------------------------------
+
+``startAtOperationTime`` allows a user to create a resumable change stream even when a result
+(and corresponding resumeToken) is not available until a later point in time.
+
+For example:
+
+- A client creates a ``ChangeStream``, and calls ``watch``
+- The ``ChangeStream`` sends out the initial ``aggregate`` call, and receives a response
+with no initial values. Because there are no initial values, there is no latest resumeToken.
+- The client's network is partitioned from the server, causing the client's ``getMore`` to time out
+- Changes occur on the server.
+- The network is unpartitioned
+- The client attempts to resume the ``ChangeStream``
+
+In the above example, not sending ``startAtOperationTime`` will result in the change stream missing
+the changes that occurred while the server and client are partitioned. By sending ``startAtOperationTime``,
+the server will know to include changes from that previous point in time.
+
 Test Plan
 =========
 
@@ -582,4 +598,6 @@ Changelog
 |            | and added ``startAtClusterTime`` option.                   |
 +------------+------------------------------------------------------------+
 | 2018-05-24 | Changed ``startatClusterTime`` to ``startAtOperationTime`` |
++------------+------------------------------------------------------------+
+| 2018-06-14 | Clarified how to calculate ``startAtOperationTime``        |
 +------------+------------------------------------------------------------+
