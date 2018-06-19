@@ -47,6 +47,7 @@ Server Wire version and Feature List
        | Retryable Writes
        | Causally Consistent Reads
        | Logical Sessions
+       | update "arrayFilters" option
 
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
