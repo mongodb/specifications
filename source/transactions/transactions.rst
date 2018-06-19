@@ -273,7 +273,10 @@ readPreference is inherited from the MongoClient associated with this
 session.
 
 The transaction’s read preference MUST override all other user
-configurable read preferences.
+configurable read preferences, with the exception of drivers that allow
+an operation level read preference. In this case, the driver MUST respect
+the read preference specified by the user, allowing the server to report
+an error.
 
 In MongoDB 4.0, transactions may only read from the primary. If a read
 is attempted and the transaction’s read preference is not Primary
