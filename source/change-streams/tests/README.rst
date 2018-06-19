@@ -44,9 +44,10 @@ Each YAML file has the following keys:
   - ``changeStreamPipeline``: An array of additional aggregation pipeline stages to add to the change stream
   - ``changeStreamOptions``: Additional options to add to the changeStream
   - ``operations``: Array of documents, each describing an operation. Each document has the following fields:
+
     - ``database``: Database against which to run the operation
     - ``collection``: Collection against which to run the operation
-    - ``commandName``: Name of the command to run
+    - ``name``: Name of the command to run
     - ``arguments``: Object of arguments for the command (ex: document to insert)
 
   - ``expectations``: Optional list of command-started events in Extended JSON format
