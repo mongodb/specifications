@@ -148,7 +148,8 @@ The following tests have not yet been automated, but MUST still be tested
 #. ``ChangeStream`` must continuously track the last seen ``resumeToken``
 #. ``ChangeStream`` will throw an exception if the server response is missing the resume token
 #. ``ChangeStream`` will automatically resume one time on a resumable error (including `not master`) with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
-#. ``ChangeStream`` will not attempt to resume on a server error
+#. ``ChangeStream`` will not attempt to resume on any error encountered while executing an ``aggregate`` command.
+#. ``ChangeStream`` will not attempt to resume after encountering error code 11601 (Interrupted), 136 (CappedPositionLost), or 237 (CursorKilled) while executing a ``getMore`` command.
 #. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
 #. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on the driver side.
 #. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
