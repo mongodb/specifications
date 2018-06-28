@@ -34,6 +34,7 @@ Server Wire version and Feature List
        | findAndModify take write concern
        | Commands take read concern
        | Document-level validation
+       | explain command supports distinct and findAndModify
  
    * - 3.4
      - 5
