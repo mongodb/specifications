@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: May 16, 2018
-:Version: 0.4
+:Last Modified: July 2, 2018
+:Version: 0.5
 
 .. contents::
 
@@ -269,7 +269,7 @@ where each string corresponds to a collection name. This method SHOULD be named
 
 MongoDB 4.0 introduced a ``nameOnly`` boolean option to the ``listCollections``
 database command, which limits the command result to only include collection
-names.
+names. NOTE: ``nameOnly`` is applied before any filter is applied.
 
 Example return::
 
@@ -287,7 +287,8 @@ Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
 the ``nameOnly`` option for the ``listCollections`` command and will ignore it 
 without raising an error. Therefore, drivers MUST always specify the ``nameOnly`` 
 option when they only intend to access collection names from the ``listCollections`` 
-command result.
+command result, except drivers MUST NOT set ``nameOnly`` if a filter
+specifies any keys other than ``name``.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,7 +345,8 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method.
+Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method,
+except drivers MUST NOT set ``nameOnly`` if a filter specifies any keys other than ``name``.
 
 Replicasets
 ~~~~~~~~~~~
@@ -412,6 +414,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.5 Changes
+    - Clarify that ``nameOnly`` must not be used with filters other than ``name``.
+
 Version 0.4 Changes
     - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command. 
 
