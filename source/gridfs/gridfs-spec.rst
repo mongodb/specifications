@@ -9,8 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: January 31, 2018
-:Version: 1.2
+:Last Modified: July 5, 2018
+:Version: 1.3
 
 .. contents::
 
@@ -575,10 +575,11 @@ If a user file contains no data, drivers MUST still create a files
 collection document for it with length set to zero. Drivers MUST NOT
 create any empty chunks for this file.
 
-Note that drivers are no longer required to run the 'filemd5' to confirm
+Drivers MUST NOT run the 'filemd5' database command to confirm
 that all chunks were successfully uploaded. We assume that if none of
 the inserts failed then the chunks must have been successfully inserted,
-and running the 'filemd5' command would just be unnecessary overhead.
+and running the 'filemd5' command would just be unnecessary overhead
+and doesn't work for sharded chunk keys anyway.
 
 **Operation Failure**
 
@@ -1029,7 +1030,8 @@ Why do drivers no longer need to call the filemd5 command on upload?
   that the chunk was correctly inserted. No other operations that insert
   or modify data require the driver to double check that the operation
   succeeded. It can be assumed that any errors would have been detected by
-  use of the appropriate write concern.
+  use of the appropriate write concern.  Using filemd5 also prevents users
+  from sharding chunk keys.
 
 What about write concern?
   This spec leaves the choice of how to set write concern to driver
@@ -1180,3 +1182,4 @@ Changes
 - 2016-10-07 Added ReadConcern to the GridFS spec
 - 2016-10-07 Modified a JSON test that was testing optional behavior
 - 2018-01-31 Deprecated MD5, and specified an option to disable MD5 until removed
+- 2018-07-05 Must not use 'filemd5'
