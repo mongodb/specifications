@@ -665,7 +665,7 @@ Basic
   interface Collection {
 
     /**
-     * Sends a batch of writes to the server at the same time.
+     * Executes multiple write operations.
      *
      * An error MUST be raised if the requests parameter is empty.
      *
