@@ -137,6 +137,8 @@ Read
      * MAY setup a cursor to be executed upon iteration against the $out collection such
      * that if a user were to iterate a pipeline including $out, results would be returned.
      *
+     * Note: implementations should return a cursor for Iterable<Document>.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
@@ -168,6 +170,10 @@ Read
     /**
      * Finds the distinct values for a specified field across a single collection.
      *
+     * Note: Unlike other read methods (e.g. aggregate, find), this method will not return
+     * a cursor. The Iterable<any> return type corresponds to the "values" array in the
+     * distinct command's result document.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
     distinct(fieldName: string, filter: Document, options: Optional<DistinctOptions>): Iterable<any>;
@@ -182,6 +188,8 @@ Read
      *
      * Note: If $explain is specified in the modifiers, the return value is a single
      * document. This could cause problems for static languages using strongly typed entities.
+     *
+     * Note: implementations should return a cursor for Iterable<Document>.
      *
      * @see https://docs.mongodb.com/manual/core/read-operations-introduction/
      */
