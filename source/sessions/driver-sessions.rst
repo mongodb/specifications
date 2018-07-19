@@ -1033,15 +1033,18 @@ topologies.  It MUST NOT be run against a standalone server.
 
 7. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
 to the pool.
+
     * Insert two documents into a collection
     * Execute a find operation on the collection and iterate past the first document
     * Assert that the implicit session is returned to the pool. This can be done in several ways:
+
       * Track in-use count in the server session pool and assert that the count has dropped to zero
       * Track the lsid used for the find operation (e.g. with APM) and then do another operation and
         assert that the same lsid is used as for the find operation.
 
 8. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
 to the pool.
+
     * Insert five documents into a collection
     * Execute a find operation on the collection with batch size of 3
     * Iterate past the first four documents, forcing the final ``getMore`` operation
