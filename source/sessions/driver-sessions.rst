@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 07-June-2018
+:Last Modified: 19-July-2018
 
 .. contents::
 
@@ -430,7 +430,7 @@ New database methods that take an explicit session
 --------------------------------------------------
 
 All ``MongoDatabase`` methods that talk to the server SHOULD be overloaded to
-take an explicit session parameter.
+take an explicit session parameter. (See `why is session an explicit parameter?`_.)
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -464,7 +464,7 @@ New collection methods that take an explicit session
 
 All ``MongoCollection`` methods that talk to the server, with the exception of
 `estimatedDocumentCount`, SHOULD be overloaded to take an explicit session
-parameter.
+parameter. (See `why is session an explicit parameter?`_.)
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -1132,17 +1132,45 @@ Open questions
 Q&A
 ===
 
-Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of ``ClientSession``?
-    Because doing so would provide an illusion of safety. It doesn't make these
-    instances thread safe. And even if when testing an application no such exceptions
-    are encountered, that doesn't prove anything. The application might still be
-    using the instances in a thread-unsafe way and just didn't happen to do so during
-    a test run. The final argument is that checking this would require overhead
-    that doesn't provide any clear benefit. 
+Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of ``ClientSession``?
+------------------------------------------------------------------------------------------------
+
+Because doing so would provide an illusion of safety. It doesn't make these
+instances thread safe. And even if when testing an application no such exceptions
+are encountered, that doesn't prove anything. The application might still be
+using the instances in a thread-unsafe way and just didn't happen to do so during
+a test run. The final argument is that checking this would require overhead
+that doesn't provide any clear benefit.
+
+Why is session an explicit parameter?
+-------------------------------------
+
+A previous draft proposed that ClientSession would be a MongoClient-like object added to the object hierarchy::
+
+  session = client.startSession(...)
+  database = session.getDatabase(...) // database is associated with session
+  collection = database.getCollection(...) // collection is associated with session
+  // operations on collection implicitly use session
+  collection.insertOne({})
+  session.endSession()
+
+The central feature of this design is that a MongoCollection (or database, or perhaps a GridFS object) is associated with a session, which is then an implied parameter to any operations executed using that MongoCollection.
+
+This API was rejected, with the justification that a ClientSession does not naturally belong to the state of a MongoCollection. MongoCollection has up to now been a stable long-lived object that could be widely shared, and in most drivers it is thread safe. Once we associate a ClientSession with it, the MongoCollection object becomes short-lived and is no longer thread safe. It is a bad sign that MongoCollection's thread safety and lifetime vary depending on how its parent MongoDatabase is created.
+
+Instead, we require users to pass session as a parameter to each function::
+
+  session = client.startSession(...)
+  database = client.getDatabase(...)
+  collection = database.getCollection(...)
+  // users must explicitly pass session to operations
+  collection.insertOne(session, {})
+  session.endSession()
 
 Change log
 ==========
 
+:2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
 :2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
 :2017-09-13: If causalConsistency option is ommitted assume true
