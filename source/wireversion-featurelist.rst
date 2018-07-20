@@ -44,11 +44,19 @@ Server Wire version and Feature List
    * - 3.6
      - 6
      - | Supports OP_MSG
-       | ChangeStream support
+       | Collection-level ChangeStream support
        | Retryable Writes
        | Causally Consistent Reads
        | Logical Sessions
        | update "arrayFilters" option
+       
+   * - 4.0
+     - 7
+     - | ReplicaSet transactions
+       | Database and cluster-level change streams and startAtOperationTime option
 
+   * - 4.2
+     - 8
+     - | Sharded transactions
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
