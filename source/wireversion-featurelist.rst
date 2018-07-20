@@ -49,6 +49,13 @@ Server Wire version and Feature List
        | Causally Consistent Reads
        | Logical Sessions
        | update "arrayFilters" option
+       
+   * - 4.0
+     - 7
+     - | ReplicaSet transactions
 
+   * - 4.2
+     - 8
+     - | Sharded transactions
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
