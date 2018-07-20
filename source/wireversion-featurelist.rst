@@ -44,7 +44,7 @@ Server Wire version and Feature List
    * - 3.6
      - 6
      - | Supports OP_MSG
-       | ChangeStream support
+       | Collection-level ChangeStream support
        | Retryable Writes
        | Causally Consistent Reads
        | Logical Sessions
@@ -53,6 +53,7 @@ Server Wire version and Feature List
    * - 4.0
      - 7
      - | ReplicaSet transactions
+       | Database and cluster-level change streams and startAtOperationTime option
 
    * - 4.2
      - 8
