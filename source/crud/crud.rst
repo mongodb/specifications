@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: June 7, 2018
+:Last Modified: July 25, 2018
 
 .. contents::
 
@@ -1219,6 +1219,17 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
     modifiedCount: Int64;
 
     /**
+     * The number of documents that were upserted.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property so long as
+     * it is always possible to infer whether an upsert has taken place. Since
+     * the "_id" of an upserted document could be null, a null "upsertedId" may
+     * be ambiguous in some drivers. If so, this field can be used to indicate
+     * whether an upsert has taken place.
+     */
+    upsertedCount: Int64;
+
+    /**
      * The identifier of the inserted document if an upsert took place.
      */
     upsertedId: any;
@@ -1699,6 +1710,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-07-25: Added upsertedCount to UpdateResult.
 * 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
 * 2018-03-05: Deprecate snapshot option
 * 2018-03-01: Deprecate maxScan query option. 
