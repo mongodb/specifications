@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: December 13, 2017
+:Last Modified: July 27, 2018
 :Version: 1.5.1
 
 .. contents::
@@ -101,7 +101,7 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
     /**
      * Describes the type of operation represented in this change notification.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate";
+    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop";
 
     /**
      * Contains two fields: “db” and “coll” containing the database and
@@ -489,4 +489,6 @@ Changelog
 | 2017-12-13 | Default read concern is also accepted, not just "majority".|
 +------------+------------------------------------------------------------+
 | 2018-04-17 | Clarified that the initial aggregate should not be retried.|
++------------+------------------------------------------------------------+
+| 2018-07-27 | Added drop type to change stream operations                |
 +------------+------------------------------------------------------------+
