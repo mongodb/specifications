@@ -10,14 +10,8 @@ whichever format is more convenient for them.
 Version
 -------
 
-Specifications have no version scheme.
-They are not tied to a MongoDB server version,
-and it is our intention that each specification moves from "draft" to "final"
-with no further versions; it is superseded by a future spec, not revised.
-
-However, implementers must have stable sets of tests to target.
-As test files evolve they will be occasionally tagged like
-"server-selection-tests-2015-01-04", until the spec is final.
+Files in the "specifications" repository have no version scheme. They are not
+tied to a MongoDB server version.
 
 Test Format and Use
 -------------------
