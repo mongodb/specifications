@@ -31,7 +31,10 @@ are described in the form of write commands that can be sent directly
 to MongoDB.
 
 The act section defines what operation (with which arguments) should
-be performed.
+be performed. The arguments section in act contains a source object, which has
+a $hex key. $hex is not a BSON type and indicates that the corresponding value
+should be parsed as a series of hex bytes (e.g. "12ab" should be parsed into
+two bytes: "0x12" and "0xab") that should be uploaded using GridFS.
 
 The assert section defines what should be true at the end of the test.
 This includes checking the return value of the operation, as well as
