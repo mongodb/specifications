@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: July 27, 2018
+:Last Modified: July 30, 2018
 :Version: 1.5.1
 
 .. contents::
@@ -60,9 +60,6 @@ An error is considered resumable if it meets any of the following criteria:
       - 136
     * - CursorKilled
       - 237
-
-- a server error response with an error message containing the substring "not
-  master" or "node is recovering"
 
 An error on an aggregate command is not a resumable error. Only errors on a
 getMore command may be considered resumable errors.
@@ -602,4 +599,6 @@ Changelog
 | 2018-06-14 | Clarified how to calculate ``startAtOperationTime``        |
 +------------+------------------------------------------------------------+
 | 2018-07-27 | Added drop to change stream operationType                  |
++------------+------------------------------------------------------------+
+| 2018-07-30 | Remove redundant error message checks for resumable errors |
 +------------+------------------------------------------------------------+
