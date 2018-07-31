@@ -619,6 +619,10 @@ The count of documents is returned in the 'n' field, similar to the `count`
 command. countDocuments options other than filter, skip, and limit are added as
 options to the `aggregate` command.
 
+In the event this aggregation is run against an empty collection, an empty
+array will be returned with no ``n`` field. Drivers MUST interpret this result
+as a ``0`` count.
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Combining Limit and Batch Size for the Wire Protocol
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
