@@ -781,19 +781,19 @@ Step 4
 To test SASLprep behavior, create two users:
 
 #. username: "IX", password "IX"
-#. username: "\u2168" (ROMAN NUMERAL NINE), password "\u2163" (ROMAN NUMERAL FOUR)
+#. username: "\\u2168" (ROMAN NUMERAL NINE), password "\\u2163" (ROMAN NUMERAL FOUR)
 
 To create the users, use the exact bytes for username and password without
 SASLprep or other normalization and specify SCRAM-SHA-256 credentials:
 
     db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
-    db.runCommand({createUser: '\u2168', pwd: '\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
+    db.runCommand({createUser: '\\u2168', pwd: '\\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 
 For each user, verify that the driver can authenticate with the password in
 both SASLprep normalized and non-normalized forms:
 
-- User "IX": use password forms "IX" and "I\u00ADX"
-- User "\u2168": use password forms "IV" and "I\u00ADV"
+- User "IX": use password forms "IX" and "I\\u00ADX"
+- User "\\u2168": use password forms "IV" and "I\\u00ADV"
 
 As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 
