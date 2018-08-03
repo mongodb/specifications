@@ -39,6 +39,7 @@ tests:
             result:
                 matchedCount: 2
                 modifiedCount: 1
+                upsertedCount: 0
             collection:
                 data:
                     - {_id: 1, y: [{b: 2}, {b: 1}]}
