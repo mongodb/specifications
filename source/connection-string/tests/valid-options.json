@@ -20,6 +20,26 @@
       "options": {
         "authmechanism": "MONGODB-CR"
       }
+    },
+    {
+      "description": "Comma separated option values are parsed to array",
+      "uri": "mongodb://example.com/?foo=bar,baz",
+      "valid": true,
+      "warning": false,
+      "hosts": [
+        {
+          "type": "hostname",
+          "host": "example.com",
+          "port": null
+        }
+      ],
+      "auth": null,
+      "options": {
+        "foo": [
+          "bar",
+          "baz"
+        ]
+      }
     }
   ]
 }
