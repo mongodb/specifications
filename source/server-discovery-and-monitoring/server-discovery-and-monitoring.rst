@@ -836,44 +836,6 @@ Other required fields
 defined in the `ServerDescription`_ data structure
 are parsed from the ismaster response in the obvious way.
 
-Network error during server check
-'''''''''''''''''''''''''''''''''
-
-When a server `check`_ fails due to a network error,
-the client SHOULD clear its connection pool for the server:
-if the monitor's socket is bad it is likely that all are.
-(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_.)
-
-Once a server is connected, the client MUST change its type
-to Unknown
-only after it has retried the server once.
-(This rule applies to server checks during monitoring.
-It does *not* apply when multi-threaded
-`clients update the topology from each handshake`_.)
-
-In this pseudocode, "description" is the prior ServerDescription::
-
-    def checkServer(description):
-        try:
-            call ismaster
-            return new ServerDescription
-        except NetworkError as e0:
-            clear connection pool for the server
-
-            if description.type is Unknown or PossiblePrimary:
-                # Failed on first try to reach this server, give up.
-                return new ServerDescription with type=Unknown, error=e0
-            else:
-                # We've been connected to this server in the past, retry once.
-                try:
-                    reconnect and call ismaster
-                    return new ServerDescription
-                except NetworkError as e1:
-                    return new ServerDescription with type=Unknown, error=e1
-
-(See `retry ismaster calls once`_ and
-`JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
-
 .. _updates its view of the topology:
 
 Updating the TopologyDescription
@@ -1120,7 +1082,7 @@ updateRSWithoutPrimary
         remove this server from topologyDescription and stop monitoring it
         return
 
-  Unlike `updateRSFromPrimary`_,	
+  Unlike `updateRSFromPrimary`_,
   this subroutine does **not** remove any servers from the TopologyDescription
   based on the list of servers in isMaster.hosts. The only server that might be
   removed is the server itself that the isMaster response is from.
@@ -1295,8 +1257,43 @@ See the Driver Sessions Spec for the purpose of this value.
 Error handling
 ''''''''''''''
 
-This section is about errors when reading or writing to a server.
-For errors when checking servers, see `network error during server check`_.
+Network error during server check
+`````````````````````````````````
+
+When a server `check`_ fails due to a network error,
+the client SHOULD clear its connection pool for the server:
+if the monitor's socket is bad it is likely that all are.
+(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_.)
+
+Once a server is connected, the client MUST change its type
+to Unknown
+only after it has retried the server once.
+(This rule applies to server checks during monitoring.
+It does *not* apply when multi-threaded
+`clients update the topology from each handshake`_.)
+
+In this pseudocode, "description" is the prior ServerDescription::
+
+    def checkServer(description):
+        try:
+            call ismaster
+            return new ServerDescription
+        except NetworkError as e0:
+            clear connection pool for the server
+
+            if description.type is Unknown or PossiblePrimary:
+                # Failed on first try to reach this server, give up.
+                return new ServerDescription with type=Unknown, error=e0
+            else:
+                # We've been connected to this server in the past, retry once.
+                try:
+                    reconnect and call ismaster
+                    return new ServerDescription
+                except NetworkError as e1:
+                    return new ServerDescription with type=Unknown, error=e1
+
+(See `retry ismaster calls once`_ and
+`JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
 
 Network error when reading or writing
 `````````````````````````````````````
