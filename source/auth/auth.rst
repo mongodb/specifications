@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.8
+:Spec Version: 1.7.1
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -878,7 +878,7 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
-Version 1.8 Changes
+Version 1.7.1 Changes
     * Unknown users don't cause ismaster errors. This was changed before
       server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
       such a possibility.
