@@ -1664,7 +1664,7 @@ References
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
 .. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
-.. _idleWritePeriodMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWritePeriodMS
+.. _idleWritePeriodMS: https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#idlewriteperiodms
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 
 Changes
