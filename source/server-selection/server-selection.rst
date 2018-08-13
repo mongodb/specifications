@@ -771,7 +771,7 @@ as follows:
    selector.
 
 5. If there are any suitable servers, choose one at random from those
-   within the latency window and return it; otherwise, continue to step #5
+   within the latency window and return it; otherwise, continue to the next step
 
 6. Request an immediate topology check, then block the server selection
    thread until the topology changes or until the server selection
