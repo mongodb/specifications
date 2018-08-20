@@ -1,0 +1,27 @@
+description: "Connecting to a single mongos"
+uri: "mongodb://a"
+phases: [
+    {
+        responses: [
+                ["a:27017", {
+                    ok: 1,
+                    ismaster: true,
+                    msg: "isdbgrid",
+                    minWireVersion: 0,
+                    maxWireVersion: 1000
+                }]
+        ],
+        outcome: {
+            servers: {
+                "a:27017": {
+                    type: "Mongos",
+                    setName:
+                }
+            },
+            topologyType: "Sharded",
+            logicalSessionTimeoutMinutes: null,
+            setName: ,
+            compatible: true
+        }
+    }
+]
