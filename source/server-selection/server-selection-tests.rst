@@ -265,7 +265,7 @@ function that filters the list of suitable servers.  Drivers implementing this p
 of the spec MUST test that:
 
 - The application-provided server selector is executed as part of the server selection process when
-  there are a nonzero number of candidate or eligible servers. For example, execute a test against a replica
+  there is a nonzero number of candidate or eligible servers. For example, execute a test against a replica
   set: Register a server selector that selects the suitable server with the highest port number. Execute 10
   queries with nearest read preference and, using command monitoring, assert that all the operations execute
   on the member with the highest port number.
