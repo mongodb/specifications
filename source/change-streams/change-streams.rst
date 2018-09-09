@@ -98,7 +98,7 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
     /**
      * Describes the type of operation represented in this change notification.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop";
+    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase";
 
     /**
      * Contains two fields: “db” and “coll” containing the database and
@@ -601,4 +601,6 @@ Changelog
 | 2018-07-27 | Added drop to change stream operationType                  |
 +------------+------------------------------------------------------------+
 | 2018-07-30 | Remove redundant error message checks for resumable errors |
++------------+------------------------------------------------------------+
+| 2018-09-09 | Added dropDatabase to change stream operationType          |
 +------------+------------------------------------------------------------+
