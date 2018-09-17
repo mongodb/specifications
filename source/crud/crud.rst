@@ -1530,7 +1530,6 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
