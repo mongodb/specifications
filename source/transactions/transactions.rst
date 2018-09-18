@@ -796,7 +796,7 @@ for justification.) The approximate meaning of the
 UnknownTransactionCommitResult label is, "We don't know if your commit
 has satisfied the provided write concern." The only write concern errors
 that are not labeled with "UnknownTransactionCommitResult" are
-CannotSatisfyWriteConcern (which will be renamed to the more precise
+UnsatisfiableWriteConcern (which will be renamed to the more precise
 UnsatisfiableWriteConcern in 4.2, while preserving the current error
 code) and UnknownReplWriteConcern. These errors codes mean that the
 provided write concern is not valid and therefore a retry attempt would

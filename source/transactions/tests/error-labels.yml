@@ -826,7 +826,7 @@ tests:
       data:
           failCommands: ["commitTransaction"]
           writeConcernError:
-            code: 100  # UnsatisfiableWriteConcern/CannotSatisfyWriteConcern
+            code: 100  # UnsatisfiableWriteConcern
             errmsg: Not enough data-bearing nodes
 
     operations:
