@@ -106,7 +106,7 @@ Drivers MUST:
   - ``0xFFFFFFFF``: To match ``"Feb 7th, 2106 06:28:15 UTC"``
 
 - Ensure that the Counter field successfully overflows its sequence from
-  ``0xFFFFFFFF`` to ``0x00000000``.
+  ``0xFFFFFF`` to ``0x000000``.
 
 Motivation for Change
 =====================
