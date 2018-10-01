@@ -20,7 +20,10 @@
               "_id": 3,
               "x": 33
             }
-          ]
+          ],
+          "options": {
+            "ordered": true
+          }
         }
       },
       "outcome": {

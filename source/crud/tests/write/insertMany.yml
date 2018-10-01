@@ -10,7 +10,7 @@ tests:
                 documents: 
                     - {_id: 2, x: 22}
                     - {_id: 3, x: 33}
-
+                options: { ordered: true }
         outcome:
             result:
                 insertedIds: { 0: 2, 1: 3 }
