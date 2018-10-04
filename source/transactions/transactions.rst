@@ -220,14 +220,7 @@ is NULL or the readConcern in defaultTransactionOptions is NULL, the
 readConcern is inherited from the MongoClient associated with this
 session.
 
-Drivers MUST override all other collection, database, or client
-readConcerns with the transaction’s readConcern. Drivers MUST add this
-readConcern to the first command in a transaction if and only if the
-readConcern is supplied and not the default. Drivers MUST NOT add to
-subsequent commands the readConcern from the transaction or any
-readConcern inherited from the collection, database, or client.
-
-If the user supplies an explicit readConcern via a method option, the driver 
+If the user supplies an explicit readConcern via a method option, the driver
 MUST raise an error with the message "Cannot set read concern after starting a
 transaction."
 See `Users cannot pass readConcern or writeConcern to operations in transactions`_.
@@ -249,7 +242,7 @@ commands. Drivers MUST NOT add the transaction’s writeConcern or any
 writeConcern inherited from the collection, database, or client to any
 preceding commands in the transaction.
 
-If the user supplies an explicit writeConcern via a method option, the driver 
+If the user supplies an explicit writeConcern via a method option, the driver
 MUST raise an error with the message "Cannot set write concern after starting a
 transaction."
 See `Users cannot pass readConcern or writeConcern to operations in transactions`_.
@@ -580,9 +573,19 @@ Constructing the first command within a transaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When constructing the first command within a transaction, drivers MUST
-add the ``lsid``, ``txnNumber``, ``readConcern``, ``startTransaction`` and
-``autocommit`` fields. This is an example of an insert command that
-begins a server transaction:
+add the ``lsid``, ``txnNumber``, ``startTransaction``, and ``autocommit``
+fields.
+
+Drivers MUST include the transaction's readConcern in the first command in a
+transaction if and only if the readConcern is supplied and not the server's
+default. The readConcern MUST NOT be inherited from the collection, database, or
+client associated with the driver method that invokes the first command.
+
+Drivers MUST NOT add to subsequent commands the readConcern from the
+transaction or any readConcern inherited from the collection, database, or
+client.
+
+This is an example of an insert command that begins a server transaction:
 
 .. code:: typescript
 
@@ -601,6 +604,10 @@ begins a server transaction:
         startTransaction : true,
         autocommit : false
     }
+
+This command uses the readConcern set on the transaction's TransactionOptions
+during the ``startTransaction`` call. It is not inherited from a client,
+database, or collection at the time of the first command.
 
 The session transitions to the "transaction in progress" state after
 completing the first command within a transaction — even on error.
@@ -796,8 +803,10 @@ for justification.) The approximate meaning of the
 UnknownTransactionCommitResult label is, "We don't know if your commit
 has satisfied the provided write concern." The only write concern errors
 that are not labeled with "UnknownTransactionCommitResult" are
-UnsatisfiableWriteConcern and UnknownReplWriteConcern. These errors codes mean 
-that the provided write concern is not valid and therefore a retry attempt would
+CannotSatisfyWriteConcern (which will be renamed to the more precise
+UnsatisfiableWriteConcern in 4.2, while preserving the current error
+code) and UnknownReplWriteConcern. These errors codes mean that the
+provided write concern is not valid and therefore a retry attempt would
 fail with the same error.
 
 Retrying commitTransaction
