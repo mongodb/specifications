@@ -55,23 +55,34 @@ Each YAML file has the following keys:
   - ``operation``: Document describing the operation to be executed. This will
     have the following fields:
 
-      - ``name``: The name of the operation as defined in the specification.
+    - ``name``: The name of the operation as defined in the specification.
 
-      - ``arguments``: The names and values of arguments from the specification.
+    - ``arguments``: The names and values of arguments from the specification.
 
   - ``outcome``: Document describing the return value and/or expected state of
     the collection after the operation is executed. This will have some or all
     of the following fields:
 
-      - ``result``: The return value from the operation.
+    - ``error``: If ``true``, the test should expect an error or exception. Note
+      that some drivers may report server-side errors as a write error within a
+      write result object.
 
-      - ``collection``:
+    - ``result``: The return value from the operation. This will correspond to
+      an operation's result object as defined in the CRUD specification. This
+      field may be omitted if ``error`` is ``true``. If this field is present
+      and ``error`` is ``true`` (generally for multi-statement tests), the
+      result reports information about operations that succeeded before an
+      unrecoverable failure. In that case, drivers may choose to check the
+      result object if their BulkWriteException (or equivalent) provides access
+      to a write result object.
 
-        - ``name`` (optional): The name of the collection to verify. If this
-          isn't present then use the collection under test.
+    - ``collection``:
 
-        - ``data``: The data that should exist in the collection after the
-          operation has been run.
+      - ``name`` (optional): The name of the collection to verify. If this isn't
+        present then use the collection under test.
+
+      - ``data``: The data that should exist in the collection after the
+        operation has been run.
 
 Expectations
 ============
