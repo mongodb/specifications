@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.4
+:Spec Version: 1.5.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 19-July-2018
+:Last Modified: 2018-10-11
 
 .. contents::
 
@@ -830,6 +830,13 @@ of the cursor.  For language runtimes that provide the ability to attach finaliz
 that are run prior to garbage collection, the cursor class SHOULD return an implicit session
 to the pool in the finalizer if the cursor has not already been exhausted.
 
+If a driver supports process forking, the session pool needs to be cleared on
+one side of the forked processes (just like sockets need to reconnect).
+Drivers MUST provide a way to clear the session pool without sending
+``endSessions``.  Drivers MAY make this automatic when the process ID changes.
+If they do not, they MUST document how to clear the session pool wherever they
+document fork support.
+
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
 
@@ -1173,6 +1180,7 @@ Instead, we require users to pass session as a parameter to each function::
 Change log
 ==========
 
+:2018-10-11: Session pools must be cleared in child process after fork
 :2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
 :2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
