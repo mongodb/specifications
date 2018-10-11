@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.4
+:Spec Version: 1.5.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 19-July-2018
+:Last Modified: 2018-10-11
 
 .. contents::
 
@@ -259,11 +259,11 @@ such use is attempted.
 ClientSession
 =============
 
-``ClientSession`` instances are not thread safe. They can only be used by one
-thread at a time.
+``ClientSession`` instances are not thread safe or fork safe. They can only be used by one
+thread or process at a time.
 
-Drivers MUST document the thread-safety limitations of sessions. Drivers MUST
-NOT attempt to detect simultaneous use by multiple threads (see Q&A for the
+Drivers MUST document the thread-safety and fork-safety limitations of sessions. Drivers MUST
+NOT attempt to detect simultaneous use by multiple threads or processes (see Q&A for the
 rationale).
 
 ClientSession interface summary
@@ -830,6 +830,14 @@ of the cursor.  For language runtimes that provide the ability to attach finaliz
 that are run prior to garbage collection, the cursor class SHOULD return an implicit session
 to the pool in the finalizer if the cursor has not already been exhausted.
 
+If a driver supports process forking, the session pool needs to be cleared on
+one side of the forked processes (just like sockets need to reconnect).
+Drivers MUST provide a way to clear the session pool without sending
+``endSessions``.  Drivers MAY make this automatic when the process ID changes.
+If they do not, they MUST document how to clear the session pool wherever they
+document fork support.  After clearing the session pool in this way, drivers
+MUST ensure that sessions already checked out are not returned to the new pool.
+
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
 
@@ -1062,6 +1070,24 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * Iterate through enough documents (3) to force a ``getMore``
     * Assert that the server receives a non-zero lsid equal to the lsid that ``find`` sent.
 
+11. For drivers that support forking, test that the session pool can be cleared
+    after a fork without calling ``endSession``.  E.g.,
+
+    * Create ClientSession
+    * Record its lsid
+    * Delete it (so the lsid is pushed into the pool)
+    * Fork
+    * In the parent, create a ClientSession and assert its lsid is the same.
+    * In the child, create a ClientSession and assert its lsid is different.
+
+12 For drivers that support forking, test that existing sessions are not checked
+   into a cleared pool.  E.g.,
+
+    * Create ClientSession
+    * Record its lsid
+    * Fork
+    * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
+    * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
@@ -1135,7 +1161,7 @@ Open questions
 Q&A
 ===
 
-Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of ``ClientSession``?
+Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded or multi-process use of ``ClientSession``?
 ------------------------------------------------------------------------------------------------
 
 Because doing so would provide an illusion of safety. It doesn't make these
@@ -1173,6 +1199,7 @@ Instead, we require users to pass session as a parameter to each function::
 Change log
 ==========
 
+:2018-10-11: Session pools must be cleared in child process after fork
 :2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
 :2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
