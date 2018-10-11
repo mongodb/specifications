@@ -1069,8 +1069,15 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * Iterate through enough documents (3) to force a ``getMore``
     * Assert that the server receives a non-zero lsid equal to the lsid that ``find`` sent.
 
-11. For drivers that support forking, test that the session pool can be cleared after a fork
-    without calling ``endSession``.
+11. For drivers that support forking, test that the session pool can be cleared
+    after a fork without calling ``endSession``.  E.g.,
+
+    * Create ClientSession
+    * Record its lsid
+    * Delete it (so the lsid is pushed into the pool)
+    * Fork
+    * In the parent, create a ClientSession and assert its lsid is the same.
+    * In the child, create a ClientSession and assert its lsid is different.
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
