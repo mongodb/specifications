@@ -259,11 +259,11 @@ such use is attempted.
 ClientSession
 =============
 
-``ClientSession`` instances are not thread safe. They can only be used by one
-thread at a time.
+``ClientSession`` instances are not thread safe or fork safe. They can only be used by one
+thread or process at a time.
 
-Drivers MUST document the thread-safety limitations of sessions. Drivers MUST
-NOT attempt to detect simultaneous use by multiple threads (see Q&A for the
+Drivers MUST document the thread-safety and fork-safety limitations of sessions. Drivers MUST
+NOT attempt to detect simultaneous use by multiple threads or processes (see Q&A for the
 rationale).
 
 ClientSession interface summary
@@ -835,7 +835,8 @@ one side of the forked processes (just like sockets need to reconnect).
 Drivers MUST provide a way to clear the session pool without sending
 ``endSessions``.  Drivers MAY make this automatic when the process ID changes.
 If they do not, they MUST document how to clear the session pool wherever they
-document fork support.
+document fork support.  After clearing the session pool in this way, drivers
+MUST ensure that sessions already checked out are not returned to the new pool.
 
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
@@ -1079,6 +1080,15 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * In the parent, create a ClientSession and assert its lsid is the same.
     * In the child, create a ClientSession and assert its lsid is different.
 
+12 For drivers that support forking, test that existing sessions are not checked
+   into a cleared pool.  E.g.,
+
+    * Create ClientSession
+    * Record its lsid
+    * Fork
+    * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
+    * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
+
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
 
@@ -1151,7 +1161,7 @@ Open questions
 Q&A
 ===
 
-Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of ``ClientSession``?
+Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded or multi-process use of ``ClientSession``?
 ------------------------------------------------------------------------------------------------
 
 Because doing so would provide an illusion of safety. It doesn't make these
