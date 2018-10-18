@@ -118,7 +118,7 @@ algorithm of both drivers and the server.
 Design Rationale
 ================
 
-**Timestamp:** The timestamp is a 32-bit **unsigned** integer, as it allows us
+**Timestamp:** The timestamp is a big-endian 32-bit **unsigned** integer, as it allows us
 to extend the furthest date that the timestamp can represent from the year 2038
 to 2106. There is no reason why MongoDB would generate a timestamp to mean a
 date before 1970, as MongoDB did not exist back then.
