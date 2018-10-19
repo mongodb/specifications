@@ -10,8 +10,8 @@ ObjectID format
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2018-07-02
-:Version: 0.2
+:Last Modified: 2018-10-11
+:Version: 0.3
 :Spec Lead: n/a
 :Advisory Group: n/a
 :Approver(s): Andy Schwerin, Bernie Hackett, Eliot Horowitz, Jeff Yemin, Jeremy Mikola, Matt Broadstone
@@ -46,18 +46,26 @@ Specification
 The ObjectID_ BSON type is a 12-byte value consisting of three different
 portions (fields):
 
-- a 4-byte value representing the seconds since the Unix epoch,
-- a 5-byte random number,
+- a 4-byte value representing the seconds since the Unix epoch in the highest
+  order bytes,
+- a 5-byte random number unique to a machine and process,
 - a 3-byte counter, starting with a random value.
+
+::
+
+      4 byte timestamp    5 byte process unique   3 byte counter
+    |<----------------->|<---------------------->|<------------>|
+    [----|----|----|----|----|----|----|----|----|----|----|----]
+    0                   4                   8                   12
 
 .. _ObjectID: https://docs.mongodb.com/manual/reference/method/ObjectId/
 
 Timestamp Field
 ---------------
 
-This 4-byte field represents the seconds since the Unix epoch (Jan 1st, 1970,
-midnight UTC). It is an ever increasing value that will have a range until
-about Jan 7th, 2106.
+This 4-byte big endian field represents the seconds since the Unix epoch (Jan
+1st, 1970, midnight UTC). It is an ever increasing value that will have a
+range until about Jan 7th, 2106.
 
 Drivers MUST create ObjectIDs with this value representing the number of
 seconds since the Unix epoch.
@@ -80,7 +88,7 @@ this value.
 Counter
 -------
 
-A 3-byte counter.
+A 3-byte big endian counter.
 
 This counter MUST be initialised to a random value when the driver is first
 activated. After initialisation, the counter MUST be increased by 1 for every
@@ -136,6 +144,10 @@ second, per server, and per process. As the counter can overflow, there is a
 possibility of having duplicate ObjectIDs if you create more than 16 million
 ObjectIDs per second in the same process on a single machine.
 
+**Endianness:** The *Timestamp* and *Counter* are big endian because we can
+then use ``memcmp`` to order ObjectIDs, and we want to ensure an increasing order.
+
+
 Backwards Compatibility
 =======================
 
@@ -151,6 +163,10 @@ Currently there is no full reference implementation yet.
 
 Changelog
 =========
+
+2018-10-11 — Version 0.3
+	Clarify that the *Timestamp* and *Counter* fields are big endian, and add
+	the reason why.
 
 2018-07-02 — Version 0.2
 	Replaced Machine ID and Process ID fields with a single 5-byte unique value
