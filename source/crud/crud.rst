@@ -628,6 +628,10 @@ The count of documents is returned in the 'n' field, similar to the `count`
 command. countDocuments options other than filter, skip, and limit are added as
 options to the `aggregate` command.
 
+In the event this aggregation is run against an empty collection, an empty
+array will be returned with no ``n`` field. Drivers MUST interpret this result
+as a ``0`` count.
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Combining Limit and Batch Size for the Wire Protocol
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1228,6 +1232,17 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
     modifiedCount: Int64;
 
     /**
+     * The number of documents that were upserted.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property so long as
+     * it is always possible to infer whether an upsert has taken place. Since
+     * the "_id" of an upserted document could be null, a null "upsertedId" may
+     * be ambiguous in some drivers. If so, this field can be used to indicate
+     * whether an upsert has taken place.
+     */
+    upsertedCount: Int64;
+
+    /**
      * The identifier of the inserted document if an upsert took place.
      */
     upsertedId: any;
@@ -1524,7 +1539,6 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1709,6 +1723,7 @@ Changes
 =======
 
 * 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
+* 2018-07-25: Added upsertedCount to UpdateResult.
 * 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
 * 2018-03-05: Deprecate snapshot option
 * 2018-03-01: Deprecate maxScan query option. 

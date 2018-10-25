@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.7
+:Spec Version: 1.7.1
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -177,12 +177,7 @@ The username MUST NOT be modified from the form provided by the user (i.e.  do
 not normalize with SASLprep), as the server uses the raw form to look for
 conflicts with legacy credentials.
 
-If the ``isMaster`` command fails with error code 11 (UserNotFound), drivers
-must consider authentication to have failed.  In such a case, drivers MUST
-raise an error that is equivalent to what they would have raised if the
-authentication mechanism were specified and the server responded the same way.
-
-If the ``isMaster`` command succeeds and the response includes a
+If the ``isMaster`` response includes a
 ``saslSupportedMechs`` field, then drivers MUST use the contents of that field
 to select a default mechanism as described later.  If the command succeeds and
 the response does not include a ``saslSupportedMechs`` field, then drivers MUST
@@ -770,10 +765,10 @@ the other mechanism fails.
 For a non-existent username, verify that not specifying a mechanism when
 connecting fails with the same error type that would occur with a correct
 username but incorrect password or mechanism.  (Because negotiation with a
-non-existent user name causes an isMaster error, we want to verify this is
-seen by users as similar to other authentication errors, not as a network or
-database command error.)
-
+non-existent user name at one point during server development caused an
+isMaster error, we want to verify this is seen by users as similar to other
+authentication errors, not as a network or database command error on the 'ismaster'
+command itself.)
 
 Step 4
 ------
@@ -781,19 +776,19 @@ Step 4
 To test SASLprep behavior, create two users:
 
 #. username: "IX", password "IX"
-#. username: "\u2168" (ROMAN NUMERAL NINE), password "\u2163" (ROMAN NUMERAL FOUR)
+#. username: "\\u2168" (ROMAN NUMERAL NINE), password "\\u2163" (ROMAN NUMERAL FOUR)
 
 To create the users, use the exact bytes for username and password without
 SASLprep or other normalization and specify SCRAM-SHA-256 credentials:
 
     db.runCommand({createUser: 'IX', pwd: 'IX', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
-    db.runCommand({createUser: '\u2168', pwd: '\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
+    db.runCommand({createUser: '\\u2168', pwd: '\\u2163', roles: ['root'], mechanisms: ['SCRAM-SHA-256']})
 
 For each user, verify that the driver can authenticate with the password in
 both SASLprep normalized and non-normalized forms:
 
-- User "IX": use password forms "IX" and "I\u00ADX"
-- User "\u2168": use password forms "IV" and "I\u00ADV"
+- User "IX": use password forms "IX" and "I\\u00ADX"
+- User "\\u2168": use password forms "IV" and "I\\u00ADV"
 
 As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 
@@ -882,6 +877,11 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.7.1 Changes
+    * Unknown users don't cause ismaster errors. This was changed before
+      server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
+      such a possibility.
 
 Version 1.7 Changes
     * Clarify authSource defaults

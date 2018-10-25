@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.4
+:Spec Version: 1.5.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 07-June-2018
+:Last Modified: 2018-10-11
 
 .. contents::
 
@@ -259,11 +259,11 @@ such use is attempted.
 ClientSession
 =============
 
-``ClientSession`` instances are not thread safe. They can only be used by one
-thread at a time.
+``ClientSession`` instances are not thread safe or fork safe. They can only be used by one
+thread or process at a time.
 
-Drivers MUST document the thread-safety limitations of sessions. Drivers MUST
-NOT attempt to detect simultaneous use by multiple threads (see Q&A for the
+Drivers MUST document the thread-safety and fork-safety limitations of sessions. Drivers MUST
+NOT attempt to detect simultaneous use by multiple threads or processes (see Q&A for the
 rationale).
 
 ClientSession interface summary
@@ -430,7 +430,7 @@ New database methods that take an explicit session
 --------------------------------------------------
 
 All ``MongoDatabase`` methods that talk to the server SHOULD be overloaded to
-take an explicit session parameter.
+take an explicit session parameter. (See `why is session an explicit parameter?`_.)
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -464,7 +464,7 @@ New collection methods that take an explicit session
 
 All ``MongoCollection`` methods that talk to the server, with the exception of
 `estimatedDocumentCount`, SHOULD be overloaded to take an explicit session
-parameter.
+parameter. (See `why is session an explicit parameter?`_.)
 
 When overloading methods to take a session parameter, the session parameter
 SHOULD be the first parameter. If overloading is not possible for your
@@ -830,6 +830,14 @@ of the cursor.  For language runtimes that provide the ability to attach finaliz
 that are run prior to garbage collection, the cursor class SHOULD return an implicit session
 to the pool in the finalizer if the cursor has not already been exhausted.
 
+If a driver supports process forking, the session pool needs to be cleared on
+one side of the forked processes (just like sockets need to reconnect).
+Drivers MUST provide a way to clear the session pool without sending
+``endSessions``.  Drivers MAY make this automatic when the process ID changes.
+If they do not, they MUST document how to clear the session pool wherever they
+document fork support.  After clearing the session pool in this way, drivers
+MUST ensure that sessions already checked out are not returned to the new pool.
+
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
 
@@ -1033,15 +1041,18 @@ topologies.  It MUST NOT be run against a standalone server.
 
 7. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
 to the pool.
+
     * Insert two documents into a collection
     * Execute a find operation on the collection and iterate past the first document
     * Assert that the implicit session is returned to the pool. This can be done in several ways:
+
       * Track in-use count in the server session pool and assert that the count has dropped to zero
       * Track the lsid used for the find operation (e.g. with APM) and then do another operation and
         assert that the same lsid is used as for the find operation.
 
 8. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
 to the pool.
+
     * Insert five documents into a collection
     * Execute a find operation on the collection with batch size of 3
     * Iterate past the first four documents, forcing the final ``getMore`` operation
@@ -1059,6 +1070,24 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * Iterate through enough documents (3) to force a ``getMore``
     * Assert that the server receives a non-zero lsid equal to the lsid that ``find`` sent.
 
+11. For drivers that support forking, test that the session pool can be cleared
+    after a fork without calling ``endSession``.  E.g.,
+
+    * Create ClientSession
+    * Record its lsid
+    * Delete it (so the lsid is pushed into the pool)
+    * Fork
+    * In the parent, create a ClientSession and assert its lsid is the same.
+    * In the child, create a ClientSession and assert its lsid is different.
+
+12 For drivers that support forking, test that existing sessions are not checked
+   into a cleared pool.  E.g.,
+
+    * Create ClientSession
+    * Record its lsid
+    * Fork
+    * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
+    * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
@@ -1132,17 +1161,46 @@ Open questions
 Q&A
 ===
 
-Q: Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded use of ``ClientSession``?
-    Because doing so would provide an illusion of safety. It doesn't make these
-    instances thread safe. And even if when testing an application no such exceptions
-    are encountered, that doesn't prove anything. The application might still be
-    using the instances in a thread-unsafe way and just didn't happen to do so during
-    a test run. The final argument is that checking this would require overhead
-    that doesn't provide any clear benefit. 
+Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded or multi-process use of ``ClientSession``?
+------------------------------------------------------------------------------------------------
+
+Because doing so would provide an illusion of safety. It doesn't make these
+instances thread safe. And even if when testing an application no such exceptions
+are encountered, that doesn't prove anything. The application might still be
+using the instances in a thread-unsafe way and just didn't happen to do so during
+a test run. The final argument is that checking this would require overhead
+that doesn't provide any clear benefit.
+
+Why is session an explicit parameter?
+-------------------------------------
+
+A previous draft proposed that ClientSession would be a MongoClient-like object added to the object hierarchy::
+
+  session = client.startSession(...)
+  database = session.getDatabase(...) // database is associated with session
+  collection = database.getCollection(...) // collection is associated with session
+  // operations on collection implicitly use session
+  collection.insertOne({})
+  session.endSession()
+
+The central feature of this design is that a MongoCollection (or database, or perhaps a GridFS object) is associated with a session, which is then an implied parameter to any operations executed using that MongoCollection.
+
+This API was rejected, with the justification that a ClientSession does not naturally belong to the state of a MongoCollection. MongoCollection has up to now been a stable long-lived object that could be widely shared, and in most drivers it is thread safe. Once we associate a ClientSession with it, the MongoCollection object becomes short-lived and is no longer thread safe. It is a bad sign that MongoCollection's thread safety and lifetime vary depending on how its parent MongoDatabase is created.
+
+Instead, we require users to pass session as a parameter to each function::
+
+  session = client.startSession(...)
+  database = client.getDatabase(...)
+  collection = database.getCollection(...)
+  // users must explicitly pass session to operations
+  collection.insertOne(session, {})
+  session.endSession()
 
 Change log
 ==========
 
+:2018-10-11: Session pools must be cleared in child process after fork
+:2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
 :2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
 :2017-09-13: If causalConsistency option is ommitted assume true

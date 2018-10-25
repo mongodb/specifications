@@ -771,7 +771,7 @@ as follows:
    selector.
 
 5. If there are any suitable servers, choose one at random from those
-   within the latency window and return it; otherwise, continue to step #5
+   within the latency window and return it; otherwise, continue to the next step
 
 6. Request an immediate topology check, then block the server selection
    thread until the topology changes or until the server selection
@@ -1664,7 +1664,7 @@ References
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
 .. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
-.. _idleWritePeriodMS: https://github.com/mongodb/specifications/tree/master/source/max-staleness.rst#idleWritePeriodMS
+.. _idleWritePeriodMS: https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#idlewriteperiodms
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 
 Changes

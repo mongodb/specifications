@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: June 14, 2018
+:Last Modified: July 30, 2018
 :Version: 1.5.1
 
 .. contents::
@@ -61,9 +61,6 @@ An error is considered resumable if it meets any of the following criteria:
     * - CursorKilled
       - 237
 
-- a server error response with an error message containing the substring "not
-  master" or "node is recovering"
-
 An error on an aggregate command is not a resumable error. Only errors on a
 getMore command may be considered resumable errors.
 
@@ -101,7 +98,7 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
     /**
      * Describes the type of operation represented in this change notification.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate";
+    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase";
 
     /**
      * Contains two fields: “db” and “coll” containing the database and
@@ -600,4 +597,10 @@ Changelog
 | 2018-05-24 | Changed ``startatClusterTime`` to ``startAtOperationTime`` |
 +------------+------------------------------------------------------------+
 | 2018-06-14 | Clarified how to calculate ``startAtOperationTime``        |
++------------+------------------------------------------------------------+
+| 2018-07-27 | Added drop to change stream operationType                  |
++------------+------------------------------------------------------------+
+| 2018-07-30 | Remove redundant error message checks for resumable errors |
++------------+------------------------------------------------------------+
+| 2018-09-09 | Added dropDatabase to change stream operationType          |
 +------------+------------------------------------------------------------+
