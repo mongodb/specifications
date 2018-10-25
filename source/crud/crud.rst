@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: July 25, 2018
+:Last Modified: October 25, 2018
 
 .. contents::
 
@@ -137,6 +137,9 @@ Read
      * MAY setup a cursor to be executed upon iteration against the $out collection such
      * that if a user were to iterate a pipeline including $out, results would be returned.
      *
+     * Note: result iteration should be backed by a cursor. Depending on the implementation,
+     * the cursor may back the returned Iterable instance or an iterator that it produces.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
@@ -168,6 +171,9 @@ Read
     /**
      * Finds the distinct values for a specified field across a single collection.
      *
+     * Note: the results are backed by the "values" array in the distinct command's result
+     * document. This differs from aggregate and find, where results are backed by a cursor.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
     distinct(fieldName: string, filter: Document, options: Optional<DistinctOptions>): Iterable<any>;
@@ -182,6 +188,9 @@ Read
      *
      * Note: If $explain is specified in the modifiers, the return value is a single
      * document. This could cause problems for static languages using strongly typed entities.
+     *
+     * Note: result iteration should be backed by a cursor. Depending on the implementation,
+     * the cursor may back the returned Iterable instance or an iterator that it produces.
      *
      * @see https://docs.mongodb.com/manual/core/read-operations-introduction/
      */
@@ -1713,6 +1722,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
 * 2018-07-25: Added upsertedCount to UpdateResult.
 * 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
 * 2018-03-05: Deprecate snapshot option
