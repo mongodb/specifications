@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: June 7, 2018
+:Last Modified: October 25, 2018
 
 .. contents::
 
@@ -1708,6 +1708,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
 * 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
 * 2018-03-05: Deprecate snapshot option
 * 2018-03-01: Deprecate maxScan query option. 
