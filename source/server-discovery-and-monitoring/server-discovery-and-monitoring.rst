@@ -1108,6 +1108,8 @@ updateRSWithPrimaryFromMember
     # SetName is never null here.
     if topologyDescription.setName != description.setName:
         remove this server from topologyDescription and stop monitoring it
+        checkIfHasPrimary()
+        return
 
     if description.address != description.me:
         remove this server from topologyDescription and stop monitoring it
