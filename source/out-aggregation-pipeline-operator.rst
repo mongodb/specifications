@@ -109,7 +109,7 @@ The user can decide whether to instantiate a collection using the name specified
 Read preferences
 ''''''''''''''''
 
-The only replica set member that can be used with **$out** is the primary because the operation writes to a collection. If a read preference other than primary is specified, the driver will route the aggregation to the primary and log a warning that it has done so.
+The only replica set member that can be used with **$out** is the primary because the operation writes to a collection. If a read preference other than primary is specified, the driver MUST route the aggregation to the primary and SHOULD log a warning that it has done so.
 
 See DRIVERS ticket: https://jira.mongodb.org/browse/DRIVERS-84
 
