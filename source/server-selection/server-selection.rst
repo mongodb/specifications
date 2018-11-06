@@ -995,8 +995,8 @@ those within the latency window.
 The ``localThresholdMS`` configuration parameter controls the size of the
 latency window used to select a suitable server.
 
-The shortest average RTT from among suitable servers anchors one end of the
-latency window (``A``).  The other end is determined by adding
+The shortest average round trip time (RTT) from among suitable servers anchors
+one end of the latency window (``A``).  The other end is determined by adding
 ``localThresholdMS`` (``B = A + localThresholdMS``).
 
 A server MUST be selected randomly from among suitable servers that have an
