@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: December 4, 2018
-:Version: 1.5.2
+:Last Modified: January 3, 2019
+:Version: 1.6.0
 
 .. contents::
 
@@ -84,11 +84,11 @@ Server Specification
 Response Format
 ---------------
 
-If the aggregation with ``$changeStream`` specified completes successfully, the resultant stream will deliver documents in the following format:
+If an aggregate command with a ``$changeStream`` stage completes successfully, the response contains documents with the following structure:
 
 .. code:: typescript
 
-  {
+  class ChangeStreamDocument {
     /**
      * The id functions as an opaque token for use when resuming an interrupted
      * change stream.
@@ -98,7 +98,7 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
     /**
      * Describes the type of operation represented in this change notification.
      */
-    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase";
+    operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
 
     /**
      * Contains two fields: “db” and “coll” containing the database and
@@ -155,6 +155,46 @@ If the aggregation with ``$changeStream`` specified completes successfully, the 
     removedFields: Array<String>;
   }
 
+The responses to a change stream aggregate or getMore have the following structures:
+
+.. code:: typescript
+
+  /**
+   * Response to a successful aggregate.
+   */
+  {
+      ok: 1,
+      cursor: {
+         ns: String,
+         id: Int64,
+         firstBatch: Array<ChangeStreamDocument>,
+         /**
+          * postBatchResumeToken is returned in MongoDB 4.2 and later.
+          */
+         postBatchResumeToken: Document
+      },
+      operationTime: Timestamp,
+      $clusterTime: Document,
+  }
+
+  /**
+   * Response to a successful getMore.
+   */
+  {
+      ok: 1,
+      cursor: {
+         ns: String,
+         id: Int64,
+         nextBatch: Array<ChangeStreamDocument>
+         /**
+          * postBatchResumeToken is returned in MongoDB 4.2 and later.
+          */
+         postBatchResumeToken: Document
+      },
+      operationTime: Timestamp,
+      $clusterTime: Document,
+  }
+
 **NOTE:** The above format is provided for illustrative purposes, and is subject to change without warning.
 
 ----------
@@ -167,7 +207,13 @@ Driver API
     /**
      * The resume token (_id) of the document the iterator last returned
      */
-    private resumeToken: Document;
+    private documentResumeToken: Document;
+
+    /**
+     * The most recent postBatchResumeToken returned in an aggregate or
+     * getMore response. For pre-4.2 versions of MongoDB, this remains unset.
+     */
+    private postBatchResumeToken: Document;
 
     /**
      * The pipeline of stages to append to an initial ``$changeStream`` stage
@@ -393,6 +439,8 @@ A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mo
 
 A change stream MUST track the last resume token returned by the iterator to the user, caching it locally for use in future attempts to resume.  A driver MUST raise an error on the first response received without a resume token (e.g. the user has removed it with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
 
+A change stream MUST track the latest ``postBatchResumeToken`` included in an aggregate or getMore response if available.
+
 A change stream MUST attempt to resume a single time if it encounters any resumable error.  A change stream MUST NOT attempt to resume on any other type of error, with the exception of a “not master” server error.  If a driver receives a “not master” error (for instance, because the primary it was connected to is stepping down), it will treat the error as a resumable error and attempt to resume.
 
 In addition to tracking the most recently delivered resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
@@ -411,14 +459,19 @@ startAtOperationTime
 
 The server expects ``startAtOperationTime`` as a BSON Timestamp. Drivers MUST allow users to specify a ``startAtOperationTime`` option in the ``watch`` helpers. They MUST allow users to specify this value as a raw ``Timestamp``.
 
-``startAtOperationTime`` and ``resumeAfter`` are mutually exclusive; if both ``startAtOperationTime`` and ``resumeAfter`` are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
+``startAtOperationTime``, ``resumeAfter``, and ``startAfter`` are all mutually exclusive; if any two are set, the server will return an error. Drivers MUST NOT throw a custom error, and MUST defer to the server error.
 
-If neither ``startAtOperationTime`` nor ``resumeAfter`` are specified, and the max wire version is >= ``7``, and the initial ``aggregate`` command does not return a resumeToken (indicating no results), the ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` command when it returns.
+The ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregate`` response when the following critera are met:
+
+- None of ``startAtOperationTime``,  ``resumeAfter``, ``startAfter`` were specified in the ``ChangeStreamOptions``.
+- The max wire version is >= ``7``.
+- The initial ``aggregate`` response did not include a ``documentResumeToken`` (indicating no results).
+- The initial ``aggregate`` response did not include a ``postBatchResumeToken``.
 
 resumeAfter
 ^^^^^^^^^^^
 
-``resumeAfter`` is used to resume a changeStream that has been stopped to ensure that only changes starting with the log entry immediately *after* the provided token will be returned. If the resume token specified does not exist, the server will return an error. 
+``resumeAfter`` is used to resume a ``ChangeStream`` that has been stopped to ensure that only changes starting with the log entry immediately *after* the provided token will be returned. If the resume token specified does not exist, the server will return an error.
 
 Resume Process
 ^^^^^^^^^^^^^^
@@ -427,24 +480,104 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 
 - Perform server selection.
 - Connect to selected server.
-- If the ``ChangeStream`` has not received any changes, and ``resumeAfter`` is not specified, and the max wire version is >= ``7``:
+- If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty):
 
-    - The driver MUST execute the known aggregation command.
-    - The driver MUST specify the ``startAtOperationTime`` key set to the ``startAtOperationTime`` provided by the user or saved from the original aggregation.
-    - The driver MUST NOT set a ``resumeAfter`` key.
-    - In this case, the ``ChangeStream`` will return all changes that occurred after the specified ``startAtOperationTime``.
+  - The driver MUST set ``resumeAfter`` to the cached ``postBatchResumeToken``.
+  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+- Else if the ``ChangeStream`` has a cached ``documentResumeToken``:
+
+  - The driver MUST set ``resumeAfter`` to the cached ``documentResumeToken``.
+  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+- Else if the ``ChangeStream`` was created with ``startAfter``:
+
+  - The driver MUST set ``resumeAfter`` to the value of the originally used ``startAfter``.
+  - The driver MUST NOT set ``startAfter``. The driver MUST remove it from the original aggregation command.
+  - The driver MUST NOT set ``startAtOperationTime``.
+- Else if the ``ChangeStream`` was created with ``resumeAfter``:
+
+  - The driver MUST set ``resumeAfter`` to the value of the originally used ``resumeAfter``.
+  - The driver MUST NOT set ``startAfter``.
+  - The driver MUST NOT set ``startAtOperationTime``.
+- Else if the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
+
+  - The driver MUST not set ``resumeAfter``.
+  - The driver MUST NOT set ``startAfter``.
+  - The driver MUST set ``startAtOperationTime`` to the value of the originally used ``startAtOperationTime`` or the one saved from the original aggregation.
+
 - Else:
+  - The driver MUST not set ``resumeAfter``, ``startAfter``, or ``startAtOperationTime``.
+  - The driver MUST use the original aggregation command to resume.
 
-    - The driver MUST execute the known aggregation command.
-    - The driver MUST specify a ``resumeAfter`` with the last known ``resumeToken``.
-    - The driver MUST NOT set a ``startAtOperationTime``.
-    - If a ``startAtOperationTime`` key was part of the original aggregation command, the driver MUST remove it.
-    - In this case, the ``ChangeStream`` will return notifications starting with the oplog entry immediately *after* the provided token.
+When ``resumeAfter`` is specified the ``ChangeStream`` will return notifications starting with the oplog entry immediately *after* the provided token.
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
 A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and MUST NOT attempt to kill the cursor on any other server.
 
+
+Exposing All Resume Tokens
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:since: 4.2
+
+Users can retrieve the ``documentResumeToken`` by inspecting the _id on each ``ChangeDocument``. But since MongoDB 4.2, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
+
+Drivers MUST expose a mechanism to retrieve the same resume token that would be used to automatically resume. It MUST be possible to use this mechanism after iterating every document. It MUST be possible for users to use this mechanism periodically even when no documents are getting returned (i.e. ``getMore`` has returned empty batches). Drivers have two options to implement this.
+
+Option 1: ChangeStream::getResumeToken()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+  interface ChangeStream extends Iterable<Document> {
+    /**
+     * Returns a resume token that should be used to resume after the most
+     * recently returned change.
+     */
+    public getResumeToken() Optional<Document>;
+  }
+
+This method returns the cached ``documentResumeToken`` or ``postBatchResumeToken`` following rules from `Resume Process`_:
+
+- If the ``ChangeStream`` has no cached ``documentResumeToken`` or ``postBatchResumeToken`` this returns an unset optional.
+- If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty) this returns the ``postBatchResumeToken``.
+- Otherwise, this returns the cached ``documentResumeToken``.
+
+This MUST be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
+
+Option 2: Event Emitted for Resume Token
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Allow users to set a callback to listen for new resume tokens. The exact interface is up to the driver, but it MUST meet the following criteria:
+
+- The callback is set in the same manner as a callback used for receiving change documents.
+- The callback accepts a resume token as an argument.
+- The callback (or event) MAY include an optional ChangeDocument, which is unset when called with resume tokens sourced from ``postBatchResumeToken``.
+
+A possible interface for this callback MAY look like:
+
+.. code:: typescript
+
+  interface ChangeStream extends Iterable<Document> {
+    /**
+     * Returns a resume token that should be used to resume after the most
+     * recently returned change.
+     */
+    public onResumeTokenChanged(ResumeTokenCallback:(Document resumeToken) => void);
+  }
+
+This MUST not be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
+
+Not Blocking on Iteration
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Synchronous drivers MUST provide a way to iterate a change stream without blocking until a change document is returned. This MUST give the user an opportunity to get the most up-to-date resume token, even when the change stream continues to receive empty batches in getMore responses. This allows users to call ``ChangeStream::getResumeToken()`` after iterating every document and periodically when no documents are getting returned.
+
+Although the implementation of tailable awaitData cursors is not specified, this MAY be implemented with a ``tryNext`` method on the change stream cursor.
+
+All drivers MUST document how users can iterate a change stream and receive *all* resume token updates. `Why do we allow access to the resume token to users`_ shows an example. The documentation MUST state that users intending to store the resume token should use this method to get the most up to date resume token.
 
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -494,16 +627,20 @@ Imagine a scenario in which a user wants to process each change to a collection 
 
 .. code:: python
 
-  resumeToken = None
   localChange = getChangeFromLocalStorage()
+  resumeToken = getResumeTokenFromLocalStorage()
+
   if localChange:
     processChange(localChange)
-    resumeToken = localChange['_id']
 
   try:
-      for change in db.collection.watch([...], resumeAfter=resumeToken):
-          persistToLocalStorage(change)
-          processChange(change)
+      change_stream = db.collection.watch([...], resumeAfter=resumeToken)
+      while True:
+          change = change_stream.try_next()
+          persistResumeTokenToLocalStorage(change_stream.get_resume_token())
+          if change:
+            persistChangeToLocalStorage(change)
+            processChange(change)
   except Exception:
       log.error("...")
 
@@ -560,6 +697,16 @@ In the above example, not sending ``startAtOperationTime`` will result in the ch
 the changes that occurred while the server and client are partitioned. By sending ``startAtOperationTime``,
 the server will know to include changes from that previous point in time.
 
+--------------------------------------------------
+Why do we need to expose the postBatchResumeToken?
+--------------------------------------------------
+
+Resume tokens refer to an oplog entry. The resume token from the ``_id`` of a document corresponds the oplog entry of the change. The ``postBatchResumeToken`` represents the oplog entry the change stream has scanned up to on the server (not necessarily a matching change). This can be a much more recent oplog entry, and should be used to resume when possible.
+
+Attempting to resume with an old resume token may degrade server performance since the server needs to scan through more oplog entries. Worse, if the resume token is older than the last oplog entry stored on the server, then resuming is impossible.
+
+Imagine the change stream matches a very small percentage of events. On a ``getMore`` the server scans the oplog for the duration of ``maxAwaitTimeMS`` but finds no matching entries and returns an empty response (still containing a ``postBatchResumeToken``). There may be a long sequence of empty responses. Then due to a network error, the change stream tries resuming. If we tried resuming with the cached ``documentResumeToken`` this throws out the oplog scanning the server had done for the long sequence of getMores with empty responses. But resuming with the last ``postBatchResumeToken`` skips the unnecessary scanning of unmatched oplog entries.
+
 Test Plan
 =========
 
@@ -574,9 +721,9 @@ There should be no backwards compatibility concerns.
 Reference Implementations
 =========================
 
- - NODE (NODE-1055)
- - PYTHON (PYTHON-1338)
- - RUBY (RUBY-1228)
+- NODE (NODE-1055)
+- PYTHON (PYTHON-1338)
+- RUBY (RUBY-1228)
 
 Changelog
 =========
@@ -618,4 +765,6 @@ Changelog
 | 2018-09-09 | Added dropDatabase to change stream operationType          |
 +------------+------------------------------------------------------------+
 | 2018-12-14 | Added ``startAfter`` to change stream options              |
++------------+------------------------------------------------------------+
+| 2018-11-06 | Added handling of ``postBatchResumeToken``.                |
 +------------+------------------------------------------------------------+
