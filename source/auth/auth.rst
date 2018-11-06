@@ -143,7 +143,7 @@ handshake:
    MongoClient, drivers MUST issue a `MongoDB Handshake
    <../mongodb-handshake/handshake.rst>`_ immediately.  This allows a
    driver to determine the server type.  If the ``isMaster`` of the
-   MongoDB Handshake fails with an error, drivers MUST treat this an
+   MongoDB Handshake fails with an error, drivers MUST treat this as
    an authentication error.
 
 #  If the server is not of type Standalone, RSPrimary, RSSecondary or
