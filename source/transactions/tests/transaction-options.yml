@@ -99,7 +99,7 @@ tests:
 
     clientOptions:
       w: 1
-      readConcernLevel: local
+      readConcernLevel: majority
 
     operations: *commitAbortOperations
 
@@ -116,7 +116,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: local
+              level: majority
             writeConcern:
           command_name: insert
           database_name: *database_name
@@ -145,7 +145,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: local
+              level: majority
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -435,7 +435,7 @@ tests:
 
     outcome: *outcome
 
-  - description: readConcern local in defaultTransactionOptions
+  - description: readConcern majority in defaultTransactionOptions
 
     clientOptions:
       w: 1
@@ -444,7 +444,7 @@ tests:
       session0:
         defaultTransactionOptions:
           readConcern:
-            level: local
+            level: majority
 
     operations: *commitAbortOperations
 
@@ -461,7 +461,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: local
+              level: majority
             writeConcern:
           command_name: insert
           database_name: *database_name
@@ -490,7 +490,7 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: local
+              level: majority
               afterClusterTime: 42
             writeConcern:
           command_name: insert
@@ -511,7 +511,7 @@ tests:
 
     outcome: *outcome
 
-  - description: readConcern local in startTransaction options
+  - description: readConcern snapshot in startTransaction options
 
     sessionOptions:
       session0:

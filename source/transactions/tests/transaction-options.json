@@ -147,7 +147,7 @@
       "description": "transaction options inherited from client",
       "clientOptions": {
         "w": 1,
-        "readConcernLevel": "local"
+        "readConcernLevel": "majority"
       },
       "operations": [
         {
@@ -211,7 +211,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "local"
+                "level": "majority"
               },
               "writeConcern": null
             },
@@ -255,7 +255,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "local",
+                "level": "majority",
                 "afterClusterTime": 42
               },
               "writeConcern": null
@@ -800,7 +800,7 @@
       }
     },
     {
-      "description": "readConcern local in defaultTransactionOptions",
+      "description": "readConcern majority in defaultTransactionOptions",
       "clientOptions": {
         "w": 1
       },
@@ -808,7 +808,7 @@
         "session0": {
           "defaultTransactionOptions": {
             "readConcern": {
-              "level": "local"
+              "level": "majority"
             }
           }
         }
@@ -875,7 +875,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "local"
+                "level": "majority"
               },
               "writeConcern": null
             },
@@ -919,7 +919,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "local",
+                "level": "majority",
                 "afterClusterTime": 42
               },
               "writeConcern": null
@@ -959,7 +959,7 @@
       }
     },
     {
-      "description": "readConcern local in startTransaction options",
+      "description": "readConcern snapshot in startTransaction options",
       "sessionOptions": {
         "session0": {
           "defaultTransactionOptions": {

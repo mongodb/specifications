@@ -83,6 +83,9 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
+  - ``skipReason``: Optional, string describing why this test should be
+    skipped.
+
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
   - ``failPoint``: Optional, a server failpoint to enable expressed as the
