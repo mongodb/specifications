@@ -143,9 +143,15 @@ Use as integration tests
 ========================
 
 Run a MongoDB replica set with a primary, a secondary, and an arbiter,
-**server version 4.0.0-rc4 or later**. (Including a secondary ensures that
+**server version 4.0.0 or later**. (Including a secondary ensures that
 server selection in a transaction works properly. Including an arbiter helps
 ensure that no new bugs have been introduced related to arbiters.)
+
+A driver that implements support for sharded transactions MUST also run these
+tests against a MongoDB sharded cluster with multiple mongoses and
+**server version 4.1.5 or later**. Including multiple mongoses (and
+initializing the MongoClient with multiple mongos seeds!) ensures that
+mongos transaction pinning works properly.
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
@@ -156,6 +162,7 @@ Then for each element in ``tests``:
    transactions from previous test failures. The command will fail with message
    "operation was interrupted", because it kills its own implicit session. Catch
    the exception and continue.
+##. When testing against a sharded cluster run this command on ALL mongoses.
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields of the YAML file.
 #. Drop the test collection, using writeConcern "majority".
@@ -166,6 +173,7 @@ Then for each element in ``tests``:
    into the test collection, using writeConcern "majority".
 #. If ``failPoint`` is specified, its value is a configureFailPoint command.
    Run the command on the admin database to enable the fail point.
+##. When testing against a sharded cluster run this command on ALL mongoses.
 #. Create a **new** MongoClient ``client``, with Command Monitoring listeners
    enabled. (Using a new MongoClient for each test ensures a fresh session pool
    that hasn't executed any transactions previously, so the tests can assert
@@ -227,7 +235,7 @@ Then for each element in ``tests``:
         configureFailPoint: <fail point name>,
         mode: "off"
     });
-
+##. When testing against a sharded cluster run this command on ALL mongoses.
 #. For each element in ``outcome``:
 
    - If ``name`` is "collection", verify that the test collection contains
