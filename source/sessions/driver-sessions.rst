@@ -507,11 +507,12 @@ How to Check Whether a Deployment Supports Sessions
 
 Standalone servers do not support sessions.
 
-A driver can determine whether a replica set or sharded cluster deployment supports sessions by checking
-whether the ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription``
-has a value or not. If it has a value the deployment supports sessions.
-However, in order for this determination to be valid, the driver MUST be
-connected to at least one server of a type that is `data-bearing
+A driver can determine whether a replica set or sharded cluster deployment
+supports sessions by checking whether the ``logicalSessionTimeoutMinutes``
+property of the ``TopologyDescription`` has a value or not. If it has a value
+the deployment supports sessions. However, in order for this determination to
+be valid, the driver MUST be connected to at least one server of a type that
+is `data-bearing
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_.
 Therefore, the detailed steps to determine whether sessions are supported are:
 
@@ -522,11 +523,11 @@ Therefore, the detailed steps to determine whether sessions are supported are:
 
 then a driver must do a server selection for any server whose type is data-bearing.
 Server selection will either time out or result in a ``TopologyDescription`` that
-includes at least one connected, data-bearing server
+includes at least one connected, data-bearing server.
 
 2. Having verified in step 1 that the ``TopologyDescription`` includes at least
 one connected server a driver can now determine whether sessions are supported
-by inspecting the ``TopologyType`` and ``logicalSessionTimeoutMinutes`` property
+by inspecting the ``TopologyType`` and ``logicalSessionTimeoutMinutes`` property.
 
 Possible race conditions when checking whether a deployment supports sessions
 -----------------------------------------------------------------------------
@@ -536,15 +537,15 @@ driver checks whether sessions are supported and subsequently sends a command
 to the server:
 
 * The TopologyDescription might be stale and no longer be accurate because it
-  has been a few seconds since the last heartbeat
+  has been a few seconds since the last heartbeat.
 
 * The TopologyDescription might be accurate at the time the driver checks
   whether sessions are supported, but by the time the driver sends a command to
-  the server it might no longer be accurate
+  the server it might no longer be accurate.
 
 * The TopologyDescription might be based on connections to a subset of the
   servers and it is possible that as the driver connects to more servers the
-  driver might discover that sessions aren't supported after all
+  driver might discover that sessions aren't supported after all.
 
 * The server might have supported sessions at the time the connection was first
   opened (and reported a value for logicalSessionTimeoutMinutes in the initial
