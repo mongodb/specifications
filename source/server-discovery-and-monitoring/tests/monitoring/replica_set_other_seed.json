@@ -1,5 +1,5 @@
 {
-  "description": "Monitoring a topology that is a replica set with a me mismatch in seeds",
+  "description": "Monitoring a topology that is a replica set with RSOther seed",
   "uri": "mongodb://a,b",
   "phases": [
     {
@@ -120,6 +120,25 @@
                 "setName": "rs",
                 "servers": [
                   {
+                    "address": "a:27017",
+                    "arbiters": [],
+                    "hosts": [
+                      "c:27017",
+                      "d:27017"
+                    ],
+                    "passives": [],
+                    "primary": "c:27017",
+                    "setName": "rs",
+                    "type": "RSOther"
+                  },
+                  {
+                    "address": "b:27017",
+                    "arbiters": [],
+                    "hosts": [],
+                    "passives": [],
+                    "type": "Unknown"
+                  },
+                  {
                     "address": "c:27017",
                     "arbiters": [],
                     "hosts": [],
@@ -217,6 +236,25 @@
                 "topologyType": "ReplicaSetNoPrimary",
                 "setName": "rs",
                 "servers": [
+                  {
+                    "address": "a:27017",
+                    "arbiters": [],
+                    "hosts": [
+                      "c:27017",
+                      "d:27017"
+                    ],
+                    "passives": [],
+                    "primary": "c:27017",
+                    "setName": "rs",
+                    "type": "RSOther"
+                  },
+                  {
+                    "address": "b:27017",
+                    "arbiters": [],
+                    "hosts": [],
+                    "passives": [],
+                    "type": "Unknown"
+                  },
                   {
                     "address": "c:27017",
                     "arbiters": [],
