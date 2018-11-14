@@ -78,6 +78,12 @@ This specification does not apply to OP_GET_MORE or OP_KILL_CURSORS
 operations on cursors, which need to go to the same server that received an
 OP_QUERY and returned a cursor ID.
 
+For operations that are part of a sharded transaction this specification only
+applies to the initial operation which starts the transaction on a mongos. This
+specification does not apply to subsequent operations that are part of the
+sharded transaction because all operations in a sharded transaction need to go
+to the same mongos server.
+
 Drivers and mongos MUST conform to the semantics of this document, but SHOULD
 use language-appropriate data models or variable names.
 
@@ -1310,6 +1316,14 @@ Cursor operations OP_GET_MORE and OP_KILL_CURSOR do not go through the server
 selection process.  Cursor operations must be sent to the original server that
 received the query and sent the OP_REPLY.  For exhaust cursors, the same socket
 must be used for OP_GET_MORE until the cursor is exhausted.
+
+Sharded Transactions
+--------------------
+
+Operations that are part of a sharded transaction (after the initial command)
+do not go through the server selection process. Sharded transaction operations
+MUST be sent to the original mongos server on which the transaction was
+started.
 
 The 'text' command and mongos
 -----------------------------
