@@ -162,7 +162,11 @@ Then for each element in ``tests``:
    transactions from previous test failures. The command will fail with message
    "operation was interrupted", because it kills its own implicit session. Catch
    the exception and continue.
-##. When testing against a sharded cluster run this command on ALL mongoses.
+
+  #. When testing against a sharded cluster, create a list of MongoClients that
+     are directly connected to each mongos. Run the killAllSessions command on
+     ALL mongoses.
+
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields of the YAML file.
 #. Drop the test collection, using writeConcern "majority".
@@ -173,12 +177,18 @@ Then for each element in ``tests``:
    into the test collection, using writeConcern "majority".
 #. If ``failPoint`` is specified, its value is a configureFailPoint command.
    Run the command on the admin database to enable the fail point.
-##. When testing against a sharded cluster run this command on ALL mongoses.
+
+  #. When testing against a sharded cluster run this command on ALL mongoses.
+
 #. Create a **new** MongoClient ``client``, with Command Monitoring listeners
    enabled. (Using a new MongoClient for each test ensures a fresh session pool
    that hasn't executed any transactions previously, so the tests can assert
    actual txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if
    present.
+
+  #. When testing against a sharded cluster this client MUST be created with
+     multiple (valid) mongos seed addreses.
+
 #. Call ``client.startSession`` twice to create ClientSession objects
    ``session0`` and ``session1``, using the test's "sessionOptions" if they
    are present. Save their lsids so they are available after calling
@@ -235,7 +245,9 @@ Then for each element in ``tests``:
         configureFailPoint: <fail point name>,
         mode: "off"
     });
-##. When testing against a sharded cluster run this command on ALL mongoses.
+
+  #. When testing against a sharded cluster run this command on ALL mongoses.
+
 #. For each element in ``outcome``:
 
    - If ``name`` is "collection", verify that the test collection contains
