@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: October 25, 2018
+:Last Modified: November 15, 2018
 
 .. contents::
 
@@ -217,6 +217,10 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * If specified, drivers SHOULD apply this option to both the original aggregate command and subsequent
      * getMore operations on the cursor.
+     *
+     * Drivers MUST NOT specify a batchSize of zero in an aggregate command that includes an $out stage, as
+     * that will prevent the pipeline from executing. Drivers SHOULD leave the cursor.batchSize command option
+     * unset in an aggregate command that includes an $out stage.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
@@ -1722,6 +1726,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
 * 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
 * 2018-07-25: Added upsertedCount to UpdateResult.
 * 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
