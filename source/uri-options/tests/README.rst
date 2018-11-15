@@ -53,3 +53,6 @@ Use as unit tests
 Testing whether a URI is valid or not requires testing whether URI parsing (or
 MongoClient construction) causes a warning due to a URI option being valid and asserting that the 
 options parsed from the URI match those listed in the ``options`` field.
+
+Note that there are tests for each of the options marked as optional; drivers will need to implement
+logic to skip over the optional tests that they don’t implement.
