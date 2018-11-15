@@ -163,7 +163,7 @@ Then for each element in ``tests``:
    "operation was interrupted", because it kills its own implicit session. Catch
    the exception and continue.
 
-  #. When testing against a sharded cluster, create a list of MongoClients that
+   - When testing against a sharded cluster, create a list of MongoClients that
      are directly connected to each mongos. Run the killAllSessions command on
      ALL mongoses.
 
@@ -178,7 +178,7 @@ Then for each element in ``tests``:
 #. If ``failPoint`` is specified, its value is a configureFailPoint command.
    Run the command on the admin database to enable the fail point.
 
-  #. When testing against a sharded cluster run this command on ALL mongoses.
+   - When testing against a sharded cluster run this command on ALL mongoses.
 
 #. Create a **new** MongoClient ``client``, with Command Monitoring listeners
    enabled. (Using a new MongoClient for each test ensures a fresh session pool
@@ -186,7 +186,7 @@ Then for each element in ``tests``:
    actual txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if
    present.
 
-  #. When testing against a sharded cluster this client MUST be created with
+   - When testing against a sharded cluster this client MUST be created with
      multiple (valid) mongos seed addreses.
 
 #. Call ``client.startSession`` twice to create ClientSession objects
@@ -246,7 +246,7 @@ Then for each element in ``tests``:
         mode: "off"
     });
 
-  #. When testing against a sharded cluster run this command on ALL mongoses.
+   - When testing against a sharded cluster run this command on ALL mongoses.
 
 #. For each element in ``outcome``:
 
