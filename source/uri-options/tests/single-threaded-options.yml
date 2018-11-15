@@ -4,11 +4,7 @@ tests:
         uri: "mongodb://example.com/?serverSelectionTryOnce=false"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~

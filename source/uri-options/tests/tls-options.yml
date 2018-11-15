@@ -4,11 +4,7 @@ tests:
         uri: "mongodb://example.com/?tls=true&tlsCAFilePath=ca.pem&tlsClientCertFilePath=cert.pem&tlsClientKeyPassword=hunter2"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -23,11 +19,7 @@ tests:
         uri: "mongodb://example.com/?tlsAllowInvalidCertificates=true"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -39,11 +31,7 @@ tests:
         uri: "mongodb://example.com/?tlsAllowInvalidHostnames=true"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -55,11 +43,7 @@ tests:
         uri: "mongodb://example.com/?tlsInsecure=true"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -71,11 +55,7 @@ tests:
         uri: "mongodb://example.com/?tlsClientKeyFilePath=client.pem"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~

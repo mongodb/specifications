@@ -4,11 +4,7 @@ tests:
         uri: "mongodb://example.com/?appname=URI-OPTIONS-SPEC-TEST&connectTimeoutMS=20000&heartbeatFrequencyMS=5000&localThresholdMS=3000&maxIdleTimeMS=50000&replicaSet=uri-options-spec&retryWrites=true&serverSelectionTimeoutMS=15000&socketTimeoutMS=7500"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -28,11 +24,7 @@ tests:
         uri: "mongodb://example.com/?connectTimeoutMS=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -43,11 +35,7 @@ tests:
         uri: "mongodb://example.com/?heartbeatFrequencyMS=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -58,11 +46,7 @@ tests:
         uri: "mongodb://example.com/?localThresholdMS=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -73,11 +57,7 @@ tests:
         uri: "mongodb://example.com/?maxIdleTimeMS=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -88,11 +68,7 @@ tests:
         uri: "mongodb://example.com/?serverSelectionTimeoutMS=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -103,11 +79,7 @@ tests:
         uri: "mongodb://example.com/?socketTimeoutMS=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~

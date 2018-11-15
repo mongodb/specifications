@@ -5,13 +5,7 @@
       "uri": "mongodb://example.com/?compressors=zlib&zlibCompressionLevel=9",
       "valid": true,
       "warning": false,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
@@ -27,13 +21,7 @@
       "uri": "mongodb://example.com/?compressors=jpeg",
       "valid": true,
       "warning": true,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
@@ -46,13 +34,7 @@
       "uri": "mongodb://example.com/?compressors=zlib&zlibCompressionLevel=invalid",
       "valid": true,
       "warning": true,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,

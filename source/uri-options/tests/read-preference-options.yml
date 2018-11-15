@@ -4,11 +4,7 @@ tests:
         uri: "mongodb://example.com/?readPreference=primaryPreferred&readPreferenceTags=dc:ny,rack:1&maxStalenessSeconds=120&readPreferenceTags=dc:ny"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -24,11 +20,7 @@ tests:
         uri: "mongodb://example.com/?readPreference=arbitraryButStillValid"
         valid: true
         warning: false
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -40,11 +32,7 @@ tests:
         uri: "mongodb://example.com/?readPreferenceTags=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~
@@ -55,11 +43,7 @@ tests:
         uri: "mongodb://example.com/?maxStalenessSeconds=invalid"
         valid: true
         warning: true
-        hosts:
-            -
-                type: ~
-                host: ~
-                port: ~
+        hosts: ~
         auth:
             username: ~
             password: ~

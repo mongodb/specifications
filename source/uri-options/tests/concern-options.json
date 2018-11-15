@@ -5,13 +5,7 @@
       "uri": "mongodb://example.com/?readConcernLevel=majority&w=5&wTimeoutMS=30000&journal=false",
       "valid": true,
       "warning": false,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
@@ -29,13 +23,7 @@
       "uri": "mongodb://example.com/?readConcernLevel=arbitraryButStillValid",
       "valid": true,
       "warning": false,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
@@ -50,13 +38,7 @@
       "uri": "mongodb://example.com/?w=arbitraryButStillValid",
       "valid": true,
       "warning": false,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
@@ -71,13 +53,7 @@
       "uri": "mongodb://example.com/?wTimeoutMS=invalid",
       "valid": true,
       "warning": true,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
@@ -90,13 +66,7 @@
       "uri": "mongodb://example.com/?journal=invalid",
       "valid": true,
       "warning": true,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,

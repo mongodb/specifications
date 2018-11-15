@@ -5,13 +5,7 @@
       "uri": "mongodb://example.com/?serverSelectionTryOnce=false",
       "valid": true,
       "warning": false,
-      "hosts": [
-        {
-          "type": null,
-          "host": null,
-          "port": null
-        }
-      ],
+      "hosts": null,
       "auth": {
         "username": null,
         "password": null,
