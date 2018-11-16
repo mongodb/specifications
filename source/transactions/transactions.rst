@@ -746,6 +746,11 @@ send all commands that are part of the same transaction, including
 commitTransaction and abortTransaction and any retries thereof, to the
 same mongos.
 
+Starting a new transaction on a pinned ClientSession MUST unpin the
+session. Additionally, any non-transaction operation using a pinned
+ClientSession MUST unpin the session and the operation MUST perform normal
+server selection.
+
 Error Reporting and Retrying Transactions
 -----------------------------------------
 

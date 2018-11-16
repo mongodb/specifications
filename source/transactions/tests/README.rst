@@ -291,3 +291,59 @@ afterClusterTime
 A ``readConcern.afterClusterTime`` value of ``42`` in a command-started event
 is a fake cluster time. Drivers MUST assert that the actual command includes an
 afterClusterTime.
+
+Mongos Pinning Prose Tests
+==========================
+
+The following tests ensure that a ClientSession is properly unpinned after
+a sharded transaction. Initialize these tests with a MongoClient connected
+to multiple mongoses.
+
+These tests use a cursor's address field to track which server an operation
+was run on. If this is not possible in your driver, use command monitoring
+instead.
+
+#. Test that starting a new transaction on a pinned ClientSession unpins the
+   session and normal server selection is performed for the next operation.
+
+   .. code:: python
+
+      @require_server_version(4, 1, 5)
+      @require_mongos_count_at_least(2)
+      def test_unpin_for_next_transaction(self):
+        client = MongoClient(mongos_hosts)
+        with client.start_session() as s:
+          # Session is pinned to Mongos.
+          with s.start_transaction():
+              client.test.test.insert_one({}, session=s)
+
+          addresses = set()
+          for _ in range(20):
+            with s.start_transaction():
+              cursor = client.test.test.find({}, session=s)
+              assert next(cursor)
+              addresses.add(cursor.address)
+
+          assert len(addresses) > 1
+
+#. Test non-transaction operations using a pinned ClientSession unpins the
+   session and normal server selection is performed.
+
+   .. code:: python
+
+      @require_server_version(4, 1, 5)
+      @require_mongos_count_at_least(2)
+      def test_unpin_for_non_transaction_operation(self):
+        client = MongoClient(mongos_hosts)
+        with client.start_session() as s:
+          # Session is pinned to Mongos.
+          with s.start_transaction():
+              client.test.test.insert_one({}, session=s)
+
+          addresses = set()
+          for _ in range(20):
+            cursor = client.test.test.find({}, session=s)
+            assert next(cursor)
+            addresses.add(cursor.address)
+
+          assert len(addresses) > 1
