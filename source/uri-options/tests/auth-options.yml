@@ -15,14 +15,3 @@ tests:
                 SERVICE_NAME: "other"
                 CANONICALIZE_HOST_NAME: "true"
             authSource: "$external"
-    -
-        description: "Invalid auth mechanism causes warning"
-        uri: "mongodb://example.com/?authMechanism=invalid"
-        valid: true
-        warning: true
-        hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
-        options: {}
