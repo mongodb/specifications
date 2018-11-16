@@ -16,18 +16,6 @@ tests:
                 - "dc:ny"
             maxStalenessSeconds: "120"
     -
-        description: "Arbitrary string read preference does not cause a warning"
-        uri: "mongodb://example.com/?readPreference=arbitraryButStillValid"
-        valid: true
-        warning: false
-        hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
-        options:
-            readPreference: "arbitraryButStillValid"
-    -
         description: "Invalid readPreferenceTags causes a warning"
         uri: "mongodb://example.com/?readPreferenceTags=invalid"
         valid: true
