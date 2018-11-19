@@ -207,7 +207,7 @@
       }
     },
     {
-      "description": "InsertOne succeeds after InterruptedDueToReplStateChange",
+      "description": "InsertOne succeeds after InterruptedDueToStepDown",
       "clientOptions": {
         "retryWrites": true
       },
@@ -693,7 +693,7 @@
       }
     },
     {
-      "description": "InsertOne succeeds after WriteConcernError InterruptedDueToReplStateChange",
+      "description": "InsertOne succeeds after WriteConcernError InterruptedDueToStepDown",
       "clientOptions": {
         "retryWrites": true
       },
