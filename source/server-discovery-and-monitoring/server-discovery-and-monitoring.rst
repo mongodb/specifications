@@ -1366,7 +1366,7 @@ unusable. These are called "node is recovering" errors:
     - Error Code
   * - InterruptedAtShutdown
     - 11600
-  * - InterruptedDueToReplStateChange
+  * - InterruptedDueToStepDown 
     - 11602
   * - NotMasterOrSecondary
     - 13436

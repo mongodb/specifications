@@ -98,7 +98,7 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
-        description: "InsertOne succeeds after InterruptedDueToReplStateChange"
+        description: "InsertOne succeeds after InterruptedDueToStepDown"
         clientOptions:
             retryWrites: true
         failPoint:
@@ -327,7 +327,7 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
-        description: "InsertOne succeeds after WriteConcernError InterruptedDueToReplStateChange"
+        description: "InsertOne succeeds after WriteConcernError InterruptedDueToStepDown"
         clientOptions:
             retryWrites: true
         failPoint:

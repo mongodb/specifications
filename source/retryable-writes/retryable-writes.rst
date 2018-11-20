@@ -79,7 +79,7 @@ Retryable Error
          - Error Code
        * - InterruptedAtShutdown
          - 11600
-       * - InterruptedDueToReplStateChange
+       * - InterruptedDueToStepDown 
          - 11602
        * - NotMaster
          - 10107
