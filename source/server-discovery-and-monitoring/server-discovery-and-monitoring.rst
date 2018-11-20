@@ -869,7 +869,7 @@ is replaced with the new ServerDescription.
 Checking wire protocol compatibility
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ServerDescription is incompatible if:
+A ServerDescription which is not Unknown is incompatible if:
 
 * minWireVersion > clientMaxWireVersion, or
 * maxWireVersion < clientMinWireVersion
