@@ -3,17 +3,7 @@
   "uri": "mongodb://a:27017",
   "phases": [
     {
-      "responses": [
-        [
-          "a:27017",
-          {
-            "ok": 1,
-            "ismaster": true,
-            "minWireVersion": 0,
-            "maxWireVersion": 4
-          }
-        ]
-      ],
+      "responses": [],
       "outcome": {
         "events": [
           {
@@ -47,7 +37,24 @@
               "topologyId": "42",
               "address": "a:27017"
             }
-          },
+          }
+        ]
+      }
+    },
+    {
+      "responses": [
+        [
+          "a:27017",
+          {
+            "ok": 1,
+            "ismaster": true,
+            "minWireVersion": 0,
+            "maxWireVersion": 4
+          }
+        ]
+      ],
+      "outcome": {
+        "events": [
           {
             "server_description_changed_event": {
               "topologyId": "42",
