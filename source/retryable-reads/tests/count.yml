@@ -1,0 +1,53 @@
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+
+minServerVersion: '4.0' # 4.2
+
+tests:
+    -
+        description: "Count succeeds on first attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: off
+            data:
+                failCommands:
+                        - count
+                closeConnection: false
+        operation:
+            name: count
+            object: collection
+            result: 2
+    -
+        description: "Count succeeds on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                closeConnection: true
+        operation:
+            name: count
+            object: collection
+            result: 2
+    -
+        description: "Count fails"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+                failCommands:
+                        - count                
+                closeConnection: true
+        operation:
+            name: count
+            object: collection
+            result:
+                errorContains: ""
