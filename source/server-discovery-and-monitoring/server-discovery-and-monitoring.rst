@@ -306,30 +306,33 @@ Fields:
   The last opTime reported by the server; an ObjectId or null.
   (Only mongos and shard servers record this field when monitoring
   config servers as replica sets.)
-* type: a `ServerType`_ enum value. Default Unknown.
-* minWireVersion, maxWireVersion:
+* (=) type: a `ServerType`_ enum value. Default Unknown.
+* (=) minWireVersion, maxWireVersion:
   the wire protocol version range supported by the server.
   Both default to 0.
   `Use min and maxWireVersion only to determine compatibility`_.
-* me: The hostname or IP, and the port number, that this server was configured with in the replica set. Default null.
-* hosts, passives, arbiters: Sets of addresses.
+* (=) me: The hostname or IP, and the port number, that this server was
+  configured with in the replica set. Default null.
+* (=) hosts, passives, arbiters: Sets of addresses.
   This server's opinion of the replica set's members, if any.
   These `hostnames are normalized to lower-case`_.
   Default empty.
   The client `monitors all three types of servers`_ in a replica set.
-* tags: map from string to string. Default empty.
-* setName: string or null. Default null.
-* setVersion: integer or null. Default null.
-* electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that
+* (=) tags: map from string to string. Default empty.
+* (=) setName: string or null. Default null.
+* (=) setVersion: integer or null. Default null.
+* (=) electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that
   believes it is primary. See `using setVersion and electionId to detect stale primaries`_.
   Default null.
-* primary: an address. This server's opinion of who the primary is.
+* (=) primary: an address. This server's opinion of who the primary is.
   Default null.
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
-* logicalSessionTimeoutMinutes: integer or null. Default null.
+* (=) logicalSessionTimeoutMinutes: integer or null. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
+
+Fields marked (=) are used for `Server Description Equality`_ comparison.
 
 .. _configured:
 
@@ -677,7 +680,10 @@ Parsing an ismaster response
 
 The client represents its view of each server with a `ServerDescription`_.
 Each time the client `checks`_ a server,
-it replaces its description of that server with a new one.
+it MUST replace its description of that server with a new one.
+This replacement MUST happen even if the new server description compares
+equal to the previous one, in order to keep client-tracked attributes
+like last update time and round trip time up to date.
 
 ServerDescriptions are created from ismaster outcomes as follows:
 
@@ -811,7 +817,7 @@ Hostnames are normalized to lower-case
 
 The same as with seeds provided in the initial configuration,
 all hostnames in the ismaster response's "me", "hosts", "passives", and "arbiters"
-entries must be lower-cased.
+entries MUST be lower-cased.
 
 This prevents unnecessary work rediscovering a server
 if a seed "A" is provided and the server
@@ -838,6 +844,22 @@ are parsed from the ismaster response in the obvious way.
 
 .. _updates its view of the topology:
 
+Server Description Equality
+```````````````````````````
+
+For the purposes of updating topology description and publishing SDAM events,
+two server descriptions having the same address
+MUST be considered equal if and only if the values of
+`ServerDescription`_ fields marked (=) are respectively equal.
+
+This specification does not prescribe how to compare server descriptions
+with different addresses for equality.
+
+Note: Server description for each server MUST be updated (replaced)
+every heartbeat. However, new description MUST NOT cause the SDAM flow
+to be executed if the new description is equal, as defined in this section,
+to the previous description.
+
 Updating the TopologyDescription
 ''''''''''''''''''''''''''''''''
 
@@ -860,9 +882,11 @@ The TopologyDescription's type was initialized as Single
 and remains Single forever.
 There is always one ServerDescription in TopologyDescription.servers.
 
-Whenever the client checks a server (successfully or not)
+Whenever the client checks a server (successfully or not), and regardless of
+whether the new server description is equal to the previous server description
+as defined in `Server Description Equality`_,
 the ServerDescription in TopologyDescription.servers
-is replaced with the new ServerDescription.
+MUST be replaced with the new ServerDescription.
 
 .. _is compatible:
 
@@ -910,7 +934,13 @@ the client MUST throw an error on every operation.
 Other TopologyTypes
 ```````````````````
 
-If the TopologyType is **not** Single, there can be one or more seeds.
+If the TopologyType is **not** Single, the topology can contain zero or more
+servers. The state of topology containing zero servers is terminal
+(because servers can only be added if they are reported by a server already
+in the topology). A client SHOULD emit a warning if it is constructed
+with no seeds in the initial seed list. A client SHOULD emit a warning when,
+in the process of updating its topology description, it removes the last
+server from the topology.
 
 Whenever a client completes an ismaster call,
 it creates a new ServerDescription with the proper `ServerType`_.
@@ -923,6 +953,9 @@ If any server's wire protocol version range does not overlap with the client's,
 the client updates the "compatible" and "compatibilityError" fields
 as described above for TopologyType Single.
 Otherwise "compatible" is set to true.
+
+If the new server description is equal to the previous server description
+as defined in `Server Description Equality`_, stop the processing.
 
 It is possible for a multi-threaded client to receive an ismaster outcome
 from a server after the server has been removed from the TopologyDescription.
