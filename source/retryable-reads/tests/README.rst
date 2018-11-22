@@ -166,5 +166,3 @@ Each YAML file has the following keys:
 
   - ``expectations``: Optional list of command-started events.
 
-  - ``outcome``: Document describing the return value after the operation
-    is executed.
