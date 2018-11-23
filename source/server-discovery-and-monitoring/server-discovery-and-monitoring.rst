@@ -990,11 +990,11 @@ with the new one.
   ,TopologyType Unknown,TopologyType Sharded,TopologyType ReplicaSetNoPrimary,TopologyType ReplicaSetWithPrimary
   ServerType Unknown,no-op,no-op,no-op,`checkIfHasPrimary`_
   ServerType Standalone,`updateUnknownWithStandalone`_,`remove`_,`remove`_,`remove`_ and `checkIfHasPrimary`_
-  ServerType Mongos,Set type to TopologyType Sharded,no-op,`remove`_,`remove`_ and `checkIfHasPrimary`_
-  ServerType RSPrimary,`updateRSFromPrimary`_,`remove`_, `updateRSFromPrimary`_,`updateRSFromPrimary`_
-  ServerType RSSecondary,Set type to ReplicaSetNoPrimary then `updateRSWithoutPrimary`_,`remove`_,`updateRSWithoutPrimary`_,`updateRSWithPrimaryFromMember`_
-  ServerType RSArbiter,Set type to ReplicaSetNoPrimary then `updateRSWithoutPrimary`_,`remove`_,`updateRSWithoutPrimary`_,`updateRSWithPrimaryFromMember`_
-  ServerType RSOther,Set type to ReplicaSetNoPrimary then `updateRSWithoutPrimary`_,`remove`_,`updateRSWithoutPrimary`_,`updateRSWithPrimaryFromMember`_
+  ServerType Mongos,Set topology type to Sharded,no-op,`remove`_,`remove`_ and `checkIfHasPrimary`_
+  ServerType RSPrimary,Set topology type to ReplicaSetWithPrimary then `updateRSFromPrimary`_,`remove`_,Set topology type to ReplicaSetWithPrimary then `updateRSFromPrimary`_,`updateRSFromPrimary`_
+  ServerType RSSecondary,Set topology type to ReplicaSetNoPrimary then `updateRSWithoutPrimary`_,`remove`_,`updateRSWithoutPrimary`_,`updateRSWithPrimaryFromMember`_
+  ServerType RSArbiter,Set topology type to ReplicaSetNoPrimary then `updateRSWithoutPrimary`_,`remove`_,`updateRSWithoutPrimary`_,`updateRSWithPrimaryFromMember`_
+  ServerType RSOther,Set topology type to ReplicaSetNoPrimary then `updateRSWithoutPrimary`_,`remove`_,`updateRSWithoutPrimary`_,`updateRSWithPrimaryFromMember`_
   ServerType RSGhost,no-op [#]_,`remove`_,no-op,`checkIfHasPrimary`_
 
 .. [#] `TopologyType remains Unknown when an RSGhost is discovered`_.
