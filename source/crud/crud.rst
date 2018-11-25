@@ -198,6 +198,21 @@ Read
 
   }
 
+  interface Database {
+
+    /**
+     * Runs an aggregation framework pipeline on the database for pipeline stages
+     * that do not require an underlying collection, such as $currentOp and $listLocalSessions.
+     *
+     * Note: result iteration should be backed by a cursor. Depending on the implementation,
+     * the cursor may back the returned Iterable instance or an iterator that it produces.
+     *
+     * @see https://docs.mongodb.com/manual/reference/method/db.aggregate/
+     */
+    aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
+
+  }
+
   class AggregateOptions {
 
     /**
@@ -674,20 +689,7 @@ Because of this anomaly in the wire protocol, it is up to the driver to enforce 
 Database-level aggregation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  interface Db {
-
-    /**
-     * Runs an aggregation framework pipeline on the database for pipeline stages
-     * that do not require an underlying collection, such as $currentOp and $listLocalSessions.
-     *
-     * Note: result iteration should be backed by a cursor. Depending on the implementation,
-     * the cursor may back the returned Iterable instance or an iterator that it produces.
-     *
-     * @see https://docs.mongodb.com/manual/reference/method/db.aggregate/
-     */
-    aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
-
-  }
+The server supports several collection-less aggregation source stages like ``$currentOp`` and ``$listLocalSessions``. The shell allows users to run ``db.aggregate``, which uses a value of 1 as the collection name and executes the operation against the entire database. Drivers support for database-level aggregation will allow users to receive a cursor from these collection-less aggregation source stages.
 
 Write
 -----
