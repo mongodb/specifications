@@ -9,7 +9,7 @@ tests:
             username: ~
             password: ~
             db: ~
-        options: 
+        options:
             appname: "URI-OPTIONS-SPEC-TEST"
             connectTimeoutMS: "20000"
             heartbeatFrequencyMS: "5000"

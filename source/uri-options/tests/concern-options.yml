@@ -9,7 +9,7 @@ tests:
             username: ~
             password: ~
             db: ~
-        options: 
+        options:
             readConcernLevel: "majority"
             w: "5"
             wTimeoutMS: "30000"
