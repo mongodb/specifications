@@ -207,7 +207,7 @@ Read
      * Note: result iteration should be backed by a cursor. Depending on the implementation,
      * the cursor may back the returned Iterable instance or an iterator that it produces.
      *
-     * @see https://docs.mongodb.com/manual/reference/method/db.aggregate/
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate/#dbcmd.aggregate
      */
     aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
 
@@ -689,7 +689,7 @@ Because of this anomaly in the wire protocol, it is up to the driver to enforce 
 Database-level aggregation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The server supports several collection-less aggregation source stages like ``$currentOp`` and ``$listLocalSessions``. The shell allows users to run ``db.aggregate``, which uses a value of 1 as the collection name and executes the operation against the entire database. Drivers support for database-level aggregation will allow users to receive a cursor from these collection-less aggregation source stages.
+The server supports several collection-less aggregation source stages like ``$currentOp`` and ``$listLocalSessions``. The database aggregate command requires a collection name of 1 for collection-less source stages. Drivers support for database-level aggregation will allow users to receive a cursor from these collection-less aggregation source stages.
 
 Write
 -----
