@@ -1,0 +1,40 @@
+data: []
+
+tests:
+    -
+        description: "Aggregate with $currentOp"
+        operation:
+            name: db-aggregate
+            database_name: admin
+            arguments:
+                pipeline:
+                  - $currentOp: {allUsers: true, idleConnections: true}
+                  - $match:
+                      command.aggregate: {$eq: 1}
+                  - $project: {command: 1}
+
+        outcome:
+            result:
+                -
+                  command:
+                    aggregate: 1
+                    pipeline:
+                      - $currentOp: {allUsers: true, idleConnections: true}
+                      - $match:
+                          command.aggregate: {$eq: 1}
+                      - $project: {command: 1}
+                    cursor: {}
+                    $db: "admin"
+    -
+        description: "Aggregate with $listLocalSessions"
+        operation:
+            name: db-aggregate
+            arguments:
+                pipeline:
+                  - $listLocalSessions: {}
+                  - $project: {lastUse: 1}
+                  - $count: 'lastUseCount'
+
+        outcome:
+            result:
+              - lastUseCount: 4
