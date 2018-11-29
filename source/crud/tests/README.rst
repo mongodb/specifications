@@ -55,7 +55,8 @@ Each YAML file has the following keys:
   - ``operation``: Document describing the operation to be executed. This will
     have the following fields:
 
-    - ``name``: The name of the operation as defined in the specification.
+    - ``name``: The name of the operation as defined in the specification. The
+      name `db-aggregate` refers to database-level aggregation.
 
     - ``database_name`` (optional): The name of the database against which to execute the operation.
 
