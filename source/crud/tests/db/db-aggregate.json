@@ -25,6 +25,11 @@
               "$project": {
                 "command": 1
               }
+            },
+            {
+              "$project": {
+                "command.lsid": false
+              }
             }
           ]
         }
@@ -52,6 +57,11 @@
                   "$project": {
                     "command": 1
                   }
+                },
+                {
+                  "$project": {
+                    "command.lsid": false
+                  }
                 }
               ],
               "cursor": {},
@@ -62,29 +72,73 @@
       }
     },
     {
-      "description": "Aggregate with $listLocalSessions",
+      "description": "Aggregate with $currentOp and allowDiskUse",
       "operation": {
         "name": "db-aggregate",
+        "database_name": "admin",
         "arguments": {
           "pipeline": [
             {
-              "$listLocalSessions": {}
-            },
-            {
-              "$project": {
-                "lastUse": 1
+              "$currentOp": {
+                "allUsers": true,
+                "idleConnections": true
               }
             },
             {
-              "$count": "lastUseCount"
+              "$match": {
+                "command.aggregate": {
+                  "$eq": 1
+                }
+              }
+            },
+            {
+              "$project": {
+                "command": 1
+              }
+            },
+            {
+              "$project": {
+                "command.lsid": false
+              }
             }
-          ]
+          ],
+          "allowDiskUse": true
         }
       },
       "outcome": {
         "result": [
           {
-            "lastUseCount": 4
+            "command": {
+              "aggregate": 1,
+              "pipeline": [
+                {
+                  "$currentOp": {
+                    "allUsers": true,
+                    "idleConnections": true
+                  }
+                },
+                {
+                  "$match": {
+                    "command.aggregate": {
+                      "$eq": 1
+                    }
+                  }
+                },
+                {
+                  "$project": {
+                    "command": 1
+                  }
+                },
+                {
+                  "$project": {
+                    "command.lsid": false
+                  }
+                }
+              ],
+              "allowDiskUse": true,
+              "cursor": {},
+              "$db": "admin"
+            }
           }
         ]
       }

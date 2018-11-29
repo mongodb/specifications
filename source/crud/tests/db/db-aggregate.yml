@@ -12,6 +12,7 @@ tests:
                   - $match:
                       command.aggregate: {$eq: 1}
                   - $project: {command: 1}
+                  - $project: {command.lsid: false}
 
         outcome:
             result:
@@ -23,18 +24,35 @@ tests:
                       - $match:
                           command.aggregate: {$eq: 1}
                       - $project: {command: 1}
+                      - $project: {command.lsid: false}
                     cursor: {}
                     $db: "admin"
+
     -
-        description: "Aggregate with $listLocalSessions"
+        description: "Aggregate with $currentOp and allowDiskUse"
         operation:
             name: db-aggregate
+            database_name: admin
             arguments:
                 pipeline:
-                  - $listLocalSessions: {}
-                  - $project: {lastUse: 1}
-                  - $count: 'lastUseCount'
+                  - $currentOp: {allUsers: true, idleConnections: true}
+                  - $match:
+                      command.aggregate: {$eq: 1}
+                  - $project: {command: 1}
+                  - $project: {command.lsid: false}
+                allowDiskUse: true
 
         outcome:
             result:
-              - lastUseCount: 4
+                -
+                  command:
+                    aggregate: 1
+                    pipeline:
+                      - $currentOp: {allUsers: true, idleConnections: true}
+                      - $match:
+                          command.aggregate: {$eq: 1}
+                      - $project: {command: 1}
+                      - $project: {command.lsid: false}
+                    allowDiskUse: true
+                    cursor: {}
+                    $db: "admin"

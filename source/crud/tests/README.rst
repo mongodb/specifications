@@ -57,6 +57,8 @@ Each YAML file has the following keys:
 
     - ``name``: The name of the operation as defined in the specification.
 
+    - ``database_name`` (optional): The name of the database against which to execute the operation.
+
     - ``arguments``: The names and values of arguments from the specification.
 
   - ``outcome``: Document describing the return value and/or expected state of
