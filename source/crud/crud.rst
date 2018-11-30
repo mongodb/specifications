@@ -255,7 +255,20 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     maxTimeMS: Optional<Int64>;
-    
+
+    /**
+     * The maximum amount of time for the server to wait on new documents to satisfy a tailable cursor
+     * query.
+     *
+     * This options only applies to aggregations which return a TAILABLE_AWAIT cursor. Drivers
+     * SHOULD always send this value, if the cursor is not a TAILABLE_AWAIT cursor the server will
+     * ignore it.
+     *
+     * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
+     * @note this option is not set on the `aggregate` command
+     */
+    maxAwaitTimeMS: Optional<Int64>;
+
     /**
      * Enables users to specify an arbitrary string to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
@@ -269,7 +282,7 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
-     * @see http://docs.mongodb.com/manual/reference/command/aggregate/ 
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     hint: Optional<(String | Document)>;
   }
@@ -1726,12 +1739,13 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions
 * 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
 * 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
 * 2018-07-25: Added upsertedCount to UpdateResult.
 * 2018-06-07: Deprecated the count helper. Added the estimatedDocumentCount and countDocuments helpers.
 * 2018-03-05: Deprecate snapshot option
-* 2018-03-01: Deprecate maxScan query option. 
+* 2018-03-01: Deprecate maxScan query option.
 * 2018-02-06: Note that batchSize in FindOptions and AggregateOptions should also apply to getMore.
 * 2018-01-26: Only send bypassDocumentValidation option if it's true, don't send false.
 * 2017-10-23: Allow BulkWriteException to provide an intermediary write result.
@@ -1740,7 +1754,7 @@ Changes
 * 2017-10-09: Prohibit empty insertMany() and bulkWrite() operations.
 * 2017-10-09: Split UpdateOptions and ReplaceOptions. Since replaceOne() previously used UpdateOptions, this may have BC implications for drivers using option classes.
 * 2017-10-05: Removed useCursor option from AggregateOptions.
-* 2017-09-26: Added hint option to AggregateOptions.  
+* 2017-09-26: Added hint option to AggregateOptions.
 * 2017-09-25: Added comment option to AggregateOptions.
 * 2017-08-31: Added arrayFilters to bulk write update models.
 * 2017-06-29: Remove requirement of using OP_KILL_CURSOR to kill cursors.
@@ -1757,4 +1771,4 @@ Changes
 * 2015-10-01: Moved bypassDocumentValidation into BulkWriteOptions and removed it from the individual write models.
 * 2015-09-16: Added bypassDocumentValidation.
 * 2015-09-16: Added readConcern notes.
-* 2015-06-17: Added limit/batchSize calculation logic. 
+* 2015-06-17: Added limit/batchSize calculation logic.
