@@ -1,9 +1,17 @@
 # Test that all the operations go to the same mongos.
 #
-# The assertion is implicit: that all the read operations succeed,
-# as if the driver does not properly pin to a mongos then one of them
-# will eventually be sent to a different server, which is unaware of the
-# transaction, and it will report an error.
+# The assertion is implicit: that all the read operations succeed.
+# If the driver does not properly pin to a single mongos then one of the
+# operations in a transaction will eventually be sent to a different mongos,
+# which is unaware of the transaction, and the mongos will return a command
+# error. An example of such an error is:
+# {
+#   'ok': 0.0,
+#   'errmsg': 'cannot continue txnId -1 for session 28938f50-9d29-4ca5-8de5-ddaf261267c4 - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= with txnId 1',
+#   'code': 251,
+#   'codeName': 'NoSuchTransaction',
+#   'errorLabels': ['TransientTransactionError']
+# }
 #
 # This test doesn't check contents of command-started events.
 # Note: these tests should also pass when run against a replica set.

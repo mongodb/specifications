@@ -147,7 +147,7 @@
       "description": "transaction options inherited from client",
       "clientOptions": {
         "w": 1,
-        "readConcernLevel": "majority"
+        "readConcernLevel": "local"
       },
       "operations": [
         {
@@ -211,7 +211,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "majority"
+                "level": "local"
               },
               "writeConcern": null
             },
@@ -255,7 +255,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "majority",
+                "level": "local",
                 "afterClusterTime": 42
               },
               "writeConcern": null
@@ -800,7 +800,7 @@
       }
     },
     {
-      "description": "readConcern majority in defaultTransactionOptions",
+      "description": "readConcern local in defaultTransactionOptions",
       "clientOptions": {
         "w": 1
       },
@@ -808,7 +808,7 @@
         "session0": {
           "defaultTransactionOptions": {
             "readConcern": {
-              "level": "majority"
+              "level": "local"
             }
           }
         }
@@ -875,7 +875,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "majority"
+                "level": "local"
               },
               "writeConcern": null
             },
@@ -919,7 +919,7 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "majority",
+                "level": "local",
                 "afterClusterTime": 42
               },
               "writeConcern": null

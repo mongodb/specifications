@@ -149,7 +149,7 @@ ensure that no new bugs have been introduced related to arbiters.)
 
 A driver that implements support for sharded transactions MUST also run these
 tests against a MongoDB sharded cluster with multiple mongoses and
-**server version 4.1.5 or later**. Including multiple mongoses (and
+**server version 4.1.6 or later**. Including multiple mongoses (and
 initializing the MongoClient with multiple mongos seeds!) ensures that
 mongos transaction pinning works properly.
 
@@ -164,7 +164,7 @@ Then for each element in ``tests``:
    To workaround `SERVER-38335`_, ensure this command does not send
    an implicit session, otherwise the command will fail with an
    "operation was interrupted" error because it kills itself and (on a sharded
-   cluster) future commands may fail with:
+   cluster) future commands may fail with an error similar to:
    "Encountered error from localhost:27217 during a transaction :: caused by :: operation was interrupted".
 
    If your driver cannot run this command without an implicit session, then
@@ -331,7 +331,7 @@ instead.
 
    .. code:: python
 
-      @require_server_version(4, 1, 5)
+      @require_server_version(4, 1, 6)
       @require_mongos_count_at_least(2)
       def test_unpin_for_next_transaction(self):
         client = MongoClient(mongos_hosts)
@@ -354,7 +354,7 @@ instead.
 
    .. code:: python
 
-      @require_server_version(4, 1, 5)
+      @require_server_version(4, 1, 6)
       @require_mongos_count_at_least(2)
       def test_unpin_for_non_transaction_operation(self):
         client = MongoClient(mongos_hosts)
