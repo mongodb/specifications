@@ -157,6 +157,7 @@ Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
 Then for each element in ``tests``:
 
+#. If the``skipReason`` field is present, skip this test completely.
 #. Create a MongoClient and call
    ``client.admin.runCommand({killAllSessions: []})`` to clean up any open
    transactions from previous test failures.
