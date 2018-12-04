@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: July 30, 2018
-:Version: 1.5.1
+:Last Modified: December 4, 2018
+:Version: 1.5.2
 
 .. contents::
 
@@ -243,7 +243,7 @@ Driver API
      * This is the same field described in FindOptions in the CRUD spec.
      * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
      * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
-     * @note this is an aggregation command option
+     * @note this option is not set on the `aggregate` command nor `$changeStream` pipeline stage
      */
     maxAwaitTimeMS: Optional<Int64>;
 
