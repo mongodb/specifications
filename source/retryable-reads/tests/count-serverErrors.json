@@ -1,0 +1,301 @@
+{
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    }
+  ],
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "Count succeeds after InterruptedAtShutdown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 11600
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after InterruptedDueToStepDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 11602
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after NotMaster",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after NotMasterNoSlaveOk",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 13435
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after NotMasterOrSecondary",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 13436
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after PrimarySteppedDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 189
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after ShutdownInProgress",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 91
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after HostNotFound",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 7
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after HostUnreachable",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 6
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after NetworkTimeout",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 89
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    },
+    {
+      "description": "Count succeeds after SocketException",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "errorCode": 9001
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": 2
+      }
+    }
+  ]
+}
