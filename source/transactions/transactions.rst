@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -344,9 +344,9 @@ progress" state, then Drivers MUST raise an error containing the message
 startTransaction SHOULD report an error if the driver can detect that
 transactions are not supported by the deployment. A deployment does not
 support transactions when the deployment does not support sessions, or
-maxWireVersion < 7, or the topology type is Sharded, see `How to Check
-Whether a Deployment Supports
-Sessions <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions>`__.
+maxWireVersion < 7, or the maxWireVersion < 8 and the topology type is Sharded,
+see `How to Check Whether a Deployment Supports Sessions
+ <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions>`_.
 Note that checking the maxWireVersion does not guarantee that the
 deployment supports transactions, for example a MongoDB 4.0 replica set
 using MMAPv1 will report maxWireVersion 7 but does not support
@@ -732,6 +732,24 @@ format:
 .. code:: typescript
 
     { ok : 1, writeConcernError: {code: <Number>, errmsg : "..."} }
+
+Mongos Pinning for Sharded Transactions
+---------------------------------------
+
+The server supports sharded transactions starting in MongoDB 4.2 (
+maxWireVersion 8). The server requires that drivers MUST send all commands for
+a single transaction to the same mongos.
+
+After the driver selects a mongos for the first command within a transaction,
+the driver MUST pin the ClientSession to the selected mongos. Drivers MUST
+send all commands that are part of the same transaction, including
+commitTransaction and abortTransaction and any retries thereof, to the
+same mongos.
+
+Starting a new transaction on a pinned ClientSession MUST unpin the
+session. Additionally, any non-transaction operation using a pinned
+ClientSession MUST unpin the session and the operation MUST perform normal
+server selection.
 
 Error Reporting and Retrying Transactions
 -----------------------------------------
@@ -1198,6 +1216,7 @@ Applications should not run such commands inside a transaction.
 **Changelog**
 -------------
 
+:2018-11-13: Add mongos pinning to support sharded transaction.
 :2018-06-18: Explicit readConcern and/or writeConcern are prohibited within
              transactions, with a client-side error.
 :2018-06-07: The count command is not supported within transactions.
