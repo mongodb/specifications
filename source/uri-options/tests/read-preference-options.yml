@@ -1,6 +1,6 @@
 tests:
     -
-        description: "Valid connection and timeout options are parsed correctly"
+        description: "Valid read preference options are parsed correctly"
         uri: "mongodb://example.com/?readPreference=primaryPreferred&readPreferenceTags=dc:ny,rack:1&maxStalenessSeconds=120&readPreferenceTags=dc:ny"
         valid: true
         warning: false
