@@ -153,6 +153,13 @@ Each YAML file has the following keys:
       expected to return an error, the ``result`` is a single document that has
       one or more of the following fields:
 
+      - ``error``: Optional. If ``true``, the test should expect an error or
+        exception. Implicitly true if ``result`` contains ``errorContains``,
+        ``errorCodeName``, ``errorLabelsContain``, and/or
+        ``errorLabelsOmit``. If ``false``, the test should expect no error or
+        exception, even if ``result`` contains ``errorContains``,
+        ``errorCodeName``, ``errorLabelsContain``, and/or ``errorLabelsOmit``.
+
       - ``errorContains``: A substring of the expected error message.
 
       - ``errorCodeName``: The expected "codeName" field in the server
