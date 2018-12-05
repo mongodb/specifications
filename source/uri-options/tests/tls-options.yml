@@ -5,10 +5,7 @@ tests:
         valid: true
         warning: false
         hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
+        auth: ~
         options:
             tls: "true"
             tlsCAFile: "ca.pem"
@@ -20,10 +17,7 @@ tests:
         valid: true
         warning: false
         hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
+        auth: ~
         options:
             tlsAllowInvalidCertificates: "true"
     -
@@ -32,10 +26,7 @@ tests:
         valid: true
         warning: false
         hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
+        auth: ~
         options:
             tlsAllowInvalidHostnames: "true"
     -
@@ -44,10 +35,7 @@ tests:
         valid: true
         warning: false
         hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
+        auth: ~
         options:
             tlsInsecure: "true"
     -
@@ -56,9 +44,6 @@ tests:
         valid: true
         warning: false
         hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
+        auth: ~
         options:
             tlsClientKeyFile: "client.pem"

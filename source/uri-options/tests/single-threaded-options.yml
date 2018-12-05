@@ -5,9 +5,6 @@ tests:
         valid: true
         warning: false
         hosts: ~
-        auth:
-            username: ~
-            password: ~
-            db: ~
+        auth: ~
         options:
             serverSelectionTryOnce: "false"
