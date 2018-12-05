@@ -6,11 +6,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "readConcernLevel": "majority",
         "w": "5",
@@ -24,11 +20,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "readConcernLevel": "arbitraryButStillValid"
       }
@@ -39,11 +31,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "w": "arbitraryButStillValid"
       }
@@ -54,11 +42,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -67,11 +51,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     }
   ]

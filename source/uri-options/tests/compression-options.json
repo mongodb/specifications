@@ -6,11 +6,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "compressors": "zlib",
         "zlibCompressionLevel": "9"
@@ -22,11 +18,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -35,11 +27,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     }
   ]

@@ -1,16 +1,12 @@
 {
   "tests": [
     {
-      "description": "Valid connection and timeout options are parsed correctly",
+      "description": "Valid read preference options are parsed correctly",
       "uri": "mongodb://example.com/?readPreference=primaryPreferred&readPreferenceTags=dc:ny,rack:1&maxStalenessSeconds=120&readPreferenceTags=dc:ny",
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "readPreference": "primaryPreferred",
         "readPreferenceTags": [
@@ -26,11 +22,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -39,11 +31,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     }
   ]

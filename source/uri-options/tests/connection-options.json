@@ -6,11 +6,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "appname": "URI-OPTIONS-SPEC-TEST",
         "connectTimeoutMS": "20000",
@@ -29,11 +25,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -42,11 +34,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -55,11 +43,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -68,11 +52,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     },
     {
@@ -81,11 +61,7 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {}
     }
   ]
