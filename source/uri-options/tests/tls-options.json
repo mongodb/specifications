@@ -2,19 +2,15 @@
   "tests": [
     {
       "description": "Valid required tls options are parsed correctly",
-      "uri": "mongodb://example.com/?tls=true&tlsCAFile=ca.pem&tlsClientCertFile=cert.pem&tlsClientKeyPassword=hunter2",
+      "uri": "mongodb://example.com/?tls=true&tlsCAFile=ca.pem&tlsClientCertificateKeyFile=cert.pem&tlsClientKeyPassword=hunter2",
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "tls": "true",
         "tlsCAFile": "ca.pem",
-        "tlsClientCertFile": "cert.pem",
+        "tlsClientCertificateKeyFile": "cert.pem",
         "tlsClientKeyPassword": "hunter2"
       }
     },
@@ -24,11 +20,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "tlsAllowInvalidCertificates": "true"
       }
@@ -39,11 +31,7 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "tlsAllowInvalidHostnames": "true"
       }
@@ -54,28 +42,9 @@
       "valid": true,
       "warning": false,
       "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
+      "auth": null,
       "options": {
         "tlsInsecure": "true"
-      }
-    },
-    {
-      "description": "tlsClientKeyFile is parsed correctly",
-      "uri": "mongodb://example.com/?tlsClientKeyFile=client.pem",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": {
-        "username": null,
-        "password": null,
-        "db": null
-      },
-      "options": {
-        "tlsClientKeyFile": "client.pem"
       }
     }
   ]

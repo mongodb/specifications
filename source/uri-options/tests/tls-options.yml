@@ -1,7 +1,7 @@
 tests:
     -
         description: "Valid required tls options are parsed correctly"
-        uri: "mongodb://example.com/?tls=true&tlsCAFile=ca.pem&tlsClientCertFile=cert.pem&tlsClientKeyPassword=hunter2"
+        uri: "mongodb://example.com/?tls=true&tlsCAFile=ca.pem&tlsClientCertificateKeyFile=cert.pem&tlsClientKeyPassword=hunter2"
         valid: true
         warning: false
         hosts: ~
@@ -9,7 +9,7 @@ tests:
         options:
             tls: "true"
             tlsCAFile: "ca.pem"
-            tlsClientCertFile: "cert.pem"
+            tlsClientCertificateKeyFile: "cert.pem"
             tlsClientKeyPassword: "hunter2"
     -
         description: "tlsAllowInvalidCertificates is parsed correctly"
@@ -38,12 +38,3 @@ tests:
         auth: ~
         options:
             tlsInsecure: "true"
-    -
-        description: "tlsClientKeyFile is parsed correctly"
-        uri: "mongodb://example.com/?tlsClientKeyFile=client.pem"
-        valid: true
-        warning: false
-        hosts: ~
-        auth: ~
-        options:
-            tlsClientKeyFile: "client.pem"
