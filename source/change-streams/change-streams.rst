@@ -278,6 +278,16 @@ Driver API
      * @note this is an option of the `$changeStream` pipeline stage.
      */
     startAtOperationTime: Optional<Timestamp>;
+
+    /**
+     * Similar to 'resumeAfter', this option takes a resume token and starts a
+     * new change stream returning the first notification after the token.
+     * This will allow users to watch collections that have been dropped and recreated
+     * or newly renamed collections without missing any notifications.
+     * @since 4.2
+     * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
+     */
+     startAfter: Optional<Timestamp>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -603,4 +613,6 @@ Changelog
 | 2018-07-30 | Remove redundant error message checks for resumable errors |
 +------------+------------------------------------------------------------+
 | 2018-09-09 | Added dropDatabase to change stream operationType          |
++------------+------------------------------------------------------------+
+| 2018-12-14 | Added ``startAfter`` to change stream options              |
 +------------+------------------------------------------------------------+
