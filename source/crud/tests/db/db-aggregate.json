@@ -10,8 +10,8 @@
           "pipeline": [
             {
               "$currentOp": {
-                "allUsers": true,
-                "idleConnections": true
+                "allUsers": false,
+                "idleConnections": false
               }
             },
             {
@@ -28,7 +28,7 @@
             },
             {
               "$project": {
-                "command.lsid": false
+                "command.lsid": 0
               }
             }
           ]
@@ -42,8 +42,8 @@
               "pipeline": [
                 {
                   "$currentOp": {
-                    "allUsers": true,
-                    "idleConnections": true
+                    "allUsers": false,
+                    "idleConnections": false
                   }
                 },
                 {
@@ -60,7 +60,7 @@
                 },
                 {
                   "$project": {
-                    "command.lsid": false
+                    "command.lsid": 0
                   }
                 }
               ],
@@ -98,7 +98,7 @@
             },
             {
               "$project": {
-                "command.lsid": false
+                "command.lsid": 0
               }
             }
           ],
@@ -131,7 +131,7 @@
                 },
                 {
                   "$project": {
-                    "command.lsid": false
+                    "command.lsid": 0
                   }
                 }
               ],
