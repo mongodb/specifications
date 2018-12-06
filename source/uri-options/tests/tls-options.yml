@@ -38,3 +38,20 @@ tests:
         auth: ~
         options:
             tlsInsecure: "true"
+    -
+        description: "tlsInsecure=true and tlsAllowInvalidCertificates=false warns"
+        uri: "mongodb://example.com/?tlsInsecure=true&tlsAllowInvalidCertificates=false"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "tlsInsecure=true and tlsAllowInvalidHostnames=false warns"
+        uri: "mongodb://example.com/?tlsInsecure=true&tlsAllowInvalidHostnames=false"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+  
