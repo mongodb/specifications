@@ -3,6 +3,7 @@
   "database_name": "change-stream-tests",
   "collection2_name": "test2",
   "database2_name": "change-stream-tests-2",
+  "collection_rename": "test-rename",
   "tests": [
     {
       "description": "$changeStream must be the first stage in a change stream pipeline sent to the server",
@@ -437,6 +438,172 @@
                 "$numberInt": "3"
               }
             }
+          }
+        ]
+      }
+    },
+    {
+      "description": "Test all change event types",
+      "minServerVersion": "3.6.0",
+      "target": "collection",
+      "topology": [
+        "replicaset"
+      ],
+      "changeStreamPipeline": [],
+      "changeStreamOptions": {},
+      "operations": [
+        {
+          "database": "change-stream-tests",
+          "collection": "test",
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          }
+        },
+        {
+          "database": "change-stream-tests",
+          "collection": "test",
+          "name": "updateOne",
+          "arguments": {
+            "filter": {
+              "x": 1
+            },
+            "update": {
+              "$set": {
+                "x": 2
+              }
+            }
+          }
+        },
+        {
+          "database": "change-stream-tests",
+          "collection": "test",
+          "name": "replaceOne",
+          "arguments": {
+            "filter": {
+              "x": 2
+            },
+            "replacement": {
+              "x": 3
+            }
+          }
+        },
+        {
+          "database": "change-stream-tests",
+          "collection": "test",
+          "name": "deleteOne",
+          "arguments": {
+            "filter": {
+              "x": 3
+            }
+          }
+        },
+        {
+          "database": "change-stream-tests",
+          "collection": "test",
+          "name": "rename",
+          "arguments": {
+            "to": "test-rename"
+          }
+        },
+        {
+          "database": "change-stream-tests",
+          "collection": "test-rename",
+          "name": "drop",
+          "arguments": null
+        },
+        {
+          "database": "change-stream-tests",
+          "collection": "test-rename",
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
+          }
+        }
+      ],
+      "result": {
+        "success": [
+          {
+            "operationType": "insert",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "fullDocument": {
+              "x": {
+                "$numberInt": "1"
+              }
+            }
+          },
+          {
+            "operationType": "update",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "updateDescription": {
+              "updatedFields": {
+                "x": {
+                  "$numberInt": "2"
+                }
+              }
+            }
+          },
+          {
+            "operationType": "replace",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "fullDocument": {
+              "x": {
+                "$numberInt": "3"
+              }
+            }
+          },
+          {
+            "operationType": "delete",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            }
+          },
+          {
+            "operationType": "rename",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
+            },
+            "to": {
+              "db": "change-stream-tests",
+              "coll": "test-rename"
+            }
+          },
+          {
+            "operationType": "invalidate"
           }
         ]
       }
