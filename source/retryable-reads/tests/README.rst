@@ -12,7 +12,7 @@ Introduction
 The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the Retryable Reads spec.
 
-Several prose tests, which are not easily expressed in YAML, are also presented
+Prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
 
 Tests will require a MongoClient created with options defined in the tests.
@@ -160,16 +160,71 @@ Each YAML file has the following keys:
         exception, even if ``result`` contains ``errorContains``,
         ``errorCodeName``, ``errorLabelsContain``, and/or ``errorLabelsOmit``.
 
-      - ``errorContains``: A substring of the expected error message.
+      - ``errorContains``: Optional. A substring of the expected error message.
 
-      - ``errorCodeName``: The expected "codeName" field in the server
+      - ``errorCodeName``: Optional. The expected "codeName" field in the server
         error response.
 
-      - ``errorLabelsContain``: A list of error label strings that the
+      - ``errorLabelsContain``: Optional. A list of error label strings that the
         error is expected to have.
 
-      - ``errorLabelsOmit``: A list of error label strings that the
+      - ``errorLabelsOmit``: Optional. A list of error label strings that the
         error is expected not to have.
 
   - ``expectations``: Optional list of command-started events.
 
+
+Replica Set Failover Test
+=========================
+
+This test is adapted from the `Retryable Write Tests: Replica Set Failover Test`_.
+
+In addition to network errors, reads should also be retried in the event of a
+primary failover, which results in a "not master" command error (or similar).
+The ``stepdownHangBeforePerformingPostMemberStateUpdateActions`` fail point
+implemented in `d4eb562`_ for `SERVER-31355`_ may be used for this test, as it
+allows a primary to keep its client connections open after a step down. This
+fail point operates by hanging the step down procedure (i.e. ``replSetStepDown``
+command) until the fail point is later deactivated.
+
+.. _d4eb562: https://github.com/mongodb/mongo/commit/d4eb562ac63717904f24de4a22e395070687bc62
+.. _SERVER-31355: https://jira.mongodb.org/browse/SERVER-31355
+.. _Retryable Write Tests\: Replica Set Failover Test: https://github.com/mongodb/specifications/tree/master/source/retryable-writes/tests#replica-set-failover-test
+
+The following test requires three MongoClient instances and will generally
+require two execution contexts (async drivers may get by with a single thread).
+
+- The client under test will connect to the replica set and be used to execute
+  read operations.
+- The fail point client will connect directly to the initial primary and be used
+  to toggle the fail point.
+- The step down client will connect to the replica set and be used to step down
+  the primary. This client will generally require its own execution context,
+  since the step down will hang.
+
+In order to guarantee that the client under test does not detect the stepped
+down primary's state change via SDAM, it must be configured with a large
+`heartbeatFrequencyMS`_ value (e.g. 60 seconds). Single-threaded drivers may
+also need to set `serverSelectionTryOnce`_ to ``false`` to ensure that server
+selection for the retry attempt waits until a new primary is elected.
+
+.. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
+.. _serverSelectionTryOnce: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontryonce
+
+The test proceeds as follows:
+
+- Using the client under test, insert a document and observe a successful write
+  result. This will ensure that initial discovery takes place.
+- Using the fail point client, activate the fail point by setting ``mode``
+  to ``"alwaysOn"``.
+- Using the step down client, step down the primary by executing the command
+  ``{ replSetStepDown: 60, force: true}``. This operation will hang so long as
+  the fail point is activated. When the fail point is later deactivated, the
+  step down will complete and the primary's client connections will be dropped.
+  At that point, any ensuing network error should be ignored.
+- Using the client under test, execute a read command. The test MUST assert that
+  the read command fails once against the stepped down node and is successfully
+  retried on the newly elected primary (after SDAM discovers the topology
+  change). The test MAY use APM or another means to observe both attempts.
+- Using the fail point client, deactivate the fail point by setting ``mode``
+  to ``"off"``.
