@@ -1,6 +1,16 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
 data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
+
+count_command_started_event: &count_command_started_event
+ command_started_event:
+   command:
+     count: *collection_name
+   command_name: count
+   database_name: *database_name
 
 minServerVersion: '4.1.6' # 4.2
 
@@ -22,6 +32,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event
     -
         description: "Count succeeds after InterruptedDueToStepDown"
         clientOptions:
@@ -39,6 +52,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after NotMaster"
         clientOptions:
@@ -56,6 +72,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -73,6 +92,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -90,6 +112,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after PrimarySteppedDown"
         clientOptions:
@@ -107,6 +132,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after ShutdownInProgress"
         clientOptions:
@@ -124,6 +152,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after HostNotFound"
         clientOptions:
@@ -141,6 +172,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after HostUnreachable"
         clientOptions:
@@ -158,6 +192,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after NetworkTimeout"
         clientOptions:
@@ -175,6 +212,9 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
     -
         description: "Count succeeds after SocketException"
         clientOptions:
@@ -192,3 +232,6 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    

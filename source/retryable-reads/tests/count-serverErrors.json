@@ -1,4 +1,6 @@
 {
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
   "data": [
     {
       "_id": 1,
@@ -9,6 +11,15 @@
       "x": 22
     }
   ],
+  "count_command_started_event": {
+    "command_started_event": {
+      "command": {
+        "count": "coll"
+      },
+      "command_name": "count",
+      "database_name": "retryable-reads-tests"
+    }
+  },
   "minServerVersion": "4.1.6",
   "tests": [
     {
@@ -35,7 +46,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after InterruptedDueToStepDown",
@@ -61,7 +92,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NotMaster",
@@ -87,7 +138,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NotMasterNoSlaveOk",
@@ -113,7 +184,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NotMasterOrSecondary",
@@ -139,7 +230,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after PrimarySteppedDown",
@@ -165,7 +276,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after ShutdownInProgress",
@@ -191,7 +322,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after HostNotFound",
@@ -217,7 +368,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after HostUnreachable",
@@ -243,7 +414,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NetworkTimeout",
@@ -269,7 +460,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after SocketException",
@@ -295,7 +506,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }
