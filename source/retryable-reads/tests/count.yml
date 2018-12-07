@@ -1,6 +1,13 @@
 database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
+count_command_started_event: &count_command_started_event
+ command_started_event:
+   command:
+     count: *collection_name
+   command_name: count
+   database_name: *database_name
+   
 data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
@@ -19,11 +26,7 @@ tests:
                 filter: { }
             result: 2
         expectations:
-             - command_started_event:
-                 command:
-                   count: *collection_name
-                 command_name: count
-                 database_name: *database_name            
+             - *count_command_started_event             
     -
         description: "Count succeeds on second attempt"
         clientOptions:
@@ -42,16 +45,8 @@ tests:
                 filter: { }
             result: 2
         expectations:
-             - command_started_event:
-                 command:
-                   count: *collection_name
-                 command_name: count
-                 database_name: *database_name
-             - command_started_event:
-                 command:
-                   count: *collection_name
-                 command_name: count
-                 database_name: *database_name                                         
+             - *count_command_started_event 
+             - *count_command_started_event                                          
     -
         description: "Count fails on first attempt"
         clientOptions:
