@@ -198,6 +198,21 @@ Read
 
   }
 
+  interface Database {
+
+    /**
+     * Runs an aggregation framework pipeline on the database for pipeline stages
+     * that do not require an underlying collection, such as $currentOp and $listLocalSessions.
+     *
+     * Note: result iteration should be backed by a cursor. Depending on the implementation,
+     * the cursor may back the returned Iterable instance or an iterator that it produces.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate/#dbcmd.aggregate
+     */
+    aggregate(pipeline: Document[], options: Optional<AggregateOptions>): Iterable<Document>;
+
+  }
+
   class AggregateOptions {
 
     /**
@@ -669,6 +684,12 @@ The OP_QUERY wire protocol only contains a numberToReturn value which drivers mu
   }
 
 Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the limit has been reached, if the cursor is still open, a driver MUST kill the cursor.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Database-level aggregation
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The server supports several collection-less aggregation source stages like ``$currentOp`` and ``$listLocalSessions``. The database aggregate command requires a collection name of 1 for collection-less source stages. Drivers support for database-level aggregation will allow users to receive a cursor from these collection-less aggregation source stages.
 
 Write
 -----
