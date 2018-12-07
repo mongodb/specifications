@@ -1,4 +1,6 @@
 {
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
   "data": [
     {
       "_id": 1,
@@ -16,21 +18,25 @@
       "clientOptions": {
         "retryReads": true
       },
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": "off",
-        "data": {
-          "failCommands": [
-            "count"
-          ],
-          "closeConnection": false
-        }
-      },
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds on second attempt",
@@ -52,11 +58,62 @@
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": 2
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Count fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": {
+          "error": true
+        }
       }
     },
     {
-      "description": "Count fails",
+      "description": "Count fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -75,8 +132,11 @@
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": {
-          "errorContains": ""
+          "error": true
         }
       }
     }
