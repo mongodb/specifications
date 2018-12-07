@@ -1,0 +1,236 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+
+count_command_started_event: &count_command_started_event
+ command_started_event:
+   command:
+     count: *collection_name
+   command_name: count
+   database_name: *database_name
+
+minServerVersion: '4.1.6' # 4.2
+
+tests:
+    -
+        description: "EstimatedDocumentCount succeeds after InterruptedAtShutdown"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 11600
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+    -
+        description: "EstimatedDocumentCount succeeds after InterruptedDueToStepDown"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 11602
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after NotMaster"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 10107
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after NotMasterNoSlaveOk"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 13435
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after NotMasterOrSecondary"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 13436
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after PrimarySteppedDown"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 189
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after ShutdownInProgress"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 91
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after HostNotFound"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 7
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after HostUnreachable"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 6
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after NetworkTimeout"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 89
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
+    -
+        description: "EstimatedDocumentCount succeeds after SocketException"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - count
+                errorcode: 9001
+        operation:
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *count_command_started_event
+             - *count_command_started_event    
