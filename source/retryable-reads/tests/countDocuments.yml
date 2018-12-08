@@ -1,0 +1,90 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+
+minServerVersion: '4.1.6' # 4.2
+
+aggregate_command_started_event: &aggregate_command_started_event
+ command_started_event:
+   command:
+     aggregate: *collection_name
+     pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
+   command_name: aggregate
+   database_name: *database_name
+
+tests:
+    -
+        description: "CountDocuments succeeds on first attempt"
+        clientOptions:
+            retryReads: true
+        operation:
+            name: countDocuments
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - *aggregate_command_started_event         
+    -
+        description: "CountDocuments succeeds on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - aggregate
+                closeConnection: true
+        operation:
+            name: countDocuments
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
+        expectations:
+             - command_started_event:
+                 command:
+                   countDocuments: *collection_name
+                 command_name: countDocuments
+                 database_name: *database_name
+             - *aggregate_command_started_event                                      
+    -
+        description: "CountDocuments fails on first attempt"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - aggregate                
+                closeConnection: true
+        operation:
+            name: countDocuments
+            object: collection
+            arguments:
+                filter: { }
+            result:
+                error: true
+    -
+        description: "CountDocuments fails on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+                failCommands:
+                        - aggregate                
+                closeConnection: true
+        operation:
+            name: countDocuments
+            object: collection
+            arguments:
+                filter: { }
+            result:
+                error: true
