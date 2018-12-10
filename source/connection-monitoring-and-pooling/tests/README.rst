@@ -2,7 +2,7 @@
   :language: javascript
 
 ========================================
-Connection Monitoring and Pooling (CMaP)
+Connection Monitoring and Pooling (CMAP)
 ========================================
 
 .. contents::
@@ -19,7 +19,7 @@ Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
 
 Common Test Format
-================
+==================
 
 Each YAML file has the following keys:
 
@@ -50,7 +50,12 @@ Valid Unit Test Operations are the following:
 - ``start(name)``: Starts a new thread named ``name``
 - ``wait(x)``: Sleep the current thread for x milliseconds
 - ``waitFor(name, suppressError?)``: wait for thread ``name`` to finish executing. If ``suppressError`` is true, ignore any errors coming from that thread, otherwise propagate the errors to the main thread.
-- ``returnTo = createPool(options)``: creates and returns a new Connection Pool with the specified options. ``enableConnectionMonitoring`` MUST be set to true, and any connection events MUST be captured
+- ``returnTo = createPool(options)``: creates and returns a new Connection Pool with the specified options.
+
+  - ``enableConnectionMonitoring`` MUST be set to true, and any connection events MUST be captured.
+  - The returned pool must have an ``id`` properly set as if created by a server. For each test, the pool ``id`` should start at 0, and monotonically increase.
+  - The returned pool must have an ``address`` set as a string value.
+
 - ``returnTo = object.acquire()``: call ``acquire`` on Pool ``object``, returning the acquired connection
 - ``object.release(connection, force?)``: call ``release`` on Pool ``object``, passing in connection and optional force flag
 - ``object.clear()``: call ``clear`` on Pool ``object``
@@ -163,3 +168,14 @@ For each YAML file with ``style: unit``, for each element in ``tests``:
 
   - Assert that ``actualEvents[i]`` exists
   - Assert that ``actualEvents[i]`` MATCHES ``expectedEvent``
+
+
+Prose Tests
+===========
+
+The following tests have not yet been automated, but MUST still be tested
+
+#. All ConnectionPoolOptions MUST be specified at the MongoClient level
+#. All ConnectionPoolOptions MUST be the same for all pools created by a MongoClient
+#. A user MUST be able to specify all ConnectionPoolOptions via a URI string
+#. A user MUST be able to subscribve to Connection Monitoring Events in a manner idiomatic to their language and driver when ``enableConnectionMonitoring`` is true
