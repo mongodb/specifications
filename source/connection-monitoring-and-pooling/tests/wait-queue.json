@@ -1,0 +1,394 @@
+{
+  "version": 1,
+  "style": "unit",
+  "tests": [
+    {
+      "description": "must issue Connections to threads in the order that the threads eneterd the queue",
+      "operations": [
+        {
+          "command": "createPool",
+          "args": [
+            {
+              "maxPoolSize": 1
+            }
+          ],
+          "returnTo": "pool"
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t1"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t1",
+          "object": "pool",
+          "returnTo": "conn"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t2"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t2",
+          "object": "pool",
+          "returnTo": "conn"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t3"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t3",
+          "object": "pool",
+          "returnTo": "conn"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t4"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t4",
+          "object": "pool",
+          "returnTo": "conn"
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t1"
+          ]
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t2"
+          ]
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t3"
+          ]
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t4"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolRelease"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolRelease"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolRelease"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolRelease"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        }
+      ],
+      "ignore": [
+        "connectionCreated",
+        "connectionDestroyed",
+        "connectionPoolCreated"
+      ]
+    },
+    {
+      "description": "must not let more than waitQueueSize threads enter the queue",
+      "operations": [
+        {
+          "command": "createPool",
+          "returnTo": "pool",
+          "args": [
+            {
+              "maxPoolSize": 1,
+              "waitQueueSize": 1
+            }
+          ]
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn1"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t1"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t1",
+          "object": "pool",
+          "returnTo": "conn2"
+        },
+        {
+          "command": "wait",
+          "args": [
+            20
+          ]
+        },
+        {
+          "command": "start",
+          "args": [
+            "t2"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t2",
+          "object": "pool",
+          "returnTo": "conn3"
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t2"
+          ]
+        }
+      ],
+      "error": {
+        "message": "Attempted to acquire a connection from connection pool while waitQueue was full",
+        "code": 20951,
+        "id": {
+          "$$ref": [
+            "pool",
+            "id"
+          ]
+        }
+      },
+      "events": [
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolQueueFull"
+        }
+      ],
+      "ignore": [
+        "connectionCreated",
+        "connectionDestroyed",
+        "connectionPoolCreated"
+      ]
+    },
+    {
+      "description": "must aggressively timeout threads enqueued longer than waitQueueTimeoutMS",
+      "operations": [
+        {
+          "command": "createPool",
+          "returnTo": "pool",
+          "args": [
+            {
+              "maxPoolSize": 1,
+              "waitQueueTimeoutMS": 20
+            }
+          ]
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn1"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t1"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t1",
+          "object": "pool",
+          "returnTo": "conn2"
+        },
+        {
+          "command": "wait",
+          "args": [
+            40
+          ]
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn1"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t1"
+          ]
+        }
+      ],
+      "error": {
+        "message": "Timed out while acquiring a connection from connection pool",
+        "code": 20952,
+        "id": {
+          "$$ref": [
+            "pool",
+            "id"
+          ]
+        }
+      },
+      "events": [
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolAcquire",
+          "pool": {
+            "id": {
+              "$$ref": [
+                "pool",
+                "id"
+              ]
+            }
+          },
+          "connection": {
+            "id": {
+              "$$ref": [
+                "conn1",
+                "id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolQueueTimeout"
+        },
+        {
+          "type": "connectionPoolRelease",
+          "pool": {
+            "id": {
+              "$$ref": [
+                "pool",
+                "id"
+              ]
+            }
+          },
+          "connection": {
+            "id": {
+              "$$ref": [
+                "conn1",
+                "id"
+              ]
+            }
+          }
+        }
+      ],
+      "ignore": [
+        "connectionCreated",
+        "connectionDestroyed",
+        "connectionPoolCreated"
+      ]
+    }
+  ]
+}
