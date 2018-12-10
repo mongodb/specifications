@@ -70,6 +70,180 @@
         "connectionCreated",
         "connectionDestroyed"
       ]
+    },
+    {
+      "description": "must assign pool ids in order of creation",
+      "operations": [
+        {
+          "command": "createPool",
+          "returnTo": "pool1"
+        },
+        {
+          "command": "createPool",
+          "returnTo": "pool2"
+        },
+        {
+          "command": "createPool",
+          "returnTo": "pool3"
+        },
+        {
+          "command": "createPool",
+          "returnTo": "pool4"
+        }
+      ],
+      "events": [
+        {
+          "type": "connectionPoolCreated",
+          "pool": {
+            "id": 0,
+            "generation": 0
+          }
+        },
+        {
+          "type": "connectionPoolCreated",
+          "pool": {
+            "id": 1,
+            "generation": 0
+          }
+        },
+        {
+          "type": "connectionPoolCreated",
+          "pool": {
+            "id": 2,
+            "generation": 0
+          }
+        },
+        {
+          "type": "connectionPoolCreated",
+          "pool": {
+            "id": 3
+          }
+        }
+      ]
+    },
+    {
+      "description": "must never exceed maxPoolSize total connections",
+      "operations": [
+        {
+          "command": "createPool",
+          "returnTo": "pool",
+          "args": [
+            {
+              "maxPoolSize": 3
+            }
+          ]
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn1"
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn2"
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn3"
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn3"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "acquire",
+          "object": "pool",
+          "returnTo": "conn4"
+        },
+        {
+          "command": "start",
+          "args": [
+            "t1"
+          ]
+        },
+        {
+          "command": "acquire",
+          "thread": "t1",
+          "object": "pool",
+          "returnTo": "conn5"
+        },
+        {
+          "command": "release",
+          "object": "pool",
+          "args": [
+            {
+              "$$ref": [
+                "conn1"
+              ]
+            }
+          ]
+        },
+        {
+          "command": "waitFor",
+          "args": [
+            "t1"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "connectionPoolCreated"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionCreated"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionCreated"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionCreated"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolRelease"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        },
+        {
+          "type": "connectionPoolQueueEntered"
+        },
+        {
+          "type": "connectionPoolRelease"
+        },
+        {
+          "type": "connectionPoolAcquire"
+        }
+      ]
     }
   ]
 }
