@@ -7,4 +7,12 @@ tests:
         hosts: ~
         auth: ~
         options:
-            serverSelectionTryOnce: "false"
+            serverSelectionTryOnce: false
+    -
+        description: "Invalid serverSelectionTryOnce causes a warning"
+        uri: "mongodb://example.com/?serverSelectionTryOnce=invalid"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options: ~
