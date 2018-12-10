@@ -125,6 +125,8 @@ Pseudocode implementation of ``actual`` MATCHES ``expected``:
 Unit Test Runner:
 =================
 
+For the unit tests, the behavior of a Connection is irrelevant beyond the need to asserting ``connection.id`` and ``connection.generation``. Drivers MAY use a mock connection class for testing the pool behavior in unit tests
+
 For each YAML file with ``style: unit``, for each element in ``tests``:
 
 - Initialize an empty dictionary ``context``
@@ -145,7 +147,7 @@ For each YAML file with ``style: unit``, for each element in ``tests``:
 - If ``error`` is presented
 
   - Assert that an actual error ``actualError`` was thrown by the main thread
-  - Assert that ``actualError`` MATCHES ``error``
+  - Assert that ``actualError`` MATCHES ``RESOLVE(context, error)``
 
 - Else: 
 
@@ -157,7 +159,7 @@ For each YAML file with ``style: unit``, for each element in ``tests``:
   - ``expectedEvents[idx] = RESOLVE(context, value)``
 
 - calculate ``actualEvents`` as every Connection Event emitted whose ``type`` is not in ``ignore``
-- for every (``expectedEvent``, ``i``) in ``expectedEvents``
+- if ``expectedEvents`` is not empty, then for every (``expectedEvent``, ``i``) in ``expectedEvents``
 
   - Assert that ``actualEvents[i]`` exists
   - Assert that ``actualEvents[i]`` MATCHES ``expectedEvent``
