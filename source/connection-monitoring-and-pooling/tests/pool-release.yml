@@ -198,4 +198,32 @@ tests:
       - connectionPoolCreated
       - connectionCreated
       - connectionPoolQueueEntered
+  - description: must remove connection from connection count before destruction
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn
+      - command: clear
+        object: pool
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn" ] } ]
+    events:
+      - type: connectionPoolCreated
+      - type: connectionPoolQueueEntered
+        pool:
+          totalConnectionCount: 0
+      - type: connectionCreated
+      - type: connectionPoolAcquire
+        pool:
+          totalConnectionCount: 1
+      - type: connectionPoolCleared
+        pool:
+          totalConnectionCount: 1
+      - type: connectionPoolRelease
+      - type: connectionDestroyed
+        pool:
+          totalConnectionCount: 0
       
