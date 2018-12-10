@@ -8,17 +8,19 @@ tests:
         args:
           - minPoolSize: 5
         returnTo: pool
+      - command: wait
+        args: [100]
       - command: close
         object: pool
     events:
       - type: connectionPoolCreated
         pool:
           id: {$$ref: ['pool', 'id']}
-          size: 0
+          totalConnectionCount: 0
       - type: connectionPoolClosed
         pool:
           id: {$$ref: ['pool', 'id']}
-          size: 5
+          totalConnectionCount: 5
     ignore:
       - connectionCreated
       - connectionDestroyed
@@ -303,8 +305,8 @@ tests:
       - type: connectionPoolAcquire
         pool:
           id: {$$ref: ["pool", "id"]}
-          available: 0
-          size: 1
+          availableConnectionCount: 0
+          totalConnectionCount: 1
         connection:
           id: 0
       - type: connectionPoolRelease
@@ -318,7 +320,7 @@ tests:
       - type: connectionPoolAcquire
         pool:
           id: {$$ref: ["pool", "id"]}
-          size: 1
+          totalConnectionCount: 1
         connection:
           id: 0
 

@@ -15,6 +15,12 @@
           "returnTo": "pool"
         },
         {
+          "command": "wait",
+          "args": [
+            100
+          ]
+        },
+        {
           "command": "close",
           "object": "pool"
         }
@@ -29,7 +35,7 @@
                 "id"
               ]
             },
-            "size": 0
+            "totalConnectionCount": 0
           }
         },
         {
@@ -41,7 +47,7 @@
                 "id"
               ]
             },
-            "size": 5
+            "totalConnectionCount": 5
           }
         }
       ],
@@ -736,8 +742,8 @@
                 "id"
               ]
             },
-            "available": 0,
-            "size": 1
+            "availableConnectionCount": 0,
+            "totalConnectionCount": 1
           },
           "connection": {
             "id": 0
@@ -777,7 +783,7 @@
                 "id"
               ]
             },
-            "size": 1
+            "totalConnectionCount": 1
           },
           "connection": {
             "id": 0
