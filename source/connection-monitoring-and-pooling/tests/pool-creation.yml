@@ -1,0 +1,33 @@
+version: 1
+style: unit
+tests:
+  - description: must be able to start a pool with minPoolSize connections
+    operations:
+      - command: createPool
+        args:
+          - minPoolSize: 5
+        returnTo: pool
+      - command: wait
+        args: [ 50 ]
+      - command: acquire
+        object: pool
+        returnTo: conn
+    events:
+      - type: connectionPoolCreated
+        pool:
+          id: {$$ref: ["pool", "id"]}
+          totalConnectionCount: 0
+      # Ensaures that by the time pool is closed, there are at least 5 connections
+      - type: connectionPoolQueueEntered
+        pool:
+          id: {$$ref: ["pool", "id"]}
+          availableConnectionCount: 5
+          totalConnectionCount: 5
+      - type: connectionPoolAcquire
+        pool:
+          id: {$$ref: ["pool", "id"]}
+          availableConnectionCount: 4
+          totalConnectionCount: 5
+    ignore:
+      - connectionCreated
+      - connectionDestroyed

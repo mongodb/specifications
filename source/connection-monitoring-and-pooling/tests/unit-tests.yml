@@ -1,29 +1,6 @@
 version: 1
 style: unit
 tests:
-  # Constructor Tests
-  - description: "must be able to start a pool with minPoolSize connections"
-    operations:
-      - command: createPool
-        args:
-          - minPoolSize: 5
-        returnTo: pool
-      - command: wait
-        args: [100]
-      - command: close
-        object: pool
-    events:
-      - type: connectionPoolCreated
-        pool:
-          id: {$$ref: ['pool', 'id']}
-          totalConnectionCount: 0
-      - type: connectionPoolClosed
-        pool:
-          id: {$$ref: ['pool', 'id']}
-          totalConnectionCount: 5
-    ignore:
-      - connectionCreated
-      - connectionDestroyed
   # Acquire Tests
   - description: "must be able to acquire a connection"
     operations:
