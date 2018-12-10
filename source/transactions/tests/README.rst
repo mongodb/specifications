@@ -337,13 +337,15 @@ instead.
       @require_mongos_count_at_least(2)
       def test_unpin_for_next_transaction(self):
         client = MongoClient(mongos_hosts)
+        # Create the collection.
+        client.test.test.insert_one({})
         with client.start_session() as s:
           # Session is pinned to Mongos.
           with s.start_transaction():
             client.test.test.insert_one({}, session=s)
 
           addresses = set()
-          for _ in range(20):
+          for _ in range(50):
             with s.start_transaction():
               cursor = client.test.test.find({}, session=s)
               assert next(cursor)
@@ -360,13 +362,15 @@ instead.
       @require_mongos_count_at_least(2)
       def test_unpin_for_non_transaction_operation(self):
         client = MongoClient(mongos_hosts)
+        # Create the collection.
+        client.test.test.insert_one({})
         with client.start_session() as s:
           # Session is pinned to Mongos.
           with s.start_transaction():
             client.test.test.insert_one({}, session=s)
 
           addresses = set()
-          for _ in range(20):
+          for _ in range(50):
             cursor = client.test.test.find({}, session=s)
             assert next(cursor)
             addresses.add(cursor.address)
