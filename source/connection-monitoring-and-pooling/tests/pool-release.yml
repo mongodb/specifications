@@ -1,0 +1,201 @@
+version: 1
+style: unit
+tests: 
+  - description: must have a method of allowing the driver to release a connection
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn" ] } ]
+    events:
+      - type: connectionPoolRelease
+        pool:
+          id: { $$ref: [ "pool", "id" ]  }
+        connection:
+          id: { $$ref: [ "conn", "id" ] }
+    ignore:
+      - connectionPoolCreated
+      - connectionCreated
+      - connectionDestroyed
+      - connectionPoolQueueEntered
+      - connectionPoolAcquire
+  - description: must throw an error if user attempts to release Connection to a Pool that did not create that Connection
+    operations:
+      - command: createPool
+        returnTo: pool1
+      - command: createPool
+        returnTo: pool2
+      - command: acquire
+        object: pool1
+        returnTo: conn
+      - command: release
+        object: pool2
+        args: [ { $$ref: [ "conn" ] } ]
+    error:
+      message: Attempted to release a connection created by a different pool
+      code: 20953
+      address: { $$ref: [ "pool2", "address" ] }
+      id: { $$ref: [ "pool2", "id" ] }
+      connectionId: { $$ref: [ "conn", "id" ] }
+    events:
+      - type: connectionPoolCreated
+        pool:
+          id: 0
+      - type: connectionPoolCreated
+        pool:
+          id: 1
+      - type: connectionPoolQueueEntered
+        pool:
+          id: 0
+      - type: connectionCreated
+        pool:
+          id: 0
+        connection:
+          id: 0
+  - description: must destroy released connection if it is stale
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn
+      - command: clear
+        object: pool
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn" ] } ]
+    events:
+      - type: connectionPoolAcquire
+        pool:
+          id: 0
+          generation: 0
+        connection:
+          id: 0
+          generation: 0
+      - type: connectionPoolCleared
+        pool:
+          id: 0
+          generation: 1
+      - type: connectionPoolRelease
+        pool:
+          id: 0
+          generation: 1
+        connection:
+          id: 0
+          generation: 0
+      - type: connectionDestroyed
+        pool:
+          id: 0
+        connection:
+          id: 0
+    ignore:
+      - connectionPoolCreated
+      - connectionCreated
+      - connectionPoolQueueEntered
+  - description: must destroy released connection if pool has been closed
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn
+      - command: close
+        object: pool
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn" ] } ]
+    events:
+      - type: connectionPoolAcquire
+        pool:
+          id: 0
+        connection:
+          id: 0
+      - type: connectionPoolClosed
+        pool:
+          id: 0
+      - type: connectionPoolRelease
+        pool:
+          id: 0
+          generation: 0
+        connection:
+          id: 0
+          generation: 0
+      - type: connectionDestroyed
+        pool:
+          id: 0
+        connection:
+          id: 0
+    ignore:
+      - connectionPoolCreated
+      - connectionCreated
+      - connectionPoolQueueEntered
+  - description: must destroy released connection if force=true is passed
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn" ] }, true ]
+    events:
+      - type: connectionPoolAcquire
+        pool:
+          id: 0
+        connection:
+          id: 0
+      - type: connectionPoolRelease
+        pool:
+          id: 0
+          generation: 0
+        connection:
+          id: 0
+          generation: 0
+      - type: connectionDestroyed
+        pool:
+          id: 0
+        connection:
+          id: 0
+    ignore:
+      - connectionPoolCreated
+      - connectionCreated
+      - connectionPoolQueueEntered
+  - description: must make valid released connection available
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn" ] } ]
+      - command: acquire
+        object: pool
+        returnTo: conn
+    events:
+      - type: connectionPoolAcquire
+        pool:
+          id: 0
+        connection:
+          id: 0
+      - type: connectionPoolRelease
+        pool:
+          id: 0
+        connection:
+          id: 0
+      - type: connectionPoolAcquire
+        pool:
+          id: 0
+        connection:
+          id: 0
+    ignore:
+      - connectionPoolCreated
+      - connectionCreated
+      - connectionPoolQueueEntered
+      
