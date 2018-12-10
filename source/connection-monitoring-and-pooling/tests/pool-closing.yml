@@ -1,0 +1,50 @@
+version: 1
+style: unit
+tests:
+  - description: A Pool MUST be able to be manually closed.
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: close
+        object: pool
+    events:
+      - type: connectionPoolCreated
+        pool:
+          id: {$$ref: [ "pool", "id" ]}
+          generation: 0
+      - type: connectionPoolClosed
+        pool:
+          id: {$$ref: [ "pool",  "id" ]}
+          generation: 0
+  - description: When a pool is closed, it MUST first destroy all available connections in that pool
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: acquire
+        object: pool
+        returnTo: conn1
+      - command: acquire
+        object: pool
+        returnTo: conn2
+      - command: acquire
+        object: pool
+        returnTo: conn3
+      - command: release
+        object: pool
+        args: [ { $$ref: [ "conn2" ] } ]
+      - command: close
+        object: pool
+    events:
+      - type: connectionPoolRelease
+        connection:
+          id: { $$ref: [ "conn2", "id" ] }
+      - type: connectionDestroyed
+        connection:
+          id: { $$ref: [ "conn2", "id" ] }
+      - type: connectionPoolClosed
+    ignore:
+      - connectionCreated
+      - connectionPoolCreated
+      - connectionPoolQueueEntered
+      - connectionPoolAcquire
+        
