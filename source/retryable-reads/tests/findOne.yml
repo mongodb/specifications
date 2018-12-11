@@ -1,0 +1,78 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
+data:
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+    - {_id: 4, x: 44}
+    - {_id: 5, x: 55}
+
+minServerVersion: '4.1.6' # 4.2
+
+failCommand_failPoint: &failCommand_failPoint
+  configureFailPoint: failCommand
+  mode: { times: 1 }
+  data:
+      failCommands:
+              - find
+      closeConnection: true
+
+retryable_command_started_event: &retryable_command_started_event
+ command_started_event:
+   command:
+     find: *collection_name
+     filter: {_id: 1}
+   command_name: find
+   database_name: *database_name
+
+retryable_operation: &retryable_operation
+  name: "findOne"
+  object: collection
+  arguments:
+      filter: {_id: 1}
+  result: {_id: 1, x: 11}
+
+tests:
+    -
+        description: "FindOne succeeds on first attempt"
+        clientOptions:
+            retryReads: true
+        operation: *retryable_operation            
+        expectations:
+             - *retryable_command_started_event
+    -
+        description: "FindOne succeeds on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint: *failCommand_failPoint
+        operation: *retryable_operation                
+        expectations:
+             - *retryable_command_started_event
+    -
+        description: "FindOne fails on first attempt"
+        clientOptions:
+            retryReads: false
+        failPoint: *failCommand_failPoint
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
+        expectations:
+             - *retryable_command_started_event
+                
+    -
+        description: "FindOne fails on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }        
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+                
