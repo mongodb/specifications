@@ -1,0 +1,107 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
+data:
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+    
+minServerVersion: '4.1.6' # 4.2
+
+failCommand_failPoint: &failCommand_failPoint
+  configureFailPoint: failCommand
+  mode: { times: 1 }
+  data:
+      failCommands:
+              - aggregate
+      closeConnection: true  
+
+
+retryable_command_started_event: &retryable_command_started_event
+ command_started_event:
+   command:
+     aggregate: *collection_name
+     pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}]
+     cursor: { 'batchSize': 2}
+   command_name: aggregate
+   database_name: *database_name
+
+retryable_operation: &retryable_operation
+    name: aggregate
+    object: collection
+    arguments:
+        pipeline:
+            - $sort: {x: 1}
+            - $match: 
+                _id: {$gt: 1}
+        batchSize: 2
+    result:
+       - {_id: 2, x: 22}
+       - {_id: 3, x: 33}
+       
+tests:
+    -
+        description: "Aggregate succeeds on first attempt"
+        clientOptions:
+            retryReads: true
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event         
+    -
+        description: "Aggregate succeeds on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint: *failCommand_failPoint
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event  
+             - *retryable_command_started_event                                      
+    -
+        description: "Aggregate fails on first attempt"
+        clientOptions:
+            retryReads: false
+        failPoint: *failCommand_failPoint
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
+        expectations:
+             - *retryable_command_started_event  
+    -
+        description: "Aggregate fails on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }           
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
+        expectations:
+             - *retryable_command_started_event  
+             - *retryable_command_started_event                 
+    -
+        description: "Aggregate with $out does not retry"
+        clientOptions:
+            retryReads: false
+        failPoint: *failCommand_failPoint
+        operation:
+            <<: *retryable_operation
+            arguments:
+                pipeline:
+                    - $sort: {x: 1}
+                    - $match: 
+                        _id: {$gt: 1}
+                    - $out: "output-collection"                    
+            result:
+                error: true
+        expectations:
+             -  command_started_event:
+                    command:
+                      aggregate: *collection_name
+                      pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}, {'$out': 'output-collection'}]
+                    command_name: aggregate
+                    database_name: *database_name
+
+
