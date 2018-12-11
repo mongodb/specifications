@@ -30,14 +30,14 @@ retryable_operation: &retryable_operation
 
 tests:
     -
-        description: "estimatedDocumentCount succeeds on first attempt"
+        description: "EstimatedDocumentCount succeeds on first attempt"
         clientOptions:
             retryReads: true
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event             
     -
-        description: "estimatedDocumentCount succeeds on second attempt"
+        description: "EstimatedDocumentCount succeeds on second attempt"
         clientOptions:
             retryReads: true
         failPoint: *failCommand_failPoint
@@ -46,7 +46,7 @@ tests:
              - *retryable_command_started_event 
              - *retryable_command_started_event                                          
     -
-        description: "estimatedDocumentCount fails on first attempt"
+        description: "EstimatedDocumentCount fails on first attempt"
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -57,7 +57,7 @@ tests:
         expectations:
              - *retryable_command_started_event                
     -
-        description: "estimatedDocumentCount fails on second attempt"
+        description: "EstimatedDocumentCount fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
