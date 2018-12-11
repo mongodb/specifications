@@ -19,6 +19,54 @@ tests:
     ignore:
       - connectionCreated
       - connectionPoolCreated
+  - description: must be able to acquire multiple connections at the same time
+    operations:
+      - command: createPool
+        returnTo: pool
+      - command: start
+        args: [ t1 ]
+      - command: start
+        args: [ t2 ]
+      - command: start
+        args: [ t3 ]
+      - command: acquire
+        thread: t1
+        object: pool
+        returnTo: conn1
+      - command: acquire
+        thread: t2
+        object: pool
+        returnTo: conn2
+      - command: acquire
+        thread: t3
+        object: pool
+        returnTo: conn3
+      - command: waitFor
+        args: [ t1 ]
+      - command: waitFor
+        args: [ t2 ]
+      - command: waitFor
+        args: [ t3 ]
+    events:
+      - type: connectionPoolAcquire
+        pool:
+          id: {$$ref: [ pool, id ]}
+        connection:
+          id: 0
+      - type: connectionPoolAcquire
+        pool:
+          id: {$$ref: [ pool, id ]}
+        connection:
+          id: 1
+      - type: connectionPoolAcquire
+        pool:
+          id: {$$ref: [ pool, id ]}
+        connection:
+          id: 2
+    ignore:
+      - connectionCreated
+      - connectionPoolCreated
+      - connectionPoolQueueEntered
   - description: must destroy and must not acquire a stale connection if found while iterating available connections
     operations:
       - command: createPool
