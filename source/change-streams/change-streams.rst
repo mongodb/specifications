@@ -280,12 +280,12 @@ Driver API
     startAtOperationTime: Optional<Timestamp>;
 
     /**
-     * Similar to 'resumeAfter', this option takes a resume token and starts a
+     * Similar to `resumeAfter`, this option takes a resume token and starts a
      * new change stream returning the first notification after the token.
      * This will allow users to watch collections that have been dropped and recreated
      * or newly renamed collections without missing any notifications.
      *
-     * The server will report an error if startAfter and resumeAfter are both specified.
+     * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
      * @since 4.2
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
