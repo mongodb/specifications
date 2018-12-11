@@ -299,7 +299,7 @@ tests:
             z:
               $numberInt: "3"
   -
-    description: Test all change event types
+    description: Test insert, update, replace, and delete event types
     minServerVersion: "3.6.0"
     target: collection
     topology:
@@ -340,24 +340,6 @@ tests:
         arguments:
           filter:
             x: 3
-      -
-        database: *database_name
-        collection: *collection_name
-        name: rename
-        arguments:
-          to: *collection_rename
-      -
-        database: *database_name
-        collection: *collection_rename
-        name: drop
-        arguments:
-      -
-        database: *database_name
-        collection: *collection_rename
-        name: insertOne
-        arguments:
-          document:
-            x: 1
     expectations:
       -
         command_started_event:
@@ -402,6 +384,47 @@ tests:
           ns:
             db: *database_name
             coll: *collection_name
+  -
+    description: Test drop, rename, and invalidate event types
+    minServerVersion: "4.0.0"
+    target: collection
+    topology:
+      - replicaset
+    changeStreamPipeline: []
+    changeStreamOptions: {}
+    operations:
+      -
+        database: *database_name
+        collection: *collection_name
+        name: rename
+        arguments:
+          to: *collection2_name
+      -
+        database: *database_name
+        collection: *collection2_name
+        name: drop
+        arguments:
+      -
+        database: *database_name
+        collection: *collection2_name
+        name: insertOne
+        arguments:
+          document:
+            x: 1
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            cursor: {}
+            pipeline:
+              -
+                $changeStream:
+                  fullDocument: default
+          command_name: aggregate
+          database_name: *database_name
+    result:
+      success:
         -
           operationType: rename
           ns:
@@ -409,6 +432,6 @@ tests:
             coll: *collection_name
           to:
             db: *database_name
-            coll: *collection_rename
+            coll: *collection2_name
         -
           operationType: invalidate
