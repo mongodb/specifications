@@ -337,6 +337,8 @@ instead.
       @require_mongos_count_at_least(2)
       def test_unpin_for_next_transaction(self):
         client = MongoClient(mongos_hosts)
+        # Wait until more than one mongos is discovered.
+        wait_until(lambda: len(client.nodes) > 1)
         # Create the collection.
         client.test.test.insert_one({})
         with client.start_session() as s:
@@ -362,6 +364,8 @@ instead.
       @require_mongos_count_at_least(2)
       def test_unpin_for_non_transaction_operation(self):
         client = MongoClient(mongos_hosts)
+        # Wait until more than one mongos is discovered.
+        wait_until(lambda: len(client.nodes) > 1)
         # Create the collection.
         client.test.test.insert_one({})
         with client.start_session() as s:
