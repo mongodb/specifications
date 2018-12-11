@@ -232,7 +232,7 @@ the previous response.
 
 The client MUST be prepared to receive a response without ``moreToCome`` set
 prior to completing iteration of a cursor, even if an earlier response for
-the same cursor had ``moreToCome`` flag set. To continue iterating such a cursor,
+the same cursor had the ``moreToCome`` flag set. To continue iterating such a cursor,
 the client MUST issue an explicit ``getMore`` request.
 
 
@@ -245,7 +245,7 @@ request. The server will never produce replies with the ``moreToCome`` bit set
 unless the request has the ``exhaustAllowed`` bit set.
 
 Setting ``exhaustAllowed`` flag on a request does not guarantee that the
-responses will have ``moreToCome`` flag set.
+responses will have the ``moreToCome`` flag set.
 
 
 .. This RST artwork improves the readability of the rendered document
