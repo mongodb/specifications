@@ -37,7 +37,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     -
+    -
         description: "Non-numeric wTimeoutMS causes a warning"
         uri: "mongodb://example.com/?wTimeoutMS=invalid"
         valid: true
@@ -53,7 +53,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     -
+    -
         description: "Invalid journal causes a warning"
         uri: "mongodb://example.com/?journal=invalid"
         valid: true

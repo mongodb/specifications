@@ -32,7 +32,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     -
+    -
         description: "Non-numeric heartbeatFrequencyMS causes a warning"
         uri: "mongodb://example.com/?heartbeatFrequencyMS=invalid"
         valid: true
@@ -48,7 +48,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     -
+    -
         description: "Non-numeric localThresholdMS causes a warning"
         uri: "mongodb://example.com/?localThresholdMS=invalid"
         valid: true
@@ -64,7 +64,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     - 
+    - 
         description: "Invalid retryWrites causes a warning"
         uri: "mongodb://example.com/?retryWrites=invalid"
         valid: true
@@ -72,7 +72,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     -
+    -
         description: "Non-numeric serverSelectionTimeoutMS causes a warning"
         uri: "mongodb://example.com/?serverSelectionTimeoutMS=invalid"
         valid: true
@@ -88,7 +88,7 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-     -
+    -
         description: "Non-numeric socketTimeoutMS causes a warning"
         uri: "mongodb://example.com/?socketTimeoutMS=invalid"
         valid: true
@@ -103,4 +103,3 @@ tests:
         warning: true
         hosts: ~
         auth: ~
- 

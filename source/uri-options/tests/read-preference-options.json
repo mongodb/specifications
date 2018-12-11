@@ -13,7 +13,7 @@
           "dc:ny,rack",
           "dc:ny"
         ],
-        "maxStalenessSeconds": "120"
+        "maxStalenessSeconds": 120
       }
     },
     {
@@ -26,8 +26,17 @@
       "options": {}
     },
     {
-      "description": "Invalid maxStalenessSeconds causes a warning",
+      "description": "Non-numeric maxStalenessSeconds causes a warning",
       "uri": "mongodb://example.com/?maxStalenessSeconds=invalid",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "Too low maxStalenessSeconds causes a warning",
+      "uri": "mongodb://example.com/?maxStalenessSeconds=-2",
       "valid": true,
       "warning": true,
       "hosts": null,

@@ -19,7 +19,7 @@ tests:
         hosts: ~
         auth: ~
         options: ~
-     -
+    -
         description: "tlsAllowInvalidCertificates is parsed correctly"
         uri: "mongodb://example.com/?tlsAllowInvalidCertificates=true"
         valid: true
@@ -53,7 +53,7 @@ tests:
         hosts: ~
         auth: ~
         options: ~
-     -
+    -
         description: "tlsInsecure is parsed correctly"
         uri: "mongodb://example.com/?tlsInsecure=true"
         valid: true
@@ -70,7 +70,7 @@ tests:
         hosts: ~
         auth: ~
         options: ~
-     -
+    -
         description: "tlsInsecure=true and tlsAllowInvalidCertificates=false warns"
         uri: "mongodb://example.com/?tlsInsecure=true&tlsAllowInvalidCertificates=false"
         valid: true
