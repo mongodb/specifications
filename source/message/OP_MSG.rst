@@ -225,12 +225,10 @@ flag not set, and MUST NOT send any more requests on this connection until
 it reads a response with the ``moreToCome`` flag not set. The client MUST
 either consume all messages with the ``moreToCome`` flag set or close the connection.
 
-When the server sends responses with the ``moreToCome`` flag set, it behaves as if
-the client sent a ``getMore`` request for the returned cursor for each of the
-responses. Each reply will have a unique ``messageId``, and the ``responseTo``
-field of every follow-up message will be the ``messageId`` of the previous
-reply. The reply will also include the normal command response body to the
-implicit ``getMore``.
+When the server sends responses with the ``moreToCome`` flag set,
+each of these responses will have a unique ``messageId``, and the
+``responseTo`` field of every follow-up response will be the ``messageId`` of
+the previous response.
 
 The client MUST be prepared to receive a response without ``moreToCome`` set
 prior to completing iteration of a cursor, even if an earlier response for
