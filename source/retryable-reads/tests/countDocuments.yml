@@ -53,7 +53,10 @@ tests:
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operation: *retryable_operation
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
         expectations:
              - *retryable_command_started_event  
     -
@@ -63,7 +66,10 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }           
-        operation: *retryable_operation
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
         expectations:
              - *retryable_command_started_event  
              - *retryable_command_started_event                 

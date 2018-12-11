@@ -1,15 +1,6 @@
 {
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
-  "count_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "count": "coll"
-      },
-      "command_name": "count",
-      "database_name": "retryable-reads-tests"
-    }
-  },
   "data": [
     {
       "_id": 1,
@@ -21,9 +12,38 @@
     }
   ],
   "minServerVersion": "4.1.6",
+  "failCommand_failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": {
+      "times": 1
+    },
+    "data": {
+      "failCommands": [
+        "count"
+      ],
+      "closeConnection": true
+    }
+  },
+  "retryable_command_started_event": {
+    "command_started_event": {
+      "command": {
+        "count": "coll"
+      },
+      "command_name": "count",
+      "database_name": "retryable-reads-tests"
+    }
+  },
+  "retryable_operation": {
+    "name": "estimatedDocumentCount",
+    "object": "collection",
+    "arguments": {
+      "filter": {}
+    },
+    "result": 2
+  },
   "tests": [
     {
-      "description": "EstimatedDocumentCount succeeds on first attempt",
+      "description": "estimatedDocumentCount succeeds on first attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -48,7 +68,7 @@
       ]
     },
     {
-      "description": "EstimatedDocumentCount succeeds on second attempt",
+      "description": "estimatedDocumentCount succeeds on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -94,7 +114,7 @@
       ]
     },
     {
-      "description": "EstimatedDocumentCount fails on first attempt",
+      "description": "estimatedDocumentCount fails on first attempt",
       "clientOptions": {
         "retryReads": false
       },
@@ -119,10 +139,21 @@
         "result": {
           "error": true
         }
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
-      "description": "EstimatedDocumentCount fails on second attempt",
+      "description": "estimatedDocumentCount fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -147,7 +178,27 @@
         "result": {
           "error": true
         }
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

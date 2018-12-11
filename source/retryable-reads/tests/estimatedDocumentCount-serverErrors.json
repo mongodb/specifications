@@ -28,7 +28,7 @@
     }
   },
   "retryable_operation": {
-    "name": "count",
+    "name": "estimatedDocumentCount",
     "object": "collection",
     "arguments": {
       "filter": {}
@@ -54,7 +54,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -100,7 +100,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -146,7 +146,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -192,7 +192,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -238,7 +238,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -284,7 +284,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -330,7 +330,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -376,7 +376,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -422,7 +422,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -468,7 +468,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -514,7 +514,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}

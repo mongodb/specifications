@@ -19,7 +19,7 @@ retryable_command_started_event: &retryable_command_started_event
       database_name: *database_name
    
 retryable_operation: &retryable_operation
-  name: count
+  name: estimatedDocumentCount
   object: collection
   arguments:
       filter: { }
