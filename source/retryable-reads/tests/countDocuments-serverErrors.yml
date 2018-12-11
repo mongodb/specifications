@@ -8,10 +8,6 @@ data:
 failCommand_failPoint: &failCommand_failPoint
   configureFailPoint: failCommand
   mode: { times: 1 }
-  data:
-      failCommands:
-              - aggregate
-      closeConnection: true
       
 retryable_command_started_event: &retryable_command_started_event
  command_started_event:

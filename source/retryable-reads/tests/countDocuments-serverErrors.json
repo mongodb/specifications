@@ -15,12 +15,6 @@
     "configureFailPoint": "failCommand",
     "mode": {
       "times": 1
-    },
-    "data": {
-      "failCommands": [
-        "aggregate"
-      ],
-      "closeConnection": true
     }
   },
   "retryable_command_started_event": {
