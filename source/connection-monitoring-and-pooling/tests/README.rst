@@ -41,8 +41,16 @@ All Unit Tests have some of the following fields:
   - ``object``: For some operation, specifies the object on which to run the operation
   - ``returnTo``: For some operation, specifies what to name the return value of the operation
 
-- ``error``: Indicates that the main thread is expected to error during this test. Subfields (like ``message``) indicate what error is expected
-- ``events``: An array of all connection monitoring events expected to occur while running ``operations``
+- ``error``: Indicates that the main thread is expected to error during this test. An error may include of the following fields:
+
+  - ``message``: the message associated with that error
+  - ``code``: the error code associated with that error
+  - ``id``: ID of pool emitting error
+  - ``address``: Address of pool emitting error
+  - ``connectionId``: ID of connection associated with this error
+  - ``foreignPoolId``: ID of foreign pool for PoolReleaseForeignConnectionError
+
+- ``events``: An array of all connection monitoring events expected to occur while running ``operations``.
 - ``ignore``: An array of event names to ignore
 
 Valid Unit Test Operations are the following:
