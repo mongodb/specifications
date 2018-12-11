@@ -1,0 +1,784 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    }
+  ],
+  "minServerVersion": "4.1.6",
+  "failCommand_failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": {
+      "times": 1
+    }
+  },
+  "retryable_command_started_event": {
+    "command_started_event": {
+      "command": {
+        "distinct": "coll",
+        "key": "x",
+        "query": {
+          "_id": {
+            "$gt": 1
+          }
+        }
+      },
+      "command_name": "distinct",
+      "database_name": "retryable-reads-tests"
+    }
+  },
+  "retryable_operation": {
+    "name": "distinct",
+    "object": "collection",
+    "arguments": {
+      "fieldName": "x",
+      "filter": {
+        "_id": {
+          "$gt": 1
+        }
+      }
+    },
+    "result": [
+      22,
+      33
+    ]
+  },
+  "tests": [
+    {
+      "description": "Distinct succeeds after InterruptedAtShutdown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 11600
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after InterruptedDueToStepDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 11602
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after NotMaster",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after NotMasterNoSlaveOk",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 13435
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after NotMasterOrSecondary",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 13436
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after PrimarySteppedDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 189
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after ShutdownInProgress",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 91
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after HostNotFound",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 7
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after HostUnreachable",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 6
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after NetworkTimeout",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 89
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct succeeds after SocketException",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 9001
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": [
+          22,
+          33
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "command_name": "distinct",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}
