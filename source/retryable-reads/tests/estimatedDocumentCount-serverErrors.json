@@ -11,7 +11,14 @@
       "x": 22
     }
   ],
-  "count_command_started_event": {
+  "minServerVersion": "4.1.6",
+  "failCommand_failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": {
+      "times": 1
+    }
+  },
+  "retryable_command_started_event": {
     "command_started_event": {
       "command": {
         "count": "coll"
@@ -20,7 +27,14 @@
       "database_name": "retryable-reads-tests"
     }
   },
-  "minServerVersion": "4.1.6",
+  "retryable_operation": {
+    "name": "count",
+    "object": "collection",
+    "arguments": {
+      "filter": {}
+    },
+    "result": 2
+  },
   "tests": [
     {
       "description": "EstimatedDocumentCount succeeds after InterruptedAtShutdown",
@@ -36,11 +50,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 11600
+          "errorCode": 11600
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -48,6 +62,15 @@
         "result": 2
       },
       "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
         {
           "command_started_event": {
             "command": {
@@ -73,11 +96,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 11602
+          "errorCode": 11602
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -119,11 +142,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 10107
+          "errorCode": 10107
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -165,11 +188,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 13435
+          "errorCode": 13435
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -211,11 +234,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 13436
+          "errorCode": 13436
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -257,11 +280,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 189
+          "errorCode": 189
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -303,11 +326,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 91
+          "errorCode": 91
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -349,11 +372,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 7
+          "errorCode": 7
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -395,11 +418,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 6
+          "errorCode": 6
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -441,11 +464,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 89
+          "errorCode": 89
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -487,11 +510,11 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 9001
+          "errorCode": 9001
         }
       },
       "operation": {
-        "name": "estimatedDocumentCount",
+        "name": "count",
         "object": "collection",
         "arguments": {
           "filter": {}
