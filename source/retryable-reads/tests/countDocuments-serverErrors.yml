@@ -5,13 +5,28 @@ data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
 
-aggregate_command_started_event: &aggregate_command_started_event
+failCommand_failPoint: &failCommand_failPoint
+  configureFailPoint: failCommand
+  mode: { times: 1 }
+  data:
+      failCommands:
+              - aggregate
+      closeConnection: true
+      
+retryable_command_started_event: &retryable_command_started_event
  command_started_event:
    command:
      aggregate: *collection_name
      pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
    command_name: aggregate
    database_name: *database_name
+
+retryable_operation: &retryable_operation
+  name: countDocuments
+  object: collection
+  arguments:
+      filter: { }
+  result: 2
 
 minServerVersion: '4.1.6' # 4.2
 
@@ -21,218 +36,119 @@ tests:
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 11600
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 11600 }
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event             
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "CountDocuments succeeds after InterruptedDueToStepDown"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 11602
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 11602 }
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after NotMaster"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 10107
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 10107 }
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after NotMasterNoSlaveOk"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 13435
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 13435 }
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after NotMasterOrSecondary"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 13436
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 13436 }
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after PrimarySteppedDown"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 189
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 189 }
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 91
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 91 }            
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 7
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 7 }            
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 6
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 6 }            
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 89
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 89 }            
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event    
     -
         description: "CountDocuments succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands:
-                        - aggregate
-                errorcode: 9001
-        operation:
-            name: countDocuments
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 9001 }            
+        operation: *retryable_operation
         expectations:
-             - *aggregate_command_started_event
-             - *aggregate_command_started_event    
+             - *retryable_command_started_event
+             - *retryable_command_started_event 

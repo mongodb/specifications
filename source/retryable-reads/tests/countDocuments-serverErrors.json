@@ -11,7 +11,19 @@
       "x": 22
     }
   ],
-  "aggregate_command_started_event": {
+  "failCommand_failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": {
+      "times": 1
+    },
+    "data": {
+      "failCommands": [
+        "aggregate"
+      ],
+      "closeConnection": true
+    }
+  },
+  "retryable_command_started_event": {
     "command_started_event": {
       "command": {
         "aggregate": "coll",
@@ -33,6 +45,14 @@
       "database_name": "retryable-reads-tests"
     }
   },
+  "retryable_operation": {
+    "name": "countDocuments",
+    "object": "collection",
+    "arguments": {
+      "filter": {}
+    },
+    "result": 2
+  },
   "minServerVersion": "4.1.6",
   "tests": [
     {
@@ -49,7 +69,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 11600
+          "errorCode": 11600
         }
       },
       "operation": {
@@ -121,7 +141,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 11602
+          "errorCode": 11602
         }
       },
       "operation": {
@@ -193,7 +213,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 10107
+          "errorCode": 10107
         }
       },
       "operation": {
@@ -265,7 +285,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 13435
+          "errorCode": 13435
         }
       },
       "operation": {
@@ -337,7 +357,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 13436
+          "errorCode": 13436
         }
       },
       "operation": {
@@ -409,7 +429,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 189
+          "errorCode": 189
         }
       },
       "operation": {
@@ -481,7 +501,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 91
+          "errorCode": 91
         }
       },
       "operation": {
@@ -553,7 +573,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 7
+          "errorCode": 7
         }
       },
       "operation": {
@@ -625,7 +645,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 6
+          "errorCode": 6
         }
       },
       "operation": {
@@ -697,7 +717,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 89
+          "errorCode": 89
         }
       },
       "operation": {
@@ -769,7 +789,7 @@
           "failCommands": [
             "aggregate"
           ],
-          "errorcode": 9001
+          "errorCode": 9001
         }
       },
       "operation": {
