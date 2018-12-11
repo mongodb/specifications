@@ -1,15 +1,6 @@
 {
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
-  "count_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "count": "coll"
-      },
-      "command_name": "count",
-      "database_name": "retryable-reads-tests"
-    }
-  },
   "data": [
     {
       "_id": 1,
@@ -21,6 +12,35 @@
     }
   ],
   "minServerVersion": "4.1.6",
+  "failCommand_failPoint": {
+    "configureFailPoint": "failCommand",
+    "mode": {
+      "times": 1
+    },
+    "data": {
+      "failCommands": [
+        "count"
+      ],
+      "closeConnection": true
+    }
+  },
+  "retryable_command_started_event": {
+    "command_started_event": {
+      "command": {
+        "count": "coll"
+      },
+      "command_name": "count",
+      "database_name": "retryable-reads-tests"
+    }
+  },
+  "retryable_operation": {
+    "name": "count",
+    "object": "collection",
+    "arguments": {
+      "filter": {}
+    },
+    "result": 2
+  },
   "tests": [
     {
       "description": "Count succeeds on first attempt",
@@ -119,7 +139,18 @@
         "result": {
           "error": true
         }
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count fails on second attempt",
@@ -147,7 +178,27 @@
         "result": {
           "error": true
         }
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }
