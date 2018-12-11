@@ -3,9 +3,9 @@ style: unit
 tests:
   - description: A Pool MUST be able to be manually closed.
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool
-      - command: close
+      - name: close
         object: pool
     events:
       - type: connectionPoolCreated
@@ -18,21 +18,21 @@ tests:
           generation: 0
   - description: When a pool is closed, it MUST first destroy all available connections in that pool
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn1
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn2
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn3
-      - command: release
+      - name: release
         object: pool
         args: [ { $$ref: [ "conn2" ] } ]
-      - command: close
+      - name: close
         object: pool
     events:
       - type: connectionPoolRelease

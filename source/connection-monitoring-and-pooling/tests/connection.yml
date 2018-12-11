@@ -3,12 +3,12 @@ style: unit
 tests:
   - description: must have an ID number associated with it.
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn1
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn2
     events:
@@ -31,12 +31,12 @@ tests:
       - connectionPoolDestroyed
   - description: must have IDs assigned in order of creation.
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn1
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn2
     events:
@@ -59,22 +59,22 @@ tests:
       - connectionPoolDestroyed
   - description: must have a generation number that reflects pool generation when connection was created
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool
       # Clears the pool twice to ensure that generation is 2
-      - command: clear
+      - name: clear
         object: pool
-      - command: clear
+      - name: clear
         object: pool
       # Acquire a connection
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn
       # Clear the pool, increasing that generation to 3
-      - command: clear
+      - name: clear
         object: pool
       # Release connection, generation should still be 2
-      - command: release
+      - name: release
         object: pool
         args: [ { $$ref: ["conn"] } ]
     events:

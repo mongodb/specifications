@@ -13,7 +13,7 @@ Introduction
 ============
 
 The YAML and JSON files in this directory are platform-independent tests that
-drivers can use to prove their conformance to the Connection Monitoring and Pooling (CPAM) Spec.
+drivers can use to prove their conformance to the Connection Monitoring and Pooling (CMAP) Spec.
 
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
@@ -35,11 +35,11 @@ All Unit Tests have some of the following fields:
 - ``description``: A text description of what the test is meant to assert
 - ``operations``: A list of operations to perform. Each operation has some of the following fields:
 
-  - ``command``: A string describing which command to issue.
-  - ``args``: An array of arguments to pass to the command
-  - ``thread``: The name of the thread in which to run this command. If not specified, runs in the default thread
-  - ``object``: For some command, specifies the object on which to run the command
-  - ``returnTo``: For some commands, specifies what to name the return value of the command
+  - ``name``: A string describing which operation to issue.
+  - ``args``: An array of arguments to pass to the operation
+  - ``thread``: The name of the thread in which to run this operation. If not specified, runs in the default thread
+  - ``object``: For some operation, specifies the object on which to run the operation
+  - ``returnTo``: For some operation, specifies what to name the return value of the operation
 
 - ``error``: Indicates that the main thread is expected to error during this test. Subfields (like ``message``) indicate what error is expected
 - ``events``: An array of all connection monitoring events expected to occur while running ``operations``

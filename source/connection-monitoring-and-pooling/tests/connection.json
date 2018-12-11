@@ -6,16 +6,16 @@
       "description": "must have an ID number associated with it.",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn2"
         }
@@ -81,16 +81,16 @@
       "description": "must have IDs assigned in order of creation.",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn2"
         }
@@ -136,28 +136,28 @@
       "description": "must have a generation number that reflects pool generation when connection was created",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool"
         },
         {
-          "command": "clear",
+          "name": "clear",
           "object": "pool"
         },
         {
-          "command": "clear",
+          "name": "clear",
           "object": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn"
         },
         {
-          "command": "clear",
+          "name": "clear",
           "object": "pool"
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {

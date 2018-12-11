@@ -6,11 +6,11 @@
       "description": "must be able to acquire a connection",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool"
         }
       ],
@@ -50,61 +50,61 @@
       "description": "must be able to acquire multiple connections at the same time",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t2"
+            "thread2"
           ]
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t3"
+            "thread3"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t1",
+          "name": "acquire",
+          "thread": "thread1",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "acquire",
-          "thread": "t2",
+          "name": "acquire",
+          "thread": "thread2",
           "object": "pool",
           "returnTo": "conn2"
         },
         {
-          "command": "acquire",
-          "thread": "t3",
+          "name": "acquire",
+          "thread": "thread3",
           "object": "pool",
           "returnTo": "conn3"
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t2"
+            "thread2"
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t3"
+            "thread3"
           ]
         }
       ],
@@ -162,7 +162,7 @@
       "description": "must destroy and must not acquire a stale connection if found while iterating available connections",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool",
           "args": [
             {
@@ -171,17 +171,17 @@
           ]
         },
         {
-          "command": "wait",
+          "name": "wait",
           "args": [
             20
           ]
         },
         {
-          "command": "clear",
+          "name": "clear",
           "object": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn"
         }
@@ -252,16 +252,16 @@
       "description": "must throw error if acquire is called on a closed pool",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -272,11 +272,11 @@
           ]
         },
         {
-          "command": "close",
+          "name": "close",
           "object": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn2"
         }

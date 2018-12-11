@@ -6,7 +6,7 @@
       "description": "must issue Connections to threads in the order that the threads eneterd the queue",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "args": [
             {
               "maxPoolSize": 1
@@ -15,60 +15,60 @@
           "returnTo": "pool"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t1",
+          "name": "acquire",
+          "thread": "thread1",
           "object": "pool",
           "returnTo": "conn"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t2"
+            "thread2"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t2",
+          "name": "acquire",
+          "thread": "thread2",
           "object": "pool",
           "returnTo": "conn"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t3"
+            "thread3"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t3",
+          "name": "acquire",
+          "thread": "thread3",
           "object": "pool",
           "returnTo": "conn"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t4"
+            "thread4"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t4",
+          "name": "acquire",
+          "thread": "thread4",
           "object": "pool",
           "returnTo": "conn"
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -79,13 +79,13 @@
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -96,13 +96,13 @@
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t2"
+            "thread2"
           ]
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -113,13 +113,13 @@
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t3"
+            "thread3"
           ]
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -130,9 +130,9 @@
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t4"
+            "thread4"
           ]
         }
       ],
@@ -190,7 +190,7 @@
       "description": "must not let more than waitQueueSize threads enter the queue",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool",
           "args": [
             {
@@ -200,44 +200,44 @@
           ]
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t1",
+          "name": "acquire",
+          "thread": "thread1",
           "object": "pool",
           "returnTo": "conn2"
         },
         {
-          "command": "wait",
+          "name": "wait",
           "args": [
             20
           ]
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t2"
+            "thread2"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t2",
+          "name": "acquire",
+          "thread": "thread2",
           "object": "pool",
           "returnTo": "conn3"
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t2"
+            "thread2"
           ]
         }
       ],
@@ -275,7 +275,7 @@
       "description": "must aggressively timeout threads enqueued longer than waitQueueTimeoutMS",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool",
           "args": [
             {
@@ -285,30 +285,30 @@
           ]
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t1",
+          "name": "acquire",
+          "thread": "thread1",
           "object": "pool",
           "returnTo": "conn2"
         },
         {
-          "command": "wait",
+          "name": "wait",
           "args": [
             40
           ]
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -319,9 +319,9 @@
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t1"
+            "thread1"
           ]
         }
       ],

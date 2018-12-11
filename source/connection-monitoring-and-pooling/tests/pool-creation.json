@@ -6,7 +6,7 @@
       "description": "must be able to start a pool with minPoolSize connections",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "args": [
             {
               "minPoolSize": 5
@@ -15,13 +15,13 @@
           "returnTo": "pool"
         },
         {
-          "command": "wait",
+          "name": "wait",
           "args": [
             50
           ]
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn"
         }
@@ -75,19 +75,19 @@
       "description": "must assign pool ids in order of creation",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool1"
         },
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool2"
         },
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool3"
         },
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool4"
         }
       ],
@@ -125,7 +125,7 @@
       "description": "must never exceed maxPoolSize total connections",
       "operations": [
         {
-          "command": "createPool",
+          "name": "createPool",
           "returnTo": "pool",
           "args": [
             {
@@ -134,22 +134,22 @@
           ]
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn1"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn2"
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn3"
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -160,24 +160,24 @@
           ]
         },
         {
-          "command": "acquire",
+          "name": "acquire",
           "object": "pool",
           "returnTo": "conn4"
         },
         {
-          "command": "start",
+          "name": "start",
           "args": [
-            "t1"
+            "thread1"
           ]
         },
         {
-          "command": "acquire",
-          "thread": "t1",
+          "name": "acquire",
+          "thread": "thread1",
           "object": "pool",
           "returnTo": "conn5"
         },
         {
-          "command": "release",
+          "name": "release",
           "object": "pool",
           "args": [
             {
@@ -188,9 +188,9 @@
           ]
         },
         {
-          "command": "waitFor",
+          "name": "waitFor",
           "args": [
-            "t1"
+            "thread1"
           ]
         }
       ],

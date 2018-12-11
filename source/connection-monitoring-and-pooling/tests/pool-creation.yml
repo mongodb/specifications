@@ -3,13 +3,13 @@ style: unit
 tests:
   - description: must be able to start a pool with minPoolSize connections
     operations:
-      - command: createPool
+      - name: createPool
         args:
           - minPoolSize: 5
         returnTo: pool
-      - command: wait
+      - name: wait
         args: [ 50 ]
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn
     events:
@@ -33,13 +33,13 @@ tests:
       - connectionDestroyed
   - description: must assign pool ids in order of creation
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool1
-      - command: createPool
+      - name: createPool
         returnTo: pool2
-      - command: createPool
+      - name: createPool
         returnTo: pool3
-      - command: createPool
+      - name: createPool
         returnTo: pool4
     events:
       - type: connectionPoolCreated
@@ -59,36 +59,36 @@ tests:
           id: 3
   - description: must never exceed maxPoolSize total connections
     operations:
-      - command: createPool
+      - name: createPool
         returnTo: pool
         args:
           - maxPoolSize: 3
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn1
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn2
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn3
-      - command: release
+      - name: release
         object: pool
         args: [ { $$ref: [ "conn3" ] } ]
-      - command: acquire
+      - name: acquire
         object: pool
         returnTo: conn4
-      - command: start
-        args: [ "t1" ]
-      - command: acquire
-        thread: t1
+      - name: start
+        args: [ "thread1" ]
+      - name: acquire
+        thread: thread1
         object: pool
         returnTo: conn5
-      - command: release
+      - name: release
         object: pool
         args: [ { $$ref: [ "conn1" ] } ]
-      - command: waitFor
-        args: [ "t1" ]
+      - name: waitFor
+        args: [ "thread1" ]
     events:
       - type: connectionPoolCreated
       - type: connectionPoolQueueEntered
