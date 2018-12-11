@@ -180,7 +180,7 @@ Bit   Name                 Request   Response   Description
                                                 for overlapping messages
 ----- -------------------- --------- ---------- --------------------------- 
 16    exhaustAllowed          x                 Client is prepared for
-                                                mutliple replies (using the
+                                                multiple replies (using the
                                                 moreToCome bit) to this
                                                 request
 ===== ==================== ========= ========== =========================== 
@@ -223,12 +223,12 @@ that the sender will send additional responses on the connection. The recipient
 MUST continue to read responses until it reads a response with the ``moreToCome``
 flag not set, and MUST NOT send any more requests on this connection until
 it reads a response with the ``moreToCome`` flag not set. The client MUST
-either consume all messages with ``moreToCome`` flag set or close the connection.
+either consume all messages with the ``moreToCome`` flag set or close the connection.
 
-When the server sends responses with ``moreToCome`` flag set, it behaves as if
+When the server sends responses with the ``moreToCome`` flag set, it behaves as if
 the client sent a ``getMore`` request for the returned cursor for each of the
 responses. Each reply will have a unique ``messageId``, and the ``responseTo``
-field of every follow-up message will be the `messageId`` of the previous
+field of every follow-up message will be the ``messageId`` of the previous
 reply. The reply will also include the normal command response body to the
 implicit ``getMore``.
 
@@ -243,7 +243,7 @@ exhaustAllowed
 
 Setting this flag on a request indicates to the recipient that the sender
 is prepared to handle multiple replies (using the ``moreToCome`` bit) to this
-request. The server will never produce replices with the ``moreToCome`` bit set
+request. The server will never produce replies with the ``moreToCome`` bit set
 unless the request has the ``exhaustAllowed`` bit set.
 
 Setting ``exhaustAllowed`` flag on a request does not guarantee that the
