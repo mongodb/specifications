@@ -25,14 +25,16 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-    - description: "Too low zlibCompressionLevel causes a warning"
+    - 
+        description: "Too low zlibCompressionLevel causes a warning"
         uri: "mongodb://example.com/?compressors=zlib&zlibCompressionLevel=-2"
         valid: true
         warning: true
         hosts: ~
         auth: ~
         options: {}
-    - description: "Too high zlibCompressionLevel causes a warning"
+    - 
+        description: "Too high zlibCompressionLevel causes a warning"
         uri: "mongodb://example.com/?compressors=zlib&zlibCompressionLevel=10"
         valid: true
         warning: true
