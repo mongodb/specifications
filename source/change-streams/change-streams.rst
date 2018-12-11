@@ -284,10 +284,13 @@ Driver API
      * new change stream returning the first notification after the token.
      * This will allow users to watch collections that have been dropped and recreated
      * or newly renamed collections without missing any notifications.
+     *
+     * The server will report an error if startAfter and resumeAfter are both specified.
+     *
      * @since 4.2
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
      */
-     startAfter: Optional<Timestamp>
+     startAfter: Optional<Document>;
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
