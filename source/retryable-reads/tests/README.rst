@@ -136,7 +136,7 @@ Each YAML file has the following keys:
     - ``name``: The name of the operation on ``object``.
 
     - ``object``: The name of the object to perform the operation on. Can be
-      "database" or "collection".
+      "database", "collection", or "client."
 
     - ``collectionOptions``: Optional, parameters to pass to the Collection()
       used for this operation.
