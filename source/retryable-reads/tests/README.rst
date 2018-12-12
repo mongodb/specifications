@@ -191,17 +191,15 @@ GridFS Tests
 
 Since the GridFS API is implemented using ``find`` commands, the `File
 Download`_ and `Generic Find on File Collection`_ parts of the GridFS API should
-be retryable under the same conditions that ``find`` is retryable. Tests should
-be adapted from ``find.yml``, ``find-ServerErrors.yml``, the "Download by Name
-when revision is 0" test at
+be retryable under the same conditions that ``find`` is retryable. These
+functions should be tested against the same conditions described in ``find.yml``
+and ``find-ServerErrors.yml``. The tests' setup and expectations can be adapted
+from the "Download by Name when revision is 0" test at
 https://github.com/mongodb/specifications/blob/master/source/gridfs/tests/download_by_name.yml
 and the "Download when there is one chunk" test at
 https://github.com/mongodb/specifications/blob/master/source/gridfs/tests/download.yml.
 
-
-
 .. _File Download: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#file-download-by-filename
-
 
 .. _Generic Find on File Collection:  https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#generic-find-on-files-collection
 
