@@ -7,14 +7,14 @@ SDAM Monitoring Specification
 
 :Spec: 222
 :Title: SDAM Monitoring Specification
-:Spec Version: 1.1
+:Spec Version: 1.1.1
 :Author: Durran Jordan
 :Spec Lead: Durran Jordan
 :Advisory Group: Jeff Yemin, Craig Wilson, Jesse Davis
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 11-Oct-2016
+:Last Modified: 12-Dec-2018
 
 .. contents::
 
@@ -357,7 +357,7 @@ the value to the default read preference, ``primary``, or treat the call as if `
 +=======================+========================================+========================================+
 | Unknown               | ``false``                              | ``false``                              |
 +-----------------------+----------------------------------------+----------------------------------------+
-| Single                | ``true``                               | ``true``                               |
+| Single                | ``true`` if the server is available    | ``true`` if the server is available    |
 +-----------------------+----------------------------------------+----------------------------------------+
 | ReplicaSetNoPrimary   | | Called with ``primary``: ``false``   | ``false``                              |
 |                       | | Called with any other option: uses   |                                        |
@@ -372,7 +372,7 @@ the value to the default read preference, ``primary``, or treat the call as if `
 |                       |   suitable for reading.                |                                        |
 |                       | | Called with no option: ``true``      |                                        |
 +-----------------------+----------------------------------------+----------------------------------------+
-| Sharded               | ``true``                               | ``true``                               |
+| Sharded               | ``true`` if 1+ servers are available   | ``true`` if 1+ servers are available   |
 +-----------------------+----------------------------------------+----------------------------------------+
 
 --------
@@ -405,6 +405,6 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
-31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
-11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.
-
+- 12 DEC 2018: Clarified table of rules for readable/writable servers
+- 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
+- 11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.
