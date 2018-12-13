@@ -19,7 +19,7 @@ Tests will require a MongoClient created with options defined in the tests.
 Integration tests will require a running MongoDB cluster with server versions
 4.2.0 or later. N.B. Strictly speaking, the server should implement the
 "Early Failure on Socket Disconnect" slated for 4.2.0, but this is not
-neccessary for initial testing.
+necessary for initial testing.
 
 
 Server Fail Point
@@ -35,7 +35,7 @@ commands listed in the "failCommands" field. See `SERVER-35004`_ and
 .. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
 
 The ``failCommand`` fail point may be configured like so::
-
+  
     db.adminCommand({
         configureFailPoint: "failCommand",
         mode: <string|document>,
@@ -45,21 +45,13 @@ The ``failCommand`` fail point may be configured like so::
           errorCode: <Number>,
         }
     });
+    
 Some tests depend on a server fail point, ``failCommand``, which
 allows us to force a network error before the server would return a read result
 to the client.  See `SERVER-35004`_ for
 more information.
 
 .. _SERVER-29606: https://jira.mongodb.org/browse/SERVER-35004
-
-The fail point may be configured like so::
-
-    db.runCommand({
-        configureFailPoint: "failCommand",
-        mode: <string|document>,
-        data: <document>
-    });
-    
 ``mode`` is a generic fail point option and may be assigned a string or document
 value. The string values ``"alwaysOn"`` and ``"off"`` may be used to enable or
 disable the fail point, respectively. A document may be used to specify either
@@ -85,11 +77,11 @@ Disabling Fail Point after Test Execution
 -----------------------------------------
 
 After each test that configures a fail point, drivers should disable the
-``failCommands`` fail point to avoid spurious failures in
+``failCommand`` fail point to avoid spurious failures in
 subsequent tests. The fail point may be disabled like so::
 
     db.runCommand({
-        configureFailPoint: "failCommands",
+        configureFailPoint: "failCommand",
         mode: "off"
     });
 
@@ -100,14 +92,10 @@ Network error tests are expressed in YAML and should be run against a standalone
 shard cluster, or single-node replica set. Until `SERVER-34943`_ is resolved,
 these tests cannot be run against a multi-node replicaset.
 
-
 .. _SERVER-34943: https://jira.mongodb.org/browse/SERVER-34943
 
 Test Format
 -----------
-
-Test Format
-===========
 
 Each YAML file has the following keys:
 
@@ -217,6 +205,8 @@ Replica Set Failover Test
 =========================
 
 This test is adapted from the `Retryable Write Tests: Replica Set Failover Test`_.
+
+N.B.: Until `SERVER-34943`_ is resolved, this test cannot be run.
 
 In addition to network errors, reads should also be retried in the event of a
 primary failover, which results in a "not master" command error (or similar).
