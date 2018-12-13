@@ -129,10 +129,6 @@ Each YAML file has the following keys:
     - ``collectionOptions``: Optional, parameters to pass to the Collection()
       used for this operation.
 
-    - ``command_name``: Present only when ``name`` is "runCommand". The name
-      of the command to run. Required for languages that are unable preserve
-      the order keys in the "command" argument when parsing JSON/YAML.
-
     - ``arguments``: Optional, the names and values of arguments.
 
     - ``result``: The return value from the operation, if any. This field may
