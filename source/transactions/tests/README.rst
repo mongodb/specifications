@@ -336,8 +336,9 @@ instead.
       @require_server_version(4, 1, 6)
       @require_mongos_count_at_least(2)
       def test_unpin_for_next_transaction(self):
-        client = MongoClient(mongos_hosts)
-        # Wait until more than one mongos is discovered.
+        # Increase localThresholdMS and wait until both nodes are discovered
+        # to avoid false positives.
+        client = MongoClient(mongos_hosts, localThresholdMS=1000)
         wait_until(lambda: len(client.nodes) > 1)
         # Create the collection.
         client.test.test.insert_one({})
@@ -363,8 +364,9 @@ instead.
       @require_server_version(4, 1, 6)
       @require_mongos_count_at_least(2)
       def test_unpin_for_non_transaction_operation(self):
-        client = MongoClient(mongos_hosts)
-        # Wait until more than one mongos is discovered.
+        # Increase localThresholdMS and wait until both nodes are discovered
+        # to avoid false positives.
+        client = MongoClient(mongos_hosts, localThresholdMS=1000)
         wait_until(lambda: len(client.nodes) > 1)
         # Create the collection.
         client.test.test.insert_one({})
