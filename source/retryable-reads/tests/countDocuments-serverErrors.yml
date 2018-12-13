@@ -5,25 +5,6 @@ data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
 
-failCommand_failPoint: &failCommand_failPoint
-  configureFailPoint: failCommand
-  mode: { times: 1 }
-      
-retryable_command_started_event: &retryable_command_started_event
- command_started_event:
-   command:
-     aggregate: *collection_name
-     pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
-   command_name: aggregate
-   database_name: *database_name
-
-retryable_operation: &retryable_operation
-  name: countDocuments
-  object: collection
-  arguments:
-      filter: { }
-  result: 2
-
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -31,12 +12,23 @@ tests:
         description: "CountDocuments succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
-        failPoint:
-            <<: *failCommand_failPoint
+        failPoint: &failCommand_failPoint
+            configureFailPoint: failCommand
+            mode: { times: 1 }
             data: { failCommands: [aggregate], errorCode: 11600 }
-        operation: *retryable_operation
+        operation: &retryable_operation
+            name: countDocuments
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
         expectations:
-             - *retryable_command_started_event
+             - &retryable_command_started_event
+                command_started_event:
+                    command:
+                        aggregate: *collection_name
+                        pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
+                    database_name: *database_name
              - *retryable_command_started_event
     -
         description: "CountDocuments succeeds after InterruptedDueToStepDown"

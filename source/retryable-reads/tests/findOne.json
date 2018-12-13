@@ -24,43 +24,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    },
-    "data": {
-      "failCommands": [
-        "find"
-      ],
-      "closeConnection": true
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "find": "coll",
-        "filter": {
-          "_id": 1
-        }
-      },
-      "command_name": "find",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "findOne",
-    "object": "collection",
-    "arguments": {
-      "filter": {
-        "_id": 1
-      }
-    },
-    "result": {
-      "_id": 1,
-      "x": 11
-    }
-  },
   "tests": [
     {
       "description": "FindOne succeeds on first attempt",
@@ -89,7 +52,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -134,7 +96,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -178,7 +139,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -222,7 +182,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -234,7 +193,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }

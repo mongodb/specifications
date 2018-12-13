@@ -16,49 +16,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    },
-    "data": {
-      "failCommands": [
-        "find"
-      ],
-      "closeConnection": true
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "distinct": "coll",
-        "key": "x",
-        "query": {
-          "_id": {
-            "$gt": 1
-          }
-        }
-      },
-      "command_name": "distinct",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "distinct",
-    "object": "collection",
-    "arguments": {
-      "fieldName": "x",
-      "filter": {
-        "_id": {
-          "$gt": 1
-        }
-      }
-    },
-    "result": [
-      22,
-      33
-    ]
-  },
   "tests": [
     {
       "description": "Distinct succeeds on first attempt",
@@ -93,7 +50,6 @@
                 }
               }
             },
-            "command_name": "distinct",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -144,7 +100,6 @@
                 }
               }
             },
-            "command_name": "distinct",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -194,7 +149,6 @@
                 }
               }
             },
-            "command_name": "distinct",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -244,7 +198,6 @@
                 }
               }
             },
-            "command_name": "distinct",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -259,7 +212,6 @@
                 }
               }
             },
-            "command_name": "distinct",
             "database_name": "retryable-reads-tests"
           }
         }

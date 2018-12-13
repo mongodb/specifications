@@ -8,43 +8,35 @@ data:
 
 minServerVersion: '4.1.6' # 4.2
 
-failCommand_failPoint: &failCommand_failPoint
-  configureFailPoint: failCommand
-  mode: { times: 1 }
-
-retryable_command_started_event: &retryable_command_started_event
- command_started_event:
-   command:
-     distinct: *collection_name
-     key: "x"
-     query: 
-         _id: {$gt: 1}
-   command_name: distinct
-   database_name: *database_name
-
-retryable_operation: &retryable_operation
-  name: "distinct"
-  object: collection
-  arguments:
-      fieldName: "x"
-      filter: 
-          _id: {$gt: 1}
-  result:
-      - 22
-      - 33
-
 tests:
     -
         description: "Distinct succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
-        failPoint:
-            <<: *failCommand_failPoint
+        failPoint: &failCommand_failPoint
+            configureFailPoint: failCommand
+            mode: { times: 1 }
             data: { failCommands: [distinct], errorCode: 11600 }
-        operation: *retryable_operation
+        operation: &retryable_operation
+            name: "distinct"
+            object: collection
+            arguments:
+                fieldName: "x"
+                filter: 
+                    _id: {$gt: 1}
+            result:
+                - 22
+                - 33
         expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
+            - &retryable_command_started_event
+                command_started_event:
+                    command:
+                        distinct: *collection_name
+                        key: "x"
+                        query: 
+                          _id: {$gt: 1}
+                    database_name: *database_name
+            - *retryable_command_started_event
     -
         description: "Distinct succeeds after InterruptedDueToStepDown"
         clientOptions:

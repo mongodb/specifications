@@ -12,35 +12,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    },
-    "data": {
-      "failCommands": [
-        "count"
-      ],
-      "closeConnection": true
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "count": "coll"
-      },
-      "command_name": "count",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "estimatedDocumentCount",
-    "object": "collection",
-    "arguments": {
-      "filter": {}
-    },
-    "result": 2
-  },
   "tests": [
     {
       "description": "EstimatedDocumentCount succeeds on first attempt",
@@ -61,7 +32,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -98,7 +68,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -107,7 +76,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -146,7 +114,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -185,7 +152,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -194,7 +160,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }

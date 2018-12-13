@@ -12,29 +12,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "count": "coll"
-      },
-      "command_name": "count",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "count",
-    "object": "collection",
-    "arguments": {
-      "filter": {}
-    },
-    "result": 2
-  },
   "tests": [
     {
       "description": "Count succeeds after InterruptedAtShutdown",
@@ -67,7 +44,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -76,7 +52,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -113,7 +88,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -122,7 +96,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -159,7 +132,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -168,7 +140,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -205,7 +176,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -214,7 +184,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -251,7 +220,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -260,7 +228,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -297,7 +264,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -306,7 +272,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -343,7 +308,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -352,7 +316,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -389,7 +352,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -398,7 +360,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -435,7 +396,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -444,7 +404,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -481,7 +440,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -490,7 +448,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -527,7 +484,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -536,7 +492,6 @@
             "command": {
               "count": "coll"
             },
-            "command_name": "count",
             "database_name": "retryable-reads-tests"
           }
         }

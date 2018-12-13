@@ -7,36 +7,28 @@ data:
 
 minServerVersion: '4.1.6' # 4.2
 
-failCommand_failPoint: &failCommand_failPoint
-  configureFailPoint: failCommand
-  mode: { times: 1 }
-
-retryable_command_started_event: &retryable_command_started_event
-  command_started_event:
-      command:
-          count: *collection_name
-      command_name: count
-      database_name: *database_name
-   
-retryable_operation: &retryable_operation
-  name: estimatedDocumentCount
-  object: collection
-  arguments:
-      filter: { }
-  result: 2
-
 tests:
     -
         description: "EstimatedDocumentCount succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
-        failPoint:
-            <<: *failCommand_failPoint
+        failPoint: &failCommand_failPoint
+            configureFailPoint: failCommand
+            mode: { times: 1 }
             data: { failCommands: [count], errorCode: 11600 }
-        operation: *retryable_operation
+        operation: &retryable_operation
+            name: estimatedDocumentCount
+            object: collection
+            arguments:
+                filter: { }
+            result: 2
         expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
+            - &retryable_command_started_event
+                command_started_event:
+                    command:
+                        count: *collection_name
+                    database_name: *database_name
+            - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after InterruptedDueToStepDown"
         clientOptions:

@@ -12,48 +12,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    },
-    "data": {
-      "failCommands": [
-        "aggregate"
-      ],
-      "closeConnection": true
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "aggregate": "coll",
-        "pipeline": [
-          {
-            "$match": {}
-          },
-          {
-            "$group": {
-              "_id": null,
-              "n": {
-                "$sum": 1
-              }
-            }
-          }
-        ]
-      },
-      "command_name": "aggregate",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "countDocuments",
-    "object": "collection",
-    "arguments": {
-      "filter": {}
-    },
-    "result": 2
-  },
   "tests": [
     {
       "description": "CountDocuments succeeds on first attempt",
@@ -87,7 +45,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -137,7 +94,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -159,7 +115,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -211,7 +166,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -263,7 +217,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -285,7 +238,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }

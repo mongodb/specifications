@@ -24,37 +24,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "find": "coll",
-        "filter": {
-          "_id": 1
-        }
-      },
-      "command_name": "find",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "findOne",
-    "object": "collection",
-    "arguments": {
-      "filter": {
-        "_id": 1
-      }
-    },
-    "result": {
-      "_id": 1,
-      "x": 11
-    }
-  },
   "tests": [
     {
       "description": "FindOne succeeds after InterruptedAtShutdown",
@@ -79,11 +48,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -95,7 +64,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -107,7 +75,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -136,11 +103,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -152,7 +119,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -164,7 +130,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -193,11 +158,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -209,7 +174,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -221,7 +185,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -250,11 +213,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -266,7 +229,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -278,7 +240,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -307,11 +268,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -323,7 +284,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -335,7 +295,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -364,11 +323,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -380,7 +339,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -392,7 +350,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -421,11 +378,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -437,7 +394,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -449,7 +405,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -478,11 +433,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -494,7 +449,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -506,7 +460,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -535,11 +488,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -551,7 +504,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -563,7 +515,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -592,11 +543,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -608,7 +559,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -620,7 +570,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -649,11 +598,11 @@
         "arguments": {
           "filter": {
             "_id": 1
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
       },
       "expectations": [
@@ -665,7 +614,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -677,7 +625,6 @@
                 "_id": 1
               }
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }

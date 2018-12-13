@@ -8,43 +8,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    },
-    "data": {
-      "failCommands": [
-        "aggregate"
-      ],
-      "closeConnection": true
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "aggregate": {
-          "$numberInt": "1"
-        },
-        "cursor": {},
-        "pipeline": [
-          {
-            "$changeStream": {
-              "fullDocument": "default",
-              "allChangesForCluster": true
-            }
-          }
-        ]
-      },
-      "command_name": "aggregate",
-      "database_name": "admin"
-    }
-  },
-  "retryable_operation": {
-    "name": "watch",
-    "object": "client",
-    "result": []
-  },
   "tests": [
     {
       "description": "client.watch succeeds on first attempt",
@@ -73,7 +36,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "admin"
           }
         }
@@ -118,7 +80,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "admin"
           }
         },
@@ -138,7 +99,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "admin"
           }
         }
@@ -185,7 +145,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "admin"
           }
         }
@@ -232,7 +191,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "admin"
           }
         },
@@ -252,7 +210,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "admin"
           }
         }

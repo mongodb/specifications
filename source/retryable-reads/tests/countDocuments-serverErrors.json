@@ -11,42 +11,6 @@
       "x": 22
     }
   ],
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "aggregate": "coll",
-        "pipeline": [
-          {
-            "$match": {}
-          },
-          {
-            "$group": {
-              "_id": null,
-              "n": {
-                "$sum": 1
-              }
-            }
-          }
-        ]
-      },
-      "command_name": "aggregate",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "countDocuments",
-    "object": "collection",
-    "arguments": {
-      "filter": {}
-    },
-    "result": 2
-  },
   "minServerVersion": "4.1.6",
   "tests": [
     {
@@ -93,7 +57,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -115,7 +78,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -165,7 +127,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -187,7 +148,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -237,7 +197,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -259,7 +218,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -309,7 +267,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -331,7 +288,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -381,7 +337,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -403,7 +358,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -453,7 +407,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -475,7 +428,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -525,7 +477,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -547,7 +498,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -597,7 +547,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -619,7 +568,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -669,7 +617,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -691,7 +638,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -741,7 +687,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -763,7 +708,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -813,7 +757,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -835,7 +778,6 @@
                 }
               ]
             },
-            "command_name": "aggregate",
             "database_name": "retryable-reads-tests"
           }
         }

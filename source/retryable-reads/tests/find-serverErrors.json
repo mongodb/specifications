@@ -24,57 +24,6 @@
     }
   ],
   "minServerVersion": "4.1.6",
-  "failCommand_failPoint": {
-    "configureFailPoint": "failCommand",
-    "mode": {
-      "times": 1
-    }
-  },
-  "retryable_command_started_event": {
-    "command_started_event": {
-      "command": {
-        "find": "coll",
-        "filter": {},
-        "sort": {
-          "_id": 1
-        },
-        "limit": 4,
-        "batchSize": 2
-      },
-      "command_name": "find",
-      "database_name": "retryable-reads-tests"
-    }
-  },
-  "retryable_operation": {
-    "name": "find",
-    "object": "collection",
-    "arguments": {
-      "filter": {},
-      "sort": {
-        "_id": 1
-      },
-      "limit": 4,
-      "batchSize": 2
-    },
-    "result": [
-      {
-        "_id": 1,
-        "x": 11
-      },
-      {
-        "_id": 2,
-        "x": 22
-      },
-      {
-        "_id": 3,
-        "x": 33
-      },
-      {
-        "_id": 4,
-        "x": 44
-      }
-    ]
-  },
   "tests": [
     {
       "description": "Find succeeds after InterruptedAtShutdown",
@@ -135,7 +84,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -150,7 +98,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -215,7 +162,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -230,7 +176,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -295,7 +240,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -310,7 +254,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -375,7 +318,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -390,7 +332,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -455,7 +396,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -470,7 +410,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -535,7 +474,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -550,7 +488,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -615,7 +552,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -630,7 +566,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -695,7 +630,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -710,7 +644,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -775,7 +708,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -790,7 +722,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -855,7 +786,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -870,7 +800,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }
@@ -935,7 +864,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         },
@@ -950,7 +878,6 @@
               "limit": 4,
               "batchSize": 2
             },
-            "command_name": "find",
             "database_name": "retryable-reads-tests"
           }
         }

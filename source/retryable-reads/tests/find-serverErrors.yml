@@ -10,48 +10,39 @@ data:
 
 minServerVersion: '4.1.6' # 4.2
 
-failCommand_failPoint: &failCommand_failPoint
-  configureFailPoint: failCommand
-  mode: { times: 1 }
-
-
-retryable_command_started_event: &retryable_command_started_event
- command_started_event:
-   command:
-     find: *collection_name
-     filter: {}
-     sort: {_id: 1}
-     limit: 4
-     batchSize: 2
-   command_name: find
-   database_name: *database_name
-
-retryable_operation: &retryable_operation
-  name: "find"
-  object: collection
-  arguments:
-      filter: {}
-      sort: {_id: 1}
-      limit: 4
-      batchSize: 2
-  result:
-      - {_id: 1, x: 11}
-      - {_id: 2, x: 22}
-      - {_id: 3, x: 33}
-      - {_id: 4, x: 44}
-
 tests:
     -
         description: "Find succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
-        failPoint:
-            <<: *failCommand_failPoint
+        failPoint: &failCommand_failPoint
+            configureFailPoint: failCommand
+            mode: { times: 1 }
             data: { failCommands: [find], errorCode: 11600 }
-        operation: *retryable_operation
+        operation: &retryable_operation
+            name: "find"
+            object: collection
+            arguments:
+                filter: {}
+                sort: {_id: 1}
+                limit: 4
+                batchSize: 2
+            result:
+                - {_id: 1, x: 11}
+                - {_id: 2, x: 22}
+                - {_id: 3, x: 33}
+                - {_id: 4, x: 44}
         expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
+            - &retryable_command_started_event
+                command_started_event:
+                    command:
+                        find: *collection_name
+                        filter: {}
+                        sort: {_id: 1}
+                        limit: 4
+                        batchSize: 2
+                    database_name: *database_name
+            - *retryable_command_started_event
     -
         description: "Find succeeds after InterruptedDueToStepDown"
         clientOptions:
