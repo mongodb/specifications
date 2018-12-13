@@ -3,7 +3,6 @@
   "database_name": "change-stream-tests",
   "collection2_name": "test2",
   "database2_name": "change-stream-tests-2",
-  "collection_rename": "test-rename",
   "tests": [
     {
       "description": "$changeStream must be the first stage in a change stream pipeline sent to the server",

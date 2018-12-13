@@ -2,7 +2,6 @@ collection_name: &collection_name "test"
 database_name: &database_name "change-stream-tests"
 collection2_name: &collection2_name "test2"
 database2_name: &database2_name "change-stream-tests-2"
-collection_rename: &collection_rename "test-rename"
 tests:
   -
     description: "$changeStream must be the first stage in a change stream pipeline sent to the server"
