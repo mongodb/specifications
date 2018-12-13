@@ -336,14 +336,19 @@ instead.
       @require_server_version(4, 1, 6)
       @require_mongos_count_at_least(2)
       def test_unpin_for_next_transaction(self):
-        client = MongoClient(mongos_hosts)
+        # Increase localThresholdMS and wait until both nodes are discovered
+        # to avoid false positives.
+        client = MongoClient(mongos_hosts, localThresholdMS=1000)
+        wait_until(lambda: len(client.nodes) > 1)
+        # Create the collection.
+        client.test.test.insert_one({})
         with client.start_session() as s:
           # Session is pinned to Mongos.
           with s.start_transaction():
             client.test.test.insert_one({}, session=s)
 
           addresses = set()
-          for _ in range(20):
+          for _ in range(50):
             with s.start_transaction():
               cursor = client.test.test.find({}, session=s)
               assert next(cursor)
@@ -359,14 +364,19 @@ instead.
       @require_server_version(4, 1, 6)
       @require_mongos_count_at_least(2)
       def test_unpin_for_non_transaction_operation(self):
-        client = MongoClient(mongos_hosts)
+        # Increase localThresholdMS and wait until both nodes are discovered
+        # to avoid false positives.
+        client = MongoClient(mongos_hosts, localThresholdMS=1000)
+        wait_until(lambda: len(client.nodes) > 1)
+        # Create the collection.
+        client.test.test.insert_one({})
         with client.start_session() as s:
           # Session is pinned to Mongos.
           with s.start_transaction():
             client.test.test.insert_one({}, session=s)
 
           addresses = set()
-          for _ in range(20):
+          for _ in range(50):
             cursor = client.test.test.find({}, session=s)
             assert next(cursor)
             addresses.add(cursor.address)
