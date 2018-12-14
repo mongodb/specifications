@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must be able to acquire a connection",
+  "operations": [
+    {
+      "name": "acquire"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolQueueEntered",
+      "pool": {
+        "id": 1
+      }
+    },
+    {
+      "type": "connectionPoolAcquire",
+      "pool": {
+        "id": 1
+      },
+      "connection": {
+        "id": 1
+      }
+    }
+  ],
+  "ignore": [
+    "connectionCreated",
+    "connectionPoolCreated"
+  ]
+}

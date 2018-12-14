@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must destroy released connection if it is stale",
+  "operations": [
+    {
+      "name": "acquire",
+      "label": "conn"
+    },
+    {
+      "name": "clear"
+    },
+    {
+      "name": "release",
+      "connection": "conn"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolAcquire",
+      "pool": {
+        "id": 1,
+        "generation": 0
+      },
+      "connection": {
+        "id": 1,
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionPoolCleared",
+      "pool": {
+        "id": 1,
+        "generation": 1
+      }
+    },
+    {
+      "type": "connectionPoolRelease",
+      "pool": {
+        "id": 1,
+        "generation": 1
+      },
+      "connection": {
+        "id": 1,
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionDestroyed",
+      "pool": {
+        "id": 1
+      },
+      "connection": {
+        "id": 1
+      }
+    }
+  ],
+  "ignore": [
+    "connectionPoolCreated",
+    "connectionCreated",
+    "connectionPoolQueueEntered"
+  ]
+}

@@ -1,0 +1,36 @@
+version: 1
+style: unit
+description: must not let more than waitQueueSize threads enter the queue
+poolOptions:
+  maxPoolSize: 1
+  waitQueueSize: 1
+operations:
+  # Acquire sole possible connection
+  - name: acquire
+  # Start a thread, have it enter sole wait queue spot
+  - name: start
+    target: thread1
+  - name: acquire
+    thread: thread1
+  - name: wait
+    ms: 20
+  # Start another thread, have it attempt to enter wait queue, find it full, error
+  - name: start
+    target: thread2
+  - name: acquire
+    thread: thread2
+  - name: waitFor
+    target: thread2
+error:
+  message: Attempted to acquire a connection from connection pool while waitQueue was full
+  errorType: waitQueueFullError
+  id: 1
+events:
+  - type: connectionPoolQueueEntered
+  - type: connectionPoolAcquire
+  - type: connectionPoolQueueEntered
+  - type: connectionPoolQueueFull
+ignore:
+  - connectionCreated
+  - connectionDestroyed
+  - connectionPoolCreated

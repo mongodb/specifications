@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must remove connection from connection count before destruction",
+  "operations": [
+    {
+      "name": "acquire",
+      "label": "conn"
+    },
+    {
+      "name": "clear"
+    },
+    {
+      "name": "release",
+      "connection": "conn"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolCreated"
+    },
+    {
+      "type": "connectionPoolQueueEntered",
+      "pool": {
+        "totalConnectionCount": 0
+      }
+    },
+    {
+      "type": "connectionCreated"
+    },
+    {
+      "type": "connectionPoolAcquire",
+      "pool": {
+        "totalConnectionCount": 1
+      }
+    },
+    {
+      "type": "connectionPoolCleared",
+      "pool": {
+        "totalConnectionCount": 1
+      }
+    },
+    {
+      "type": "connectionPoolRelease"
+    },
+    {
+      "type": "connectionDestroyed",
+      "pool": {
+        "totalConnectionCount": 0
+      }
+    }
+  ]
+}

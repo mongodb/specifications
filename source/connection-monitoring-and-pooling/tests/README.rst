@@ -25,89 +25,57 @@ Each YAML file has the following keys:
 
 - ``version``: A version number indicating the expected format of the spec tests (current version = 1)
 - ``style``: A string indicating what style of tests this file contains. Currently ``unit`` is the only valid value
-- ``tests``: An array of tests that are to be run independently of each other
+- ``description``: A text description of what the test is meant to assert
 
 Unit Test Format:
 =================
 
 All Unit Tests have some of the following fields:
 
-- ``description``: A text description of what the test is meant to assert
-- ``operations``: A list of operations to perform. Each operation has some of the following fields:
+- ``operations``: A list of operations to perform. All operations support the following fields:
 
   - ``name``: A string describing which operation to issue.
-  - ``args``: An array of arguments to pass to the operation
   - ``thread``: The name of the thread in which to run this operation. If not specified, runs in the default thread
-  - ``object``: For some operation, specifies the object on which to run the operation
-  - ``returnTo``: For some operation, specifies what to name the return value of the operation
+  - ``object``: The object on which to run the pool method. Can be ``pool1`` or ``pool2``. Defaults to ``pool1``
 
 - ``error``: Indicates that the main thread is expected to error during this test. An error may include of the following fields:
 
   - ``message``: the message associated with that error
-  - ``code``: the error code associated with that error
+  - ``errorType``: the error code associated with that error
   - ``id``: ID of pool emitting error
   - ``address``: Address of pool emitting error
-  - ``connectionId``: ID of connection associated with this error
-  - ``foreignPoolId``: ID of foreign pool for PoolReleaseForeignConnectionError
+  - ``foreignConnectionInfo``: Connection metadata on a foreign connection during a PoolReleaseForeignConnectionError
 
 - ``events``: An array of all connection monitoring events expected to occur while running ``operations``.
 - ``ignore``: An array of event names to ignore
 
 Valid Unit Test Operations are the following:
 
-- ``start(name)``: Starts a new thread named ``name``
-- ``wait(x)``: Sleep the current thread for x milliseconds
-- ``waitFor(name, suppressError?)``: wait for thread ``name`` to finish executing. If ``suppressError`` is true, ignore any errors coming from that thread, otherwise propagate the errors to the main thread.
+- ``start(target)``: Starts a new thread named ``target``
+
+  - ``target``: The name of the new thread to start
+
+- ``wait(ms)``: Sleep the current thread for ``ms`` milliseconds
+
+  - ``ms``: The number of milliseconds to sleep the current thread for
+
+- ``waitFor(target)``: wait for thread ``target`` to finish executing. Propagate any errors to the main thread.
+
+  - ``target``: The name of the thread to wait for.
+
 - ``returnTo = createPool(options)``: creates and returns a new Connection Pool with the specified options.
 
-  - ``enableConnectionMonitoring`` MUST be set to true, and any connection events MUST be captured.
-  - The returned pool must have an ``id`` properly set as if created by a server. For each test, the pool ``id`` should start at 0, and monotonically increase.
-  - The returned pool must have an ``address`` set as a string value.
+- ``label = object.acquire()``: call ``acquire`` on Pool ``object``, returning the acquired connection
 
-- ``returnTo = object.acquire()``: call ``acquire`` on Pool ``object``, returning the acquired connection
+  - ``label``: If specified, associate this label with the returned connection, so that it may be referenced in later operations
+
 - ``object.release(connection, force?)``: call ``release`` on Pool ``object``, passing in connection and optional force flag
+
+  - ``connection``: A string label identifying which connection to release. Should be a label that was previously set with ``acquire``
+  - ``force``: A boolean indicating whether or not to force-close the connection
+
 - ``object.clear()``: call ``clear`` on Pool ``object``
 - ``object.close()``: call ``close`` on Pool ``object``
-
-Spec Test Context References
-============================
-
-If an any point a value in a test is of the form ``{ $$ref: string[] }``, that value is considered a Context Reference. Context References are resolved by replacing the value with the current value of ``context[...$$ref]``
-
-The definition of RESOLVE in the Spec Test Runner is as follows:
-
-- RESOLVE takes two value, ``context`` and ``unresolved``
-- Notation is ``RESOLVE(context, unresolved)``
-
-Pseudocode implementation of ``RESOLVE(context, unresolved)``:
-
-::
-
-  if unresolved is a JSON array:
-    resolved = []
-    for every idx/value in unresolved:
-      resolved[idx] = RESOLVE(context, value)
-    return resolved
-  else if unresolved is a JSON object:
-    if unresolved["$$ref"] is an array:
-      resolved = context
-      for every value in unresolved:
-        resolved = resolved[value]
-      return resolved
-    else:
-      resolved = {}
-      for every key/value in unresolved:
-        resolved[key] = RESOLVE(context, value)
-      return resolved
-  else:
-    return unresolved
-
-
-Examples: if ``context = { foo: 'bar', fizz: 12, buzz: { spam: 'eggs' } }``
-
-- ``RESOLVE(context, { $$ref: [ "foo" ] })`` equals ``"bar"``
-- ``RESOLVE(context, { $$ref: [ "buzz", "spam" ] })`` equals ``"eggs"``
-- ``RESOLVE(context, { foo: { $$ref : ["fizz"] } })`` equals ``{ foo: 12 }``
 
 Spec Test Match Function
 ========================
@@ -140,39 +108,32 @@ Unit Test Runner:
 
 For the unit tests, the behavior of a Connection is irrelevant beyond the need to asserting ``connection.id`` and ``connection.generation``. Drivers MAY use a mock connection class for testing the pool behavior in unit tests
 
-For each YAML file with ``style: unit``, for each element in ``tests``:
+For each YAML file with ``style: unit``:
 
-- Initialize an empty dictionary ``context``
+- Create two Pool Objects, ``pool1`` and ``pool2``
+
+  - If ``poolOptions`` is specified, use those options to initialize both pools
+  - ``enableConnectionMonitoring`` MUST be set to true, and any connection events MUST be captured.
+  - The returned pool must have an ``id`` properly set as if created by a server. For each test, the pool ``id`` should start at 1, and monotonically increase.
+  - The returned pool must have an ``address`` set as a string value.
+
 - Execute each ``operation`` in ``operations``
 
   - If a ``thread`` is specified, execute in that corresponding thread. Otherwise, execute in the main thread.
-  - If an ``object`` is specified, execute the operation against ``context[object]``
-  - If a ``returnTo`` is specified, set ``context[returnTo]`` to the return value of the operation
-  - If ``args`` are specified:
-
-    - For every ``idx``/``arg`` in ``args``:
-    
-      - ``args[i] = RESOLVE(context, arg)``
-
-    - Pass ``args`` into the operation
+  - If an ``object`` is specified, execute the operation against the specified pool. Otherwise, execute against ``pool1``
 
 - Wait for the main thread to finish executing all of its operations
 - If ``error`` is presented
 
   - Assert that an actual error ``actualError`` was thrown by the main thread
-  - Assert that ``actualError`` MATCHES ``RESOLVE(context, error)``
+  - Assert that ``actualError`` MATCHES ``error``
 
 - Else: 
 
   - Assert that no errors were thrown by the main thread
 
-- ``expectedEvents = []``
-- for every ``idx/value`` in ``events``: 
-
-  - ``expectedEvents[idx] = RESOLVE(context, value)``
-
 - calculate ``actualEvents`` as every Connection Event emitted whose ``type`` is not in ``ignore``
-- if ``expectedEvents`` is not empty, then for every ``idx``/``expectedEvent`` in ``expectedEvents``
+- if ``events`` is not empty, then for every ``idx``/``expectedEvent`` in ``events``
 
   - Assert that ``actualEvents[idx]`` exists
   - Assert that ``actualEvents[idx]`` MATCHES ``expectedEvent``

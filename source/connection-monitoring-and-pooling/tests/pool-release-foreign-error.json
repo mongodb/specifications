@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must throw an error if user attempts to release Connection to a Pool that did not create that Connection",
+  "operations": [
+    {
+      "name": "acquire",
+      "object": "pool1",
+      "label": "conn"
+    },
+    {
+      "name": "release",
+      "object": "pool2",
+      "connection": "conn"
+    }
+  ],
+  "error": {
+    "message": "Attempted to release a connection created by a different pool",
+    "errorType": "poolReleaseForeignConnectionError",
+    "id": 2,
+    "foreignConnectionInfo": {
+      "id": 1,
+      "poolId": 1
+    }
+  }
+}

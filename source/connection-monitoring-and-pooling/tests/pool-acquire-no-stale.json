@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must destroy and must not acquire a stale connection if found while iterating available connections",
+  "poolOptions": {
+    "minPoolSize": 3
+  },
+  "operations": [
+    {
+      "name": "wait",
+      "ms": 20
+    },
+    {
+      "name": "clear"
+    },
+    {
+      "name": "acquire"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolCreated",
+      "pool": {
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionCreated",
+      "connection": {
+        "id": 1,
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionCreated",
+      "connection": {
+        "id": 2,
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionCreated",
+      "connection": {
+        "id": 3,
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionPoolCleared",
+      "pool": {
+        "generation": 1
+      }
+    },
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionDestroyed"
+    },
+    {
+      "type": "connectionDestroyed"
+    },
+    {
+      "type": "connectionDestroyed"
+    },
+    {
+      "type": "connectionCreated",
+      "connection": {
+        "id": 3,
+        "generation": 1
+      }
+    },
+    {
+      "type": "connectionPoolAcquire",
+      "connection": {
+        "id": 3,
+        "generation": 1
+      }
+    }
+  ]
+}

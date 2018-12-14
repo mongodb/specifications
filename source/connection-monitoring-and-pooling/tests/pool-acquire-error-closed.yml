@@ -1,0 +1,24 @@
+version: 1
+style: unit
+description: must throw error if acquire is called on a closed pool
+operations:
+  - name: acquire
+    label: conn1
+  - name: release
+    connection: conn1
+  - name: close
+    object: pool
+  - name: acquire
+error:
+  message: Attempted to acquire a connection from closed connection pool
+  errorType: poolClosedError
+  id: 1
+events:
+  - type: connectionPoolCreated
+  - type: connectionPoolAcquire
+  - type: connectionPoolRelease
+  - type: connectionPoolClosed
+ignore:
+  - connectionCreated
+  - connectionDestroyed
+  - connectionPoolQueueEntered

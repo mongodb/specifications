@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must be able to start a pool with minPoolSize connections",
+  "poolOptions": {
+    "minPoolSize": 5
+  },
+  "operations": [
+    {
+      "name": "wait",
+      "ms": 50
+    },
+    {
+      "name": "acquire"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolCreated",
+      "pool": {
+        "id": 1,
+        "totalConnectionCount": 0
+      }
+    },
+    {
+      "type": "connectionPoolQueueEntered",
+      "pool": {
+        "id": 1,
+        "availableConnectionCount": 5,
+        "totalConnectionCount": 5
+      }
+    },
+    {
+      "type": "connectionPoolAcquire",
+      "pool": {
+        "id": 1,
+        "availableConnectionCount": 4,
+        "totalConnectionCount": 5
+      }
+    }
+  ],
+  "ignore": [
+    "connectionCreated",
+    "connectionDestroyed"
+  ]
+}

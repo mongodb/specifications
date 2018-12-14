@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must destroy released connection if pool has been closed",
+  "operations": [
+    {
+      "name": "acquire",
+      "label": "conn"
+    },
+    {
+      "name": "close"
+    },
+    {
+      "name": "release",
+      "connection": "conn"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolAcquire",
+      "pool": {
+        "id": 1
+      },
+      "connection": {
+        "id": 1
+      }
+    },
+    {
+      "type": "connectionPoolClosed",
+      "pool": {
+        "id": 1
+      }
+    },
+    {
+      "type": "connectionPoolRelease",
+      "pool": {
+        "id": 1,
+        "generation": 0
+      },
+      "connection": {
+        "id": 1,
+        "generation": 0
+      }
+    },
+    {
+      "type": "connectionDestroyed",
+      "pool": {
+        "id": 1
+      },
+      "connection": {
+        "id": 1
+      }
+    }
+  ],
+  "ignore": [
+    "connectionPoolCreated",
+    "connectionCreated",
+    "connectionPoolQueueEntered"
+  ]
+}

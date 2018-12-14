@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must aggressively timeout threads enqueued longer than waitQueueTimeoutMS",
+  "poolOptions": {
+    "maxPoolSize": 1,
+    "waitQueueTimeoutMS": 20
+  },
+  "operations": [
+    {
+      "name": "acquire",
+      "label": "conn0"
+    },
+    {
+      "name": "start",
+      "target": "thread1"
+    },
+    {
+      "name": "acquire",
+      "thread": "thread1"
+    },
+    {
+      "name": "wait",
+      "ms": 40
+    },
+    {
+      "name": "release",
+      "connection": "conn0"
+    },
+    {
+      "name": "waitFor",
+      "target": "thread1"
+    }
+  ],
+  "error": {
+    "message": "Timed out while acquiring a connection from connection pool",
+    "errorType": "waitQueueTimeoutError",
+    "id": 1
+  },
+  "events": [
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolAcquire"
+    },
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolQueueTimeout"
+    },
+    {
+      "type": "connectionPoolRelease"
+    }
+  ],
+  "ignore": [
+    "connectionCreated",
+    "connectionDestroyed",
+    "connectionPoolCreated"
+  ]
+}

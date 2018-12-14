@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must issue Connections to threads in the order that the threads eneterd the queue",
+  "poolOptions": {
+    "maxPoolSize": 1
+  },
+  "operations": [
+    {
+      "name": "acquire",
+      "returnTo": "conn0"
+    },
+    {
+      "name": "start",
+      "target": "thread1"
+    },
+    {
+      "name": "acquire",
+      "thread": "thread1",
+      "label": "conn1"
+    },
+    {
+      "name": "start",
+      "target": "thread2"
+    },
+    {
+      "name": "acquire",
+      "thread": "thread2",
+      "label": "conn2"
+    },
+    {
+      "name": "start",
+      "target": "thread3"
+    },
+    {
+      "name": "acquire",
+      "thread": "thread3",
+      "returnTo": "conn3"
+    },
+    {
+      "name": "start",
+      "target": "thread4"
+    },
+    {
+      "name": "acquire",
+      "thread": "thread4",
+      "returnTo": "conn4"
+    },
+    {
+      "name": "release",
+      "connection": "conn0"
+    },
+    {
+      "name": "waitFor",
+      "target": "thread1"
+    },
+    {
+      "name": "release",
+      "connection": "conn1"
+    },
+    {
+      "name": "waitFor",
+      "target": "thread2"
+    },
+    {
+      "name": "release",
+      "connection": "conn2"
+    },
+    {
+      "name": "waitFor",
+      "target": "thread3"
+    },
+    {
+      "name": "release",
+      "connection": "conn3"
+    },
+    {
+      "name": "waitFor",
+      "target": "thread4"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolAcquire"
+    },
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolQueueEntered"
+    },
+    {
+      "type": "connectionPoolRelease"
+    },
+    {
+      "type": "connectionPoolAcquire"
+    },
+    {
+      "type": "connectionPoolRelease"
+    },
+    {
+      "type": "connectionPoolAcquire"
+    },
+    {
+      "type": "connectionPoolRelease"
+    },
+    {
+      "type": "connectionPoolAcquire"
+    },
+    {
+      "type": "connectionPoolRelease"
+    },
+    {
+      "type": "connectionPoolAcquire"
+    }
+  ],
+  "ignore": [
+    "connectionCreated",
+    "connectionDestroyed",
+    "connectionPoolCreated"
+  ]
+}

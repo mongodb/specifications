@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "When a pool is closed, it MUST first destroy all available connections in that pool",
+  "operations": [
+    {
+      "name": "acquire"
+    },
+    {
+      "name": "acquire",
+      "label": "conn"
+    },
+    {
+      "name": "acquire"
+    },
+    {
+      "name": "release",
+      "connection": "conn"
+    },
+    {
+      "name": "close"
+    }
+  ],
+  "events": [
+    {
+      "type": "connectionPoolRelease",
+      "connection": {
+        "id": 2
+      }
+    },
+    {
+      "type": "connectionDestroyed",
+      "connection": {
+        "id": 2
+      }
+    },
+    {
+      "type": "connectionPoolClosed"
+    }
+  ],
+  "ignore": [
+    "connectionCreated",
+    "connectionPoolCreated",
+    "connectionPoolQueueEntered",
+    "connectionPoolAcquire"
+  ]
+}

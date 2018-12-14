@@ -1,0 +1,32 @@
+version: 1
+style: unit
+description: must destroy released connection if force=true is passed
+operations:
+  - name: createPool
+  - name: acquire
+    label: conn
+  - name: release
+    connection: conn
+    force: true
+events:
+  - type: connectionPoolAcquire
+    pool:
+      id: 1
+    connection:
+      id: 1
+  - type: connectionPoolRelease
+    pool:
+      id: 1
+      generation: 0
+    connection:
+      id: 1
+      generation: 0
+  - type: connectionDestroyed
+    pool:
+      id: 1
+    connection:
+      id: 1
+ignore:
+  - connectionPoolCreated
+  - connectionCreated
+  - connectionPoolQueueEntered
