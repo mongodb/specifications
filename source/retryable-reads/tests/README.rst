@@ -136,15 +136,11 @@ Each YAML file has the following keys:
         
   - ``expectations``: Optional list of command-started events.
     
-Optionally Retryable Commands
+Optional Enumeration Commands
 =============================
 
-If a driver chooses to implement retryability for the optionally retryable
-enumeration commands (e.g. ``client.listDatabases()``,
-``db.listCollections()``), the tests for the enumeration commands should test
-against the same conditions as described in ``find.yml`` and
-``find-serverErrors.yml``.
-
+A driver only needs to test the optional enumeration commands it has chosen to
+implement (e.g. ``Database.listCollectionNames()``).
     
 Replica Set Failover Test
 =========================
