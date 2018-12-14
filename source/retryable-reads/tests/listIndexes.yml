@@ -1,0 +1,62 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
+data: []
+minServerVersion: '4.1.6' # 4.2
+
+tests:
+    -
+        description: "ListIndexes succeeds on first attempt"
+        clientOptions:
+            retryReads: true
+        operation: &retryable_operation
+            name: "listIndexes"
+            object: collection
+            result:
+                error: false
+        expectations:
+            -  &retryable_command_started_event
+                command_started_event:
+                    command:
+                        listIndexes: *collection_name
+                    database_name: *database_name
+    -
+        description: "ListIndexes succeeds on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint: &failCommand_failPoint
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands:
+                        - listIndexes
+                closeConnection: true
+        operation: *retryable_operation                
+        expectations:
+             - *retryable_command_started_event
+    -
+        description: "ListIndexes fails on first attempt"
+        clientOptions:
+            retryReads: false
+        failPoint: *failCommand_failPoint
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
+        expectations:
+             - *retryable_command_started_event 
+    -
+        description: "ListIndexes fails on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }        
+        operation:
+            <<: *retryable_operation
+            result:
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+                
