@@ -8,7 +8,7 @@
   "operations": [
     {
       "name": "acquire",
-      "returnTo": "conn0"
+      "label": "conn0"
     },
     {
       "name": "start",
@@ -35,7 +35,7 @@
     {
       "name": "acquire",
       "thread": "thread3",
-      "returnTo": "conn3"
+      "label": "conn3"
     },
     {
       "name": "start",
@@ -44,7 +44,7 @@
     {
       "name": "acquire",
       "thread": "thread4",
-      "returnTo": "conn4"
+      "label": "conn4"
     },
     {
       "name": "release",

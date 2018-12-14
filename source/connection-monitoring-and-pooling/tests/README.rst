@@ -32,11 +32,13 @@ Unit Test Format:
 
 All Unit Tests have some of the following fields:
 
+- ``poolOptions``: if present, connection pool options to use when creating a pool
+- ``numberOfPools``: The number of pools to create for this test. Defaults to 1
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
   - ``name``: A string describing which operation to issue.
   - ``thread``: The name of the thread in which to run this operation. If not specified, runs in the default thread
-  - ``object``: The object on which to run the pool method. Can be ``pool1`` or ``pool2``. Defaults to ``pool1``
+  - ``object``: The object on which to run the pool method. Can be ``pool1``, ``pool2``, etc. Defaults to ``pool1``
 
 - ``error``: Indicates that the main thread is expected to error during this test. An error may include of the following fields:
 
@@ -110,7 +112,7 @@ For the unit tests, the behavior of a Connection is irrelevant beyond the need t
 
 For each YAML file with ``style: unit``:
 
-- Create two Pool Objects, ``pool1`` and ``pool2``
+- Create ``numberOfPools`` connection pools (defaults to 1)
 
   - If ``poolOptions`` is specified, use those options to initialize both pools
   - ``enableConnectionMonitoring`` MUST be set to true, and any connection events MUST be captured.

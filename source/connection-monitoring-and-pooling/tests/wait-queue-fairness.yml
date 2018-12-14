@@ -6,7 +6,7 @@ poolOptions:
 operations:
     # Acquire sole connection in pool
   - name: acquire
-    returnTo: conn0
+    label: conn0
     # Create 4 threads, have them all queue up for connections
   - name: start
     target: thread1
@@ -22,12 +22,12 @@ operations:
     target: thread3
   - name: acquire
     thread: thread3
-    returnTo: conn3
+    label: conn3
   - name: start
     target: thread4
   - name: acquire
     thread: thread4
-    returnTo: conn4
+    label: conn4
     # From main thread, keep releasing connection and then wait for appropriate thread
     # Test will timeout if threads are not enqueued in proper order
   - name: release

@@ -2,6 +2,7 @@
   "version": 1,
   "style": "unit",
   "description": "must throw an error if user attempts to release Connection to a Pool that did not create that Connection",
+  "numberOfPools": 2,
   "operations": [
     {
       "name": "acquire",
