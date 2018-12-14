@@ -1,0 +1,198 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "files",
+  "data": {
+    "files": [
+      {
+        "_id": {
+          "$oid": "000000000000000000000001"
+        },
+        "length": 1,
+        "chunkSize": 4,
+        "uploadDate": {
+          "$date": "1970-01-01T00:00:00.000Z"
+        },
+        "md5": "47ed733b8d10be225eceba344d533586",
+        "filename": "abc",
+        "contentType": "application/octet-stream",
+        "aliases": [],
+        "metadata": {}
+      }
+    ],
+    "chunks": [
+      {
+        "_id": {
+          "$oid": "000000000000000000000001"
+        },
+        "files_id": {
+          "$oid": "000000000000000000000001"
+        },
+        "n": 0,
+        "data": {
+          "$hex": "11"
+        }
+      }
+    ]
+  },
+  "tests": [
+    {
+      "description": "Download_by_name succeeds on first attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "operation": "download_by_name",
+        "arguments": {
+          "filename": "abc"
+        },
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Download_by_name succeeds on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "operation": "download_by_name",
+        "arguments": {
+          "filename": "abc"
+        },
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Download_by_name fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "operation": "download_by_name",
+        "arguments": {
+          "filename": "abc"
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Download_by_name fails on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "operation": "download_by_name",
+        "arguments": {
+          "filename": "abc"
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}

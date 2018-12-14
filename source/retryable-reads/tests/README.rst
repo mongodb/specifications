@@ -102,8 +102,8 @@ Each YAML file has the following keys:
 - ``database_name`` and ``collection_name``: Optional. The database and collection to use
   for testing.
 
-- ``data``: The data that should exist in the collection under test before each
-  test run.
+- ``data``: The data that should exist in the collection(s) under test before
+  each test run.
 
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:
@@ -141,23 +141,6 @@ Each YAML file has the following keys:
         
   - ``expectations``: Optional list of command-started events.
     
-GridFS Tests
-============
-
-Since the GridFS API is implemented using ``find`` commands, the `File
-Download`_ and `Generic Find on File Collection`_ parts of the GridFS API should
-be retryable under the same conditions that ``find`` is retryable. These
-functions should be tested against the same conditions described in ``find.yml``
-and ``find-ServerErrors.yml``. The tests' setup and expectations can be adapted
-from the "Download by Name when revision is 0" test at
-https://github.com/mongodb/specifications/blob/master/source/gridfs/tests/download_by_name.yml
-and the "Download when there is one chunk" test at
-https://github.com/mongodb/specifications/blob/master/source/gridfs/tests/download.yml.
-
-.. _File Download: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#file-download-by-filename
-
-.. _Generic Find on File Collection:  https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#generic-find-on-files-collection
-
 Optionally Retryable Commands
 =============================
 

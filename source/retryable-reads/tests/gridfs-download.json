@@ -1,0 +1,207 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "files",
+  "data": {
+    "files": [
+      {
+        "_id": {
+          "$oid": "000000000000000000000003"
+        },
+        "length": 2,
+        "chunkSize": 4,
+        "uploadDate": {
+          "$date": "1970-01-01T00:00:00.000Z"
+        },
+        "md5": "c700ed4fdb1d27055aa3faa2c2432283",
+        "filename": "length-2",
+        "contentType": "application/octet-stream",
+        "aliases": [],
+        "metadata": {}
+      }
+    ],
+    "chunks": [
+      {
+        "_id": {
+          "$oid": "000000000000000000000003"
+        },
+        "files_id": {
+          "$oid": "000000000000000000000004"
+        },
+        "n": 0,
+        "data": {
+          "$hex": "11223344"
+        }
+      }
+    ]
+  },
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "Download succeeds on first attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "operation": "download",
+        "arguments": {
+          "id": {
+            "$oid": "000000000000000000000003"
+          }
+        },
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "$oid": "000000000000000000000003"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Download succeeds on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "operation": "download",
+        "arguments": {
+          "id": {
+            "$oid": "000000000000000000000003"
+          }
+        },
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "$oid": "000000000000000000000003"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Download fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "operation": "download",
+        "arguments": {
+          "id": {
+            "$oid": "000000000000000000000003"
+          }
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "$oid": "000000000000000000000003"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Download fails on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "operation": "download",
+        "arguments": {
+          "id": {
+            "$oid": "000000000000000000000003"
+          }
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "$oid": "000000000000000000000003"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "files",
+              "filter": {
+                "$oid": "000000000000000000000003"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}
