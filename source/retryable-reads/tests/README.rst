@@ -110,13 +110,8 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
-  - ``clientOptions``: Optional, parameters to pass to MongoClient().
-
   - ``failPoint``: Optional, a server failpoint to enable expressed as the
     configureFailPoint command to run on the admin database.
-
-  - ``sessionOptions``: Optional, parameters to pass to
-    MongoClient.startSession().
 
   - ``operation``: A document describing an operation to be
     executed. The document has the following fields:
