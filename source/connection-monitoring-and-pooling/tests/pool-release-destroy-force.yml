@@ -2,7 +2,6 @@ version: 1
 style: unit
 description: must destroy released connection if force=true is passed
 operations:
-  - name: createPool
   - name: acquire
     label: conn
   - name: release

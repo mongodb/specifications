@@ -7,7 +7,6 @@ operations:
   - name: release
     connection: conn1
   - name: close
-    object: pool
   - name: acquire
 error:
   message: Attempted to acquire a connection from closed connection pool

@@ -35,7 +35,7 @@ events:
     pool:
       id: 1
     connection:
-      id: 2
+      id: 3
 ignore:
   - connectionCreated
   - connectionPoolCreated

@@ -13,7 +13,7 @@ operations:
 events:
   - type: connectionPoolCreated
     pool:
-      id: 0
+      id: 1
     options:
       maxPoolSize: 50
       minPoolSize: 5

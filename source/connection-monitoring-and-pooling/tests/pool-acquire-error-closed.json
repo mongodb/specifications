@@ -12,8 +12,7 @@
       "connection": "conn1"
     },
     {
-      "name": "close",
-      "object": "pool"
+      "name": "close"
     },
     {
       "name": "acquire"

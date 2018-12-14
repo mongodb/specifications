@@ -19,7 +19,7 @@
     {
       "type": "connectionPoolCreated",
       "pool": {
-        "id": 0
+        "id": 1
       },
       "options": {
         "maxPoolSize": 50,

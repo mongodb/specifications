@@ -36,9 +36,9 @@ events:
   - type: connectionDestroyed
   - type: connectionCreated
     connection:
-      id: 3
+      id: 4
       generation: 1
   - type: connectionPoolAcquire
     connection:
-      id: 3
+      id: 4
       generation: 1
