@@ -85,11 +85,11 @@ Pseudocode implementation of ``RESOLVE(context, unresolved)``:
 
   if unresolved is a JSON array:
     resolved = []
-    for every idk/value in unresolved:
+    for every idx/value in unresolved:
       resolved[idx] = RESOLVE(context, value)
     return resolved
   else if unresolved is a JSON object:
-    if unresolved["$$ref""] is an array:
+    if unresolved["$$ref"] is an array:
       resolved = context
       for every value in unresolved:
         resolved = resolved[value]
@@ -172,10 +172,10 @@ For each YAML file with ``style: unit``, for each element in ``tests``:
   - ``expectedEvents[idx] = RESOLVE(context, value)``
 
 - calculate ``actualEvents`` as every Connection Event emitted whose ``type`` is not in ``ignore``
-- if ``expectedEvents`` is not empty, then for every (``expectedEvent``, ``i``) in ``expectedEvents``
+- if ``expectedEvents`` is not empty, then for every ``idx``/``expectedEvent`` in ``expectedEvents``
 
-  - Assert that ``actualEvents[i]`` exists
-  - Assert that ``actualEvents[i]`` MATCHES ``expectedEvent``
+  - Assert that ``actualEvents[idx]`` exists
+  - Assert that ``actualEvents[idx]`` MATCHES ``expectedEvent``
 
 
 Prose Tests
@@ -186,4 +186,4 @@ The following tests have not yet been automated, but MUST still be tested
 #. All ConnectionPoolOptions MUST be specified at the MongoClient level
 #. All ConnectionPoolOptions MUST be the same for all pools created by a MongoClient
 #. A user MUST be able to specify all ConnectionPoolOptions via a URI string
-#. A user MUST be able to subscribve to Connection Monitoring Events in a manner idiomatic to their language and driver when ``enableConnectionMonitoring`` is true
+#. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver when ``enableConnectionMonitoring`` is true
