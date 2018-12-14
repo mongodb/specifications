@@ -138,23 +138,8 @@ Each YAML file has the following keys:
       one or more of the following fields:
 
       - ``error``: Optional. If ``true``, the test should expect an error or
-        exception. Implicitly true if ``result`` contains ``errorContains``,
-        ``errorCodeName``, ``errorLabelsContain``, and/or
-        ``errorLabelsOmit``. If ``false``, the test should expect no error or
-        exception, even if ``result`` contains ``errorContains``,
-        ``errorCodeName``, ``errorLabelsContain``, and/or ``errorLabelsOmit``.
-
-      - ``errorContains``: Optional. A substring of the expected error message.
-
-      - ``errorCodeName``: Optional. The expected "codeName" field in the server
-        error response.
-
-      - ``errorLabelsContain``: Optional. A list of error label strings that the
-        error is expected to have.
-
-      - ``errorLabelsOmit``: Optional. A list of error label strings that the
-        error is expected not to have.
-
+        exception.
+        
   - ``expectations``: Optional list of command-started events.
 
 MapReduce Tests
