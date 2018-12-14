@@ -1,0 +1,978 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    }
+  ],
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "MapReduce succeeds after InterruptedAtShutdown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 11600
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after InterruptedDueToStepDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 11602
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after NotMaster",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after NotMasterNoSlaveOk",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 13435
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after NotMasterOrSecondary",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 13436
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after PrimarySteppedDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 189
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after ShutdownInProgress",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 91
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after HostNotFound",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 7
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after HostUnreachable",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 6
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after NetworkTimeout",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 89
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce succeeds after SocketException",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 9001
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": "function inc() { return emit(0, this.x + 1) }",
+          "reduce": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }",
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ]
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}

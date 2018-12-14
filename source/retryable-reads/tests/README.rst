@@ -140,19 +140,6 @@ Each YAML file has the following keys:
         exception.
         
   - ``expectations``: Optional list of command-started events.
-
-MapReduce Tests
-===============
-
-Drivers MUST ensure that ``mapReduce`` is retried only when ``out: { inline:
-1}``.  The tests for ``mapReduce`` should test against the same conditions as
-described in ``aggregate.yml`` and ``aggregate-serverErrors.yml``, with the
-exception that ``mapReduce`` MUST not retry when the `out` stage is not
-``{inline: 1}``.
-
-A recommended data set would be three documents that contain values for x such
-that ``x:0``, ``x:1`` and ``x:2``. The map function should increment each of
-these values by one, and the reduce function should add all x's together.
     
 GridFS Tests
 ============
