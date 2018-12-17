@@ -121,9 +121,6 @@ Each YAML file has the following keys:
     - ``object``: The name of the object to perform the operation on. Can be
       "database", "collection", or "client."
 
-    - ``collectionOptions``: Optional, parameters to pass to the Collection()
-      used for this operation.
-
     - ``arguments``: Optional, the names and values of arguments.
 
     - ``result``: Optional. The return value from the operation, if any. This
