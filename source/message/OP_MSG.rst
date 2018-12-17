@@ -244,8 +244,17 @@ is prepared to handle multiple replies (using the ``moreToCome`` bit) to this
 request. The server will never produce replies with the ``moreToCome`` bit set
 unless the request has the ``exhaustAllowed`` bit set.
 
-Setting ``exhaustAllowed`` flag on a request does not guarantee that the
-responses will have the ``moreToCome`` flag set.
+Setting the ``exhaustAllowed`` bit on a request does not guarantee that the
+responses will have the ``moreToCome`` bit set.
+
+MongoDB server only handles the ``exhaustAllowed`` bit on the following
+operations. A driver MUST NOT set the ``exhaustAllowed`` bit on other operations.
+
+============== ============================================================ 
+Operation      Minimum MongoDB Version
+============== ============================================================ 
+getMore        4.2
+============== ============================================================ 
 
 
 .. This RST artwork improves the readability of the rendered document
