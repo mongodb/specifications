@@ -57,7 +57,7 @@ Each YAML file has the following keys:
       operation.
 
     - ``error`` (optional): If ``true``, the test should expect the operation
-      to emit an an error or exception. If ``false`` or omitted, drivers MUST
+      to emit an error or exception. If ``false`` or omitted, drivers MUST
       assert that no error occurred.
 
     - ``result`` (optional): The return value from the operation. This will
