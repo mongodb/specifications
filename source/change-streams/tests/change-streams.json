@@ -570,8 +570,8 @@
       }
     },
     {
-      "description": "Test drop, rename, and invalidate event types",
-      "minServerVersion": "4.0.0",
+      "description": "Test rename and invalidate event types",
+      "minServerVersion": "4.0.1",
       "target": "collection",
       "topology": [
         "replicaset"
@@ -585,22 +585,6 @@
           "name": "rename",
           "arguments": {
             "to": "test2"
-          }
-        },
-        {
-          "database": "change-stream-tests",
-          "collection": "test2",
-          "name": "drop",
-          "arguments": null
-        },
-        {
-          "database": "change-stream-tests",
-          "collection": "test2",
-          "name": "insertOne",
-          "arguments": {
-            "document": {
-              "x": 1
-            }
           }
         }
       ],
@@ -634,6 +618,57 @@
             "to": {
               "db": "change-stream-tests",
               "coll": "test2"
+            }
+          },
+          {
+            "operationType": "invalidate"
+          }
+        ]
+      }
+    },
+    {
+      "description": "Test drop and invalidate event types",
+      "minServerVersion": "4.0.1",
+      "target": "collection",
+      "topology": [
+        "replicaset"
+      ],
+      "changeStreamPipeline": [],
+      "changeStreamOptions": {},
+      "operations": [
+        {
+          "database": "change-stream-tests",
+          "collection": "test",
+          "name": "drop",
+          "arguments": null
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
+          }
+        }
+      ],
+      "result": {
+        "success": [
+          {
+            "operationType": "drop",
+            "ns": {
+              "db": "change-stream-tests",
+              "coll": "test"
             }
           },
           {

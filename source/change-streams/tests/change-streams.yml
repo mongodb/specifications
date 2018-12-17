@@ -384,8 +384,8 @@ tests:
             db: *database_name
             coll: *collection_name
   -
-    description: Test drop, rename, and invalidate event types
-    minServerVersion: "4.0.0"
+    description: Test rename and invalidate event types
+    minServerVersion: "4.0.1"
     target: collection
     topology:
       - replicaset
@@ -398,18 +398,6 @@ tests:
         name: rename
         arguments:
           to: *collection2_name
-      -
-        database: *database_name
-        collection: *collection2_name
-        name: drop
-        arguments:
-      -
-        database: *database_name
-        collection: *collection2_name
-        name: insertOne
-        arguments:
-          document:
-            x: 1
     expectations:
       -
         command_started_event:
@@ -432,5 +420,40 @@ tests:
           to:
             db: *database_name
             coll: *collection2_name
+        -
+          operationType: invalidate
+  -
+    description: Test drop and invalidate event types
+    minServerVersion: "4.0.1"
+    target: collection
+    topology:
+      - replicaset
+    changeStreamPipeline: []
+    changeStreamOptions: {}
+    operations:
+      -
+        database: *database_name
+        collection: *collection_name
+        name: drop
+        arguments:
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            cursor: {}
+            pipeline:
+              -
+                $changeStream:
+                  fullDocument: default
+          command_name: aggregate
+          database_name: *database_name
+    result:
+      success:
+        -
+          operationType: drop
+          ns:
+            db: *database_name
+            coll: *collection_name
         -
           operationType: invalidate
