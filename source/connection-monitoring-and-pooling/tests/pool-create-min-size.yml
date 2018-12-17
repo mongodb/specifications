@@ -13,16 +13,16 @@ events:
       id: 1
       totalConnectionCount: 0
   # Ensaures that by the time pool is closed, there are at least 5 connections
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquisitionStarted
     pool:
       id: 1
       availableConnectionCount: 5
       totalConnectionCount: 5
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     pool:
       id: 1
       availableConnectionCount: 4
       totalConnectionCount: 5
 ignore:
   - connectionCreated
-  - connectionDestroyed
+  - connectionClosed

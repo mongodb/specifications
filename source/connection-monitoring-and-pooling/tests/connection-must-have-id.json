@@ -12,7 +12,7 @@
   ],
   "events": [
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
       "type": "connectionCreated",
@@ -21,13 +21,13 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "connection": {
         "id": 42
       }
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
       "type": "connectionCreated",
@@ -36,7 +36,7 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "connection": {
         "id": 42
       }

@@ -8,24 +8,25 @@ operations:
     connection: conn
     force: true
 events:
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     pool:
       id: 1
     connection:
       id: 1
-  - type: connectionPoolRelease
+  - type: connectionReleased
     pool:
       id: 1
       generation: 0
     connection:
       id: 1
       generation: 0
-  - type: connectionDestroyed
+  - type: connectionClosed
     pool:
       id: 1
     connection:
       id: 1
+    reason: force
 ignore:
   - connectionPoolCreated
   - connectionCreated
-  - connectionPoolQueueEntered
+  - connectionAcquisitionStarted

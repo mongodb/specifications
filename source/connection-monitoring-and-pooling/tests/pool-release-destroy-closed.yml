@@ -8,7 +8,7 @@ operations:
   - name: release
     connection: conn
 events:
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     pool:
       id: 1
     connection:
@@ -16,19 +16,20 @@ events:
   - type: connectionPoolClosed
     pool:
       id: 1
-  - type: connectionPoolRelease
+  - type: connectionReleased
     pool:
       id: 1
       generation: 0
     connection:
       id: 1
       generation: 0
-  - type: connectionDestroyed
+  - type: connectionClosed
     pool:
       id: 1
     connection:
       id: 1
+    reason: poolClosed
 ignore:
   - connectionPoolCreated
   - connectionCreated
-  - connectionPoolQueueEntered
+  - connectionAcquisitionStarted

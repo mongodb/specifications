@@ -5,18 +5,18 @@ operations:
   - name: acquire
   - name: acquire
 events:
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquisitionStarted
   - type: connectionCreated
     connection:
       id: 42
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     connection:
       id: 42
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquisitionStarted
   - type: connectionCreated
     connection:
       id: 42
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     connection:
       id: 42
 ignore:

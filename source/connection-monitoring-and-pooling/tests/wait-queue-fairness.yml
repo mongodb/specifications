@@ -47,21 +47,21 @@ operations:
   - name: waitFor
     target: thread4
 events:
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolAcquire
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolRelease
-  - type: connectionPoolAcquire
-  - type: connectionPoolRelease
-  - type: connectionPoolAcquire
-  - type: connectionPoolRelease
-  - type: connectionPoolAcquire
-  - type: connectionPoolRelease
-  - type: connectionPoolAcquire
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquired
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquisitionStarted
+  - type: connectionReleased
+  - type: connectionAcquired
+  - type: connectionReleased
+  - type: connectionAcquired
+  - type: connectionReleased
+  - type: connectionAcquired
+  - type: connectionReleased
+  - type: connectionAcquired
 ignore:
   - connectionCreated
-  - connectionDestroyed
+  - connectionClosed
   - connectionPoolCreated

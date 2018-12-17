@@ -26,12 +26,13 @@ error:
   errorType: waitQueueTimeoutError
   id: 1
 events:
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolAcquire
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolQueueTimeout
-  - type: connectionPoolRelease
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquired
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquisitionFailed
+    reason: timeout
+  - type: connectionReleased
 ignore:
   - connectionCreated
-  - connectionDestroyed
+  - connectionClosed
   - connectionPoolCreated

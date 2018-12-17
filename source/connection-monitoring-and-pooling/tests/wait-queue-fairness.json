@@ -81,51 +81,51 @@
   ],
   "events": [
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionReleased"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionReleased"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionReleased"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionReleased"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     }
   ],
   "ignore": [
     "connectionCreated",
-    "connectionDestroyed",
+    "connectionClosed",
     "connectionPoolCreated"
   ]
 }

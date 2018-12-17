@@ -23,7 +23,7 @@
       }
     },
     {
-      "type": "connectionPoolQueueEntered",
+      "type": "connectionAcquisitionStarted",
       "pool": {
         "id": 1,
         "availableConnectionCount": 5,
@@ -31,7 +31,7 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "pool": {
         "id": 1,
         "availableConnectionCount": 4,
@@ -41,6 +41,6 @@
   ],
   "ignore": [
     "connectionCreated",
-    "connectionDestroyed"
+    "connectionClosed"
   ]
 }

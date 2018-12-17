@@ -20,7 +20,7 @@
       "type": "connectionPoolCreated"
     },
     {
-      "type": "connectionPoolQueueEntered",
+      "type": "connectionAcquisitionStarted",
       "pool": {
         "totalConnectionCount": 0
       }
@@ -29,7 +29,7 @@
       "type": "connectionCreated"
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "pool": {
         "totalConnectionCount": 1
       }
@@ -41,13 +41,14 @@
       }
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionReleased"
     },
     {
-      "type": "connectionDestroyed",
+      "type": "connectionClosed",
       "pool": {
         "totalConnectionCount": 0
-      }
+      },
+      "reason": "stale"
     }
   ]
 }

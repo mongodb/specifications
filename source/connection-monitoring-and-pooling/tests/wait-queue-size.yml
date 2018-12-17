@@ -26,11 +26,13 @@ error:
   errorType: waitQueueFullError
   id: 1
 events:
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolAcquire
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolQueueFull
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquired
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquisitionFailed
+    reason: queueFull
 ignore:
   - connectionCreated
-  - connectionDestroyed
+  - connectionClosed
   - connectionPoolCreated

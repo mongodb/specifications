@@ -9,18 +9,19 @@ operations:
     connection: conn
 events:
   - type: connectionPoolCreated
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquisitionStarted
     pool:
       totalConnectionCount: 0
   - type: connectionCreated
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     pool:
       totalConnectionCount: 1
   - type: connectionPoolCleared
     pool:
       totalConnectionCount: 1
-  - type: connectionPoolRelease
-  - type: connectionDestroyed
+  - type: connectionReleased
+  - type: connectionClosed
     pool:
       totalConnectionCount: 0
+    reason: stale
       

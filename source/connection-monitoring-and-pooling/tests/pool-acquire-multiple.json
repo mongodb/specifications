@@ -42,7 +42,7 @@
   ],
   "events": [
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "pool": {
         "id": 1
       },
@@ -51,7 +51,7 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "pool": {
         "id": 1
       },
@@ -60,7 +60,7 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "pool": {
         "id": 1
       },
@@ -72,6 +72,6 @@
   "ignore": [
     "connectionCreated",
     "connectionPoolCreated",
-    "connectionPoolQueueEntered"
+    "connectionAcquisitionStarted"
   ]
 }

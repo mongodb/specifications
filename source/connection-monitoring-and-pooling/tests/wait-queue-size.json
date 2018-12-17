@@ -42,21 +42,25 @@
   },
   "events": [
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolQueueFull"
+      "type": "connectionAcquisitionStarted"
+    },
+    {
+      "type": "connectionAcquisitionFailed",
+      "reason": "queueFull"
     }
   ],
   "ignore": [
     "connectionCreated",
-    "connectionDestroyed",
+    "connectionClosed",
     "connectionPoolCreated"
   ]
 }

@@ -45,7 +45,7 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "connection": {
         "id": 1,
         "generation": 2
@@ -61,7 +61,7 @@
       }
     },
     {
-      "type": "connectionPoolRelease",
+      "type": "connectionReleased",
       "connection": {
         "id": 1,
         "generation": 2
@@ -72,7 +72,7 @@
     }
   ],
   "ignore": [
-    "connectionPoolQueueEntered",
+    "connectionAcquisitionStarted",
     "connectionPoolCreated",
     "connectionPoolDestroyed"
   ]

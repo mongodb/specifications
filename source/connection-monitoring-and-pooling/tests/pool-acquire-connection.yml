@@ -4,10 +4,10 @@ description: must be able to acquire a connection
 operations:
   - name: acquire
 events:
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquisitionStarted
     pool:
       id: 1
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     pool:
       id: 1
     connection:

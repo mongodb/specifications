@@ -22,18 +22,18 @@ operations:
     target: thread1
 events:
   - type: connectionPoolCreated
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquisitionStarted
   - type: connectionCreated
-  - type: connectionPoolAcquire
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquired
+  - type: connectionAcquisitionStarted
   - type: connectionCreated
-  - type: connectionPoolAcquire
-  - type: connectionPoolQueueEntered
+  - type: connectionAcquired
+  - type: connectionAcquisitionStarted
   - type: connectionCreated
-  - type: connectionPoolAcquire
-  - type: connectionPoolRelease
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolAcquire  
-  - type: connectionPoolQueueEntered
-  - type: connectionPoolRelease
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
+  - type: connectionReleased
+  - type: connectionAcquisitionStarted
+  - type: connectionAcquired  
+  - type: connectionAcquisitionStarted
+  - type: connectionReleased
+  - type: connectionAcquired

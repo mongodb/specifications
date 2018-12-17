@@ -52,16 +52,19 @@
       }
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionDestroyed"
+      "type": "connectionClosed",
+      "reason": "stale"
     },
     {
-      "type": "connectionDestroyed"
+      "type": "connectionClosed",
+      "reason": "stale"
     },
     {
-      "type": "connectionDestroyed"
+      "type": "connectionClosed",
+      "reason": "stale"
     },
     {
       "type": "connectionCreated",
@@ -71,7 +74,7 @@
       }
     },
     {
-      "type": "connectionPoolAcquire",
+      "type": "connectionAcquired",
       "connection": {
         "id": 4,
         "generation": 1

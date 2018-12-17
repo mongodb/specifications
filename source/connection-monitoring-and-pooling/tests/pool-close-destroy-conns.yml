@@ -10,16 +10,17 @@ operations:
     connection: conn
   - name: close
 events:
-  - type: connectionPoolRelease
+  - type: connectionReleased
     connection:
       id: 2
-  - type: connectionDestroyed
+  - type: connectionClosed
     connection:
       id: 2
+    reason: poolClosed
   - type: connectionPoolClosed
 ignore:
   - connectionCreated
   - connectionPoolCreated
-  - connectionPoolQueueEntered
-  - connectionPoolAcquire
+  - connectionAcquisitionStarted
+  - connectionAcquired
         

@@ -28,10 +28,10 @@
       "type": "connectionPoolCreated"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionReleased"
     },
     {
       "type": "connectionPoolClosed"
@@ -39,7 +39,7 @@
   ],
   "ignore": [
     "connectionCreated",
-    "connectionDestroyed",
-    "connectionPoolQueueEntered"
+    "connectionClosed",
+    "connectionAcquisitionStarted"
   ]
 }

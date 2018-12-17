@@ -26,7 +26,7 @@ events:
       generation: 2
     pool:
       generation: 2
-  - type: connectionPoolAcquire
+  - type: connectionAcquired
     connection:
       id: 1
       generation: 2
@@ -35,13 +35,13 @@ events:
   - type: connectionPoolCleared
     pool:
       generation: 3
-  - type: connectionPoolRelease
+  - type: connectionReleased
     connection:
       id: 1
       generation: 2
     pool:
       generation: 3
 ignore:
-  - connectionPoolQueueEntered
+  - connectionAcquisitionStarted
   - connectionPoolCreated
   - connectionPoolDestroyed

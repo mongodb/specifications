@@ -14,10 +14,10 @@ error:
   id: 1
 events:
   - type: connectionPoolCreated
-  - type: connectionPoolAcquire
-  - type: connectionPoolRelease
+  - type: connectionAcquired
+  - type: connectionReleased
   - type: connectionPoolClosed
 ignore:
   - connectionCreated
-  - connectionDestroyed
-  - connectionPoolQueueEntered
+  - connectionClosed
+  - connectionAcquisitionStarted

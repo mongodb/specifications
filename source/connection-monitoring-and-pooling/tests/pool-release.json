@@ -14,7 +14,7 @@
   ],
   "events": [
     {
-      "type": "connectionPoolRelease",
+      "type": "connectionReleased",
       "pool": {
         "id": 42
       },
@@ -26,8 +26,8 @@
   "ignore": [
     "connectionPoolCreated",
     "connectionCreated",
-    "connectionDestroyed",
-    "connectionPoolQueueEntered",
-    "connectionPoolAcquire"
+    "connectionClosed",
+    "connectionAcquisitionStarted",
+    "connectionAcquired"
   ]
 }

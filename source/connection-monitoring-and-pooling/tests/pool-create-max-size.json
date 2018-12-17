@@ -46,49 +46,49 @@
       "type": "connectionPoolCreated"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
       "type": "connectionCreated"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolQueueEntered"
-    },
-    {
-      "type": "connectionCreated"
-    },
-    {
-      "type": "connectionPoolAcquire"
-    },
-    {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionAcquisitionStarted"
     },
     {
       "type": "connectionCreated"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionCreated"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
     },
     {
-      "type": "connectionPoolQueueEntered"
+      "type": "connectionReleased"
     },
     {
-      "type": "connectionPoolRelease"
+      "type": "connectionAcquisitionStarted"
     },
     {
-      "type": "connectionPoolAcquire"
+      "type": "connectionAcquired"
+    },
+    {
+      "type": "connectionAcquisitionStarted"
+    },
+    {
+      "type": "connectionReleased"
+    },
+    {
+      "type": "connectionAcquired"
     }
   ]
 }
