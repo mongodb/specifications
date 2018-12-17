@@ -1,0 +1,459 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [],
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "ListCollectionNames succeeds after InterruptedAtShutdown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 11600
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after InterruptedDueToStepDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 11602
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after NotMaster",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after NotMasterNoSlaveOk",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 13435
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after NotMasterOrSecondary",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 13436
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after PrimarySteppedDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 189
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after ShutdownInProgress",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 91
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after HostNotFound",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 7
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after HostUnreachable",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 6
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after NetworkTimeout",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 89
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionNames succeeds after SocketException",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 9001
+        }
+      },
+      "operation": {
+        "name": "listCollectionNames",
+        "object": "database",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": "retryable-reads-tests"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

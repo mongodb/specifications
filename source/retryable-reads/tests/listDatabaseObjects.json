@@ -1,0 +1,139 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [],
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "ListDatabaseObjects succeeds on first attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "name": "listDatabaseObjects",
+        "object": "client",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "listDatabaseObjects",
+        "object": "client",
+        "result": {
+          "error": false
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "listDatabaseObjects",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects fails on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "listDatabaseObjects",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
