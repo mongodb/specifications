@@ -115,7 +115,8 @@
       "valid": true,
       "warning": true,
       "hosts": null,
-      "auth": null
+      "auth": null,
+      "options": {}
     }
   ]
 }
