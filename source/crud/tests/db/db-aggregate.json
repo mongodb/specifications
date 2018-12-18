@@ -1,11 +1,12 @@
 {
+  "database_name": "admin",
   "data": [],
   "tests": [
     {
       "description": "Aggregate with $currentOp",
       "operation": {
         "name": "db-aggregate",
-        "database_name": "admin",
+        "object": "database",
         "arguments": {
           "pipeline": [
             {
@@ -75,7 +76,7 @@
       "description": "Aggregate with $currentOp and allowDiskUse",
       "operation": {
         "name": "db-aggregate",
-        "database_name": "admin",
+        "object": "database",
         "arguments": {
           "pipeline": [
             {

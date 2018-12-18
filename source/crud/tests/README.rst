@@ -35,6 +35,8 @@ Format
 
 Each YAML file has the following keys:
 
+- ``database_name`` (optional): The database to use for testing.
+
 - ``data``: The data that should exist in the collection under test before each
   test run.
 
@@ -57,6 +59,9 @@ Each YAML file has the following keys:
 
     - ``name``: The name of the operation as defined in the specification. The
       name `db-aggregate` refers to database-level aggregation.
+
+    - ``object``: The name of the object to perform the operation on. Can be
+      "database" or "collection". Defaults to "collection" if undefined.
 
     - ``database_name`` (optional): The name of the database against which to execute the operation.
 

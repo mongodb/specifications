@@ -1,3 +1,5 @@
+database_name: &database_name "admin"
+
 data: []
 
 tests:
@@ -5,7 +7,7 @@ tests:
         description: "Aggregate with $currentOp"
         operation:
             name: db-aggregate
-            database_name: admin
+            object: database
             arguments:
                 pipeline:
                   - $currentOp: {allUsers: false, idleConnections: false}
@@ -32,7 +34,7 @@ tests:
         description: "Aggregate with $currentOp and allowDiskUse"
         operation:
             name: db-aggregate
-            database_name: admin
+            object: database
             arguments:
                 pipeline:
                   - $currentOp: {allUsers: true, idleConnections: true}
