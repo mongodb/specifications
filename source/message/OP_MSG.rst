@@ -175,9 +175,14 @@ Bit   Name                 Request   Response   Description
 ----- -------------------- --------- ---------- --------------------------- 
 0     checksumPresent         x         x       Checksum present
 ----- -------------------- --------- ---------- --------------------------- 
-1     moreToCome              x                 Sender will send another
+1     moreToCome              x         x       Sender will send another
                                                 message and is not prepared
                                                 for overlapping messages
+----- -------------------- --------- ---------- --------------------------- 
+16    exhaustAllowed          x                 Client is prepared for
+                                                multiple replies (using the
+                                                moreToCome bit) to this
+                                                request
 ===== ==================== ========= ========== =========================== 
 
 
@@ -192,7 +197,11 @@ moreToCome
 
 The ``OP_MSG`` message is essentially a request-response protocol, one message
 per turn. However, setting the ``moreToCome`` flag indicates to the recipient that
-the sender is not ready to give up his turn and will send another message.
+the sender is not ready to give up its turn and will send another message.
+
+
+moreToCome On Requests
+~~~~~~~~~~~~~~~~~~~~~~
 
 When the ``moreToCome`` flag is set on a request it signals to the recipient that
 the sender does not want to know the outcome of the message. There is no
@@ -205,6 +214,47 @@ discovers that it is no longer primary, then the server will close the
 connection. All other errors during processing will be silently dropped, and
 will not result in the connection being closed.
 
+
+moreToCome On Responses
+~~~~~~~~~~~~~~~~~~~~~~~
+
+When the ``moreToCome`` flag is set on a response it signals to the recipient
+that the sender will send additional responses on the connection. The recipient
+MUST continue to read responses until it reads a response with the ``moreToCome``
+flag not set, and MUST NOT send any more requests on this connection until
+it reads a response with the ``moreToCome`` flag not set. The client MUST
+either consume all messages with the ``moreToCome`` flag set or close the connection.
+
+When the server sends responses with the ``moreToCome`` flag set,
+each of these responses will have a unique ``messageId``, and the
+``responseTo`` field of every follow-up response will be the ``messageId`` of
+the previous response.
+
+The client MUST be prepared to receive a response without ``moreToCome`` set
+prior to completing iteration of a cursor, even if an earlier response for
+the same cursor had the ``moreToCome`` flag set. To continue iterating such a cursor,
+the client MUST issue an explicit ``getMore`` request.
+
+
+exhaustAllowed
+~~~~~~~~~~~~~~
+
+Setting this flag on a request indicates to the recipient that the sender
+is prepared to handle multiple replies (using the ``moreToCome`` bit) to this
+request. The server will never produce replies with the ``moreToCome`` bit set
+unless the request has the ``exhaustAllowed`` bit set.
+
+Setting the ``exhaustAllowed`` bit on a request does not guarantee that the
+responses will have the ``moreToCome`` bit set.
+
+MongoDB server only handles the ``exhaustAllowed`` bit on the following
+operations. A driver MUST NOT set the ``exhaustAllowed`` bit on other operations.
+
+============== ============================================================ 
+Operation      Minimum MongoDB Version
+============== ============================================================ 
+getMore        4.2
+============== ============================================================ 
 
 
 .. This RST artwork improves the readability of the rendered document
@@ -522,8 +572,6 @@ Future Work
 
 In the near future, this opcode is expected to be extended and include support for:
 
-* exhausting docs (reading documents from the server without getmore) with
-  ``moreToCome``
 * Message checksum (crc32c)
 * Output document sequences
 * Similarly, certain commands will reply to messages using this technique when
@@ -557,12 +605,6 @@ Q & A
      will pickup on next time it uses the connection. This means at least one
      unacknowledged write operation will be lost as the client does not
      discover the failover until next time the socket is used.
-* Will the ``moreToCome`` flag ever be used for responses?
-  The ``moreToCome`` flag will also be sent on response, where the sender signals to
-  the recipient that more messages are coming and the recipient must wait its
-  turn until all messages have arrived (e.g. ``moreToCome`` no longer set). This
-  in practice achieves "exhaust" functionality.  Note that MongoDB 3.6 does not
-  currently implement this flag on responses, but may in the future.
 * Should we provide ``runMoreToComeCommand()`` helpers?
   Since the protocol allows any command to be tagged with ``moreToCome``, effectively
   allowing any operation to become ``fire & forget``, it might be a good idea
