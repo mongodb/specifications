@@ -19,8 +19,6 @@ tests:
         operation: &retryable_operation
             name: estimatedDocumentCount
             object: collection
-            arguments:
-                filter: { }
             result: 2
         expectations:
             - &retryable_command_started_event

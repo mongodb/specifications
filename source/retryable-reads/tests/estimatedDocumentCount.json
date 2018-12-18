@@ -21,9 +21,6 @@
       "operation": {
         "name": "estimatedDocumentCount",
         "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
         "result": 2
       },
       "expectations": [
@@ -57,9 +54,6 @@
       "operation": {
         "name": "estimatedDocumentCount",
         "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
         "result": 2
       },
       "expectations": [
@@ -101,9 +95,6 @@
       "operation": {
         "name": "estimatedDocumentCount",
         "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
         "result": {
           "error": true
         }
@@ -139,9 +130,6 @@
       "operation": {
         "name": "estimatedDocumentCount",
         "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
         "result": {
           "error": true
         }
