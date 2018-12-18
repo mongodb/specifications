@@ -21,7 +21,10 @@ Find, getMore and killCursors commands.
 Abstract
 ========
 
-The Find, GetMore and KillCursors commands in MongoDB 3.2 or later replace the use of the legacy OP_QUERY, OP_GET_MORE and OP_KILL_CURSORS wire protocol messages. This specification lays out how drivers should interact with the new commands when compared to the legacy wire protocol level messages.
+The Find, GetMore and KillCursors commands in MongoDB 3.2 or later replace
+the use of the legacy OP_QUERY, OP_GET_MORE and OP_KILL_CURSORS wire protocol
+messages. This specification lays out how drivers should interact with the new
+commands when compared to the legacy wire protocol level messages.
 
 Definitions
 ===========
@@ -335,14 +338,21 @@ Any driver that provides helpers for any of the special collections below SHOULD
 Exhaust
 ^^^^^^^
 
-The **find** command does not support the exhaust flag from **OP_QUERY**. Drivers that support exhaust MUST fallback to existing **OP_QUERY** wire protocol messages.
+The **find** command does not support the exhaust flag from **OP_QUERY**.
+Drivers that support exhaust MUST fallback to existing **OP_QUERY** wire
+protocol messages.
 
 Interactions with OP_QUERY
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When sending a find operation as a find command rather than a legacy **OP_QUERY** find only the **slaveOk** flag is honored of the flags available in the **flag** field on the wire protocol.
+When sending a find operation as a find command rather than a legacy
+**OP_QUERY** find only the **slaveOk** flag is honored of the flags available
+in the **flag** field on the wire protocol.
 
-For the **find**, **getMore** and **killCursors** commands the **numberToReturn** field SHOULD be -1. To execute **find** commands against a secondary the driver MUST set the **slaveOk** bit for the **find** command to successfully execute.
+For the **find**, **getMore** and **killCursors** commands the
+**numberToReturn** field SHOULD be -1. To execute **find** commands against
+a secondary the driver MUST set the **slaveOk** bit for the **find** command
+to successfully execute.
 
 The **slaveOk** flag SHOULD not be set for all follow-up **getMore** and **killCursors** commands. The cursor on the server keeps the original **slaveOk** value first set on the **find** command.
 
@@ -455,7 +465,10 @@ In the case of **a tailable cursor with awaitData == true** the driver MUST prov
 getMore
 -------
 
-The **getMore** command replaces the **OP_GET_MORE** wire protocol message. The query flags passed to OP_QUERY for a getMore command MUST be slave_ok=True when sent to a secondary. The OP_QUERY namespace MUST be the same as for the **find** and **killCursors** commands. The command takes the following object.
+The **getMore** command replaces the **OP_GET_MORE** wire protocol message.
+The query flags passed to OP_QUERY for a getMore command MUST be slave_ok=True
+when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
+**find** and **killCursors** commands. The command takes the following object.
 
 .. code:: javascript
 
@@ -579,7 +592,9 @@ The **cursorsAlive** array contain cursors that were not possible to kill. The i
 Difference from 3.0 OP_KILL_CURSORS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-One of the differences with the new **killCursors** command compared to the **OP_KILL_CURSORS** wire protocol message is that the **killCursors** command returns a response while the **OP_KILL_CURSORS** wire protocol does not.
+One of the differences with the new **killCursors** command compared to the
+**OP_KILL_CURSORS** wire protocol message is that the **killCursors** command
+returns a response while the **OP_KILL_CURSORS** wire protocol does not.
 
 The **OP_REPLY** message has the following general structure.
 
@@ -609,13 +624,21 @@ The **OP_REPLY** message has the following general structure.
         document* documents;      // documents
     }
 
-For the **find**, **getMore** and **killCursors** MongoDB returns a single document meaning **numberReturned** is set to **1**. This is in contrast to MongoDB 3.0 and earlier where a **OP_QUERY** query will set **numberReturned** to >= 0.
+For the **find**, **getMore** and **killCursors** MongoDB returns a single
+document meaning **numberReturned** is set to **1**. This is in contrast to
+MongoDB 3.0 and earlier where a **OP_QUERY** query will set **numberReturned**
+to >= 0.
 
-A driver MUST deserialize the command result and extract the **firstBatch** and **nextBatch** arrays for the **find** and **getMore** commands to access the returned documents.
+A driver MUST deserialize the command result and extract the **firstBatch**
+and **nextBatch** arrays for the **find** and **getMore** commands to access 
+the returned documents.
 
 The result from the **killCursors** command MAY be safely ignored.
 
-If the driver supports returning **raw** BSON buffers instead of deserialized documents there might be a need to be able to partially deserialize documents to be able to efficiently provide the behavior in comparison to existing **OP_QUERY** queryresults.
+If the driver supports returning **raw** BSON buffers instead of deserialized
+documents there might be a need to be able to partially deserialize documents
+to be able to efficiently provide the behavior in comparison to existing
+**OP_QUERY** queryresults.
 
 Errors
 ======
