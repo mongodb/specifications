@@ -6,7 +6,7 @@ tests:
     -
         description: "Aggregate with $currentOp"
         operation:
-            name: db-aggregate
+            name: aggregate
             object: database
             arguments:
                 pipeline:
@@ -33,7 +33,7 @@ tests:
     -
         description: "Aggregate with $currentOp and allowDiskUse"
         operation:
-            name: db-aggregate
+            name: aggregate
             object: database
             arguments:
                 pipeline:
