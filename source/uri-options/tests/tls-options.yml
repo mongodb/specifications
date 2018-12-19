@@ -10,7 +10,7 @@ tests:
             tls: true
             tlsCAFile: "ca.pem"
             tlsCertificateKeyFile: "cert.pem"
-            tlsCertificateKeyPassword: "hunter2"
+            tlsCertificateKeyFilePassword: "hunter2"
     -  
         description: "Invalid tlsAllowInvalidCertificates causes a warning"
         uri: "mongodb://example.com/?tlsAllowInvalidCertificates=invalid"

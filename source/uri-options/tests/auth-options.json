@@ -8,10 +8,10 @@
       "hosts": null,
       "auth": null,
       "options": {
-        "authmechanism": "GSSAPI",
+        "authMechanism": "GSSAPI",
         "authMechanismProperties": {
           "SERVICE_NAME": "other",
-          "CANONICALIZE_HOST_NAME": "true"
+          "CANONICALIZE_HOST_NAME": true
         },
         "authSource": "$external"
       }
