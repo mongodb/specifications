@@ -9,7 +9,7 @@ tests:
         options:
             readPreference: "primaryPreferred"
             readPreferenceTags:
-                - "dc:ny,rack"
+                - "dc:ny,rack:1"
                 - "dc:ny"
             maxStalenessSeconds: 120
     -

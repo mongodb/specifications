@@ -7,7 +7,7 @@ tests:
         hosts: ~
         auth: ~
         options:
-            authmechanism: "GSSAPI"
+            authMechanism: "GSSAPI"
             authMechanismProperties:
                 SERVICE_NAME: "other"
                 CANONICALIZE_HOST_NAME: "true"
