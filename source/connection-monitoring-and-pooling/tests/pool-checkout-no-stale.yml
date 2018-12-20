@@ -20,7 +20,7 @@ events:
   - type: ConnectionCheckOutStarted
 
   # Note: we cannot deterministically assert which connections get destroyed in which order,
-  # just that they will all be destroyed before connection acquisition.
+  # just that they will all be destroyed before connection check out.
   - type: ConnectionClosed
     reason: stale
   - type: ConnectionClosed

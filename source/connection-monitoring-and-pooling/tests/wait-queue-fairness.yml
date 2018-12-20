@@ -4,7 +4,7 @@ description: must issue Connections to threads in the order that the threads ene
 poolOptions:
   maxPoolSize: 1
 operations:
-    # Acquire sole connection in pool
+    # Check out sole connection in pool
   - name: checkOut
     label: conn0
     # Create 4 threads, have them all queue up for connections

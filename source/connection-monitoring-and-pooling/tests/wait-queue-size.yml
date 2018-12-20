@@ -5,7 +5,7 @@ poolOptions:
   maxPoolSize: 1
   waitQueueSize: 1
 operations:
-  # Acquire sole possible connection
+  # Check out sole possible connection
   - name: checkOut
   # Start a thread, have it enter sole wait queue spot
   - name: start

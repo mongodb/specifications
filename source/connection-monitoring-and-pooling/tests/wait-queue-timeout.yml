@@ -5,7 +5,7 @@ poolOptions:
   maxPoolSize: 1
   waitQueueTimeoutMS: 20
 operations:
-  # Acquire only possible connection
+  # Check out only possible connection
   - name: checkOut
     label: conn0
   # Start a thread, have it enter the wait queue
@@ -13,7 +13,7 @@ operations:
     target: thread1
   - name: checkOut
     thread: thread1
-  # Wait long enough for other thread to time out, then release connection
+  # Wait long enough for other thread to time out, then check in connection
   - name: wait
     ms: 40
   - name: checkIn
