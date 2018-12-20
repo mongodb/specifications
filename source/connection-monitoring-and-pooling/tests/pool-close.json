@@ -9,18 +9,12 @@
   ],
   "events": [
     {
-      "type": "connectionPoolCreated",
-      "pool": {
-        "id": 1,
-        "generation": 0
-      }
+      "type": "ConnectionPoolCreated",
+      "address": "42"
     },
     {
-      "type": "connectionPoolClosed",
-      "pool": {
-        "id": 1,
-        "generation": 0
-      }
+      "type": "ConnectionPoolClosed",
+      "address": "42"
     }
   ]
 }

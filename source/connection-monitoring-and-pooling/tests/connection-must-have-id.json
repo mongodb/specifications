@@ -4,46 +4,39 @@
   "description": "must have an ID number associated with it",
   "operations": [
     {
-      "name": "acquire"
+      "name": "checkOut"
     },
     {
-      "name": "acquire"
+      "name": "checkOut"
     }
   ],
   "events": [
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionCreated",
-      "connection": {
-        "id": 42
-      }
+      "type": "ConnectionCreated",
+      "connectionId": 42
     },
     {
-      "type": "connectionAcquired",
-      "connection": {
-        "id": 42
-      }
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionCreated",
-      "connection": {
-        "id": 42
-      }
+      "type": "ConnectionCreated",
+      "connectionId": 42
     },
     {
-      "type": "connectionAcquired",
-      "connection": {
-        "id": 42
-      }
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     }
   ],
   "ignore": [
-    "connectionPoolCreated",
-    "connectionPoolDestroyed"
+    "ConnectionPoolCreated",
+    "ConnectionPoolDestroyed",
+    "ConnectionReady"
   ]
 }

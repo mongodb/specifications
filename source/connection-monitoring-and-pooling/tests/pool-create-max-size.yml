@@ -4,36 +4,39 @@ description: must never exceed maxPoolSize total connections
 poolOptions:
   maxPoolSize: 3
 operations:
-  - name: acquire
+  - name: checkOut
     label: conn1
-  - name: acquire
-  - name: acquire
+  - name: checkOut
+  - name: checkOut
     label: conn2
-  - name: release
+  - name: checkIn
     connection: conn2
-  - name: acquire
+  - name: checkOut
   - name: start
     target: thread1
-  - name: acquire
+  - name: checkOut
     thread: thread1
-  - name: release
+  - name: checkIn
     connection: conn1
   - name: waitFor
     target: thread1
 events:
-  - type: connectionPoolCreated
-  - type: connectionAcquisitionStarted
-  - type: connectionCreated
-  - type: connectionAcquired
-  - type: connectionAcquisitionStarted
-  - type: connectionCreated
-  - type: connectionAcquired
-  - type: connectionAcquisitionStarted
-  - type: connectionCreated
-  - type: connectionAcquired
-  - type: connectionReleased
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquired  
-  - type: connectionAcquisitionStarted
-  - type: connectionReleased
-  - type: connectionAcquired
+  - type: ConnectionPoolCreated
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCreated
+  - type: ConnectionReady
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCreated
+  - type: ConnectionReady
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCreated
+  - type: ConnectionReady
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckedIn
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckedIn
+  - type: ConnectionCheckedOut

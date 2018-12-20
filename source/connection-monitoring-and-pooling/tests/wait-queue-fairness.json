@@ -7,7 +7,7 @@
   },
   "operations": [
     {
-      "name": "acquire",
+      "name": "checkOut",
       "label": "conn0"
     },
     {
@@ -15,7 +15,7 @@
       "target": "thread1"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread1",
       "label": "conn1"
     },
@@ -24,7 +24,7 @@
       "target": "thread2"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread2",
       "label": "conn2"
     },
@@ -33,7 +33,7 @@
       "target": "thread3"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread3",
       "label": "conn3"
     },
@@ -42,12 +42,12 @@
       "target": "thread4"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread4",
       "label": "conn4"
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn0"
     },
     {
@@ -55,7 +55,7 @@
       "target": "thread1"
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn1"
     },
     {
@@ -63,7 +63,7 @@
       "target": "thread2"
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn2"
     },
     {
@@ -71,7 +71,7 @@
       "target": "thread3"
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn3"
     },
     {
@@ -81,51 +81,52 @@
   ],
   "events": [
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCheckedIn"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCheckedIn"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCheckedIn"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCheckedIn"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     }
   ],
   "ignore": [
-    "connectionCreated",
-    "connectionClosed",
-    "connectionPoolCreated"
+    "ConnectionCreated",
+    "ConnectionReady",
+    "ConnectionClosed",
+    "ConnectionPoolCreated"
   ]
 }

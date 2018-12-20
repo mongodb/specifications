@@ -2,25 +2,24 @@ version: 1
 style: unit
 description: When a pool is closed, it MUST first destroy all available connections in that pool
 operations:
-  - name: acquire
-  - name: acquire
+  - name: checkOut
+  - name: checkOut
     label: conn
-  - name: acquire
-  - name: release
+  - name: checkOut
+  - name: checkIn
     connection: conn
   - name: close
 events:
-  - type: connectionReleased
-    connection:
-      id: 2
-  - type: connectionClosed
-    connection:
-      id: 2
+  - type: ConnectionCheckedIn
+    connectionId: 2
+  - type: ConnectionClosed
+    connectionId: 2
     reason: poolClosed
-  - type: connectionPoolClosed
+  - type: ConnectionPoolClosed
 ignore:
-  - connectionCreated
-  - connectionPoolCreated
-  - connectionAcquisitionStarted
-  - connectionAcquired
+  - ConnectionCreated
+  - ConnectionReady
+  - ConnectionPoolCreated
+  - ConnectionCheckOutStarted
+  - ConnectionCheckedOut
         

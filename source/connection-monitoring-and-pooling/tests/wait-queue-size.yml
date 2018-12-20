@@ -6,33 +6,33 @@ poolOptions:
   waitQueueSize: 1
 operations:
   # Acquire sole possible connection
-  - name: acquire
+  - name: checkOut
   # Start a thread, have it enter sole wait queue spot
   - name: start
     target: thread1
-  - name: acquire
+  - name: checkOut
     thread: thread1
   - name: wait
     ms: 20
   # Start another thread, have it attempt to enter wait queue, find it full, error
   - name: start
     target: thread2
-  - name: acquire
+  - name: checkOut
     thread: thread2
   - name: waitFor
     target: thread2
 error:
-  message: Attempted to acquire a connection from connection pool while waitQueue was full
-  errorType: waitQueueFullError
-  id: 1
+  type: WaitQueueFullError
+  message: Attempted to check out a connection from connection pool while waitQueue was full
 events:
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquired
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquisitionFailed
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckOutFailed
     reason: queueFull
 ignore:
-  - connectionCreated
-  - connectionClosed
-  - connectionPoolCreated
+  - ConnectionCreated
+  - ConnectionReady
+  - ConnectionClosed
+  - ConnectionPoolCreated

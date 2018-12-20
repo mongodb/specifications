@@ -8,14 +8,14 @@
   },
   "operations": [
     {
-      "name": "acquire"
+      "name": "checkOut"
     },
     {
       "name": "start",
       "target": "thread1"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread1"
     },
     {
@@ -27,7 +27,7 @@
       "target": "thread2"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread2"
     },
     {
@@ -36,31 +36,31 @@
     }
   ],
   "error": {
-    "message": "Attempted to acquire a connection from connection pool while waitQueue was full",
-    "errorType": "waitQueueFullError",
-    "id": 1
+    "type": "WaitQueueFullError",
+    "message": "Attempted to check out a connection from connection pool while waitQueue was full"
   },
   "events": [
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquisitionFailed",
+      "type": "ConnectionCheckOutFailed",
       "reason": "queueFull"
     }
   ],
   "ignore": [
-    "connectionCreated",
-    "connectionClosed",
-    "connectionPoolCreated"
+    "ConnectionCreated",
+    "ConnectionReady",
+    "ConnectionClosed",
+    "ConnectionPoolCreated"
   ]
 }

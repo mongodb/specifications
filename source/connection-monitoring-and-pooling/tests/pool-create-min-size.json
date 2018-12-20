@@ -11,36 +11,37 @@
       "ms": 50
     },
     {
-      "name": "acquire"
+      "name": "checkOut"
     }
   ],
   "events": [
     {
-      "type": "connectionPoolCreated",
-      "pool": {
-        "id": 1,
-        "totalConnectionCount": 0
-      }
+      "type": "ConnectionPoolCreated"
     },
     {
-      "type": "connectionAcquisitionStarted",
-      "pool": {
-        "id": 1,
-        "availableConnectionCount": 5,
-        "totalConnectionCount": 5
-      }
+      "type": "ConnectionCreated"
     },
     {
-      "type": "connectionAcquired",
-      "pool": {
-        "id": 1,
-        "availableConnectionCount": 4,
-        "totalConnectionCount": 5
-      }
+      "type": "ConnectionCreated"
+    },
+    {
+      "type": "ConnectionCreated"
+    },
+    {
+      "type": "ConnectionCreated"
+    },
+    {
+      "type": "ConnectionCreated"
+    },
+    {
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionCheckedOut"
     }
   ],
   "ignore": [
-    "connectionCreated",
-    "connectionClosed"
+    "ConnectionReady",
+    "ConnectionClosed"
   ]
 }

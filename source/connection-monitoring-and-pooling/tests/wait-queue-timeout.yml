@@ -6,33 +6,33 @@ poolOptions:
   waitQueueTimeoutMS: 20
 operations:
   # Acquire only possible connection
-  - name: acquire
+  - name: checkOut
     label: conn0
   # Start a thread, have it enter the wait queue
   - name: start
     target: thread1
-  - name: acquire
+  - name: checkOut
     thread: thread1
   # Wait long enough for other thread to time out, then release connection
   - name: wait
     ms: 40
-  - name: release
+  - name: checkIn
     connection: conn0
   # Rejoin thread1, should experience error
   - name: waitFor
     target: thread1
 error:
-  message: Timed out while acquiring a connection from connection pool
-  errorType: waitQueueTimeoutError
-  id: 1
+  type: WaitQueueTimeoutError
+  message: Timed out while checking out a connection from connection pool
 events:
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquired
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquisitionFailed
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckOutFailed
     reason: timeout
-  - type: connectionReleased
+  - type: ConnectionCheckedIn
 ignore:
-  - connectionCreated
-  - connectionClosed
-  - connectionPoolCreated
+  - ConnectionCreated
+  - ConnectionReady
+  - ConnectionClosed
+  - ConnectionPoolCreated

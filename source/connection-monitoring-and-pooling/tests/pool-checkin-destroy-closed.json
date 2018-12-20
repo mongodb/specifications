@@ -1,45 +1,42 @@
 {
   "version": 1,
   "style": "unit",
-  "description": "When a pool is closed, it MUST first destroy all available connections in that pool",
+  "description": "must destroy checked in connection if pool has been closed",
   "operations": [
-    {
-      "name": "checkOut"
-    },
     {
       "name": "checkOut",
       "label": "conn"
     },
     {
-      "name": "checkOut"
+      "name": "close"
     },
     {
       "name": "checkIn",
       "connection": "conn"
-    },
-    {
-      "name": "close"
     }
   ],
   "events": [
     {
-      "type": "ConnectionCheckedIn",
-      "connectionId": 2
-    },
-    {
-      "type": "ConnectionClosed",
-      "connectionId": 2,
-      "reason": "poolClosed"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 1
     },
     {
       "type": "ConnectionPoolClosed"
+    },
+    {
+      "type": "ConnectionCheckedIn",
+      "connectionId": 1
+    },
+    {
+      "type": "ConnectionClosed",
+      "connectionId": 1,
+      "reason": "poolClosed"
     }
   ],
   "ignore": [
+    "ConnectionPoolCreated",
     "ConnectionCreated",
     "ConnectionReady",
-    "ConnectionPoolCreated",
-    "ConnectionCheckOutStarted",
-    "ConnectionCheckedOut"
+    "ConnectionCheckOutStarted"
   ]
 }

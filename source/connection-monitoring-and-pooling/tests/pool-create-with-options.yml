@@ -11,9 +11,7 @@ operations:
   - name: wait
     ms: 20
 events:
-  - type: connectionPoolCreated
-    pool:
-      id: 1
+  - type: ConnectionPoolCreated
     options:
       maxPoolSize: 50
       minPoolSize: 5

@@ -5,63 +5,64 @@ poolOptions:
   maxPoolSize: 1
 operations:
     # Acquire sole connection in pool
-  - name: acquire
+  - name: checkOut
     label: conn0
     # Create 4 threads, have them all queue up for connections
   - name: start
     target: thread1
-  - name: acquire
+  - name: checkOut
     thread: thread1
     label: conn1
   - name: start
     target: thread2
-  - name: acquire
+  - name: checkOut
     thread: thread2
     label: conn2
   - name: start
     target: thread3
-  - name: acquire
+  - name: checkOut
     thread: thread3
     label: conn3
   - name: start
     target: thread4
-  - name: acquire
+  - name: checkOut
     thread: thread4
     label: conn4
-    # From main thread, keep releasing connection and then wait for appropriate thread
+    # From main thread, keep checking in connection and then wait for appropriate thread
     # Test will timeout if threads are not enqueued in proper order
-  - name: release
+  - name: checkIn
     connection: conn0
   - name: waitFor
     target: thread1
-  - name: release
+  - name: checkIn
     connection: conn1
   - name: waitFor
     target: thread2
-  - name: release
+  - name: checkIn
     connection: conn2
   - name: waitFor
     target: thread3
-  - name: release
+  - name: checkIn
     connection: conn3
   - name: waitFor
     target: thread4
 events:
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquired
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquisitionStarted
-  - type: connectionAcquisitionStarted
-  - type: connectionReleased
-  - type: connectionAcquired
-  - type: connectionReleased
-  - type: connectionAcquired
-  - type: connectionReleased
-  - type: connectionAcquired
-  - type: connectionReleased
-  - type: connectionAcquired
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckOutStarted
+  - type: ConnectionCheckedIn
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckedIn
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckedIn
+  - type: ConnectionCheckedOut
+  - type: ConnectionCheckedIn
+  - type: ConnectionCheckedOut
 ignore:
-  - connectionCreated
-  - connectionClosed
-  - connectionPoolCreated
+  - ConnectionCreated
+  - ConnectionReady
+  - ConnectionClosed
+  - ConnectionPoolCreated

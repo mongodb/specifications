@@ -7,33 +7,33 @@
   },
   "operations": [
     {
-      "name": "acquire",
+      "name": "checkOut",
       "label": "conn1"
     },
     {
-      "name": "acquire"
+      "name": "checkOut"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "label": "conn2"
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn2"
     },
     {
-      "name": "acquire"
+      "name": "checkOut"
     },
     {
       "name": "start",
       "target": "thread1"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread1"
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn1"
     },
     {
@@ -43,52 +43,61 @@
   ],
   "events": [
     {
-      "type": "connectionPoolCreated"
+      "type": "ConnectionPoolCreated"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionCreated"
+      "type": "ConnectionCreated"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionReady"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionCreated"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCreated"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionReady"
     },
     {
-      "type": "connectionCreated"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCreated"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionReady"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckedIn"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
+    },
+    {
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionCheckedIn"
+    },
+    {
+      "type": "ConnectionCheckedOut"
     }
   ]
 }

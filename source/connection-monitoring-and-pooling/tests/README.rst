@@ -33,22 +33,25 @@ Unit Test Format:
 All Unit Tests have some of the following fields:
 
 - ``poolOptions``: if present, connection pool options to use when creating a pool
-- ``numberOfPools``: The number of pools to create for this test. Defaults to 1
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
   - ``name``: A string describing which operation to issue.
   - ``thread``: The name of the thread in which to run this operation. If not specified, runs in the default thread
-  - ``object``: The object on which to run the pool method. Can be ``pool1``, ``pool2``, etc. Defaults to ``pool1``
 
 - ``error``: Indicates that the main thread is expected to error during this test. An error may include of the following fields:
 
+  - ``type``: the type of error emitted
   - ``message``: the message associated with that error
-  - ``errorType``: the error code associated with that error
-  - ``id``: ID of pool emitting error
   - ``address``: Address of pool emitting error
-  - ``foreignConnectionInfo``: Connection metadata on a foreign connection during a PoolReleaseForeignConnectionError
 
-- ``events``: An array of all connection monitoring events expected to occur while running ``operations``.
+- ``events``: An array of all connection monitoring events expected to occur while running ``operations``. An event may contain any of the following fields
+
+  - ``type``: The type of event emitted
+  - ``address``: The address of the pool emitting the event
+  - ``connectionId``: The id of a connection associated with the event
+  - ``options``: Options used to create the pool
+  - ``reason``: A reason giving mroe information on why the event was emitted
+
 - ``ignore``: An array of event names to ignore
 
 Valid Unit Test Operations are the following:
@@ -67,17 +70,17 @@ Valid Unit Test Operations are the following:
 
 - ``returnTo = createPool(options)``: creates and returns a new Connection Pool with the specified options.
 
-- ``label = object.acquire()``: call ``acquire`` on Pool ``object``, returning the acquired connection
+- ``label = pool.acquire()``: call ``acquire`` on pool, returning the acquired connection
 
   - ``label``: If specified, associate this label with the returned connection, so that it may be referenced in later operations
 
-- ``object.release(connection, force?)``: call ``release`` on Pool ``object``, passing in connection and optional force flag
+- ``pool.release(connection, force?)``: call ``release`` on pool, passing in connection and optional force flag
 
   - ``connection``: A string label identifying which connection to release. Should be a label that was previously set with ``acquire``
   - ``force``: A boolean indicating whether or not to force-close the connection
 
-- ``object.clear()``: call ``clear`` on Pool ``object``
-- ``object.close()``: call ``close`` on Pool ``object``
+- ``pool.clear()``: call ``clear`` on Pool
+- ``pool.close()``: call ``close`` on Pool
 
 Spec Test Match Function
 ========================
@@ -108,21 +111,18 @@ Pseudocode implementation of ``actual`` MATCHES ``expected``:
 Unit Test Runner:
 =================
 
-For the unit tests, the behavior of a Connection is irrelevant beyond the need to asserting ``connection.id`` and ``connection.generation``. Drivers MAY use a mock connection class for testing the pool behavior in unit tests
+For the unit tests, the behavior of a Connection is irrelevant beyond the need to asserting ``connection.id``. Drivers MAY use a mock connection class for testing the pool behavior in unit tests
 
 For each YAML file with ``style: unit``:
 
-- Create ``numberOfPools`` connection pools (defaults to 1)
+- Create a Pool ``pool``, subscribe and capture any Connection Monitoring events emitted in order.
 
   - If ``poolOptions`` is specified, use those options to initialize both pools
-  - ``enableConnectionMonitoring`` MUST be set to true, and any connection events MUST be captured.
-  - The returned pool must have an ``id`` properly set as if created by a server. For each test, the pool ``id`` should start at 1, and monotonically increase.
   - The returned pool must have an ``address`` set as a string value.
 
 - Execute each ``operation`` in ``operations``
 
   - If a ``thread`` is specified, execute in that corresponding thread. Otherwise, execute in the main thread.
-  - If an ``object`` is specified, execute the operation against the specified pool. Otherwise, execute against ``pool1``
 
 - Wait for the main thread to finish executing all of its operations
 - If ``error`` is presented
@@ -149,4 +149,4 @@ The following tests have not yet been automated, but MUST still be tested
 #. All ConnectionPoolOptions MUST be specified at the MongoClient level
 #. All ConnectionPoolOptions MUST be the same for all pools created by a MongoClient
 #. A user MUST be able to specify all ConnectionPoolOptions via a URI string
-#. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver when ``enableConnectionMonitoring`` is true
+#. A user MUST be able to subscribe to Connection Monitoring Events in a manner idiomatic to their language and driver

@@ -4,46 +4,39 @@
   "description": "must have IDs assigned in order of creation",
   "operations": [
     {
-      "name": "acquire"
+      "name": "checkOut"
     },
     {
-      "name": "acquire"
+      "name": "checkOut"
     }
   ],
   "events": [
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionCreated",
-      "connection": {
-        "id": 1
-      }
+      "type": "ConnectionCreated",
+      "connectionId": 1
     },
     {
-      "type": "connectionAcquired",
-      "connection": {
-        "id": 1
-      }
+      "type": "ConnectionCheckedOut",
+      "connectionId": 1
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionCreated",
-      "connection": {
-        "id": 2
-      }
+      "type": "ConnectionCreated",
+      "connectionId": 2
     },
     {
-      "type": "connectionAcquired",
-      "connection": {
-        "id": 2
-      }
+      "type": "ConnectionCheckedOut",
+      "connectionId": 2
     }
   ],
   "ignore": [
-    "connectionPoolCreated",
-    "connectionPoolDestroyed"
+    "ConnectionPoolCreated",
+    "ConnectionPoolDestroyed",
+    "ConnectionReady"
   ]
 }

@@ -8,7 +8,7 @@
   },
   "operations": [
     {
-      "name": "acquire",
+      "name": "checkOut",
       "label": "conn0"
     },
     {
@@ -16,7 +16,7 @@
       "target": "thread1"
     },
     {
-      "name": "acquire",
+      "name": "checkOut",
       "thread": "thread1"
     },
     {
@@ -24,7 +24,7 @@
       "ms": 40
     },
     {
-      "name": "release",
+      "name": "checkIn",
       "connection": "conn0"
     },
     {
@@ -33,31 +33,31 @@
     }
   ],
   "error": {
-    "message": "Timed out while acquiring a connection from connection pool",
-    "errorType": "waitQueueTimeoutError",
-    "id": 1
+    "type": "WaitQueueTimeoutError",
+    "message": "Timed out while checking out a connection from connection pool"
   },
   "events": [
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquired"
+      "type": "ConnectionCheckedOut"
     },
     {
-      "type": "connectionAcquisitionStarted"
+      "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "connectionAcquisitionFailed",
+      "type": "ConnectionCheckOutFailed",
       "reason": "timeout"
     },
     {
-      "type": "connectionReleased"
+      "type": "ConnectionCheckedIn"
     }
   ],
   "ignore": [
-    "connectionCreated",
-    "connectionClosed",
-    "connectionPoolCreated"
+    "ConnectionCreated",
+    "ConnectionReady",
+    "ConnectionClosed",
+    "ConnectionPoolCreated"
   ]
 }

@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "must destroy and must not check out a stale connection if found while iterating available connections",
+  "poolOptions": {
+    "minPoolSize": 3
+  },
+  "operations": [
+    {
+      "name": "wait",
+      "ms": 20
+    },
+    {
+      "name": "clear"
+    },
+    {
+      "name": "checkOut"
+    }
+  ],
+  "events": [
+    {
+      "type": "ConnectionPoolCreated"
+    },
+    {
+      "type": "ConnectionCreated",
+      "connectionId": 1
+    },
+    {
+      "type": "ConnectionCreated",
+      "connectionId": 2
+    },
+    {
+      "type": "ConnectionCreated",
+      "connectionId": 3
+    },
+    {
+      "type": "ConnectionPoolCleared"
+    },
+    {
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionClosed",
+      "reason": "stale"
+    },
+    {
+      "type": "ConnectionClosed",
+      "reason": "stale"
+    },
+    {
+      "type": "ConnectionClosed",
+      "reason": "stale"
+    },
+    {
+      "type": "ConnectionCreated",
+      "connectionId": 4
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "connectionId": 4
+    }
+  ],
+  "ignore": [
+    "ConnectionReady"
+  ]
+}
