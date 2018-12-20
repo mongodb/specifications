@@ -68,15 +68,13 @@ Valid Unit Test Operations are the following:
 
   - ``target``: The name of the thread to wait for.
 
-- ``returnTo = createPool(options)``: creates and returns a new Connection Pool with the specified options.
-
-- ``label = pool.acquire()``: call ``acquire`` on pool, returning the acquired connection
+- ``label = pool.checkOut()``: call ``checkOut`` on pool, returning the checked out connection
 
   - ``label``: If specified, associate this label with the returned connection, so that it may be referenced in later operations
 
-- ``pool.release(connection, force?)``: call ``release`` on pool, passing in connection and optional force flag
+- ``pool.checkIn(connection, force?)``: call ``checkIn`` on pool, passing in connection and optional force flag
 
-  - ``connection``: A string label identifying which connection to release. Should be a label that was previously set with ``acquire``
+  - ``connection``: A string label identifying which connection to check in. Should be a label that was previously set with ``checkOut``
   - ``force``: A boolean indicating whether or not to force-close the connection
 
 - ``pool.clear()``: call ``clear`` on Pool
