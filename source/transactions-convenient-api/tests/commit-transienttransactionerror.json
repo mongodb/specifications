@@ -4,7 +4,7 @@
   "data": [],
   "tests": [
     {
-      "description": "commitTransaction is not retried after TransientTransactionError (NotMaster)",
+      "description": "transaction is retried commitTransaction TransientTransactionError (NotMaster)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -92,16 +92,62 @@
             "command_name": "commitTransaction",
             "database_name": "admin"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "readConcern": null,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "autocommit": false,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
     {
-      "description": "commitTransaction is not retried after TransientTransactionError (LockTimeout)",
+      "description": "transaction is retried commitTransaction TransientTransactionError (LockTimeout)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -189,16 +235,62 @@
             "command_name": "commitTransaction",
             "database_name": "admin"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "readConcern": null,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "autocommit": false,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
     {
-      "description": "commitTransaction is not retried after TransientTransactionError (WriteConflict)",
+      "description": "transaction is retried commitTransaction TransientTransactionError (WriteConflict)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -286,16 +378,62 @@
             "command_name": "commitTransaction",
             "database_name": "admin"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "readConcern": null,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "autocommit": false,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
     {
-      "description": "commitTransaction is not retried after TransientTransactionError (SnapshotUnavailable)",
+      "description": "transaction is retried commitTransaction TransientTransactionError (SnapshotUnavailable)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -383,16 +521,62 @@
             "command_name": "commitTransaction",
             "database_name": "admin"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "readConcern": null,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "autocommit": false,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
     {
-      "description": "commitTransaction is not retried after TransientTransactionError (NoSuchTransaction)",
+      "description": "transaction is retried commitTransaction TransientTransactionError (NoSuchTransaction)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -480,16 +664,62 @@
             "command_name": "commitTransaction",
             "database_name": "admin"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "readConcern": null,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "autocommit": false,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
     {
-      "description": "commitTransaction is not retried after TransientTransactionError (PreparedTransactionInProgress)",
+      "description": "transaction is retried commitTransaction TransientTransactionError (PreparedTransactionInProgress)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -577,11 +807,57 @@
             "command_name": "commitTransaction",
             "database_name": "admin"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "readConcern": null,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "2"
+              },
+              "autocommit": false,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
         }
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     }
