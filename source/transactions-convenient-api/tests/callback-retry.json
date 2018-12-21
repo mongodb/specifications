@@ -202,11 +202,23 @@
                     "_id": 1
                   }
                 },
-                "error": true
+                "result": {
+                  "errorCodeName": "DuplicateKey",
+                  "errorLabelsOmit": [
+                    "TransientTransactionError",
+                    "UnknownTransactionCommitResult"
+                  ]
+                }
               }
             ]
           },
-          "error": true
+          "result": {
+            "errorCodeName": "DuplicateKey",
+            "errorLabelsOmit": [
+              "TransientTransactionError",
+              "UnknownTransactionCommitResult"
+            ]
+          }
         }
       ],
       "expectations": [

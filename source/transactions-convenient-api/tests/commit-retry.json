@@ -137,18 +137,17 @@
       }
     },
     {
-      "description": "commitTransaction is not retried after write concern error (UnknownReplWriteConcern)",
+      "description": "commitTransaction retry only overwrites write concern w option",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
             "commitTransaction"
           ],
-          "errorCode": 79,
-          "closeConnection": false
+          "closeConnection": true
         }
       },
       "operations": [
@@ -172,7 +171,13 @@
               }
             ]
           },
-          "error": true
+          "transactionOptions": {
+            "writeConcern": {
+              "w": 2,
+              "j": true,
+              "wtimeout": 5000
+            }
+          }
         }
       ],
       "expectations": [
@@ -211,81 +216,15 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
-              "startTransaction": null,
-              "writeConcern": null
+              "writeConcern": {
+                "w": 2,
+                "j": true,
+                "wtimeout": 5000
+              },
+              "startTransaction": null
             },
             "command_name": "commitTransaction",
             "database_name": "admin"
-          }
-        }
-      ],
-      "outcome": {
-        "collection": {
-          "data": []
-        }
-      }
-    },
-    {
-      "description": "commitTransaction is not retried after write concern error (UnsatisfiableWriteConcern)",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 1
-        },
-        "data": {
-          "failCommands": [
-            "commitTransaction"
-          ],
-          "errorCode": 100,
-          "closeConnection": false
-        }
-      },
-      "operations": [
-        {
-          "name": "withTransaction",
-          "object": "session0",
-          "callback": {
-            "operations": [
-              {
-                "name": "insertOne",
-                "object": "collection",
-                "arguments": {
-                  "session": "session0",
-                  "document": {
-                    "_id": 1
-                  }
-                },
-                "result": {
-                  "insertedId": 1
-                }
-              }
-            ]
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "insert": "test",
-              "documents": [
-                {
-                  "_id": 1
-                }
-              ],
-              "ordered": true,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "startTransaction": true,
-              "autocommit": false,
-              "readConcern": null,
-              "writeConcern": null
-            },
-            "command_name": "insert",
-            "database_name": "withTransaction-tests"
           }
         },
         {
@@ -300,8 +239,35 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
-              "startTransaction": null,
-              "writeConcern": null
+              "writeConcern": {
+                "w": "majority",
+                "j": true,
+                "wtimeout": 5000
+              },
+              "startTransaction": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "writeConcern": {
+                "w": "majority",
+                "j": true,
+                "wtimeout": 5000
+              },
+              "startTransaction": null
             },
             "command_name": "commitTransaction",
             "database_name": "admin"
@@ -310,7 +276,11 @@
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     }
