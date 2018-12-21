@@ -42,6 +42,9 @@ Each YAML file has the following keys:
   - ``failPoint`` (optional): The ``configureFailPoint`` command document to run
     to configure a fail point on the primary server.
 
+  - ``clientOptions`` (optional): Names and values of options to pass to
+    ``MongoClient()``.
+
   - ``sessionOptions`` (optional): Names and values of options to pass to
     ``MongoClient.startSession()``.
 
