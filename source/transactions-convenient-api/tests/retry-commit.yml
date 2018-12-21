@@ -111,7 +111,9 @@ tests:
                 document: { _id: 1 }
               result:
                 insertedId: 1
-        error: true
+        result:
+          errorCodeName: UnknownReplWriteConcern
+          errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
     expectations:
       -
         command_started_event:
@@ -168,7 +170,9 @@ tests:
                 document: { _id: 1 }
               result:
                 insertedId: 1
-        error: true
+        result:
+          errorCodeName: UnsatisfiableWriteConcern
+          errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
     expectations:
       -
         command_started_event:

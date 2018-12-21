@@ -140,8 +140,12 @@ tests:
               arguments:
                 session: session0
                 document: { _id: 1 }
-              error: true
-        error: true
+              result:
+                errorCodeName: DuplicateKey
+                errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
+        result:
+          errorCodeName: DuplicateKey
+          errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
     expectations:
       -
         command_started_event:

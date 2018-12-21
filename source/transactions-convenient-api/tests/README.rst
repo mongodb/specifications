@@ -65,7 +65,20 @@ Each YAML file has the following keys:
 
     - ``result`` (optional): The return value from the operation. This will
       correspond to an operation's result object as defined in the CRUD
-      specification. This field may be omitted if ``error`` is ``true``.
+      specification. If the operation is expected to return an error, the
+      ``result`` is a single document that has one or more of the following
+      fields:
+
+      - ``errorContains``: A substring of the expected error message.
+
+      - ``errorCodeName``: The expected "codeName" field in the server
+        error response.
+
+      - ``errorLabelsContain``: A list of error label strings that the
+        error is expected to have.
+
+      - ``errorLabelsOmit``: A list of error label strings that the
+        error is expected not to have.
 
   - ``expectations`` (optional): List of command-started events.
 
