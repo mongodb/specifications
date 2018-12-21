@@ -121,3 +121,22 @@ Command-Started Events
 See: `Command-Started Events <../../transactions/tests#command-started-events>`_
 in the Transactions spec test suite for instructions on asserting
 command-started events.
+
+Prose Tests
+===========
+
+Callback Raises a Custom Error
+``````````````````````````````
+
+Write a callback that raises a custom exception or error that does not include
+either UnknownTransactionCommitResult or TransientTransactionError error labels.
+Execute this callback using ``withTransaction`` and assert that the callback's
+error bypasses any retry logic within ``withTransaction`` and is propagated to
+the caller of ``withTransaction``.
+
+Callback Returns a Value
+````````````````````````
+
+Write a callback that returns a custom value (e.g. boolean, string, object).
+Execute this callback using ``withTransaction`` and assert that the callback's
+return value is propagated to the caller of ``withTransaction``.
