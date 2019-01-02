@@ -253,6 +253,18 @@ Read
     bypassDocumentValidation: Optional<Boolean>;
 
     /**
+     * Specifies a read concern.
+     *
+     * Possible read concern levels are "local", "available", "majority" and "linearizable".
+     *
+     * For servers >= 4.2, readConcern cannot be set to "majority" in an aggregation command that includes
+     * an $out stage.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate/
+     */
+    readConcern: Optional<Document>;
+
+    /**
      * Specifies a collation.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
