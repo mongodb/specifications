@@ -94,7 +94,9 @@ The read concern option is available for the following operations:
 - ``geoNear`` command
 - ``geoSearch`` command
 
-``aggregate`` command with $out and ``mapReduce`` command with "out" set to anything other than "inline" do not support readConcern.
+``aggregate`` command with $out does not support the "linearizable" readConcern.
+
+``mapReduce`` command with "out" set to anything other than "inline" does not support readConcern.
 
 Unknown Levels and Additional Options for String Based ReadConcerns
 -------------------------------------------------------------------
