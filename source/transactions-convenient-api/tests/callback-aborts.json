@@ -65,6 +65,7 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
+              "readConcern": null,
               "startTransaction": null,
               "writeConcern": null
             },
@@ -177,6 +178,7 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
+              "readConcern": null,
               "startTransaction": null,
               "writeConcern": null
             },
@@ -198,6 +200,7 @@
               "txnNumber": {
                 "$numberLong": "2"
               },
+              "readConcern": null,
               "startTransaction": null,
               "writeConcern": null
             },

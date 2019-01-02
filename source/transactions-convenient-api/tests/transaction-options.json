@@ -57,13 +57,11 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "readConcern": {
-                "afterClusterTime": 42
-              },
               "txnNumber": {
                 "$numberLong": "1"
               },
               "autocommit": false,
+              "readConcern": null,
               "startTransaction": null,
               "writeConcern": null
             },
@@ -142,10 +140,6 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "readConcern": {
-                "level": "local",
-                "afterClusterTime": 42
-              },
               "txnNumber": {
                 "$numberLong": "1"
               },
@@ -153,6 +147,7 @@
               "writeConcern": {
                 "w": 1
               },
+              "readConcern": null,
               "startTransaction": null
             },
             "command_name": "commitTransaction",
@@ -238,10 +233,6 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "readConcern": {
-                "level": "snapshot",
-                "afterClusterTime": 42
-              },
               "txnNumber": {
                 "$numberLong": "1"
               },
@@ -249,6 +240,7 @@
               "writeConcern": {
                 "w": 1
               },
+              "readConcern": null,
               "startTransaction": null
             },
             "command_name": "commitTransaction",
@@ -330,10 +322,6 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "readConcern": {
-                "level": "snapshot",
-                "afterClusterTime": 42
-              },
               "txnNumber": {
                 "$numberLong": "1"
               },
@@ -341,6 +329,7 @@
               "writeConcern": {
                 "w": 1
               },
+              "readConcern": null,
               "startTransaction": null
             },
             "command_name": "commitTransaction",
@@ -434,10 +423,6 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "readConcern": {
-                "level": "snapshot",
-                "afterClusterTime": 42
-              },
               "txnNumber": {
                 "$numberLong": "1"
               },
@@ -445,6 +430,7 @@
               "writeConcern": {
                 "w": 1
               },
+              "readConcern": null,
               "startTransaction": null
             },
             "command_name": "commitTransaction",
@@ -530,10 +516,6 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "readConcern": {
-                "level": "snapshot",
-                "afterClusterTime": 42
-              },
               "txnNumber": {
                 "$numberLong": "1"
               },
@@ -541,6 +523,7 @@
               "writeConcern": {
                 "w": 1
               },
+              "readConcern": null,
               "startTransaction": null
             },
             "command_name": "commitTransaction",
