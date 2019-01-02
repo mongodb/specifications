@@ -257,8 +257,8 @@ Read
      *
      * Possible read concern levels are "local", "available", "majority" and "linearizable".
      *
-     * For servers >= 4.2, readConcern cannot be set to "majority" in an aggregation command that includes
-     * an $out stage.
+     * For servers >= 4.2, readConcern cannot be set to "linearizable" in an aggregation command that
+     * includes an $out stage.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
@@ -1805,3 +1805,4 @@ Changes
 * 2015-09-16: Added bypassDocumentValidation.
 * 2015-09-16: Added readConcern notes.
 * 2015-06-17: Added limit/batchSize calculation logic.
+* 2019-01-02: Added readConcern option to AggregateOptions.
