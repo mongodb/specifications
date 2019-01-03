@@ -639,8 +639,7 @@
         {
           "database": "change-stream-tests",
           "collection": "test",
-          "name": "drop",
-          "arguments": null
+          "name": "drop"
         }
       ],
       "expectations": [

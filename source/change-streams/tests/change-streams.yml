@@ -435,7 +435,6 @@ tests:
         database: *database_name
         collection: *collection_name
         name: drop
-        arguments:
     expectations:
       -
         command_started_event:
