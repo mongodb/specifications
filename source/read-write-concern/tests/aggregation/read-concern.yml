@@ -70,6 +70,6 @@ tests:
                     - $match:
                         _id: {$gt: 1}
                     - $out: "other_test_collection"
-                readConcern: { level: "invalid123" }
+                readConcern: { level: "!invalid123" }
         error: true
-        readConcernDocument: { level: "invalid123" }
+        readConcernDocument: { level: "!invalid123" }
