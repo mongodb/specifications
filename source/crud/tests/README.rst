@@ -63,8 +63,6 @@ Each YAML file has the following keys:
     - ``object``: The name of the object to perform the operation on. Can be
       "database" or "collection". Defaults to "collection" if undefined.
 
-    - ``database_name`` (optional): The name of the database against which to execute the operation.
-
     - ``arguments``: The names and values of arguments from the specification.
 
   - ``outcome``: Document describing the return value and/or expected state of
