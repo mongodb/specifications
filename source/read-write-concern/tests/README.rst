@@ -52,6 +52,37 @@ array of test case objects, each of which have the following keys:
 - ``isServerDefault:`` Indicates whether the read or write concern is considered the server's default.
 - ``isAcknowledged:`` Indicates if the write concern should be considered acknowledged.
 
+Aggregation
+~~~~~~~~~~~
+
+These tests are designed to ensure compliance with the spec in relation to what should be
+sent to the server when using the aggregation framework.
+
+Each YAML file contains the following keys:
+
+- ``data``: The data that should exist in the collection under test before each
+  test run.
+- ``minServerVersion`` (optional): The minimum server version (inclusive)
+  required to successfully run the test. If this field is not present, it should
+  be assumed that there is no lower bound on the required server version.
+- ``maxServerVersion`` (optional): The maximum server version (exclusive)
+  against which this test can run successfully. If this field is not present,
+  it should be assumed that there is no upper bound on the required server
+  version.
+- ``tests``: An array of tests that are to be run independently of each other.
+  Each test will have some or all of the following fields:
+  - ``description``: The name of the test.
+  - ``operation``: Document describing the operation to be executed. This will
+    have the following fields:
+    - ``name``: The name of the operation as defined in the specification. The
+      name `db-aggregate` refers to database-level aggregation.
+    - ``arguments``: The names and values of arguments from the specification.
+  - ``error``: If ``true``, the test should expect an error or exception. Note
+      that some drivers may report server-side errors as a write error within a
+      write result object.
+  - ``readConcernDocument:`` A document indicating the read concern to be sent to the server.
+
+
 Use as unit tests
 =================
 

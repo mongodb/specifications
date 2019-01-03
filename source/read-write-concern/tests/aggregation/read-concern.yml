@@ -1,0 +1,61 @@
+data:
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+minServerVersion: '4.2'
+
+tests:
+    -
+        description: "Majority"
+        operation:
+            name: aggregate
+            arguments:
+                pipeline:
+                    - $sort: {x: 1}
+                    - $match:
+                        _id: {$gt: 1}
+                    - $out: "other_test_collection"
+                readConcern: { level: "majority" }
+        error: false
+        readConcernDocument: { level: "majority" }
+
+    -
+        description: "Local"
+        operation:
+            name: aggregate
+            arguments:
+                pipeline:
+                    - $sort: {x: 1}
+                    - $match:
+                        _id: {$gt: 1}
+                    - $out: "other_test_collection"
+                readConcern: { level: "local" }
+        error: false
+        readConcernDocument: { level: "local" }
+    -
+        description: "Linearizable"
+        operation:
+            name: aggregate
+            arguments:
+                pipeline:
+                    - $sort: {x: 1}
+                    - $match:
+                        _id: {$gt: 1}
+                    - $out: "other_test_collection"
+                readConcern: { level: "linearizable" }
+        error: true
+        readConcernDocument: { level: "linearizable" }
+
+    -
+        description: "Available"
+        operation:
+            name: aggregate
+            arguments:
+                pipeline:
+                    - $sort: {x: 1}
+                    - $match:
+                        _id: {$gt: 1}
+                    - $out: "other_test_collection"
+                readConcern: { level: "available" }
+        error: false
+        readConcernDocument: { level: "available" }
