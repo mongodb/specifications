@@ -4,11 +4,11 @@
   "data": [],
   "tests": [
     {
-      "description": "transaction is retried commitTransaction TransientTransactionError (NotMaster)",
+      "description": "transaction is retried after commitTransaction TransientTransactionError (NotMaster)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
@@ -38,15 +38,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "errorCodeName": "NotMaster",
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
-            "errorLabelsOmit": [
-              "UnknownTransactionCommitResult"
-            ]
           }
         }
       ],
@@ -72,6 +63,23 @@
             },
             "command_name": "insert",
             "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
           }
         },
         {
@@ -143,11 +151,11 @@
       }
     },
     {
-      "description": "transaction is retried commitTransaction TransientTransactionError (LockTimeout)",
+      "description": "transaction is retried after commitTransaction TransientTransactionError (LockTimeout)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
@@ -177,15 +185,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "errorCodeName": "LockTimeout",
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
-            "errorLabelsOmit": [
-              "UnknownTransactionCommitResult"
-            ]
           }
         }
       ],
@@ -211,6 +210,23 @@
             },
             "command_name": "insert",
             "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
           }
         },
         {
@@ -282,11 +298,11 @@
       }
     },
     {
-      "description": "transaction is retried commitTransaction TransientTransactionError (WriteConflict)",
+      "description": "transaction is retried after commitTransaction TransientTransactionError (WriteConflict)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
@@ -316,15 +332,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "errorCodeName": "WriteConflict",
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
-            "errorLabelsOmit": [
-              "UnknownTransactionCommitResult"
-            ]
           }
         }
       ],
@@ -350,6 +357,23 @@
             },
             "command_name": "insert",
             "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
           }
         },
         {
@@ -421,11 +445,11 @@
       }
     },
     {
-      "description": "transaction is retried commitTransaction TransientTransactionError (SnapshotUnavailable)",
+      "description": "transaction is retried after commitTransaction TransientTransactionError (SnapshotUnavailable)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
@@ -455,15 +479,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "errorCodeName": "SnapshotUnavailable",
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
-            "errorLabelsOmit": [
-              "UnknownTransactionCommitResult"
-            ]
           }
         }
       ],
@@ -489,6 +504,23 @@
             },
             "command_name": "insert",
             "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
           }
         },
         {
@@ -560,11 +592,11 @@
       }
     },
     {
-      "description": "transaction is retried commitTransaction TransientTransactionError (NoSuchTransaction)",
+      "description": "transaction is retried after commitTransaction TransientTransactionError (NoSuchTransaction)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
@@ -594,15 +626,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "errorCodeName": "NoSuchTransaction",
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
-            "errorLabelsOmit": [
-              "UnknownTransactionCommitResult"
-            ]
           }
         }
       ],
@@ -628,6 +651,23 @@
             },
             "command_name": "insert",
             "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
           }
         },
         {
@@ -699,11 +739,11 @@
       }
     },
     {
-      "description": "transaction is retried commitTransaction TransientTransactionError (PreparedTransactionInProgress)",
+      "description": "transaction is retried after commitTransaction TransientTransactionError (PreparedTransactionInProgress)",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 1
+          "times": 2
         },
         "data": {
           "failCommands": [
@@ -733,15 +773,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "errorCodeName": "PreparedTransactionInProgress",
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
-            "errorLabelsOmit": [
-              "UnknownTransactionCommitResult"
-            ]
           }
         }
       ],
@@ -767,6 +798,23 @@
             },
             "command_name": "insert",
             "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
           }
         },
         {
