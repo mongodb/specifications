@@ -6,7 +6,7 @@ minServerVersion: '4.2'
 
 tests:
     -
-        description: "Majority"
+        description: "readConcernMajority"
         operation:
             name: aggregate
             arguments:
@@ -20,7 +20,7 @@ tests:
         readConcernDocument: { level: "majority" }
 
     -
-        description: "Local"
+        description: "readConcernLocal"
         operation:
             name: aggregate
             arguments:
@@ -33,7 +33,7 @@ tests:
         error: false
         readConcernDocument: { level: "local" }
     -
-        description: "Linearizable"
+        description: "readConcernLinearizable"
         operation:
             name: aggregate
             arguments:
@@ -47,7 +47,7 @@ tests:
         readConcernDocument: { level: "linearizable" }
 
     -
-        description: "Available"
+        description: "readConcernAvailable"
         operation:
             name: aggregate
             arguments:
@@ -59,3 +59,17 @@ tests:
                 readConcern: { level: "available" }
         error: false
         readConcernDocument: { level: "available" }
+
+    -
+        description: "readConcernInvalid"
+        operation:
+            name: aggregate
+            arguments:
+                pipeline:
+                    - $sort: {x: 1}
+                    - $match:
+                        _id: {$gt: 1}
+                    - $out: "other_test_collection"
+                readConcern: { level: "invalid123" }
+        error: true
+        readConcernDocument: { level: "invalid123" }
