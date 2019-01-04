@@ -345,8 +345,7 @@ startTransaction SHOULD report an error if the driver can detect that
 transactions are not supported by the deployment. A deployment does not
 support transactions when the deployment does not support sessions, or
 maxWireVersion < 7, or the maxWireVersion < 8 and the topology type is Sharded,
-see `How to Check Whether a Deployment Supports Sessions
- <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions>`_.
+see `How to Check Whether a Deployment Supports Sessions <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#how-to-check-whether-a-deployment-supports-sessions>`_.
 Note that checking the maxWireVersion does not guarantee that the
 deployment supports transactions, for example a MongoDB 4.0 replica set
 using MMAPv1 will report maxWireVersion 7 but does not support
