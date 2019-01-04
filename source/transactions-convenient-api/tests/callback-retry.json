@@ -92,12 +92,14 @@
               ],
               "ordered": true,
               "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
               "txnNumber": {
                 "$numberLong": "2"
               },
               "startTransaction": true,
               "autocommit": false,
-              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
