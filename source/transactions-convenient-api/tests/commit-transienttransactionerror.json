@@ -85,23 +85,6 @@
         {
           "command_started_event": {
             "command": {
-              "commitTransaction": 1,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "autocommit": false,
-              "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
-            },
-            "command_name": "commitTransaction",
-            "database_name": "admin"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
               "insert": "test",
               "documents": [
                 {
@@ -131,6 +114,48 @@
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
               },
               "autocommit": false,
               "readConcern": null,
@@ -234,23 +259,6 @@
         {
           "command_started_event": {
             "command": {
-              "commitTransaction": 1,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "autocommit": false,
-              "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
-            },
-            "command_name": "commitTransaction",
-            "database_name": "admin"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
               "insert": "test",
               "documents": [
                 {
@@ -280,6 +288,48 @@
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
               },
               "autocommit": false,
               "readConcern": null,
@@ -383,23 +433,6 @@
         {
           "command_started_event": {
             "command": {
-              "commitTransaction": 1,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "autocommit": false,
-              "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
-            },
-            "command_name": "commitTransaction",
-            "database_name": "admin"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
               "insert": "test",
               "documents": [
                 {
@@ -429,6 +462,48 @@
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
               },
               "autocommit": false,
               "readConcern": null,
@@ -532,23 +607,6 @@
         {
           "command_started_event": {
             "command": {
-              "commitTransaction": 1,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "autocommit": false,
-              "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
-            },
-            "command_name": "commitTransaction",
-            "database_name": "admin"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
               "insert": "test",
               "documents": [
                 {
@@ -578,6 +636,48 @@
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
               },
               "autocommit": false,
               "readConcern": null,
@@ -681,23 +781,6 @@
         {
           "command_started_event": {
             "command": {
-              "commitTransaction": 1,
-              "lsid": "session0",
-              "txnNumber": {
-                "$numberLong": "1"
-              },
-              "autocommit": false,
-              "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
-            },
-            "command_name": "commitTransaction",
-            "database_name": "admin"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
               "insert": "test",
               "documents": [
                 {
@@ -727,6 +810,48 @@
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "2"
+              },
+              "autocommit": false,
+              "readConcern": null,
+              "startTransaction": null,
+              "writeConcern": null
+            },
+            "command_name": "commitTransaction",
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "lsid": "session0",
+              "readConcern": {
+                "afterClusterTime": 42
+              },
+              "txnNumber": {
+                "$numberLong": "3"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "insert",
+            "database_name": "withTransaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "commitTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "3"
               },
               "autocommit": false,
               "readConcern": null,
