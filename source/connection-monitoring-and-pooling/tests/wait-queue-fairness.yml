@@ -49,18 +49,27 @@ operations:
 events:
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
 ignore:
   - ConnectionCreated
   - ConnectionReady

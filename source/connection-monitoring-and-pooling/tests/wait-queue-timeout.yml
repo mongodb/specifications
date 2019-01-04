@@ -27,10 +27,12 @@ error:
 events:
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckOutFailed
     reason: timeout
   - type: ConnectionCheckedIn
+    connectionId: 42
 ignore:
   - ConnectionCreated
   - ConnectionReady

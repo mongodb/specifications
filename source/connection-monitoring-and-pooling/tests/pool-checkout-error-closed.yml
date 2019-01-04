@@ -13,9 +13,14 @@ error:
   message: Attempted to check out a connection from closed connection pool
 events:
   - type: ConnectionPoolCreated
+    address: 42
+    options: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionPoolClosed
+    address: 42
 ignore:
   - ConnectionCreated
   - ConnectionReady

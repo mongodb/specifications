@@ -16,6 +16,7 @@ events:
     connectionId: 2
     reason: poolClosed
   - type: ConnectionPoolClosed
+    address: 42
 ignore:
   - ConnectionCreated
   - ConnectionReady

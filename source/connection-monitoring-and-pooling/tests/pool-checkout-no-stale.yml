@@ -10,6 +10,8 @@ operations:
   - name: checkOut
 events:
   - type: ConnectionPoolCreated
+    address: 42
+    options: 42
   - type: ConnectionCreated
     connectionId: 1
   - type: ConnectionCreated
@@ -17,15 +19,19 @@ events:
   - type: ConnectionCreated
     connectionId: 3
   - type: ConnectionPoolCleared
+    address: 42
   - type: ConnectionCheckOutStarted
 
   # Note: we cannot deterministically assert which connections get destroyed in which order,
   # just that they will all be destroyed before connection check out.
   - type: ConnectionClosed
+    connectionId: 42
     reason: stale
   - type: ConnectionClosed
+    connectionId: 42
     reason: stale
   - type: ConnectionClosed
+    connectionId: 42
     reason: stale
   - type: ConnectionCreated
     connectionId: 4

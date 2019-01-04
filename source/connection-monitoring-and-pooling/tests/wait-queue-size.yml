@@ -27,6 +27,7 @@ error:
 events:
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckOutFailed

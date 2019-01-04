@@ -22,21 +22,36 @@ operations:
     target: thread1
 events:
   - type: ConnectionPoolCreated
+    address: 42
+    options: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
-  - type: ConnectionReady
+    connectionId: 42
+#  - type: ConnectionReady
+#     connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
-  - type: ConnectionReady
+    connectionId: 42
+#  - type: ConnectionReady
+#     connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
-  - type: ConnectionReady
+    connectionId: 42
+# - type: ConnectionReady
+#     connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedOut
+    connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedIn
+    connectionId: 42
   - type: ConnectionCheckedOut
+    connectionId: 42

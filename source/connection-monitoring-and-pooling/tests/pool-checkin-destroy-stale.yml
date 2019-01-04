@@ -11,6 +11,7 @@ events:
   - type: ConnectionCheckedOut
     connectionId: 1
   - type: ConnectionPoolCleared
+    address: 42
   - type: ConnectionCheckedIn
     connectionId: 1
   - type: ConnectionClosed

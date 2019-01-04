@@ -12,9 +12,12 @@ operations:
     ms: 20
 events:
   - type: ConnectionPoolCreated
+    address: 42
     options:
       maxPoolSize: 50
       minPoolSize: 5
       maxIdleTimeMS: 100
       waitQueueSize: 4
       waitQueueTimeoutMS: 200
+ignore:
+  - ConnectionCreated
