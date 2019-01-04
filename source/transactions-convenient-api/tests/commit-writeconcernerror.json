@@ -14,7 +14,6 @@
           "failCommands": [
             "commitTransaction"
           ],
-          "closeConnection": false,
           "writeConcernError": {
             "code": 64,
             "codeName": "WriteConcernFailed",
@@ -120,7 +119,6 @@
           "failCommands": [
             "commitTransaction"
           ],
-          "closeConnection": false,
           "writeConcernError": {
             "code": 79,
             "codeName": "UnknownReplWriteConcern",
@@ -221,7 +219,6 @@
           "failCommands": [
             "commitTransaction"
           ],
-          "closeConnection": false,
           "writeConcernError": {
             "code": 100,
             "codeName": "UnsatisfiableWriteConcern",

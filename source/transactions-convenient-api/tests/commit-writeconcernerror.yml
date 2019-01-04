@@ -11,7 +11,8 @@ tests:
       mode: { times: 1 }
       data:
           failCommands: ["commitTransaction"]
-          closeConnection: false
+          # Do not specify closeConnection: false, since that would conflict
+          # with writeConcernError (likely a server bug)
           writeConcernError:
             code: 64
             codeName: WriteConcernFailed
@@ -79,7 +80,6 @@ tests:
       mode: { times: 1 }
       data:
           failCommands: ["commitTransaction"]
-          closeConnection: false
           writeConcernError:
             code: 79
             codeName: UnknownReplWriteConcern
@@ -130,7 +130,6 @@ tests:
       mode: { times: 1 }
       data:
           failCommands: ["commitTransaction"]
-          closeConnection: false
           writeConcernError:
             code: 100
             codeName: UnsatisfiableWriteConcern
