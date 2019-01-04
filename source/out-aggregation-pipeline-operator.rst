@@ -85,7 +85,7 @@ If both a cursor and **$out** are requested, the results will be written to the 
 
 **4. The "linearizable" readConcern cannot be used with the $out option**
 
-If a "linearizable" readConcern is requested with a pipeline containing the **$out** stage, an error will be returned::
+For servers < 4.2, if a "linearizable" readConcern is requested with a pipeline containing the **$out** stage, an error will be returned::
 
     aggregate failed: {
         "code" : 72,

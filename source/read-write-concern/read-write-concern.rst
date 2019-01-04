@@ -94,7 +94,9 @@ The read concern option is available for the following operations:
 - ``geoNear`` command
 - ``geoSearch`` command
 
-``aggregate`` command with $out does not support the "linearizable" readConcern.
+
+Starting in MongoDB 4.2, the ``aggregate`` command with $out does not support the "linearizable" readConcern.
+Versions older than 4.2 do not support readConcern for the ``aggregate`` command with $out.
 
 ``mapReduce`` command with "out" set to anything other than "inline" does not support readConcern.
 

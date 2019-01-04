@@ -6,7 +6,7 @@ minServerVersion: '4.2'
 
 tests:
     -
-        description: "readConcernMajority"
+        description: "readConcern Majority with out stage"
         operation:
             name: aggregate
             arguments:
@@ -20,7 +20,7 @@ tests:
         readConcernDocument: { level: "majority" }
 
     -
-        description: "readConcernLocal"
+        description: "readConcern Local with out"
         operation:
             name: aggregate
             arguments:
@@ -33,7 +33,7 @@ tests:
         error: false
         readConcernDocument: { level: "local" }
     -
-        description: "readConcernLinearizable"
+        description: "readConcern Linearizable with out stage"
         operation:
             name: aggregate
             arguments:
@@ -47,7 +47,7 @@ tests:
         readConcernDocument: { level: "linearizable" }
 
     -
-        description: "readConcernAvailable"
+        description: "readConcern Available with out stage"
         operation:
             name: aggregate
             arguments:
@@ -61,7 +61,7 @@ tests:
         readConcernDocument: { level: "available" }
 
     -
-        description: "readConcernInvalid"
+        description: "Invalid readConcern with out stage"
         operation:
             name: aggregate
             arguments:
