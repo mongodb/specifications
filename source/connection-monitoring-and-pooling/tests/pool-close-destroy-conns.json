@@ -32,7 +32,8 @@
       "reason": "poolClosed"
     },
     {
-      "type": "ConnectionPoolClosed"
+      "type": "ConnectionPoolClosed",
+      "address": 42
     }
   ],
   "ignore": [

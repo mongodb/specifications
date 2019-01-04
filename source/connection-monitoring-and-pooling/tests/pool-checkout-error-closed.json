@@ -24,16 +24,21 @@
   },
   "events": [
     {
-      "type": "ConnectionPoolCreated"
+      "type": "ConnectionPoolCreated",
+      "address": 42,
+      "options": 42
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionPoolClosed"
+      "type": "ConnectionPoolClosed",
+      "address": 42
     }
   ],
   "ignore": [

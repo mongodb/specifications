@@ -19,7 +19,9 @@
   ],
   "events": [
     {
-      "type": "ConnectionPoolCreated"
+      "type": "ConnectionPoolCreated",
+      "address": 42,
+      "options": 42
     },
     {
       "type": "ConnectionCreated",
@@ -34,21 +36,25 @@
       "connectionId": 3
     },
     {
-      "type": "ConnectionPoolCleared"
+      "type": "ConnectionPoolCleared",
+      "address": 42
     },
     {
       "type": "ConnectionCheckOutStarted"
     },
     {
       "type": "ConnectionClosed",
+      "connectionId": 42,
       "reason": "stale"
     },
     {
       "type": "ConnectionClosed",
+      "connectionId": 42,
       "reason": "stale"
     },
     {
       "type": "ConnectionClosed",
+      "connectionId": 42,
       "reason": "stale"
     },
     {

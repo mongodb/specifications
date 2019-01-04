@@ -27,22 +27,16 @@ events:
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
     connectionId: 42
-#  - type: ConnectionReady
-#     connectionId: 42
   - type: ConnectionCheckedOut
     connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
     connectionId: 42
-#  - type: ConnectionReady
-#     connectionId: 42
   - type: ConnectionCheckedOut
     connectionId: 42
   - type: ConnectionCheckOutStarted
   - type: ConnectionCreated
     connectionId: 42
-# - type: ConnectionReady
-#     connectionId: 42
   - type: ConnectionCheckedOut
     connectionId: 42
   - type: ConnectionCheckedIn
@@ -55,3 +49,5 @@ events:
     connectionId: 42
   - type: ConnectionCheckedOut
     connectionId: 42
+ignore:
+  - ConnectionReady

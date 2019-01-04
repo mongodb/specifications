@@ -10,11 +10,12 @@
   "events": [
     {
       "type": "ConnectionPoolCreated",
-      "address": "42"
+      "address": 42,
+      "options": 42
     },
     {
       "type": "ConnectionPoolClosed",
-      "address": "42"
+      "address": 42
     }
   ]
 }

@@ -84,7 +84,8 @@
       "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
       "type": "ConnectionCheckOutStarted"
@@ -99,28 +100,36 @@
       "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     }
   ],
   "ignore": [

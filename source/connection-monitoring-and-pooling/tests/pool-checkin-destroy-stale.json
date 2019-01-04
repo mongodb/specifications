@@ -21,7 +21,8 @@
       "connectionId": 1
     },
     {
-      "type": "ConnectionPoolCleared"
+      "type": "ConnectionPoolCleared",
+      "address": 42
     },
     {
       "type": "ConnectionCheckedIn",

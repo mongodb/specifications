@@ -43,61 +43,67 @@
   ],
   "events": [
     {
-      "type": "ConnectionPoolCreated"
+      "type": "ConnectionPoolCreated",
+      "address": 42,
+      "options": 42
     },
     {
       "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCreated"
+      "type": "ConnectionCreated",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionReady"
-    },
-    {
-      "type": "ConnectionCheckedOut"
-    },
-    {
-      "type": "ConnectionCheckOutStarted"
-    },
-    {
-      "type": "ConnectionCreated"
-    },
-    {
-      "type": "ConnectionReady"
-    },
-    {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
       "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCreated"
+      "type": "ConnectionCreated",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionReady"
-    },
-    {
-      "type": "ConnectionCheckedOut"
-    },
-    {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
       "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCreated",
+      "connectionId": 42
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
+    },
+    {
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
     },
     {
       "type": "ConnectionCheckOutStarted"
     },
     {
-      "type": "ConnectionCheckedIn"
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     },
     {
-      "type": "ConnectionCheckedOut"
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionCheckedIn",
+      "connectionId": 42
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "connectionId": 42
     }
+  ],
+  "ignore": [
+    "ConnectionReady"
   ]
 }
