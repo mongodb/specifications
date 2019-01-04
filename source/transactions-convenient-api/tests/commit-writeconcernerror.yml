@@ -21,7 +21,7 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback:
+        callback: &callback
           operations:
             -
               name: insertOne
@@ -67,9 +67,11 @@ tests:
             writeConcern: ~
           command_name: commitTransaction
           database_name: admin
-    outcome:
+    # The write operation is still applied despite the write concern error
+    outcome: &outcome
       collection:
-        data: []
+        data:
+          - { _id: 1 }
   -
     description: commitTransaction is not retried after write concern error (UnknownReplWriteConcern)
     failPoint:
@@ -86,16 +88,7 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback:
-          operations:
-            -
-              name: insertOne
-              object: collection
-              arguments:
-                session: session0
-                document: { _id: 1 }
-              result:
-                insertedId: 1
+        callback: *callback
         result:
           errorCodeName: UnknownReplWriteConcern
           errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
@@ -129,9 +122,7 @@ tests:
             writeConcern: ~
           command_name: commitTransaction
           database_name: admin
-    outcome:
-      collection:
-        data: []
+    outcome: *outcome
   -
     description: commitTransaction is not retried after write concern error (UnsatisfiableWriteConcern)
     failPoint:
@@ -148,16 +139,7 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback:
-          operations:
-            -
-              name: insertOne
-              object: collection
-              arguments:
-                session: session0
-                document: { _id: 1 }
-              result:
-                insertedId: 1
+        callback: *callback
         result:
           errorCodeName: UnsatisfiableWriteConcern
           errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
@@ -191,6 +173,4 @@ tests:
             writeConcern: ~
           command_name: commitTransaction
           database_name: admin
-    outcome:
-      collection:
-        data: []
+    outcome: *outcome

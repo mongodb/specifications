@@ -101,7 +101,11 @@
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
@@ -198,7 +202,11 @@
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
@@ -295,7 +303,11 @@
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     }
