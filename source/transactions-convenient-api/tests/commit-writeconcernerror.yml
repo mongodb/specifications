@@ -6,6 +6,7 @@ data: []
 tests:
   -
     description: commitTransaction is not retried after write concern error (WriteConcernFailed)
+    skipReason: SPEC-1197 Drivers should not retry commit after wtimeout error
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 1 }
