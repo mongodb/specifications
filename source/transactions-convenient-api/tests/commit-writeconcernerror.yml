@@ -5,7 +5,7 @@ data: []
 
 tests:
   -
-    description: commitTransaction is not retried after write concern error (WriteConcernFailed)
+    description: commitTransaction is not retried after WriteConcernFailed timeout error
     skipReason: SPEC-1197 Drivers should not retry commit after wtimeout error
     failPoint:
       configureFailPoint: failCommand
@@ -75,7 +75,100 @@ tests:
         data:
           - { _id: 1 }
   -
-    description: commitTransaction is not retried after write concern error (UnknownReplWriteConcern)
+    # This test configures the fail point to return a contrived error that
+    # is WriteConcernFailed but omits the errInfo field that would identify it
+    # as a wtimeout error. This tests that drivers do not assume that all
+    # WriteConcernFailed errors are due to a replication timeout.
+    description: commitTransaction is retried after WriteConcernFailed non-timeout error
+    skipReason: SPEC-1185 Drivers should use majority write concern when retrying commitTransaction
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 2 }
+      data:
+          failCommands: ["commitTransaction"]
+          closeConnection: false
+          writeConcernError:
+            code: 64
+            codeName: WriteConcernFailed
+            errmsg: "waiting for replication did not time out"
+    operations:
+      -
+        name: withTransaction
+        object: session0
+        callback:
+          operations:
+            -
+              name: insertOne
+              object: collection
+              arguments:
+                session: session0
+                document: { _id: 1 }
+              result:
+                insertedId: 1
+    expectations:
+      -
+        command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - { _id: 1 }
+            ordered: true
+            lsid: session0
+            txnNumber: { $numberLong: "1" }
+            startTransaction: true
+            autocommit: false
+            # omitted fields
+            readConcern: ~
+            writeConcern: ~
+          command_name: insert
+          database_name: *database_name
+      -
+        command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber: { $numberLong: "1" }
+            autocommit: false
+            # omitted fields
+            readConcern: ~
+            startTransaction: ~
+            writeConcern: ~
+          command_name: commitTransaction
+          database_name: admin
+      -
+        command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber: { $numberLong: "1" }
+            autocommit: false
+            # commitTransaction applies w:majority on retries (SPEC-1185)
+            writeConcern: { w: majority }
+            # omitted fields
+            readConcern: ~
+            startTransaction: ~
+          command_name: commitTransaction
+          database_name: admin
+      -
+        command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber: { $numberLong: "1" }
+            autocommit: false
+            # commitTransaction applies w:majority on retries (SPEC-1185)
+            writeConcern: { w: majority }
+            # omitted fields
+            readConcern: ~
+            startTransaction: ~
+          command_name: commitTransaction
+          database_name: admin
+    outcome:
+      collection:
+        data:
+          - { _id: 1 }
+  -
+    description: commitTransaction is not retried after UnknownReplWriteConcern error
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 1 }
@@ -125,7 +218,7 @@ tests:
           database_name: admin
     outcome: *outcome
   -
-    description: commitTransaction is not retried after write concern error (UnsatisfiableWriteConcern)
+    description: commitTransaction is not retried after UnsatisfiableWriteConcern error
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 1 }
