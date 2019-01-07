@@ -348,7 +348,7 @@
       }
     },
     {
-      "description": "withTransaction explicit transaction options override client options",
+      "description": "withTransaction explicit transaction options override defaultTransactionOptions",
       "sessionOptions": {
         "session0": {
           "defaultTransactionOptions": {
@@ -449,7 +449,7 @@
       }
     },
     {
-      "description": "withTransaction explicit transaction options override defaultTransactionOptions",
+      "description": "withTransaction explicit transaction options override client options",
       "clientOptions": {
         "readConcernLevel": "majority",
         "w": "majority"
