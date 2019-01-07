@@ -1,6 +1,7 @@
 {
   "database_name": "admin",
   "data": [],
+  "minServerVersion": "3.6",
   "tests": [
     {
       "description": "Aggregate with $currentOp",
