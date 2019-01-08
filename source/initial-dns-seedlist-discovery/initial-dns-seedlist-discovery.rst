@@ -292,7 +292,7 @@ ChangeLog
     Clarified that individual TXT records can have multiple strings.
 
 2017-10-31 — 1.1.3
-    Added a clause that specifying two host names with a `mongodb+srv://`` URI
+    Added a clause that specifying two host names with a ``mongodb+srv://`` URI
     is not allowed. Added a few more test cases.
 
 2017-10-18 — 1.1.2
@@ -308,7 +308,7 @@ ChangeLog
     Added support for connection string options through TXT records.
 
 2017-09-19
-    Clarify that host names in `mongodb+srv://` URLs work like normal host
+    Clarify that host names in ``mongodb+srv://`` URLs work like normal host
     specifications.
 
 2017-09-01
