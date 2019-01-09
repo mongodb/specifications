@@ -461,7 +461,8 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority }
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -472,7 +473,7 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
+            writeConcern: { w: majority }
           command_name: commitTransaction
           database_name: admin
 
@@ -544,7 +545,8 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority }
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -555,7 +557,7 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
+            writeConcern: { w: majority }
           command_name: commitTransaction
           database_name: admin
 
