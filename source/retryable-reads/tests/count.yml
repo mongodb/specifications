@@ -15,8 +15,7 @@ tests:
         operation: &retryable_operation
             name: count
             object: collection
-            arguments:
-                filter: { }
+            arguments: { filter: { } }
             result: 2
         expectations:
             - &retryable_command_started_event
@@ -55,8 +54,8 @@ tests:
         clientOptions:
             retryReads: true
         failPoint:
-          <<: *failCommand_failPoint
-          mode: { times: 2 }
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             result:
