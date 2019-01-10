@@ -17,8 +17,8 @@ tests:
             name: mapReduce
             object: collection
             arguments:
-                map: "function inc() { return emit(0, this.x + 1) }"
-                reduce: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+                map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+                reduce: { $code:  "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
                 out: { inline: 1 }
             result: [ {  "_id" : 0, "value" : 6 } ]
         expectations:
@@ -26,8 +26,8 @@ tests:
                 command_started_event:
                     command:
                         mapReduce: *collection_name
-                        map: "function inc() { return emit(0, this.x + 1) }"
-                        reduce: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+                        map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+                        reduce: { $code:  "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
                         out: { inline: 1 }
                     database_name: *database_name
     -                
@@ -38,8 +38,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands:
-                        - mapReduce
+                failCommands: [mapReduce]
                 closeConnection: true  
         operation: *retryable_operation
         expectations:

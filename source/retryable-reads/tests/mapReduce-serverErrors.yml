@@ -21,8 +21,8 @@ tests:
             name: mapReduce
             object: collection
             arguments:
-                map: "function inc() { return emit(0, this.x + 1) }"
-                reduce: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+                map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+                reduce: { $code:  "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
                 out: { inline: 1 }
             result: [ {  "_id" : 0, "value" : 6 } ]
         expectations:
@@ -30,8 +30,9 @@ tests:
                 command_started_event:
                     command:
                         mapReduce: *collection_name
-                        pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}]
-                        cursor: { 'batchSize': 2}
+                        map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+                        reduce: { $code:  "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }                        
+                        out: { inline: 1 }
                     database_name: *database_name
             - *retryable_command_started_event
     -
