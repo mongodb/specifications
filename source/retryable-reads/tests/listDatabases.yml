@@ -10,7 +10,7 @@ tests:
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: "listDatabases"
+            name: listDatabases
             object: client
             result:
                 error: false

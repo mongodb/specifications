@@ -20,7 +20,7 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [find], errorCode: 11600 }
         operation: &retryable_operation
-            name: "findOne"
+            name: findOne
             object: collection
             arguments:
                 filter: {_id: 1}

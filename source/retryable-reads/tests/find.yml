@@ -16,7 +16,7 @@ tests:
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: "find"
+            name: find
             object: collection
             arguments:
                 filter: {}

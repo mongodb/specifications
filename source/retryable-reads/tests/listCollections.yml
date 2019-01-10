@@ -10,7 +10,7 @@ tests:
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: "listCollections"
+            name: listCollections
             object: database
             result:
                 error: false

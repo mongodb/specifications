@@ -14,7 +14,7 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [listIndexes], errorCode: 11600 }
         operation:  &retryable_operation
-            name: "listIndexes"
+            name: listIndexes
             object: collection
             result:
                 error: false
