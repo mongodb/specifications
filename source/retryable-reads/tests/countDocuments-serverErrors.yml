@@ -19,8 +19,7 @@ tests:
         operation: &retryable_operation
             name: countDocuments
             object: collection
-            arguments:
-                filter: { }
+            arguments: { filter: { } }
             result: 2
         expectations:
              - &retryable_command_started_event
