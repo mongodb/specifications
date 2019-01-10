@@ -514,7 +514,7 @@ When ``resumeAfter`` is specified the ``ChangeStream`` will return notifications
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
-A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and MUST NOT attempt to kill the cursor on any other server.
+A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and MUST NOT attempt to kill the cursor on any other server. Any exceptions or errors that occur during the process of killing the cursor should be suppressed, including both errors returned by the ``killCursor`` command and exceptions thrown by opening, writing to, or reading from the socket.
 
 
 Exposing All Resume Tokens
@@ -671,7 +671,7 @@ It was decided to remove this example from the specification for the following r
 What do the additional error codes mean?
 ----------------------------------------
 
-The `CursorKilled` or `Interrupted` error implies implies some other actor killed the cursor.
+The `CursorKilled` or `Interrupted` error implies some other actor killed the cursor.
 
 The `CappedPositionLost` error implies falling off of the back of the oplog,
 so resuming is impossible.
@@ -767,4 +767,6 @@ Changelog
 | 2018-12-14 | Added ``startAfter`` to change stream options              |
 +------------+------------------------------------------------------------+
 | 2018-11-06 | Added handling of ``postBatchResumeToken``.                |
++------------+------------------------------------------------------------+
+| 2019-01-10 | Clarified error handling for killing the cursor.           |
 +------------+------------------------------------------------------------+
