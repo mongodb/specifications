@@ -22,9 +22,9 @@ tests:
             object: collection
             arguments:
                 pipeline:
-                    - $sort: {x: 1}
                     - $match: 
                         _id: {$gt: 1}
+                    - $sort: {x: 1}                        
                 batchSize: 2
             result:
                 - {_id: 2, x: 22}
@@ -34,7 +34,7 @@ tests:
                 command_started_event:
                     command:
                         aggregate: *collection_name
-                        pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}]
+                        pipeline: [{$sort: {x: 1}}, {$match: {_id: {$gt: 1}}}]
                         cursor: { 'batchSize': 2}
                     database_name: *database_name
             - *retryable_command_started_event

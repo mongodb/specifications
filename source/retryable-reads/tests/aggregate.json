@@ -28,15 +28,15 @@
         "arguments": {
           "pipeline": [
             {
-              "$sort": {
-                "x": 1
-              }
-            },
-            {
               "$match": {
                 "_id": {
                   "$gt": 1
                 }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
               }
             }
           ],
@@ -60,15 +60,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 }
               ],
@@ -104,15 +104,15 @@
         "arguments": {
           "pipeline": [
             {
-              "$sort": {
-                "x": 1
-              }
-            },
-            {
               "$match": {
                 "_id": {
                   "$gt": 1
                 }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
               }
             }
           ],
@@ -136,15 +136,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 }
               ],
@@ -161,15 +161,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 }
               ],
@@ -205,15 +205,15 @@
         "arguments": {
           "pipeline": [
             {
-              "$sort": {
-                "x": 1
-              }
-            },
-            {
               "$match": {
                 "_id": {
                   "$gt": 1
                 }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
               }
             }
           ],
@@ -230,15 +230,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 }
               ],
@@ -274,15 +274,15 @@
         "arguments": {
           "pipeline": [
             {
-              "$sort": {
-                "x": 1
-              }
-            },
-            {
               "$match": {
                 "_id": {
                   "$gt": 1
                 }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
               }
             }
           ],
@@ -299,15 +299,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 }
               ],
@@ -324,15 +324,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 }
               ],
@@ -368,15 +368,15 @@
         "arguments": {
           "pipeline": [
             {
-              "$sort": {
-                "x": 1
-              }
-            },
-            {
               "$match": {
                 "_id": {
                   "$gt": 1
                 }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
               }
             },
             {
@@ -395,15 +395,15 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
                   }
                 },
                 {

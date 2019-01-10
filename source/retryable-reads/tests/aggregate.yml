@@ -18,9 +18,8 @@ tests:
             object: collection
             arguments:
                 pipeline:
-                    - $sort: {x: 1}
-                    - $match: 
-                        _id: {$gt: 1}
+                    - $match: {_id: {$gt: 1}}                  
+                    - $sort: {x: 1}                        
                 batchSize: 2
             result:
                - {_id: 2, x: 22}
@@ -30,7 +29,7 @@ tests:
                 command_started_event:
                     command:
                         aggregate: *collection_name
-                        pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}]
+                        pipeline: [{$match: {_id: {$gt: 1}}}, {$sort: {x: 1}}]
                         cursor: { 'batchSize': 2}
                     database_name: *database_name
     -                
@@ -41,8 +40,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands:
-                        - aggregate
+                failCommands: [aggregate]
                 closeConnection: true  
         operation: *retryable_operation
         expectations:
@@ -82,9 +80,8 @@ tests:
             <<: *retryable_operation
             arguments:
                 pipeline:
+                    - $match: {_id: {$gt: 1}}
                     - $sort: {x: 1}
-                    - $match: 
-                        _id: {$gt: 1}
                     - $out: "output-collection"                    
             result:
                 error: true
@@ -92,7 +89,7 @@ tests:
              -  command_started_event:
                     command:
                       aggregate: *collection_name
-                      pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}, {'$out': 'output-collection'}]
+                      pipeline: [{$match: {_id: {$gt: 1}}}, {$sort: {x: 1}}, {$out: 'output-collection'}]
                     command_name: aggregate
                     database_name: *database_name
 
