@@ -36,8 +36,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -93,8 +92,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -150,8 +148,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -207,8 +204,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -264,8 +260,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -321,8 +316,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -378,8 +372,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -435,8 +428,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -492,8 +484,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -549,8 +540,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
@@ -606,8 +596,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {

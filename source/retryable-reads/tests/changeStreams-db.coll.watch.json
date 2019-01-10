@@ -16,8 +16,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "collection",
-        "result": []
+        "object": "collection"
       },
       "expectations": [
         {
@@ -57,8 +56,7 @@
       },
       "operation": {
         "name": "watch",
-        "object": "collection",
-        "result": []
+        "object": "collection"
       },
       "expectations": [
         {

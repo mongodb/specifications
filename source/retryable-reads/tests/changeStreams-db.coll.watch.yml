@@ -14,16 +14,13 @@ tests:
         operation: &retryable_operation
             name: watch
             object: collection
-            result: []
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
                         aggregate: *collection_name
                         cursor: {}
-                        pipeline:
-                          - $changeStream:
-                                fullDocument: default
+                        pipeline: [ { $changeStream: { fullDocument: "default" } } ]
                     database_name: *database_name
     -   
         description: "db.coll.watch succeeds on second attempt"
