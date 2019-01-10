@@ -46,8 +46,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands:
-                        - find
+                failCommands: [find]
                 closeConnection: true
         operation: *retryable_operation                
         expectations:

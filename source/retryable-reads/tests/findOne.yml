@@ -18,8 +18,7 @@ tests:
         operation: &retryable_operation
             name: "findOne"
             object: collection
-            arguments:
-                filter: {_id: 1}
+            arguments: {filter: {_id: 1 }}
             result: {_id: 1, x: 11}           
         expectations:
             - &retryable_command_started_event
@@ -36,8 +35,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands:
-                      - find
+              failCommands: [find]
               closeConnection: true
         operation: *retryable_operation                
         expectations:
