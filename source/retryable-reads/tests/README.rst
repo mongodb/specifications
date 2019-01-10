@@ -25,53 +25,8 @@ necessary for initial testing.
 Server Fail Point
 =================
 
-Some tests depend on a server fail point, expressed in the ``failPoint`` field.
-For example the ``failCommand`` fail point allows the client to force the
-server to return an error. Keep in mind that the fail point only triggers for
-commands listed in the "failCommands" field. See `SERVER-35004`_ and
-`SERVER-35083`_ for more information.
-
-.. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
-.. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
-
-The ``failCommand`` fail point may be configured like so::
-  
-    db.adminCommand({
-        configureFailPoint: "failCommand",
-        mode: <string|document>,
-        data: {
-          failCommands: ["commandName", "commandName2"],
-          closeConnection: <true|false>,
-          errorCode: <Number>,
-        }
-    });
-    
-Some tests depend on a server fail point, ``failCommand``, which
-allows us to force a network error before the server would return a read result
-to the client.  See `SERVER-35004`_ for
-more information.
-
-.. _SERVER-29606: https://jira.mongodb.org/browse/SERVER-35004
-``mode`` is a generic fail point option and may be assigned a string or document
-value. The string values ``"alwaysOn"`` and ``"off"`` may be used to enable or
-disable the fail point, respectively. A document may be used to specify either
-``times`` or ``skip``, which are mutually exclusive:
-
-- ``{ times: <integer> }`` may be used to limit the number of times the fail
-  point may trigger before transitioning to ``"off"``.
-- ``{ skip: <integer> }`` may be used to defer the first trigger of a fail
-  point, after which it will transition to ``"alwaysOn"``.
-
-The ``data`` option is a document that may be used to specify options that
-control the fail point's behavior. ``failCommand`` supports the following
-``data`` options, which may be combined if desired:
-
-- ``failCommands``: Required, the list of command names to fail.
-- ``closeConnection``: Boolean option, which defaults to ``false``. If
-  ``true``, the connection on which the command is executed will be closed
-  and the client will see a network error.
-- ``errorCode``: Integer option, which is unset by default. If set, the
-  specified command error code will be returned as a command error.
+See: `Server Fail Point <../../transactions/tests#server-fail-point>`_ in the
+Transactions spec test suite.
 
 Disabling Fail Point after Test Execution
 -----------------------------------------
@@ -99,16 +54,20 @@ Test Format
 
 Each YAML file has the following keys:
 
-- ``database_name`` and ``collection_name``: Optional. The database and collection to use
-  for testing.
+- ``database_name`` and ``collection_name``: Optional. The database and
+  collection to use for testing.
 
 - ``data``: The data that should exist in the collection(s) under test before
   each test run.
+
+- ``minServerVersion`` (optional): The minimum server version (inclusive).
 
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:
 
   - ``description``: The name of the test.
+
+  - ``skipReason``: Optional, string describing why this test should be skipped.
 
   - ``failPoint``: Optional, a server failpoint to enable expressed as the
     configureFailPoint command to run on the admin database.
