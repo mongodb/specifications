@@ -138,6 +138,20 @@
             },
             "database_name": "retryable-reads-tests"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
+            },
+            "database_name": "retryable-reads-tests"
+          }
         }
       ]
     },

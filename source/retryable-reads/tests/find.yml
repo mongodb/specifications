@@ -51,6 +51,7 @@ tests:
         operation: *retryable_operation                
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event             
     -
         description: "Find fails on first attempt"
         clientOptions:
