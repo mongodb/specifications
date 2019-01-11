@@ -22,8 +22,6 @@ tests:
             operation: download_by_name
             object: gridfsbucket
             arguments: { filename: "abc" }
-            result:
-                error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:

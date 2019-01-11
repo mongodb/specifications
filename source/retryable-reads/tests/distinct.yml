@@ -14,7 +14,7 @@ tests:
         clientOptions:
             retryReads: true
         operation:  &retryable_operation
-            name: "distinct"
+            name: distinct
             object: collection
             arguments: { fieldName: "x", filter: { _id: { $gt: 1 } } }
             result:

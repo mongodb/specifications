@@ -16,8 +16,6 @@ tests:
         operation:  &retryable_operation
             name: listDatabases
             object: client
-            result:
-                error: false
         expectations:
             - &retryable_command_started_event
                 command_started_event:

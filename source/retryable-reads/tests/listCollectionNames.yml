@@ -12,8 +12,6 @@ tests:
         operation: &retryable_operation
             name: listCollectionNames
             object: database
-            result:
-                error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:

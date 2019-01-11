@@ -23,10 +23,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -66,10 +63,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -109,10 +103,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -152,10 +143,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -195,10 +183,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -238,10 +223,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -281,10 +263,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -324,10 +303,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -367,10 +343,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -410,10 +383,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -453,10 +423,7 @@
       },
       "operation": {
         "name": "listIndexNames",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {

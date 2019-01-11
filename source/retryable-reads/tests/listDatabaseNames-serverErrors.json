@@ -23,10 +23,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -64,10 +61,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -105,10 +99,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -146,10 +137,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -187,10 +175,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -228,10 +213,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -269,10 +251,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -310,10 +289,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -351,10 +327,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -392,10 +365,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -433,10 +403,7 @@
       },
       "operation": {
         "name": "listDatabaseNames",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {

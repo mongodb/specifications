@@ -48,9 +48,6 @@
           "id": {
             "$oid": "000000000000000000000003"
           }
-        },
-        "result": {
-          "error": false
         }
       },
       "expectations": [
@@ -105,9 +102,6 @@
           "id": {
             "$oid": "000000000000000000000003"
           }
-        },
-        "result": {
-          "error": false
         }
       },
       "expectations": [

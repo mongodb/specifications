@@ -23,10 +23,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -64,10 +61,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -105,10 +99,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -146,10 +137,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -187,10 +175,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -228,10 +213,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -269,10 +251,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -310,10 +289,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -351,10 +327,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -392,10 +365,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
@@ -433,10 +403,7 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {

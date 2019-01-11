@@ -18,7 +18,7 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [distinct], errorCode: 11600 }
         operation: &retryable_operation
-            name: "distinct"
+            name: distinct
             object: collection
             arguments: { fieldName: "x", filter: { _id: { $gt: 1 } } }
             result:

@@ -45,9 +45,6 @@
         "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
-        },
-        "result": {
-          "error": false
         }
       },
       "expectations": [
@@ -100,9 +97,6 @@
         "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
-        },
-        "result": {
-          "error": false
         }
       },
       "expectations": [

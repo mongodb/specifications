@@ -11,10 +11,7 @@
       },
       "operation": {
         "name": "listDatabases",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {
@@ -45,10 +42,7 @@
       },
       "operation": {
         "name": "listDatabases",
-        "object": "client",
-        "result": {
-          "error": false
-        }
+        "object": "client"
       },
       "expectations": [
         {

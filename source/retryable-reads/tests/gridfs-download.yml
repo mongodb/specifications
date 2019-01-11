@@ -24,8 +24,6 @@ tests:
             operation: download
             object: gridfsbucket
             arguments: { id: { "$oid" : "000000000000000000000003" } }
-            result:
-                error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
