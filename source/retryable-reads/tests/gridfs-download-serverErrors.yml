@@ -1,21 +1,17 @@
 database_name: &database_name "retryable-reads-tests"
-collection_name: &collection_name "files"
+bucket_name: "fs"
 
 data:
-    files:
+    fs.files:
         -
-            _id: { "$oid" : "000000000000000000000003" }
-            length: 2
+            _id: { $oid: "000000000000000000000004" }
+            length: 8
             chunkSize: 4
-            uploadDate: { "$date" : "1970-01-01T00:00:00.000Z" }
-            md5: "c700ed4fdb1d27055aa3faa2c2432283"
-            filename: "length-2"
-            contentType: "application/octet-stream"
-            aliases: []
+            uploadDate: { $date: "1970-01-01T00:00:00.000Z" }
+            filename: "length-8"
             metadata: {}
-    chunks:
-        - { _id : { "$oid" : "000000000000000000000003" }, files_id : { "$oid" : "000000000000000000000004" }, n : 0, data : { $hex : "11223344" } }
-
+    fs.chunks:
+        - { _id: { $oid: "000000000000000000000003" }, files_id: { $oid: "000000000000000000000004" }, n: 0, data : { $binary: { base64: "ESIzRA==", subType: 0 } } }
 
 minServerVersion: '4.1.6' # 4.2
 
@@ -30,16 +26,23 @@ tests:
             data: { failCommands: [find], errorCode: 11600 }
         operation: &retryable_operation
             operation: download
-            arguments:
-                id: { "$oid" : "000000000000000000000003" }
+            object: gridfsbucket
+            arguments: { id: { "$oid" : "000000000000000000000003" } }
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        find: *collection_name
-                        filter: { "$oid" : "000000000000000000000003" }
+                        find: fs.files
+                        filter: { $oid : "000000000000000000000004" }
                     database_name: *database_name
             - *retryable_command_started_event
+            - &find_chunks_command_started_event
+                command_started_event:
+                    command:
+                        find: fs.chunks
+                        filter: { $oid : "000000000000000000000003" }
+                        sort: { n: 1 } 
+                    database_name: *database_name            
     -
         description: "Download succeeds after InterruptedDueToStepDown"
         clientOptions:
@@ -50,7 +53,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
         description: "Download succeeds after NotMaster"
         clientOptions:
@@ -61,7 +65,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -72,7 +77,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -83,7 +89,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event 
+             - *find_chunks_command_started_event   
     -
         description: "Download succeeds after PrimarySteppedDown"
         clientOptions:
@@ -94,7 +101,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after ShutdownInProgress"
         clientOptions:
@@ -105,7 +113,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after HostNotFound"
         clientOptions:
@@ -116,7 +125,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after HostUnreachable"
         clientOptions:
@@ -127,7 +137,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after NetworkTimeout"
         clientOptions:
@@ -138,7 +149,8 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event    
     -
         description: "Download succeeds after SocketException"
         clientOptions:
@@ -149,4 +161,5 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event 

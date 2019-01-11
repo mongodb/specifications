@@ -56,6 +56,8 @@ Each YAML file has the following keys:
 
 - ``database_name`` and ``collection_name``: Optional. The database and
   collection to use for testing.
+  
+- ``bucket_name``: Optional. The GridFS bucket name to use for testing.
 
 - ``data``: The data that should exist in the collection(s) under test before
   each test run.
@@ -78,7 +80,7 @@ Each YAML file has the following keys:
     - ``name``: The name of the operation on ``object``.
 
     - ``object``: The name of the object to perform the operation on. Can be
-      "database", "collection", or "client."
+      "database", "collection", "client", or "gridfsbucket."
 
     - ``arguments``: Optional, the names and values of arguments.
 

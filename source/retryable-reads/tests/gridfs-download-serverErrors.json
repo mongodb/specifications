@@ -1,25 +1,22 @@
 {
   "database_name": "retryable-reads-tests",
-  "collection_name": "files",
+  "bucket_name": "fs",
   "data": {
-    "files": [
+    "fs.files": [
       {
         "_id": {
-          "$oid": "000000000000000000000003"
+          "$oid": "000000000000000000000004"
         },
-        "length": 2,
+        "length": 8,
         "chunkSize": 4,
         "uploadDate": {
           "$date": "1970-01-01T00:00:00.000Z"
         },
-        "md5": "c700ed4fdb1d27055aa3faa2c2432283",
-        "filename": "length-2",
-        "contentType": "application/octet-stream",
-        "aliases": [],
+        "filename": "length-8",
         "metadata": {}
       }
     ],
-    "chunks": [
+    "fs.chunks": [
       {
         "_id": {
           "$oid": "000000000000000000000003"
@@ -29,7 +26,10 @@
         },
         "n": 0,
         "data": {
-          "$hex": "11223344"
+          "$binary": {
+            "base64": "ESIzRA==",
+            "subType": 0
+          }
         }
       }
     ]
@@ -55,6 +55,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -65,9 +66,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -76,9 +77,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -105,6 +120,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -115,9 +131,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -126,9 +142,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -155,6 +185,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -165,9 +196,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -176,9 +207,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -205,6 +250,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -215,9 +261,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -226,9 +272,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -255,6 +315,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -265,9 +326,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -276,9 +337,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -305,6 +380,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -315,9 +391,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -326,9 +402,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -355,6 +445,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -365,9 +456,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -376,9 +467,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -405,6 +510,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -415,9 +521,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -426,9 +532,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -455,6 +575,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -465,9 +586,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -476,9 +597,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -505,6 +640,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -515,9 +651,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -526,9 +662,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -555,6 +705,7 @@
       },
       "operation": {
         "operation": "download",
+        "object": "gridfsbucket",
         "arguments": {
           "id": {
             "$oid": "000000000000000000000003"
@@ -565,9 +716,9 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "$oid": "000000000000000000000004"
               }
             },
             "database_name": "retryable-reads-tests"
@@ -576,9 +727,23 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
+              "filter": {
+                "$oid": "000000000000000000000004"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
               "filter": {
                 "$oid": "000000000000000000000003"
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"

@@ -1,20 +1,17 @@
 database_name: &database_name "retryable-reads-tests"
-collection_name: &collection_name "files"
+bucket_name: "fs"
 
 data:
-    files:
+    fs.files:
         -
-            _id: { "$oid" : "000000000000000000000003" }
-            length: 2
+            _id: { $oid: "000000000000000000000004" }
+            length: 8
             chunkSize: 4
-            uploadDate: { "$date" : "1970-01-01T00:00:00.000Z" }
-            md5: "c700ed4fdb1d27055aa3faa2c2432283"
-            filename: "length-2"
-            contentType: "application/octet-stream"
-            aliases: []
+            uploadDate: { $date : "1970-01-01T00:00:00.000Z" }
+            filename: "length-8"
             metadata: {}
-    chunks:
-        - { _id : { "$oid" : "000000000000000000000003" }, files_id : { "$oid" : "000000000000000000000004" }, n : 0, data : { $hex : "11223344" } }
+    fs.chunks:
+        - { _id: { $oid: "000000000000000000000003" }, files_id: { $oid: "000000000000000000000004" }, n: 0, data : { $binary: { base64: "ESIzRA==", subType: 0 } } }
 
 minServerVersion: '4.1.6' # 4.2
 
@@ -25,16 +22,23 @@ tests:
             retryReads: true
         operation: &retryable_operation
             operation: download
-            arguments:
-                id: { "$oid" : "000000000000000000000003" }
+            object: gridfsbucket
+            arguments: { id: { "$oid" : "000000000000000000000003" } }
             result:
                 error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
                     command:
-                        find: *collection_name
-                        filter: { "$oid" : "000000000000000000000003" }
+                        find: fs.files
+                        filter: { $oid : "000000000000000000000003" }
+                    database_name: *database_name
+            -  &find_chunks_command_started_event
+                command_started_event:
+                    command:
+                        find: fs.chunks
+                        filter: { $oid : "000000000000000000000003" }
+                        sort: { n: 1 } 
                     database_name: *database_name
     -
         description: "Download succeeds on second attempt"
@@ -49,6 +53,8 @@ tests:
         operation: *retryable_operation                
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
         description: "Download fails on first attempt"
         clientOptions:
