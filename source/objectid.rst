@@ -10,8 +10,8 @@ ObjectID format
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2018-10-11
-:Version: 0.3
+:Last Modified: 2019-01-14
+:Version: 0.4
 :Spec Lead: n/a
 :Advisory Group: n/a
 :Approver(s): Andy Schwerin, Bernie Hackett, Eliot Horowitz, Jeff Yemin, Jeremy Mikola, Matt Broadstone
@@ -80,10 +80,16 @@ timestamp value.
 Random Value
 ------------
 
-A 5-byte field consisting of a random value generated once per process.
+A 5-byte field consisting of a random value generated once per process. This
+random value is unique to the machine and process.
 
 Drivers MUST NOT have an accessor method on an ObjectID class for obtaining
 this value.
+
+The random number does not have to be cryptographic. If possible, use a PRNG
+with OS supplied entropy that SHOULD NOT block to wait for more entropy to
+become available. Otherwise, seed a deterministic PRNG to ensure uniqueness of
+process and machine by combining time, process ID, and hostname.
 
 Counter
 -------
@@ -100,6 +106,11 @@ to 0.
 Drivers MUST NOT have an accessor method on an ObjectID class for obtaining
 this value.
 
+The random number does not have to be cryptographic. If possible, use a PRNG
+with OS supplied entropy that SHOULD NOT block to wait for more entropy to
+become available. Otherwise, seed a deterministic PRNG to ensure uniqueness of
+process and machine by combining time, process ID, and hostname.
+
 Test Plan
 =========
 
@@ -115,6 +126,11 @@ Drivers MUST:
 
 - Ensure that the Counter field successfully overflows its sequence from
   ``0xFFFFFF`` to ``0x000000``.
+
+- Ensure that after a new process is created through a fork() or similar
+  process creation operation, the "random number unique to a machine and
+  process" is no longer the same as the parent process that created the new
+  process.
 
 Motivation for Change
 =====================
@@ -163,6 +179,10 @@ Currently there is no full reference implementation yet.
 
 Changelog
 =========
+
+2019-01-14 — Version 0.4
+	Clarify that the random numbers don't need to be cryptographically secure.
+	Add a test to test that the unique value is different in forked processes.
 
 2018-10-11 — Version 0.3
 	Clarify that the *Timestamp* and *Counter* fields are big endian, and add
