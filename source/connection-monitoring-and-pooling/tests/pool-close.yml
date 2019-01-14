@@ -1,6 +1,6 @@
 version: 1
 style: unit
-description: A Pool MUST be able to be manually closed.
+description: must be able to manually close a pool
 operations:
   - name: close
 events:
