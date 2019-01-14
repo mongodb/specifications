@@ -8,6 +8,14 @@
   },
   "operations": [
     {
+      "name": "checkOut",
+      "label": "conn"
+    },
+    {
+      "name": "checkIn",
+      "connection": "conn"
+    },
+    {
       "name": "wait",
       "ms": 50
     },
@@ -23,6 +31,17 @@
     },
     {
       "type": "ConnectionCreated",
+      "connectionId": 1
+    },
+    {
+      "type": "ConnectionCheckOutStarted"
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "connectionId": 1
+    },
+    {
+      "type": "ConnectionCheckedIn",
       "connectionId": 1
     },
     {
