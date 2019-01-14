@@ -72,10 +72,9 @@ Valid Unit Test Operations are the following:
 
   - ``label``: If specified, associate this label with the returned connection, so that it may be referenced in later operations
 
-- ``pool.checkIn(connection, force?)``: call ``checkIn`` on pool, passing in connection and optional force flag
+- ``pool.checkIn(connection)``: call ``checkIn`` on pool
 
   - ``connection``: A string label identifying which connection to check in. Should be a label that was previously set with ``checkOut``
-  - ``force``: A boolean indicating whether or not to force-close the connection
 
 - ``pool.clear()``: call ``clear`` on Pool
 - ``pool.close()``: call ``close`` on Pool
