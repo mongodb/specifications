@@ -2,6 +2,8 @@ version: 1
 style: unit
 description: must be able to check out multiple connections at the same time
 operations:
+  # Note: this test can be somewhat non-deterministic depending on how you
+  # implement your test runner.
   - name: start
     target: thread1
   - name: start

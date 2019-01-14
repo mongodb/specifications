@@ -8,6 +8,9 @@ operations:
   - name: checkOut
     label: conn0
     # Create 4 threads, have them all queue up for connections
+    # Note: this might become non-deterministic depending on how you
+    # implement your test runner. The goal is for each thread to
+    # have started and begun checkOut before the next thread starts
   - name: start
     target: thread1
   - name: checkOut
