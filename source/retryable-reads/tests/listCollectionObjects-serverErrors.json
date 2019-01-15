@@ -29,14 +29,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -67,14 +67,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -105,14 +105,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -143,14 +143,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -181,14 +181,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -219,14 +219,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -257,14 +257,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -295,14 +295,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -333,14 +333,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -371,14 +371,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -409,14 +409,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }

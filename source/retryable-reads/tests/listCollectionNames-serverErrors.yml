@@ -20,7 +20,7 @@ tests:
             -  &retryable_command_started_event
                 command_started_event:
                     command:
-                        listCollections: *database_name
+                        listCollections: 1
             - *retryable_command_started_event
     -
         description: "ListCollectionNames succeeds after InterruptedDueToStepDown"
