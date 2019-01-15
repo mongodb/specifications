@@ -42,6 +42,7 @@ tests:
         operation: *retryable_operation                
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "Distinct fails on first attempt"
         clientOptions:

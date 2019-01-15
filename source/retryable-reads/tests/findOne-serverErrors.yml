@@ -24,7 +24,7 @@ tests:
             object: collection
             arguments:
                 filter: {_id: 1}
-                result: {_id: 1, x: 11}
+            result: {_id: 1, x: 11}
         expectations:
              - &retryable_command_started_event
                  command_started_event:
