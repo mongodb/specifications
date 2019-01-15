@@ -18,8 +18,7 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        aggregate:
-                        $numberInt: "1"
+                        aggregate: 1
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default" } } ]
                     database_name: *database_name    

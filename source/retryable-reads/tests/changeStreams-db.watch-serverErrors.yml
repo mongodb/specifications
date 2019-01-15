@@ -24,7 +24,7 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        aggregate: *collection_name
+                        aggregate: 1
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default" } } ]
                     database_name: *database_name
