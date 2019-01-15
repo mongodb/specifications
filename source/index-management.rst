@@ -579,7 +579,7 @@ Common API Components
      * Optionally specifies the length in time, in seconds, for documents to remain in
      * a collection.
      */
-    expireAfter: Int32;
+    expireAfterSeconds: Int32;
 
     /**
      * Optionally specify a specific name for the index outside of the default generated
@@ -599,10 +599,10 @@ Common API Components
     sparse: Boolean;
 
     /**
-     * Optionally used only in MongoDB 3.0.0 and higher. Specifies the storage engine
-     * to store the index in.
+     * Optionally used only in MongoDB 3.0.0 and higher. Allows users to configure the storage
+     * engine on a per-index basis when creating an index.
      */
-    storageEngine: String;
+    storageEngine: Document;
 
     /**
      * Optionally forces the index to be unique.
@@ -616,7 +616,7 @@ Common API Components
 
     /**
      * Optionally specifies the default language for text indexes.
-     * Is english if none is provided.
+     * Is 'english' if none is provided.
      */
     defaultLanguage: String;
 
@@ -632,7 +632,7 @@ Common API Components
      *
      * MongoDB 2.6 and higher may support version 1 or 2.
      */
-    textVersion: Int32;
+    textIndexVersion: Int32;
 
     /**
      * Optionally specifies fields in the index and their corresponding weight values.
@@ -646,7 +646,7 @@ Common API Components
      *
      * MongoDB 2.6 and higher may support version 1 or 2.
      */
-    sphereVersion: Int32;
+    2dsphereIndexVersion: Int32;
 
     /**
      * Optionally specifies the precision of the stored geo hash in the 2d index, from 1 to 32.
@@ -672,7 +672,7 @@ Common API Components
 
     /**
      * Optionally specifies a filter for use in a partial index. Only documents that match the
-     * filter expression are included in the index.
+     * filter expression are included in the index. New in MongoDB 3.2.
      */
     partialFilterExpression: Document;
 
