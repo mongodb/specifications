@@ -53,6 +53,14 @@
             },
             "database_name": "retryable-reads-tests"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexes": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
         }
       ]
     },

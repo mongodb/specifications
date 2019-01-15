@@ -51,6 +51,13 @@
               "listDatabases": 1
             }
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
         }
       ]
     },
