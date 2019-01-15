@@ -32,6 +32,7 @@ tests:
         operation: *retryable_operation                
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "ListIndexNames fails on first attempt"
         clientOptions:
