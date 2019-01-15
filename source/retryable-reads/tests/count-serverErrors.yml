@@ -161,8 +161,8 @@ tests:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 10107 }
         operation:
-          <<: *retryable_operation
-          result: 
+            <<: *retryable_operation
+            result: 
                 error: true
         expectations:
              - *retryable_command_started_event
