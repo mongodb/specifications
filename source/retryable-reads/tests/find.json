@@ -68,8 +68,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -131,8 +130,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -145,8 +143,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -193,8 +190,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -241,8 +237,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -255,8 +250,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }

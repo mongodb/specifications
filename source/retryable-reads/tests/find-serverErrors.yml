@@ -36,7 +36,6 @@ tests:
                         filter: {}
                         sort: {_id: 1}
                         limit: 4
-                        batchSize: 2
                     database_name: *database_name
             - *retryable_command_started_event
     -
