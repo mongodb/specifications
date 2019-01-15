@@ -18,7 +18,7 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        aggregate: { $numberInt: "1" }
+                        aggregate: 1
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default", "allChangesForCluster": true } } ]
                     database_name: admin         
