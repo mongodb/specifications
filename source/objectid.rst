@@ -80,14 +80,16 @@ timestamp value.
 Random Value
 ------------
 
-A 5-byte field consisting of a random value generated once per process.
+A 5-byte field consisting of a random value generated once per process. This
+random value is unique to the machine and process.
 
 Drivers MUST NOT have an accessor method on an ObjectID class for obtaining
 this value.
 
-The random number does not have to be cryptographic, but SHOULD NOT be
-generated with a blocking PRNG (one that waits for more entropy to become
-available, if there is not enough).
+The random number does not have to be cryptographic. If possible, use a PRNG
+with OS supplied entropy that SHOULD NOT block to wait for more entropy to
+become available. Otherwise, seed a deterministic PRNG to ensure uniqueness of
+process and machine by combining time, process ID, and hostname.
 
 Counter
 -------
@@ -104,9 +106,10 @@ to 0.
 Drivers MUST NOT have an accessor method on an ObjectID class for obtaining
 this value.
 
-The random number does not have to be cryptographic, but SHOULD NOT be
-generated with a blocking PRNG (one that waits for more entropy to become
-available, if there is not enough).
+The random number does not have to be cryptographic. If possible, use a PRNG
+with OS supplied entropy that SHOULD NOT block to wait for more entropy to
+become available. Otherwise, seed a deterministic PRNG to ensure uniqueness of
+process and machine by combining time, process ID, and hostname.
 
 Test Plan
 =========
