@@ -1127,6 +1127,169 @@
           }
         }
       ]
+    },
+    {
+      "description": "Aggregate fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "aggregate",
+        "object": "collection",
+        "arguments": {
+          "pipeline": [
+            {
+              "$match": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
+              }
+            }
+          ],
+          "batchSize": 2
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Aggregate fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "aggregate",
+        "object": "collection",
+        "arguments": {
+          "pipeline": [
+            {
+              "$match": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            {
+              "$sort": {
+                "x": 1
+              }
+            }
+          ],
+          "batchSize": 2
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                },
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                }
+              ],
+              "cursor": {
+                "batchSize": 2
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

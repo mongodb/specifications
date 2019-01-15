@@ -443,6 +443,84 @@
           }
         }
       ]
+    },
+    {
+      "description": "ListIndexNames fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listIndexes"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listIndexNames",
+        "object": "collection",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListIndexNames fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listIndexes"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listIndexNames",
+        "object": "collection",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

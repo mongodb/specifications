@@ -841,6 +841,133 @@
           }
         }
       ]
+    },
+    {
+      "description": "MapReduce fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": {
+            "$code": "function inc() { return emit(0, this.x + 1) }"
+          },
+          "reduce": {
+            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+          },
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "map": {
+                "$code": "function inc() { return emit(0, this.x + 1) }"
+              },
+              "reduce": {
+                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+              },
+              "out": {
+                "inline": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "map": {
+                "$code": "function inc() { return emit(0, this.x + 1) }"
+              },
+              "reduce": {
+                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+              },
+              "out": {
+                "inline": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "MapReduce fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "mapReduce"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "mapReduce",
+        "object": "collection",
+        "arguments": {
+          "map": {
+            "$code": "function inc() { return emit(0, this.x + 1) }"
+          },
+          "reduce": {
+            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+          },
+          "out": {
+            "inline": 1
+          }
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "mapReduce": "coll",
+              "map": {
+                "$code": "function inc() { return emit(0, this.x + 1) }"
+              },
+              "reduce": {
+                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+              },
+              "out": {
+                "inline": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

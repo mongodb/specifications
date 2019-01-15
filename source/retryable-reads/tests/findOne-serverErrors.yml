@@ -142,4 +142,32 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
+    -
+        description: "FindOne fails after two NotMaster errors"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [find], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event               
+    -
+        description: "FindOne fails after NotMaster when retryReads is false"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [find], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event                         

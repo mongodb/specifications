@@ -782,6 +782,129 @@
           }
         }
       ]
+    },
+    {
+      "description": "CountDocuments fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "countDocuments",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "CountDocuments fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "countDocuments",
+        "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

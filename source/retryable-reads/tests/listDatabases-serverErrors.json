@@ -421,6 +421,81 @@
           }
         }
       ]
+    },
+    {
+      "description": "ListDatabases fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listDatabases",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabases fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listDatabases",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
     }
   ]
 }

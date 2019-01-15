@@ -882,6 +882,118 @@
           }
         }
       ]
+    },
+    {
+      "description": "Find fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "find",
+        "object": "collection",
+        "arguments": {
+          "filter": {},
+          "sort": {
+            "_id": 1
+          },
+          "limit": 4,
+          "batchSize": 2
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Find fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "find",
+        "object": "collection",
+        "arguments": {
+          "filter": {},
+          "sort": {
+            "_id": 1
+          },
+          "limit": 4,
+          "batchSize": 2
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

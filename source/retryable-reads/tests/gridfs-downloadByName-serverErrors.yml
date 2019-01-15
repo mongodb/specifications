@@ -161,3 +161,31 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
              - *find_chunks_command_started_event
+    -
+        description: "DownloadByName fails after two NotMaster errors"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [find], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event               
+    -
+        description: "DownloadByName fails after NotMaster when retryReads is false"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [find], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event               

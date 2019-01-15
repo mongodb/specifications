@@ -720,6 +720,118 @@
           }
         }
       ]
+    },
+    {
+      "description": "Distinct fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "Distinct fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "distinct",
+        "object": "collection",
+        "arguments": {
+          "fieldName": "x",
+          "filter": {
+            "_id": {
+              "$gt": 1
+            }
+          }
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

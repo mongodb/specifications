@@ -716,6 +716,97 @@
           }
         }
       ]
+    },
+    {
+      "description": "DownloadByName fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "operation": "download_by_name",
+        "arguments": {
+          "filename": "abc"
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "DownloadByName fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "operation": "download_by_name",
+        "arguments": {
+          "filename": "abc"
+        },
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }
