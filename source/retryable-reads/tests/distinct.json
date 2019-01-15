@@ -67,7 +67,7 @@
         },
         "data": {
           "failCommands": [
-            "find"
+            "distinct"
           ],
           "closeConnection": true
         }
@@ -117,7 +117,7 @@
         },
         "data": {
           "failCommands": [
-            "find"
+            "distinct"
           ],
           "closeConnection": true
         }
@@ -166,7 +166,7 @@
         },
         "data": {
           "failCommands": [
-            "find"
+            "distinct"
           ],
           "closeConnection": true
         }
