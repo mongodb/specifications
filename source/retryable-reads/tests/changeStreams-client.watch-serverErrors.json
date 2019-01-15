@@ -42,7 +42,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -58,7 +58,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -98,7 +98,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -114,7 +114,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -154,7 +154,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -170,7 +170,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -210,7 +210,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -226,7 +226,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -266,7 +266,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -282,7 +282,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -322,7 +322,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -338,7 +338,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -378,7 +378,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -394,7 +394,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -434,7 +434,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -450,7 +450,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -490,7 +490,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -506,7 +506,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -546,7 +546,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -562,7 +562,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -602,7 +602,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -618,7 +618,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
