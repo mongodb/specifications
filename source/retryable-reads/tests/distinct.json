@@ -102,6 +102,20 @@
             },
             "database_name": "retryable-reads-tests"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
         }
       ]
     },

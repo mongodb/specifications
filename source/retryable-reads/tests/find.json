@@ -38,8 +38,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": [
           {
@@ -102,8 +101,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": [
           {
@@ -180,8 +178,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": {
           "error": true
@@ -229,8 +226,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": {
           "error": true

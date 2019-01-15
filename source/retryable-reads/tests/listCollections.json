@@ -51,6 +51,13 @@
               "listCollections": 1
             }
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
+            }
+          }
         }
       ]
     },

@@ -39,8 +39,7 @@
                 "x": 1
               }
             }
-          ],
-          "batchSize": 2
+          ]
         },
         "result": [
           {
@@ -115,8 +114,7 @@
                 "x": 1
               }
             }
-          ],
-          "batchSize": 2
+          ]
         },
         "result": [
           {
@@ -216,8 +214,7 @@
                 "x": 1
               }
             }
-          ],
-          "batchSize": 2
+          ]
         },
         "result": {
           "error": true
@@ -285,8 +282,7 @@
                 "x": 1
               }
             }
-          ],
-          "batchSize": 2
+          ]
         },
         "result": {
           "error": true
