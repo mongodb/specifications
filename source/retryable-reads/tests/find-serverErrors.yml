@@ -22,7 +22,7 @@ tests:
         operation: &retryable_operation
             name: find
             object: collection
-            arguments: { filter: {}, sort: { _id: 1 }, limit: 4, batchSize: 2 }
+            arguments: { filter: {}, sort: { _id: 1 }, limit: 4 }
             result:
                 - {_id: 1, x: 11}
                 - {_id: 2, x: 22}

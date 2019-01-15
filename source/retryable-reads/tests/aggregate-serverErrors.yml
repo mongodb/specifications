@@ -25,7 +25,6 @@ tests:
                     - $match: 
                         _id: {$gt: 1}
                     - $sort: {x: 1}                        
-                batchSize: 2
             result:
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}
