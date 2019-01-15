@@ -29,7 +29,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 11602 }
+            data: { failCommands: [listIndexes], errorCode: 11602 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -40,7 +40,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 10107 }
+            data: { failCommands: [listIndexes], errorCode: 10107 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -51,7 +51,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 13435 }
+            data: { failCommands: [listIndexes], errorCode: 13435 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -62,7 +62,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 13436 }
+            data: { failCommands: [listIndexes], errorCode: 13436 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -73,7 +73,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 189 }
+            data: { failCommands: [listIndexes], errorCode: 189 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -84,7 +84,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 91 }            
+            data: { failCommands: [listIndexes], errorCode: 91 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -95,7 +95,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 7 }            
+            data: { failCommands: [listIndexes], errorCode: 7 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -106,7 +106,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 6 }            
+            data: { failCommands: [listIndexes], errorCode: 6 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -117,7 +117,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 89 }            
+            data: { failCommands: [listIndexes], errorCode: 89 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -128,7 +128,7 @@ tests:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [listIndexNames], errorCode: 9001 }            
+            data: { failCommands: [listIndexes], errorCode: 9001 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
