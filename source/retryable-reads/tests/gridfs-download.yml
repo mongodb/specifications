@@ -11,7 +11,7 @@ data:
             filename: "length-8"
             metadata: {}
     fs.chunks:
-        - { _id: { $oid: "000000000000000000000003" }, files_id: { $oid: "000000000000000000000004" }, n: 0, data : { $binary: { base64: "ESIzRA==", subType: 0 } } }
+        - { _id: { $oid: "000000000000000000000003" }, files_id: { $oid: "000000000000000000000004" }, n: 0, data : { $binary: { base64: "ESIzRA==", subType: "00" } } }
 
 minServerVersion: '4.1.6' # 4.2
 

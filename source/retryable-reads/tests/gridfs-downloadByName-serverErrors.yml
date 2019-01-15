@@ -11,7 +11,7 @@ data:
             filename: abc
             metadata: {}
     fs.chunks:
-        - { _id: { $oid: "000000000000000000000001" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: 0 } } }
+        - { _id: { $oid: "000000000000000000000001" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
 
 tests:
     -

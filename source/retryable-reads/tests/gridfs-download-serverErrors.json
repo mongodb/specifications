@@ -28,7 +28,7 @@
         "data": {
           "$binary": {
             "base64": "ESIzRA==",
-            "subType": 0
+            "subType": "00"
           }
         }
       }
