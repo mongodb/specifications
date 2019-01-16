@@ -11,7 +11,7 @@ data:
             filename: abc
             metadata: {}
     fs.chunks:
-        - { _id: { $oid: "000000000000000000000001" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
+        - { _id: { $oid: "000000000000000000000002" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
 
 tests:
     -
@@ -19,7 +19,7 @@ tests:
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            operation: download_by_name
+            name: download_by_name
             object: gridfsbucket
             arguments: { filename: "abc" }
         expectations:
@@ -33,7 +33,7 @@ tests:
                 command_started_event:
                     command:
                         find: fs.chunks
-                        filter: { $oid : "000000000000000000000003" }
+                        filter: { files_id: {$oid : "000000000000000000000001"} }
                         sort: { n: 1 } 
                     database_name: *database_name                    
     -
