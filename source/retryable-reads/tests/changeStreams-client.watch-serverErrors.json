@@ -47,12 +47,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -63,12 +64,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -103,12 +105,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -119,12 +122,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -159,12 +163,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -175,12 +180,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -215,12 +221,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -231,12 +238,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -271,12 +279,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -287,12 +296,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -327,12 +337,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -343,12 +354,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -383,12 +395,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -399,12 +412,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -439,12 +453,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -455,12 +470,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -495,12 +511,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -511,12 +528,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -551,12 +569,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -567,12 +586,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -607,12 +627,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -623,12 +644,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -666,12 +688,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         },
         {
@@ -682,12 +705,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
@@ -725,12 +749,13 @@
               "pipeline": [
                 {
                   "$changeStream": {
-                    "fullDocument": "default"
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
                   }
                 }
               ]
             },
-            "database_name": "retryable-reads-tests"
+            "database_name": "admin"
           }
         }
       ]
