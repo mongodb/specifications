@@ -17,7 +17,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexNames": "coll"
+              "listIndexes": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -49,7 +49,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexNames": "coll"
+              "listIndexes": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -57,7 +57,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexNames": "coll"
+              "listIndexes": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -92,7 +92,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexNames": "coll"
+              "listIndexes": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -127,7 +127,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexNames": "coll"
+              "listIndexes": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -135,7 +135,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexNames": "coll"
+              "listIndexes": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
