@@ -27,7 +27,7 @@ tests:
                         aggregate: 1
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default", allChangesForCluster: true } } ]
-                    database_name: *database_name
+                    database_name: admin
             - *retryable_command_started_event
     -
         description: "client.watch succeeds after InterruptedDueToStepDown"
