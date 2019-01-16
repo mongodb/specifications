@@ -5,9 +5,7 @@
   "poolOptions": {
     "maxPoolSize": 50,
     "minPoolSize": 5,
-    "maxIdleTimeMS": 100,
-    "waitQueueSize": 4,
-    "waitQueueTimeoutMS": 200
+    "maxIdleTimeMS": 100
   },
   "operations": [
     {
@@ -22,9 +20,7 @@
       "options": {
         "maxPoolSize": 50,
         "minPoolSize": 5,
-        "maxIdleTimeMS": 100,
-        "waitQueueSize": 4,
-        "waitQueueTimeoutMS": 200
+        "maxIdleTimeMS": 100
       }
     }
   ],
