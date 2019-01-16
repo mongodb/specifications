@@ -29,7 +29,6 @@ tests:
                     command:
                         aggregate: *collection_name
                         pipeline: [{$match: {_id: {$gt: 1}}}, {$sort: {x: 1}}]
-                        cursor: { 'batchSize': 2}
                     database_name: *database_name
     -                
         description: "Aggregate succeeds on second attempt"

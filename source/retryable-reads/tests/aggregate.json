@@ -70,10 +70,7 @@
                     "x": 1
                   }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -145,10 +142,7 @@
                     "x": 1
                   }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -170,10 +164,7 @@
                     "x": 1
                   }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -238,10 +229,7 @@
                     "x": 1
                   }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -306,10 +294,7 @@
                     "x": 1
                   }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -331,10 +316,7 @@
                     "x": 1
                   }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
