@@ -71,21 +71,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -96,21 +93,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -171,21 +165,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -196,21 +187,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -271,21 +259,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -296,21 +281,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -371,21 +353,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -396,21 +375,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -471,21 +447,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -496,21 +469,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -571,21 +541,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -596,21 +563,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -671,21 +635,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -696,21 +657,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -771,21 +729,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -796,21 +751,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -871,21 +823,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -896,21 +845,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -971,21 +917,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -996,21 +939,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -1071,21 +1011,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -1096,21 +1033,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -1164,21 +1098,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -1189,21 +1120,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -1257,21 +1185,18 @@
               "aggregate": "coll",
               "pipeline": [
                 {
-                  "$sort": {
-                    "x": 1
-                  }
-                },
-                {
                   "$match": {
                     "_id": {
                       "$gt": 1
                     }
                   }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
                 }
-              ],
-              "cursor": {
-                "batchSize": 2
-              }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
