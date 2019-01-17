@@ -77,8 +77,8 @@ tests:
         operation:
             <<: *retryable_operation
             arguments:
-                map: "function inc() { return emit(0, this.x + 1) }"
-                reduce: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+                map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+                reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }" }
                 out: output-collection
             result:
                 error: true
@@ -86,8 +86,8 @@ tests:
              -  command_started_event:
                     command:
                       mapReduce: *collection_name
-                      map: "function inc() { return emit(0, this.x + 1) }"
-                      reduce: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+                      map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+                      reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }" }
                       out: output-collection
                     database_name: *database_name
 
