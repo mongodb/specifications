@@ -1,0 +1,501 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [],
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "ListDatabaseObjects succeeds after InterruptedAtShutdown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 11600
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after InterruptedDueToStepDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 11602
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after NotMaster",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after NotMasterNoSlaveOk",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 13435
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after NotMasterOrSecondary",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 13436
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after PrimarySteppedDown",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 189
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after ShutdownInProgress",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 91
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after HostNotFound",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 7
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after HostUnreachable",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 6
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after NetworkTimeout",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 89
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects succeeds after SocketException",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 9001
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListDatabaseObjects fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listDtabaseObjects",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
