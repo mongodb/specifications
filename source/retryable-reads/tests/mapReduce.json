@@ -268,7 +268,7 @@
     {
       "description": "MapReduce without {inline: 1} does not retry",
       "clientOptions": {
-        "retryReads": false
+        "retryReads": true
       },
       "failPoint": {
         "configureFailPoint": "failCommand",

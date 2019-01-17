@@ -72,7 +72,7 @@ tests:
     -
         description: "MapReduce without {inline: 1} does not retry"
         clientOptions:
-            retryReads: false
+            retryReads: true
         failPoint: *failCommand_failPoint
         operation:
             <<: *retryable_operation
