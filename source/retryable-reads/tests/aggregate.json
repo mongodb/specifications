@@ -326,7 +326,7 @@
     {
       "description": "Aggregate with $out does not retry",
       "clientOptions": {
-        "retryReads": false
+        "retryReads": true
       },
       "failPoint": {
         "configureFailPoint": "failCommand",
