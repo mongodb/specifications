@@ -14,7 +14,7 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [listDatabases], errorCode: 11600 }
         operation:  &retryable_operation
-            name: listDtabaseObjects
+            name: listDatabaseObjects
             object: client
         expectations:
             - &retryable_command_started_event
