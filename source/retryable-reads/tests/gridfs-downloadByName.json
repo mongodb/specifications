@@ -19,7 +19,7 @@
     "fs.chunks": [
       {
         "_id": {
-          "$oid": "000000000000000000000001"
+          "$oid": "000000000000000000000002"
         },
         "files_id": {
           "$oid": "000000000000000000000001"
@@ -41,7 +41,7 @@
         "retryReads": true
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
         "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
@@ -64,7 +64,9 @@
             "command": {
               "find": "fs.chunks",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
               },
               "sort": {
                 "n": 1
@@ -93,7 +95,7 @@
         }
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
         "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
@@ -127,7 +129,9 @@
             "command": {
               "find": "fs.chunks",
               "filter": {
-                "$oid": "000000000000000000000003"
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
               },
               "sort": {
                 "n": 1
@@ -156,7 +160,7 @@
         }
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
         "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
@@ -197,7 +201,7 @@
         }
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
         "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"

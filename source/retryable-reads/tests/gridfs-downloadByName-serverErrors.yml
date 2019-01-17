@@ -1,5 +1,5 @@
 database_name: &database_name "retryable-reads-tests"
-collection_name: &collection_name "fs.files"
+bucket_name: "fs"
 
 data:
     fs.files:
@@ -11,7 +11,7 @@ data:
             filename: abc
             metadata: {}
     fs.chunks:
-        - { _id: { $oid: "000000000000000000000001" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
+        - { _id: { $oid: "000000000000000000000002" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
 
 tests:
     -
@@ -23,14 +23,15 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [find], errorCode: 11600 }
         operation: &retryable_operation
-            operation: download_by_name
+            name: download_by_name
+            object: gridfsbucket
             arguments:
                 filename: abc 
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        find: *collection_name
+                        find: fs.files
                         filter: { filename : "abc" }
                     database_name: *database_name
             - *retryable_command_started_event
@@ -38,7 +39,7 @@ tests:
                 command_started_event:
                     command:
                         find: fs.chunks
-                        filter: { $oid : "000000000000000000000003" }
+                        filter: { files_id: { $oid : "000000000000000000000001" }}
                         sort: { n: 1 } 
                     database_name: *database_name
     -
