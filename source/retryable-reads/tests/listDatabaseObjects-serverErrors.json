@@ -22,7 +22,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -60,7 +60,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -98,7 +98,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -136,7 +136,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -174,7 +174,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -212,7 +212,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -250,7 +250,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -288,7 +288,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -326,7 +326,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -364,7 +364,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -402,7 +402,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client"
       },
       "expectations": [
@@ -440,7 +440,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client",
         "result": {
           "error": true
@@ -481,7 +481,7 @@
         }
       },
       "operation": {
-        "name": "listDtabaseObjects",
+        "name": "listDatabaseObjects",
         "object": "client",
         "result": {
           "error": true
