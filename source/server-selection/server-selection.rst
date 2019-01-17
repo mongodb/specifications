@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: January 29, 2018
-:Version: 1.10
+:Last Modified: December 13, 2018
+:Version: 1.10.1
 
 .. contents::
 
@@ -496,8 +496,8 @@ A read preference tag set (``T``) matches a server tag set (``S``) –
 or equivalently a server tag set (``S``) matches a read preference
 tag set (``T``) — if ``T`` is a subset of ``S`` (i.e. ``T ⊆ S``).
 
-For example, the read preference tag set "\{ dc: 'ny', rack: 2 \}" matches a
-secondary server with tag set "\{ dc: 'ny', rack: 2, size: 'large' \}".
+For example, the read preference tag set "\{ dc: 'ny', rack: '2' \}" matches a
+secondary server with tag set "\{ dc: 'ny', rack: '2', size: 'large' \}".
 
 A tag set that is an empty document matches any server, because the empty
 tag set is a subset of any tag set.  This means the default ``tag_sets``
@@ -1724,6 +1724,8 @@ Pipeline Operator" spec and warns if read preference is not primary.
 
 2018-01-29: Remove reference to '$out Aggregation spec'. Clarify runCommand
 selection rules.
+
+2018-12-13: Update tag_set example to use only String values
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
