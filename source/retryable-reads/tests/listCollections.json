@@ -81,9 +81,7 @@
       "operation": {
         "name": "listCollections",
         "object": "database",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -115,9 +113,7 @@
       "operation": {
         "name": "listCollections",
         "object": "database",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

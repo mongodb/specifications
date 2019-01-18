@@ -17,7 +17,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexes": "coll"
+              "listIndexNames": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -49,7 +49,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexes": "coll"
+              "listIndexNames": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -57,7 +57,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexes": "coll"
+              "listIndexNames": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -84,15 +84,13 @@
       "operation": {
         "name": "listIndexNames",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listIndexes": "coll"
+              "listIndexNames": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -119,15 +117,13 @@
       "operation": {
         "name": "listIndexNames",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listIndexes": "coll"
+              "listIndexNames": "coll"
             },
             "database_name": "retryable-reads-tests"
           }
@@ -135,7 +131,7 @@
         {
           "command_started_event": {
             "command": {
-              "listIndexes": "coll"
+              "listIndexNames": "coll"
             },
             "database_name": "retryable-reads-tests"
           }

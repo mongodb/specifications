@@ -178,9 +178,7 @@
             "$oid": "000000000000000000000001"
           }
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -223,9 +221,7 @@
             "$oid": "000000000000000000000001"
           }
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

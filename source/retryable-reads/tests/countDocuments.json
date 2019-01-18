@@ -143,9 +143,8 @@
         "arguments": {
           "filter": {}
         },
-        "result": {
-          "error": true
-        }
+        "result": 2,
+        "error": true
       },
       "expectations": [
         {
@@ -194,9 +193,8 @@
         "arguments": {
           "filter": {}
         },
-        "result": {
-          "error": true
-        }
+        "result": 2,
+        "error": true
       },
       "expectations": [
         {

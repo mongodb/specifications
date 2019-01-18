@@ -84,9 +84,7 @@
       "operation": {
         "name": "listIndexes",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -119,9 +117,7 @@
       "operation": {
         "name": "listIndexes",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

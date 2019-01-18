@@ -138,8 +138,10 @@
           }
         },
         "result": {
-          "error": true
-        }
+          "_id": 1,
+          "x": 11
+        },
+        "error": true
       },
       "expectations": [
         {
@@ -181,8 +183,10 @@
           }
         },
         "result": {
-          "error": true
-        }
+          "_id": 1,
+          "x": 11
+        },
+        "error": true
       },
       "expectations": [
         {

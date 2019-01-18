@@ -81,9 +81,7 @@
       "operation": {
         "name": "listDatabaseNames",
         "object": "client",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -115,9 +113,7 @@
       "operation": {
         "name": "listDatabaseNames",
         "object": "client",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

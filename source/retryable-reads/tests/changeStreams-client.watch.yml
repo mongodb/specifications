@@ -43,8 +43,7 @@ tests:
         failPoint: *failCommand_failPoint
         operation:
             <<: *retryable_operation
-            result:
-                error: true
+            error: true
         expectations:
              - *retryable_command_started_event  
     -
@@ -56,8 +55,7 @@ tests:
             mode: { times: 2 }           
         operation:
             <<: *retryable_operation
-            result:
-                error: true
+            error: true
         expectations:
              - *retryable_command_started_event  
              - *retryable_command_started_event                 

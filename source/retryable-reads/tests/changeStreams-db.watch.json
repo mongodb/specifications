@@ -113,9 +113,7 @@
       "operation": {
         "name": "watch",
         "object": "database",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -156,9 +154,7 @@
       "operation": {
         "name": "watch",
         "object": "database",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
