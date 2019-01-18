@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 9-January-2019
+:Last Modified: 18-January-2019
 
 .. contents::
 
@@ -1271,10 +1271,22 @@ In the event of retryable error, the driver can upgrade commitTransaction to use
 of committing the transaction twice. Note that users may still be vulnerable to
 rollbacks by using ``w:1`` (as with any write operation).
 
+While it's possible that the original write concern may provide greater
+guarantees than majority (e.g. ``w:3`` in a three-node replica set,
+`custom write concern`_), drivers are not in a position to make that comparison
+due to the possibility of hidden members or the opaque nature of custom write
+concerns. Excluding the edge case where `_writeConcernMajorityJournalDefault`_
+has been disabled, drivers can readily trust that a majority write concern is
+durable, which achieves the primary objective of avoiding duplicate commits.
+
+.. _custom write concern: https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#tag-sets-and-custom-write-concern-behavior
+
+.. _writeConcernMajorityJournalDefault: https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.writeConcernMajorityJournalDefault
+
 **Changelog**
 -------------
 
-:2019-01-09: Apply majority write concern when retrying commitTransaction
+:2019-01-18: Apply majority write concern when retrying commitTransaction
 :2018-11-13: Add mongos pinning to support sharded transaction.
 :2018-06-18: Explicit readConcern and/or writeConcern are prohibited within
              transactions, with a client-side error.
