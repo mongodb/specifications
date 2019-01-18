@@ -1242,7 +1242,7 @@ Consider the following scenario:
 6. The driver then retries the entire transaction on A where it commits
    successfully.
 
-The outcome of this scenario is that two complete execution of the transaction
+The outcome of this scenario is that two complete executions of the transaction
 operations are permanently committed on node A.
 
 Drivers can avoid this scenario if they always use a majority write concern when
