@@ -3,7 +3,7 @@ collection_name: &collection_name "coll"
 
 data:
     - {_id: 1, x: 11}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -22,7 +22,7 @@ tests:
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default" } } ]
                     database_name: *database_name
-    -   
+    -
         description: "db.coll.watch succeeds on second attempt"
         clientOptions:
             retryReads: true
@@ -35,8 +35,8 @@ tests:
                 closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "db.coll.watch fails on first attempt"
         clientOptions:
@@ -46,20 +46,20 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "db.coll.watch fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event
 
 
 

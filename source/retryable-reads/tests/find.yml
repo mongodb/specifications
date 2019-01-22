@@ -26,7 +26,7 @@ tests:
                 - {_id: 1, x: 11}
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}
-                - {_id: 4, x: 44}           
+                - {_id: 4, x: 44}
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
@@ -46,10 +46,10 @@ tests:
             data:
                 failCommands: [find]
                 closeConnection: true
-        operation: *retryable_operation                
+        operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event             
+             - *retryable_command_started_event
     -
         description: "Find fails on first attempt"
         clientOptions:
@@ -59,18 +59,18 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
     -
         description: "Find fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }        
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
-                
+

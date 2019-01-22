@@ -5,7 +5,7 @@ data:
     - {_id: 1, x: 11}
     - {_id: 2, x: 22}
     - {_id: 3, x: 33}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -39,7 +39,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after NotMaster"
         clientOptions:
@@ -50,7 +50,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -61,7 +61,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -72,7 +72,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after PrimarySteppedDown"
         clientOptions:
@@ -83,58 +83,58 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 91 }            
+            data: { failCommands: [aggregate], errorCode: 91 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 7 }            
+            data: { failCommands: [aggregate], errorCode: 7 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 6 }            
+            data: { failCommands: [aggregate], errorCode: 6 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 89 }            
+            data: { failCommands: [aggregate], errorCode: 89 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.coll.watch succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 9001 }            
+            data: { failCommands: [aggregate], errorCode: 9001 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -149,11 +149,11 @@ tests:
             data: { failCommands: [aggregate], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event               
+             - *retryable_command_started_event
     -
         description: "db.coll.watch fails after NotMaster when retryReads is false"
         clientOptions:
@@ -163,7 +163,7 @@ tests:
             data: { failCommands: [aggregate], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
-             - *retryable_command_started_event                       
+             - *retryable_command_started_event

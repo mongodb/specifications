@@ -5,7 +5,7 @@ data:
     - {_id: 1, x: 0}
     - {_id: 2, x: 1}
     - {_id: 3, x: 2}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -30,7 +30,7 @@ tests:
                         reduce: { $code:  "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
                         out: { inline: 1 }
                     database_name: *database_name
-    -                
+    -
         description: "MapReduce succeeds on second attempt"
         clientOptions:
             retryReads: true
@@ -39,11 +39,11 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: [mapReduce]
-                closeConnection: true  
+                closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "MapReduce fails on first attempt"
         clientOptions:
@@ -53,20 +53,20 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "MapReduce fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "MapReduce without {inline: 1} does not retry"
         clientOptions:

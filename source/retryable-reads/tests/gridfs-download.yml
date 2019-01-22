@@ -36,7 +36,7 @@ tests:
                     command:
                         find: fs.chunks
                         filter: { files_id: {$oid : "000000000000000000000001" }}
-                        sort: { n: 1 } 
+                        sort: { n: 1 }
                     database_name: *database_name
     -
         description: "Download succeeds on second attempt"
@@ -48,7 +48,7 @@ tests:
             data:
                 failCommands: [find]
                 closeConnection: true
-        operation: *retryable_operation                
+        operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -62,18 +62,18 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
     -
         description: "Download fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }        
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
-                
+

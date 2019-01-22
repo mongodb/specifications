@@ -19,7 +19,7 @@ tests:
             name: findOne
             object: collection
             arguments: {filter: {_id: 1 }}
-            result: {_id: 1, x: 11}           
+            result: {_id: 1, x: 11}
         expectations:
             - &retryable_command_started_event
                 command_started_event:
@@ -37,7 +37,7 @@ tests:
             data:
               failCommands: [find]
               closeConnection: true
-        operation: *retryable_operation                
+        operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -50,18 +50,18 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event           
+             - *retryable_command_started_event
     -
         description: "FindOne fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }        
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
-                
+

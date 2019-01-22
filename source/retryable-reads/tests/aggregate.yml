@@ -5,7 +5,7 @@ data:
     - {_id: 1, x: 11}
     - {_id: 2, x: 22}
     - {_id: 3, x: 33}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -18,8 +18,8 @@ tests:
             object: collection
             arguments:
                 pipeline:
-                    - $match: {_id: {$gt: 1}}                  
-                    - $sort: {x: 1}                        
+                    - $match: {_id: {$gt: 1}}
+                    - $sort: {x: 1}
             result:
                - {_id: 2, x: 22}
                - {_id: 3, x: 33}
@@ -30,7 +30,7 @@ tests:
                         aggregate: *collection_name
                         pipeline: [{$match: {_id: {$gt: 1}}}, {$sort: {x: 1}}]
                     database_name: *database_name
-    -                
+    -
         description: "Aggregate succeeds on second attempt"
         clientOptions:
             retryReads: true
@@ -39,11 +39,11 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: [aggregate]
-                closeConnection: true  
+                closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "Aggregate fails on first attempt"
         clientOptions:
@@ -53,20 +53,20 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "Aggregate fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "Aggregate with $out does not retry"
         clientOptions:
@@ -78,7 +78,7 @@ tests:
                 pipeline:
                     - $match: {_id: {$gt: 1}}
                     - $sort: {x: 1}
-                    - $out: "output-collection"                    
+                    - $out: "output-collection"
             error: true
         expectations:
              -  command_started_event:

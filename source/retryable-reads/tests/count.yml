@@ -22,7 +22,7 @@ tests:
                 command_started_event:
                     command:
                             count: *collection_name
-                    database_name: *database_name  
+                    database_name: *database_name
     -
         description: "Count succeeds on second attempt"
         clientOptions:
@@ -36,8 +36,8 @@ tests:
 
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event 
-             - *retryable_command_started_event                                          
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "Count fails on first attempt"
         clientOptions:
@@ -47,7 +47,7 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event                
+             - *retryable_command_started_event
     -
         description: "Count fails on second attempt"
         clientOptions:

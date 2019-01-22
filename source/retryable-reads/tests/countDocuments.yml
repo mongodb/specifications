@@ -23,7 +23,7 @@ tests:
                   command:
                         aggregate: *collection_name
                         pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
-                  database_name: *database_name    
+                  database_name: *database_name
     -
         description: "CountDocuments succeeds on second attempt"
         clientOptions:
@@ -33,11 +33,11 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: [aggregate]
-                closeConnection: true  
+                closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "CountDocuments fails on first attempt"
         clientOptions:
@@ -47,17 +47,17 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "CountDocuments fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event

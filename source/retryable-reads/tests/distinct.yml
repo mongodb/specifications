@@ -19,14 +19,14 @@ tests:
             arguments: { fieldName: "x", filter: { _id: { $gt: 1 } } }
             result:
                 - 22
-                - 33          
+                - 33
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
                         distinct: *collection_name
                         key: "x"
-                        query: 
+                        query:
                             _id: {$gt: 1}
                     database_name: *database_name
     -
@@ -39,7 +39,7 @@ tests:
             data:
                 failCommands: [distinct]
                 closeConnection: true
-        operation: *retryable_operation                
+        operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -53,18 +53,18 @@ tests:
             error: true
         expectations:
              - *retryable_command_started_event
-                
+
     -
         description: "Distinct fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }        
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
-                
+

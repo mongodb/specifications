@@ -34,8 +34,8 @@ tests:
                 closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event 
-             - *retryable_command_started_event                                          
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount fails on first attempt"
         clientOptions:
@@ -45,7 +45,7 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event                
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount fails on second attempt"
         clientOptions:

@@ -30,7 +30,7 @@ tests:
                     command:
                         distinct: *collection_name
                         key: "x"
-                        query: 
+                        query:
                           _id: {$gt: 1}
                     database_name: *database_name
             - *retryable_command_started_event
@@ -44,7 +44,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after NotMaster"
         clientOptions:
@@ -55,7 +55,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -66,7 +66,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -77,7 +77,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after PrimarySteppedDown"
         clientOptions:
@@ -88,58 +88,58 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [distinct], errorCode: 91 }            
+            data: { failCommands: [distinct], errorCode: 91 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [distinct], errorCode: 7 }            
+            data: { failCommands: [distinct], errorCode: 7 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [distinct], errorCode: 6 }            
+            data: { failCommands: [distinct], errorCode: 6 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [distinct], errorCode: 89 }            
+            data: { failCommands: [distinct], errorCode: 89 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Distinct succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [distinct], errorCode: 9001 }            
+            data: { failCommands: [distinct], errorCode: 9001 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -154,11 +154,11 @@ tests:
             data: { failCommands: [distinct], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event               
+             - *retryable_command_started_event
     -
         description: "Distinct fails after NotMaster when retryReads is false"
         clientOptions:
@@ -168,8 +168,8 @@ tests:
             data: { failCommands: [distinct], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
-             - *retryable_command_started_event                  
-              
+             - *retryable_command_started_event
+

@@ -3,7 +3,7 @@ collection_name: &collection_name "coll"
 
 data:
     - {_id: 1, x: 11}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -21,7 +21,7 @@ tests:
                         aggregate: 1
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default", "allChangesForCluster": true } } ]
-                    database_name: admin         
+                    database_name: admin
     -
         description: "client.watch succeeds on second attempt"
         clientOptions:
@@ -34,8 +34,8 @@ tests:
                 closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "client.watch fails on first attempt"
         clientOptions:
@@ -45,17 +45,17 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "client.watch fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event

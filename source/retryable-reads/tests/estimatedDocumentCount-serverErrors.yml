@@ -37,7 +37,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after NotMaster"
         clientOptions:
@@ -48,7 +48,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -59,7 +59,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -70,7 +70,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after PrimarySteppedDown"
         clientOptions:
@@ -81,58 +81,58 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 91 }            
+            data: { failCommands: [count], errorCode: 91 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 7 }            
+            data: { failCommands: [count], errorCode: 7 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 6 }            
+            data: { failCommands: [count], errorCode: 6 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 89 }            
+            data: { failCommands: [count], errorCode: 89 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 9001 }            
+            data: { failCommands: [count], errorCode: 9001 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -147,11 +147,11 @@ tests:
             data: { failCommands: [count], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event               
+             - *retryable_command_started_event
     -
         description: "EstimatedDocumentCount fails after NotMaster when retryReads is false"
         clientOptions:
@@ -161,7 +161,7 @@ tests:
             data: { failCommands: [count], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
-             - *retryable_command_started_event                   
+             - *retryable_command_started_event

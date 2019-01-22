@@ -29,7 +29,7 @@ tests:
                 failCommands:
                         - listIndexes
                 closeConnection: true
-        operation: *retryable_operation                
+        operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -42,18 +42,18 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
     -
         description: "ListIndexes fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }        
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
-                
+

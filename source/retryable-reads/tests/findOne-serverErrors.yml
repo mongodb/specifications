@@ -43,7 +43,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after NotMaster"
         clientOptions:
@@ -54,7 +54,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -65,7 +65,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -76,7 +76,7 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after PrimarySteppedDown"
         clientOptions:
@@ -87,58 +87,58 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 91 }            
+            data: { failCommands: [find], errorCode: 91 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 7 }            
+            data: { failCommands: [find], errorCode: 7 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 6 }            
+            data: { failCommands: [find], errorCode: 6 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 89 }            
+            data: { failCommands: [find], errorCode: 89 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "FindOne succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 9001 }            
+            data: { failCommands: [find], errorCode: 9001 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
@@ -153,11 +153,11 @@ tests:
             data: { failCommands: [find], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event               
+             - *retryable_command_started_event
     -
         description: "FindOne fails after NotMaster when retryReads is false"
         clientOptions:
@@ -167,7 +167,7 @@ tests:
             data: { failCommands: [find], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
-             - *retryable_command_started_event                         
+             - *retryable_command_started_event
