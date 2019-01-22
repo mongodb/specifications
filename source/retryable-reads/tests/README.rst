@@ -90,10 +90,9 @@ Each YAML file has the following keys:
 
     - ``result``: Optional. The return value from the operation, if any. This
       field may be a scalar (e.g. in the case of a count), a single document, or
-      an array of documents in the case of a multi-document read. If the
-      operation is expected to return an error, the ``result`` is a single
-      document that has one or more of the following fields:
-      - ``error``: Optional. If ``true``, the test should expect an error or
+      an array of documents in the case of a multi-document read.
+      
+  - ``error``: Optional. If ``true``, the test should expect an error or
         exception.
         
   - ``expectations``: Optional list of command-started events.
