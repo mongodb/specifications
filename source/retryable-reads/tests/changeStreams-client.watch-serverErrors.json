@@ -723,9 +723,7 @@
       "operation": {
         "name": "watch",
         "object": "client",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -788,9 +786,7 @@
       "operation": {
         "name": "watch",
         "object": "client",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

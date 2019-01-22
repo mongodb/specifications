@@ -773,9 +773,7 @@
         "arguments": {
           "filename": "abc"
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -825,9 +823,7 @@
         "arguments": {
           "filename": "abc"
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

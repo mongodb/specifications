@@ -1087,9 +1087,17 @@
             }
           ]
         },
-        "result": {
-          "error": true
-        }
+        "result": [
+          {
+            "_id": 2,
+            "x": 22
+          },
+          {
+            "_id": 3,
+            "x": 33
+          }
+        ],
+        "error": true
       },
       "expectations": [
         {
@@ -1174,9 +1182,17 @@
             }
           ]
         },
-        "result": {
-          "error": true
-        }
+        "result": [
+          {
+            "_id": 2,
+            "x": 22
+          },
+          {
+            "_id": 3,
+            "x": 33
+          }
+        ],
+        "error": true
       },
       "expectations": [
         {

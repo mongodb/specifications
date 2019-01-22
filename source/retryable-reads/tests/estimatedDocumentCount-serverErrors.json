@@ -484,9 +484,8 @@
       "operation": {
         "name": "estimatedDocumentCount",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "result": 2,
+        "error": true
       },
       "expectations": [
         {
@@ -527,9 +526,8 @@
       "operation": {
         "name": "estimatedDocumentCount",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "result": 2,
+        "error": true
       },
       "expectations": [
         {
