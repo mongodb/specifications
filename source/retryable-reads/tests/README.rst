@@ -94,7 +94,16 @@ Each YAML file has the following keys:
         exception.
         
   - ``expectations``: Optional list of command-started events.
-    
+
+Speeding Up Tests
+-----------------
+
+Drivers may benefit reducing `minHeartbeatFrequencyMS`_ in order to speed up
+tests. Python was able to decrease the run time of the tests greatly by lowering
+the SDAM's ``minHeartbeatFrequencyMS`` from 500ms to 50ms, thus decreasing the
+waiting time after a "not master" error:
+
+.. _minHeartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms
 Optional Enumeration Commands
 =============================
 
