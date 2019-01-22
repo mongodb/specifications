@@ -11,6 +11,10 @@
   "tests": [
     {
       "description": "client.watch succeeds on first attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -40,6 +44,10 @@
     },
     {
       "description": "client.watch succeeds on second attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -98,6 +106,10 @@
     },
     {
       "description": "client.watch fails on first attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": false
       },
@@ -140,6 +152,10 @@
     },
     {
       "description": "client.watch fails on second attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },

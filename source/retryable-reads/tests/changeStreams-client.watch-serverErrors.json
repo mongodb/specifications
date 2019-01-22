@@ -19,6 +19,10 @@
   "tests": [
     {
       "description": "client.watch succeeds after InterruptedAtShutdown",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -77,6 +81,10 @@
     },
     {
       "description": "client.watch succeeds after InterruptedDueToStepDown",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -135,6 +143,10 @@
     },
     {
       "description": "client.watch succeeds after NotMaster",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -193,6 +205,10 @@
     },
     {
       "description": "client.watch succeeds after NotMasterNoSlaveOk",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -251,6 +267,10 @@
     },
     {
       "description": "client.watch succeeds after NotMasterOrSecondary",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -309,6 +329,10 @@
     },
     {
       "description": "client.watch succeeds after PrimarySteppedDown",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -367,6 +391,10 @@
     },
     {
       "description": "client.watch succeeds after ShutdownInProgress",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -425,6 +453,10 @@
     },
     {
       "description": "client.watch succeeds after HostNotFound",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -483,6 +515,10 @@
     },
     {
       "description": "client.watch succeeds after HostUnreachable",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -541,6 +577,10 @@
     },
     {
       "description": "client.watch succeeds after NetworkTimeout",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -599,6 +639,10 @@
     },
     {
       "description": "client.watch succeeds after SocketException",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -657,6 +701,10 @@
     },
     {
       "description": "client.watch fails after two NotMaster errors",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
@@ -718,6 +766,10 @@
     },
     {
       "description": "client.watch fails after NotMaster when retryReads is false",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": false
       },

@@ -70,6 +70,9 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
+  - ``topology:`` Optional. An array of server topologies against which to run the
+    test. Valid topologies are single, replicaset, and sharded.
+  
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
   - ``failPoint``: Optional, a server failpoint to enable expressed as the

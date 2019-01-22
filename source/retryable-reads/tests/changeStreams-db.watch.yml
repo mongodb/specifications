@@ -9,6 +9,7 @@ minServerVersion: '4.1.6' # 4.2
 tests:
     -
         description: "db.watch succeeds on first attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         operation: &retryable_operation
@@ -24,6 +25,7 @@ tests:
                     database_name: *database_name
     -
         description: "db.watch succeeds on second attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:  &failCommand_failPoint
@@ -38,6 +40,7 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch fails on first attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -48,6 +51,7 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch fails on second attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:

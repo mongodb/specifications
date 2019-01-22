@@ -24,6 +24,7 @@ tests:
                     database_name: *database_name
     -
         description: "db.coll.watch succeeds on second attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:  &failCommand_failPoint
@@ -39,6 +40,7 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.coll.watch fails on first attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -49,6 +51,7 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.coll.watch fails on second attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
