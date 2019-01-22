@@ -25,8 +25,9 @@ necessary for initial testing.
 Server Fail Point
 =================
 
-See: `Server Fail Point <../../transactions/tests#server-fail-point>`_ in the
-Transactions spec test suite.
+See: `Server Fail Point`_ in the Transactions spec test suite.
+
+.. _Server Fail Point: ../../transactions/tests#server-fail-point
 
 Disabling Fail Point after Test Execution
 -----------------------------------------
