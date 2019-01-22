@@ -98,6 +98,25 @@ Each YAML file has the following keys:
         
   - ``expectations``: Optional list of command-started events.
 
+GridFS Tests
+------------
+
+GridFS tests are denoted by when ``operation.object`` is ``gridfsbucket``.
+
+``fs.files`` and ``fs.chunks`` should be created in the database
+specified by ``database_name``. This could be done via inserts or by
+creating GridFSBuckets—using the GridFS ``bucketName`` (see
+`GridFSBucket spec`_) specified by ``bucket_name`` field in the YAML
+file—and calling ``upload_from_stream_with_id`` with the appropriate
+data.
+
+``Download`` tests should be tested against ``GridFS.download_to_stream``.
+``DownloadByName`` tests should be tested against
+``GridFS.download_to_stream_by_name``.
+
+
+.. _GridFSBucket spec: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class
+    
 Speeding Up Tests
 -----------------
 
