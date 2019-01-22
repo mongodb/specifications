@@ -101,7 +101,7 @@ Each YAML file has the following keys:
 GridFS Tests
 ------------
 
-GridFS tests are denoted by when ``operation.object`` is ``gridfsbucket``.
+GridFS tests are denoted by when the YAML file contains ``bucket_name``.
 
 ``fs.files`` and ``fs.chunks`` should be created in the database
 specified by ``database_name``. This could be done via inserts or by
