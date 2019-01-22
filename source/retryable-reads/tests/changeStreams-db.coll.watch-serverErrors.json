@@ -701,9 +701,7 @@
       "operation": {
         "name": "watch",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -764,9 +762,7 @@
       "operation": {
         "name": "watch",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

@@ -749,9 +749,11 @@
             }
           }
         },
-        "result": {
-          "error": true
-        }
+        "result": [
+          22,
+          33
+        ],
+        "error": true
       },
       "expectations": [
         {
@@ -812,9 +814,11 @@
             }
           }
         },
-        "result": {
-          "error": true
-        }
+        "result": [
+          22,
+          33
+        ],
+        "error": true
       },
       "expectations": [
         {
