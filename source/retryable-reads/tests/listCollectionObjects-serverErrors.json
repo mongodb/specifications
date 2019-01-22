@@ -442,9 +442,7 @@
       "operation": {
         "name": "listCollectionObjects",
         "object": "database",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -483,9 +481,7 @@
       "operation": {
         "name": "listCollectionObjects",
         "object": "database",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

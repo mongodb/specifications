@@ -161,8 +161,7 @@ tests:
             data: { failCommands: [aggregate], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result:
-                error: true
+            error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -176,7 +175,6 @@ tests:
             data: { failCommands: [aggregate], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result:
-                error: true
+            error: true
         expectations:
              - *retryable_command_started_event

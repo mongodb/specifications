@@ -464,9 +464,7 @@
       "operation": {
         "name": "listIndexNames",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -507,9 +505,7 @@
       "operation": {
         "name": "listIndexNames",
         "object": "collection",
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

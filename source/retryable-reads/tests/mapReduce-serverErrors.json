@@ -873,9 +873,13 @@
             "inline": 1
           }
         },
-        "result": {
-          "error": true
-        }
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ],
+        "error": true
       },
       "expectations": [
         {
@@ -945,9 +949,13 @@
             "inline": 1
           }
         },
-        "result": {
-          "error": true
-        }
+        "result": [
+          {
+            "_id": 0,
+            "value": 6
+          }
+        ],
+        "error": true
       },
       "expectations": [
         {
