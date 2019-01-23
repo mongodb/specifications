@@ -147,10 +147,6 @@
             }
           }
         },
-        "result": [
-          22,
-          33
-        ],
         "error": true
       },
       "expectations": [
@@ -198,10 +194,6 @@
             }
           }
         },
-        "result": [
-          22,
-          33
-        ],
         "error": true
       },
       "expectations": [

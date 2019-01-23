@@ -12,10 +12,11 @@ tests:
         description: "Count succeeds on first attempt"
         clientOptions:
             retryReads: true
-        operation: &retryable_operation
-            name: count
-            object: collection
-            arguments: { filter: { } }
+        operation: &retryable_operation_succeeds
+            <<: &retryable_operation
+                name: count
+                object: collection
+                arguments: { filter: { } }
             result: 2
         expectations:
             - &retryable_command_started_event
@@ -34,7 +35,7 @@ tests:
                 failCommands: [count]
                 closeConnection: true
 
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -43,7 +44,7 @@ tests:
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operation:
+        operation: &retryable_operation_fails
             <<: *retryable_operation
             error: true
         expectations:
@@ -55,9 +56,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
-        operation:
-            <<: *retryable_operation
-            error: true
+        operation: *retryable_operation_fails
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event

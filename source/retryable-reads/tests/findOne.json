@@ -137,10 +137,6 @@
             "_id": 1
           }
         },
-        "result": {
-          "_id": 1,
-          "x": 11
-        },
         "error": true
       },
       "expectations": [
@@ -181,10 +177,6 @@
           "filter": {
             "_id": 1
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         },
         "error": true
       },

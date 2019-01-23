@@ -104,7 +104,6 @@
         "arguments": {
           "filter": {}
         },
-        "result": 2,
         "error": true
       },
       "expectations": [
@@ -141,7 +140,6 @@
         "arguments": {
           "filter": {}
         },
-        "result": 2,
         "error": true
       },
       "expectations": [

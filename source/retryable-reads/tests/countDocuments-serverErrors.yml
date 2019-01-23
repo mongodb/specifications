@@ -16,10 +16,11 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data: { failCommands: [aggregate], errorCode: 11600 }
-        operation: &retryable_operation
-            name: countDocuments
-            object: collection
-            arguments: { filter: { } }
+        operation: &retryable_operation_succeeds
+            <<: &retryable_operation
+                name: countDocuments
+                object: collection
+                arguments: { filter: { } }
             result: 2
         expectations:
              - &retryable_command_started_event
@@ -36,7 +37,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 11602 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -47,7 +48,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 10107 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -58,7 +59,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13435 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -69,7 +70,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13436 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -80,7 +81,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 189 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -91,7 +92,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 91 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -102,7 +103,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 7 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -113,7 +114,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 6 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -124,7 +125,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 89 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -135,7 +136,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 9001 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -147,7 +148,7 @@ tests:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [aggregate], errorCode: 10107 }
-        operation:
+        operation: &retryable_operation_fails
             <<: *retryable_operation
             error: true
         expectations:
@@ -160,8 +161,6 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 10107 }
-        operation:
-            <<: *retryable_operation
-            error: true
+        operation: *retryable_operation_fails
         expectations:
              - *retryable_command_started_event
