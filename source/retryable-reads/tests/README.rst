@@ -93,7 +93,7 @@ Each YAML file has the following keys:
       an array of documents in the case of a multi-document read.
       
   - ``error``: Optional. If ``true``, the test should expect an error or
-        exception.
+    exception.
         
   - ``expectations``: Optional list of command-started events.
 
