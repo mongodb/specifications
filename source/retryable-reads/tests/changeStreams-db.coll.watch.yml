@@ -9,6 +9,7 @@ minServerVersion: '4.1.6' # 4.2
 tests:
     -
         description: "db.coll.watch succeeds on first attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         operation: &retryable_operation

@@ -11,6 +11,10 @@
   "tests": [
     {
       "description": "db.coll.watch succeeds on first attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
       "clientOptions": {
         "retryReads": true
       },
