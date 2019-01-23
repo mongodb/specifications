@@ -75,14 +75,14 @@ tests:
             <<: *retryable_operation_fails
             arguments:
                 map: { $code: "function inc() { return emit(0, this.x + 1) }" }
-                reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }" }
+                reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
                 out: output-collection
         expectations:
              -  command_started_event:
                     command:
                       mapReduce: *collection_name
                       map: { $code: "function inc() { return emit(0, this.x + 1) }" }
-                      reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc +x); }" }
+                      reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
                       out: output-collection
                     database_name: *database_name
 

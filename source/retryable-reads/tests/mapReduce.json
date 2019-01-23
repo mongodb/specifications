@@ -286,7 +286,7 @@
             "$code": "function inc() { return emit(0, this.x + 1) }"
           },
           "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
           },
           "out": "output-collection"
         },
@@ -301,7 +301,7 @@
                 "$code": "function inc() { return emit(0, this.x + 1) }"
               },
               "reduce": {
-                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc +x); }"
+                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
               },
               "out": "output-collection"
             },
