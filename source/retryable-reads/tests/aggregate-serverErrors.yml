@@ -26,7 +26,7 @@ tests:
                         - $match:
                             _id: {$gt: 1}
                         - $sort: {x: 1}
-            result: &result
+            result:
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}
         expectations:
