@@ -748,7 +748,8 @@
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               }
             },
             "command_name": "commitTransaction",
@@ -766,7 +767,8 @@
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               }
             },
             "command_name": "commitTransaction",
@@ -884,7 +886,8 @@
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               }
             },
             "command_name": "commitTransaction",
@@ -902,7 +905,8 @@
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               }
             },
             "command_name": "commitTransaction",

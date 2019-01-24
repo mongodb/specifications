@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 18-January-2019
+:Last Modified: 24-January-2019
 
 .. contents::
 
@@ -418,7 +418,10 @@ apply ``w: majority`` to the write concern of the commitTransaction command. If
 the transaction is using a `writeConcern`_ that is not the server default (i.e.
 specified via TransactionOptions during the ``startTransaction`` call or
 otherwise inherited), any other write concern options (e.g. ``wtimeout``) MUST
-be left as-is when applying ``w: majority``. See
+be left as-is when applying ``w: majority``. Finally, if the modified write
+concern does not include a ``wtimeout`` value, drivers MUST also apply
+``wtimeout: 10000`` to the write concern in order to avoid waiting forever (or
+until a socket timeout) if the majority write concern cannot be satisfied. See
 `Majority write concern is used when retrying commitTransaction`_.
 
 Drivers MUST add error labels to certain errors when commitTransaction
