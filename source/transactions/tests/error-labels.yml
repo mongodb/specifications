@@ -636,8 +636,8 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
-              w: majority
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
       - command_started_event:
@@ -648,8 +648,8 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
-              w: majority
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
 
@@ -728,8 +728,8 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
-              w: majority
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
 
@@ -810,8 +810,8 @@ tests:
               $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern:
-              w: majority
+            # commitTransaction applies w:majority on retries
+            writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
 
