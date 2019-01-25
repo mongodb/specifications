@@ -580,6 +580,13 @@ transaction, the server will return an error. The ``writeConcern`` argument
 of the commitTransaction and abortTransaction commands has
 semantics analogous to existing write commands.
 
+Behavior of the recoveryToken field
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Only included for sharded transactions and only when running a
+commitTransaction or abortTransaction command. See the
+`recoveryToken field`_ section for more info.
+
 Constructing the first command within a transaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -705,7 +712,8 @@ The commitTransaction server command has the following format:
         lsid : { id : <UUID> },
         txnNumber : <Int64>,
         autocommit : false,
-        writeConcern : {...}
+        writeConcern : {...},
+        recoveryToken : {...}
     }
 
 abortTransaction
@@ -720,7 +728,8 @@ The abortTransaction server command has the following format:
         lsid : { id : <UUID> },
         txnNumber : <Int64>,
         autocommit : false,
-        writeConcern : {...}
+        writeConcern : {...},
+        recoveryToken : {...}
     }
 
 Both commands MUST be sent to the admin database.
@@ -744,23 +753,58 @@ format:
 
     { ok : 1, writeConcernError: {code: <Number>, errmsg : "..."} }
 
-Mongos Pinning for Sharded Transactions
----------------------------------------
+Sharded Transactions
+--------------------
 
-The server supports sharded transactions starting in MongoDB 4.2 (
-maxWireVersion 8). The server requires that drivers MUST send all commands for
-a single transaction to the same mongos.
+MongoDB 4.2 (maxWireVersion 8) introduces support for sharded transactions.
+Sharded transactions support all of the same features as single replica set
+transaction but introduce two new driver concepts: mongos pinning and the
+``recoveryToken`` field.
+
+Mongos Pinning
+~~~~~~~~~~~~~~
+
+The server requires that drivers MUST send all commands for
+a single transaction to the same mongos (excluding retries of commitTransaction
+and abortTransaction) therefore this spec introduces the concept of pinning a
+ClientSession to a mongos.
 
 After the driver selects a mongos for the first command within a transaction,
 the driver MUST pin the ClientSession to the selected mongos. Drivers MUST
-send all commands that are part of the same transaction, including
-commitTransaction and abortTransaction and any retries thereof, to the
-same mongos.
+send all subsequent commands that are part of the same transaction (excluding
+retries of commitTransaction and abortTransaction) to the same mongos.
+
+When to unpin
+^^^^^^^^^^^^^
+
+A pinned ClientSession MUST be unpinned after running the initial
+commitTransaction or abortTransaction attempt regardless if that attempt
+succeeded or failed. When the commitTransaction or abortTransaction attempt
+fails on the pinned mongos, the session MUST be unpinned and any
+subsequent (automatic or explicit) retry attempt MUST perform normal mongos
+server selection. When a commitTransaction or abortTransaction
+attempt succeeds on the pinned mongos, the session MUST also be unpinned.
 
 Starting a new transaction on a pinned ClientSession MUST unpin the
 session. Additionally, any non-transaction operation using a pinned
 ClientSession MUST unpin the session and the operation MUST perform normal
 server selection.
+
+recoveryToken field
+~~~~~~~~~~~~~~~~~~~
+
+The ``recoveryToken`` field enables the driver (and the server) to recover
+the outcome of a sharded transaction on a new mongos.
+
+When a driver runs a command within a transaction, the mongos response
+includes a ``recoveryToken`` field. Drivers MUST append this ``recoveryToken``
+field to any subsequent commitTransaction or abortTransaction commands.
+Sending the ``recoveryToken`` along with commitTransaction and abortTransaction
+allows the mongos to recover the state of a transaction even if the mongos was
+restarted or is not the same mongos which started the transaction.
+
+Drivers MUST treat the ``recoveryToken`` field as an opaque BSON field and
+relay it back to the server unchanged.
 
 Error Reporting and Retrying Transactions
 -----------------------------------------
