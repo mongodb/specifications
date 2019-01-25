@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -125,13 +125,13 @@ pertaining to URI options apply here.
 
    * - maxIdleTimeMS
      - non-negative integer; 0 means no minimum
-     - defined in connection pooling spec (TODO: Add link)
+     - defined in `connection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
      - required for drivers with connection pools
      - The amount of time a connection can be idle before it's closed
 
    * - maxPoolSize
      - positive integer
-     - defined in collection pooling spec (TODO: Add link)
+     - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time
 
@@ -140,6 +140,12 @@ pertaining to URI options apply here.
      - defined in `max staleness spec <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#api>`_
      - no
      - The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible for server selection
+
+   * - minPoolSize
+     - positive integer
+     - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - required for drivers with connection pools
+     - The maximum number of clients or connections able to be created by a pool at a given time
 
    * - readConcernLevel
      - any string (`to allow for forwards compatibility with the server <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#unknown-levels-and-additional-options-for-string-based-readconcerns>`_)
@@ -253,6 +259,12 @@ pertaining to URI options apply here.
      - no
      - Default write concern "w" field for the client
 
+   * - waitQueueTimeoutMS
+     - positive number
+     - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - required for drivers with connection pools, with exceptions described in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - The maximum number of clients or connections able to be created by a pool at a given time
+
    * - wTimeoutMS
      - non-negative integer; 0 means no timeout
      - no timeout
@@ -349,3 +361,8 @@ options rather than be a static description of the options at the time it was
 written. Whenever another specification is written or modified in a way that
 changes the name or the semantics of a URI option or adds a new URI option,
 this specification MUST be updated to reflect those changes.
+
+Changes
+=======
+
+- 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
