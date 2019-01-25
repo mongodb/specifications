@@ -142,7 +142,7 @@ pertaining to URI options apply here.
      - The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible for server selection
 
    * - minPoolSize
-     - positive integer;
+     - positive integer
      - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time
@@ -260,7 +260,7 @@ pertaining to URI options apply here.
      - Default write concern "w" field for the client
 
    * - waitQueueTimeoutMS
-     - positive number;
+     - positive number
      - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
      - required for drivers with connection pools, with exceptions described in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
      - The maximum number of clients or connections able to be created by a pool at a given time
