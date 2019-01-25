@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.2
+:Spec Version: 1.3
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 18-June-2018
+:Last Modified: 24-January-2019
 
 .. contents::
 
@@ -411,6 +411,18 @@ commitTransaction is a retryable write command. Drivers MUST retry once
 after commitTransaction fails with a retryable error according to the
 Retryable Writes Specification, regardless of whether retryWrites is set
 on the MongoClient or not.
+
+When commitTransaction is retried, either by the driver's internal retry-once
+logic or explicitly by the user calling commitTransaction again, drivers MUST
+apply ``w: majority`` to the write concern of the commitTransaction command. If
+the transaction is using a `writeConcern`_ that is not the server default (i.e.
+specified via TransactionOptions during the ``startTransaction`` call or
+otherwise inherited), any other write concern options (e.g. ``wtimeout``) MUST
+be left as-is when applying ``w: majority``. Finally, if the modified write
+concern does not include a ``wtimeout`` value, drivers MUST also apply
+``wtimeout: 10000`` to the write concern in order to avoid waiting forever (or
+until a socket timeout) if the majority write concern cannot be satisfied. See
+`Majority write concern is used when retrying commitTransaction`_.
 
 Drivers MUST add error labels to certain errors when commitTransaction
 fails. See the `Error reporting changes`_ and `Error Labels`_ sections
@@ -1212,9 +1224,72 @@ What happens when a command object passed to RunCommand already contains a trans
 The behavior of running such commands in a transaction are undefined.
 Applications should not run such commands inside a transaction.
 
+Majority write concern is used when retrying commitTransaction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Drivers should apply a majority write concern when retrying commitTransaction to
+guard against a transaction being applied twice.
+
+Consider the following scenario:
+
+1. The driver is connected to a replica set where node A is primary.
+2. The driver sends commitTransaction to A with ``w:1``. A commits the
+   transaction but dies before it can reply. This constitutes a retryable error,
+   which means the driver can retry the commitTransaction command.
+3. Node B is briefly elected.
+4. The driver retries commitTransaction on B with ``w:1``, and B replies with a
+   NoSuchTransaction error code and TransientTransactionError error label. This
+   implies that the driver may retry the entire transaction.
+5. Node A revives before B has done any ``w:majority`` writes and is reëlected
+   as primary.
+6. The driver then retries the entire transaction on A where it commits
+   successfully.
+
+The outcome of this scenario is that two complete executions of the transaction
+operations are permanently committed on node A.
+
+Drivers can avoid this scenario if they always use a majority write concern when
+retrying commitTransaction. Applying a majority write concern to step four in
+the above scenario would lead to one of the following possible outcomes:
+
+- Node B replies with failed response, which does not include a
+  TransientTransactionError error label. This does not constitute a retryable
+  error. Control is returned to the user.
+- Node B replies with a successful response (e.g. ``ok:1``) indicating that the
+  retried commitTransaction has succeeded durably and the driver can continue.
+  Control is returned to the user.
+- Node B replies with a wtimeout error. This does not constitute a retryable
+  error. Control is returned to the user.
+- Node B replies with a failure response that includes the
+  TransientTransactionError label, which indicates it is safe to retry the
+  entire transaction. Drivers can trust that a server response will not include
+  both a write concern error and TransientTransactionError label (see:
+  `SERVER-37179 <https://jira.mongodb.org/browse/SERVER-37179>`_). 
+
+Adding a majority write concern only when retrying commitTransaction provides a
+good compromise of performance and durability. Applications can use ``w:1`` for
+the initial transaction attempt for a performance advantage in the happy path.
+In the event of retryable error, the driver can upgrade commitTransaction to use
+``w:majority`` and provide additional guarantees to the user and avoid any risk
+of committing the transaction twice. Note that users may still be vulnerable to
+rollbacks by using ``w:1`` (as with any write operation).
+
+While it's possible that the original write concern may provide greater
+guarantees than majority (e.g. ``w:3`` in a three-node replica set,
+`custom write concern`_), drivers are not in a position to make that comparison
+due to the possibility of hidden members or the opaque nature of custom write
+concerns. Excluding the edge case where `_writeConcernMajorityJournalDefault`_
+has been disabled, drivers can readily trust that a majority write concern is
+durable, which achieves the primary objective of avoiding duplicate commits.
+
+.. _custom write concern: https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#tag-sets-and-custom-write-concern-behavior
+
+.. _writeConcernMajorityJournalDefault: https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.writeConcernMajorityJournalDefault
+
 **Changelog**
 -------------
 
+:2019-01-18: Apply majority write concern when retrying commitTransaction
 :2018-11-13: Add mongos pinning to support sharded transaction.
 :2018-06-18: Explicit readConcern and/or writeConcern are prohibited within
              transactions, with a client-side error.
