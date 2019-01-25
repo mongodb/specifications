@@ -7,7 +7,7 @@
       "x": 11
     }
   ],
-  "minServerVersion": "4.1.6",
+  "minServerVersion": "4.1.7",
   "tests": [
     {
       "description": "db.watch succeeds on first attempt",

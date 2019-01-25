@@ -11,7 +11,7 @@
       "x": 22
     }
   ],
-  "minServerVersion": "4.1.6",
+  "minServerVersion": "4.1.7",
   "tests": [
     {
       "description": "EstimatedDocumentCount succeeds after InterruptedAtShutdown",

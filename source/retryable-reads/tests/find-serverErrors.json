@@ -23,7 +23,7 @@
       "x": 55
     }
   ],
-  "minServerVersion": "4.1.6",
+  "minServerVersion": "4.1.7",
   "tests": [
     {
       "description": "Find succeeds after InterruptedAtShutdown",

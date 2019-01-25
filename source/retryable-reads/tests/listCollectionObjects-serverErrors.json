@@ -2,7 +2,7 @@
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [],
-  "minServerVersion": "4.1.6",
+  "minServerVersion": "4.1.7",
   "tests": [
     {
       "description": "ListCollectionObjects succeeds after InterruptedAtShutdown",

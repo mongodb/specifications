@@ -34,7 +34,7 @@
       }
     ]
   },
-  "minServerVersion": "4.1.6",
+  "minServerVersion": "4.1.7",
   "tests": [
     {
       "description": "Download succeeds on first attempt",
