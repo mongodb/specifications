@@ -24,18 +24,6 @@
       "options": 42
     },
     {
-      "type": "ConnectionCreated",
-      "connectionId": 1
-    },
-    {
-      "type": "ConnectionCreated",
-      "connectionId": 2
-    },
-    {
-      "type": "ConnectionCreated",
-      "connectionId": 3
-    },
-    {
       "type": "ConnectionPoolCleared",
       "address": 42
     },
@@ -58,15 +46,12 @@
       "reason": "stale"
     },
     {
-      "type": "ConnectionCreated",
-      "connectionId": 4
-    },
-    {
       "type": "ConnectionCheckedOut",
       "connectionId": 4
     }
   ],
   "ignore": [
+    "ConnectionCreated",
     "ConnectionReady"
   ]
 }
