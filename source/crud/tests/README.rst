@@ -35,6 +35,8 @@ Format
 
 Each YAML file has the following keys:
 
+- ``collection_name`` (optional): The collection to use for testing.
+
 - ``database_name`` (optional): The database to use for testing.
 
 - ``data``: The data that should exist in the collection under test before each
@@ -54,8 +56,8 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
-  - ``operation``: Document describing the operation to be executed. This will
-    have the following fields:
+  - ``operations``: Array of documents, each describing an operation to be
+    executed. Each document has the following fields:
 
     - ``name``: The name of the operation as defined in the specification.
 
@@ -64,13 +66,9 @@ Each YAML file has the following keys:
 
     - ``arguments``: The names and values of arguments from the specification.
 
-  - ``outcome``: Document describing the return value and/or expected state of
-    the collection after the operation is executed. This will have some or all
-    of the following fields:
-
-    - ``error``: If ``true``, the test should expect an error or exception. Note
-      that some drivers may report server-side errors as a write error within a
-      write result object.
+    - ``error`` (optional): If ``true``, the test should expect the operation
+      to emit an error or exception. If ``false`` or omitted, drivers MUST
+      assert that no error occurred.
 
     - ``result``: The return value from the operation. This will correspond to
       an operation's result object as defined in the CRUD specification. This
@@ -81,6 +79,11 @@ Each YAML file has the following keys:
       result object if their BulkWriteException (or equivalent) provides access
       to a write result object.
 
+  - ``expectations`` (optional): List of command-started events.
+
+  - ``outcome`` (optional): Document describing the expected state of the
+    collection after the operation is executed. Contains the following fields:
+
     - ``collection``:
 
       - ``name`` (optional): The name of the collection to verify. If this isn't
@@ -88,6 +91,27 @@ Each YAML file has the following keys:
 
       - ``data``: The data that should exist in the collection after the
         operation has been run.
+
+Legacy Test Format for Single Operations
+----------------------------------------
+
+The test format above supports both multiple operations and APM expectations,
+and is consistent with the formats used by other specifications. Previously, the
+CRUD spec tests used a simplified format that only allowed for executing a
+single operation. Notable differences from the current format are as follows:
+
+- Instead of a `tests[i].operations` array, a single operation was defined as a
+  document in `tests[i].operation`. That document consisted of only the `name`,
+  `arguments`, and an optional `object` field.
+
+- Instead of `error` and `result` fields within each element in the
+  `tests[i].operations` array, the single operation's error and result were
+  defined under the `tests[i].outcome.error` and `tests[i].outcome.result`
+  fields.
+
+The legacy format should not conflict with the newer, multi-operation format
+used by other specs. Several drivers currently handle both formats using a
+unified test runner.
 
 Expectations
 ============
