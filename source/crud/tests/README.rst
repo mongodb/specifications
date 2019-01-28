@@ -102,7 +102,17 @@ unified test runner.
 Expectations
 ============
 
+Optional Fields in Results
+--------------------------
+
 Expected results for some tests may include optional fields, such as
 ``insertedId`` (for InsertOneResult), ``insertedIds`` (for InsertManyResult),
 and ``upsertedCount`` (for UpdateResult). Drivers that do not implement these
 fields can ignore them.
+
+Asserting Nonexistent Fields
+----------------------------
+
+Some command-started events in ``expectations`` include ``{ $exists: false }``
+as values for fields such as ``writeConcern``. Tests MUST assert that the actual
+command **omits** any field that has such a value in the expected command.
