@@ -12,26 +12,12 @@ Introduction
 The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the CRUD spec.
 
-Given the variety of languages and implementations and limited nature of a
-description of a test, there are a number of things that aren't testable. For
-instance, none of these tests assert that maxTimeMS was properly sent to the
-server. This would involve a lot of infrastructure to define and setup.
-Therefore, these YAML tests are in no way a replacement for more thorough
-testing. However, they can provide an initial verification of your
-implementation.
-
 Running these integration tests will require a running MongoDB server or
 cluster with server versions 2.6.0 or later. Some tests have specific server
 version requirements as noted by ``minServerVersion`` and ``maxServerVersion``.
 
-Version
-=======
-
-Files in the "specifications" repository have no version scheme. They are not
-tied to a MongoDB server version.
-
-Format
-======
+Test Format
+===========
 
 Each YAML file has the following keys:
 
