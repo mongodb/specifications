@@ -1,0 +1,142 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [],
+  "minServerVersion": "4.1.7",
+  "tests": [
+    {
+      "description": "ListIndexNames succeeds on first attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "name": "listIndexNames",
+        "object": "collection"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListIndexNames succeeds on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listIndexes"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "listIndexNames",
+        "object": "collection"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListIndexNames fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listIndexes"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "listIndexNames",
+        "object": "collection",
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListIndexNames fails on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listIndexes"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "listIndexNames",
+        "object": "collection",
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexNames": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}

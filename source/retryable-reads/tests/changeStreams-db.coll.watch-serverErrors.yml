@@ -1,0 +1,180 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
+data:
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+
+minServerVersion: '4.1.7' # 4.2
+
+tests:
+    -
+        description: "db.coll.watch succeeds after InterruptedAtShutdown"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint: &failCommand_failPoint
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data: { failCommands: [aggregate], errorCode: 11600 }
+        operation: &retryable_operation
+            name: watch
+            object: collection
+        expectations:
+            - &retryable_command_started_event
+                command_started_event:
+                    command:
+                        aggregate: *collection_name
+                        cursor: {}
+                        pipeline: [ { $changeStream: { fullDocument: "default" } } ]
+                    database_name: *database_name
+            - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after InterruptedDueToStepDown"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 11602 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after NotMaster"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 10107 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after NotMasterNoSlaveOk"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 13435 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after NotMasterOrSecondary"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 13436 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after PrimarySteppedDown"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 189 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after ShutdownInProgress"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 91 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after HostNotFound"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 7 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after HostUnreachable"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 6 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after NetworkTimeout"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 89 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch succeeds after SocketException"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 9001 }
+        operation: *retryable_operation
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch fails after two NotMaster errors"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [aggregate], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "db.coll.watch fails after NotMaster when retryReads is false"
+        topology: [replicaset, sharded]
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            error: true
+        expectations:
+             - *retryable_command_started_event

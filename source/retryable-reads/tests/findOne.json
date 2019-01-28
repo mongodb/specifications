@@ -1,0 +1,209 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    },
+    {
+      "_id": 4,
+      "x": 44
+    },
+    {
+      "_id": 5,
+      "x": 55
+    }
+  ],
+  "minServerVersion": "4.1.7",
+  "tests": [
+    {
+      "description": "FindOne succeeds on first attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "name": "findOne",
+        "object": "collection",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          }
+        },
+        "result": {
+          "_id": 1,
+          "x": 11
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {
+                "_id": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "FindOne succeeds on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "findOne",
+        "object": "collection",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          }
+        },
+        "result": {
+          "_id": 1,
+          "x": 11
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {
+                "_id": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {
+                "_id": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "FindOne fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "findOne",
+        "object": "collection",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          }
+        },
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {
+                "_id": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "FindOne fails on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "findOne",
+        "object": "collection",
+        "arguments": {
+          "filter": {
+            "_id": 1
+          }
+        },
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {
+                "_id": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {
+                "_id": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}

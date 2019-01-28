@@ -1,0 +1,211 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    }
+  ],
+  "minServerVersion": "4.1.7",
+  "tests": [
+    {
+      "description": "db.coll.watch succeeds on first attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "name": "watch",
+        "object": "collection"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "db.coll.watch succeeds on second attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "collection"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "db.coll.watch fails on first attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "collection",
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "db.coll.watch fails on second attempt",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "collection",
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    }
+  ]
+}

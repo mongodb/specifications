@@ -1,0 +1,812 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    }
+  ],
+  "minServerVersion": "4.1.7",
+  "tests": [
+    {
+      "description": "client.watch succeeds after InterruptedAtShutdown",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 11600
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after InterruptedDueToStepDown",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 11602
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after NotMaster",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after NotMasterNoSlaveOk",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 13435
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after NotMasterOrSecondary",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 13436
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after PrimarySteppedDown",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 189
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after ShutdownInProgress",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 91
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after HostNotFound",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 7
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after HostUnreachable",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 6
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after NetworkTimeout",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 89
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after SocketException",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 9001
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client"
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch fails after two NotMaster errors",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client",
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch fails after NotMaster when retryReads is false",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ],
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client",
+        "error": true
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    }
+  ]
+}
