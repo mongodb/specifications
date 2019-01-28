@@ -92,8 +92,8 @@ Each YAML file has the following keys:
       field may be a scalar (e.g. in the case of a count), a single document, or
       an array of documents in the case of a multi-document read.
       
-  - ``error``: Optional. If ``true``, the test should expect an error or
-    exception.
+    - ``error``: Optional. If ``true``, the test should expect an error or
+      exception.
         
   - ``expectations``: Optional list of command-started events.
 
