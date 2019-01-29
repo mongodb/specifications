@@ -98,6 +98,24 @@ Each YAML file has the following keys:
       - ``data``: The data that should exist in the collection after the
         operations have run.
 
+``withTransaction`` Operation
+`````````````````````````````
+
+These tests introduce a ``withTransaction`` operation, which may have the
+following fields:
+
+- ``callback``: Document containing the following field:
+
+  - ``operations``: Array of documents, each describing an operation to be
+    executed. Elements in this array will follow the same structure as the
+    ``operations`` field defined above (and in the CRUD and Transactions specs).
+
+    Note that drivers are expected to evaluate ``error` and ``result``
+    assertions when executing operations within ``callback.operations``.
+
+- ``transactionOptions`` (optional): Names and values of options to pass to
+  ``withTransaction()``, which will in turn be used for ``startTransaction()``.
+
 Use as Integration Tests
 ========================
 

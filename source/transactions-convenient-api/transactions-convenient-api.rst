@@ -104,7 +104,7 @@ class:
 
     interface ClientSession {
         withTransaction(function<any(...)> callback,
-                        Optional<TransactionOptions> txnOptions,
+                        Optional<TransactionOptions> transactionOptions,
                         ... /* other arguments as needed */): any
 
         // other existing members of ClientSession
@@ -231,12 +231,12 @@ This method can be expressed by the following pseudo-code:
 
 .. code:: typescript
 
-    withTransaction(callback, txnOptions) {
+    withTransaction(callback, transactionOptions) {
         // Note: drivers SHOULD use a monotonic clock to determine elapsed time
         var startTime = Date.now(); // milliseconds since Unix epoch
 
         retryTransaction: while (true) {
-            this.startTransaction(txnOptions); // may throw on error
+            this.startTransaction(transactionOptions); // may throw on error
 
             try {
                 userDefinedFunction(this);
