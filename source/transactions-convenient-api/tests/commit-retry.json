@@ -5,7 +5,6 @@
   "tests": [
     {
       "description": "commitTransaction succeeds after multiple connection errors",
-      "skipReason": "SPEC-1185 Drivers should use majority write concern when retrying commitTransaction",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -92,7 +91,8 @@
               },
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               },
               "readConcern": null,
               "startTransaction": null
@@ -111,7 +111,8 @@
               },
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               },
               "readConcern": null,
               "startTransaction": null
@@ -133,7 +134,6 @@
     },
     {
       "description": "commitTransaction retry only overwrites write concern w option",
-      "skipReason": "SPEC-1185 Drivers should use majority write concern when retrying commitTransaction",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -362,9 +362,12 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
+              "writeConcern": {
+                "w": "majority",
+                "wtimeout": 10000
+              },
               "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
+              "startTransaction": null
             },
             "command_name": "commitTransaction",
             "database_name": "admin"
@@ -379,9 +382,12 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
+              "writeConcern": {
+                "w": "majority",
+                "wtimeout": 10000
+              },
               "readConcern": null,
-              "startTransaction": null,
-              "writeConcern": null
+              "startTransaction": null
             },
             "command_name": "commitTransaction",
             "database_name": "admin"

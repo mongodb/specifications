@@ -111,7 +111,6 @@
     },
     {
       "description": "commitTransaction is retried after WriteConcernFailed non-timeout error",
-      "skipReason": "SPEC-1185 Drivers should use majority write concern when retrying commitTransaction",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -203,7 +202,8 @@
               },
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               },
               "readConcern": null,
               "startTransaction": null
@@ -222,7 +222,8 @@
               },
               "autocommit": false,
               "writeConcern": {
-                "w": "majority"
+                "w": "majority",
+                "wtimeout": 10000
               },
               "readConcern": null,
               "startTransaction": null
