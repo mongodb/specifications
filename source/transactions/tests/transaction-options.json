@@ -210,9 +210,6 @@
               },
               "startTransaction": true,
               "autocommit": false,
-              "readConcern": {
-                "level": "local"
-              },
               "writeConcern": null
             },
             "command_name": "insert",
@@ -255,7 +252,6 @@
               "startTransaction": true,
               "autocommit": false,
               "readConcern": {
-                "level": "local",
                 "afterClusterTime": 42
               },
               "writeConcern": null

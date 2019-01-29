@@ -115,8 +115,6 @@ tests:
               $numberLong: "1"
             startTransaction: true
             autocommit: false
-            readConcern:
-              level: local
             writeConcern:
           command_name: insert
           database_name: *database_name
@@ -145,7 +143,6 @@ tests:
             startTransaction: true
             autocommit: false
             readConcern:
-              level: local
               afterClusterTime: 42
             writeConcern:
           command_name: insert
