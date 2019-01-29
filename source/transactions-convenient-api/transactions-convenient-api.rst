@@ -10,7 +10,7 @@ Convenient API for Transactions
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 28-January-2019
+:Last Modified: 29-January-2019
 
 .. contents::
 
@@ -241,7 +241,8 @@ This method can be expressed by the following pseudo-code:
             try {
                 userDefinedFunction(this);
             } catch (error) {
-                if (this.state == STARTING || this.state == IN_PROGRESS) {
+                if (this.transactionState == STARTING ||
+                    this.transactionState == IN_PROGRESS) {
                     this.abortTransaction();
                 }
 
@@ -253,9 +254,9 @@ This method can be expressed by the following pseudo-code:
                 throw error;
             }
 
-            if (this.state == NO_TXN ||
-                this.state == COMMITTED ||
-                this.state == ABORTED) {
+            if (this.transactionState == NO_TXN ||
+                this.transactionState == COMMITTED ||
+                this.transactionState == ABORTED) {
                 return; // Assume callback intentionally ended the transaction
             }
 
