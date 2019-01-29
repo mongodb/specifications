@@ -125,7 +125,7 @@
           "writeConcernError": {
             "code": 64,
             "codeName": "WriteConcernFailed",
-            "errmsg": "waiting for replication did not time out"
+            "errmsg": "multiple errors reported"
           }
         }
       },
