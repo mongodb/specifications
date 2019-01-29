@@ -75,9 +75,9 @@ tests:
         data:
           - { _id: 1 }
   -
-    # This test configures the fail point to return a contrived error that
-    # is WriteConcernFailed but omits the errInfo field that would identify it
-    # as a wtimeout error. This tests that drivers do not assume that all
+    # This test configures the fail point to return an error with the
+    # WriteConcernFailed code but without errInfo that would identify it as a
+    # wtimeout error. This tests that drivers do not assume that all
     # WriteConcernFailed errors are due to a replication timeout.
     description: commitTransaction is retried after WriteConcernFailed non-timeout error
     skipReason: SPEC-1185 Drivers should use majority write concern when retrying commitTransaction
@@ -90,7 +90,7 @@ tests:
           writeConcernError:
             code: 64
             codeName: WriteConcernFailed
-            errmsg: "waiting for replication did not time out"
+            errmsg: "multiple errors reported"
     operations:
       -
         name: withTransaction
