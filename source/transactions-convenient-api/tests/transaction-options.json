@@ -288,7 +288,7 @@
                 }
               ]
             },
-            "transactionOptions": {
+            "options": {
               "readConcern": {
                 "level": "snapshot"
               },
@@ -391,7 +391,7 @@
                 }
               ]
             },
-            "transactionOptions": {
+            "options": {
               "readConcern": {
                 "level": "snapshot"
               },
@@ -486,7 +486,7 @@
                 }
               ]
             },
-            "transactionOptions": {
+            "options": {
               "readConcern": {
                 "level": "snapshot"
               },
