@@ -10,7 +10,7 @@ Convenient API for Transactions
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 29-January-2019
+:Last Modified: 30-January-2019
 
 .. contents::
 
@@ -104,7 +104,7 @@ class:
 
     interface ClientSession {
         withTransaction(function<any(...)> callback,
-                        Optional<TransactionOptions> transactionOptions,
+                        Optional<TransactionOptions> options,
                         ... /* other arguments as needed */): any
 
         // other existing members of ClientSession
@@ -231,12 +231,12 @@ This method can be expressed by the following pseudo-code:
 
 .. code:: typescript
 
-    withTransaction(callback, transactionOptions) {
+    withTransaction(callback, options) {
         // Note: drivers SHOULD use a monotonic clock to determine elapsed time
         var startTime = Date.now(); // milliseconds since Unix epoch
 
         retryTransaction: while (true) {
-            this.startTransaction(transactionOptions); // may throw on error
+            this.startTransaction(options); // may throw on error
 
             try {
                 userDefinedFunction(this);
@@ -465,3 +465,8 @@ client-side operation timeout, withTransaction can continue to use the
 120-second default and thus preserve backwards compatibility.
 
 .. _DRIVERS-555: https://jira.mongodb.org/browse/DRIVERS-555
+
+Changes
+=======
+
+YYYY-MM-DD: Nothing yet
