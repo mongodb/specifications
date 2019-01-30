@@ -287,14 +287,14 @@
                   }
                 }
               ]
-            }
-          },
-          "transactionOptions": {
-            "readConcern": {
-              "level": "snapshot"
             },
-            "writeConcern": {
-              "w": 1
+            "options": {
+              "readConcern": {
+                "level": "snapshot"
+              },
+              "writeConcern": {
+                "w": 1
+              }
             }
           }
         }
@@ -390,14 +390,14 @@
                   }
                 }
               ]
-            }
-          },
-          "transactionOptions": {
-            "readConcern": {
-              "level": "snapshot"
             },
-            "writeConcern": {
-              "w": 1
+            "options": {
+              "readConcern": {
+                "level": "snapshot"
+              },
+              "writeConcern": {
+                "w": 1
+              }
             }
           }
         }
@@ -485,14 +485,14 @@
                   }
                 }
               ]
-            }
-          },
-          "transactionOptions": {
-            "readConcern": {
-              "level": "snapshot"
             },
-            "writeConcern": {
-              "w": 1
+            "options": {
+              "readConcern": {
+                "level": "snapshot"
+              },
+              "writeConcern": {
+                "w": 1
+              }
             }
           }
         }
