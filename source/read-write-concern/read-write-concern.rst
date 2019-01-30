@@ -13,7 +13,7 @@ Read and Write Concern
 :Type: Standards
 :Server Versions: 2.4+
 :Last Modified: January 29, 2019
-:Version: 1.5
+:Version: 1.5.1
 
 .. contents::
 
@@ -406,10 +406,12 @@ command failure. For example:
 
 - ``{ok:0, code: 251, codeName: "NoSuchTransaction", writeConcernError: {code: 91, codeName: "ShutdownInProgress"}}`` [#]_
 
-.. [#] This is only possible in a sharded cluster. When a write goes to
+.. [#] This is only possible in a sharded cluster. When a write is routed to
        multiple shards and more than one shard returns a writeConcernError,
-       then mongos will construct a "WriteConcernFailed" error where the errmsg
-       field contains the stringified writeConcernError from each shard.
+       then mongos will construct a new writeConcernError with the
+       "WriteConcernFailed" error code and an errmsg field contains the
+       stringified writeConcernError from each shard. Note that each shard may
+       return a different writeConcernError.
 
 .. [#] See https://jira.mongodb.org/browse/SERVER-38850
 
@@ -535,4 +537,4 @@ Version History
   - 2017-11-17 : Added list of commands that support readConcern 
   - 2017-12-18 : Added "available" to Readconcern level.
   - 2017-05-29 : Added user management commands to list of commands that write 
-  - 2017-05-29 : Added section listing all known examples of writeConcernError.
+  - 2019-01-29 : Added section listing all known examples of writeConcernError.
