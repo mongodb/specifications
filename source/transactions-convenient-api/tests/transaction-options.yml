@@ -148,7 +148,7 @@ tests:
                   document: { _id: 1 }
                 result:
                   insertedId: 1
-          options:
+          transactionOptions:
             readConcern: { level: snapshot }
             writeConcern: { w: 1 }
     expectations:
