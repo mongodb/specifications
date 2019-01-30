@@ -86,7 +86,8 @@ tests:
       mode: { times: 2 }
       data:
           failCommands: ["commitTransaction"]
-          closeConnection: false
+          # Can reenable the following line when SERVER-39292 is fixed
+          # closeConnection: false
           writeConcernError:
             code: 64
             codeName: WriteConcernFailed

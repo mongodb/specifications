@@ -121,7 +121,6 @@
           "failCommands": [
             "commitTransaction"
           ],
-          "closeConnection": false,
           "writeConcernError": {
             "code": 64,
             "codeName": "WriteConcernFailed",
