@@ -22,16 +22,17 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback: &callback
-          operations:
-            -
-              name: insertOne
-              object: collection
-              arguments:
-                session: session0
-                document: { _id: 1 }
-              result:
-                insertedId: 1
+        arguments: &arguments
+          callback:
+            operations:
+              -
+                name: insertOne
+                object: collection
+                arguments:
+                  session: session0
+                  document: { _id: 1 }
+                result:
+                  insertedId: 1
         result:
           errorCodeName: WriteConcernFailed
           # Per transactions spec, drivers add UnknownTransactionCommitResult
@@ -94,16 +95,7 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback:
-          operations:
-            -
-              name: insertOne
-              object: collection
-              arguments:
-                session: session0
-                document: { _id: 1 }
-              result:
-                insertedId: 1
+        arguments: *arguments
     expectations:
       -
         command_started_event:
@@ -181,7 +173,7 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback: *callback
+        arguments: *arguments
         result:
           errorCodeName: UnknownReplWriteConcern
           errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
@@ -231,7 +223,7 @@ tests:
       -
         name: withTransaction
         object: session0
-        callback: *callback
+        arguments: *arguments
         result:
           errorCodeName: UnsatisfiableWriteConcern
           errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
