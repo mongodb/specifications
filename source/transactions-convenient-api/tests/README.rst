@@ -113,7 +113,7 @@ following fields:
     Note that drivers are expected to evaluate ``error` and ``result``
     assertions when executing operations within ``callback.operations``.
 
-- ``transactionOptions`` (optional): Names and values of options to pass to
+- ``options`` (optional): Names and values of options to pass to
   ``withTransaction()``, which will in turn be used for ``startTransaction()``.
 
 Use as Integration Tests
@@ -184,9 +184,9 @@ should be checked:
    error to its caller. This case may occur if the commit was internally retried
    against a new primary after a failover and the second primary returned a
    NoSuchTransaction error response.
-   
+
  If possible, drivers should implement these tests without requiring the test
  runner to block for the full duration of the retry timeout. This might be done
  by internally modifying the timeout value used by ``withTransaction`` with some
  private API or using a mock timer.
- 
+

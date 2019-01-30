@@ -112,7 +112,7 @@ tests:
                   document: { _id: 1 }
                 result:
                   insertedId: 1
-          transactionOptions:
+          options:
             writeConcern: { w: 2, j: true, wtimeout: 5000 }
     expectations:
       -
