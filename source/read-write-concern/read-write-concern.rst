@@ -12,7 +12,7 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: December 18, 2017
+:Last Modified: January 29, 2019
 :Version: 1.5
 
 .. contents::
@@ -363,6 +363,7 @@ Server errors associated with ``WriteConcern`` return successful responses with 
         "electionId" : ObjectId("55f30e4cffffffffffffffff"),
         "writeConcernError" : {
             "code" : 79,
+            "codeName" : "UnknownReplWriteConcern",
             "errmsg" : "No write concern mode named 'blah' found in replica set configuration"
         }
     }
@@ -379,6 +380,38 @@ Drivers SHOULD NOT parse server replies for "writeConcernError" in generic comma
 
 (Reporting of writeConcernErrors is more complex for bulk operations,
 see the Bulk API Spec.)
+
+writeConcernError Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The set of possible writeConcernErrors is quite large because they can include
+errors caused by shutdown, stepdown, interruption, maxTimeMS, and wtimeout.
+This section attempts to list all known error codes that may appear
+within a writeConcernError but may not be exhaustive. Note that some errors
+have been abbreviated:
+
+- ``{ok:1, writeConcernError: {code: 91, codeName: "ShutdownInProgress"}}``
+- ``{ok:1, writeConcernError: {code: 189, codeName: "PrimarySteppedDown"}}``
+- ``{ok:1, writeConcernError: {code: 11600, codeName: "InterruptedAtShutdown"}}``
+- ``{ok:1, writeConcernError: {code: 11601, codeName: "Interrupted"}}``
+- ``{ok:1, writeConcernError: {code: 11602, codeName: "InterruptedDueToReplStateChange"}}``
+- ``{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}``
+- ``{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`` [#]_
+- ``{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}``
+- ``{ok:1, writeConcernError: {code: 100, codeName: "UnsatisfiableWriteConcern", errmsg: "Not enough data-bearing nodes"}}``
+- ``{ok:1, writeConcernError: {code: 79, codeName: "UnknownReplWriteConcern"}}``
+
+Note also that it is possible for a writeConcernError to be attached to a
+command failure. For example:
+
+- ``{ok:0, code: 251, codeName: "NoSuchTransaction", writeConcernError: {code: 91, codeName: "ShutdownInProgress"}}`` [#]_
+
+.. [#] This is only possible in a sharded cluster. When a write goes to
+       multiple shards and more than one shard returns a writeConcernError,
+       then mongos will construct a "WriteConcernFailed" error where the errmsg
+       field contains the stringified writeConcernError from each shard.
+
+.. [#] See https://jira.mongodb.org/browse/SERVER-38850
 
 Location Specification
 ----------------------
@@ -502,3 +535,4 @@ Version History
   - 2017-11-17 : Added list of commands that support readConcern 
   - 2017-12-18 : Added "available" to Readconcern level.
   - 2017-05-29 : Added user management commands to list of commands that write 
+  - 2017-05-29 : Added section listing all known examples of writeConcernError.
