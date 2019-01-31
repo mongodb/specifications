@@ -30,14 +30,16 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -74,14 +76,16 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -118,14 +122,16 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -162,14 +168,16 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -206,14 +214,16 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -250,14 +260,16 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -294,14 +306,16 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -338,14 +352,16 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -382,14 +398,16 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -426,14 +444,16 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -470,14 +490,16 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -514,14 +536,16 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -558,14 +582,16 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

@@ -9,10 +9,12 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -40,10 +42,12 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -78,11 +82,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -110,11 +116,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

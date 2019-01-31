@@ -53,15 +53,17 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -124,15 +126,17 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -195,15 +199,17 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -266,15 +272,17 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -337,15 +345,17 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -408,15 +418,17 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -479,15 +491,17 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -550,15 +564,17 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -621,15 +637,17 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -692,15 +710,17 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -763,15 +783,17 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -834,16 +856,18 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
-          }
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -890,16 +914,18 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
-          }
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

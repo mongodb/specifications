@@ -17,14 +17,15 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data: { failCommands: [distinct], errorCode: 11600 }
-        operation: &retryable_operation_succeeds
-            <<: &retryable_operation
-                name: distinct
-                object: collection
-                arguments: { fieldName: "x", filter: { _id: { $gt: 1 } } }
-            result:
-                - 22
-                - 33
+        operations:
+            - &retryable_operation_succeeds
+                <<: &retryable_operation
+                    name: distinct
+                    object: collection
+                    arguments: { fieldName: "x", filter: { _id: { $gt: 1 } } }
+                result:
+                    - 22
+                    - 33
         expectations:
             - &retryable_command_started_event
                 command_started_event:
@@ -42,7 +43,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 11602 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -53,7 +54,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 10107 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -64,7 +65,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 13435 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -75,7 +76,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 13436 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -86,7 +87,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 189 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -97,7 +98,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 91 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -108,7 +109,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 7 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -119,7 +120,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 6 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -130,7 +131,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 89 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -141,7 +142,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 9001 }
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -153,9 +154,10 @@ tests:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [distinct], errorCode: 10107 }
-        operation: &retryable_operation_fails
-            <<: *retryable_operation
-            error: true
+        operations:
+            - &retryable_operation_fails
+                <<: *retryable_operation
+                error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -166,7 +168,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [distinct], errorCode: 10107 }
-        operation: *retryable_operation_fails
+        operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
 

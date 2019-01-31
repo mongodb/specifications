@@ -41,15 +41,17 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -99,15 +101,17 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
           }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -170,16 +174,18 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
-          }
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -213,16 +219,18 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "download",
-        "object": "gridfsbucket",
-        "arguments": {
-          "id": {
-            "$oid": "000000000000000000000001"
-          }
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

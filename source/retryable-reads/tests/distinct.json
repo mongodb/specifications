@@ -22,22 +22,24 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -72,22 +74,24 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -136,19 +140,21 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "error": true
-      },
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -183,19 +189,21 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "error": true
-      },
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

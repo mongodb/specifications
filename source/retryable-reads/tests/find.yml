@@ -15,19 +15,20 @@ tests:
         description: "Find succeeds on first attempt"
         clientOptions:
             retryReads: true
-        operation: &retryable_operation_succeeds
-            <<: &retryable_operation
-                name: find
-                object: collection
-                arguments:
-                    filter: {}
-                    sort: {_id: 1}
-                    limit: 4
-            result:
-                - {_id: 1, x: 11}
-                - {_id: 2, x: 22}
-                - {_id: 3, x: 33}
-                - {_id: 4, x: 44}
+        operations:
+            - &retryable_operation_succeeds
+                <<: &retryable_operation
+                    name: find
+                    object: collection
+                    arguments:
+                        filter: {}
+                        sort: {_id: 1}
+                        limit: 4
+                result:
+                    - {_id: 1, x: 11}
+                    - {_id: 2, x: 22}
+                    - {_id: 3, x: 33}
+                    - {_id: 4, x: 44}
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
@@ -47,7 +48,7 @@ tests:
             data:
                 failCommands: [find]
                 closeConnection: true
-        operation: *retryable_operation_succeeds
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -56,9 +57,10 @@ tests:
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operation: &retryable_operation_fails
-            <<: *retryable_operation
-            error: true
+        operations:
+            - &retryable_operation_fails
+                <<: *retryable_operation
+                error: true
         expectations:
              - *retryable_command_started_event
     -
@@ -68,7 +70,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
-        operation: *retryable_operation_fails
+        operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event

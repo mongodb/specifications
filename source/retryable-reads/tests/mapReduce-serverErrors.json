@@ -34,27 +34,29 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -109,27 +111,29 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -184,27 +188,29 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -259,27 +265,29 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -334,27 +342,29 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -409,27 +419,29 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -484,27 +496,29 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -559,27 +573,29 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -634,27 +650,29 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -709,27 +727,29 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -784,27 +804,29 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "result": [
-          {
-            "_id": 0,
-            "value": 6
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 0,
+              "value": 6
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -859,22 +881,24 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "error": true
-      },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -929,22 +953,24 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "mapReduce",
-        "object": "collection",
-        "arguments": {
-          "map": {
-            "$code": "function inc() { return emit(0, this.x + 1) }"
+      "operations": [
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
           },
-          "reduce": {
-            "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-          },
-          "out": {
-            "inline": 1
-          }
-        },
-        "error": true
-      },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

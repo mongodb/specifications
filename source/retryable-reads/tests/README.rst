@@ -45,10 +45,8 @@ Network Error Tests
 ===================
 
 Network error tests are expressed in YAML and should be run against a standalone,
-shard cluster, or single-node replica set. Until `SERVER-34943`_ is resolved,
-these tests cannot be run against a multi-node replicaset.
+shard cluster, or single-node replica set.
 
-.. _SERVER-34943: https://jira.mongodb.org/browse/SERVER-34943
 
 Test Format
 -----------
@@ -75,11 +73,11 @@ Each YAML file has the following keys:
   
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
-  - ``failPoint``: Optional, a server failpoint to enable expressed as the
+  - ``failPoint``: Optional, a server failpoint to enable, expressed as the
     configureFailPoint command to run on the admin database.
 
-  - ``operation``: A document describing an operation to be
-    executed. The document has the following fields:
+  - ``operations``: An array of documents describing an operation to be
+    executed. Each document has the following fields:
 
     - ``name``: The name of the operation on ``object``.
 

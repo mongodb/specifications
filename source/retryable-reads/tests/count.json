@@ -18,14 +18,16 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -54,14 +56,16 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -98,14 +102,16 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -134,14 +140,16 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "count",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

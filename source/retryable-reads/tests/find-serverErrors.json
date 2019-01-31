@@ -42,35 +42,37 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -117,35 +119,37 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -192,35 +196,37 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -267,35 +273,37 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -342,35 +350,37 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -417,35 +427,37 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -492,35 +504,37 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -567,35 +581,37 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -642,35 +658,37 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -717,35 +735,37 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -792,35 +812,37 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "result": [
-          {
-            "_id": 1,
-            "x": 11
-          },
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          },
-          {
-            "_id": 4,
-            "x": 44
-          }
-        ]
-      },
+          "result": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            }
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -867,18 +889,20 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "error": true
-      },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -925,18 +949,20 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "find",
-        "object": "collection",
-        "arguments": {
-          "filter": {},
-          "sort": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "_id": 1
+            },
+            "limit": 4
           },
-          "limit": 4
-        },
-        "error": true
-      },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

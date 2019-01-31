@@ -18,10 +18,12 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "watch",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -63,10 +65,12 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "watch",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -125,11 +129,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "watch",
-        "object": "client",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -171,11 +177,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "watch",
-        "object": "client",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
