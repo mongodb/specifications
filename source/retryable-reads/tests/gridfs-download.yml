@@ -20,10 +20,11 @@ tests:
         description: "Download succeeds on first attempt"
         clientOptions:
             retryReads: true
-        operation: &retryable_operation
-            name: download
-            object: gridfsbucket
-            arguments: { id: { "$oid" : "000000000000000000000001" } }
+        operations:
+            - &retryable_operation
+                name: download
+                object: gridfsbucket
+                arguments: { id: { "$oid" : "000000000000000000000001" } }
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
@@ -48,7 +49,7 @@ tests:
             data:
                 failCommands: [find]
                 closeConnection: true
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -58,9 +59,10 @@ tests:
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operation:
-            <<: *retryable_operation
-            error: true
+        operations:
+            - &retryable_operation_fails
+                <<: *retryable_operation
+                error: true
         expectations:
              - *retryable_command_started_event
     -
@@ -70,9 +72,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
-        operation:
-            <<: *retryable_operation
-            error: true
+        operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event

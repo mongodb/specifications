@@ -30,19 +30,21 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "findOne",
-        "object": "collection",
-        "arguments": {
-          "filter": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -74,19 +76,21 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "findOne",
-        "object": "collection",
-        "arguments": {
-          "filter": {
-            "_id": 1
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          },
+          "result": {
+            "_id": 1,
+            "x": 11
           }
-        },
-        "result": {
-          "_id": 1,
-          "x": 11
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -129,16 +133,18 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "findOne",
-        "object": "collection",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          }
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -170,16 +176,18 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "findOne",
-        "object": "collection",
-        "arguments": {
-          "filter": {
-            "_id": 1
-          }
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

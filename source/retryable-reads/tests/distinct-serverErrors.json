@@ -34,22 +34,24 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -98,22 +100,24 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -162,22 +166,24 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -226,22 +232,24 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -290,22 +298,24 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -354,22 +364,24 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -418,22 +430,24 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -482,22 +496,24 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -546,22 +562,24 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -610,22 +628,24 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -674,22 +694,24 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "result": [
-          22,
-          33
-        ]
-      },
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -738,19 +760,21 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "error": true
-      },
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -799,19 +823,21 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "distinct",
-        "object": "collection",
-        "arguments": {
-          "fieldName": "x",
-          "filter": {
-            "_id": {
-              "$gt": 1
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
             }
-          }
-        },
-        "error": true
-      },
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

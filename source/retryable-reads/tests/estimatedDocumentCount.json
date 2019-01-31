@@ -18,11 +18,13 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "estimatedDocumentCount",
-        "object": "collection",
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection",
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -51,11 +53,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "estimatedDocumentCount",
-        "object": "collection",
-        "result": 2
-      },
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection",
+          "result": 2
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -92,11 +96,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "estimatedDocumentCount",
-        "object": "collection",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -125,11 +131,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "estimatedDocumentCount",
-        "object": "collection",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

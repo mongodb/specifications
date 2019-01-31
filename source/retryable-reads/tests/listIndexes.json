@@ -9,10 +9,12 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "listIndexes",
-        "object": "collection"
-      },
+      "operations": [
+        {
+          "name": "listIndexes",
+          "object": "collection"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -41,10 +43,12 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "listIndexes",
-        "object": "collection"
-      },
+      "operations": [
+        {
+          "name": "listIndexes",
+          "object": "collection"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -81,11 +85,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "listIndexes",
-        "object": "collection",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "listIndexes",
+          "object": "collection",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -114,11 +120,13 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "listIndexes",
-        "object": "collection",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "listIndexes",
+          "object": "collection",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

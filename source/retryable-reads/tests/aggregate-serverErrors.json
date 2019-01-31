@@ -34,36 +34,38 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -128,36 +130,38 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -222,36 +226,38 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -316,36 +322,38 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -410,36 +418,38 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -504,36 +514,38 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -598,36 +610,38 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -692,36 +706,38 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -786,36 +802,38 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -880,36 +898,38 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -974,36 +994,38 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
             },
             {
-              "$sort": {
-                "x": 1
-              }
+              "_id": 3,
+              "x": 33
             }
           ]
-        },
-        "result": [
-          {
-            "_id": 2,
-            "x": 22
-          },
-          {
-            "_id": 3,
-            "x": 33
-          }
-        ]
-      },
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -1068,27 +1090,29 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
-            },
-            {
-              "$sort": {
-                "x": 1
-              }
-            }
-          ]
-        },
-        "error": true
-      },
+            ]
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -1153,27 +1177,29 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "aggregate",
-        "object": "collection",
-        "arguments": {
-          "pipeline": [
-            {
-              "$match": {
-                "_id": {
-                  "$gt": 1
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
                 }
               }
-            },
-            {
-              "$sort": {
-                "x": 1
-              }
-            }
-          ]
-        },
-        "error": true
-      },
+            ]
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

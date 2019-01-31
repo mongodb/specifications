@@ -13,9 +13,10 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data: { failCommands: [listDatabases], errorCode: 11600 }
-        operation:  &retryable_operation
-            name: listDatabases
-            object: client
+        operations:
+            - &retryable_operation
+                name: listDatabases
+                object: client
         expectations:
             - &retryable_command_started_event
                 command_started_event:
@@ -29,7 +30,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 11602 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -40,7 +41,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 10107 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -51,7 +52,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 13435 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -62,7 +63,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 13436 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -73,7 +74,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 189 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -84,7 +85,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 91 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -95,7 +96,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 7 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -106,7 +107,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 6 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -117,7 +118,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 89 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -128,7 +129,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 9001 }
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -140,9 +141,10 @@ tests:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [listDatabases], errorCode: 10107 }
-        operation:
-            <<: *retryable_operation
-            error: true
+        operations:
+            - &retryable_operation_fails
+                <<: *retryable_operation
+                error: true
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -153,9 +155,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 10107 }
-        operation:
-            <<: *retryable_operation
-            error: true
+        operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
 

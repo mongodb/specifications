@@ -21,10 +21,12 @@
           "errorCode": 11600
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -59,10 +61,12 @@
           "errorCode": 11602
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -97,10 +101,12 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -135,10 +141,12 @@
           "errorCode": 13435
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -173,10 +181,12 @@
           "errorCode": 13436
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -211,10 +221,12 @@
           "errorCode": 189
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -249,10 +261,12 @@
           "errorCode": 91
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -287,10 +301,12 @@
           "errorCode": 7
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -325,10 +341,12 @@
           "errorCode": 6
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -363,10 +381,12 @@
           "errorCode": 89
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -401,10 +421,12 @@
           "errorCode": 9001
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client"
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client"
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -439,11 +461,13 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -478,11 +502,13 @@
           "errorCode": 10107
         }
       },
-      "operation": {
-        "name": "listDatabases",
-        "object": "client",
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "listDatabases",
+          "object": "client",
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

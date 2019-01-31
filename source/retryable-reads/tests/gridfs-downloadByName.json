@@ -41,13 +41,15 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "download_by_name",
-        "object": "gridfsbucket",
-        "arguments": {
-          "filename": "abc"
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -95,13 +97,15 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "download_by_name",
-        "object": "gridfsbucket",
-        "arguments": {
-          "filename": "abc"
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          }
         }
-      },
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -160,14 +164,16 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "download_by_name",
-        "object": "gridfsbucket",
-        "arguments": {
-          "filename": "abc"
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {
@@ -199,14 +205,16 @@
           "closeConnection": true
         }
       },
-      "operation": {
-        "name": "download_by_name",
-        "object": "gridfsbucket",
-        "arguments": {
-          "filename": "abc"
-        },
-        "error": true
-      },
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          },
+          "error": true
+        }
+      ],
       "expectations": [
         {
           "command_started_event": {

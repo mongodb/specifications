@@ -12,9 +12,10 @@ tests:
         topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
-        operation: &retryable_operation
-            name: watch
-            object: collection
+        operations:
+            - &retryable_operation
+                name: watch
+                object: collection
         expectations:
             - &retryable_command_started_event
                 command_started_event:
@@ -35,7 +36,7 @@ tests:
                 failCommands:
                         - aggregate
                 closeConnection: true
-        operation: *retryable_operation
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -45,9 +46,10 @@ tests:
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operation:
-            <<: *retryable_operation
-            error: true
+        operations:
+            - &retryable_operation_fails
+                <<: *retryable_operation
+                error: true
         expectations:
              - *retryable_command_started_event
     -
@@ -58,9 +60,7 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
-        operation:
-            <<: *retryable_operation
-            error: true
+        operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
