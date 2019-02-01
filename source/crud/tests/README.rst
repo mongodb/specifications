@@ -121,20 +121,134 @@ The legacy format should not conflict with the newer, multi-operation format
 used by other specs. Several drivers currently handle both formats using a
 unified test runner.
 
-Expectations
-============
+Test Runner Implementation
+==========================
 
-Optional Fields in Results
---------------------------
+This section provides guidance for implementing a test runner.
 
-Expected results for some tests may include optional fields, such as
-``insertedId`` (for InsertOneResult), ``insertedIds`` (for InsertManyResult),
-and ``upsertedCount`` (for UpdateResult). Drivers that do not implement these
-fields can ignore them.
+Before running the tests:
+
+- Create a global MongoClient (``globalMongoClient``) and connect to the server.
+  This client will be used for executing meta operations, such as checking
+  server versions and preparing data fixtures.
+
+For each test file:
+
+- Using ``globalMongoClient``, check that the current server version satisfies
+  the ``minServerVersion`` and ``maxServerVersion`` top-level fields in the test
+  file (if applicable). If the
+  requirements are not satisifed, the test file should be skipped.
+
+- Determine the collection and database under test, utilizing the top-level
+  ``collection_name`` and/or ``database_name`` fields if present.
+
+- For each element in the ``tests`` array:
+
+  - Using ``globalMongoClient``, ensure that the collection and/or database
+    under test is in a "clean" state, as needed. This may be accomplished by
+    dropping the database; however, drivers may also decide to drop individual
+    collections as needed (this may be more performant).
+
+  - If the top-level ``data`` field is present in the test file, insert the
+    corresponding data into the collection under test using
+    ``globalMongoClient``.
+
+  - If the the ``failPoint`` field is present, use ``globalMongoClient`` to
+    configure the fail point on the primary server. See
+    `Server Fail Point <../../transactions/tests#server-fail-point>`_ in the
+    Transactions spec test documentation for more information.
+
+  - Create a local MongoClient (``localMongoClient``) and connect to the server.
+    This client will be used for executing the test case.
+
+      - If ``clientOptions`` is present, those options should be used to create
+        the client. Drivers MAY merge these options atop existing defaults (e.g.
+        reduced ``serverSelectionTimeoutMS`` value for faster test failures) at
+        their own discretion.
+
+  - Activate command monitoring for ``localMongoClient`` and begin capturing
+    events. Note that some events may need to be filtered out if the driver
+    uses global listeners or reports internal commands (e.g. ``isMaster``,
+    authentication).
+
+  - For each element in the ``operations`` array:
+
+    - Using ``localMongoClient``, select the appropriate ``object`` to execute
+      the operation. Default to the collection under test if this field is not
+      present.
+
+      - If ``collectionOptions`` is present, those options should be used to
+        construct the collection object.
+
+    - Given the ``name`` and ``arguments``, execute the operation on the object
+      under test. Capture the result of the operation, if any, and observe
+      whether an error occurred. If an error is encountered that includes a
+      result (e.g. BulkWriteException), extract the result object.
+
+    - If ``error`` is present and true, assert that the operation encountered an
+      error. Otherwise, assert that no error was encountered.
+
+    - if ``result`` is present, assert that it matches the operation's result.
+
+  - Deactivate command monitoring for ``localMongoClient``.
+
+  - If the ``expectations`` array is present, assert that the sequence of
+    emitted CommandStartedEvents from executing the operation(s) matches the
+    sequence of ``command_started_event`` objects in the ``expectations`` array.
+
+  - If the ``outcome`` field is present, assert the contents of the specified
+    collection using ``globalMongoClient``.
+
+Evaluating Matches
+------------------
+
+The expected values for ``result``, ``command_started_event.command``, and
+elements in ``outcome.data`` are written in
+`Extended JSON <../../extended-json.rst>`_. Drivers may adopt any of the
+following approaches to comparisons, as long as they are consistent:
+
+- Convert ``actual`` to Extended JSON and compare to ``expected``
+- Convert ``expected`` and ``actual`` to BSON, and compare them
+- Convert ``expected`` and ``actual`` to native representations, and compare
+  them
+
+Extra Fields in Actual Results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When comparing ``actual`` with ``expected``, drivers should permit ``actual`` to
+contain additional fields not present in ``expected``. For instance, the
+following documents match:
+
+- ``expected`` is ``{ "x": 1 }``
+- ``actual`` is ``{ "_id": { "$oid" : "000000000000000000000001" }, "x": 1 }``
+
+In this sense, ``expected`` may be a subset of ``actual``. It may also be
+helpful to think of ``expected`` as a form of query criteria. Note that in some
+cases, ``expected`` may condition additional, optional fields (see:
+`Optional Fields in Expected Results`_).
+
+Optional Fields in Expected Results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some expected results may include fields that are optional in the CRUD
+specification, such as ``insertedId`` (for InsertOneResult), ``insertedIds``
+(for InsertManyResult), and ``upsertedCount`` (for UpdateResult). Drivers that
+do not implement these fields can ignore them when comparing ``actual`` with
+``expected``.
 
 Asserting Nonexistent Fields
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some command-started events in ``expectations`` include ``{ $exists: false }``
-as values for fields such as ``writeConcern``. Tests MUST assert that the actual
-command **omits** any field that has such a value in the expected command.
+Some expected documents may include ``{ $exists: false }`` as a field value.
+When evaluating this, the test runner MUST assert that ``actual`` does not
+contain the corresponding field. For instance, this may be used to assert that a
+CommandStartedEvent's command document does not contain a ``writeConcern``
+field.
+
+Asserting Fields with Any Value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some expected documents may include ``{ $exists: true }`` as a field value. When
+evaluating this, the test runner MUST assert that ``actual`` contains the
+corresponding field (any BSON value is acceptable). For instance, this may be
+used to assert that a document contains *some* value in its ``_id`` field.
