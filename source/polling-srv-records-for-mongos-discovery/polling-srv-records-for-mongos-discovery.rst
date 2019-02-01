@@ -7,7 +7,7 @@ Polling SRV Records for mongos Discovery
 
 :Title: Polling SRV Records for mongos Discovery
 :Author: Derick Rethans
-:Status: Draft
+:Status: Accepted
 :Type: Standards
 :Last Modified: 2018-11-29
 :Version: 1.0
