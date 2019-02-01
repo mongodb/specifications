@@ -25,7 +25,7 @@ Each YAML file has the following keys:
 
 - ``database_name`` (optional): The database to use for testing.
 
-- ``data``: The data that should exist in the collection under test before each
+- ``data`` (optional): The data that should exist in the collection under test before each
   test run.
 
 - ``minServerVersion`` (optional): The minimum server version (inclusive)
@@ -42,13 +42,25 @@ Each YAML file has the following keys:
 
   - ``description``: The name of the test.
 
+  - ``skipReason`` (optional): If present, the test should be skipped and the
+    string value will specify a reason.
+
+  - ``failPoint`` (optional): The ``configureFailPoint`` command document to run
+    to configure a fail point on the primary server.
+
+  - ``clientOptions`` (optional): Names and values of options used to construct
+    the MongoClient for this test.
+
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
 
-    - ``name``: The name of the operation as defined in the specification.
-
-    - ``object``: The name of the object to perform the operation on. Can be
+    - ``object`` (optional): The name of the object to perform the operation on. Can be
       "database" or "collection". Defaults to "collection" if undefined.
+
+    - ``collectionOptions`` (optional): Names and values of options used to
+      construct the collection object for this test.
+
+    - ``name``: The name of the operation as defined in the specification.
 
     - ``arguments``: The names and values of arguments from the specification.
 
@@ -56,16 +68,26 @@ Each YAML file has the following keys:
       to emit an error or exception. If ``false`` or omitted, drivers MUST
       assert that no error occurred.
 
-    - ``result``: The return value from the operation. This will correspond to
-      an operation's result object as defined in the CRUD specification. This
-      field may be omitted if ``error`` is ``true``. If this field is present
-      and ``error`` is ``true`` (generally for multi-statement tests), the
-      result reports information about operations that succeeded before an
+    - ``result`` (optional): The result of executing the operation. This will
+      correspond to operation's return value as defined in the specification.
+      This field may be omitted if ``error`` is ``true``. If this field is
+      present and ``error`` is ``true`` (generally for multi-statement tests),
+      the result reports information about statements that succeeded before an
       unrecoverable failure. In that case, drivers may choose to check the
       result object if their BulkWriteException (or equivalent) provides access
       to a write result object.
 
-  - ``expectations`` (optional): List of command-started events.
+  - ``expectations`` (optional): Array of documents, each describing a 
+    `CommandStartedEvent <../../command-monitoring/command-monitoring.rst#api>`_
+    from the
+    `Command Monitoring <../../command-monitoring/command-monitoring.rst>`_
+    specification. If present, drivers should use command monitoring to observe
+    events emitted during execution of the test operation(s) and assert that
+    they match the expected CommandStartedEvent(s). Each document will have the
+    following field:
+
+    - ``command_started_event``: Document corresponding to an expected
+      `CommandStartedEvent <../../command-monitoring/command-monitoring.rst#api>`_.
 
   - ``outcome`` (optional): Document describing the expected state of the
     collection after the operation is executed. Contains the following fields:
