@@ -281,7 +281,7 @@ pertaining to URI options apply here.
        best compression
 
 **Test Plan**
-------------
+-------------
 
 Tests are implemented and described in the `tests <tests>`_ directory
 
@@ -363,6 +363,6 @@ changes the name or the semantics of a URI option or adds a new URI option,
 this specification MUST be updated to reflect those changes.
 
 Changes
-=======
+-------
 
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
