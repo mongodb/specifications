@@ -202,38 +202,49 @@ For each test file:
 Evaluating Matches
 ------------------
 
-The expected values for ``result``, ``command_started_event.command``, and
-elements in ``outcome.data`` are written in
-`Extended JSON <../../extended-json.rst>`_. Drivers may adopt any of the
-following approaches to comparisons, as long as they are consistent:
+The expected values for results (e.g. ``result`` for an operation
+operation, ``command_started_event.command``, elements in ``outcome.data``) are
+written in `Extended JSON <../../extended-json.rst>`_. Drivers may adopt any of
+the following approaches to comparisons, as long as they are consistent:
 
 - Convert ``actual`` to Extended JSON and compare to ``expected``
 - Convert ``expected`` and ``actual`` to BSON, and compare them
 - Convert ``expected`` and ``actual`` to native representations, and compare
   them
 
-Extra Fields in Actual Results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Extra Fields in Actual Documents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When comparing ``actual`` with ``expected``, drivers should permit ``actual`` to
-contain additional fields not present in ``expected``. For instance, the
-following documents match:
+When comparing ``actual`` and ``expected`` *documents*, drivers should permit
+``actual`` documents to contain additional fields not present in ``expected``.
+For example, the following documents match:
 
 - ``expected`` is ``{ "x": 1 }``
 - ``actual`` is ``{ "_id": { "$oid" : "000000000000000000000001" }, "x": 1 }``
 
 In this sense, ``expected`` may be a subset of ``actual``. It may also be
-helpful to think of ``expected`` as a form of query criteria. Note that in some
-cases, ``expected`` may condition additional, optional fields (see:
-`Optional Fields in Expected Results`_).
+helpful to think of ``expected`` as a form of query criteria. The intention
+behind this rule is that it is not always feasible for the test to express all
+fields in the expected document(s) (e.g. session and cluster time information
+in a ``command_started_event.command`` document).
 
-Optional Fields in Expected Results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This rule for allowing extra fields in ``actual`` only applies for values that
+correspond to a document. For instance, an actual result of ``[1, 2, 3, 4]`` for
+a ``distinct`` operation would not match an expected result of ``[1, 2, 3]``.
+Likewise with the ``find`` operation, this rule would only apply when matching
+documents *within* the expected result array and actual cursor.
 
-Some expected results may include fields that are optional in the CRUD
+Note that in the case of result objects for some CRUD operations, ``expected``
+may condition additional, optional fields (see:
+`Optional Fields in Expected Result Objects`_).
+
+Optional Fields in Expected Result Objects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some ``expected`` results may include fields that are optional in the CRUD
 specification, such as ``insertedId`` (for InsertOneResult), ``insertedIds``
 (for InsertManyResult), and ``upsertedCount`` (for UpdateResult). Drivers that
-do not implement these fields can ignore them when comparing ``actual`` with
+do not implement these fields should ignore them when comparing ``actual`` with
 ``expected``.
 
 Asserting Nonexistent Fields
