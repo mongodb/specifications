@@ -118,12 +118,12 @@ For each YAML file, for each element in ``tests``:
 - If there was an error:
 
   - Assert that an error was expected for the test.
-  - Assert that the error MATCHES ``results.error``
+  - Assert that the error MATCHES ``result.error``
 
 - Else:
 
   - Assert that no error was expected for the test
-  - Assert that the changes received from ``changeStream`` MATCH the results in ``results.success``
+  - Assert that the changes received from ``changeStream`` MATCH the results in ``result.success``
 
 - If there are any ``expectations``
 
