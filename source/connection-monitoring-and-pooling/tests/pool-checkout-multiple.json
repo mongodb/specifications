@@ -8,8 +8,16 @@
       "target": "thread1"
     },
     {
+      "name": "wait",
+      "ms": 10
+    },
+    {
       "name": "start",
       "target": "thread2"
+    },
+    {
+      "name": "wait",
+      "ms": 20
     },
     {
       "name": "start",

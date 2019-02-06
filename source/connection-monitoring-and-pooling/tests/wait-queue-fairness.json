@@ -1,9 +1,10 @@
 {
   "version": 1,
   "style": "unit",
-  "description": "must issue Connections to threads in the order that the threads eneterd the queue",
+  "description": "must issue Connections to threads in the order that the threads entered the queue",
   "poolOptions": {
-    "maxPoolSize": 1
+    "maxPoolSize": 1,
+    "waitQueueTimeoutMS": 1000
   },
   "operations": [
     {
@@ -20,6 +21,10 @@
       "label": "conn1"
     },
     {
+      "name": "wait",
+      "ms": 10
+    },
+    {
       "name": "start",
       "target": "thread2"
     },
@@ -29,6 +34,10 @@
       "label": "conn2"
     },
     {
+      "name": "wait",
+      "ms": 20
+    },
+    {
       "name": "start",
       "target": "thread3"
     },
@@ -36,6 +45,10 @@
       "name": "checkOut",
       "thread": "thread3",
       "label": "conn3"
+    },
+    {
+      "name": "wait",
+      "ms": 30
     },
     {
       "name": "start",
