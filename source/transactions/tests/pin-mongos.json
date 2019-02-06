@@ -12,6 +12,9 @@
   "tests": [
     {
       "description": "countDocuments",
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -125,6 +128,9 @@
     },
     {
       "description": "distinct",
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -246,6 +252,9 @@
     },
     {
       "description": "find",
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -391,6 +400,9 @@
     },
     {
       "description": "insertOne",
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -544,6 +556,9 @@
     },
     {
       "description": "mixed read write operations",
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -704,6 +719,9 @@
     },
     {
       "description": "multiple commits",
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -792,6 +810,12 @@
     },
     {
       "description": "remain pinned after errors within a transaction and commit",
+      "topology": [
+        "sharded"
+      ],
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -932,6 +956,12 @@
     },
     {
       "description": "remain pinned after errors within a transaction and abort",
+      "topology": [
+        "sharded"
+      ],
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",

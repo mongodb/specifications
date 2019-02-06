@@ -5,6 +5,12 @@
   "tests": [
     {
       "description": "commitTransaction explicit retries succeed on new mongos",
+      "topology": [
+        "sharded"
+      ],
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -178,6 +184,12 @@
     },
     {
       "description": "commitTransaction retry succeeds on new mongos",
+      "topology": [
+        "sharded"
+      ],
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -303,6 +315,12 @@
     },
     {
       "description": "commitTransaction retry fails on new mongos",
+      "topology": [
+        "sharded"
+      ],
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",
@@ -421,6 +439,12 @@
     },
     {
       "description": "abortTransaction sends recoveryToken",
+      "topology": [
+        "sharded"
+      ],
+      "clientOptions": {
+        "useMultipleMongoses": true
+      },
       "operations": [
         {
           "name": "startTransaction",

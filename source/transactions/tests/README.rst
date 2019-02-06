@@ -86,7 +86,15 @@ Each YAML file has the following keys:
   - ``skipReason``: Optional, string describing why this test should be
     skipped.
 
-  - ``clientOptions``: Optional, parameters to pass to MongoClient().
+  - ``topology``: Optional. An array of server topologies against which to run
+    the test. Valid topologies are "replicaset" and "sharded". The default is
+    ["replicaset", "sharded"].
+
+  - ``clientOptions``: Optional, parameters to pass to MongoClient():
+
+    - ``useMultipleMongoses``: Optional, boolean. If true and this test is
+      running against a sharded cluster, intialize the MongoClient for this
+      test with multiple mongos seed addresses.
 
   - ``failPoint``: Optional, a server failpoint to enable expressed as the
     configureFailPoint command to run on the admin database.
@@ -149,9 +157,9 @@ ensure that no new bugs have been introduced related to arbiters.)
 
 A driver that implements support for sharded transactions MUST also run these
 tests against a MongoDB sharded cluster with multiple mongoses and
-**server version 4.1.6 or later**. Including multiple mongoses (and
-initializing the MongoClient with multiple mongos seeds!) ensures that
-mongos transaction pinning works properly.
+**server version 4.1.7 or later**. Some tests require initializing the
+MongoClient with multiple mongos seeds to ensures that mongos transaction
+pinning and the recoveryToken works properly.
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
@@ -210,8 +218,9 @@ Then for each element in ``tests``:
    actual txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if
    present.
 
-   - When testing against a sharded cluster this client MUST be created with
-     multiple (valid) mongos seed addreses.
+   - When testing against a sharded cluster and
+     ``clientOptions.useMultipleMongoses`` is ``true`` the client MUST be
+     created with multiple (valid) mongos seed addreses.
 
 #. Call ``client.startSession`` twice to create ClientSession objects
    ``session0`` and ``session1``, using the test's "sessionOptions" if they

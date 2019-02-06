@@ -5,6 +5,9 @@ data: []
 
 tests:
   - description: commitTransaction explicit retries succeed on new mongos
+    topology: ["sharded"]
+    clientOptions:
+      useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -114,6 +117,9 @@ tests:
           - _id: 1
 
   - description: commitTransaction retry succeeds on new mongos
+    topology: ["sharded"]
+    clientOptions:
+      useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -196,6 +202,9 @@ tests:
           - _id: 1
 
   - description: commitTransaction retry fails on new mongos
+    topology: ["sharded"]
+    clientOptions:
+      useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -276,6 +285,9 @@ tests:
         data: []
 
   - description: abortTransaction sends recoveryToken
+    topology: ["sharded"]
+    clientOptions:
+      useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
