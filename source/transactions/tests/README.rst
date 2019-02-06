@@ -170,35 +170,6 @@ Then for each element in ``tests``:
    ``client.admin.runCommand({killAllSessions: []})`` to clean up any open
    transactions from previous test failures.
 
-   To workaround `SERVER-38335`_, ensure this command does not send
-   an implicit session, otherwise the command will fail with an
-   "operation was interrupted" error because it kills itself and (on a sharded
-   cluster) future commands may fail with an error similar to:
-   "Encountered error from localhost:27217 during a transaction :: caused by :: operation was interrupted".
-
-   If your driver cannot run this command without an implicit session, then
-   either skip this step and live with the fact that previous test failures
-   may cause later tests to fail or use the `killAllSessionsByPattern` command
-   instead. During each test record all session ids sent to the server and at
-   the end of each test kill all the sessions ids (using a different session):
-
-   .. code:: python
-
-      # Be sure to use a distinct session to avoid "operation was interrupted".
-      session_for_cleanup = client.start_session()
-      recorded_session_uuids = []
-      # Run test case and record session uuids...
-      client.admin.runCommand({
-          'killAllSessionsByPattern': [
-              {'lsid': {'id': uuid}} for uuid in recorded_session_uuids]},
-          session=session_for_cleanup)
-
-   - When testing against a sharded cluster, create a list of MongoClients that
-     are directly connected to each mongos. Run the `killAllSessions`
-     (or `killAllSessionsByPattern`) command on ALL mongoses.
-
-   .. _SERVER-38335: https://jira.mongodb.org/browse/SERVER-38335
-
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields of the YAML file.
 #. Drop the test collection, using writeConcern "majority".
