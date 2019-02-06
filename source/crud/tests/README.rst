@@ -16,8 +16,26 @@ Running these integration tests will require a running MongoDB server or
 cluster with server versions 2.6.0 or later. Some tests have specific server
 version requirements as noted by ``minServerVersion`` and ``maxServerVersion``.
 
+Subdirectories for Test Formats
+-------------------------------
+
+This document describes a current test format, which should be used for any new
+CRUD tests. Additionally, it refers to a "legacy" format, which dates back to
+the initial version of the CRUD specification. Until such time that all original
+tests have been ported to the current format, tests in each format will be
+grouped in their own subdirectory:
+
+- ``v1/``: Legacy format tests
+- ``v2/``: Current format tests
+
+Since some drivers may not have a unified test runner capable of executing tests
+in both formats, segregating tests in this manner will make it easier for
+drivers to sync and feed test files to different test runners.
+
 Test Format
 ===========
+
+*Note: this section pertains to test files in the "v2" directory.*
 
 Each YAML file has the following keys:
 
@@ -103,6 +121,8 @@ Each YAML file has the following keys:
 Legacy Test Format for Single Operations
 ----------------------------------------
 
+*Note: this section pertains to test files in the "v1" directory.*
+
 The test format above supports both multiple operations and APM expectations,
 and is consistent with the formats used by other specifications. Previously, the
 CRUD spec tests used a simplified format that only allowed for executing a
@@ -118,8 +138,8 @@ single operation. Notable differences from the current format are as follows:
   fields.
 
 The legacy format should not conflict with the newer, multi-operation format
-used by other specs. Several drivers currently handle both formats using a
-unified test runner.
+used by other specs (e.g. Transactions). It is possible to create a unified test
+runner capable of executing both formats (as some drivers do).
 
 Test Runner Implementation
 ==========================
