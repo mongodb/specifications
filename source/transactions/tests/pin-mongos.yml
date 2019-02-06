@@ -1,10 +1,10 @@
 # Test that all the operations go to the same mongos.
 #
-# The assertion is implicit: that all the read operations succeed.
-# If the driver does not properly pin to a single mongos then one of the
-# operations in a transaction will eventually be sent to a different mongos,
-# which is unaware of the transaction, and the mongos will return a command
-# error. An example of such an error is:
+# In tests that don't include command-started events the assertion is implicit:
+# that all the read operations succeed. If the driver does not properly pin to
+# a single mongos then one of the operations in a transaction will eventually
+# be sent to a different mongos, which is unaware of the transaction, and the
+# mongos will return a command error. An example of such an error is:
 # {
 #   'ok': 0.0,
 #   'errmsg': 'cannot continue txnId -1 for session 28938f50-9d29-4ca5-8de5-ddaf261267c4 - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= with txnId 1',
@@ -12,9 +12,6 @@
 #   'codeName': 'NoSuchTransaction',
 #   'errorLabels': ['TransientTransactionError']
 # }
-#
-# This test doesn't check contents of command-started events.
-# Note: these tests should also pass when run against a replica set.
 database_name: &database_name "transaction-tests"
 collection_name: &collection_name "test"
 data: &data
@@ -296,3 +293,174 @@ tests:
           - {_id: 2}
           - {_id: 3}
           - {_id: 4}
+
+  - description: remain pinned after errors within a transaction and commit
+    operations:
+      - name: startTransaction
+        object: session0
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 3
+        result:
+          insertedId: 3
+      # Enable the fail point only on the Mongos that session0 is pinned to.
+      - name: failPoint
+        session: session0
+        failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["insert"]
+              closeConnection: true
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 4
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+      # Session remains pinned to the first mongos and commitTransaction
+      # succeeds.
+      - name: commitTransaction
+        object: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 3
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 4
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+            recoveryToken: 42
+          command_name: commitTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data:
+          - _id: 1
+          - _id: 2
+          - _id: 3
+
+  - description: remain pinned after errors within a transaction and abort
+    operations:
+      - name: startTransaction
+        object: session0
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 3
+        result:
+          insertedId: 3
+      # Enable the fail point only on the Mongos that session0 is pinned to.
+      - name: failPoint
+        session: session0
+        failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["insert"]
+              closeConnection: true
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 4
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+      # Session remains pinned to the first mongos and abortTransaction
+      # succeeds.
+      - name: abortTransaction
+        object: session0
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 3
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 4
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+            recoveryToken: 42
+          command_name: abortTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data:
+          - _id: 1
+          - _id: 2
