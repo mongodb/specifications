@@ -317,6 +317,13 @@ A ``readConcern.afterClusterTime`` value of ``42`` in a command-started event
 is a fake cluster time. Drivers MUST assert that the actual command includes an
 afterClusterTime.
 
+recoveryToken
+^^^^^^^^^^^^^
+
+A ``recoveryToken`` value of ``42`` in a command-started event is a fake
+recovery token. Drivers MUST assert that the actual command includes a
+"recoveryToken" field.
+
 Mongos Pinning Prose Tests
 ==========================
 
