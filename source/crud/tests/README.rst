@@ -246,20 +246,3 @@ specification, such as ``insertedId`` (for InsertOneResult), ``insertedIds``
 (for InsertManyResult), and ``upsertedCount`` (for UpdateResult). Drivers that
 do not implement these fields should ignore them when comparing ``actual`` with
 ``expected``.
-
-Asserting Nonexistent Fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Some expected documents may include ``{ $exists: false }`` as a field value.
-When evaluating this, the test runner MUST assert that ``actual`` does not
-contain the corresponding field. For instance, this may be used to assert that a
-CommandStartedEvent's command document does not contain a ``writeConcern``
-field.
-
-Asserting Fields with Any Value
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Some expected documents may include ``{ $exists: true }`` as a field value. When
-evaluating this, the test runner MUST assert that ``actual`` contains the
-corresponding field (any BSON value is acceptable). For instance, this may be
-used to assert that a document contains *some* value in its ``_id`` field.
