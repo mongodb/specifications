@@ -401,3 +401,31 @@ instead.
             addresses.add(cursor.address)
 
           assert len(addresses) > 1
+
+Q & A
+=====
+
+Why do some tests appear to hang for 60 seconds on a sharded cluster?
+
+`````````````````````````````````````````````````````````````````````
+There are two cases where this can happen. When the initial commitTransaction
+attempt fails on mongos A and is retryed on mongos B, mongos B will block
+waiting for the transaction to complete. However because the initial commit
+attempt failed, the transaction will only completed after it is automatically
+aborted for exceeding the shard's transactionLifetimeLimitSeconds setting.
+
+The second case is when a *single-shard* transaction is commited successfully
+on mongos A and then explicitly commited again on mongos B, mongos B will also
+block until the transactionLifetimeLimitSeconds timeout is hit at which point
+``{ok:1}`` will be returned. `SERVER-39349`_ requests that recovering the
+outcome of a completed single-shard transaction should not block.
+Note that this test suite only includes single shard transactions.
+
+To workaorund these issues, drivers SHOULD decrease the transaction timeout
+setting by running setParameter **on each shard**. Setting the timeout to 3
+seconds significantly speeds up the test suite without a high risk of
+prematurely timing out any tests' transactions. To decrease the timeout, run::
+
+  db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 3 } )
+
+.. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
