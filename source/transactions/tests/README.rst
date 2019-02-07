@@ -159,9 +159,9 @@ ensure that no new bugs have been introduced related to arbiters.)
 
 A driver that implements support for sharded transactions MUST also run these
 tests against a MongoDB sharded cluster with multiple mongoses and
-**server version 4.1.7 or later**. Some tests require initializing the
-MongoClient with multiple mongos seeds to ensures that mongos transaction
-pinning and the recoveryToken works properly.
+**server version v4.1.7-232-g473e96a or later**. Some tests require
+initializing the MongoClient with multiple mongos seeds to ensures that mongos
+transaction pinning and the recoveryToken works properly.
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
