@@ -645,6 +645,15 @@ a manner idiomatic to the Driver and Language.
 .. code:: typescript
 
     /**
+     *  Thrown when a driver times out when attempting to check out
+     *  a Connection from a Pool
+     */
+    interface MaxPoolSizeTimeoutError {
+      message: 'Unable to check out a connection within the timeout due to the max pool size';
+      address: <pool address>;
+    }
+
+    /**
      *  Thrown when the driver attempts to check out a
      *  Connection from a closed Connection Pool
      */
@@ -658,7 +667,7 @@ a manner idiomatic to the Driver and Language.
      *  a Connection from a Pool
      */
     interface WaitQueueTimeoutError {
-      message: 'Timed out while checking out a connection from connection pool';
+      message: 'Timed out while waiting to check out a connection from the pool';
       address: <pool address>;
     }
 
