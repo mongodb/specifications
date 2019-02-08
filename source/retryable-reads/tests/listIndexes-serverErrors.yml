@@ -2,13 +2,11 @@ database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
 data: []
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
         description: "ListIndexes succeeds after InterruptedAtShutdown"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -26,8 +24,6 @@ tests:
             - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after InterruptedDueToStepDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 11602 }
@@ -37,8 +33,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after NotMaster"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 10107 }
@@ -48,8 +42,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after NotMasterNoSlaveOk"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 13435 }
@@ -59,8 +51,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after NotMasterOrSecondary"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 13436 }
@@ -70,8 +60,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after PrimarySteppedDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 189 }
@@ -81,8 +69,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after ShutdownInProgress"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 91 }
@@ -92,8 +78,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after HostNotFound"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 7 }
@@ -103,8 +87,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after HostUnreachable"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 6 }
@@ -114,8 +96,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after NetworkTimeout"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 89 }
@@ -125,8 +105,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes succeeds after SocketException"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 9001 }
@@ -136,8 +114,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListIndexes fails after two NotMaster errors"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

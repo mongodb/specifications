@@ -17,10 +17,18 @@ in this file. Those tests will need to be manually implemented by each driver.
 
 Tests will require a MongoClient created with options defined in the tests.
 Integration tests will require a running MongoDB cluster with server versions
-4.2.0 or later. N.B. Strictly speaking, the server should implement the
-"Early Failure on Socket Disconnect" slated for 4.2.0, but this is not
-necessary for initial testing.
+4.0 or later.
 
+Tests will require a MongoClient created with options defined in the
+tests. Integration tests will require a running MongoDB cluster with server
+versions 4.0 or later.
+
+N.B. The spec specifies 3.6 as the minimum server version: however,
+``failCommand`` is not supported on 3.6, so for now, testing requires MongoDB
+4.0. Once `DRIVERS-560`_ is resolved, we will attempt to adapt its live failure
+integration tests to test Retryable Reads on MongoDB 3.6.
+
+.. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
 
 Server Fail Point
 =================
@@ -63,14 +71,17 @@ Each YAML file has the following keys:
 
 - ``minServerVersion`` (optional): The minimum server version (inclusive).
 
+- ``topology``: Optional. An array of server topologies against which to run the
+  test. Valid topologies are ``single``, ``replicaset`` and ``sharded``. The default
+  is ``[single, replicaset, sharded]``.
+    
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:
 
   - ``description``: The name of the test.
-
-  - ``topology:`` Optional. An array of server topologies against which to run the
-    test. Valid topologies are single, replicaset, and sharded.
-  
+    
+  - ``clientOptions``: Optional, parameters to pass to MongoClient().
+    
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
   - ``failPoint``: Optional, a server failpoint to enable, expressed as the

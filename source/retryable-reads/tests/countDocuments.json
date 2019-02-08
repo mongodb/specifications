@@ -11,13 +11,10 @@
       "x": 22
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "CountDocuments succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "countDocuments",
@@ -54,9 +51,6 @@
     },
     {
       "description": "CountDocuments succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -177,9 +171,6 @@
     },
     {
       "description": "CountDocuments fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

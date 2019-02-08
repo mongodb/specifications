@@ -2,13 +2,10 @@
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "ListDatabaseObjects succeeds after InterruptedAtShutdown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -46,9 +43,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after InterruptedDueToStepDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -86,9 +80,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after NotMaster",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -126,9 +117,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after NotMasterNoSlaveOk",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -166,9 +154,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after NotMasterOrSecondary",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -206,9 +191,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after PrimarySteppedDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -246,9 +228,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after ShutdownInProgress",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -286,9 +265,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after HostNotFound",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -326,9 +302,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after HostUnreachable",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -366,9 +339,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after NetworkTimeout",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -406,9 +376,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds after SocketException",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -446,9 +413,6 @@
     },
     {
       "description": "ListDatabaseObjects fails after two NotMaster errors",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

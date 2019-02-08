@@ -2,13 +2,10 @@
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "ListIndexes succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "listIndexes",
@@ -28,9 +25,6 @@
     },
     {
       "description": "ListIndexes succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -105,9 +99,6 @@
     },
     {
       "description": "ListIndexes fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

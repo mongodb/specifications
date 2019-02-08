@@ -11,13 +11,10 @@
       "x": 22
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "EstimatedDocumentCount succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "estimatedDocumentCount",
@@ -38,9 +35,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -116,9 +110,6 @@
     },
     {
       "description": "EstimatedDocumentCount fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

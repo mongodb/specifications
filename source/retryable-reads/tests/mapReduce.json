@@ -15,13 +15,10 @@
       "x": 2
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
-      "description": "MapReduce succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
+      "description": "MapReduce succeeds with retry on",
       "operations": [
         {
           "name": "mapReduce",
@@ -66,10 +63,7 @@
       ]
     },
     {
-      "description": "MapReduce succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
+      "description": "MapReduce fails with retry on",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -97,32 +91,10 @@
               "inline": 1
             }
           },
-          "result": [
-            {
-              "_id": 0,
-              "value": 6
-            }
-          ]
+          "error": true
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "mapReduce": "coll",
-              "map": {
-                "$code": "function inc() { return emit(0, this.x + 1) }"
-              },
-              "reduce": {
-                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-              },
-              "out": {
-                "inline": 1
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {
@@ -143,7 +115,7 @@
       ]
     },
     {
-      "description": "MapReduce fails on first attempt",
+      "description": "MapReduce fails with retry off",
       "clientOptions": {
         "retryReads": false
       },
@@ -160,22 +132,7 @@
         }
       },
       "operations": [
-        {
-          "name": "mapReduce",
-          "object": "collection",
-          "arguments": {
-            "map": {
-              "$code": "function inc() { return emit(0, this.x + 1) }"
-            },
-            "reduce": {
-              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-            },
-            "out": {
-              "inline": 1
-            }
-          },
-          "error": true
-        }
+        null
       ],
       "expectations": [
         {
@@ -191,129 +148,6 @@
               "out": {
                 "inline": 1
               }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "MapReduce fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "mapReduce"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "mapReduce",
-          "object": "collection",
-          "arguments": {
-            "map": {
-              "$code": "function inc() { return emit(0, this.x + 1) }"
-            },
-            "reduce": {
-              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-            },
-            "out": {
-              "inline": 1
-            }
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "mapReduce": "coll",
-              "map": {
-                "$code": "function inc() { return emit(0, this.x + 1) }"
-              },
-              "reduce": {
-                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-              },
-              "out": {
-                "inline": 1
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
-              "mapReduce": "coll",
-              "map": {
-                "$code": "function inc() { return emit(0, this.x + 1) }"
-              },
-              "reduce": {
-                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-              },
-              "out": {
-                "inline": 1
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "MapReduce without {inline: 1} does not retry",
-      "clientOptions": {
-        "retryReads": true
-      },
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 1
-        },
-        "data": {
-          "failCommands": [
-            "mapReduce"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "mapReduce",
-          "object": "collection",
-          "arguments": {
-            "map": {
-              "$code": "function inc() { return emit(0, this.x + 1) }"
-            },
-            "reduce": {
-              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-            },
-            "out": "output-collection"
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "mapReduce": "coll",
-              "map": {
-                "$code": "function inc() { return emit(0, this.x + 1) }"
-              },
-              "reduce": {
-                "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
-              },
-              "out": "output-collection"
             },
             "database_name": "retryable-reads-tests"
           }

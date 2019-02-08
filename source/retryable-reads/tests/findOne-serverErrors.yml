@@ -8,13 +8,11 @@ data:
     - {_id: 4, x: 44}
     - {_id: 5, x: 55}
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
         description: "FindOne succeeds after InterruptedAtShutdown"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -37,8 +35,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after InterruptedDueToStepDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 11602 }
@@ -48,8 +44,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after NotMaster"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 10107 }
@@ -59,8 +53,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after NotMasterNoSlaveOk"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 13435 }
@@ -70,8 +62,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after NotMasterOrSecondary"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 13436 }
@@ -81,8 +71,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after PrimarySteppedDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 189 }
@@ -92,8 +80,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after ShutdownInProgress"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 91 }
@@ -103,8 +89,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after HostNotFound"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 7 }
@@ -114,8 +98,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after HostUnreachable"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 6 }
@@ -125,8 +107,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after NetworkTimeout"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 89 }
@@ -136,8 +116,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne succeeds after SocketException"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [find], errorCode: 9001 }
@@ -147,8 +125,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "FindOne fails after two NotMaster errors"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

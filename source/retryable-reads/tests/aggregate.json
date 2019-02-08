@@ -15,13 +15,10 @@
       "x": 33
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "Aggregate succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "aggregate",
@@ -81,9 +78,6 @@
     },
     {
       "description": "Aggregate succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -242,9 +236,6 @@
     },
     {
       "description": "Aggregate fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -329,9 +320,6 @@
     },
     {
       "description": "Aggregate with $out does not retry",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

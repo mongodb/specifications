@@ -11,13 +11,10 @@
       "x": 22
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "CountDocuments succeeds after InterruptedAtShutdown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -87,9 +84,6 @@
     },
     {
       "description": "CountDocuments succeeds after InterruptedDueToStepDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -159,9 +153,6 @@
     },
     {
       "description": "CountDocuments succeeds after NotMaster",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -231,9 +222,6 @@
     },
     {
       "description": "CountDocuments succeeds after NotMasterNoSlaveOk",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -303,9 +291,6 @@
     },
     {
       "description": "CountDocuments succeeds after NotMasterOrSecondary",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -375,9 +360,6 @@
     },
     {
       "description": "CountDocuments succeeds after PrimarySteppedDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -447,9 +429,6 @@
     },
     {
       "description": "CountDocuments succeeds after ShutdownInProgress",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -519,9 +498,6 @@
     },
     {
       "description": "CountDocuments succeeds after HostNotFound",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -591,9 +567,6 @@
     },
     {
       "description": "CountDocuments succeeds after HostUnreachable",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -663,9 +636,6 @@
     },
     {
       "description": "CountDocuments succeeds after NetworkTimeout",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -735,9 +705,6 @@
     },
     {
       "description": "CountDocuments succeeds after SocketException",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -807,9 +774,6 @@
     },
     {
       "description": "CountDocuments fails after two NotMaster errors",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

@@ -23,13 +23,10 @@
       "x": 55
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "FindOne succeeds after InterruptedAtShutdown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -84,9 +81,6 @@
     },
     {
       "description": "FindOne succeeds after InterruptedDueToStepDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -141,9 +135,6 @@
     },
     {
       "description": "FindOne succeeds after NotMaster",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -198,9 +189,6 @@
     },
     {
       "description": "FindOne succeeds after NotMasterNoSlaveOk",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -255,9 +243,6 @@
     },
     {
       "description": "FindOne succeeds after NotMasterOrSecondary",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -312,9 +297,6 @@
     },
     {
       "description": "FindOne succeeds after PrimarySteppedDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -369,9 +351,6 @@
     },
     {
       "description": "FindOne succeeds after ShutdownInProgress",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -426,9 +405,6 @@
     },
     {
       "description": "FindOne succeeds after HostNotFound",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -483,9 +459,6 @@
     },
     {
       "description": "FindOne succeeds after HostUnreachable",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -540,9 +513,6 @@
     },
     {
       "description": "FindOne succeeds after NetworkTimeout",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -597,9 +567,6 @@
     },
     {
       "description": "FindOne succeeds after SocketException",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -654,9 +621,6 @@
     },
     {
       "description": "FindOne fails after two NotMaster errors",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

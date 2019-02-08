@@ -8,13 +8,11 @@ data:
     - {_id: 4, x: 44}
     - {_id: 5, x: 55}
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
         description: "Find succeeds on first attempt"
-        clientOptions:
-            retryReads: true
         operations:
             - &retryable_operation_succeeds
                 <<: &retryable_operation
@@ -39,7 +37,7 @@ tests:
                         limit: 4
                     database_name: *database_name
     -
-        description: "Find succeeds on second attempt"
+        description: "Find succeeds on second attempt with explicit clientOptions"
         clientOptions:
             retryReads: true
         failPoint: &failCommand_failPoint
@@ -48,6 +46,13 @@ tests:
             data:
                 failCommands: [find]
                 closeConnection: true
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "Find succeeds on second attempt"
+        failPoint: *failCommand_failPoint
         operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
@@ -65,8 +70,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Find fails on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

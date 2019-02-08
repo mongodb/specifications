@@ -5,13 +5,11 @@ data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
         description: "Count succeeds after InterruptedAtShutdown"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -32,8 +30,6 @@ tests:
             - *retryable_command_started_event
     -
         description: "Count succeeds after InterruptedDueToStepDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 11602 }
@@ -43,8 +39,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after NotMaster"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 10107 }
@@ -54,8 +48,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after NotMasterNoSlaveOk"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 13435 }
@@ -65,8 +57,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after NotMasterOrSecondary"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 13436 }
@@ -76,8 +66,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after PrimarySteppedDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 189 }
@@ -87,8 +75,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after ShutdownInProgress"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 91 }
@@ -98,8 +84,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after HostNotFound"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 7 }
@@ -109,8 +93,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after HostUnreachable"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 6 }
@@ -120,8 +102,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after NetworkTimeout"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 89 }
@@ -131,8 +111,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count succeeds after SocketException"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 9001 }
@@ -142,8 +120,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Count fails after two NotMaster errors"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

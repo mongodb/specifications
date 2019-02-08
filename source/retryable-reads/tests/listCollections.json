@@ -2,13 +2,10 @@
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "ListCollections succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "listCollections",
@@ -27,9 +24,6 @@
     },
     {
       "description": "ListCollections succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -101,9 +95,6 @@
     },
     {
       "description": "ListCollections fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

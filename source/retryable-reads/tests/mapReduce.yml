@@ -6,16 +6,14 @@ data:
     - {_id: 2, x: 1}
     - {_id: 3, x: 2}
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
-        description: "MapReduce succeeds on first attempt"
-        clientOptions:
-            retryReads: true
+        description: "MapReduce succeeds with retry on"
         operations:
-            - &retryable_operation_succeeds
-                <<: &retryable_operation
+            - &operation_succeeds
+                <<: &operation
                     name: mapReduce
                     object: collection
                     arguments:
@@ -24,7 +22,7 @@ tests:
                         out: { inline: 1 }
                 result: [ {  "_id" : 0, "value" : 6 } ]
         expectations:
-            - &retryable_command_started_event
+            - &command_started_event
                 command_started_event:
                     command:
                         mapReduce: *collection_name
@@ -33,59 +31,24 @@ tests:
                         out: { inline: 1 }
                     database_name: *database_name
     -
-        description: "MapReduce succeeds on second attempt"
-        clientOptions:
-            retryReads: true
+        description: "MapReduce fails with retry on"
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
                 failCommands: [mapReduce]
                 closeConnection: true
-        operations: [*retryable_operation_succeeds]
+        operations:
+            - &operation_fails
+                <<: *operation
+                error: true
         expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
+             - *command_started_event
     -
-        description: "MapReduce fails on first attempt"
+        description: "MapReduce fails with retry off"
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operations:
-            - &retryable_operation_fails
-                <<: *retryable_operation
-                error: true
+        operations: [&operation_fails]
         expectations:
-             - *retryable_command_started_event
-    -
-        description: "MapReduce fails on second attempt"
-        clientOptions:
-            retryReads: true
-        failPoint:
-            <<: *failCommand_failPoint
-            mode: { times: 2 }
-        operations: [*retryable_operation_fails]
-        expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
-    -
-        description: "MapReduce without {inline: 1} does not retry"
-        clientOptions:
-            retryReads: true
-        failPoint: *failCommand_failPoint
-        operations:
-            -   <<: *retryable_operation_fails
-                arguments:
-                    map: { $code: "function inc() { return emit(0, this.x + 1) }" }
-                    reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
-                    out: output-collection
-        expectations:
-             -  command_started_event:
-                    command:
-                      mapReduce: *collection_name
-                      map: { $code: "function inc() { return emit(0, this.x + 1) }" }
-                      reduce: { $code: "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
-                      out: output-collection
-                    database_name: *database_name
-
-
+             - *command_started_event

@@ -7,17 +7,14 @@
       "x": 11
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
+  "topology": [
+    "replicaset",
+    "sharded"
+  ],
   "tests": [
     {
       "description": "client.watch succeeds on first attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "watch",
@@ -46,13 +43,6 @@
     },
     {
       "description": "client.watch succeeds on second attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -110,10 +100,6 @@
     },
     {
       "description": "client.watch fails on first attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "clientOptions": {
         "retryReads": false
       },
@@ -158,13 +144,6 @@
     },
     {
       "description": "client.watch fails on second attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

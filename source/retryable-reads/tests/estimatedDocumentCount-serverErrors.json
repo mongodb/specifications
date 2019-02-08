@@ -11,13 +11,10 @@
       "x": 22
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "EstimatedDocumentCount succeeds after InterruptedAtShutdown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -58,9 +55,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after InterruptedDueToStepDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -101,9 +95,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after NotMaster",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -144,9 +135,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after NotMasterNoSlaveOk",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -187,9 +175,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after NotMasterOrSecondary",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -230,9 +215,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after PrimarySteppedDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -273,9 +255,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after ShutdownInProgress",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -316,9 +295,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after HostNotFound",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -359,9 +335,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after HostUnreachable",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -402,9 +375,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after NetworkTimeout",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -445,9 +415,6 @@
     },
     {
       "description": "EstimatedDocumentCount succeeds after SocketException",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -488,9 +455,6 @@
     },
     {
       "description": "EstimatedDocumentCount fails after two NotMaster errors",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

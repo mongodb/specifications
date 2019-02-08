@@ -6,13 +6,11 @@ data:
     - {_id: 2, x: 22}
     - {_id: 3, x: 33}
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
         description: "Aggregate succeeds on first attempt"
-        clientOptions:
-            retryReads: true
         operations:
             - &retryable_operation_succeeds
                 <<: &retryable_operation
@@ -34,8 +32,6 @@ tests:
                     database_name: *database_name
     -
         description: "Aggregate succeeds on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -59,8 +55,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Aggregate fails on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
@@ -70,8 +64,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "Aggregate with $out does not retry"
-        clientOptions:
-            retryReads: true
         failPoint: *failCommand_failPoint
         operations:
             -   <<: *retryable_operation_fails
