@@ -34,7 +34,7 @@
       }
     ]
   },
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "Download succeeds after InterruptedAtShutdown",

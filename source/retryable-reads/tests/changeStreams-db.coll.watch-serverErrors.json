@@ -15,7 +15,7 @@
       "x": 33
     }
   ],
-  "minServerVersion": "4.1.7",
+  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "db.coll.watch succeeds after InterruptedAtShutdown",

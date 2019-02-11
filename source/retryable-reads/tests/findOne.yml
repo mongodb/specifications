@@ -8,7 +8,7 @@ data:
     - {_id: 4, x: 44}
     - {_id: 5, x: 55}
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -

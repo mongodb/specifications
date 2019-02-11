@@ -2,7 +2,7 @@ database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
 data: []
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -

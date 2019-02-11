@@ -1,7 +1,7 @@
 database_name: &database_name "retryable-reads-tests"
 bucket_name: "fs"
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 data:
     fs.files:

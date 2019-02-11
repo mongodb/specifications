@@ -13,7 +13,7 @@ data:
     fs.chunks:
         - { _id: { $oid: "000000000000000000000002" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
 
-minServerVersion: '4.1.7' # 4.2
+minServerVersion: '4.0'
 
 tests:
     -
