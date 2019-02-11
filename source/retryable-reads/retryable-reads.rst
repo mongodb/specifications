@@ -554,9 +554,6 @@ Future work
 
 4. We may revisit the decision not retry ``Cursor.getMore()`` (see `Q&A`_).
 
-5. To improve performance on servers without “Early Failure on Socket
-   Disconnect”, we may use ``killSessions`` to automatically kill the previous
-   attempt before running a retry.
 
 Q&A 
 ====
