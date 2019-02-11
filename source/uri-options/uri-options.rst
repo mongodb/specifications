@@ -50,10 +50,8 @@ occur:
 2. Both ``tlsInsecure`` and ``tlsAllowInvalidHostnames`` appear in the 
    URI options.
 3. All instances of ``tls`` and ``ssl`` in the URI options do not have the
-   same value. For ease of implementation, drivers MAY fulfill this
-   requirement by raising errors whenever ``tls`` or ``ssl`` appears more
-   than once in the URI options, including when they both appear once.
-
+   same value. If all instances of ``tls`` and ``ssl`` have the same
+   value, an error MUST NOT be raised.
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
