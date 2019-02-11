@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-2-8
+:Last Modified: 2019-2-11
    
 .. contents::
 
