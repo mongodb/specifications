@@ -406,8 +406,8 @@ Q & A
 =====
 
 Why do some tests appear to hang for 60 seconds on a sharded cluster?
-
 `````````````````````````````````````````````````````````````````````
+
 There are two cases where this can happen. When the initial commitTransaction
 attempt fails on mongos A and is retryed on mongos B, mongos B will block
 waiting for the transaction to complete. However because the initial commit
