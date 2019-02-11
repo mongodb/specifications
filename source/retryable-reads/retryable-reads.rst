@@ -5,7 +5,7 @@ Retryable Reads
 :Spec Title: Retryable Reads
 :Spec Version: 1.0
 :Author: Vincent Kam 
-:Lead: \Bernie Hackett
+:Lead: Bernie Hackett
 :Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
 :Approvers: Jason Carey, Bernie Hackett, Shane Harvey, Eliot Horowitz, Scott L’Hommedieu, Jeremy Mikola, Dan Pasette, Jeff Yemin
 :Status: Accepted
@@ -113,15 +113,15 @@ Requirements for Retryable Reads
 Supported Server Versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Drivers SHOULD verify server eligibility by ensuring that ``maxWireVersion`` is
-at least 6 because retryable reads require a MongoDB 36 standalone, replica set
-or shard cluster, MongoDB 3.6 server wire version is 6 as defined in the `Server
+Drivers MUST verify server eligibility by ensuring that ``maxWireVersion`` is at
+least 6 because retryable reads require a MongoDB 3.6 standalone, replica set or
+shard cluster, MongoDB 3.6 server wire version is 6 as defined in the `Server
 Wire version and Feature List specification
 <https://github.com/mongodb/specifications/blob/master/source/wireversion-featurelist.rst>`__.
 
 The minimum server version is 3.6 because
 
-1. It gives us version parity with retryable writes
+1. It gives us version parity with retryable writes.
 2. It forces the retry attempt to use the same implicit session, which would
    make it it easier to track operations and kill any errant longer running
    operation.
@@ -509,6 +509,22 @@ to 2n times.
 The note above will also apply if an application upgrades to a version of the
 driver where that defaults to enabling retryable reads.
 
+Rejected Designs
+----------------
+
+1. To improve performance on servers without “Early Failure on Socket
+   Disconnect”, we may, we considered using ``killSessions`` to automatically
+   kill the previous attempt before running a retry.  We decided against this
+   because after killing the session, parts of it still may be running if there
+   are any errors.  Additionally, killing sessions takes time because a kill has
+   to talk to every non-config ``mongod`` in the cluster (i.e. all the primaries
+   and secondaries of each shard). In addition, in order to protect the system
+   against getting overloaded with these requests, every server allows no more
+   than one killsession operation at a time.  Operations that attempt to
+   killsessions while a killsession is running are batched together and run
+   simultaneously after the current one finishes
+
+
 Reference Implementation 
 =========================
 
@@ -527,9 +543,8 @@ Future work
 1. A later specification may allow operations (including read) to be retried any
    number of times during a singular timeout period.
 
-2. A later specification may have `drivers default to enabling retryable writes
-   <https://jira.mongodb.org/browse/WRITING-3115>`__, in which case, drivers
-   MUST also default to enabling retryable reads.
+2. A later specification may have drivers default to enabling retryable writes,
+   in which case, drivers MUST also default to enabling retryable reads.
 
 3. Any future changes to the the applicable parts of `retryable writes
    specification
@@ -624,14 +639,16 @@ wire protocol message.
 Why isn't MongoDB 4.2 required?
 -------------------------------
 
-MongoDB 4.2 was initially considered as a requirement for retryable
-reads because MongoDB 4.2 implements support for "Early Failure on
-Socket Disconnect," changing the the semantics of socket disconnect to
-prevent ops from doing work that no client is interested in. This
-prevents applications from seeing degraded performance when a read is
-retried. Upon further discussion, we decided that should not be required
-to retry reads because any customers experiencing degraded performance
-can simply disable ``retryableReads``.
+MongoDB 4.2 was initially considered as a requirement for retryable reads
+because MongoDB 4.2 implements support for “Early Failure on Socket Disconnect,”
+changing the the semantics of socket disconnect to prevent ops from doing work
+that no client is interested in. This prevents applications from seeing degraded
+performance when an expensive read is retried. Upon further discussion, we
+decided that "Early Failure on Socket Disconnect" should not be required to
+retry reads because the resilience benefit of retryable reads outweighs the
+minor risk of degraded performance. Additionally, any customers experiencing
+degraded performance can simply disable ``retryableReads``.
+
 
 Changelog 
 ==========
