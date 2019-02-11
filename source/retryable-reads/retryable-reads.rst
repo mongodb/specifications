@@ -554,6 +554,12 @@ Future work
 
 4. We may revisit the decision not retry ``Cursor.getMore()`` (see `Q&A`_).
 
+5. Once `DRIVERS-560`_ is resolved, tests will be added to allow testing
+   Retryable Reads on MongoDB 3.6. See the `test plan
+   <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`__
+   for additional information.
+
+.. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
 
 Q&A 
 ====

@@ -17,10 +17,18 @@ in this file. Those tests will need to be manually implemented by each driver.
 
 Tests will require a MongoClient created with options defined in the tests.
 Integration tests will require a running MongoDB cluster with server versions
-4.2.0 or later. N.B. Strictly speaking, the server should implement the
-"Early Failure on Socket Disconnect" slated for 4.2.0, but this is not
-necessary for initial testing.
+4.0 or later.
 
+Tests will require a MongoClient created with options defined in the
+tests. Integration tests will require a running MongoDB cluster with server
+versions 4.0 or later.
+
+N.B. The spec specifies 3.6 as the minimum server version: however,
+``failCommand`` is not supported on 3.6, so for now, testing requires MongoDB
+4.0. Once `DRIVERS-560`_ is resolved, tests will be added to allow testing
+Retryable Reads on MongoDB 3.6.
+
+.. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
 
 Server Fail Point
 =================
