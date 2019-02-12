@@ -35,7 +35,7 @@
     },
     {
       "name": "wait",
-      "ms": 20
+      "ms": 10
     },
     {
       "name": "start",
@@ -48,7 +48,7 @@
     },
     {
       "name": "wait",
-      "ms": 30
+      "ms": 10
     },
     {
       "name": "start",
@@ -58,6 +58,10 @@
       "name": "checkOut",
       "thread": "thread4",
       "label": "conn4"
+    },
+    {
+      "name": "wait",
+      "ms": 10
     },
     {
       "name": "checkIn",
