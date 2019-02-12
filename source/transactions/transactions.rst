@@ -764,10 +764,8 @@ transaction but introduce two new driver concepts: mongos pinning and the
 Mongos Pinning
 ~~~~~~~~~~~~~~
 
-The server requires that drivers MUST send all commands for
-a single transaction to the same mongos (excluding retries of commitTransaction
-and abortTransaction) therefore this spec introduces the concept of pinning a
-ClientSession to a mongos.
+Drivers MUST send all commands for a single transaction to the same mongos
+(excluding retries of commitTransaction and abortTransaction).
 
 After the driver selects a mongos for the first command within a transaction,
 the driver MUST pin the ClientSession to the selected mongos. Drivers MUST
@@ -793,15 +791,15 @@ server selection.
 recoveryToken field
 ~~~~~~~~~~~~~~~~~~~
 
-The ``recoveryToken`` field enables the driver (and the server) to recover
-the outcome of a sharded transaction on a new mongos.
+The ``recoveryToken`` field enables the driver to recover the outcome of a
+sharded transaction on a new (or restarted) mongos.
 
 When a driver runs a command within a transaction, the mongos response
-includes a ``recoveryToken`` field. Drivers MUST append this ``recoveryToken``
-field to any subsequent commitTransaction or abortTransaction commands.
-Sending the ``recoveryToken`` along with commitTransaction and abortTransaction
-allows the mongos to recover the state of a transaction even if the mongos was
-restarted or is not the same mongos which started the transaction.
+includes a ``recoveryToken`` field. Drivers MUST track the most recently
+received ``recoveryToken`` field and MUST append this field to any subsequent
+commitTransaction or abortTransaction commands.
+Tracking the most recently returned ``recoveryToken`` allows the server to
+update the ``recoveryToken`` mid-transaction if needed.
 
 Drivers MUST treat the ``recoveryToken`` field as an opaque BSON field and
 relay it back to the server unchanged.
