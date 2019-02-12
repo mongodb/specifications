@@ -87,8 +87,8 @@ Each YAML file has the following keys:
     skipped.
 
   - ``topology``: Optional. An array of server topologies against which to run
-    the test. Valid topologies are "replicaset" and "sharded". The default is
-    ["replicaset", "sharded"].
+    the test. Valid topologies are "single", "replicaset" and "sharded". The
+    default is ["replicaset", "sharded"].
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient():
 
@@ -159,7 +159,7 @@ ensure that no new bugs have been introduced related to arbiters.)
 
 A driver that implements support for sharded transactions MUST also run these
 tests against a MongoDB sharded cluster with multiple mongoses and
-**server version v4.1.7-232-g473e96a or later**. Some tests require
+**server version 4.2 or later**. Some tests require
 initializing the MongoClient with multiple mongos seeds to ensures that mongos
 transaction pinning and the recoveryToken works properly.
 
@@ -202,7 +202,7 @@ Then for each element in ``tests``:
 #. For each element in ``operations``:
 
    - If the operation ``name`` is a special test operation type, execute it and
-     go to the next operation, otherwise procede to the next step.
+     go to the next operation, otherwise proceed to the next step.
    - Enter a "try" block or your programming language's closest equivalent.
    - Create a Database object from the MongoClient, using the ``database_name``
      field at the top level of the test file.
@@ -332,9 +332,10 @@ afterClusterTime.
 recoveryToken
 ^^^^^^^^^^^^^
 
-A ``recoveryToken`` value of ``42`` in a command-started event is a fake
-recovery token. Drivers MUST assert that the actual command includes a
-"recoveryToken" field.
+A ``recoveryToken`` value of ``42`` in a command-started event is a
+placeholder for an arbitrary recovery token. Drivers MUST assert that the
+actual command includes a "recoveryToken" field, which may contain any BSON
+value.
 
 Mongos Pinning Prose Tests
 ==========================
@@ -409,19 +410,20 @@ Why do some tests appear to hang for 60 seconds on a sharded cluster?
 `````````````````````````````````````````````````````````````````````
 
 There are two cases where this can happen. When the initial commitTransaction
-attempt fails on mongos A and is retryed on mongos B, mongos B will block
+attempt fails on mongos A and is retried on mongos B, mongos B will block
 waiting for the transaction to complete. However because the initial commit
-attempt failed, the transaction will only completed after it is automatically
-aborted for exceeding the shard's transactionLifetimeLimitSeconds setting.
+attempt failed, the command will only complete after the transaction is
+automatically aborted for exceeding the shard's
+transactionLifetimeLimitSeconds setting.
 
-The second case is when a *single-shard* transaction is commited successfully
-on mongos A and then explicitly commited again on mongos B, mongos B will also
+The second case is when a *single-shard* transaction is committed successfully
+on mongos A and then explicitly committed again on mongos B. Mongos B will also
 block until the transactionLifetimeLimitSeconds timeout is hit at which point
 ``{ok:1}`` will be returned. `SERVER-39349`_ requests that recovering the
 outcome of a completed single-shard transaction should not block.
 Note that this test suite only includes single shard transactions.
 
-To workaorund these issues, drivers SHOULD decrease the transaction timeout
+To workaround these issues, drivers SHOULD decrease the transaction timeout
 setting by running setParameter **on each shard**. Setting the timeout to 3
 seconds significantly speeds up the test suite without a high risk of
 prematurely timing out any tests' transactions. To decrease the timeout, run::

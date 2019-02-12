@@ -4,7 +4,7 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: commitTransaction explicit retries succeed on new mongos
+  - description: commitTransaction explicit retries succeed
     topology: ["sharded"]
     clientOptions:
       useMultipleMongoses: true

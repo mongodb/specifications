@@ -306,7 +306,7 @@ tests:
           - {_id: 3}
           - {_id: 4}
 
-  - description: remain pinned after errors within a transaction and commit
+  - description: remain pinned after errors within a transaction
     topology: ["sharded"]
     clientOptions:
       useMultipleMongoses: true
@@ -340,7 +340,8 @@ tests:
           errorLabelsContain: ["TransientTransactionError"]
           errorLabelsOmit: ["UnknownTransactionCommitResult"]
       # Session remains pinned to the first mongos and commitTransaction
-      # succeeds.
+      # succeeds. If a driver mistakenly upins then this commit will likely
+      # select a new mongos and fail.
       - name: commitTransaction
         object: session0
 
