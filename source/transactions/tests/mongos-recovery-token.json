@@ -319,7 +319,8 @@
         "sharded"
       ],
       "clientOptions": {
-        "useMultipleMongoses": true
+        "useMultipleMongoses": true,
+        "heartbeatFrequencyMS": 5000
       },
       "operations": [
         {
@@ -345,11 +346,12 @@
           "failPoint": {
             "configureFailPoint": "failCommand",
             "mode": {
-              "times": 1
+              "times": 7
             },
             "data": {
               "failCommands": [
-                "commitTransaction"
+                "commitTransaction",
+                "isMaster"
               ],
               "closeConnection": true
             }
