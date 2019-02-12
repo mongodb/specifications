@@ -25,8 +25,8 @@ versions 4.0 or later.
 
 N.B. The spec specifies 3.6 as the minimum server version: however,
 ``failCommand`` is not supported on 3.6, so for now, testing requires MongoDB
-4.0. Once `DRIVERS-560`_ is resolved, live failure integration tests will be
-added to test Retryable Reads on MongoDB 3.6.
+4.0. Once `DRIVERS-560`_ is resolved, we will attempt to adapt its live failure
+integration tests to test Retryable Reads on MongoDB 3.6.
 
 .. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
 
