@@ -216,20 +216,23 @@
           }
         },
         {
-          "name": "failPoint",
-          "session": "session0",
-          "failPoint": {
-            "configureFailPoint": "failCommand",
-            "mode": {
-              "times": 1
-            },
-            "data": {
-              "failCommands": [
-                "commitTransaction"
-              ],
-              "writeConcernError": {
-                "code": 91,
-                "errmsg": "Replication is being shut down"
+          "name": "targetedFailPoint",
+          "object": "testRunner",
+          "arguments": {
+            "session": "session0",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "commitTransaction"
+                ],
+                "writeConcernError": {
+                  "code": 91,
+                  "errmsg": "Replication is being shut down"
+                }
               }
             }
           }
@@ -341,19 +344,22 @@
           }
         },
         {
-          "name": "failPoint",
-          "session": "session0",
-          "failPoint": {
-            "configureFailPoint": "failCommand",
-            "mode": {
-              "times": 7
-            },
-            "data": {
-              "failCommands": [
-                "commitTransaction",
-                "isMaster"
-              ],
-              "closeConnection": true
+          "name": "targetedFailPoint",
+          "object": "testRunner",
+          "arguments": {
+            "session": "session0",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 7
+              },
+              "data": {
+                "failCommands": [
+                  "commitTransaction",
+                  "isMaster"
+                ],
+                "closeConnection": true
+              }
             }
           }
         },
@@ -466,18 +472,21 @@
           }
         },
         {
-          "name": "failPoint",
-          "session": "session0",
-          "failPoint": {
-            "configureFailPoint": "failCommand",
-            "mode": {
-              "times": 1
-            },
-            "data": {
-              "failCommands": [
-                "abortTransaction"
-              ],
-              "closeConnection": true
+          "name": "targetedFailPoint",
+          "object": "testRunner",
+          "arguments": {
+            "session": "session0",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "abortTransaction"
+                ],
+                "closeConnection": true
+              }
             }
           }
         },

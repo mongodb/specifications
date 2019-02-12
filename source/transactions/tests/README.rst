@@ -105,12 +105,11 @@ Each YAML file has the following keys:
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
 
-    - ``name``: The name of the operation on ``object`` or the name of a
-      special test operation to run, eg. "failPoint". See
-      `Special Test Operations`_.
+    - ``name``: The name of the operation on ``object``.
 
     - ``object``: The name of the object to perform the operation on. Can be
-      "database", "collection", "session0", or "session1".
+      "database", "collection", "session0", "session1", or "testRunner". See
+      the "targetedFailPoint" operation in `Special Test Operations`_.
 
     - ``collectionOptions``: Optional, parameters to pass to the Collection()
       used for this operation.
@@ -269,28 +268,31 @@ Special Test Operations
 
 Certain operations that appear in the "operations" array do not correspond to
 API methods but instead represent special test operations. Such operations are
-defined here:
+defined on the "testRunner" object and documented here:
 
-failPoint
-~~~~~~~~~
+targetedFailPoint
+~~~~~~~~~~~~~~~~~
 
-The "failPoint" operation instructs the test runner to configure a fail point
-on a specific mongos. The mongos to run the ``configureFailPoint`` is
+The "targetedFailPoint" operation instructs the test runner to configure a fail
+point on a specific mongos. The mongos to run the ``configureFailPoint`` is
 determined by the "session" argument (either "session0" or "session1").
-The session must already be pinned to a mongos server.
+The session must already be pinned to a mongos server. The "failPoint" argument
+is the ``configureFailPoint`` command to run.
 
 Here is an example which instructs the test runner to enable the failCommand
 fail point on the mongos server which "session0" is pinned to::
 
       # Enable the fail point only on the Mongos that session0 is pinned to.
-      - name: failPoint
-        session: session0
-        failPoint:
-          configureFailPoint: failCommand
-          mode: { times: 1 }
-          data:
-              failCommands: ["commitTransaction"]
-              closeConnection: true
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          - session: session0
+          - failPoint:
+              configureFailPoint: failCommand
+              mode: { times: 1 }
+              data:
+                failCommands: ["commitTransaction"]
+                closeConnection: true
 
 Command-Started Events
 ``````````````````````

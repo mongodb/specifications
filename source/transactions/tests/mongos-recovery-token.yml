@@ -136,12 +136,14 @@ tests:
         result:
           insertedId: 1
       # Enable the fail point only on the Mongos that session0 is pinned to.
-      - name: failPoint
-        session: session0
-        failPoint:
-          configureFailPoint: failCommand
-          mode: { times: 1 }
-          data:
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
               failCommands: ["commitTransaction"]
               writeConcernError:
                 code: 91
@@ -227,12 +229,14 @@ tests:
       # commit and some SDAM heartbeats. A test runner will have multiple
       # clients connected to this server so this fail point configuration
       # is also racy.
-      - name: failPoint
-        session: session0
-        failPoint:
-          configureFailPoint: failCommand
-          mode: { times: 7 }
-          data:
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 7 }
+            data:
               failCommands: ["commitTransaction", "isMaster"]
               closeConnection: true
       # The first commitTransaction sees a retryable connection error due to
@@ -311,12 +315,14 @@ tests:
         result:
           insertedId: 1
       # Enable the fail point only on the Mongos that session0 is pinned to.
-      - name: failPoint
-        session: session0
-        failPoint:
-          configureFailPoint: failCommand
-          mode: { times: 1 }
-          data:
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
               failCommands: ["abortTransaction"]
               closeConnection: true
       # The first abortTransaction sees a retryable connection error due to
