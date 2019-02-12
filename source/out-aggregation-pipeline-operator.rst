@@ -83,6 +83,16 @@ If both a cursor and **$out** are requested, the results will be written to the 
       "ok" : 1
     }
 
+**4. The "linearizable" readConcern cannot be used with the $out option**
+
+Starting in MongoDB 4.2, if a "linearizable" readConcern is requested with a pipeline containing the **$out** stage, an error will be returned::
+
+    aggregate failed: {
+        "code" : 72,
+        "ok" : 0,
+        "errmsg" : "$out cannot be used with a 'linearizable' read concern level"
+    }
+
 
 Driver API
 ----------
