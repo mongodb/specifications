@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-2-11
+:Last Modified: 2019-2-12
    
 .. contents::
 
@@ -289,22 +289,22 @@ The above requirement can be fulfilled in one of two ways:
    requirements. If an error occurs while recreating the command, then the
    driver MUST raise the original retryable error.
 
-   a. For example, if the wire version dips from *W*\ :sub:`0` to *W*\ :sub:`1`
-      after server selection, and the spec for operation *O* notes that for wire
-      version *W*\ :sub:`1`, that field *F* should be omitted, then field *F*
-      should be omitted. If the spec for operation *O* requires the driver to
-      error out if field *F* is defined when talking to a server with wire
-      version *W*\ :sub:`1`, then the driver must error out and raise the
-      original retryable error.
+   For example, if the wire version dips from *W*\ :sub:`0` to *W*\ :sub:`1`
+   after server selection, and the spec for operation *O* notes that for wire
+   version *W*\ :sub:`1`, that field *F* should be omitted, then field *F*
+   should be omitted. If the spec for operation *O* requires the driver to error
+   out if field *F* is defined when talking to a server with wire version *W*\
+   :sub:`1`, then the driver must error out and raise the original retryable
+   error.
 
 2. Alternatively, if a driver chooses not to recreate the command as described
    above, then a driver MUST NOT retry if the server/wire version dips after
    server selection and MUST raise the original retryable error.
 
-   b. For example, if the wire version dips after server selection, the driver
-      can choose to not retry and simply raise the original retryable error
-      because there is no guarantee that the lower versioned server can support
-      the original command.
+   For example, if the wire version dips after server selection, the driver can
+   choose to not retry and simply raise the original retryable error because
+   there is no guarantee that the lower versioned server can support the
+   original command.
 
 3c. If the retry attempt fails
 ''''''''''''''''''''''''''''''
