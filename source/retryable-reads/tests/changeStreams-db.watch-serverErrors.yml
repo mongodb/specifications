@@ -7,11 +7,11 @@ data:
     - {_id: 3, x: 33}
 
 minServerVersion: '4.0'
+topology: [replicaset, sharded]
 
 tests:
     -
         description: "db.watch succeeds after InterruptedAtShutdown"
-        topology: [replicaset, sharded]
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -31,7 +31,6 @@ tests:
             - *retryable_command_started_event
     -
         description: "db.watch succeeds after InterruptedDueToStepDown"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 11602 }
@@ -41,7 +40,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after NotMaster"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 10107 }
@@ -51,7 +49,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after NotMasterNoSlaveOk"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13435 }
@@ -61,7 +58,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after NotMasterOrSecondary"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13436 }
@@ -71,7 +67,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after PrimarySteppedDown"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 189 }
@@ -81,7 +76,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after ShutdownInProgress"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 91 }
@@ -91,7 +85,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after HostNotFound"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 7 }
@@ -101,7 +94,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after HostUnreachable"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 6 }
@@ -111,7 +103,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after NetworkTimeout"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 89 }
@@ -121,7 +112,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch succeeds after SocketException"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 9001 }
@@ -131,7 +121,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch fails after two NotMaster errors"
-        topology: [replicaset, sharded]
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
@@ -145,7 +134,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "db.watch fails after NotMaster when retryReads is false"
-        topology: [replicaset, sharded]
         clientOptions:
             retryReads: false
         failPoint:

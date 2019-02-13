@@ -71,6 +71,10 @@ Each YAML file has the following keys:
 
 - ``minServerVersion`` (optional): The minimum server version (inclusive).
 
+- ``topology``: Optional. An array of server topologies against which to run the
+  test. Valid topologies are ``single``, ``replicaset`` and ``sharded``. The default
+  is ``[single, replicaset, sharded]``.
+    
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:
 
@@ -78,9 +82,6 @@ Each YAML file has the following keys:
     
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
     
-  - ``topology:`` Optional. An array of server topologies against which to run the
-    test. Valid topologies are single, replicaset, and sharded.
-  
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
   - ``failPoint``: Optional, a server failpoint to enable, expressed as the

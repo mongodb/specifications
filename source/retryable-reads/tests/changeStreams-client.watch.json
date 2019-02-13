@@ -11,10 +11,6 @@
   "tests": [
     {
       "description": "client.watch succeeds on first attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "operations": [
         {
           "name": "watch",
@@ -43,10 +39,6 @@
     },
     {
       "description": "client.watch succeeds on second attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -104,10 +96,6 @@
     },
     {
       "description": "client.watch fails on first attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "clientOptions": {
         "retryReads": false
       },
@@ -152,10 +140,6 @@
     },
     {
       "description": "client.watch fails on second attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

@@ -8,13 +8,13 @@
     }
   ],
   "minServerVersion": "4.0",
+  "topology": [
+    "replicaset",
+    "sharded"
+  ],
   "tests": [
     {
       "description": "db.coll.watch succeeds on first attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "operations": [
         {
           "name": "watch",
@@ -42,10 +42,6 @@
     },
     {
       "description": "db.coll.watch succeeds on second attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -101,10 +97,6 @@
     },
     {
       "description": "db.coll.watch fails on first attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "clientOptions": {
         "retryReads": false
       },
@@ -148,10 +140,6 @@
     },
     {
       "description": "db.coll.watch fails on second attempt",
-      "topology": [
-        "replicaset",
-        "sharded"
-      ],
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
