@@ -38,9 +38,6 @@
   "tests": [
     {
       "description": "DownloadByName succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "download_by_name",
@@ -82,9 +79,6 @@
     },
     {
       "description": "DownloadByName succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -190,9 +184,6 @@
     },
     {
       "description": "DownloadByName fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

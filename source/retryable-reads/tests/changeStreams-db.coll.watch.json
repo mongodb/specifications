@@ -15,9 +15,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "watch",
@@ -49,9 +46,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -158,9 +152,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

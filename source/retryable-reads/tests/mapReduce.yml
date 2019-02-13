@@ -11,8 +11,6 @@ minServerVersion: '4.0'
 tests:
     -
         description: "MapReduce succeeds with retry on"
-        clientOptions:
-            retryReads: true
         operations:
             - &operation_succeeds
                 <<: &operation
@@ -34,8 +32,6 @@ tests:
                     database_name: *database_name
     -
         description: "MapReduce fails with retry on"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }

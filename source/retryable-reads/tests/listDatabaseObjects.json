@@ -6,9 +6,6 @@
   "tests": [
     {
       "description": "ListDatabaseObjects succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "listDatabaseObjects",
@@ -27,9 +24,6 @@
     },
     {
       "description": "ListDatabaseObjects succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -101,9 +95,6 @@
     },
     {
       "description": "ListDatabaseObjects fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

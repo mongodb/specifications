@@ -23,9 +23,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -85,9 +82,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -147,9 +141,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -209,9 +200,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -271,9 +259,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -333,9 +318,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -395,9 +377,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -457,9 +436,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -519,9 +495,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -581,9 +554,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -643,9 +613,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -705,9 +672,6 @@
         "replicaset",
         "sharded"
       ],
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

@@ -10,8 +10,6 @@ tests:
     -
         description: "db.watch succeeds on first attempt"
         topology: [replicaset, sharded]
-        clientOptions:
-            retryReads: true
         operations:
             - &retryable_operation
                 name: watch
@@ -27,8 +25,6 @@ tests:
     -
         description: "db.watch succeeds on second attempt"
         topology: [replicaset, sharded]
-        clientOptions:
-            retryReads: true
         failPoint:  &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -54,8 +50,6 @@ tests:
     -
         description: "db.watch fails on second attempt"
         topology: [replicaset, sharded]
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

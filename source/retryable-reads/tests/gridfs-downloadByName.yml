@@ -18,8 +18,6 @@ data:
 tests:
     -
         description: "DownloadByName succeeds on first attempt"
-        clientOptions:
-            retryReads: true
         operations:
             - &retryable_operation
                 name: download_by_name
@@ -41,8 +39,6 @@ tests:
                     database_name: *database_name
     -
         description: "DownloadByName succeeds on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -67,8 +63,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "DownloadByName fails on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

@@ -19,9 +19,6 @@
   "tests": [
     {
       "description": "MapReduce succeeds with retry on",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "mapReduce",
@@ -67,9 +64,6 @@
     },
     {
       "description": "MapReduce fails with retry on",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

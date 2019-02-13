@@ -38,9 +38,6 @@
   "tests": [
     {
       "description": "DownloadByName succeeds after InterruptedAtShutdown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -105,9 +102,6 @@
     },
     {
       "description": "DownloadByName succeeds after InterruptedDueToStepDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -172,9 +166,6 @@
     },
     {
       "description": "DownloadByName succeeds after NotMaster",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -239,9 +230,6 @@
     },
     {
       "description": "DownloadByName succeeds after NotMasterNoSlaveOk",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -306,9 +294,6 @@
     },
     {
       "description": "DownloadByName succeeds after NotMasterOrSecondary",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -373,9 +358,6 @@
     },
     {
       "description": "DownloadByName succeeds after PrimarySteppedDown",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -440,9 +422,6 @@
     },
     {
       "description": "DownloadByName succeeds after ShutdownInProgress",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -507,9 +486,6 @@
     },
     {
       "description": "DownloadByName succeeds after HostNotFound",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -574,9 +550,6 @@
     },
     {
       "description": "DownloadByName succeeds after HostUnreachable",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -641,9 +614,6 @@
     },
     {
       "description": "DownloadByName succeeds after NetworkTimeout",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -708,9 +678,6 @@
     },
     {
       "description": "DownloadByName succeeds after SocketException",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -775,9 +742,6 @@
     },
     {
       "description": "DownloadByName fails after two NotMaster errors",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

@@ -7,8 +7,6 @@ minServerVersion: '4.0'
 tests:
     -
         description: "ListDatabaseObjects succeeds after InterruptedAtShutdown"
-        clientOptions:
-            retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -25,8 +23,6 @@ tests:
             - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after InterruptedDueToStepDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 11602 }
@@ -36,8 +32,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after NotMaster"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 10107 }
@@ -47,8 +41,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after NotMasterNoSlaveOk"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 13435 }
@@ -58,8 +50,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after NotMasterOrSecondary"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 13436 }
@@ -69,8 +59,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after PrimarySteppedDown"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 189 }
@@ -80,8 +68,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after ShutdownInProgress"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 91 }
@@ -91,8 +77,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after HostNotFound"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 7 }
@@ -102,8 +86,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after HostUnreachable"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 6 }
@@ -113,8 +95,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after NetworkTimeout"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 89 }
@@ -124,8 +104,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects succeeds after SocketException"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listDatabases], errorCode: 9001 }
@@ -135,8 +113,6 @@ tests:
              - *retryable_command_started_event
     -
         description: "ListDatabaseObjects fails after two NotMaster errors"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

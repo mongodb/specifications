@@ -15,9 +15,6 @@
   "tests": [
     {
       "description": "Count succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "count",
@@ -41,9 +38,6 @@
     },
     {
       "description": "Count succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -125,9 +119,6 @@
     },
     {
       "description": "Count fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

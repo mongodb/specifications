@@ -6,9 +6,6 @@
   "tests": [
     {
       "description": "ListIndexNames succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "listIndexNames",
@@ -28,9 +25,6 @@
     },
     {
       "description": "ListIndexNames succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -105,9 +99,6 @@
     },
     {
       "description": "ListIndexNames fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

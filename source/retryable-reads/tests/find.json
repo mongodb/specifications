@@ -27,9 +27,6 @@
   "tests": [
     {
       "description": "Find succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "find",
@@ -78,7 +75,10 @@
       ]
     },
     {
-      "description": "Find succeeds on second attempt with default clientOptions",
+      "description": "Find succeeds on second attempt with explicit clientOptions",
+      "clientOptions": {
+        "retryReads": true
+      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -153,9 +153,6 @@
     },
     {
       "description": "Find succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -277,9 +274,6 @@
     },
     {
       "description": "Find fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

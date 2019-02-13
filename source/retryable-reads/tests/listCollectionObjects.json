@@ -6,9 +6,6 @@
   "tests": [
     {
       "description": "ListCollectionObjects succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "listCollectionObjects",
@@ -27,9 +24,6 @@
     },
     {
       "description": "ListCollectionObjects succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -101,9 +95,6 @@
     },
     {
       "description": "ListCollectionObjects fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

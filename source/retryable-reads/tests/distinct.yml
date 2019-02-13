@@ -11,8 +11,6 @@ minServerVersion: '4.0'
 tests:
     -
         description: "Distinct succeeds on first attempt"
-        clientOptions:
-            retryReads: true
         operations:
             - &retryable_operation_succeeds
                 <<: &retryable_operation
@@ -33,8 +31,6 @@ tests:
                     database_name: *database_name
     -
         description: "Distinct succeeds on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint:  &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -59,8 +55,6 @@ tests:
 
     -
         description: "Distinct fails on second attempt"
-        clientOptions:
-            retryReads: true
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }

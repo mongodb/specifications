@@ -19,9 +19,6 @@
   "tests": [
     {
       "description": "Distinct succeeds on first attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "operations": [
         {
           "name": "distinct",
@@ -59,9 +56,6 @@
     },
     {
       "description": "Distinct succeeds on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -174,9 +168,6 @@
     },
     {
       "description": "Distinct fails on second attempt",
-      "clientOptions": {
-        "retryReads": true
-      },
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
