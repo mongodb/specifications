@@ -39,15 +39,22 @@ tests:
                         limit: 4
                     database_name: *database_name
     -
-        description: "Find succeeds on second attempt"
-        clientOptions:
-            retryReads: true
+        description: "Find succeeds on second attempt with default clientOptions"
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
                 failCommands: [find]
                 closeConnection: true
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "Find succeeds on second attempt"
+        clientOptions:
+            retryReads: true
+        failPoint: *failCommand_failPoint
         operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
