@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.3
+:Spec Version: 1.3.1
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 24-January-2019
+:Last Modified: 13-February-2019
 
 .. contents::
 
@@ -1294,6 +1294,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-02-19: Clarify FAQ entry for not retrying commit on wtimeout
 :2019-01-18: Apply majority write concern when retrying commitTransaction
 :2018-11-13: Add mongos pinning to support sharded transaction.
 :2018-06-18: Explicit readConcern and/or writeConcern are prohibited within
