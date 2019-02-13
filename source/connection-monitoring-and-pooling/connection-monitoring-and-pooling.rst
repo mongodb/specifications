@@ -560,8 +560,6 @@ Events
        *   - "idle":            The connection became stale by being available for too long
        *   - "error":           The connection experienced an error, making it no longer valid
        *   - "poolClosed":      The pool was closed, making the connection no longer valid
-       *   - "handshakeFailed": A connection was created, but failed to fully connect to the endpoint. This can
-       *                        indicate a failure in TCP, TLS, initial handshake, compression negotiation, or auth
        */
       reason: string|Enum;
     }
