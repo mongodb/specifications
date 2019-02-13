@@ -1210,13 +1210,18 @@ The following commands are allowed inside transactions:
 
 10. geoSearch
 
-Why don’t drivers retry after write concern timeout errors?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Why don’t drivers automatically retry commit after a write concern timeout error?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A write concern timeout error indicates that the command succeeded but
 failed to meet the specified writeConcern within the given time limit.
 Attempting to retry would implicitly double the application’s wtimeout
-value so drivers do not retry.
+value so drivers do not automatically retry.
+
+Note: this applies only to the driver's internal retry-once behavior.
+Write concern timeout errors will be labeled with
+"UnknownTransactionCommitResult", which signals that higher-level code
+may retry.
 
 What happens when a command object passed to RunCommand already contains a transaction field (eg. lsid, txnNumber, etc...)?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
