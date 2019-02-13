@@ -513,16 +513,16 @@ Rejected Designs
 ----------------
 
 1. To improve performance on servers without “Early Failure on Socket
-   Disconnect”, we may, we considered using ``killSessions`` to automatically
-   kill the previous attempt before running a retry.  We decided against this
-   because after killing the session, parts of it still may be running if there
-   are any errors.  Additionally, killing sessions takes time because a kill has
-   to talk to every non-config ``mongod`` in the cluster (i.e. all the primaries
-   and secondaries of each shard). In addition, in order to protect the system
+   Disconnect”, we considered using ``killSessions`` to automatically kill the
+   previous attempt before running a retry.  We decided against this because
+   after killing the session, parts of it still may be running if there are any
+   errors.  Additionally, killing sessions takes time because a kill has to talk
+   to every non-config ``mongod`` in the cluster (i.e. all the primaries and
+   secondaries of each shard). In addition, in order to protect the system
    against getting overloaded with these requests, every server allows no more
    than one killsession operation at a time.  Operations that attempt to
-   killsessions while a killsession is running are batched together and run
-   simultaneously after the current one finishes
+   ``killsessions`` while a killsession is running are batched together and run
+   simultaneously after the current one finishes.
 
 
 Reference Implementation 
