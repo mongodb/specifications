@@ -1,11 +1,11 @@
 data:
-    - {_id: 1, x: 11}
-    - {_id: 2, x: 22}
-    - {_id: 3, x: 33}
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+    - { _id: 3, x: 33 }
 
 minServerVersion: '4.1'
 
-collection_name: &collection_name 'testaggcollection'
+collection_name: &collection_name 'test_aggregate_out_readconcern'
 
 tests:
   -
@@ -15,13 +15,11 @@ tests:
         object: collection
         name: aggregate
         collectionOptions:
-          readConcern:
-            level: "majority"
+          readConcern: { level: "majority" }
         arguments:
           pipeline:
-            - $sort: {x : 1}
-            - $match:
-                _id: {$gt: 1}
+            - $sort: { x : 1 }
+            - $match: { _id: { $gt: 1 } }
             - $out: &output_collection "other_test_collection"
     expectations:
       -
@@ -37,8 +35,8 @@ tests:
       collection:
         name: *output_collection
         data:
-          - {_id: 2, x: 22}
-          - {_id: 3, x: 33}
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: "readConcern local with out stage"
     operations:
@@ -46,14 +44,12 @@ tests:
         object: collection
         name: aggregate
         collectionOptions:
-          readConcern:
-            level: "local"
+          readConcern: { level: "local" }
         arguments:
           pipeline:
-            - $sort: {x : 1}
-            - $match:
-                _id: {$gt: 1}
-            - $out: &output_collection "other_test_collection"
+            - $sort: { x : 1 }
+            - $match: { _id: { $gt: 1 } }
+            - $out: *output_collection
     expectations:
       -
         command_started_event:
@@ -68,8 +64,8 @@ tests:
       collection:
         name: *output_collection
         data:
-          - {_id: 2, x: 22}
-          - {_id: 3, x: 33}
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: "readConcern available with out stage"
     operations:
@@ -77,14 +73,12 @@ tests:
         object: collection
         name: aggregate
         collectionOptions:
-          readConcern:
-            level: "available"
+          readConcern: { level: "available" }
         arguments:
           pipeline:
             - $sort: {x : 1}
-            - $match:
-                _id: {$gt: 1}
-            - $out: &output_collection "other_test_collection"
+            - $match: { _id: { $gt: 1 } }
+            - $out: *output_collection
     expectations:
       -
         command_started_event:
@@ -99,8 +93,8 @@ tests:
       collection:
         name: *output_collection
         data:
-          - {_id: 2, x: 22}
-          - {_id: 3, x: 33}
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
   -
     description: "readConcern linearizable with out stage"
     operations:
@@ -108,14 +102,12 @@ tests:
         object: collection
         name: aggregate
         collectionOptions:
-          readConcern:
-            level: "linearizable"
+          readConcern: { level: "linearizable" }
         arguments:
           pipeline:
-            - $sort: {x : 1}
-            - $match:
-                _id: {$gt: 1}
-            - $out: &output_collection "other_test_collection"
+            - $sort: { x : 1 }
+            - $match: { _id: { $gt: 1 } }
+            - $out: *output_collection
         error: true
     expectations:
       -
@@ -134,14 +126,12 @@ tests:
         object: collection
         name: aggregate
         collectionOptions:
-          readConcern:
-            level: "!invalid123"
+          readConcern: { level: "!invalid123" }
         arguments:
           pipeline:
-            - $sort: {x : 1}
-            - $match:
-                _id: {$gt: 1}
-            - $out: &output_collection "other_test_collection"
+            - $sort: { x : 1 }
+            - $match: { _id: { $gt: 1 } }
+            - $out: *output_collection
         error: true
     expectations:
       -

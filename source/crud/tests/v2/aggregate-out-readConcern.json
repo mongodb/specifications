@@ -14,7 +14,7 @@
     }
   ],
   "minServerVersion": "4.1",
-  "collection_name": "testaggcollection",
+  "collection_name": "test_aggregate_out_readconcern",
   "tests": [
     {
       "description": "readConcern majority with out stage",
@@ -52,7 +52,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "testaggcollection",
+              "aggregate": "test_aggregate_out_readconcern",
               "pipeline": [
                 {
                   "$sort": {
@@ -129,7 +129,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "testaggcollection",
+              "aggregate": "test_aggregate_out_readconcern",
               "pipeline": [
                 {
                   "$sort": {
@@ -206,7 +206,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "testaggcollection",
+              "aggregate": "test_aggregate_out_readconcern",
               "pipeline": [
                 {
                   "$sort": {
@@ -284,7 +284,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "testaggcollection",
+              "aggregate": "test_aggregate_out_readconcern",
               "pipeline": [
                 {
                   "$sort": {
@@ -347,7 +347,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "testaggcollection",
+              "aggregate": "test_aggregate_out_readconcern",
               "pipeline": [
                 {
                   "$sort": {
