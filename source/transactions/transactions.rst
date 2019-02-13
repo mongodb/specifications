@@ -1278,7 +1278,7 @@ While it's possible that the original write concern may provide greater
 guarantees than majority (e.g. ``w:3`` in a three-node replica set,
 `custom write concern`_), drivers are not in a position to make that comparison
 due to the possibility of hidden members or the opaque nature of custom write
-concerns. Excluding the edge case where `_writeConcernMajorityJournalDefault`_
+concerns. Excluding the edge case where `writeConcernMajorityJournalDefault`_
 has been disabled, drivers can readily trust that a majority write concern is
 durable, which achieves the primary objective of avoiding duplicate commits.
 
