@@ -1,0 +1,41 @@
+data:
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+
+minServerVersion: '4.1'
+
+collection_name: &collection_name 'testaggcollection'
+
+tests:
+  -
+    description: "readConcern Majority with out stage"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        collectionOptions:
+          readConcern:
+            level: "majority"
+        arguments:
+          pipeline:
+            - $sort: {x : 1}
+            - $match:
+                _id: {$gt: 1}
+            - $out: &output_collection "other_test_collection"
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline:
+              - $sort: { x: 1 }
+              - $match: { _id: { $gt: 1 } }
+              - $out: *output_collection "other_test_collection"
+            readConcern: { level: "majority" }
+    outcome:
+      collection:
+        name: *output_collection
+        data:
+          - {_id: 2, x: 22}
+          - {_id: 3, x: 33}
