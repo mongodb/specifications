@@ -11,7 +11,8 @@ topology: [replicaset, sharded]
 
 tests:
     -
-        description: "client.watch succeeds after InterruptedAtShutdown"        failPoint: &failCommand_failPoint
+        description: "client.watch succeeds after InterruptedAtShutdown"
+        failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
             data: { failCommands: [aggregate], errorCode: 11600 }

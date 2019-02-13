@@ -8,6 +8,10 @@
     }
   ],
   "minServerVersion": "4.0",
+  "topology": [
+    "replicaset",
+    "sharded"
+  ],
   "tests": [
     {
       "description": "client.watch succeeds on first attempt",
