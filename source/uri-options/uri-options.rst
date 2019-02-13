@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.2
+:Spec Version: 1.3
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -35,6 +35,26 @@ document are to be interpreted as described in
 
 **Specification**
 -----------------
+
+Conflicting TLS options
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`_,
+the behavior of duplicates of most URI options is undefined. However, due
+to the security implications of certain options, drivers MUST raise an
+error to the user during parsing if any of the following circumstances
+occur:
+
+1. Both ``tlsInsecure`` and ``tlsAllowInvalidCertificates`` appear in the 
+   URI options.
+2. Both ``tlsInsecure`` and ``tlsAllowInvalidHostnames`` appear in the 
+   URI options.
+3. All instances of ``tls`` and ``ssl`` in the URI options do not have the
+   same value. If all instances of ``tls`` and ``ssl`` have the same
+   value, an error MUST NOT be raised.
+
+List of specified options
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each driver option below MUST be implemented in each driver unless marked
 as optional. If an option is marked as optional, a driver MUST meet any
@@ -366,3 +386,4 @@ Changes
 -------
 
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
+- 2019-02-04 Specified errors for conflicting TLS-related URI options

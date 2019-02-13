@@ -12,7 +12,7 @@ Connection String Spec
 :Status: Approved
 :Type: Standards
 :Last Modified: June 04, 2018
-:Version: 1.3
+:Version: 1.4
 
 .. contents::
 
@@ -208,7 +208,7 @@ Any invalid Values for a given key MUST be ignored and MUST log a WARN level mes
 -------------
 Repeated Keys
 -------------
-If a key is repeated and the corresponding data type is not a List then the precedence of which key value pair will be used is undefined.
+If a key is repeated and the corresponding data type is not a List then the precedence of which key value pair will be used is undefined except where defined otherwise by the `URI options spec <https://github.com/mongodb/specifications/blob/master/source/uri-options/uri-options.rst>`_.
 
 Where possible, a warning SHOULD be raised to inform the user that multiple options were found for the same value.
 
@@ -384,3 +384,5 @@ Changes
 - 2018-01-09: Clarified that space characters should be encoded to ``%20``.
 - 2018-06-04: Revised Userinfo section to provide an explicit list of allowed
   characters and clarify rules for exceptions.
+- 2019-02-04: In Repeated Keys section, clarified that the URI options spec may
+  override the repeated key behavior described here for certain options.
