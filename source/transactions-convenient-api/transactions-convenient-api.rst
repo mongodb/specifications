@@ -264,7 +264,7 @@ This method can be expressed by the following pseudo-code:
                 try {
                     /* We will rely on ClientSession.commitTransaction() to
                      * apply a majority write concern if commitTransaction is
-                     * being retried (see: SPEC-1185) */
+                     * being retried (see: DRIVERS-601) */
                     this.commitTransaction();
                 } catch (error) {
                     /* Note: a write concern timeout error will have the
