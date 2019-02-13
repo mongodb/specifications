@@ -72,6 +72,10 @@ Test Format
 
 Each YAML file has the following keys:
 
+- ``topology``: Optional. An array of server topologies against which to run
+  the test. Valid topologies are "single", "replicaset" and "sharded". The
+  default is all topologies (ie ``[single, replicaset", sharded]``).
+
 - ``database_name`` and ``collection_name``: The database and collection to use
   for testing.
 
@@ -85,10 +89,6 @@ Each YAML file has the following keys:
 
   - ``skipReason``: Optional, string describing why this test should be
     skipped.
-
-  - ``topology``: Optional. An array of server topologies against which to run
-    the test. Valid topologies are "single", "replicaset" and "sharded". The
-    default is ["replicaset", "sharded"].
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient():
 

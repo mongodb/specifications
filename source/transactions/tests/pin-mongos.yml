@@ -12,8 +12,10 @@
 #   'codeName': 'NoSuchTransaction',
 #   'errorLabels': ['TransientTransactionError']
 # }
+topology: [sharded]
 database_name: &database_name "transaction-tests"
 collection_name: &collection_name "test"
+
 data: &data
   - {_id: 1}
   - {_id: 2}
@@ -307,7 +309,6 @@ tests:
           - {_id: 4}
 
   - description: remain pinned after errors within a transaction
-    topology: ["sharded"]
     clientOptions:
       useMultipleMongoses: true
     operations:
@@ -399,7 +400,6 @@ tests:
           - _id: 3
 
   - description: remain pinned after errors within a transaction and abort
-    topology: ["sharded"]
     clientOptions:
       useMultipleMongoses: true
     operations:
