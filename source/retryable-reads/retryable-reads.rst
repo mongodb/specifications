@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-2-12
+:Last Modified: 2019-2-13
    
 .. contents::
 
@@ -85,7 +85,7 @@ retryReads
 
 This boolean option determines whether retryable behavior will be applied to all
 read operations executed within the MongoClient. This option MUST default to
-false [1]_, which implies no change in read behavior. `As with retryable writes
+true. `As with retryable writes
 <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#retrywrites>`__,
 this option MUST NOT be configurable at the level of an individual read
 operation, collection object, or database object. Drivers that expose a "high"
@@ -277,7 +277,7 @@ infer that an attempt was made.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 After server selection, a driver MUST send a valid command to the newly selected
-server that is equivalent [2]_ to the initial command sent to the first
+server that is equivalent [1]_ to the initial command sent to the first
 server. If the driver determines that the newly selected server may not be able
 to support a command equivalent to the initial command, drivers MUST NOT retry
 and MUST raise the original retryable error
@@ -543,18 +543,15 @@ Future work
 1. A later specification may allow operations (including read) to be retried any
    number of times during a singular timeout period.
 
-2. A later specification may have drivers default to enabling retryable writes,
-   in which case, drivers MUST also default to enabling retryable reads.
-
-3. Any future changes to the the applicable parts of `retryable writes
+2. Any future changes to the the applicable parts of `retryable writes
    specification
    <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/>`__
    may also need to be reflected in the retryable reads specification, and vice
    versa.
 
-4. We may revisit the decision not retry ``Cursor.getMore()`` (see `Q&A`_).
+3. We may revisit the decision not retry ``Cursor.getMore()`` (see `Q&A`_).
 
-5. Once `DRIVERS-560`_ is resolved, tests will be added to allow testing
+4. Once `DRIVERS-560`_ is resolved, tests will be added to allow testing
    Retryable Reads on MongoDB 3.6. See the `test plan
    <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`__
    for additional information.
@@ -658,7 +655,5 @@ Changelog
 
 Endnotes
 ========
-.. [1] See `future work`_ for information about potential change to the default.
-
-.. [2] The first and second commands will be identical unless variations in
-   parameters exist between wire/server versions.
+.. [1] The first and second commands will be identical unless variations in
+       parameters exist between wire/server versions.
