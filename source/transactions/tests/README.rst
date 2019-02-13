@@ -286,13 +286,13 @@ fail point on the mongos server which "session0" is pinned to::
       - name: targetedFailPoint
         object: testRunner
         arguments:
-          - session: session0
-          - failPoint:
-              configureFailPoint: failCommand
-              mode: { times: 1 }
-              data:
-                failCommands: ["commitTransaction"]
-                closeConnection: true
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["commitTransaction"]
+              closeConnection: true
 
 Command-Started Events
 ``````````````````````
