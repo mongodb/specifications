@@ -421,7 +421,7 @@ In order to avoid blocking the application with infinite retry loops,
 ``withTransaction`` will cease retrying invocations of the callback or
 commitTransaction if it has exceeded a fixed timeout period of 120 seconds. This
 limit is a non-configurable default and is intentionally twice the value of
-MongoDB 4.0's default for the `transactionLifetimeLimitSeconds` parameter (60
+MongoDB 4.0's default for the `transactionLifetimeLimitSeconds`_ parameter (60
 seconds). Applications that desire longer retry periods may call
 ``withTransaction`` additional times as needed. Applications that desire shorter
 retry periods should not use this method.
