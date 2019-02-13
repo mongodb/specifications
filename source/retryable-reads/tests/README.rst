@@ -75,7 +75,9 @@ Each YAML file has the following keys:
   Each test will have some or all of the following fields:
 
   - ``description``: The name of the test.
-
+    
+  - ``clientOptions``: Optional, parameters to pass to MongoClient().
+    
   - ``topology:`` Optional. An array of server topologies against which to run the
     test. Valid topologies are single, replicaset, and sharded.
   
