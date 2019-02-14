@@ -801,8 +801,8 @@ commitTransaction or abortTransaction commands.
 Tracking the most recently returned ``recoveryToken`` allows the server to
 update the ``recoveryToken`` mid-transaction if needed.
 
-Drivers MUST treat the ``recoveryToken`` field as an opaque BSON field and
-relay it back to the server unchanged.
+Drivers can safely assume that the ``recoveryToken`` field is always a BSON
+document but drivers MUST NOT modify the contents of the document.
 
 Error Reporting and Retrying Transactions
 -----------------------------------------

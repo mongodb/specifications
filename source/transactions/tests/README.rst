@@ -336,8 +336,8 @@ recoveryToken
 
 A ``recoveryToken`` value of ``42`` in a command-started event is a
 placeholder for an arbitrary recovery token. Drivers MUST assert that the
-actual command includes a "recoveryToken" field, which may contain any BSON
-value.
+actual command includes a "recoveryToken" field and SHOULD assert that field
+is a BSON document.
 
 Mongos Pinning Prose Tests
 ==========================
