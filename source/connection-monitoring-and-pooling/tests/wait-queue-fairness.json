@@ -21,8 +21,8 @@
       "label": "conn1"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted"
     },
     {
       "name": "start",
@@ -34,8 +34,8 @@
       "label": "conn2"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted"
     },
     {
       "name": "start",
@@ -47,8 +47,8 @@
       "label": "conn3"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted"
     },
     {
       "name": "start",
@@ -60,8 +60,8 @@
       "label": "conn4"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted"
     },
     {
       "name": "checkIn",

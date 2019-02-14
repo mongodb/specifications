@@ -18,22 +18,22 @@ operations:
   - name: checkOut
     thread: thread1
     label: conn1
-  - name: wait
-    ms: 10
+  - name: waitForEvent
+    event: ConnectionCheckOutStarted
   - name: start
     target: thread2
   - name: checkOut
     thread: thread2
     label: conn2
-  - name: wait
-    ms: 10
+  - name: waitForEvent
+    event: ConnectionCheckOutStarted
   - name: start
     target: thread3
   - name: checkOut
     thread: thread3
     label: conn3
-  - name: wait
-    ms: 10
+  - name: waitForEvent
+    event: ConnectionCheckOutStarted
   - name: start
     target: thread4
   - name: checkOut
@@ -41,8 +41,8 @@ operations:
     label: conn4
     # From main thread, keep checking in connection and then wait for appropriate thread
     # Test will timeout if threads are not enqueued in proper order
-  - name: wait
-    ms: 10
+  - name: waitForEvent
+    event: ConnectionCheckOutStarted
   - name: checkIn
     connection: conn0
   - name: waitFor

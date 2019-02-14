@@ -20,8 +20,8 @@
       "thread": "thread1"
     },
     {
-      "name": "wait",
-      "ms": 40
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutFailed"
     },
     {
       "name": "checkIn",

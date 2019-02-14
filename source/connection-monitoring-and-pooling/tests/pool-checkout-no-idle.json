@@ -29,13 +29,6 @@
       "options": 42
     },
     {
-      "type": "ConnectionCreated",
-      "connectionId": 1
-    },
-    {
-      "type": "ConnectionCheckOutStarted"
-    },
-    {
       "type": "ConnectionCheckedOut",
       "connectionId": 1
     },
@@ -44,16 +37,9 @@
       "connectionId": 1
     },
     {
-      "type": "ConnectionCheckOutStarted"
-    },
-    {
       "type": "ConnectionClosed",
       "connectionId": 1,
       "reason": "idle"
-    },
-    {
-      "type": "ConnectionCreated",
-      "connectionId": 2
     },
     {
       "type": "ConnectionCheckedOut",
@@ -61,6 +47,8 @@
     }
   ],
   "ignore": [
-    "ConnectionReady"
+    "ConnectionReady",
+    "ConnectionCreated",
+    "ConnectionCheckOutStarted"
   ]
 }

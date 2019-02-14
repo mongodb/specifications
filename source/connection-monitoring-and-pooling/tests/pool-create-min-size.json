@@ -7,10 +7,6 @@
   },
   "operations": [
     {
-      "name": "wait",
-      "ms": 50
-    },
-    {
       "name": "checkOut"
     }
   ],
@@ -41,15 +37,13 @@
       "connectionId": 42
     },
     {
-      "type": "ConnectionCheckOutStarted"
-    },
-    {
       "type": "ConnectionCheckedOut",
       "connectionId": 42
     }
   ],
   "ignore": [
     "ConnectionReady",
-    "ConnectionClosed"
+    "ConnectionClosed",
+    "ConnectionCheckOutStarted"
   ]
 }

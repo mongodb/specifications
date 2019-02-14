@@ -4,8 +4,6 @@ description: must be able to start a pool with minPoolSize connections
 poolOptions:
   minPoolSize: 5
 operations:
-  - name: wait
-    ms: 50
   - name: checkOut
 events:
   - type: ConnectionPoolCreated
@@ -22,9 +20,9 @@ events:
   - type: ConnectionCreated
     connectionId: 42
   # Ensures that by the time pool is closed, there are at least 5 connections
-  - type: ConnectionCheckOutStarted
   - type: ConnectionCheckedOut
     connectionId: 42
 ignore:
   - ConnectionReady
   - ConnectionClosed
+  - ConnectionCheckOutStarted
