@@ -30,7 +30,8 @@ tests:
                     database_name: admin
             - *retryable_command_started_event
     -
-        description: "client.watch succeeds after InterruptedDueToStepDown"        failPoint:
+        description: "client.watch succeeds after InterruptedDueToStepDown"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 11602 }
         operations: [*retryable_operation]
@@ -38,7 +39,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after NotMaster"        failPoint:
+        description: "client.watch succeeds after NotMaster"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 10107 }
         operations: [*retryable_operation]
@@ -46,7 +48,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after NotMasterNoSlaveOk"        failPoint:
+        description: "client.watch succeeds after NotMasterNoSlaveOk"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13435 }
         operations: [*retryable_operation]
@@ -54,7 +57,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after NotMasterOrSecondary"        failPoint:
+        description: "client.watch succeeds after NotMasterOrSecondary"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13436 }
         operations: [*retryable_operation]
@@ -62,7 +66,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after PrimarySteppedDown"        failPoint:
+        description: "client.watch succeeds after PrimarySteppedDown"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 189 }
         operations: [*retryable_operation]
@@ -70,7 +75,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after ShutdownInProgress"        failPoint:
+        description: "client.watch succeeds after ShutdownInProgress"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 91 }
         operations: [*retryable_operation]
@@ -78,7 +84,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after HostNotFound"        failPoint:
+        description: "client.watch succeeds after HostNotFound"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 7 }
         operations: [*retryable_operation]
@@ -86,7 +93,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after HostUnreachable"        failPoint:
+        description: "client.watch succeeds after HostUnreachable"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 6 }
         operations: [*retryable_operation]
@@ -94,7 +102,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after NetworkTimeout"        failPoint:
+        description: "client.watch succeeds after NetworkTimeout"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 89 }
         operations: [*retryable_operation]
@@ -102,7 +111,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch succeeds after SocketException"        failPoint:
+        description: "client.watch succeeds after SocketException"
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 9001 }
         operations: [*retryable_operation]
@@ -110,7 +120,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch fails after two NotMaster errors"        failPoint:
+        description: "client.watch fails after two NotMaster errors"
+        failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [aggregate], errorCode: 10107 }
@@ -122,7 +133,8 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "client.watch fails after NotMaster when retryReads is false"        clientOptions:
+        description: "client.watch fails after NotMaster when retryReads is false"
+        clientOptions:
             retryReads: false
         failPoint:
             <<: *failCommand_failPoint
