@@ -302,7 +302,7 @@ tests:
           - {_id: 3}
           - {_id: 4}
 
-  - description: remain pinned after errors within a transaction
+  - description: unpin after transient error within a transaction
     useMultipleMongoses: true
     operations:
       - name: startTransaction
@@ -335,98 +335,8 @@ tests:
         result:
           errorLabelsContain: ["TransientTransactionError"]
           errorLabelsOmit: ["UnknownTransactionCommitResult"]
-      # Session remains pinned to the first mongos and commitTransaction
-      # succeeds. If a driver mistakenly upins then this commit will likely
-      # select a new mongos and fail.
-      - name: commitTransaction
-        object: session0
-
-    expectations:
-      - command_started_event:
-          command:
-            insert: *collection_name
-            documents:
-              - _id: 3
-            ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
-          command_name: insert
-          database_name: *database_name
-      - command_started_event:
-          command:
-            insert: *collection_name
-            documents:
-              - _id: 4
-            ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            writeConcern:
-          command_name: insert
-          database_name: *database_name
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            writeConcern:
-            recoveryToken: 42
-          command_name: commitTransaction
-          database_name: admin
-
-    outcome:
-      collection:
-        data:
-          - _id: 1
-          - _id: 2
-          - _id: 3
-
-  - description: remain pinned after errors within a transaction and abort
-    useMultipleMongoses: true
-    operations:
-      - name: startTransaction
-        object: session0
-      - name: insertOne
-        object: collection
-        arguments:
-          session: session0
-          document:
-            _id: 3
-        result:
-          insertedId: 3
-      # Enable the fail point only on the Mongos that session0 is pinned to.
-      - name: targetedFailPoint
-        object: testRunner
-        arguments:
-          session: session0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["insert"]
-              closeConnection: true
-      - name: insertOne
-        object: collection
-        arguments:
-          session: session0
-          document:
-            _id: 4
-        result:
-          errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
-      # Session remains pinned to the first mongos and abortTransaction
-      # succeeds.
+      # Session unpins from the first mongos after the insert error and
+      # abortTransaction succeeds immediately on any mongos.
       - name: abortTransaction
         object: session0
 
@@ -472,6 +382,123 @@ tests:
             writeConcern:
             recoveryToken: 42
           command_name: abortTransaction
+          database_name: admin
+
+    outcome:
+      collection:
+        data:
+          - _id: 1
+          - _id: 2
+
+  # Applications should not run commitTransaction after transient errors but
+  # the transactions API allows it and this test confirms unpinning behavior.
+  # In a sharded cluster, a transient error within a transaction unpins the
+  # session. This way a subsequent abort can "succeed" immediately instead of
+  # blocking for serverSelectionTimeoutMS in the case the mongos went down.
+  # However since the abortTransaction helper ignores errors, this test uses
+  # commitTransaction to prove the session was unpinned.
+  - description: unpin after transient error within a transaction and commit
+    useMultipleMongoses: true
+    clientOptions:
+      # Increase heartbeatFrequencyMS to avoid the race condition where an in
+      # flight heartbeat refreshes the first mongoes' SDAM state in between
+      # the initial commitTransaction and the retry attempt.
+      heartbeatFrequencyMS: 5000
+    operations:
+      - name: startTransaction
+        object: session0
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 3
+        result:
+          insertedId: 3
+      # Enable the fail point only on the Mongos that session0 is pinned to.
+      # Fail isMaster to prevent the heartbeat requested directly after the
+      # insert error from racing with server selection for the commit.
+      # Note: times: 7 is slightly artbitrary but it accounts for one failed
+      # insert and some SDAM heartbeats. A test runner will have multiple
+      # clients connected to this server so this fail point configuration
+      # is also racy.
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 7 }
+            data:
+              failCommands: ["insert", "isMaster"]
+              closeConnection: true
+      - name: insertOne
+        object: collection
+        arguments:
+          session: session0
+          document:
+            _id: 4
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+      # Session unpins from the first mongos after the insert error and
+      # commitTransaction selects the second mongos and fails. If a driver
+      # mistakenly remains pinned then this commit succeed.
+      #
+      # Note that the retry attempt should not select the original mongos
+      # because that server's SDAM state is reset by the connection error,
+      # heartbeatFrequencyMS is high, and subsequent isMaster heartbeats
+      # should fail.
+      - name: commitTransaction
+        object: session0
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorCodeName: NoSuchTransaction
+
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 3
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 4
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            commitTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+            recoveryToken: 42
+          command_name: commitTransaction
           database_name: admin
 
     outcome:

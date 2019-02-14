@@ -775,13 +775,19 @@ retries of commitTransaction and abortTransaction) to the same mongos.
 When to unpin
 ^^^^^^^^^^^^^
 
-A pinned ClientSession MUST be unpinned after running the initial
+Drivers MUST unpin a ClientSession when a command within a transaction
+fails with a TransientTransactionError (including a server selection error).
+Transient errors indicate that the transaction in question has already been
+aborted or that the pinned mongos is down/unavailable. Unpinning the session
+ensures that a subsequent abortTransaction does not block waiting on a server
+that is unreachable.
+
+Additionally, Drivers MUST unpin a ClientSession after running any
 commitTransaction or abortTransaction attempt regardless if that attempt
-succeeded or failed. When the commitTransaction or abortTransaction attempt
-fails on the pinned mongos, the session MUST be unpinned and any
-subsequent (automatic or explicit) retry attempt MUST perform normal mongos
-server selection. When a commitTransaction or abortTransaction
-attempt succeeds on the pinned mongos, the session MUST also be unpinned.
+succeeded or failed. After the initial commit or abort attempt, any mongos can
+satisfy a subsequent retry. Note, when the initial attempt fails with a
+retryable writes error, the automatic retry attempt MUST perform normal
+server selection to select an available mongos.
 
 Starting a new transaction on a pinned ClientSession MUST unpin the
 session. Additionally, any non-transaction operation using a pinned
@@ -792,7 +798,7 @@ recoveryToken field
 ~~~~~~~~~~~~~~~~~~~
 
 The ``recoveryToken`` field enables the driver to recover the outcome of a
-sharded transaction on a new (or restarted) mongos.
+sharded transaction on a new (or restarted) mongos. [#]_
 
 When a driver runs a command within a transaction, the mongos response
 includes a ``recoveryToken`` field. Drivers MUST track the most recently
@@ -803,6 +809,14 @@ update the ``recoveryToken`` mid-transaction if needed.
 
 Drivers can safely assume that the ``recoveryToken`` field is always a BSON
 document but drivers MUST NOT modify the contents of the document.
+
+.. [#] In 4.2, a new mongos waits for the *outcome* of the transaction but
+       will never itself cause the transaction to be committed. If the initial
+       commit on the original mongos itself failed to initiate the
+       transaction's commit sequence, then a retry attempt on a new mongos
+       will block until the transaction is automatically timed out by the
+       cluster. In this case, the new mongos will return a transient error
+       indicating that the transaction was aborted.
 
 Error Reporting and Retrying Transactions
 -----------------------------------------
