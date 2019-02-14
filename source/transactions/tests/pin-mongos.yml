@@ -22,8 +22,7 @@ data: &data
 
 tests:
   - description: countDocuments
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -50,8 +49,7 @@ tests:
         data: *data
 
   - description: distinct
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -77,8 +75,7 @@ tests:
         data: *data
 
   - description: find
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -106,8 +103,7 @@ tests:
         data: *data
 
   - description: insertOne
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -193,8 +189,7 @@ tests:
           - {_id: 10}
 
   - description: mixed read write operations
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -265,8 +260,7 @@ tests:
           - {_id: 7}
 
   - description: multiple commits
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -309,8 +303,7 @@ tests:
           - {_id: 4}
 
   - description: remain pinned after errors within a transaction
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0
@@ -400,8 +393,7 @@ tests:
           - _id: 3
 
   - description: remain pinned after errors within a transaction and abort
-    clientOptions:
-      useMultipleMongoses: true
+    useMultipleMongoses: true
     operations:
       - name: startTransaction
         object: session0

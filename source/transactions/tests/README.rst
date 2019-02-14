@@ -90,11 +90,11 @@ Each YAML file has the following keys:
   - ``skipReason``: Optional, string describing why this test should be
     skipped.
 
-  - ``clientOptions``: Optional, parameters to pass to MongoClient():
+  - ``useMultipleMongoses``: Optional, boolean. If true and this test is
+    running against a sharded cluster, intialize the MongoClient for this
+    test with multiple mongos seed addresses.
 
-    - ``useMultipleMongoses``: Optional, boolean. If true and this test is
-      running against a sharded cluster, intialize the MongoClient for this
-      test with multiple mongos seed addresses.
+  - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
   - ``failPoint``: Optional, a server failpoint to enable expressed as the
     configureFailPoint command to run on the admin database.
@@ -190,9 +190,9 @@ Then for each element in ``tests``:
    actual txnNumbers, starting from 1.) Pass this test's ``clientOptions`` if
    present.
 
-   - When testing against a sharded cluster and
-     ``clientOptions.useMultipleMongoses`` is ``true`` the client MUST be
-     created with multiple (valid) mongos seed addreses.
+   - When testing against a sharded cluster and ``useMultipleMongoses`` is
+     ``true`` the client MUST be created with multiple (valid) mongos seed
+     addreses.
 
 #. Call ``client.startSession`` twice to create ClientSession objects
    ``session0`` and ``session1``, using the test's "sessionOptions" if they
