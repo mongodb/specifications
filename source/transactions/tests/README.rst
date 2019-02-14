@@ -433,3 +433,10 @@ prematurely timing out any tests' transactions. To decrease the timeout, run::
   db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 3 } )
 
 .. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
+
+**Changelog**
+-------------
+
+:2019-02-13: Modify test format for 4.2 sharded transactions, including
+             "useMultipleMongoses", ``object: testRunner``, the
+             ``targetedFailPoint`` operation, and recoveryToken assertions.
