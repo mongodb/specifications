@@ -3,9 +3,14 @@
   "style": "unit",
   "description": "must be able to start a pool with minPoolSize connections",
   "poolOptions": {
-    "minPoolSize": 5
+    "minPoolSize": 3
   },
   "operations": [
+    {
+      "name": "waitForEvent",
+      "event": "ConnectionCreated",
+      "count": 3
+    },
     {
       "name": "checkOut"
     }
@@ -15,14 +20,6 @@
       "type": "ConnectionPoolCreated",
       "address": 42,
       "options": 42
-    },
-    {
-      "type": "ConnectionCreated",
-      "connectionId": 42
-    },
-    {
-      "type": "ConnectionCreated",
-      "connectionId": 42
     },
     {
       "type": "ConnectionCreated",
