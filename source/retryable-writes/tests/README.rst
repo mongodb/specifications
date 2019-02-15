@@ -210,7 +210,7 @@ testing an update or delete that is split into two commands, the ``skip`` should
 be set to the number of statements in the first command to allow the fail point
 to trigger on the second command.
 
-Replica Set Failover Test
+Replica Set Failover Test (TO BE REMOVED)
 =========================
 
 In addition to network errors, writes should also be retried in the event of a
