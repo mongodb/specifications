@@ -5,7 +5,7 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: commitTransaction explicit retries succeed
+  - description: commitTransaction explicit retries include recoveryToken
     useMultipleMongoses: true
     operations:
       - name: startTransaction
@@ -18,10 +18,6 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
       - name: commitTransaction
         object: session0
       - name: commitTransaction
@@ -54,32 +50,6 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
-            recoveryToken: 42
-          command_name: commitTransaction
-          database_name: admin
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            # commitTransaction applies w:majority on retries
-            writeConcern: { w: majority, wtimeout: 10000 }
-            recoveryToken: 42
-          command_name: commitTransaction
-          database_name: admin
-      - command_started_event:
-          command:
-            commitTransaction: 1
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction:
-            autocommit: false
-            # commitTransaction applies w:majority on retries
-            writeConcern: { w: majority, wtimeout: 10000 }
             recoveryToken: 42
           command_name: commitTransaction
           database_name: admin
