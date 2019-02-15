@@ -54,8 +54,10 @@ tests:
                 multi: true
                 arrayFilters: [ { "i.b": 1 } ]
             ordered: true
-            writeConcern: { $exists: false }
-            bypassDocumentValidation: { $exists: false }
+            # TODO: check that these fields do not exist once
+            # https://jira.mongodb.org/browse/SPEC-1215 has been resolved.
+            # writeConcern: null
+            # bypassDocumentValidation: null
           command_name: update
           database_name: *database_name
     outcome:

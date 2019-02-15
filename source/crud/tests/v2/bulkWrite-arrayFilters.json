@@ -116,13 +116,7 @@
                   ]
                 }
               ],
-              "ordered": true,
-              "writeConcern": {
-                "$exists": false
-              },
-              "bypassDocumentValidation": {
-                "$exists": false
-              }
+              "ordered": true
             },
             "command_name": "update",
             "database_name": "crud-tests"
