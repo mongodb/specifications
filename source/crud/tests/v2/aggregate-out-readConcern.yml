@@ -16,7 +16,7 @@ tests:
         name: aggregate
         collectionOptions:
           readConcern: { level: "majority" }
-        arguments:
+        arguments: &arguments
           pipeline:
             - $sort: { x : 1 }
             - $match: { _id: { $gt: 1 } }
@@ -26,15 +26,15 @@ tests:
         command_started_event:
           command:
             aggregate: *collection_name
-            pipeline:
+            pipeline: &pipeline
               - $sort: { x: 1 }
               - $match: { _id: { $gt: 1 } }
-              - $out: *output_collection
+              - $out: "other_test_collection"
             readConcern: { level: "majority" }
     outcome:
       collection:
         name: *output_collection
-        data:
+        data: &data
           - { _id: 2, x: 22 }
           - { _id: 3, x: 33 }
   -
@@ -45,27 +45,18 @@ tests:
         name: aggregate
         collectionOptions:
           readConcern: { level: "local" }
-        arguments:
-          pipeline:
-            - $sort: { x : 1 }
-            - $match: { _id: { $gt: 1 } }
-            - $out: *output_collection
+        arguments: *arguments
     expectations:
       -
         command_started_event:
           command:
             aggregate: *collection_name
-            pipeline:
-              - $sort: { x: 1 }
-              - $match: { _id: { $gt: 1 } }
-              - $out: *output_collection
+            pipeline: *pipeline
             readConcern: { level: "local" }
     outcome:
       collection:
         name: *output_collection
-        data:
-          - { _id: 2, x: 22 }
-          - { _id: 3, x: 33 }
+        data: *data
   -
     description: "readConcern available with out stage"
     operations:
@@ -74,27 +65,18 @@ tests:
         name: aggregate
         collectionOptions:
           readConcern: { level: "available" }
-        arguments:
-          pipeline:
-            - $sort: {x : 1}
-            - $match: { _id: { $gt: 1 } }
-            - $out: *output_collection
+        arguments: *arguments
     expectations:
       -
         command_started_event:
           command:
             aggregate: *collection_name
-            pipeline:
-              - $sort: { x: 1 }
-              - $match: { _id: { $gt: 1 } }
-              - $out: *output_collection
+            pipeline: *pipeline
             readConcern: { level: "available" }
     outcome:
       collection:
         name: *output_collection
-        data:
-          - { _id: 2, x: 22 }
-          - { _id: 3, x: 33 }
+        data: *data
   -
     description: "readConcern linearizable with out stage"
     operations:
@@ -103,21 +85,14 @@ tests:
         name: aggregate
         collectionOptions:
           readConcern: { level: "linearizable" }
-        arguments:
-          pipeline:
-            - $sort: { x : 1 }
-            - $match: { _id: { $gt: 1 } }
-            - $out: *output_collection
+        arguments: *arguments
         error: true
     expectations:
       -
         command_started_event:
           command:
             aggregate: *collection_name
-            pipeline:
-              - $sort: { x: 1 }
-              - $match: { _id: { $gt: 1 } }
-              - $out: *output_collection
+            pipeline: *pipeline
             readConcern: { level: "linearizable" }
   -
     description: "invalid readConcern with out stage"
@@ -127,19 +102,12 @@ tests:
         name: aggregate
         collectionOptions:
           readConcern: { level: "!invalid123" }
-        arguments:
-          pipeline:
-            - $sort: { x : 1 }
-            - $match: { _id: { $gt: 1 } }
-            - $out: *output_collection
+        arguments: *arguments
         error: true
     expectations:
       -
         command_started_event:
           command:
             aggregate: *collection_name
-            pipeline:
-              - $sort: { x: 1 }
-              - $match: { _id: { $gt: 1 } }
-              - $out: *output_collection
+            pipeline: *pipeline
             readConcern: { level: "!invalid123" }
