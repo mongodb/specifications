@@ -21,7 +21,7 @@ Abstract
 
 GridFS is a convention drivers use to store and retrieve BSON binary
 data (type “\\x05”) that exceeds MongoDB’s BSON-document size limit of
-16MB. When this data, called a **user file**, is written to the system,
+16 MiB. When this data, called a **user file**, is written to the system,
 GridFS divides the file into **chunks** that are stored as distinct
 documents in a **chunks collection**. To retrieve a stored file, GridFS
 locates and returns all of its component chunks. Internally, GridFS
@@ -56,7 +56,7 @@ Bucket name
 
 Chunk
   A section of a user file, stored as a single document in the ‘chunks’ collection of a GridFS bucket.
-  The default size for the data field in chunks is 255KB. Chunk documents have the following form:
+  The default size for the data field in chunks is 255 KiB. Chunk documents have the following form:
 
   .. code:: javascript
   
@@ -106,7 +106,7 @@ Files collection document
   :_id: a unique ID for this document. Usually this will be of type ObjectId, but a custom _id value provided by
     the application may be of any type.
   :length: the length of this stored file, in bytes
-  :chunkSize: the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is 255KB.
+  :chunkSize: the size, in bytes, of each data chunk of this file. This value is configurable by file. The default is 255 KiB.
   :uploadDate: the date and time this file was added to GridFS, stored as a BSON datetime value. The value of this
     field MUST be the datetime when the upload completed, not the datetime when it was begun.
   :md5: DEPRECATED, a hash of the contents of the stored file
@@ -267,7 +267,7 @@ Configurable GridFSBucket class
     bucketName : String optional;
     
     /**
-     * The chunk size in bytes. Defaults to 255KB.
+     * The chunk size in bytes. Defaults to 255 KiB.
      */
     chunkSizeBytes : Int32 optional;
     
@@ -320,7 +320,7 @@ configurable:
 - **chunkSizeBytes:** the number of bytes stored in chunks for new
   user files added through this GridFSBucket object. This will not
   reformat existing files in the system that use a different chunk
-  size. Defaults to 255KB.
+  size. Defaults to 255 KiB.
 
 IF a driver supports configuring readConcern, readPreference or writeConcern
 at the database or collection level, then GridFSBucket objects MUST also allow
@@ -957,11 +957,11 @@ that are undesirable or incorrect.
 Design Rationale
 ================
 
-Why is the default chunk size 255KB?
+Why is the default chunk size 255 KiB?
   On MMAPv1, the server provides documents with extra padding to allow for
-  in-place updates. When the ‘data’ field of a chunk is limited to 255KB,
+  in-place updates. When the ‘data’ field of a chunk is limited to 255 KiB,
   it ensures that the whole chunk document (the chunk data along with an
-  _id and other information) will fit into a 256KB section of memory,
+  _id and other information) will fit into a 256 KiB section of memory,
   making the best use of the provided padding. Users setting custom chunk
   sizes are advised not to use round power-of-two values, as the whole
   chunk document is likely to exceed that space and demand extra padding

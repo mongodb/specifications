@@ -132,17 +132,17 @@ we'd like to perform.
 Request Size Limits
 ~~~~~~~~~~~~~~~~~~~
 
-Supporting unlimited batch sizes poses two problems - the BSONObj internal size limit is 16MB + 16KB
+Supporting unlimited batch sizes poses two problems - the BSONObj internal size limit is 16 MiB + 16 KiB
 (for command overhead), and a small write operation may have a much larger response.  In order to
 ensure a batch can be correctly processed, two limits must be respected.
 
 Both of these limits can be found using isMaster():
 
-* ``maxBsonObjectSize`` : currently 16MB, this is the maximum size of writes (excluding command overhead)
+* ``maxBsonObjectSize`` : currently 16 MiB, this is the maximum size of writes (excluding command overhead)
   that should be sent to the server.  Documents to be inserted, query documents for updates and
   deletes, and update expression documents must be <= this size.  Once these documents have been
   assembled into a write command the total size may exceed ``maxBsonObjectSize`` by a maximum of
-  16KB, allowing users to insert documents up to ``maxBsonObjectSize``.
+  16 KiB, allowing users to insert documents up to ``maxBsonObjectSize``.
 
 * ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
   can be included in a write batch.  If more than this number of writes are included, the server cannot

@@ -436,9 +436,9 @@ A driver SHOULD attempt to kill the cursor on the server on which the cursor is 
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-**1. `fullDocument: updateLookup` can result in change documents larger than 16MB**
+**1. `fullDocument: updateLookup` can result in change documents larger than 16 MiB**
 
-There is a risk that if there is a large change to a large document, the full document and delta might result in a document larger than the 16MB limitation on BSON documents.  If that happens the cursor will be closed, and a server error will be returned.
+There is a risk that if there is a large change to a large document, the full document and delta might result in a document larger than the 16 MiB limitation on BSON documents.  If that happens the cursor will be closed, and a server error will be returned.
 
 **2. Users can remove the resume token with aggregation stages**
 
