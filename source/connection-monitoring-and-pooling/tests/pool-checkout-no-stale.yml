@@ -4,8 +4,9 @@ description: must destroy and must not check out a stale connection if found whi
 poolOptions:
   minPoolSize: 3
 operations:
-  - name: wait
-    ms: 20
+  - name: waitForEvent
+    event: ConnectionCreated
+    count: 3
   - name: clear
   - name: checkOut
 events:
@@ -28,7 +29,7 @@ events:
     connectionId: 42
     reason: stale
   - type: ConnectionCheckedOut
-    connectionId: 4
+    connectionId: 42
 ignore:
-  - ConnectionCreated
   - ConnectionReady
+  - ConnectionCreated

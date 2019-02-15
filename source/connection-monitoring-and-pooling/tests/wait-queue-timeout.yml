@@ -16,10 +16,11 @@ operations:
   # Wait for other thread to time out, then check in connection
   - name: waitForEvent
     event: ConnectionCheckOutFailed
+    count: 1
   - name: checkIn
     connection: conn0
   # Rejoin thread1, should experience error
-  - name: waitFor
+  - name: waitForThread
     target: thread1
 error:
   type: WaitQueueTimeoutError

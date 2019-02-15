@@ -28,15 +28,15 @@
       "thread": "thread3"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread1"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread2"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread3"
     }
   ],

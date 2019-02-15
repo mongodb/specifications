@@ -21,14 +21,15 @@
     },
     {
       "name": "waitForEvent",
-      "event": "ConnectionCheckOutFailed"
+      "event": "ConnectionCheckOutFailed",
+      "count": 1
     },
     {
       "name": "checkIn",
       "connection": "conn0"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread1"
     }
   ],

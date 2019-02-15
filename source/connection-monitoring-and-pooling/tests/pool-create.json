@@ -4,8 +4,9 @@
   "description": "must be able to create a pool",
   "operations": [
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionPoolCreated",
+      "count": 1
     }
   ],
   "events": [
