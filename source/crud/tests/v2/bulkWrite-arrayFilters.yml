@@ -54,8 +54,8 @@ tests:
                 multi: true
                 arrayFilters: [ { "i.b": 1 } ]
             ordered: true
-            writeConcern: { $exists: false }
-            bypassDocumentValidation: { $exists: false }
+            writeConcern: null
+            bypassDocumentValidation: null
           command_name: update
           database_name: *database_name
     outcome:
