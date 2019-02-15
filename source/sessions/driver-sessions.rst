@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.5.0
+:Spec Version: 1.5.1
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2018-10-11
+:Last Modified: 2019-02-15
 
 .. contents::
 
@@ -642,10 +642,9 @@ orphaned sessions building up at the server.
 Therefore drivers MUST NOT send a session ID with unacknowledged writes under
 any circumstances:
 
-* For unacknowledged writes with an explicit session, drivers SHOULD raise an
-  error.  If a driver allows users to provide an explicit session with an
-  unacknowledged write (e.g. for backwards compatibility), the driver MUST NOT
-  send the session ID.
+* For unacknowledged writes with an explicit session, drivers MUST raise an
+  error.  If a driver does not raise an error for backwards compatibility,
+  the driver MUST NOT send the session ID.
 
 * For unacknowledged writes without an explicit session, drivers SHOULD NOT use
   an implicit session.  If a driver creates an implicit session for
@@ -1200,10 +1199,6 @@ Instead, we require users to pass session as a parameter to each function::
 Change log
 ==========
 
-:2018-10-11: Session pools must be cleared in child process after fork
-:2018-07-19: Justify why session must be an explicit parameter to each function
-:2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
-:2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
 :2017-09-13: If causalConsistency option is ommitted assume true
 :2017-09-16: Omit session ID when opening and authenticating a connection
 :2017-09-18: Drivers MUST gossip the cluster time when they see a $clusterTime
@@ -1222,3 +1217,7 @@ Change log
 :2018-02-20: Add implicit/explicit session tests
 :2018-02-20: Drivers SHOULD error if unacknowledged writes are used with sessions
 :2018-05-23: Drivers MUST not use session ID with parallelCollectionScan
+:2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
+:2018-07-19: Justify why session must be an explicit parameter to each function
+:2018-10-11: Session pools must be cleared in child process after fork
+:2019-02-15: Drivers MUST error if unacknowledged writes are used with explicit sessions
