@@ -19,10 +19,10 @@ tests:
             errmsg: "waiting for replication timed out"
             errInfo: { wtimeout: true }
     operations:
-      -
+      - &operation
         name: withTransaction
         object: session0
-        arguments: &arguments
+        arguments:
           callback:
             operations:
               -
@@ -33,10 +33,6 @@ tests:
                   document: { _id: 1 }
                 result:
                   insertedId: 1
-        result:
-          errorCodeName: WriteConcernFailed
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
     expectations: &expectations_with_retries
       -
         command_started_event:
@@ -96,7 +92,7 @@ tests:
           command_name: commitTransaction
           database_name: admin
     # The write operation is still applied despite the write concern error
-    outcome:
+    outcome: &outcome
       collection:
         data:
           - { _id: 1 }
@@ -118,19 +114,9 @@ tests:
             codeName: WriteConcernFailed
             errmsg: "multiple errors reported"
     operations:
-      -
-        name: withTransaction
-        object: session0
-        arguments: *arguments
-        result:
-          errorCodeName: WriteConcernFailed
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
+      - *operation
     expectations: *expectations_with_retries
-    outcome:
-      collection:
-        data:
-          - { _id: 1 }
+    outcome: *outcome
   -
     description: commitTransaction is not retried after UnknownReplWriteConcern error
     failPoint:
@@ -143,10 +129,7 @@ tests:
             codeName: UnknownReplWriteConcern
             errmsg: "No write concern mode named 'foo' found in replica set configuration"
     operations:
-      -
-        name: withTransaction
-        object: session0
-        arguments: *arguments
+      - <<: *operation
         result:
           errorCodeName: UnknownReplWriteConcern
           errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
@@ -180,9 +163,8 @@ tests:
             writeConcern: ~
           command_name: commitTransaction
           database_name: admin
-    outcome:
-      collection:
-        data: []
+    # failCommand with writeConcernError still applies the write operation(s)
+    outcome: *outcome
 
   -
     description: commitTransaction is not retried after UnsatisfiableWriteConcern error
@@ -196,14 +178,10 @@ tests:
             codeName: UnsatisfiableWriteConcern
             errmsg: "Not enough data-bearing nodes"
     operations:
-      -
-        name: withTransaction
-        object: session0
-        arguments: *arguments
+      - <<: *operation
         result:
           errorCodeName: UnsatisfiableWriteConcern
           errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
     expectations: *expectations_without_retries
-    outcome:
-      collection:
-        data: []
+    # failCommand with writeConcernError still applies the write operation(s)
+    outcome: *outcome

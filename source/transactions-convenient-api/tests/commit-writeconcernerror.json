@@ -46,15 +46,6 @@
                 }
               ]
             }
-          },
-          "result": {
-            "errorCodeName": "WriteConcernFailed",
-            "errorLabelsContain": [
-              "UnknownTransactionCommitResult"
-            ],
-            "errorLabelsOmit": [
-              "TransientTransactionError"
-            ]
           }
         }
       ],
@@ -190,15 +181,6 @@
                 }
               ]
             }
-          },
-          "result": {
-            "errorCodeName": "WriteConcernFailed",
-            "errorLabelsContain": [
-              "UnknownTransactionCommitResult"
-            ],
-            "errorLabelsOmit": [
-              "TransientTransactionError"
-            ]
           }
         }
       ],
@@ -388,7 +370,11 @@
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     },
@@ -486,7 +472,11 @@
       ],
       "outcome": {
         "collection": {
-          "data": []
+          "data": [
+            {
+              "_id": 1
+            }
+          ]
         }
       }
     }
