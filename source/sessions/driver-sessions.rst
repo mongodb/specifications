@@ -1200,10 +1200,6 @@ Instead, we require users to pass session as a parameter to each function::
 Change log
 ==========
 
-:2018-10-11: Session pools must be cleared in child process after fork
-:2018-07-19: Justify why session must be an explicit parameter to each function
-:2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
-:2018-05-23: Document that parallelCollectionScan helpers do not support implicit sessions
 :2017-09-13: If causalConsistency option is ommitted assume true
 :2017-09-16: Omit session ID when opening and authenticating a connection
 :2017-09-18: Drivers MUST gossip the cluster time when they see a $clusterTime
@@ -1222,3 +1218,6 @@ Change log
 :2018-02-20: Add implicit/explicit session tests
 :2018-02-20: Drivers SHOULD error if unacknowledged writes are used with sessions
 :2018-05-23: Drivers MUST not use session ID with parallelCollectionScan
+:2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
+:2018-07-19: Justify why session must be an explicit parameter to each function
+:2018-10-11: Session pools must be cleared in child process after fork
