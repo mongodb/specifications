@@ -1,12 +1,10 @@
 version: 1
 style: unit
 description: must destroy and must not check out a stale connection if found while iterating available connections
-poolOptions:
-  minPoolSize: 3
 operations:
-  - name: waitForEvent
-    event: ConnectionCreated
-    count: 3
+  - name: checkOut
+    label: conn
+  - name: checkIn
   - name: clear
   - name: checkOut
 events:
