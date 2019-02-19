@@ -146,16 +146,16 @@ handshake:
    MongoDB Handshake fails with an error, drivers MUST treat this as
    an authentication error.
 
-#  If the server is not of type Standalone, RSPrimary, RSSecondary or
+#. If the server is not of type Standalone, RSPrimary, RSSecondary or
    Mongos, no authentication is possible and the handshake is complete.
 
 #. If credentials exist:
 
-    #. A driver MUST authenticate with all credentials provided to the
-           MongoClient.
+   #. A driver MUST authenticate with all credentials provided to the
+      MongoClient.
 
-    #. A single invalid credential is the same as all credentials being
-           invalid.
+   #. A single invalid credential is the same as all credentials being
+      invalid.
 
 If the authentication handshake fails for a socket, drivers MUST close all
 other general-use sockets connected to the same server.
@@ -186,7 +186,7 @@ use the legacy default mechanism rules for servers older than 4.0.
 Single-credential drivers
 `````````````````````````
 
-When the authentication mechanism is not specied, drivers that allow
+When the authentication mechanism is not specified, drivers that allow
 only a single credential per client MUST perform mechanism negotiation
 as part of the MongoDB Handshake portion of the authentication
 handshake.  This lets authentication proceed without a separate
@@ -378,7 +378,7 @@ TODO: Errors
 SASL Mechanisms
 ---------------
 
-:since: 2.4 enterprise
+:since: 2.4 Enterprise
 
 SASL mechanisms are all implemented using the same sasl commands and interpreted as defined by the `SASL specification RFC 4422 <http://tools.ietf.org/html/rfc4422>`_.
 
@@ -401,11 +401,11 @@ GSSAPI
 ~~~~~~
 
 :since: 
-	2.4 enterprise
+	2.4 Enterprise
 
-	2.6 enterprise on windows
+	2.6 Enterprise on Windows
 
-GSSAPI is kerberos authentication as defined in `RFC 4752 <http://tools.ietf.org/html/rfc4752>`_. Microsoft has a proprietary implementation called SSPI which is compatible with both windows and linux clients.
+GSSAPI is kerberos authentication as defined in `RFC 4752 <http://tools.ietf.org/html/rfc4752>`_. Microsoft has a proprietary implementation called SSPI which is compatible with both Windows and Linux clients.
 
 `MongoCredential`_ properties:
 
@@ -492,7 +492,7 @@ Beware of a bug in older glibc where ``getaddrinfo`` uses PTR records instead of
 PLAIN
 ~~~~~
 
-:since: 2.6 enterprise
+:since: 2.6 Enterprise
 
 The PLAIN mechanism, as defined in `RFC 4616 <http://tools.ietf.org/html/rfc4616>`_, is used in MongoDB to perform LDAP authentication. It cannot be used to perform any other type of authentication. Since the credentials are stored outside of MongoDB, the `$external` database must be used for authentication.
 
