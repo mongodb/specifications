@@ -11,7 +11,7 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: February 19, 2018
+:Last Modified: February 19, 2019
 :Version: 1.4.1
 
 .. contents::
@@ -386,4 +386,4 @@ Changes
   characters and clarify rules for exceptions.
 - 2019-02-04: In Repeated Keys section, clarified that the URI options spec may
   override the repeated key behavior described here for certain options.
-- 2019-02-04: Require drivers to document option precedence rules
+- 2019-02-19: Require drivers to document option precedence rules
