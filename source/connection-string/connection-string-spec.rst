@@ -11,8 +11,8 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: June 04, 2018
-:Version: 1.4
+:Last Modified: February 19, 2018
+:Version: 1.4.1
 
 .. contents::
 
@@ -247,7 +247,7 @@ Any options that are not supported MUST raise a WARN log level as described in t
 Connection options precedence
 -----------------------------
 
-As the connection string is designed as a mechanism outside of an application to define and change MongoClient configuration, it is RECOMMENDED that the connection string and its defined options take precedence over any MongoClient Options defined in the application, which take precedence over default values.
+If a driver allows URI options to be specified outside of the connection string (e.g. dictionary parameter to the MongoClient constructor) it MUST document the precedence rules between all such mechanisms. For instance, a driver MAY allow a value for option `foo` in a dictionary parameter to override the value of `foo` in the connection string (or vice versa) so long as that behavior is documented.
 
 ---------
 Test Plan
@@ -386,3 +386,4 @@ Changes
   characters and clarify rules for exceptions.
 - 2019-02-04: In Repeated Keys section, clarified that the URI options spec may
   override the repeated key behavior described here for certain options.
+- 2019-02-04: Require drivers to document option precedence rules
