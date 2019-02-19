@@ -229,11 +229,11 @@ Internally the driver will execute 3 write commands. One each for the inserts, u
 Request Size Limits
 -------------------
 
-Supporting unlimited batch sizes poses two problems - the BSONObj internal size limit is 16MB + small overhead (for commands), and a small write operation may have a much larger response.  In order to ensure a batch can be correctly processed, two limits must be respected.
+Supporting unlimited batch sizes poses two problems - the BSONObj internal size limit is 16 MiB + small overhead (for commands), and a small write operation may have a much larger response.  In order to ensure a batch can be correctly processed, two limits must be respected.
 
 Both of these limits can be found using isMaster():
 
-* ``maxBsonObjectSize`` : currently 16MB, this is the maximum size of writes (excepting command overhead)
+* ``maxBsonObjectSize`` : currently 16 MiB, this is the maximum size of writes (excepting command overhead)
   that should be sent to the server.  Documents to be inserted, query documents for updates and 
   deletes, and update expression documents must be <= this size.
 
@@ -1233,13 +1233,13 @@ Test Case 2:
 
         Same for initializeOrderedBulkOp().
 
-        We can upsert() a 16MB document—the driver can make a command document slightly larger than the max document size.
+        We can upsert() a 16 MiB document—the driver can make a command document slightly larger than the max document size.
 
         Empty collection.
         
         .. code:: javascript
 
-            var bigstring = “string of length 16MB - 30 bytes”
+            var bigstring = “string of length 16 MiB - 30 bytes”
             batch = initializeUnorderedBulkOp()
             batch.find({key: 1}).upsert().update({$set: {x: bigstring}})
             batch.execute() succeeds.
@@ -1559,16 +1559,16 @@ Empty collection, unique index on 'a’.
 
 BATCH SPLITTING: maxBsonObjectSize
 ----------------------------------
-More than 16MB worth of inserts are split into multiple messages, and error indexes are rewritten. An unordered batch continues on error and returns the error after all messages are sent.
+More than 16 MiB worth of inserts are split into multiple messages, and error indexes are rewritten. An unordered batch continues on error and returns the error after all messages are sent.
 
 Empty collection.
 
 .. code:: javascript
 
-    // Verify that the driver splits inserts into 16-MB messages:
+    // Verify that the driver splits inserts into 16-MiB messages:
     batch = initializeOrderedBulkOp()
     for (i = 0; i < 6; i++) {
-    batch.insert({_id: i, a: '4 MB STRING'});
+    batch.insert({_id: i, a: '4 MiB STRING'});
     }
 
     batch.insert({_id: 0})  // will fail

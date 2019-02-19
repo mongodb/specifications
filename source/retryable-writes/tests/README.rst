@@ -187,9 +187,9 @@ The YAML tests specify bulk write operations that are split by command type
 operations may also be split due to ``maxWriteBatchSize``,
 ``maxBsonObjectSize``, or ``maxMessageSizeBytes``.
 
-For instance, an insertMany operation with five 10 MB documents executed using
+For instance, an insertMany operation with five 10 MiB documents executed using
 OP_MSG payload type 0 (i.e. entire command in one document) would be split into
-five insert commands in order to respect the 16 MB ``maxBsonObjectSize`` limit.
+five insert commands in order to respect the 16 MiB ``maxBsonObjectSize`` limit.
 The same insertMany operation executed using OP_MSG payload type 1 (i.e. command
 arguments pulled out into a separate payload vector) would be split into two
 insert commands in order to respect the 48 MB ``maxMessageSizeBytes`` limit.
