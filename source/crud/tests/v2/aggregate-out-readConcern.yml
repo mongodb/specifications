@@ -31,10 +31,10 @@ tests:
               - $match: { _id: { $gt: 1 } }
               - $out: "other_test_collection"
             readConcern: { level: "majority" }
-    outcome:
+    outcome: &outcome
       collection:
         name: *output_collection
-        data: &data
+        data:
           - { _id: 2, x: 22 }
           - { _id: 3, x: 33 }
   -
@@ -53,10 +53,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "local" }
-    outcome:
-      collection:
-        name: *output_collection
-        data: *data
+    outcome: *outcome
   -
     description: "readConcern available with out stage"
     operations:
@@ -73,10 +70,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "available" }
-    outcome:
-      collection:
-        name: *output_collection
-        data: *data
+    outcome: *outcome
   -
     description: "readConcern linearizable with out stage"
     operations:
