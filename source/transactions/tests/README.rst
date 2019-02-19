@@ -294,6 +294,28 @@ fail point on the mongos server which "session0" is pinned to::
               failCommands: ["commitTransaction"]
               closeConnection: true
 
+assertSessionPinned
+~~~~~~~~~~~~~~~~~~~
+
+The "assertSessionPinned" operation instructs the test runner to assert that
+the given session is pinned to a mongos::
+
+      - name: assertSessionPinned
+        object: testRunner
+        arguments:
+          session: session0
+
+assertSessionUnpinned
+~~~~~~~~~~~~~~~~~~~~~
+
+The "assertSessionUnpinned" operation instructs the test runner to assert that
+the given session is not pinned to a mongos::
+
+      - name: assertSessionPinned
+        object: testRunner
+        arguments:
+          session: session0
+
 Command-Started Events
 ``````````````````````
 
