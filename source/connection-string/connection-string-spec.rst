@@ -247,7 +247,7 @@ Any options that are not supported MUST raise a WARN log level as described in t
 Connection options precedence
 -----------------------------
 
-If a driver allows URI options to be specified outside of the connection string (e.g. dictionary parameter to the MongoClient constructor) it MUST document the precedence rules between all such mechanisms. For instance, a driver MAY allow a value for option `foo` in a dictionary parameter to override the value of `foo` in the connection string (or vice versa) so long as that behavior is documented.
+If a driver allows URI options to be specified outside of the connection string (e.g. dictionary parameter to the MongoClient constructor) it MUST document the precedence rules between all such mechanisms. For instance, a driver MAY allow a value for option ``foo`` in a dictionary parameter to override the value of ``foo`` in the connection string (or vice versa) so long as that behavior is documented.
 
 ---------
 Test Plan
