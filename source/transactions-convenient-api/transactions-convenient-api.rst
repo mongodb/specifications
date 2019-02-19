@@ -3,14 +3,14 @@ Convenient API for Transactions
 ===============================
 
 :Spec Title: Convenient API for Transactions
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Jeremy Mikola
 :Lead: Jeff Yemin
 :Advisors: A\. Jesse Jiryu Davis, Kris Brandow, Oleg Pudeyev, Sam Ritter, Tess Avitabile
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 30-January-2019
+:Last Modified: 2019-02-13
 
 .. contents::
 
@@ -123,15 +123,12 @@ drivers MUST enforce a 120-second timeout to limit retry behavior and safeguard
 applications from long-running (or infinite) retry loops. Drivers SHOULD use a
 monotonic clock to determine elapsed time.
 
-If an UnknownTransactionCommitResult is encountered for a commit and the error
-is not a write concern timeout, the commit operation may be retried. If the
-retry timeout has not been exceeded, the driver MUST retry a commit that fails
-with an error bearing the "UnknownTransactionCommitResult" label and does not
-indicate a write concern timeout. Drivers can detect a write concern timeouts
-error by both the WriteConcernFailed code (64) and presence of
-``errInfo: { wtimeout: true }``. If the retry timeout has been exceeded, drivers
-MUST NOT retry the commit and allow ``withTransaction`` to propagate the error
-to its caller.
+If an UnknownTransactionCommitResult is encountered for a commit, the commit
+operation may be retried. If the retry timeout has not been exceeded, the driver
+MUST retry a commit that fails with an error bearing the
+"UnknownTransactionCommitResult" label. If the retry timeout has been exceeded,
+drivers MUST NOT retry the commit and allow ``withTransaction`` to propagate the
+error to its caller.
 
 If a TransientTransactionError is encountered at any point, the entire
 transaction may be retried. If the retry timeout has not been exceeded, the
@@ -211,11 +208,10 @@ This method should perform the following sequence of actions:
 9.  If ``commitTransaction`` reported an error:
 
    a. If the ``commitTransaction`` error includes a
-      "UnknownTransactionCommitResult" label and is not a write concern timeout
-      error (i.e. error code 64 and includes ``errInfo: { wtimeout: true }``)
-      and the elapsed time of ``withTransaction`` is less than 120 seconds, jump
-      back to step eight. We will trust ``commitTransaction`` to apply a
-      majority write concern on retry attempts (see:
+      "UnknownTransactionCommitResult" label and the elapsed time of
+      ``withTransaction`` is less than 120 seconds, jump back to step eight. We
+      will trust ``commitTransaction`` to apply a majority write concern on
+      retry attempts (see:
       `Majority write concern is used when retrying commitTransaction`_).
 
    b. If the ``commitTransaction`` error includes a "TransientTransactionError"
@@ -267,11 +263,7 @@ This method can be expressed by the following pseudo-code:
                      * being retried (see: DRIVERS-601) */
                     this.commitTransaction();
                 } catch (error) {
-                    /* Note: a write concern timeout error will have the
-                     * WriteConcernFailed code (64) and include the additional
-                     * `errInfo: { wtimeout: true }` field. */
-                    if (!isWriteConcernTimeoutError(error) &&
-                        error.hasErrorLabel("UnknownTransactionCommitResult") &&
+                    if (error.hasErrorLabel("UnknownTransactionCommitResult") &&
                         Date.now() - startTime < 120000) {
                         continue retryCommit;
                     }
@@ -384,21 +376,36 @@ their users to design idempotent callbacks.
 
 .. _Retry Transactions and Commit Operation: https://docs.mongodb.com/manual/core/transactions/#retry-transaction-and-commit-operation
 
-The commit is not retried after a write concern timeout error
--------------------------------------------------------------
+The commit is retried after a write concern timeout error
+---------------------------------------------------------
 
-Per the Transactions specification, drivers internally retry commits that fail
-with an `UnknownTransactionCommitResult`_ error label. This label is applied to
-write concern errors other than UnsatisfiableWriteConcern
-(CannotSatisfyWriteConcern in server versions before 4.2) and
-UnknownReplWriteConcern, and may appear on a WriteConcernFailed error, which
-indicates a write concern timeout.
+Per the Transactions specification, drivers internally retry
+``commitTransaction`` once if it fails due to a retryable error (as defined in
+the `Retryable Writes`_ specification). Beyond that, applications may manually
+retry ``commitTransaction`` if it fails with any error bearing the
+`UnknownTransactionCommitResult`_ error label. This lable is applied for the
+the following errors:
 
-This specification intentionally chooses not to retry commit operations after a
-write concern timeout error, as doing so would exceed the user's original
-intention for ``wtimeout``.
+.. _Retryable Writes: ../retryable-writes/retryable-writes.rst#terms
 
-.. _UnknownTransactionCommitResult: https://github.com/mongodb/specifications/blob/master/source/transactions/transactions.rst#unknowntransactioncommitresult
+.. _UnknownTransactionCommitResult: ../transactions/transactions.rst#unknowntransactioncommitresult
+
+- Server selection failure
+- Retryable error (as defined in the `Retryable Writes`_ specification)
+- Write concern failure or timeout (excluding UnsatisfiableWriteConcern and
+  UnknownReplWriteConcern)
+
+A previous design for ``withTransaction`` retried for all of these errors
+*except* for write concern timeouts, so as not to exceed the user's original
+intention for ``wtimeout``. The current design of this specification no longer
+excludes write concern timeouts, and simply retries ``commitTransaction`` within
+its timeout period for all errors bearing the "UnknownTransactionCommitResult"
+label.
+
+This change was made in light of the forthcoming Client-side Operations Timeout
+specification (see: `Future Work`_), which we expect will allow the current
+120-second timeout for ``withTransaction`` to be customized and also obviate the
+need for users to specify ``wtimeout``.
 
 The transaction and commit may be retried any number of times within a timeout period
 -------------------------------------------------------------------------------------
@@ -469,4 +476,4 @@ client-side operation timeout, withTransaction can continue to use the
 Changes
 =======
 
-YYYY-MM-DD: Nothing yet
+2018-02-13: withTransaction should retry commits after a wtimeout
