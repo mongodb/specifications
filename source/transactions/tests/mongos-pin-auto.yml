@@ -251,6 +251,384 @@ tests:
       - *abortTransaction
     outcome: *outcome
 
+  - description: remain pinned after non-transient Interrupted error on updateOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              errorCode: 11601
+      - name: updateOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          update: {$inc: {x: 1}}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on replaceOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              errorCode: 11601
+      - name: replaceOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          replacement: {y: 1}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on updateMany
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              errorCode: 11601
+      - name: updateMany
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: {$gte: 1}}
+          update: {$set: {z: 1}}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on deleteOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              errorCode: 11601
+      - name: deleteOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on deleteMany
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              errorCode: 11601
+      - name: deleteMany
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: {$gte: 1}}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on findOneAndDelete
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              errorCode: 11601
+      - name: findOneAndDelete
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on findOneAndUpdate
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              errorCode: 11601
+      - name: findOneAndUpdate
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          update: {$inc: {x: 1}}
+          returnDocument: Before
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on findOneAndReplace
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              errorCode: 11601
+      - name: findOneAndReplace
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          replacement: {y: 1}
+          returnDocument: Before
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on bulkWrite
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              errorCode: 11601
+      - name: bulkWrite
+        object: collection
+        arguments:
+          session: session0
+          requests:
+            - name: deleteOne
+              arguments:
+                filter: {_id: 1}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on find
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["find"]
+              errorCode: 11601
+      - name: find
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on countDocuments
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["aggregate"]
+              errorCode: 11601
+      - name: countDocuments
+        object: collection
+        arguments:
+          session: session0
+          filter: {}
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on aggregate
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["aggregate"]
+              errorCode: 11601
+      - name: aggregate
+        object: collection
+        arguments:
+          session: session0
+          pipeline: []
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on distinct
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["distinct"]
+              errorCode: 11601
+      - name: distinct
+        object: collection
+        arguments:
+          session: session0
+          fieldName: _id
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: remain pinned after non-transient Interrupted error on runCommand
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["insert"]
+              errorCode: 11601
+      - name: runCommand
+        object: database
+        command_name: insert
+        arguments:
+          session: session0
+          command:
+            insert: *collection_name
+            documents:
+              - _id : 1
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+      - *assertSessionPinned
+      - *abortTransaction
+    outcome: *outcome
+
   - description: unpin after transient connection error on insertOne
     useMultipleMongoses: true
     operations:
@@ -354,3 +732,760 @@ tests:
       - *assertSessionUnpinned
       - *abortTransaction
     outcome: *outcome
+
+  - description: unpin after transient connection error on updateOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              closeConnection: true
+      - name: updateOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          update: {$inc: {x: 1}}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on updateOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              errorCode: 91
+      - name: updateOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          update: {$inc: {x: 1}}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on replaceOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              closeConnection: true
+      - name: replaceOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          replacement: {y: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on replaceOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              errorCode: 91
+      - name: replaceOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          replacement: {y: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on updateMany
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              closeConnection: true
+      - name: updateMany
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: {$gte: 1}}
+          update: {$set: {z: 1}}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on updateMany
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["update"]
+              errorCode: 91
+      - name: updateMany
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: {$gte: 1}}
+          update: {$set: {z: 1}}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on deleteOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              closeConnection: true
+      - name: deleteOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on deleteOne
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              errorCode: 91
+      - name: deleteOne
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on deleteMany
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              closeConnection: true
+      - name: deleteMany
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: {$gte: 1}}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on deleteMany
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              errorCode: 91
+      - name: deleteMany
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: {$gte: 1}}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on findOneAndDelete
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              closeConnection: true
+      - name: findOneAndDelete
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on findOneAndDelete
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              errorCode: 91
+      - name: findOneAndDelete
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on findOneAndUpdate
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              closeConnection: true
+      - name: findOneAndUpdate
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          update: {$inc: {x: 1}}
+          returnDocument: Before
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on findOneAndUpdate
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              errorCode: 91
+      - name: findOneAndUpdate
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          update: {$inc: {x: 1}}
+          returnDocument: Before
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on findOneAndReplace
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              closeConnection: true
+      - name: findOneAndReplace
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          replacement: {y: 1}
+          returnDocument: Before
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on findOneAndReplace
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["findAndModify"]
+              errorCode: 91
+      - name: findOneAndReplace
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+          replacement: {y: 1}
+          returnDocument: Before
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on bulkWrite
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              closeConnection: true
+      - name: bulkWrite
+        object: collection
+        arguments:
+          session: session0
+          requests:
+            - name: deleteOne
+              arguments:
+                filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on bulkWrite
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["delete"]
+              errorCode: 91
+      - name: bulkWrite
+        object: collection
+        arguments:
+          session: session0
+          requests:
+            - name: deleteOne
+              arguments:
+                filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on find
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["find"]
+              closeConnection: true
+      - name: find
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on find
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["find"]
+              errorCode: 91
+      - name: find
+        object: collection
+        arguments:
+          session: session0
+          filter: {_id: 1}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on countDocuments
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["aggregate"]
+              closeConnection: true
+      - name: countDocuments
+        object: collection
+        arguments:
+          session: session0
+          filter: {}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on countDocuments
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["aggregate"]
+              errorCode: 91
+      - name: countDocuments
+        object: collection
+        arguments:
+          session: session0
+          filter: {}
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on aggregate
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["aggregate"]
+              closeConnection: true
+      - name: aggregate
+        object: collection
+        arguments:
+          session: session0
+          pipeline: []
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on aggregate
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["aggregate"]
+              errorCode: 91
+      - name: aggregate
+        object: collection
+        arguments:
+          session: session0
+          pipeline: []
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on distinct
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["distinct"]
+              closeConnection: true
+      - name: distinct
+        object: collection
+        arguments:
+          session: session0
+          fieldName: _id
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on distinct
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["distinct"]
+              errorCode: 91
+      - name: distinct
+        object: collection
+        arguments:
+          session: session0
+          fieldName: _id
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient connection error on runCommand
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["insert"]
+              closeConnection: true
+      - name: runCommand
+        object: database
+        command_name: insert
+        arguments:
+          session: session0
+          command:
+            insert: *collection_name
+            documents:
+              - _id : 1
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
+  - description: unpin after transient ShutdownInProgress error on runCommand
+    useMultipleMongoses: true
+    operations:
+      - *startTransaction
+      - *initialCommand
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["insert"]
+              errorCode: 91
+      - name: runCommand
+        object: database
+        command_name: insert
+        arguments:
+          session: session0
+          command:
+            insert: *collection_name
+            documents:
+              - _id : 1
+        result:
+          errorLabelsContain: ["TransientTransactionError"]
+      - *assertSessionUnpinned
+      - *abortTransaction
+    outcome: *outcome
+
