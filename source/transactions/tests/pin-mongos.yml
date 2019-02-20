@@ -24,7 +24,8 @@ tests:
   - description: countDocuments
     useMultipleMongoses: true
     operations:
-      - name: startTransaction
+      - &startTransaction
+        name: startTransaction
         object: session0
       - &countDocuments
         name: countDocuments
@@ -41,7 +42,8 @@ tests:
       - *countDocuments
       - *countDocuments
       - *countDocuments
-      - name: commitTransaction
+      - &commitTransaction
+        name: commitTransaction
         object: session0
 
     outcome:
@@ -51,8 +53,7 @@ tests:
   - description: distinct
     useMultipleMongoses: true
     operations:
-      - name: startTransaction
-        object: session0
+      - *startTransaction
       - &distinct
         name: distinct
         object: collection
@@ -67,8 +68,7 @@ tests:
       - *distinct
       - *distinct
       - *distinct
-      - name: commitTransaction
-        object: session0
+      - *commitTransaction
 
     outcome:
       collection:
@@ -95,8 +95,7 @@ tests:
       - *find
       - *find
       - *find
-      - name: commitTransaction
-        object: session0
+      - *commitTransaction
 
     outcome:
       collection:
@@ -171,8 +170,7 @@ tests:
           session: session0
         result:
           insertedId: 10
-      - name: commitTransaction
-        object: session0
+      - *commitTransaction
 
     outcome:
       collection:
@@ -245,8 +243,7 @@ tests:
           session: session0
         result:
           insertedId: 7
-      - name: commitTransaction
-        object: session0
+      - *commitTransaction
 
     outcome:
       collection:
