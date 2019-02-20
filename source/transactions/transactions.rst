@@ -776,17 +776,16 @@ When to unpin
 ^^^^^^^^^^^^^
 
 Drivers MUST unpin a ClientSession when a command within a transaction
-fails with a TransientTransactionError (including a server selection error).
-Transient errors indicate that the transaction in question has already been
-aborted or that the pinned mongos is down/unavailable. Unpinning the session
-ensures that a subsequent abortTransaction does not block waiting on a server
-that is unreachable.
+fails with a TransientTransactionError. Transient errors indicate that the
+transaction in question has already been aborted or that the pinned mongos is
+down/unavailable. Unpinning the session ensures that a subsequent
+abortTransaction does not block waiting on a server that is unreachable.
 
 Additionally, Drivers MUST unpin a ClientSession after running any
 commitTransaction or abortTransaction attempt regardless if that attempt
 succeeded or failed. After the initial commit or abort attempt, any mongos can
 satisfy a subsequent retry. Note, when the initial attempt fails with a
-retryable writes error, the automatic retry attempt MUST perform normal
+retryable error, the automatic retry attempt MUST perform normal
 server selection to select an available mongos.
 
 Starting a new transaction on a pinned ClientSession MUST unpin the
