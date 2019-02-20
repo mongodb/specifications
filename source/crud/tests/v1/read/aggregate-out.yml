@@ -18,6 +18,10 @@ tests:
                 batchSize: 2
 
         outcome:
+            # Note: drivers are not required to return a cursor for aggregate
+            # pipelines using $out, but those that do may use this result to
+            # assert that the returned cursor points to the output collection.
+            # Drivers that do not return cursors for $out should ignore this.
             result:
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}
