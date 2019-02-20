@@ -793,12 +793,12 @@ recoveryToken field
 The ``recoveryToken`` field enables the driver to recover the outcome of a
 sharded transaction on a new (or restarted) mongos. [#]_
 
-When a driver runs a command within a transaction, the mongos response
-includes a ``recoveryToken`` field. Drivers MUST track the most recently
-received ``recoveryToken`` field and MUST append this field to any subsequent
-commitTransaction commands.
-Tracking the most recently returned ``recoveryToken`` allows the server to
-update the ``recoveryToken`` mid-transaction if needed.
+Every successful (``ok:1``) command response in a sharded transaction includes
+a ``recoveryToken`` field. Drivers MUST track the most recently received
+``recoveryToken`` field and MUST append this field to any subsequent
+commitTransaction commands. Tracking the most recently returned
+``recoveryToken`` allows the server to update the ``recoveryToken``
+mid-transaction if needed.
 
 Drivers can safely assume that the ``recoveryToken`` field is always a BSON
 document but drivers MUST NOT modify the contents of the document.
