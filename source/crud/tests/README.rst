@@ -128,13 +128,13 @@ and is consistent with the formats used by other specifications. Previously, the
 CRUD spec tests used a simplified format that only allowed for executing a
 single operation. Notable differences from the current format are as follows:
 
-- Instead of a `tests[i].operations` array, a single operation was defined as a
-  document in `tests[i].operation`. That document consisted of only the `name`,
-  `arguments`, and an optional `object` field.
+- Instead of a ``tests[i].operations`` array, a single operation was defined as
+  a document in ``tests[i].operation``. That document consisted of only the
+  ``name``, ``arguments``, and an optional ``object`` field.
 
-- Instead of `error` and `result` fields within each element in the
-  `tests[i].operations` array, the single operation's error and result were
-  defined under the `tests[i].outcome.error` and `tests[i].outcome.result`
+- Instead of ``error`` and ``result`` fields within each element in the
+  ``tests[i].operations`` array, the single operation's error and result were
+  defined under the ``tests[i].outcome.error`` and ``tests[i].outcome.result``
   fields.
 
 The legacy format should not conflict with the newer, multi-operation format
