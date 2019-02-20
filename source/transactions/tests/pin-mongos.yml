@@ -270,26 +270,70 @@ tests:
           session: session0
         result:
           insertedIds: {0: 3, 1: 4}
+      # Session is pinned and remains pinned after successful commits.
+      - &assertSessionPinned
+        name: assertSessionPinned
+        object: testRunner
+        arguments:
+          session: session0
+      - *commitTransaction
+      - *assertSessionPinned
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *assertSessionPinned
+
+    outcome:
+      collection:
+        data:
+          - {_id: 1}
+          - {_id: 2}
+          - {_id: 3}
+          - {_id: 4}
+
+  - description: remain pinned after non-transient error on commit
+    useMultipleMongoses: true
+    operations:
+      - name: startTransaction
+        object: session0
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id: 3
+            - _id: 4
+          session: session0
+        result:
+          insertedIds: {0: 3, 1: 4}
+      # Session is pinned.
+      - *assertSessionPinned
+      # Fail the commit with a non-transient error, eg MaxTimeMSExpired.
+      - name: targetedFailPoint
+        object: testRunner
+        arguments:
+          session: session0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["commitTransaction"]
+              errorCode: 50 # MaxTimeMSExpired
       - name: commitTransaction
         object: session0
+        result:
+          errorLabelsOmit: ["TransientTransactionError"]
+          errorCode: 50
+      - *assertSessionPinned
+      # The next commit should succeed.
       - name: commitTransaction
         object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
-      - name: commitTransaction
-        object: session0
+      - *assertSessionPinned
 
     outcome:
       collection:

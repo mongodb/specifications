@@ -769,23 +769,18 @@ Drivers MUST send all commands for a single transaction to the same mongos
 After the driver selects a mongos for the first command within a transaction,
 the driver MUST pin the ClientSession to the selected mongos. Drivers MUST
 send all subsequent commands that are part of the same transaction (excluding
-retries of commitTransaction and abortTransaction) to the same mongos.
+certain retries of commitTransaction and abortTransaction) to the same mongos.
 
 When to unpin
 ^^^^^^^^^^^^^
 
-Drivers MUST unpin a ClientSession when a command within a transaction
-fails with a TransientTransactionError. Transient errors indicate that the
-transaction in question has already been aborted or that the pinned mongos is
+Drivers MUST unpin a ClientSession when a command within a transaction,
+including commitTransaction and abortTransaction fails with a
+TransientTransactionError. Transient errors indicate that the transaction
+in question has already been aborted or that the pinned mongos is
 down/unavailable. Unpinning the session ensures that a subsequent
-abortTransaction does not block waiting on a server that is unreachable.
-
-Additionally, Drivers MUST unpin a ClientSession after running any
-commitTransaction or abortTransaction attempt regardless if that attempt
-succeeded or failed. After the initial commit or abort attempt, any mongos can
-satisfy a subsequent retry. Note, when the initial attempt fails with a
-retryable error, the automatic retry attempt MUST perform normal
-server selection to select an available mongos.
+abortTransaction (or commitTransaction) does not block waiting on a server
+that is unreachable.
 
 Starting a new transaction on a pinned ClientSession MUST unpin the
 session. Additionally, any non-transaction operation using a pinned
