@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: November 15, 2018
+:Last Modified: February 20, 2019
 
 .. contents::
 
@@ -1350,6 +1350,8 @@ Below are defined the exceptions that should be thrown from the various write me
 
     /**
      * The request that errored.
+     *
+     * NOT REQUIRED: Drivers may choose to not provide this property.
      */
     request: Optional<WriteModel>;
 
@@ -1760,6 +1762,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
 * 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions
 * 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
 * 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
