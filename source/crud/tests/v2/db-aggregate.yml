@@ -11,7 +11,7 @@ tests:
         object: database
         arguments:
           pipeline:
-            - $currentOp: { allUsers: false, idleConnections: false }
+            - $currentOp: { allUsers: false, idleConnections: false, localOps: true }
             - $match: { command.aggregate: { $eq: 1 } }
             - $project: { command: 1 }
             - $project: { command.lsid: 0 }
@@ -20,7 +20,7 @@ tests:
             command:
               aggregate: 1
               pipeline:
-                - $currentOp: { allUsers: false, idleConnections: false }
+                - $currentOp: { allUsers: false, idleConnections: false, localOps: true }
                 - $match: { command.aggregate: { $eq: 1 } }
                 - $project: { command: 1 }
                 - $project: { command.lsid: 0 }
@@ -34,7 +34,7 @@ tests:
         object: database
         arguments:
           pipeline:
-            - $currentOp: { allUsers: true, idleConnections: true }
+            - $currentOp: { allUsers: true, idleConnections: true, localOps: true }
             - $match: { command.aggregate: {$eq: 1} }
             - $project: { command: 1 }
             - $project: { command.lsid: 0 }
@@ -44,7 +44,7 @@ tests:
             command:
               aggregate: 1
               pipeline:
-                - $currentOp: { allUsers: true, idleConnections: true }
+                - $currentOp: { allUsers: true, idleConnections: true, localOps: true }
                 - $match: { command.aggregate: { $eq: 1 } }
                 - $project: { command: 1 }
                 - $project: { command.lsid: 0 }
