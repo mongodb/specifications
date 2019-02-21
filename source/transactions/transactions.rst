@@ -782,6 +782,12 @@ down/unavailable. Unpinning the session ensures that a subsequent
 abortTransaction (or commitTransaction) does not block waiting on a server
 that is unreachable.
 
+Additionally, drivers MUST unpin a ClientSession when any individual
+commitTransaction command attempt fails with an UnknownTransactionCommitResult
+error label. In cases where the UnknownTransactionCommitResult causes an
+automatic retry attempt, drivers MUST unpin the ClientSession before performing
+server selection for the retry.
+
 Starting a new transaction on a pinned ClientSession MUST unpin the
 session. Additionally, any non-transaction operation using a pinned
 ClientSession MUST unpin the session and the operation MUST perform normal
