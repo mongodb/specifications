@@ -53,8 +53,8 @@ tests:
           document:
             _id: 4
         result:
-          errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
+          errorCodeName: Interrupted
       - &assertSessionPinned
         name: assertSessionPinned
         object: testRunner
@@ -114,7 +114,6 @@ tests:
           - {_id: 1}
           - {_id: 2}
           - {_id: 3}
-          - {_id: 4}
 
   - description: unpin after transient error within a transaction
     useMultipleMongoses: true
@@ -213,7 +212,7 @@ tests:
   # multiple types of transient errors (connection and error code).'''
 
 TEMPLATE = '''
-  - description: {test_name} {error_name} error on {op_name}
+  - description: {test_name} {error_name} error on {op_name} {command_name}
     useMultipleMongoses: true
     operations:
       - *startTransaction
@@ -262,16 +261,16 @@ OPS = {
           replacement: {y: 1}
           returnDocument: Before'''),
     # Bulk write insert/update/delete:
-    'bulkWrite': ('insert', 'collection', r'''requests:
+    'bulkWrite insert': ('insert', 'collection', r'''requests:
             - name: insertOne
               arguments:
                 document: {_id: 1}'''),
-    'bulkWrite': ('update', 'collection', r'''requests:
+    'bulkWrite update': ('update', 'collection', r'''requests:
             - name: updateOne
               arguments:
                 filter: {_id: 1}
                 update: {$set: {x: 1}}'''),
-    'bulkWrite': ('delete', 'collection', r'''requests:
+    'bulkWrite delete': ('delete', 'collection', r'''requests:
             - name: deleteOne
               arguments:
                 filter: {_id: 1}'''),
@@ -309,6 +308,8 @@ def create_pin_test(op_name, error_name):
     error_labels = 'errorLabelsOmit'
     command_name, object_name, op_args = OPS[op_name]
     error_data = NON_TRANSIENT_ERRORS[error_name]
+    if op_name.startswith('bulkWrite'):
+        op_name = 'bulkWrite'
     return TEMPLATE.format(**locals())
 
 
@@ -318,6 +319,8 @@ def create_unpin_test(op_name, error_name):
     error_labels = 'errorLabelsContain'
     command_name, object_name, op_args = OPS[op_name]
     error_data = TRANSIENT_ERRORS[error_name]
+    if op_name.startswith('bulkWrite'):
+        op_name = 'bulkWrite'
     return TEMPLATE.format(**locals())
 
 tests = []
