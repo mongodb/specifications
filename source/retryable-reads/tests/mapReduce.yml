@@ -49,6 +49,6 @@ tests:
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operations: [&operation_fails]
+        operations: [*operation_fails]
         expectations:
              - *command_started_event

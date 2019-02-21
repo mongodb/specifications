@@ -132,7 +132,22 @@
         }
       },
       "operations": [
-        null
+        {
+          "name": "mapReduce",
+          "object": "collection",
+          "arguments": {
+            "map": {
+              "$code": "function inc() { return emit(0, this.x + 1) }"
+            },
+            "reduce": {
+              "$code": "function sum(key, values) { return values.reduce((acc, x) => acc + x); }"
+            },
+            "out": {
+              "inline": 1
+            }
+          },
+          "error": true
+        }
       ],
       "expectations": [
         {
