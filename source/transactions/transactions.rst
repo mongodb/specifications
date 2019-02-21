@@ -790,8 +790,9 @@ server selection.
 recoveryToken field
 ~~~~~~~~~~~~~~~~~~~
 
-The ``recoveryToken`` field enables the driver to recover the outcome of a
-sharded transaction on a new (or restarted) mongos. [#]_
+The ``recoveryToken`` field enables the driver to recover a sharded
+transaction's outcome on a new mongos when the original mongos is no
+longer available. [#]_
 
 Every successful (``ok:1``) command response in a sharded transaction includes
 a ``recoveryToken`` field. Drivers MUST track the most recently received
