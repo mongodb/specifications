@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.3.1
+:Spec Version: 1.4
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 13-February-2019
+:Last Modified: 19-February-2019
 
 .. contents::
 
@@ -580,6 +580,13 @@ transaction, the server will return an error. The ``writeConcern`` argument
 of the commitTransaction and abortTransaction commands has
 semantics analogous to existing write commands.
 
+Behavior of the recoveryToken field
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Only included for sharded transactions and only when running a
+commitTransaction command. See the
+`recoveryToken field`_ section for more info.
+
 Constructing the first command within a transaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -705,7 +712,8 @@ The commitTransaction server command has the following format:
         lsid : { id : <UUID> },
         txnNumber : <Int64>,
         autocommit : false,
-        writeConcern : {...}
+        writeConcern : {...},
+        recoveryToken : {...}
     }
 
 abortTransaction
@@ -744,23 +752,71 @@ format:
 
     { ok : 1, writeConcernError: {code: <Number>, errmsg : "..."} }
 
-Mongos Pinning for Sharded Transactions
----------------------------------------
+Sharded Transactions
+--------------------
 
-The server supports sharded transactions starting in MongoDB 4.2 (
-maxWireVersion 8). The server requires that drivers MUST send all commands for
-a single transaction to the same mongos.
+MongoDB 4.2 (maxWireVersion 8) introduces support for sharded transactions.
+Sharded transactions support all of the same features as single replica set
+transaction but introduce two new driver concepts: mongos pinning and the
+``recoveryToken`` field.
+
+Mongos Pinning
+~~~~~~~~~~~~~~
+
+Drivers MUST send all commands for a single transaction to the same mongos
+(excluding retries of commitTransaction and abortTransaction).
 
 After the driver selects a mongos for the first command within a transaction,
 the driver MUST pin the ClientSession to the selected mongos. Drivers MUST
-send all commands that are part of the same transaction, including
-commitTransaction and abortTransaction and any retries thereof, to the
-same mongos.
+send all subsequent commands that are part of the same transaction (excluding
+certain retries of commitTransaction and abortTransaction) to the same mongos.
+
+When to unpin
+^^^^^^^^^^^^^
+
+Drivers MUST unpin a ClientSession when a command within a transaction,
+including commitTransaction and abortTransaction, fails with a
+TransientTransactionError. Transient errors indicate that the transaction
+in question has already been aborted or that the pinned mongos is
+down/unavailable. Unpinning the session ensures that a subsequent
+abortTransaction (or commitTransaction) does not block waiting on a server
+that is unreachable.
+
+Additionally, drivers MUST unpin a ClientSession when any individual
+commitTransaction command attempt fails with an UnknownTransactionCommitResult
+error label. In cases where the UnknownTransactionCommitResult causes an
+automatic retry attempt, drivers MUST unpin the ClientSession before performing
+server selection for the retry.
 
 Starting a new transaction on a pinned ClientSession MUST unpin the
 session. Additionally, any non-transaction operation using a pinned
 ClientSession MUST unpin the session and the operation MUST perform normal
 server selection.
+
+recoveryToken field
+~~~~~~~~~~~~~~~~~~~
+
+The ``recoveryToken`` field enables the driver to recover a sharded
+transaction's outcome on a new mongos when the original mongos is no
+longer available. [#]_
+
+Every successful (``ok:1``) command response in a sharded transaction includes
+a ``recoveryToken`` field. Drivers MUST track the most recently received
+``recoveryToken`` field and MUST append this field to any subsequent
+commitTransaction commands. Tracking the most recently returned
+``recoveryToken`` allows the server to update the ``recoveryToken``
+mid-transaction if needed.
+
+Drivers can safely assume that the ``recoveryToken`` field is always a BSON
+document but drivers MUST NOT modify the contents of the document.
+
+.. [#] In 4.2, a new mongos waits for the *outcome* of the transaction but
+       will never itself cause the transaction to be committed. If the initial
+       commit on the original mongos itself failed to initiate the
+       transaction's commit sequence, then a retry attempt on a new mongos
+       will block until the transaction is automatically timed out by the
+       cluster. In this case, the new mongos will return a transient error
+       indicating that the transaction was aborted.
 
 Error Reporting and Retrying Transactions
 -----------------------------------------
@@ -1294,6 +1350,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-02-19: Add support for sharded transaction recoveryToken.
 :2019-02-19: Clarify FAQ entry for not retrying commit on wtimeout
 :2019-01-18: Apply majority write concern when retrying commitTransaction
 :2018-11-13: Add mongos pinning to support sharded transaction.
