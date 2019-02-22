@@ -454,6 +454,9 @@ prematurely timing out any tests' transactions. To decrease the timeout, run::
 
   db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 3 } )
 
+Note that mongo-orchestration automatically sets this timeout to 3 seconds so
+drivers using mongo-orchestration do not need to run these commands manually.
+
 .. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
 
 **Changelog**
