@@ -1351,8 +1351,8 @@ If there is a network timeout on the connection after the handshake completes,
 the client MUST NOT mark the server Unknown.
 (A timeout may indicate a slow operation on the server,
 rather than an unavailable server.)
-If, however, there is some other network error on the connection after the handshake completes,
-the client MUST replace the server's description
+If, however, there is some other network error on the connection after the
+handshake completes, the client MUST replace the server's description
 with a default ServerDescription of type Unknown,
 and fill the ServerDescription's error field with useful information,
 the same as if an error or timeout occurred before the handshake completed.
