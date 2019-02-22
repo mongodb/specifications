@@ -1390,6 +1390,8 @@ error is a "node is recovering" error or a "not master" error.
 
 If the response includes an error code, it MUST be checked first to attempt
 to determine if error is a "node is recovering" or "not master" error.
+Clients MUST match the errors by the numeric error code and not by the code
+name, as the code name can change from one server version to the next.
 
 The following error codes indicate a replica set member is temporarily
 unusable. These are called "node is recovering" errors:
