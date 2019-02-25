@@ -25,7 +25,9 @@ Each YAML file has the following keys:
 
 Each phase object has two keys:
 
-- responses: An array of "response" objects.
+- responses: (optional) An array of "response" objects. If not provided,
+  the test runner should construct the client and perform assertions specified
+  in the outcome object without processing any responses.
 - outcome: An "outcome" object representing the TopologyDescription.
 
 A response is a pair of values:
