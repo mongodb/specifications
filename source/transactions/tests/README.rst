@@ -438,7 +438,9 @@ attempt fails on mongos A and is retried on mongos B, mongos B will block
 waiting for the transaction to complete. However because the initial commit
 attempt failed, the command will only complete after the transaction is
 automatically aborted for exceeding the shard's
-transactionLifetimeLimitSeconds setting.
+transactionLifetimeLimitSeconds setting. `SERVER-39726`_ requests that
+recovering the outcome of an uncommitted transaction should immediately abort
+the transaction.
 
 The second case is when a *single-shard* transaction is committed successfully
 on mongos A and then explicitly committed again on mongos B. Mongos B will also
@@ -454,8 +456,11 @@ prematurely timing out any tests' transactions. To decrease the timeout, run::
 
   db.adminCommand( { setParameter: 1, transactionLifetimeLimitSeconds: 3 } )
 
-Note that mongo-orchestration automatically sets this timeout to 3 seconds so
-drivers using mongo-orchestration do not need to run these commands manually.
+Note that mongo-orchestration >=0.6.13 automatically sets this timeout to 3
+seconds so drivers using mongo-orchestration do not need to run these commands
+manually.
+
+.. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39726
 
 .. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
 
