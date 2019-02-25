@@ -21,8 +21,9 @@
       "label": "conn1"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted",
+      "count": 2
     },
     {
       "name": "start",
@@ -34,8 +35,9 @@
       "label": "conn2"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted",
+      "count": 3
     },
     {
       "name": "start",
@@ -47,8 +49,9 @@
       "label": "conn3"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted",
+      "count": 4
     },
     {
       "name": "start",
@@ -60,15 +63,16 @@
       "label": "conn4"
     },
     {
-      "name": "wait",
-      "ms": 10
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted",
+      "count": 5
     },
     {
       "name": "checkIn",
       "connection": "conn0"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread1"
     },
     {
@@ -76,7 +80,7 @@
       "connection": "conn1"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread2"
     },
     {
@@ -84,7 +88,7 @@
       "connection": "conn2"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread3"
     },
     {
@@ -92,7 +96,7 @@
       "connection": "conn3"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread4"
     }
   ],

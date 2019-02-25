@@ -8,16 +8,8 @@
       "target": "thread1"
     },
     {
-      "name": "wait",
-      "ms": 10
-    },
-    {
       "name": "start",
       "target": "thread2"
-    },
-    {
-      "name": "wait",
-      "ms": 20
     },
     {
       "name": "start",
@@ -36,30 +28,30 @@
       "thread": "thread3"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread1"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread2"
     },
     {
-      "name": "waitFor",
+      "name": "waitForThread",
       "target": "thread3"
     }
   ],
   "events": [
     {
       "type": "ConnectionCheckedOut",
-      "connectionId": 1
+      "connectionId": 42
     },
     {
       "type": "ConnectionCheckedOut",
-      "connectionId": 2
+      "connectionId": 42
     },
     {
       "type": "ConnectionCheckedOut",
-      "connectionId": 3
+      "connectionId": 42
     }
   ],
   "ignore": [

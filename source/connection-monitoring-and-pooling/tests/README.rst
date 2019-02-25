@@ -64,9 +64,14 @@ Valid Unit Test Operations are the following:
 
   - ``ms``: The number of milliseconds to sleep the current thread for
 
-- ``waitFor(target)``: wait for thread ``target`` to finish executing. Propagate any errors to the main thread.
+- ``waitForThread(target)``: wait for thread ``target`` to finish executing. Propagate any errors to the main thread.
 
   - ``target``: The name of the thread to wait for.
+
+- ``waitForEvent(event, count)``: block the current thread until ``event`` has occurred ``count`` times
+
+  - ``event``: The name of the event
+  - ``count``: The number of times the event must occur (counting from the start of the test)
 
 - ``label = pool.checkOut()``: call ``checkOut`` on pool, returning the checked out connection
 
@@ -137,6 +142,8 @@ For each YAML file with ``style: unit``:
   - Assert that ``actualEvents[idx]`` exists
   - Assert that ``actualEvents[idx]`` MATCHES ``expectedEvent``
 
+
+It is important to note that the ``ignore`` list is used for calculating ``actualEvents``, but is NOT used for the ``waitForEvent`` command
 
 Prose Tests
 ===========
