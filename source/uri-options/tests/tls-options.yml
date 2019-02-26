@@ -151,6 +151,22 @@ tests:
         auth: ~
         options: {}
     -
+        description: "ssl=true and tls=true doesn't warn"
+        uri: "mongodb://example.com/?ssl=true&tls=true"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "ssl=false and tls=false doesn't warn"
+        uri: "mongodb://example.com/?ssl=false&tls=false"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
         description: "tls=false and ssl=true raises error"
         uri: "mongodb://example.com/?tls=false&ssl=true"
         valid: false
