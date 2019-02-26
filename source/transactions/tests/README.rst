@@ -279,6 +279,15 @@ determined by the "session" argument (either "session0" or "session1").
 The session must already be pinned to a mongos server. The "failPoint" argument
 is the ``configureFailPoint`` command to run.
 
+If a test uses ``targetedFailPoint``, disable the fail point after running
+all ``operations`` to avoid spurious failures in subsequent tests. The fail
+point may be disabled like so::
+
+    db.adminCommand({
+        configureFailPoint: <fail point name>,
+        mode: "off"
+    });
+
 Here is an example which instructs the test runner to enable the failCommand
 fail point on the mongos server which "session0" is pinned to::
 
