@@ -71,7 +71,7 @@ tests:
         auth: ~
         options: {}
     -
-        description: "tlsInsecure and tlsAllowInvalidCertificates both present raises an error"
+        description: "tlsInsecure and tlsAllowInvalidCertificates both present (and true) raises an error"
         uri: "mongodb://example.com/?tlsInsecure=true&tlsAllowInvalidCertificates=true"
         valid: false
         warning: false
@@ -79,8 +79,24 @@ tests:
         auth: ~
         options: {}
     -
-        description: "tlsInsecure and tlsAllowInvalidHostnames both present raises an error"
+        description: "tlsInsecure and tlsAllowInvalidCertificates both present (and false) raises an error"
+        uri: "mongodb://example.com/?tlsInsecure=false&tlsAllowInvalidCertificates=false"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "tlsInsecure and tlsAllowInvalidHostnames both present (and true) raises an error"
         uri: "mongodb://example.com/?tlsInsecure=true&tlsAllowInvalidHostnames=true"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "tlsInsecure and tlsAllowInvalidHostnames both present (and false) raises an error"
+        uri: "mongodb://example.com/?tlsInsecure=false&tlsAllowInvalidHostnames=false"
         valid: false
         warning: false
         hosts: ~
