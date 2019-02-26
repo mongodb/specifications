@@ -988,7 +988,7 @@ abortTransaction throws "Cannot call abortTransaction after
 commitTransaction".
 
 Drivers add the "TransientTransactionError" label to network errors
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When any non-commitTransaction command fails with a network error within
 a transaction Drivers add the "TransientTransactionError" label because

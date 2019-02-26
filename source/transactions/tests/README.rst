@@ -460,12 +460,12 @@ Note that mongo-orchestration >=0.6.13 automatically sets this timeout to 3
 seconds so drivers using mongo-orchestration do not need to run these commands
 manually.
 
-.. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39726
+.. _SERVER-39726: https://jira.mongodb.org/browse/SERVER-39726
 
 .. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
 
 **Changelog**
--------------
+=============
 
 :2019-02-13: Modify test format for 4.2 sharded transactions, including
              "useMultipleMongoses", ``object: testRunner``, the
