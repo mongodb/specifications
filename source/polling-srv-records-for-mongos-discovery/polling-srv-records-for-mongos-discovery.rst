@@ -52,8 +52,8 @@ rescan, rescanning
 A rescan is the periodic scan of all DNS SRV records to discover a new set of
 mongos hosts.
 
-rescanSRVFrequencyMS
-~~~~~~~~~~~~~~~~~~~~
+rescanSRVIntervalMS
+~~~~~~~~~~~~~~~~~~~
 
 An internal value representing how often the DNS SRV records should be queried
 for.
@@ -97,7 +97,7 @@ discovery.  Periodic scan MUST follow these rules:
   - MUST NOT raise an error
   - SHOULD log this situation, including the reason why the DNS records
     could not be found, if possible
-  - MUST temporarily set *rescanSRVFrequencyMS* to *heartbeatFrequencyMS* until
+  - MUST temporarily set *rescanSRVIntervalMS* to *heartbeatFrequencyMS* until
     at least one verified SRV record is obtained.
 
 - For all verified host names, as returned through the DNS SRV query, the
@@ -114,14 +114,14 @@ discovery.  Periodic scan MUST follow these rules:
 
 The rescan needs to happen periodically. As SRV records contain a TTL value,
 this value can be used to indicate when a rescan needs to happen. Different
-SRV records can have different TTL values. The *rescanSRVFrequencyMS* value MUST
+SRV records can have different TTL values. The *rescanSRVIntervalMS* value MUST
 be set to the lowest of the individual TTL values associated with the
 different SRV records in the most recent rescan, but MUST NOT be lower
 than *60 seconds*. If a driver is unable to access the TTL values of SRV
 records, it MUST rescan every 60 seconds.
 
 Drivers SHOULD endeavour to rescan and obtain a new list of mongos servers
-every *rescanSRVFrequencyMS* value. The *rescanSRVFrequencyMS* period SHOULD be
+every *rescanSRVIntervalMS* value. The *rescanSRVIntervalMS* period SHOULD be
 calculated from the **end** of the previous rescan (or the **end** of the
 initial DNS seedlist discovery scan).
 
@@ -137,7 +137,7 @@ Single-Threaded Drivers
 -----------------------
 
 The rescan MUST happen **before** scanning all servers as part of the normal
-scanning_ functionality, but only if *rescanSRVFrequencyMS* has passed.
+scanning_ functionality, but only if *rescanSRVIntervalMS* has passed.
 
 .. _scanning: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#scanning
 
