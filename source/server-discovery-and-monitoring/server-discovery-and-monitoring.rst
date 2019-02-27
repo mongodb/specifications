@@ -267,8 +267,8 @@ Fields:
   a primary. Default null.
 * maxElectionId: an ObjectId or null. The largest electionId ever reported by
   a primary. Default null.
-* servers: a set of ServerDescription instances.
-  Default contains one server: "localhost:27017", ServerType Unknown.
+* servers: a set of ServerDescription instances, one for each of the
+  servers in the topology.
 * stale: a boolean for single-threaded clients, whether the topology must
   be re-scanned.
   (Not related to maxStalenessSeconds, nor to `stale primaries`_.)
