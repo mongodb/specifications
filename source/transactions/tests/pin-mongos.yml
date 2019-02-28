@@ -444,7 +444,7 @@ tests:
       # Increase heartbeatFrequencyMS to avoid the race condition where an in
       # flight heartbeat refreshes the first mongoes' SDAM state in between
       # the insert connection error and the single commit attempt.
-      heartbeatFrequencyMS: 5000
+      heartbeatFrequencyMS: 30000
     operations:
       - name: startTransaction
         object: session0
@@ -483,8 +483,9 @@ tests:
           errorLabelsContain: ["TransientTransactionError"]
           errorLabelsOmit: ["UnknownTransactionCommitResult"]
       # Session unpins from the first mongos after the insert error and
-      # commitTransaction selects the second mongos and fails. If this commit
-      # succeeds it indicates a bug, either:
+      # commitTransaction selects the second mongos which is unaware of the
+      # transaction and therefore fails with NoSuchTransaction error. If this
+      # commit succeeds it indicates a bug, either:
       # - the driver mistakenly remained pinned even after the insert error, or
       # - the test client was initialized with a single mongos seed
       #
