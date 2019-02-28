@@ -654,7 +654,7 @@ for filter, but an empty document is supported::
   if (limit) {
     pipeline.push({'$limit': limit})
   }
-  pipeline.push({'$group': {'_id': null, 'n': {'$sum': 1}}})
+  pipeline.push({'$group': {'_id': 1, 'n': {'$sum': 1}}})
 
 The count of documents is returned in the 'n' field, similar to the `count`
 command. countDocuments options other than filter, skip, and limit are added as
