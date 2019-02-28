@@ -26,7 +26,7 @@ tests:
                 command_started_event:
                     command:
                         aggregate: *collection_name
-                        pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
+                        pipeline: [{'$match': {}}, {'$group': {'_id': 1, 'n': {'$sum': 1}}}]
                     database_name: *database_name
              - *retryable_command_started_event
     -
