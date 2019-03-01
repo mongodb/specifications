@@ -75,9 +75,26 @@ Test Format
 
 Each YAML file has the following keys:
 
-- ``topology``: Optional. An array of server topologies against which to run
-  the test. Valid topologies are "single", "replicaset" and "sharded". The
-  default is all topologies (ie ``[single, replicaset", sharded]``).
+- ``runOn`` (optional): An array of server version and/or topology requirements
+  for which the tests can be run. If the test environment satisfies one or more
+  of these requirements, the tests may be executed; otherwise, this file should
+  be skipped. If this field is omitted, the tests can be assumed to have no
+  particular requirements and should be executed. Each element will have some or
+  all of the following fields:
+
+  - ``minServerVersion`` (optional): The minimum server version (inclusive)
+    required to successfully run the tests. If this field is omitted, it should
+    be assumed that there is no lower bound on the required server version.
+
+  - ``maxServerVersion`` (optional): The maximum server version (inclusive)
+    against which the tests can be run successfully. If this field is omitted,
+    it should be assumed that there is no upper bound on the required server
+    version.
+
+  - ``topology`` (optional): An array of server topologies against which the
+    tests can be run successfully. Valid topologies are "single", "replicaset",
+    and "sharded". If this field is omitted, the default is all topologies (i.e.
+    ``["single", "replicaset", "sharded"]``).
 
 - ``database_name`` and ``collection_name``: The database and collection to use
   for testing.
@@ -481,6 +498,10 @@ manually.
 Changelog
 =========
 
+:2019-03-01: Add top-level ``runOn`` field to denote server version and/or
+             topology requirements requirements for the test file. Removes the
+             ``topology`` top-level field, which is now expressed within
+             ``runOn`` elements.
 :2019-02-28: ``useMultipleMongoses: true`` and non-targeted fail points are
              mutually exclusive.
 :2019-02-13: Modify test format for 4.2 sharded transactions, including
