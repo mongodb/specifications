@@ -475,8 +475,8 @@ manually.
 
 .. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
 
-**Changelog**
-=============
+Changelog
+=========
 
 :2019-02-28: ``useMultipleMongoses: true`` and non-targeted fail points are
              mutually exclusive.
