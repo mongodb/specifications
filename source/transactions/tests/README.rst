@@ -149,7 +149,7 @@ Each YAML file has the following keys:
       - ``data``: The data that should exist in the collection after the
         operations have run.
 
-Use as integration tests
+Use as Integration Tests
 ========================
 
 Run a MongoDB replica set with a primary, a secondary, and an arbiter,
