@@ -110,7 +110,7 @@ class:
         // other existing members of ClientSession
     }
 
-ClientSession.withTransaction
+withTransaction() Description
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This method is responsible for starting a transaction, invoking a callback, and
@@ -151,6 +151,9 @@ parameters or options as needed (e.g. user data to pass as a parameter to the
 callback).
 
 .. _CRUD: ../crud/crud.rst#deviations
+
+withTransaction() Sequence of Actions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This method should perform the following sequence of actions:
 
@@ -219,6 +222,9 @@ This method should perform the following sequence of actions:
 .. _state: ../transactions/transactions.rst#clientsession-changes
 .. _abortTransaction: ../transactions/transactions.rst#aborttransaction
 .. _commitTransaction: ../transactions/transactions.rst#committransaction
+
+withTransaction() Pseudo-code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This method can be expressed by the following pseudo-code:
 
