@@ -129,6 +129,12 @@ pertaining to URI options apply here.
      - no
      - the interval between regular server monitoring checks
 
+   * - horizonName
+     - any string
+     - If TLS is enabled, the SNI name; otherwise, the hostname portion of the URI
+     - no
+     - specifies which horizon of the server to connect to
+
    * - journal
      - "true" or "false"
      - no "j" field specified
