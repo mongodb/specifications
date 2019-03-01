@@ -19,7 +19,8 @@ Tests will require a MongoClient created with options defined in the tests.
 Integration tests will require a running MongoDB cluster with server versions
 3.6.0 or later. The ``{setFeatureCompatibilityVersion: 3.6}`` admin command
 will also need to have been executed to enable support for retryable writes on
-the cluster.
+the cluster. Some tests may have more stringent version requirements depending
+on the fail points used.
 
 Server Fail Point
 =================
@@ -89,12 +90,13 @@ disabled like so::
         mode: "off"
     });
 
-Network Error Tests
-===================
+Use as Integration Tests
+========================
 
-Network error tests are expressed in YAML and should be run against a replica
-set. These tests cannot be run against a shard cluster because mongos does not
-support the necessary fail point.
+Integration tests are expressed in YAML and can be run against a replica set or
+sharded cluster as denoted by the top-level ``runOn`` field. Tests that rely on
+the ``onPrimaryTransactionalWrite`` fail point cannot be run against a sharded
+cluster because the fail point is not supported by mongos.
 
 The tests exercise the following scenarios:
 
