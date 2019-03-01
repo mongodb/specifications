@@ -181,10 +181,10 @@ For each test file:
   - Create a local MongoClient (``localMongoClient``) and connect to the server.
     This client will be used for executing the test case.
 
-      - If ``clientOptions`` is present, those options should be used to create
-        the client. Drivers MAY merge these options atop existing defaults (e.g.
-        reduced ``serverSelectionTimeoutMS`` value for faster test failures) at
-        their own discretion.
+    - If ``clientOptions`` is present, those options should be used to create
+      the client. Drivers MAY merge these options atop existing defaults (e.g.
+      reduced ``serverSelectionTimeoutMS`` value for faster test failures) at
+      their own discretion.
 
   - Activate command monitoring for ``localMongoClient`` and begin capturing
     events. Note that some events may need to be filtered out if the driver
