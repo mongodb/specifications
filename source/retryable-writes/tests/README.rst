@@ -136,17 +136,29 @@ Test Format
 
 Each YAML file has the following keys:
 
+- ``runOn`` (optional): An array of server version and/or topology requirements
+  for which the tests can be run. If the test environment satisfies one or more
+  of these requirements, the tests may be executed; otherwise, this file should
+  be skipped. If this field is omitted, the tests can be assumed to have no
+  particular requirements and should be executed. Each element will have some or
+  all of the following fields:
+
+  - ``minServerVersion`` (optional): The minimum server version (inclusive)
+    required to successfully run the tests. If this field is omitted, it should
+    be assumed that there is no lower bound on the required server version.
+
+  - ``maxServerVersion`` (optional): The maximum server version (inclusive)
+    against which the tests can be run successfully. If this field is omitted,
+    it should be assumed that there is no upper bound on the required server
+    version.
+
+  - ``topology`` (optional): An array of server topologies against which the
+    tests can be run successfully. Valid topologies are "single", "replicaset",
+    and "sharded". If this field is omitted, the default is all topologies (i.e.
+    ``["single", "replicaset", "sharded"]``).
+
 - ``data``: The data that should exist in the collection under test before each
   test run.
-
-- ``minServerVersion`` (optional): The minimum server version (inclusive)
-  required to successfully run the test. If this field is not present, it should
-  be assumed that there is no lower bound on the required server version.
-
-- ``maxServerVersion`` (optional): The maximum server version (exclusive)
-  against which this test can run successfully. If this field is not present,
-  it should be assumed that there is no upper bound on the required server
-  version.
 
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:
@@ -155,9 +167,15 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Parameters to pass to MongoClient().
 
+  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
+    test should be initialized with multiple mongos seed addresses. If ``false``
+    or omitted, only a single mongos address should be specified. This field has
+    no effect for non-sharded topologies.
+
   - ``failPoint`` (optional): The ``configureFailPoint`` command document to run
     to configure a fail point on the primary server. Drivers must ensure that
-    ``configureFailPoint`` is the first field in the command.
+    ``configureFailPoint`` is the first field in the command. This option and
+    ``useMultipleMongoses: true`` are mutually exclusive.
 
   - ``operation``: Document describing the operation to be executed. The
     operation should be executed through a collection object derived from a
@@ -276,3 +294,13 @@ supported write operations:
   - ``insertMany()`` with ``ordered=false``
   - ``bulkWrite()`` with ``ordered=true`` (no ``UpdateMany`` or ``DeleteMany``)
   - ``bulkWrite()`` with ``ordered=false`` (no ``UpdateMany`` or ``DeleteMany``)
+
+Changelog
+=========
+
+:2019-03-01: Add top-level ``runOn`` field to denote server version and/or
+             topology requirements requirements for the test file. Removes the
+             ``minServerVersion`` and ``maxServerVersion`` top-level fields,
+             which are now expressed within ``runOn`` elements.
+
+             Add top-level ``useMultipleMongoses`` field.
