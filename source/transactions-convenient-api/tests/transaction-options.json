@@ -19,6 +19,7 @@
   "tests": [
     {
       "description": "withTransaction and no transaction options set",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",
@@ -98,6 +99,7 @@
     },
     {
       "description": "withTransaction inherits transaction options from client",
+      "useMultipleMongoses": true,
       "clientOptions": {
         "readConcernLevel": "local",
         "w": 1
@@ -185,6 +187,7 @@
     },
     {
       "description": "withTransaction inherits transaction options from defaultTransactionOptions",
+      "useMultipleMongoses": true,
       "sessionOptions": {
         "session0": {
           "defaultTransactionOptions": {
@@ -280,6 +283,7 @@
     },
     {
       "description": "withTransaction explicit transaction options",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",
@@ -371,6 +375,7 @@
     },
     {
       "description": "withTransaction explicit transaction options override defaultTransactionOptions",
+      "useMultipleMongoses": true,
       "sessionOptions": {
         "session0": {
           "defaultTransactionOptions": {
@@ -474,6 +479,7 @@
     },
     {
       "description": "withTransaction explicit transaction options override client options",
+      "useMultipleMongoses": true,
       "clientOptions": {
         "readConcernLevel": "majority",
         "w": "majority"

@@ -19,6 +19,7 @@
   "tests": [
     {
       "description": "withTransaction commits after callback returns",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",
@@ -137,6 +138,7 @@
     },
     {
       "description": "withTransaction commits after callback returns (second transaction)",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",

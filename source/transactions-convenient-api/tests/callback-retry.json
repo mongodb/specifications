@@ -191,6 +191,7 @@
     },
     {
       "description": "callback is not retried after non-transient error (DuplicateKeyError)",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",

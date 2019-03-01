@@ -15,6 +15,7 @@ tests:
   -
     # Session state will be ABORTED when callback returns to withTransaction
     description: withTransaction succeeds if callback aborts
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction
@@ -69,6 +70,7 @@ tests:
   -
     # Session state will be ABORTED when callback returns to withTransaction
     description: withTransaction succeeds if callback aborts with no ops
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction
@@ -86,6 +88,7 @@ tests:
   -
     # Session state will be NO_TXN when callback returns to withTransaction
     description: withTransaction still succeeds if callback aborts and runs extra op
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction

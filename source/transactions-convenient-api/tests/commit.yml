@@ -14,6 +14,7 @@ data: []
 tests:
   -
     description: withTransaction commits after callback returns
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction
@@ -94,6 +95,7 @@ tests:
     # withTransaction only examines the session's state, it should commit that
     # second transaction after the callback returns.
     description: withTransaction commits after callback returns (second transaction)
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction

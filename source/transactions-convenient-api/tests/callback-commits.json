@@ -19,6 +19,7 @@
   "tests": [
     {
       "description": "withTransaction succeeds if callback commits",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",
@@ -141,6 +142,7 @@
     },
     {
       "description": "withTransaction still succeeds if callback commits and runs extra op",
+      "useMultipleMongoses": true,
       "operations": [
         {
           "name": "withTransaction",

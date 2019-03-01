@@ -64,7 +64,13 @@ Each YAML file has the following keys:
     string value will specify a reason.
 
   - ``failPoint`` (optional): The ``configureFailPoint`` command document to run
-    to configure a fail point on the primary server.
+    to configure a fail point on the primary server. This option and
+    ``useMultipleMongoses: true`` are mutually exclusive.
+
+  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
+    test should be initialized with multiple mongos seed addresses. If ``false``
+    or omitted, only a single mongos address should be specified. This field has
+    no effect for non-sharded topologies.
 
   - ``clientOptions`` (optional): Names and values of options to pass to
     ``MongoClient()``.
@@ -210,3 +216,5 @@ Changelog
              topology requirements requirements for the test file. Removes the
              ``minServerVersion`` top-level field, which is now expressed within
              ``runOn`` elements.
+
+             Add top-level ``useMultipleMongoses`` field.

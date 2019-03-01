@@ -15,6 +15,7 @@ tests:
   -
     # Session state will be COMMITTED when callback returns to withTransaction
     description: withTransaction succeeds if callback commits
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction
@@ -95,6 +96,7 @@ tests:
   -
     # Session state will be NO_TXN when callback returns to withTransaction
     description: withTransaction still succeeds if callback commits and runs extra op
+    useMultipleMongoses: true
     operations:
       -
         name: withTransaction
