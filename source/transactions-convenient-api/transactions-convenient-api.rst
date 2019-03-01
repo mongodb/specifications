@@ -152,6 +152,10 @@ callback).
 
 .. _CRUD: ../crud/crud.rst#deviations
 
+~~~~~~~~~~~~~~~~~~~
+Sequence of Actions
+~~~~~~~~~~~~~~~~~~~
+
 This method should perform the following sequence of actions:
 
 1. Record the current monotonic time, which will be used to enforce the
@@ -161,8 +165,6 @@ This method should perform the following sequence of actions:
    specified in the call to ``withTransaction``, those MUST be used for
    ``startTransaction``. Note that ``ClientSession.defaultTransactionOptions``
    will be used in the absence of any explicit TransactionOptions.
-
-.. _startTransaction: ../transactions/transactions.rst#starttransaction
 
 3. If ``startTransaction`` reported an error, propagate that error to the caller
    of ``withTransaction`` and return immediately.
@@ -176,14 +178,10 @@ This method should perform the following sequence of actions:
    ClientSession and whether the callback reported an error (e.g. thrown
    exception, error output parameter).
 
-.. _state: ../transactions/transactions.rst#clientsession-changes
-
 6. If the callback reported an error:
 
    a. If the ClientSession is in the "starting transaction" or "transaction in
       progress" state, invoke `abortTransaction`_ on the session.
-
-.. _abortTransaction: ../transactions/transactions.rst#aborttransaction
 
    b. If the callback's error includes a "TransientTransactionError" label and
       the elapsed time of ``withTransaction`` is less than 120 seconds, jump
@@ -203,9 +201,7 @@ This method should perform the following sequence of actions:
 
 8. Invoke `commitTransaction`_ on the session.
 
-.. _commitTransaction: ../transactions/transactions.rst#committransaction
-
-9.  If ``commitTransaction`` reported an error:
+9. If ``commitTransaction`` reported an error:
 
    a. If the ``commitTransaction`` error includes a
       "UnknownTransactionCommitResult" label and the elapsed time of
@@ -221,7 +217,16 @@ This method should perform the following sequence of actions:
    c. Otherwise, propagate the ``commitTransaction`` error to the caller of
       ``withTransaction`` and return immediately.
 
-10. The transaction was committed successfully. Return immediately. 
+10. The transaction was committed successfully. Return immediately.
+
+.. _startTransaction: ../transactions/transactions.rst#starttransaction
+.. _state: ../transactions/transactions.rst#clientsession-changes
+.. _abortTransaction: ../transactions/transactions.rst#aborttransaction
+.. _commitTransaction: ../transactions/transactions.rst#committransaction
+
+~~~~~~~~~~~
+Pseudo-code
+~~~~~~~~~~~
 
 This method can be expressed by the following pseudo-code:
 
