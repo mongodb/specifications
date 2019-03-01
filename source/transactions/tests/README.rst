@@ -110,9 +110,10 @@ Each YAML file has the following keys:
   - ``skipReason``: Optional, string describing why this test should be
     skipped.
 
-  - ``useMultipleMongoses``: Optional, boolean. If true and this test is
-    running against a sharded cluster, intialize the MongoClient for this
-    test with multiple mongos seed addresses.
+  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
+    test should be initialized with multiple mongos seed addresses. If ``false``
+    or omitted, only a single mongos address should be specified. This field has
+    no effect for non-sharded topologies.
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
