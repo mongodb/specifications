@@ -24,6 +24,9 @@ the cluster.
 Server Fail Point
 =================
 
+onPrimaryTransactionalWrite
+---------------------------
+
 Some tests depend on a server fail point, ``onPrimaryTransactionalWrite``, which
 allows us to force a network error before the server would return a write result
 to the client. The fail point also allows control whether the server will
@@ -64,15 +67,25 @@ may be combined if desired:
   If set, the specified exception code will be thrown and the write will not be
   committed. If unset, the write will be allowed to commit.
 
-Disabling Fail Point after Test Execution
------------------------------------------
+failCommand
+-----------
 
-After each test that configures a fail point, drivers should disable the
-``onPrimaryTransactionalWrite`` fail point to avoid spurious failures in
-subsequent tests. The fail point may be disabled like so::
+Some tests depend on a server fail point, ``failCommand``, which allows the
+client to force the server to return an error. Unlike
+``onPrimaryTransactionalWrite``, ``failCommand`` does not allow the client to
+control whether the server will commit the operation. See:
+`failCommand <../../transactions/tests#failcommand>`_ in the Transactions spec
+test suite for more information.
+
+Disabling Fail Points after Test Execution
+------------------------------------------
+
+After each test that configures a fail point, drivers should disable the fail
+point to avoid spurious failures in subsequent tests. The fail point may be
+disabled like so::
 
     db.runCommand({
-        configureFailPoint: "onPrimaryTransactionalWrite",
+        configureFailPoint: <fail point name>,
         mode: "off"
     });
 

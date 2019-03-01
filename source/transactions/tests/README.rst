@@ -20,6 +20,9 @@ in this file. Those tests will need to be manually implemented by each driver.
 Server Fail Point
 =================
 
+failCommand
+-----------
+
 Some tests depend on a server fail point, expressed in the ``failPoint`` field.
 For example the ``failCommand`` fail point allows the client to force the
 server to return an error. Keep in mind that the fail point only triggers for
