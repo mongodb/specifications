@@ -574,10 +574,6 @@ In the near future, this opcode is expected to be extended and include support f
 
 * Message checksum (crc32c)
 * Output document sequences
-* Similarly, certain commands will reply to messages using this technique when
-  possible to avoid the overhead of BSON Arrays. Drivers will be required to
-  allow all command replies to use this technique.  Drivers will be required to
-  handle ``Payload Type 1``.
 * ``moreToCome`` can also be used for other commands, such as ``killCursors`` to
   restore ``OP_KILL_CURSORS`` behaviour as currently any errors/replies are ignored.
 
