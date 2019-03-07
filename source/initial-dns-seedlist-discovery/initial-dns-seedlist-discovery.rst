@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2018-02-08
-:Version: 1.3.1
+:Last Modified: 2019-03-07
+:Version: 1.3.2
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -149,6 +149,16 @@ through a Connection String. For example, if a driver that does not support
 the ``authSource`` option finds ``authSource=db`` in a TXT record, it MUST handle
 the unknown option according to the rules in the Connection String spec.
 
+CNAME not supported
+-------------------
+
+The use of DNS CNAME records is not supported.  Clients MUST NOT check for a
+CNAME record on ``{hostname}.{domainname}``.  A system's DNS resolver could
+transparently handle CNAME, but because of how clients validate records
+returned from SRV queries, use of CNAME could break validation.  Seedlist
+discovery therefore does not recommend or support the use of CNAME records in
+concert with SRV or TXT records.
+
 Example
 =======
 
@@ -263,6 +273,9 @@ SRV records.
 
 ChangeLog
 =========
+
+2019-03-07 - 1.3.2
+    Clarify that CNAME is not supported
 
 2018-02-08 — 1.3.1
     Clarify that ``{options}}`` in the Specification_ section includes all the
