@@ -19,10 +19,6 @@ Tests will require a MongoClient created with options defined in the tests.
 Integration tests will require a running MongoDB cluster with server versions
 4.0 or later.
 
-Tests will require a MongoClient created with options defined in the
-tests. Integration tests will require a running MongoDB cluster with server
-versions 4.0 or later.
-
 N.B. The spec specifies 3.6 as the minimum server version: however,
 ``failCommand`` is not supported on 3.6, so for now, testing requires MongoDB
 4.0. Once `DRIVERS-560`_ is resolved, we will attempt to adapt its live failure
