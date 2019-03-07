@@ -80,7 +80,7 @@ Each YAML file has the following keys:
     
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
-  - ``failPoint``: Optional, a server failpoint to enable, expressed as the
+  - ``failPoint``: Optional, a server fail point to enable, expressed as the
     configureFailPoint command to run on the admin database.
 
   - ``operations``: An array of documents describing an operation to be
