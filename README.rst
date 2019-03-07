@@ -14,9 +14,13 @@ following principles:
 
 
 Be Idiomatic
-~~~~~~~~
+~~~~~~~~~~~~
 
-Each Driver attempts to provide the easiest way to work with MongoDB in a given language ecosystem.   Specification details should allow drivers to be as idiomatic as possible when implementing the specification.  Likewise, drivers should strive to be as idiomatic as possible while meeting the specification and staying true to the original intent.
+Each Driver attempts to provide the easiest way to work with MongoDB in a 
+given language ecosystem. Specification details should allow drivers to be
+as idiomatic as possible when implementing the specification. Likewise, 
+drivers should strive to be as idiomatic as possible while meeting the 
+specification and staying true to the original intent.
 
 No Knobs
 ~~~~~~~~
