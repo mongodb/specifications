@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2018-04-25
+:Last Modified: 2019-03-05
 
 .. contents::
 
@@ -440,8 +440,11 @@ Consider the following pseudo-code:
   }
 
 When retrying a write command, drivers MUST resend the command with the same
-transaction ID. Drivers MAY resend the original wire protocol message (see:
+transaction ID. Drivers MUST NOT resend the original wire protocol message if
+doing so would violate rules for `gossipping the cluster time`_ (see:
 `Can drivers resend the same wire protocol message on retry attempts?`_).
+
+.. _gossipping the cluster time: ../sessions/driver-sessions.rst#gossipping-the-cluster-time
 
 In the case of a multi-statement write operation split across multiple write
 commands, a failed retry attempt will also interrupt execution of any additional
@@ -706,11 +709,12 @@ Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------
 
 Since retry attempts entail sending the same command and transaction ID to the
-server, drivers may opt to resend the same wire protocol message in order to
-avoid constructing a new message and computing its checksum. The server will not
-complain if it receives two messages with the same ``requestId``, as the field
-is only used for logging and populating the ``responseTo`` field in its replies
-to the client. That said, this approach may have implications for
+server, drivers might consider resending the same wire protocol message in order
+to avoid constructing a new message and computing its checksum. The server will
+not complain if it receives two messages with the same ``requestId``, as the
+field is only used for logging and populating the ``responseTo`` field in its
+replies to the client. That said, re-using a wire protocol message might violate
+rules for `gossipping the cluster time`_ and might also have implications for
 `Command Monitoring`_, since the original write command and its retry attempt
 may report the same ``requestId``.
 
@@ -726,6 +730,9 @@ of the bulk API in reducing the number of command round-trips to the server.
 
 Changes
 =======
+
+2019-03-05: Prohibit resending wire protocol messages if doing so would violate
+rules for gossipping the cluster time.
 
 2018-06-07: WriteConcernFailed is not a retryable error code.
 
