@@ -1514,7 +1514,11 @@ servers. For a "node is recovering" error, single-threaded clients MUST NOT
 mark the topology as "stale". If a node is recovering for some time, an
 immediate scan may not gain useful information.
 
-The client SHOULD clear its connection pool for the server.
+If the client is connected to server version 4.2 or higher,
+the client SHOULD keep any connections it has to the server open,
+and SHOULD NOT clear its connection pool for the server.
+If the client is connected to server version 4.0 or lower, the client
+SHOULD clear its connection pool to the server.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
