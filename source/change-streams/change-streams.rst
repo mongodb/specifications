@@ -287,6 +287,7 @@ Driver API
      * a change stream query.
      *
      * This is the same field described in FindOptions in the CRUD spec.
+     *
      * @see https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read
      * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
      * @note this option is not set on the `aggregate` command nor `$changeStream` pipeline stage
@@ -319,6 +320,7 @@ Driver API
      * The change stream will only provide changes that occurred at or after the
      * specified timestamp. Any command run against the server will return
      * an operation time that can be used here.
+     *
      * @since 4.0
      * @see https://docs.mongodb.com/manual/reference/method/db.runCommand/
      * @note this is an option of the `$changeStream` pipeline stage.
@@ -335,6 +337,7 @@ Driver API
      *
      * @since 4.2
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
+     * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
   }
