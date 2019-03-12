@@ -16,7 +16,7 @@ Strive to be idiomatic, but favor consistency
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers attempt to provide the easiest way to work with MongoDB in a given 
-language ecosystem while specifications attempt to provide a consistent 
+language ecosystem, while specifications attempt to provide a consistent 
 behavior and experience across all languages. Drivers should strive to be as 
 idiomatic as possible while meeting the specification and staying true to the 
 original intent.
