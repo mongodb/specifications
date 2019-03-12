@@ -502,12 +502,12 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
   - The driver MUST NOT set ``startAtOperationTime``.
 - Else if the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
 
-  - The driver MUST not set ``resumeAfter``.
+  - The driver MUST NOT set ``resumeAfter``.
   - The driver MUST NOT set ``startAfter``.
   - The driver MUST set ``startAtOperationTime`` to the value of the originally used ``startAtOperationTime`` or the one saved from the original aggregation.
 
 - Else:
-  - The driver MUST not set ``resumeAfter``, ``startAfter``, or ``startAtOperationTime``.
+  - The driver MUST NOT set ``resumeAfter``, ``startAfter``, or ``startAtOperationTime``.
   - The driver MUST use the original aggregation command to resume.
 
 When ``resumeAfter`` is specified the ``ChangeStream`` will return notifications starting with the oplog entry immediately *after* the provided token.
@@ -568,7 +568,7 @@ A possible interface for this callback MAY look like:
     public onResumeTokenChanged(ResumeTokenCallback:(Document resumeToken) => void);
   }
 
-This MUST not be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
+This MUST NOT be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
 
 Not Blocking on Iteration
 ~~~~~~~~~~~~~~~~~~~~~~~~~
