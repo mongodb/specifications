@@ -58,7 +58,12 @@ when another server E is the existing primary.
    command, providing the modified configuration.
 5. Directly connect to the server N and execute `replSetFreeze
    <https://docs.mongodb.com/manual/reference/command/replSetFreeze/>`_
-   admin command as follows: ``{replSetFreeze: 0}``.
+   admin command as follows: ``{replSetFreeze: 0}``. If this command
+   fails with operation failure code 95 ("cannot freeze node when primary or
+   running for election. state: Primary"), perform server selection to
+   discover the current primary. If the current primary is server N, stop
+   as the procedure is complete. Otherwise propagate the operation failure
+   error(*).
 6. Connect to the server E and execute the `replSetStepDown
    <https://docs.mongodb.com/manual/reference/command/replSetStepDown/>`_
    admin command as follows:
@@ -70,6 +75,11 @@ when another server E is the existing primary.
 9. Perform server selection to obtain the current primary.
 10. If the current primary is not N, go to step 7 and step up the server N
     again.
+
+(*) The cluster may have held an election after the replica set was reconfigured
+in step 4, making the server N the current primary. If this happens,
+``replSetFreeze`` command will fail, but the overall goal of having the
+server N as the primary has been achieved.
 
 As the above procedure contains a potentially infinite loop, the driver MAY
 impose a time limit and fail if the server N has not become a primary in the
