@@ -8,8 +8,6 @@ minServerVersion: '3.99'
 tests:
     -
         description: "BulkWrite succeeds after PrimarySteppedDown"
-        clientOptions:
-            retryWrites: true
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -49,8 +47,6 @@ tests:
                     - { _id: 3, x: 33 }
     -
         description: "BulkWrite succeeds after WriteConcernError ShutdownInProgress"
-        clientOptions:
-            retryWrites: true
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 1 }

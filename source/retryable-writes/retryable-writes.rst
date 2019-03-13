@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-03-05
+:Last Modified: 2019-03-06
 
 .. contents::
 
@@ -141,7 +141,7 @@ retryWrites
 
 This boolean option determines whether retryable behavior will be applied to all
 supported write operations executed within the MongoClient. This option MUST
-default to false, which implies no change in write behavior.
+default to true.
 
 This option MUST NOT be configurable at the level of a database object,
 collection object, or at the level of an individual write operation.
@@ -691,20 +691,6 @@ That said, drivers will need to clearly document exactly which operations
 support retryable behavior. In the case ``bulkWrite()``, which may or may not
 support retryability, drivers should discuss how elegibility is determined.
 
-Why does the retryWrites MongoClient option default to false?
--------------------------------------------------------------
-
-Retryable write operations are a first step towards the server supporting
-transactions and multi-document writes. MongoDB 3.6 lacks support for retrying
-some `CRUD`_ operations, such as ``updateMany()`` and ``deleteMany()``.
-Additionally, write commands other than ``insert``, ``update``, ``delete``, and
-``findAndModify`` are not supported at all.
-
-Enabling retryability for write operations does incur some server-side overhead.
-As such, it would be prudent not to enable this feature for all applications by
-default and instead have applications opt in to the behavior. We may change this
-default in the future if testing reveals the overhead to be sufficiently small.
-
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------
 
@@ -728,8 +714,19 @@ and maximize retryability for other, supported write operations. The reasoning
 behind this prohibition is that such behavior would conflict with a primary goal
 of the bulk API in reducing the number of command round-trips to the server.
 
+retryWrites originally defaulted to false, why does it now default to true?
+---------------------------------------------------------------------------
+
+Since the initial release of retryable writes in MongoDB 3.6 testing showed
+that the overhead for supported operations was sufficiently small that there
+was no risk in changing the default. Additionally, the fact that some
+operations continue to be unsupported for retryable writes (updateMany and
+deleteMany) does not seem to pose a problem in practice.
+
 Changes
 =======
+
+2019-03-06: retryWrites now defaults to true.
 
 2019-03-05: Prohibit resending wire protocol messages if doing so would violate
 rules for gossipping the cluster time.

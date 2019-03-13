@@ -7,8 +7,6 @@ minServerVersion: '3.6'
 tests:
     -
         description: "UpdateMany ignores retryWrites"
-        clientOptions:
-            retryWrites: true
         operation:
             name: "updateMany"
             arguments:
