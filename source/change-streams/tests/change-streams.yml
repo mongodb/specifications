@@ -456,6 +456,8 @@ tests:
             coll: *collection_name
         -
           operationType: invalidate
+  # Test that resume logic works correctly even after consecutive retryable failures of a getMore command,
+  # with no intervening events.  This is ensured by setting the batch size of the change stream to 1,
   -
     description: Test consecutive resume
     minServerVersion: "3.6.0"
