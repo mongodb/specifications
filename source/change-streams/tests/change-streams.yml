@@ -460,7 +460,7 @@ tests:
   # with no intervening events.  This is ensured by setting the batch size of the change stream to 1,
   -
     description: Test consecutive resume
-    minServerVersion: "3.6.0"
+    minServerVersion: "4.1.7"
     target: collection
     topology:
       - replicaset
