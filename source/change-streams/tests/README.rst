@@ -155,3 +155,8 @@ The following tests have not yet been automated, but MUST still be tested
 #. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
 #. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a changestream.
 #. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
+#. ``ChangeStream`` will resume multiple times even when no intervening change stream documents are received by the cursor. Consider this scenario:
+
+   #. Stop the primary and wait for election -> cursor resumes correctly
+   #. Stop the new primary and wait for election -> cursor resumes correctly
+

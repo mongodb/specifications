@@ -517,6 +517,8 @@ When ``resumeAfter`` is specified the ``ChangeStream`` will return notifications
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
+A driver MUST ensure that consecutive resume attempts can succeed, even in the absence of any changes received by the cursor between resume attempts.
+
 A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and MUST NOT attempt to kill the cursor on any other server. Any exceptions or errors that occur during the process of killing the cursor should be suppressed, including both errors returned by the ``killCursor`` command and exceptions thrown by opening, writing to, or reading from the socket.
 
 
