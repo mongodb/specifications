@@ -43,9 +43,6 @@ Each YAML file has the following keys:
     Valid topologies are ``single``, ``replicaset``, and ``sharded``.
   - ``changeStreamPipeline``: An array of additional aggregation pipeline stages to add to the change stream
   - ``changeStreamOptions``: Additional options to add to the changeStream
-
-    - ``batchSize``: The batch size to apply to the change stream
-
   - ``operations``: Array of documents, each describing an operation. Each document has the following fields:
 
     - ``database``: Database against which to run the operation

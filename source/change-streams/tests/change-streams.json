@@ -678,7 +678,7 @@
     },
     {
       "description": "Test consecutive resume",
-      "minServerVersion": "3.6.0",
+      "minServerVersion": "4.1.7",
       "target": "collection",
       "topology": [
         "replicaset"
