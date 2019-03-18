@@ -21,7 +21,7 @@ Server Fail Point
 =================
 
 failCommand
------------
+```````````
 
 Some tests depend on a server fail point, expressed in the ``failPoint`` field.
 For example the ``failCommand`` fail point allows the client to force the
