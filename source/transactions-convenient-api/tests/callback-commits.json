@@ -143,6 +143,9 @@
     {
       "description": "withTransaction still succeeds if callback commits and runs extra op",
       "useMultipleMongoses": true,
+      "clientOptions": {
+        "retryWrites": false
+      },
       "operations": [
         {
           "name": "withTransaction",

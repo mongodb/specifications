@@ -126,6 +126,9 @@
     {
       "description": "withTransaction still succeeds if callback aborts and runs extra op",
       "useMultipleMongoses": true,
+      "clientOptions": {
+        "retryWrites": false
+      },
       "operations": [
         {
           "name": "withTransaction",
