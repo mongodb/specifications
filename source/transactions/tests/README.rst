@@ -20,6 +20,9 @@ in this file. Those tests will need to be manually implemented by each driver.
 Server Fail Point
 =================
 
+failCommand
+-----------
+
 Some tests depend on a server fail point, expressed in the ``failPoint`` field.
 For example the ``failCommand`` fail point allows the client to force the
 server to return an error. Keep in mind that the fail point only triggers for
@@ -149,7 +152,7 @@ Each YAML file has the following keys:
       - ``data``: The data that should exist in the collection after the
         operations have run.
 
-Use as integration tests
+Use as Integration Tests
 ========================
 
 Run a MongoDB replica set with a primary, a secondary, and an arbiter,
@@ -475,8 +478,8 @@ manually.
 
 .. _SERVER-39349: https://jira.mongodb.org/browse/SERVER-39349
 
-**Changelog**
-=============
+Changelog
+=========
 
 :2019-02-28: ``useMultipleMongoses: true`` and non-targeted fail points are
              mutually exclusive.
