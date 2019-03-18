@@ -217,4 +217,4 @@ Changelog
              ``minServerVersion`` top-level field, which is now expressed within
              ``runOn`` elements.
 
-             Add top-level ``useMultipleMongoses`` field.
+             Add test-level ``useMultipleMongoses`` field.
