@@ -57,6 +57,27 @@ Test Format
 
 Each YAML file has the following keys:
 
+- ``runOn`` (optional): An array of server version and/or topology requirements
+  for which the tests can be run. If the test environment satisfies one or more
+  of these requirements, the tests may be executed; otherwise, this file should
+  be skipped. If this field is omitted, the tests can be assumed to have no
+  particular requirements and should be executed. Each element will have some or
+  all of the following fields:
+
+  - ``minServerVersion`` (optional): The minimum server version (inclusive)
+    required to successfully run the tests. If this field is omitted, it should
+    be assumed that there is no lower bound on the required server version.
+
+  - ``maxServerVersion`` (optional): The maximum server version (inclusive)
+    against which the tests can be run successfully. If this field is omitted,
+    it should be assumed that there is no upper bound on the required server
+    version.
+
+  - ``topology`` (optional): An array of server topologies against which the
+    tests can be run successfully. Valid topologies are "single", "replicaset",
+    and "sharded". If this field is omitted, the default is all topologies (i.e.
+    ``["single", "replicaset", "sharded"]``).
+
 - ``database_name`` and ``collection_name``: Optional. The database and
   collection to use for testing.
   
@@ -64,12 +85,6 @@ Each YAML file has the following keys:
 
 - ``data``: The data that should exist in the collection(s) under test before
   each test run.
-
-- ``minServerVersion`` (optional): The minimum server version (inclusive).
-
-- ``topology``: Optional. An array of server topologies against which to run the
-  test. Valid topologies are ``single``, ``replicaset`` and ``sharded``. The default
-  is ``[single, replicaset, sharded]``.
     
 - ``tests``: An array of tests that are to be run independently of each other.
   Each test will have some or all of the following fields:
@@ -77,6 +92,11 @@ Each YAML file has the following keys:
   - ``description``: The name of the test.
     
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
+
+  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
+    test should be initialized with multiple mongos seed addresses. If ``false``
+    or omitted, only a single mongos address should be specified. This field has
+    no effect for non-sharded topologies.
     
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
@@ -135,3 +155,13 @@ Optional Enumeration Commands
 
 A driver only needs to test the optional enumeration commands it has chosen to
 implement (e.g. ``Database.listCollectionNames()``).
+
+Changelog
+=========
+
+:2019-03-19: Add top-level ``runOn`` field to denote server version and/or
+             topology requirements requirements for the test file. Removes the
+             ``minServerVersion`` and ``topology`` top-level fields, which are
+             now expressed within ``runOn`` elements.
+
+             Add test-level ``useMultipleMongoses`` field.

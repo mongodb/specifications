@@ -1,8 +1,12 @@
 {
+  "runOn": [
+    {
+      "minServerVersion": "4.0"
+    }
+  ],
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [],
-  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "ListCollections succeeds on first attempt",

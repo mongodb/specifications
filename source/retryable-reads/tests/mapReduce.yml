@@ -1,3 +1,6 @@
+runOn:
+    - { minServerVersion: "4.0" }
+
 database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
@@ -5,8 +8,6 @@ data:
     - {_id: 1, x: 0}
     - {_id: 2, x: 1}
     - {_id: 3, x: 2}
-
-minServerVersion: '4.0'
 
 tests:
     -

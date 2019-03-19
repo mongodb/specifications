@@ -1,4 +1,9 @@
 {
+  "runOn": [
+    {
+      "minServerVersion": "4.0"
+    }
+  ],
   "database_name": "retryable-reads-tests",
   "bucket_name": "fs",
   "data": {
@@ -34,7 +39,6 @@
       }
     ]
   },
-  "minServerVersion": "4.0",
   "tests": [
     {
       "description": "Download succeeds on first attempt",
