@@ -265,7 +265,7 @@ Getting Collection Names
 
 Drivers MAY implement a MongoClient method that returns an Iterable of strings,
 where each string corresponds to a collection name. This method SHOULD be named
-``listCollections``.
+``listCollectionNames``.
 
 MongoDB 4.0 introduced a ``nameOnly`` boolean option to the ``listCollections``
 database command, which limits the command result to only include collection
@@ -332,7 +332,8 @@ Returning a List of Collection Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method that returns a collection object for each
-returned collection, if the driver has such a concept. 
+returned collection, if the driver has such a concept. This method MAY be named
+``listMongoCollections``.
 
 Example return (in PHP, but abbreviated)::
 
@@ -381,15 +382,17 @@ For each of the configurations:
 Tests
 -----
 
-- Run the driver's method that returns a list of collection names, and:
+- Run the driver's method that returns a list of collection names (e.g.
+  ``listCollectionNames()``):
 
   - verify that *all* collection names are represented in the result
   - verify that there are no duplicate collection names
   - there are no returned collections that do not exist
   - there are no returned collections containing an '$'
 
-- Run the driver's method that returns a list of collection names, pass a
-  filter of ``{ 'options.capped': true }``, and:
+- Run the driver's method that returns a list of collection names (e.g.
+  ``listCollectionNames()``), pass a filter of ``{ 'options.capped': true }``,
+  and:
 
   - verify that *only* names of capped collections are represented in the result
   - verify that there are no duplicate collection names
@@ -414,6 +417,11 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.5.1 Changes
+    - The method that returns a list of collection names should be named
+      ``listCollectionNames``. The method that returns a list of collection
+      objects may be named ``listMongoCollections``.
+
 Version 0.5 Changes
     - Clarify that ``nameOnly`` must not be used with filters other than ``name``.
 
