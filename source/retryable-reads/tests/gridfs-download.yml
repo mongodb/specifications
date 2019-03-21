@@ -1,3 +1,6 @@
+runOn:
+    - { minServerVersion: "4.0" }
+
 database_name: &database_name "retryable-reads-tests"
 bucket_name: "fs"
 
@@ -12,8 +15,6 @@ data:
             metadata: {}
     fs.chunks:
         - { _id: { $oid: "000000000000000000000002" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
-
-minServerVersion: '4.0'
 
 tests:
     -

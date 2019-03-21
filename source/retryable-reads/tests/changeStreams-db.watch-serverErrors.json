@@ -1,4 +1,13 @@
 {
+  "runOn": [
+    {
+      "minServerVersion": "4.0",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ]
+    }
+  ],
   "database_name": "retryable-reads-tests",
   "collection_name": "coll",
   "data": [
@@ -14,11 +23,6 @@
       "_id": 3,
       "x": 33
     }
-  ],
-  "minServerVersion": "4.0",
-  "topology": [
-    "replicaset",
-    "sharded"
   ],
   "tests": [
     {
