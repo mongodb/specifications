@@ -3,7 +3,12 @@
     {
       "minServerVersion": "4.0",
       "topology": [
-        "replicaset",
+        "replicaset"
+      ]
+    },
+    {
+      "minServerVersion": "4.1.7",
+      "topology": [
         "sharded"
       ]
     }
