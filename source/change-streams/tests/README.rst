@@ -158,4 +158,46 @@ The following tests have not yet been automated, but MUST still be tested
 #. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
 #. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a changestream.
 #. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
-
+#. - For a ``ChangeStream`` under these conditions:
+      - Running against a server ``>=4.0.7``.
+      - The batch is empty or has been iterated to the last document.
+   - Expected result: 
+       - ``getResumeToken`` must return the ``postBatchResumeToken`` from the current command response.
+#. - For a ``ChangeStream`` under these conditions:
+      - Running against a server ``<4.0.7``.
+      - The batch is empty or has been iterated to the last document.
+   - Expected result: 
+      - ``getResumeToken`` must return the ``_id`` of the last document returned if one exists.
+      - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
+      - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
+      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
+#. - For a ``ChangeStream`` under these conditions:
+      - The batch is not empty.
+      - The batch has been iterated up to but not including the last element.
+   - Expected result:
+      - ``getResumeToken`` must return the ``_id`` of the previous document returned.
+#. - For a ``ChangeStream`` under these conditions:
+      - The batch is not empty.
+      - The batch hasn’t been iterated at all.
+      - Only the initial ``aggregate`` command has been executed.
+   - Expected result:
+      - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
+      - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
+      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
+#. - For a ``ChangeStream`` under these conditions:
+      - Running against a server ``>=4.0.7``.
+      - The batch is not empty.
+      - The batch hasn’t been iterated at all.
+      - The stream has iterated beyond a previous batch and a ``getMore`` command has just been executed.
+   - Expected result:
+      - ``getResumeToken`` must return the ``postBatchResumeToken`` from the previous command response.
+#. - For a ``ChangeStream`` under these conditions:
+      - Running against a server ``<4.0.7``.
+      - The batch is not empty.
+      - The batch hasn’t been iterated at all.
+      - The stream has iterated beyond a previous batch and a ``getMore`` command has just been executed.
+   - Expected result:
+      - ``getResumeToken`` must return the ``_id`` of the previous document returned if one exists.
+      - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
+      - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
+      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
