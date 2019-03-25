@@ -2,7 +2,105 @@
 Connections Survive Primary Step Down Tests
 ===========================================
 
+These tests can be used to verify a driver's compliance with server discovery
+and monitoring requirements with respect to handling "not master" and
+"server shutting down" error responses from the server.
+
 These tests apply only to replica set topologies.
+
+Tests
+-----
+
+The driver should implement the following tests:
+
+getMore Iteration
+`````````````````
+
+This test requires server version 4.2 or higher, and makes use of events
+defined in the `CMAP specification
+<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
+
+Perform the following operations:
+
+- Insert 5 documents into a collection.
+- Clear the connection pool to the current primary (see CMAP spec for
+  the definition of connection pool clear operation).
+- Start a find operation on the collection with a batch size of 2, and
+  retrieve the first batch of results.
+- Verify that a ConnectionCreated CMAP event has been published.
+- Send a `replSetStepDown` command to the current primary and verify that
+  the command succeeded.
+- Retrieve the next batch of results from the cursor obtained in the find
+  operation, and verify that this operation succeeded.
+- Verify that no new ConnectionCreated CMAP events have been published.
+
+Not Master - Keep Connection Pool
+`````````````````````````````````
+
+This test requires server version 4.2 or higher.
+
+Perform the following operations:
+
+- Perform server selection for the primary server to obtain a server object
+  with an initialized connection pool.
+- Step down the primary, OR mock an operation returning NotMaster operation
+  failure error code.
+- Verify that:
+  - Connection pool generation (per CMAP spec) has not changed
+  - PoolCleared CMAP event has not been published
+
+Not Master - Reset Connection Pool
+``````````````````````````````````
+
+This test requires server version 4.0 or lower.
+
+Perform the following operations:
+
+- Perform server selection for the primary server to obtain a server object
+  with an initialized connection pool.
+- Step down the primary, OR mock an operation returning NotMaster operation
+  failure error code.
+- Verify that:
+  - Connection pool generation (per CMAP spec) has been incremented by 1
+  - PoolCleared CMAP event has not been published
+
+Shutdown - Reset Connection Pool
+````````````````````````````````
+
+This test should be run on all supported server versions.
+
+Perform the following operations:
+
+- Perform server selection for the primary server to obtain a server object
+  with an initialized connection pool.
+- Mock an operation returning ShutdownInProgress (91) operation
+  failure error code.
+- Verify that:
+  - Connection pool generation (per CMAP spec) has been incremented by 1
+  - PoolCleared CMAP event has not been published
+
+
+Server Step Down Procedure
+--------------------------
+
+In principle, the current primary may be stepped down by running the following
+admin command on it: `{replSetStepDown: null}`. This will cause the current
+primary to step down and an election to be held to elect a new primary.
+A driver MAY use this simple procedure to step down the current primary.
+
+Note that MongoDB server 4.0 and lower will close all connections on step down,
+including the one which sent the `{replSetStepDown: 1}` command. Therefore
+on these server versions the step down command will always fail, and the driver
+should expect such failure.
+
+On MongoDB server 4.2 and higher the step down command will not close active
+connections, and the driver MUST verify that it succeeds.
+
+Although this simple procedure works in principle, it may cause extended
+cluster unavailability when used multiple times in succession (see
+`SERVER-39846 <https://jira.mongodb.org/browse/SERVER-39846>`_).
+To perform multiple step downs in quick succession, or have predictable
+performance characteristics of the step downs, the guidance below is provided.
 
 Cluster Configuration
 ---------------------
@@ -97,116 +195,3 @@ following procedure:
   current primary.
 - Follow the above server election procedure to elect the chosen server as
   the new primary.
-
-Tests
------
-
-The driver should implement the following tests:
-
-getMore Iteration
-`````````````````
-
-This test requires server version 4.2 or higher, and makes use of events
-defined in the `CMAP specification
-<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
-
-Perform the following operations:
-
-- Insert 5 documents into a collection.
-- Clear the connection pool to the current primary (see CMAP spec for
-  the definition of connection pool clear operation).
-- Start a find operation on the collection with a batch size of 2, and
-  retrieve the first batch of results.
-- Verify that a ConnectionCreated CMAP event has been published.
-- Send a `replSetStepDown` command to the current primary and verify that
-  the command succeeded.
-- Retrieve the next batch of results from the cursor obtained in the find
-  operation, and verify that this operation succeeded.
-- Verify that no new ConnectionCreated CMAP events have been published.
-
-Acknowledged Write
-``````````````````
-
-This test requires server version 4.2 or higher.
-
-Perform the following operations:
-
-- Obtain a connection to the current primary.
-- Step down the primary, and verify that another server has been elected as
-  a primary.
-- Dispatch an acknowledged insert operation over the connection obtained in
-  the first step.
-- Verify that the result of the insert operation is a NotMaster error.
-- Verify that the connection used for the insert operation remains open.
-
-Unacknowledged Write
-````````````````````
-
-This test requires server version 4.2 or higher.
-
-Perform the following operations:
-
-- Obtain a connection to the current primary.
-- Step down the primary, and verify that another server has been elected as
-  a primary.
-- Dispatch an unacknowledged insert operation over the connection obtained
-  in the first step.
-- Dispatch another unacknowledged insert operation over the connection obtained
-  in the first step.
-- If the second unacknowledged insert succeeded, dispatch another unacknowledged
-  insert over the same connection[*].
-- Verify that the last unacknowledged insert produced a network error due
-  to the connection being closed by the server.
-
-[*] Depending on buffering performed by the network stack, the first write
-operation on a connection which was closed on the remote end may succeed.
-In the acknowledged write scenario, the error is detected upon (trying to)
-read the response. In the unacknowledged write scenario, an additional write
-may be needed to detect that the connection is closed.
-
-Primary-Secondary-Primary Cycle
-```````````````````````````````
-
-This test requires server version 4.2 or higher.
-
-Perform the following operations:
-
-- Obtain a connection to the current primary.
-- Step down the primary, and verify that another server has been elected as
-  a primary.
-- Dispatch an acknowledged insert operation over the connection obtained in
-  the first step.
-- Verify that the result of the insert operation is a NotMaster error.
-- Verify that the connection used for the insert operation remains open.
-- Step up the server which was originally the primary.
-- Dispatch another acknowledged insert operation over the connection obtained
-  in the first step.
-- Verify that the insert succeeded and the data inserted is in the collection.
-
-Not Master - Keep Connection Pool
-`````````````````````````````````
-
-This test requires server version 4.2 or higher.
-
-Perform the following operations:
-
-- Perform server selection for the primary server to obtain a server object
-  with an initialized connection pool.
-- Step down the primary, OR mock an operation returning NotMaster operation
-  failure error code.
-- Verify connection pool generation has not changed, AND/OR that PoolCleared
-  CMAP event has not been published.
-
-Not Master - Reset Connection Pool
-``````````````````````````````````
-
-This test requires server version 4.0 or lower.
-
-Perform the following operations:
-
-- Perform server selection for the primary server to obtain a server object
-  with an initialized connection pool.
-- Step down the primary, OR mock an operation returning NotMaster operation
-  failure error code.
-- Verify connection pool generation has been incremented by 1, AND/OR that
-  PoolCleared CMAP event has been published.
