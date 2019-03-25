@@ -169,7 +169,8 @@ when another server E is the existing primary.
 7. Connect directly to the server N and execute the following admin command:
    ``{replSetStepUp: 1}``. If this command fails with an operation failure
    error with code 125 ("Election failed"), repeat this step 7.
-8. Set the status of all servers in the topology to Unknown.
+8. Trigger a rescan of the topology, such as by setting the status of all
+   servers in the topology to Unknown.
 9. Perform server selection to obtain the current primary.
 10. If the current primary is not N, go to step 7 and step up the server N
     again.
