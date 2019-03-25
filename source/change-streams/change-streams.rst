@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: January 3, 2019
+:Last Modified: April 3, 2019
 :Version: 1.6.0
 
 .. contents::
@@ -169,7 +169,7 @@ The responses to a change stream aggregate or getMore have the following structu
          id: Int64,
          firstBatch: Array<ChangeStreamDocument>,
          /**
-          * postBatchResumeToken is returned in MongoDB 4.2 and later.
+          * postBatchResumeToken is returned in MongoDB 4.0.7 and later.
           */
          postBatchResumeToken: Document
       },
@@ -187,7 +187,7 @@ The responses to a change stream aggregate or getMore have the following structu
          id: Int64,
          nextBatch: Array<ChangeStreamDocument>
          /**
-          * postBatchResumeToken is returned in MongoDB 4.2 and later.
+          * postBatchResumeToken is returned in MongoDB 4.0.7 and later.
           */
          postBatchResumeToken: Document
       },
@@ -211,7 +211,7 @@ Driver API
 
     /**
      * The most recent postBatchResumeToken returned in an aggregate or
-     * getMore response. For pre-4.2 versions of MongoDB, this remains unset.
+     * getMore response. For pre-4.0.7 versions of MongoDB, this remains unset.
      */
     private postBatchResumeToken: Document;
 
@@ -335,7 +335,7 @@ Driver API
      *
      * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
-     * @since 4.2
+     * @since 4.0.7
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
      * @note this is an option of the `$changeStream` pipeline stage.
      */
@@ -525,9 +525,9 @@ A driver SHOULD attempt to kill the cursor on the server on which the cursor is 
 Exposing All Resume Tokens
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:since: 4.2
+:since: 4.0.7
 
-Users can retrieve the ``documentResumeToken`` by inspecting the _id on each ``ChangeDocument``. But since MongoDB 4.2, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
+Users can retrieve the ``documentResumeToken`` by inspecting the _id on each ``ChangeDocument``. But since MongoDB 4.0.7, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
 
 Drivers MUST expose a mechanism to retrieve the same resume token that would be used to automatically resume. It MUST be possible to use this mechanism after iterating every document. It MUST be possible for users to use this mechanism periodically even when no documents are getting returned (i.e. ``getMore`` has returned empty batches). Drivers have two options to implement this.
 
@@ -774,4 +774,7 @@ Changelog
 | 2018-11-06 | Added handling of ``postBatchResumeToken``.                |
 +------------+------------------------------------------------------------+
 | 2019-01-10 | Clarified error handling for killing the cursor.           |
++------------+------------------------------------------------------------+
+| 2019-04-03 | Updated the lowest server version that supports            |
+|            | ``postBatchResumeToken``.                                  |
 +------------+------------------------------------------------------------+
