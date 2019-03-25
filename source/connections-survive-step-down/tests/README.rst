@@ -211,4 +211,4 @@ Perform the following operations:
 - Step down the primary, OR mock an operation returning NotMaster operation
   failure error code.
 - Verify connection pool generation has been incremented by 1, AND/OR that
-  PoolCleared CMAP eent has been published.
+  PoolCleared CMAP event has been published.
