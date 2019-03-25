@@ -106,25 +106,23 @@ The driver should implement the following tests:
 getMore Iteration
 `````````````````
 
-This test requires server version 4.2 or higher.
+This test requires server version 4.2 or higher, and makes use of events
+defined in the `CMAP specification
+<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_.
 
 Perform the following operations:
 
 - Insert 5 documents into a collection.
+- Clear the connection pool to the current primary (see CMAP spec for
+  the definition of connection pool clear operation).
 - Start a find operation on the collection with a batch size of 2, and
   retrieve the first batch of results.
-- Step down the primary, and verify that another server has been elected as
-  a primary.
-- Using the same connection that was used for the initial find, continue
-  iterating the collection by issuing a getMore operation.
-- Verify that the next batch of results is returned successfully.
-
-Drivers that do not ordinarily allow applications to execute operations
-on specific connections may need to perform the getMore iteration test on
-a lower level than the public API exposed to applications.
-In this case the driver SHOULD verify that both initial find and the
-subsequent getMore are dispatched on the same connection, for example by
-comparing socket handles used for the two operations.
+- Verify that a ConnectionCreated CMAP event has been published.
+- Send a `replSetStepDown` command to the current primary and verify that
+  the command succeeded.
+- Retrieve the next batch of results from the cursor obtained in the find
+  operation, and verify that this operation succeeded.
+- Verify that no new ConnectionCreated CMAP events have been published.
 
 Acknowledged Write
 ``````````````````
