@@ -44,8 +44,7 @@ Perform the following operations:
 
 - Perform server selection for the primary server to obtain a server object
   with an initialized connection pool.
-- Step down the primary, OR mock an operation returning NotMaster operation
-  failure error code.
+- Mock an operation returning NotMaster operation failure error code.
 - Verify that:
   - Connection pool generation (per CMAP spec) has not changed
   - PoolCleared CMAP event has not been published
@@ -59,8 +58,7 @@ Perform the following operations:
 
 - Perform server selection for the primary server to obtain a server object
   with an initialized connection pool.
-- Step down the primary, OR mock an operation returning NotMaster operation
-  failure error code.
+- Mock an operation returning NotMaster operation failure error code.
 - Verify that:
   - Connection pool generation (per CMAP spec) has been incremented by 1
   - PoolCleared CMAP event has been published
