@@ -1514,8 +1514,8 @@ servers. For a "node is recovering" error, single-threaded clients MUST NOT
 mark the topology as "stale". If a node is recovering for some time, an
 immediate scan may not gain useful information.
 
-The following subset of "not master" errors is defined to be "server shutting
-down" errors:
+The following subset of "node is recovering" errors is defined to be "server
+shutting down" errors:
 
 .. list-table::
   :header-rows: 1
@@ -1528,13 +1528,14 @@ down" errors:
     - 91
 
 If the client is connected to server version 4.2 or higher, and the client
-receives a "not master" error which is not a "server shutting down" error,
-the client MUST keep any connections it has to the server open,
-and MUST NOT clear its connection pool for the server.
+receives a "not master" or "node is recovering" error which is not a
+"server shutting down" error, the client MUST keep any connections it has to
+the server open, and MUST NOT clear its connection pool for the server.
 If the client is connected to server version 4.2 or higher and receives a
 "server shutting down" error, or
 if the client is connected to server version 4.0 or lower and receives a
-"not master" error, the client MUST clear its connection pool to the server.
+"not master" or "node is recovering" error, the client MUST clear its
+connection pool to the server.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
@@ -2322,8 +2323,8 @@ When a server shuts down, it will return one of the "server shutting down"
 errors for each attempted operation and eventually will close all connections.
 Keeping a connection to a server which is shutting down open would only
 produce errors on this connection - such a connection will never be usable for
-any operations. In contrast, when a server returns "not master" error the
-connection may be usable for other operations (such as secondary reads).
+any operations. In contrast, when a server 4.2 or later returns "not master"
+error the connection may be usable for other operations (such as secondary reads).
 
 What's the point of periodic monitoring?
 ''''''''''''''''''''''''''''''''''''''''

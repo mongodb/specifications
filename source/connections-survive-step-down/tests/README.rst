@@ -62,7 +62,7 @@ Perform the following operations:
   failure error code.
 - Verify that:
   - Connection pool generation (per CMAP spec) has been incremented by 1
-  - PoolCleared CMAP event has not been published
+  - PoolCleared CMAP event has been published
 
 Shutdown - Reset Connection Pool
 ````````````````````````````````
@@ -77,7 +77,7 @@ Perform the following operations:
   failure error code.
 - Verify that:
   - Connection pool generation (per CMAP spec) has been incremented by 1
-  - PoolCleared CMAP event has not been published
+  - PoolCleared CMAP event has been published
 
 
 Server Step Down Procedure
