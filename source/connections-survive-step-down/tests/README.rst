@@ -24,7 +24,8 @@ Perform the following operations:
 
 - Insert 5 documents into a collection.
 - Clear the connection pool to the current primary (see CMAP spec for
-  the definition of connection pool clear operation).
+  the definition of connection pool clear operation, and
+  `Why clear the pool in getMore test?`_ for rationale).
 - Start a find operation on the collection with a batch size of 2, and
   retrieve the first batch of results.
 - Verify that a ConnectionCreated CMAP event has been published.
@@ -196,3 +197,15 @@ following procedure:
   current primary.
 - Follow the above server election procedure to elect the chosen server as
   the new primary.
+
+
+Questions and Answers
+---------------------
+
+Why clear the pool in getMore test?
+```````````````````````````````````
+
+Since the following assertion is that a CMAP event is NOT sent, it makes
+sense to assert that one is sent by the driver is some other circumstance,
+otherwise a driver which doesn't implement CMAP events at all will pass the
+test. To guarantee that the event is sent, pool is cleared first.
