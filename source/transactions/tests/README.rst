@@ -207,8 +207,8 @@ Then for each element in ``tests``:
    create it explicitly.)
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
-#. When testing against a sharded cluster run a ``distinct`` commmand on the
-   newly created collection on all mongoses. For an explaination see,
+#. When testing against a sharded cluster run a ``distinct`` command on the
+   newly created collection on all mongoses. For an explanation see,
    `Why do tests that run distinct sometimes fail with StaleDbVersion?`_
 #. If ``failPoint`` is specified, its value is a configureFailPoint command.
    Run the command on the admin database to enable the fail point.
@@ -502,7 +502,7 @@ manually.
 Why do tests that run distinct sometimes fail with StaleDbVersion?
 ``````````````````````````````````````````````````````````````````
 
-When a shard recieves its first command that contains a dbVersion, the shard
+When a shard receives its first command that contains a dbVersion, the shard
 returns a StaleDbVersion error and the Mongos retries the operation. In a
 sharded transaction, Mongos does not retry these operations and instead returns
 the error to the client. For example::
