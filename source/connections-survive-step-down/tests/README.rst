@@ -211,3 +211,12 @@ Since the following assertion is that a CMAP event is NOT sent, it makes
 sense to assert that one is sent by the driver is some other circumstance,
 otherwise a driver which doesn't implement CMAP events at all will pass the
 test. To guarantee that the event is sent, pool is cleared first.
+
+Alternative method of asserting connection behavior
+```````````````````````````````````````````````````
+
+Drivers which do not implement connection pools and CMAP specification may,
+instead of using CMAP events to assert that no new connections have been
+established, check `connections.totalCreated
+<https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated>`_
+value in serverStatus.
