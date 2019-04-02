@@ -110,12 +110,15 @@ configured in a specific way. This configuration should be done prior to
 running any of the below tests. When the tests are finished, the default
 cluster configuration should be restored.
 
-Adjust replica set configuration to have the following settings:
+Adjust replica set configuration using `replSetReconfig
+<https://docs.mongodb.com/manual/reference/command/replSetReconfig/>`_
+to have the following settings:
 
 - ``electionTimeoutMillis``: 1000
 
 Connect to each of the servers in the deployment directly and set the
-following server parameters:
+following server parameters using `setParameter
+<https://docs.mongodb.com/manual/reference/command/setParameter/#dbcmd.setParameter>`_:
 
 - ``enableElectionHandoff``: false
 
