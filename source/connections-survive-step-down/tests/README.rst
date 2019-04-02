@@ -84,7 +84,7 @@ Server Step Down Procedure
 --------------------------
 
 In principle, the current primary may be stepped down by running the following
-admin command on it: `{replSetStepDown: null}`. This will cause the current
+admin command on it: ``{replSetStepDown: null}``. This will cause the current
 primary to step down and an election to be held to elect a new primary.
 A driver MAY use this simple procedure to step down the current primary.
 
