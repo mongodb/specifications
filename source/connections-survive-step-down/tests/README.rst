@@ -29,7 +29,7 @@ Perform the following operations:
 - Start a find operation on the collection with a batch size of 2, and
   retrieve the first batch of results.
 - Verify that a ConnectionCreated CMAP event has been published.
-- Send a `replSetStepDown` command to the current primary and verify that
+- Send a ``replSetStepDown`` command to the current primary and verify that
   the command succeeded.
 - Retrieve the next batch of results from the cursor obtained in the find
   operation, and verify that this operation succeeded.
