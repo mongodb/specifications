@@ -46,6 +46,7 @@ Perform the following operations:
   with an initialized connection pool.
 - Mock an operation returning NotMaster operation failure error code.
 - Verify that:
+
   - Connection pool generation (per CMAP spec) has not changed
   - PoolCleared CMAP event has not been published
 
