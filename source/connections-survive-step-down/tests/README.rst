@@ -219,6 +219,6 @@ Alternative method of asserting connection behavior
 
 Drivers which do not implement connection pools and CMAP specification may,
 instead of using CMAP events to assert that no new connections have been
-established, check `connections.totalCreated
+established, check the `connections.totalCreated
 <https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated>`_
 value in serverStatus.
