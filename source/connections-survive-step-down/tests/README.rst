@@ -89,7 +89,7 @@ primary to step down and an election to be held to elect a new primary.
 A driver MAY use this simple procedure to step down the current primary.
 
 Note that MongoDB server 4.0 and lower will close all connections on step down,
-including the one which sent the `{replSetStepDown: 1}` command. Therefore
+including the one which sent the ``replSetStepDown`` command. Therefore
 on these server versions the step down command will always fail, and the driver
 should expect such failure.
 
