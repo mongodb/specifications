@@ -123,8 +123,8 @@ following server parameters using `setParameter
 - ``enableElectionHandoff``: false
 
 Note: for the elections to work correctly, the values specified for
-replSetStepDown, secondaryCatchUpPeriodSecs and electionTimeoutMillis must
-satisfy the following relationship:
+replSetStepDown, secondaryCatchUpPeriodSecs (as provided in replSetStepDown
+command) and electionTimeoutMillis must satisfy the following relationship:
 
 ``replSetStepDown`` >= ``secondaryCatchUpPeriodSecs`` + ``electionTimeoutMillis``/1000.0
 
