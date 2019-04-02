@@ -1532,10 +1532,9 @@ receives a "not master" or "node is recovering" error which is not a
 "server shutting down" error, the client MUST keep any connections it has to
 the server open, and MUST NOT clear its connection pool for the server.
 If the client is connected to server version 4.2 or higher and receives a
-"server shutting down" error, or
-if the client is connected to server version 4.0 or lower and receives a
-"not master" or "node is recovering" error, the client MUST clear its
-connection pool to the server.
+"server shutting down" error, or if the client is connected to server version
+4.0 or lower and receives a "not master" or "node is recovering" error,
+the client MUST clear its connection pool to the server.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
