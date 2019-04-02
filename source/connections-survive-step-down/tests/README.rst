@@ -30,7 +30,7 @@ Perform the following operations:
   retrieve the first batch of results.
 - Verify that a ConnectionCreated CMAP event has been published.
 - Send a ``replSetStepDown`` command to the current primary and verify that
-  the command succeeded.
+  the command succeeded, or follow `Server Step Down Procedure`_ below.
 - Retrieve the next batch of results from the cursor obtained in the find
   operation, and verify that this operation succeeded.
 - Verify that no new ConnectionCreated CMAP events have been published.
