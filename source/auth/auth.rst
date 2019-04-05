@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.7.1
+:Spec Version: 1.8.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2018-04-17
+:Last Modified: 2019-04-26
 
 .. contents::
 
@@ -87,6 +87,14 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
+Ambiguity between authentication source and URI database
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The presence of a database name in the URI connection string MUST NOT be
+interpreted as a user configuring authentication credentials.  The URI database
+name is only used as a default source for some mechanisms when authentication
+has been configured and a source is required but has not been specified.  See
+individual mechanism definitions for details.
 
 Errors
 ~~~~~~
@@ -877,6 +885,13 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.8.0 Changes
+    * Test format changed to improve specificity of behavior assertions.
+
+Version 1.7.2 Changes
+    * Clarify that database name in URI is not treated as a user configuring
+      auth credentials.
 
 Version 1.7.1 Changes
     * Unknown users don't cause ismaster errors. This was changed before

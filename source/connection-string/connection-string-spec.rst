@@ -11,8 +11,8 @@ Connection String Spec
 :Advisors: \A. Jesse Jiryu Davis, Jeremy Mikola, Anna Herlihy
 :Status: Approved
 :Type: Standards
-:Last Modified: March 4, 2019
-:Version: 1.4.1
+:Last Modified: 2019-04-26
+:Version: 1.4.2
 
 .. contents::
 
@@ -130,6 +130,8 @@ Auth Database (optional)
 The database to authenticate against. If provided it is everything after the Host Information (ending with "/") and up to the first question mark ("?") or end of string. The auth database MUST be URL decoded by the parser.
 
 The following characters MUST NOT appear in the database name, once it has been decoded: slash ("/"), backslash ("\\"), space (" "), double-quote ("""), or dollar sign ("$"). The MongoDB Manual `says that <https://docs.mongodb.com/manual/reference/limits/#Restrictions-on-Field-Names>`_ period (".") is also prohibited, but drivers MAY allow periods in order to express a namespace (database and collection name, perhaps containing multiple periods) in this part of the URL.
+
+The presence of the auth database component without other credential data such as Userinfo or authentication parameters in connection options MUST NOT be interpreted as a request for authentication.
 
 -----------------------------
 Connection Options (optional)
@@ -387,3 +389,4 @@ Changes
 - 2019-02-04: In Repeated Keys section, clarified that the URI options spec may
   override the repeated key behavior described here for certain options.
 - 2019-03-04: Require drivers to document option precedence rules
+- 2019-04-26: Database name in URI alone does not trigger authentication

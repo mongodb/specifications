@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.3
+:Spec Version: 1.3.1
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 07-December-2018
+:Last Modified: 2019-04-26
 
 
 **Abstract**
@@ -88,8 +88,9 @@ pertaining to URI options apply here.
    * - authMechanism
      - any string; valid values are defined in the `auth spec 
        <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
-     - defined in `auth spec 
-       <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
+     - None; default values for authentication exist for constructing authentication credentials per the
+       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       but there is no default for the URI option itself.
      - no
      - The authentication mechanism method to use for connection to the
        server
@@ -102,9 +103,9 @@ pertaining to URI options apply here.
 
    * - authSource
      - any string
-     - If the auth mechanism is PLAIN, GSSAPI, or MONGODB-X509, the default value is "$external"
-
-       Otherwise, the value should fall back on the database specified in the URI, or "admin" if it is not specified
+     - None; default values for authentication exist for constructing authentication credentials per the
+       `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
+       but there is no default for the URI option itself.
      - no
      - The database that connections should authenticate against
 
@@ -387,5 +388,6 @@ Changes
 
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
+- 2019-04-26 authSource and authMechanism have no default value
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
