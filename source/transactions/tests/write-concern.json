@@ -64,13 +64,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -145,13 +145,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -231,13 +231,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -309,13 +309,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -424,13 +424,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -519,13 +519,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -621,13 +621,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "insert",
@@ -708,13 +708,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "delete",
@@ -788,13 +788,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "delete",
@@ -882,13 +882,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "update",
@@ -981,13 +981,13 @@
                 }
               ],
               "ordered": true,
-              "readConcern": null,
               "lsid": "session0",
               "txnNumber": {
                 "$numberLong": "1"
               },
               "startTransaction": true,
               "autocommit": false,
+              "readConcern": null,
               "writeConcern": null
             },
             "command_name": "update",

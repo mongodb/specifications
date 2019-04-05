@@ -43,13 +43,14 @@ tests:
             documents:
               - _id: 1
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: &transactionCommandArgs
+              lsid: session0
+              txnNumber:
+                $numberLong: "1"
+              startTransaction: true
+              autocommit: false
+              readConcern:
+              writeConcern:
           command_name: insert
           database_name: *database_name
       - command_started_event:
@@ -94,13 +95,7 @@ tests:
             documents:
               - _id: 1
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: insert
           database_name: *database_name
       - &commitWithDefaultWCEvent
@@ -149,13 +144,7 @@ tests:
             documents:
               - _id: 1
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: insert
           database_name: *database_name
       - command_started_event:
@@ -198,13 +187,7 @@ tests:
             documents:
               - _id: 1
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: insert
           database_name: *database_name
       - command_started_event:
@@ -254,9 +237,10 @@ tests:
       - *startTransaction
       - name: insertOne
         object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: &collection_w0
+          object: collection
+          collectionOptions:
+            writeConcern: { w: 0 }
         arguments:
           session: session0
           document:
@@ -280,10 +264,7 @@ tests:
     operations:
       - *startTransaction
       - name: insertMany
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           documents:
@@ -301,13 +282,7 @@ tests:
               - _id: 1
               - _id: 2
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: insert
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -324,10 +299,7 @@ tests:
     operations:
       - *startTransaction
       - name: bulkWrite
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           requests:
@@ -360,10 +332,7 @@ tests:
     operations:
       - *startTransaction
       - name: deleteOne
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter:
@@ -380,13 +349,7 @@ tests:
               - q: {_id: 0}
                 limit: 1
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: delete
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -400,10 +363,7 @@ tests:
     operations:
       - *startTransaction
       - name: deleteMany
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter:
@@ -420,13 +380,7 @@ tests:
               - q: {_id: 0}
                 limit: 0
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: delete
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -440,10 +394,7 @@ tests:
     operations:
       - *startTransaction
       - name: updateOne
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter: {_id: 0}
@@ -466,13 +417,7 @@ tests:
                 multi: false
                 upsert: true
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: update
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -487,10 +432,7 @@ tests:
     operations:
       - *startTransaction
       - name: updateMany
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter: {_id: 0}
@@ -513,13 +455,7 @@ tests:
                 multi: true
                 upsert: true
             ordered: true
-            readConcern:
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: update
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -534,10 +470,7 @@ tests:
     operations:
       - *startTransaction
       - name: findOneAndDelete
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter: {_id: 0}
@@ -550,13 +483,7 @@ tests:
             findAndModify: *collection_name
             query: {_id: 0}
             remove: True
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            readConcern:
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: findAndModify
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -570,10 +497,7 @@ tests:
     operations:
       - *startTransaction
       - name: findOneAndReplace
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter: {_id: 0}
@@ -589,13 +513,7 @@ tests:
             query: {_id: 0}
             update: {x: 1}
             new: false
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            readConcern:
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: findAndModify
           database_name: *database_name
       - *commitWithDefaultWCEvent
@@ -610,10 +528,7 @@ tests:
     operations:
       - *startTransaction
       - name: findOneAndUpdate
-        object: collection
-        collectionOptions:
-          writeConcern:
-            w: 0
+        <<: *collection_w0
         arguments:
           session: session0
           filter: {_id: 0}
@@ -630,13 +545,7 @@ tests:
             query: {_id: 0}
             update: {$inc: {x: 1}}
             new: false
-            lsid: session0
-            txnNumber:
-              $numberLong: "1"
-            startTransaction: true
-            autocommit: false
-            readConcern:
-            writeConcern:
+            <<: *transactionCommandArgs
           command_name: findAndModify
           database_name: *database_name
       - *commitWithDefaultWCEvent
