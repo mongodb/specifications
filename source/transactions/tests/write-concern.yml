@@ -236,7 +236,6 @@ tests:
     operations:
       - *startTransaction
       - name: insertOne
-        object: collection
         <<: &collection_w0
           object: collection
           collectionOptions:
