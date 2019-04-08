@@ -10,6 +10,25 @@ and monitoring requirements with respect to handling "not master" and
 
 These tests apply only to replica set topologies.
 
+Server Fail Point
+-----------------
+
+See: `Server Fail Point`_ in the Transactions spec test suite.
+
+.. _Server Fail Point: ../../transactions/tests#server-fail-point
+
+Disabling Fail Point after Test Execution
+`````````````````````````````````````````
+
+After each test that configures a fail point, drivers should disable the
+``failCommand`` fail point to avoid spurious failures in
+subsequent tests. The fail point may be disabled like so::
+
+    db.runCommand({
+        configureFailPoint: "failCommand",
+        mode: "off"
+    });
+
 Tests
 -----
 
