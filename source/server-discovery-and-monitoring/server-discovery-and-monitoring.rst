@@ -1514,7 +1514,7 @@ servers. For a "node is recovering" error, single-threaded clients MUST NOT
 mark the topology as "stale". If a node is recovering for some time, an
 immediate scan may not gain useful information.
 
-The following subset of "node is recovering" errors is defined to be "server
+The following subset of "node is recovering" errors is defined to be "node is
 shutting down" errors:
 
 .. list-table::
@@ -1529,16 +1529,16 @@ shutting down" errors:
 
 If the client is connected to server version 4.2 or higher, and the client
 receives a "not master" or "node is recovering" error which is not a
-"server shutting down" error, the client MUST keep any connections it has to
+"node is shutting down" error, the client MUST keep any connections it has to
 the server open, and MUST NOT clear its connection pool for the server.
 If the client is connected to server version 4.2 or higher and receives a
-"server shutting down" error, or if the client is connected to server version
+"node is shutting down" error, or if the client is connected to server version
 4.0 or lower and receives a "not master" or "node is recovering" error,
 the client MUST clear its connection pool to the server.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
-transient errors`_ and `Why close connections when server is shutting down?`_.)
+transient errors`_ and `Why close connections when a node is shutting down?`_.)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2315,10 +2315,10 @@ See `"not master" and "node is recovering"`_,
 and the test scenario called
 "parsing 'not master' and 'node is recovering' errors".
 
-Why close connections when server is shutting down?
+Why close connections when a node is shutting down?
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 
-When a server shuts down, it will return one of the "server shutting down"
+When a server shuts down, it will return one of the "node is shutting down"
 errors for each attempted operation and eventually will close all connections.
 Keeping a connection to a server which is shutting down open would only
 produce errors on this connection - such a connection will never be usable for

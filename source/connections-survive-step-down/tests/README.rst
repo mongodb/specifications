@@ -4,7 +4,7 @@ Connections Survive Primary Step Down Tests
 
 These tests can be used to verify a driver's compliance with server discovery
 and monitoring requirements with respect to handling "not master" and
-"server shutting down" error responses from the server.
+"node is shutting down" error responses from the server.
 
 .. contents::
 
