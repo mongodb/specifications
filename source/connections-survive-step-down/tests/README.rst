@@ -25,17 +25,15 @@ defined in the `CMAP specification
 Perform the following operations:
 
 - Insert 5 documents into a collection.
-- Clear the connection pool to the current primary (see CMAP spec for
-  the definition of connection pool clear operation, and
-  `Why clear the pool in getMore test?`_ for rationale).
 - Start a find operation on the collection with a batch size of 2, and
   retrieve the first batch of results.
-- Verify that a ConnectionCreated CMAP event has been published.
 - Send a ``replSetStepDown`` command to the current primary and verify that
   the command succeeded, or follow `Server Step Down Procedure`_ below.
 - Retrieve the next batch of results from the cursor obtained in the find
   operation, and verify that this operation succeeded.
-- Verify that no new ConnectionCreated CMAP events have been published.
+- If the driver implements CMP specification, verify that no new
+  ConnectionCreated CMAP events have been published. Otherwise verify that
+  `connections.totalCreated` serverStatus value has not changed.
 
 Not Master - Keep Connection Pool
 `````````````````````````````````
