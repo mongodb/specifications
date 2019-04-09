@@ -483,27 +483,8 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 
 - Perform server selection.
 - Connect to selected server.
-- If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty):
-
-  - The driver MUST set ``resumeAfter`` to the cached ``postBatchResumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
-  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
-- Else if the ``ChangeStream`` has a cached ``documentResumeToken``:
-
-  - The driver MUST set ``resumeAfter`` to the cached ``documentResumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
-  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
-- Else if the ``ChangeStream`` was created with ``startAfter``:
-
-  - The driver MUST set ``resumeAfter`` to the value of the originally used ``startAfter``.
-  - The driver MUST NOT set ``startAfter``. The driver MUST remove it from the original aggregation command.
-  - The driver MUST NOT set ``startAtOperationTime``.
-- Else if the ``ChangeStream`` was created with ``resumeAfter``:
-
-  - The driver MUST set ``resumeAfter`` to the value of the originally used ``resumeAfter``.
-  - The driver MUST NOT set ``startAfter``.
-  - The driver MUST NOT set ``startAtOperationTime``.
-- Else if the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
+- Call ``getResumeToken()`` to receive the resume token.
+- If the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
 
   - The driver MUST NOT set ``resumeAfter``.
   - The driver MUST NOT set ``startAfter``.
@@ -544,8 +525,34 @@ Option 1: ChangeStream::getResumeToken()
     public getResumeToken() Optional<Document>;
   }
 
-This method returns the cached ``documentResumeToken`` or ``postBatchResumeToken`` following rules from `Resume Process`_:
+This method returns the cached ``documentResumeToken`` or ``postBatchResumeToken`` following these rules:
 
+- If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty), return the cached ``postBatchResumeToken`` and:
+
+  - The driver MUST set ``resumeAfter`` to the cached ``postBatchResumeToken``.
+  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+- Else if the ``ChangeStream`` has a cached ``documentResumeToken``, return the cached ``documentResumeToken`` and:
+
+  - The driver MUST set ``resumeAfter`` to the cached ``documentResumeToken``.
+  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+- Else if the ``ChangeStream`` was created with ``startAfter``, return ``startAfter`` and:
+
+  - The driver MUST set ``resumeAfter`` to the value of the originally used ``startAfter``.
+  - The driver MUST NOT set ``startAfter``. The driver MUST remove it from the original aggregation command.
+  - The driver MUST NOT set ``startAtOperationTime``.
+- Else if the ``ChangeStream`` was created with ``resumeAfter``, return ``resumeAfter`` and:
+
+  - The driver MUST set ``resumeAfter`` to the value of the originally used ``resumeAfter``.
+  - The driver MUST NOT set ``startAfter``.
+  - The driver MUST NOT set ``startAtOperationTime``.
+
+- If the ``ChangeStream`` has returned no documents in a non-empty batch from the original aggregate:
+
+  - If the ``ChangeStream`` was created with ``startAfter``, this returns ``startAfter``.
+  - Else if the ``ChangeStream`` was created with ``resumeAfter``, this returns ``resumeAfter``.
+  - Else this returns an unset optional.
 - If the ``ChangeStream`` has no cached ``documentResumeToken`` or ``postBatchResumeToken`` this returns an unset optional.
 - If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty) this returns the ``postBatchResumeToken``.
 - Otherwise, this returns the cached ``documentResumeToken``.
