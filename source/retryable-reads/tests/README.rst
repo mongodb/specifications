@@ -150,6 +150,14 @@ the SDAM's ``minHeartbeatFrequencyMS`` from 500ms to 50ms, thus decreasing the
 waiting time after a "not master" error:
 
 .. _minHeartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms
+
+Unsupported commands
+--------------------
+
+Some drivers may not support some commands in the retryable reads tests, such
+as ``listCollectionObjects``, ``listIndexNames`` and ``listDatabaseObjects``.
+For tests that use these commands, drivers may skip these tests.
+
 Optional Enumeration Commands
 =============================
 
