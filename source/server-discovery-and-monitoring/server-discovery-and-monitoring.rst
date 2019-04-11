@@ -1232,8 +1232,11 @@ updateRSFromPrimary
   (The Monitor provides a "request refresh" feature for this purpose,
   see `multi-threaded or asynchronous monitoring`_.)
 
-  The client SHOULD clear its connection pool for the old primary, too:
+  If the old primary server version is 4.0 or earlier,
+  the client SHOULD clear its connection pool for the old primary, too:
   the connections are all bad because the old primary has closed its sockets.
+  If the old primary server version is 4.2 or newer, the client SHOULD NOT
+  clear its connection pool for the old primary.
 
   See `replica set monitoring with and without a primary`_.
 
@@ -1508,11 +1511,11 @@ a "not master" or "node is recovering" error means the server is available
 but the client is wrong about its type,
 thus an immediate re-check is likely to provide useful information.
 
-For single-threaded clients, in the case of a "not master" error, the client
-MUST mark the topology as "stale" so the next server selection scans all
-servers. For a "node is recovering" error, single-threaded clients MUST NOT
-mark the topology as "stale". If a node is recovering for some time, an
-immediate scan may not gain useful information.
+For single-threaded clients, in the case of a "not master" or "node is
+shutting down" error, the client MUST mark the topology as "stale" so the next
+server selection scans all servers. For a "node is recovering" error,
+single-threaded clients MUST NOT mark the topology as "stale". If a node is
+recovering for some time, an immediate scan may not gain useful information.
 
 The following subset of "node is recovering" errors is defined to be "node is
 shutting down" errors:
