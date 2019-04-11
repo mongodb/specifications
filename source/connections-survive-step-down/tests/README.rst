@@ -106,8 +106,8 @@ Perform the following operations on a client configured to NOT retry writes:
 Server Step Down Procedure
 --------------------------
 
-In principle, the current primary may be stepped down by running the following
-admin command on it: ``{replSetStepDown: null}``. This will cause the current
+The current primary may be stepped down by running the following admin command
+on it: ``{replSetStepDown: 1, force: true}``. This will cause the current
 primary to step down and an election to be held to elect a new primary.
 A driver MAY use this simple procedure to step down the current primary.
 
@@ -119,11 +119,11 @@ should expect such failure.
 On MongoDB server 4.2 and higher the step down command will not close active
 connections, and the driver MUST verify that it succeeds.
 
-Although this simple procedure works in principle, it may cause extended
-cluster unavailability when used multiple times in succession (see
-`SERVER-39846 <https://jira.mongodb.org/browse/SERVER-39846>`_).
-To perform multiple step downs in quick succession, or have predictable
-performance characteristics of the step downs, the guidance below is provided.
+Although the forced step down procedure works, it may take over 10 seconds for
+the cluster to elect a new primary. The below cluster configuration and
+step down/election procedure is provided for drivers wishing to not wait
+this long for a new primary to be elected. By following the below configuration
+and procedure, election times of less than 5 seconds can be achieved.
 
 Cluster Configuration
 ---------------------
