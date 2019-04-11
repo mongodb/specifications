@@ -227,14 +227,6 @@ following procedure:
 Questions and Answers
 ---------------------
 
-Why clear the pool in getMore test?
-```````````````````````````````````
-
-Since the following assertion is that a CMAP event is NOT sent, it makes
-sense to assert that one is sent by the driver is some other circumstance,
-otherwise a driver which doesn't implement CMAP events at all will pass the
-test. To guarantee that the event is sent, pool is cleared first.
-
 Alternative method of asserting connection behavior
 ```````````````````````````````````````````````````
 
