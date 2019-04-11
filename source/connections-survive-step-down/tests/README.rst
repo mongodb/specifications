@@ -43,7 +43,7 @@ defined in the `CMAP specification
 
 Perform the following operations:
 
-- Insert 5 documents into a collection.
+- Insert 5 documents into a collection with a majority write concern.
 - Start a find operation on the collection with a batch size of 2, and
   retrieve the first batch of results.
 - Send a ``replSetStepDown`` command to the current primary and verify that
