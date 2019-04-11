@@ -59,44 +59,48 @@ Not Master - Keep Connection Pool
 
 This test requires server version 4.2 or higher.
 
-Perform the following operations:
+Perform the following operations on a client configured to NOT retry writes:
 
-- Perform server selection for the primary server to obtain a server object
-  with an initialized connection pool.
-- Mock an operation returning NotMaster operation failure error code.
-- Verify that:
-
-  - Connection pool generation (per CMAP spec) has not changed
-  - PoolCleared CMAP event has not been published
+- Create the ``step-down`` collection by inserting a ``{test: 1}`` document
+  into it.
+- Set the following fail point: ``{configureFailPoint: "failCommand",
+  data: {failCommands: ["insert"], errorCode: 11600, mode: {times: 1}}``
+- Execute an insert into the ``step-down`` collection of a ``{test: 1}``
+  document.
+- Verify that the insert failed with an operation failure with 11600 code.
+- Verify that no PoolCleared CMAP events have been published.
 
 Not Master - Reset Connection Pool
 ``````````````````````````````````
 
 This test requires server version 4.0 or lower.
 
-Perform the following operations:
+Perform the following operations on a client configured to NOT retry writes:
 
-- Perform server selection for the primary server to obtain a server object
-  with an initialized connection pool.
-- Mock an operation returning NotMaster operation failure error code.
-- Verify that:
-  - Connection pool generation (per CMAP spec) has been incremented by 1
-  - PoolCleared CMAP event has been published
+- Create the ``step-down`` collection by inserting a ``{test: 1}`` document
+  into it.
+- Set the following fail point: ``{configureFailPoint: "failCommand",
+  data: {failCommands: ["insert"], errorCode: 11600, mode: {times: 1}}``
+- Execute an insert into the ``step-down`` collection of a ``{test: 1}``
+  document.
+- Verify that the insert failed with an operation failure with 11600 code.
+- Verify that a PoolCleared CMAP event has been published.
 
 Shutdown - Reset Connection Pool
 ````````````````````````````````
 
 This test should be run on all supported server versions.
 
-Perform the following operations:
+Perform the following operations on a client configured to NOT retry writes:
 
-- Perform server selection for the primary server to obtain a server object
-  with an initialized connection pool.
-- Mock an operation returning ShutdownInProgress (91) operation
-  failure error code.
-- Verify that:
-  - Connection pool generation (per CMAP spec) has been incremented by 1
-  - PoolCleared CMAP event has been published
+- Create the ``step-down`` collection by inserting a ``{test: 1}`` document
+  into it.
+- Set the following fail point: ``{configureFailPoint: "failCommand",
+  data: {failCommands: ["insert"], errorCode: 91, mode: {times: 1}}``
+- Execute an insert into the ``step-down`` collection of a ``{test: 1}``
+  document.
+- Verify that the insert failed with an operation failure with 91 code.
+- Verify that a PoolCleared CMAP event has been published.
 
 
 Server Step Down Procedure
