@@ -205,15 +205,9 @@ Driver API
 
   interface ChangeStream extends Iterable<Document> {
     /**
-     * The resume token (_id) of the document the iterator last returned
+     * The resume token to be used for resuming the iterator
      */
-    private documentResumeToken: Document;
-
-    /**
-     * The most recent postBatchResumeToken returned in an aggregate or
-     * getMore response. For pre-4.2 versions of MongoDB, this remains unset.
-     */
-    private postBatchResumeToken: Document;
+    private resumeToken: Document;
 
     /**
      * The pipeline of stages to append to an initial ``$changeStream`` stage
@@ -483,8 +477,11 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 
 - Perform server selection.
 - Connect to selected server.
-- Call ``getResumeToken()`` to receive the resume token.
-- If the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
+- If there is a cached ``resumeToken``:
+  - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
+  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+- If there is no cached ``resumeToken`` and the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
 
   - The driver MUST NOT set ``resumeAfter``.
   - The driver MUST NOT set ``startAfter``.
@@ -525,37 +522,6 @@ Option 1: ChangeStream::getResumeToken()
     public getResumeToken() Optional<Document>;
   }
 
-This method returns the cached ``documentResumeToken`` or ``postBatchResumeToken`` following these rules:
-
-- If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty), return the cached ``postBatchResumeToken`` and:
-
-  - The driver MUST set ``resumeAfter`` to the cached ``postBatchResumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
-  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
-- Else if the ``ChangeStream`` has a cached ``documentResumeToken``, return the cached ``documentResumeToken`` and:
-
-  - The driver MUST set ``resumeAfter`` to the cached ``documentResumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
-  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
-- Else if the ``ChangeStream`` was created with ``startAfter``, return ``startAfter`` and:
-
-  - The driver MUST set ``resumeAfter`` to the value of the originally used ``startAfter``.
-  - The driver MUST NOT set ``startAfter``. The driver MUST remove it from the original aggregation command.
-  - The driver MUST NOT set ``startAtOperationTime``.
-- Else if the ``ChangeStream`` was created with ``resumeAfter``, return ``resumeAfter`` and:
-
-  - The driver MUST set ``resumeAfter`` to the value of the originally used ``resumeAfter``.
-  - The driver MUST NOT set ``startAfter``.
-  - The driver MUST NOT set ``startAtOperationTime``.
-
-- If the ``ChangeStream`` has returned no documents in a non-empty batch from the original aggregate:
-
-  - If the ``ChangeStream`` was created with ``startAfter``, this returns ``startAfter``.
-  - Else if the ``ChangeStream`` was created with ``resumeAfter``, this returns ``resumeAfter``.
-  - Else this returns an unset optional.
-- If the ``ChangeStream`` has no cached ``documentResumeToken`` or ``postBatchResumeToken`` this returns an unset optional.
-- If the ``ChangeStream`` has a cached ``postBatchResumeToken`` and has returned all documents in the most recent batch (or the most recent batch was empty) this returns the ``postBatchResumeToken``.
-- Otherwise, this returns the cached ``documentResumeToken``.
 
 This MUST be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
 
@@ -581,6 +547,21 @@ A possible interface for this callback MAY look like:
   }
 
 This MUST NOT be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
+
+Updating the Cached Resume Token
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This method returns the cached ``resumeToken`` following these rules:
+
+- When the ``ChangeStream`` is started:
+  - If ``startAfter`` is set, return it.
+  - Else if ``resumeAfter`` is set, return it.
+  - Else, ``resumeToken`` remains unset.
+- When ``aggregate`` or ``getMore`` returns:
+  - If an empty batch was returned and a ``postBatchResumeToken`` was included, return it.
+- When returning a document to the user:
+  - If it's the last document in the batch and a ``postBatchResumeToken`` is included, return it.
+  - Else, return the ``_id`` of the document.
 
 Not Blocking on Iteration
 ~~~~~~~~~~~~~~~~~~~~~~~~~
