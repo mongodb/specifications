@@ -205,7 +205,7 @@ Driver API
 
   interface ChangeStream extends Iterable<Document> {
     /**
-     * The resume token to be used for resuming the iterator
+     * The cached resume token
      */
     private resumeToken: Document;
 
@@ -434,13 +434,13 @@ ChangeStream
 
 A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a method to close the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``.
 
-A change stream MUST track the last resume token returned by the iterator to the user, caching it locally for use in future attempts to resume.  A driver MUST raise an error on the first response received without a resume token (e.g. the user has removed it with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
+A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
-A change stream MUST track the latest ``postBatchResumeToken`` included in an aggregate or getMore response if available.
+A driver MUST raise an error on the first document received without a resume token (e.g. the user has removed ``_id`` with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error.  A change stream MUST NOT attempt to resume on any other type of error, with the exception of a “not master” server error.  If a driver receives a “not master” error (for instance, because the primary it was connected to is stepping down), it will treat the error as a resumable error and attempt to resume.
 
-In addition to tracking the most recently delivered resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
+In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
 
 Single Server Topologies
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -462,7 +462,7 @@ The ``ChangeStream`` MUST save the ``operationTime`` from the initial ``aggregat
 
 - None of ``startAtOperationTime``,  ``resumeAfter``, ``startAfter`` were specified in the ``ChangeStreamOptions``.
 - The max wire version is >= ``7``.
-- The initial ``aggregate`` response did not include a ``documentResumeToken`` (indicating no results).
+- The initial ``aggregate`` response had no results.
 - The initial ``aggregate`` response did not include a ``postBatchResumeToken``.
 
 resumeAfter
@@ -505,7 +505,7 @@ Exposing All Resume Tokens
 
 :since: 4.2
 
-Users can retrieve the ``documentResumeToken`` by inspecting the _id on each ``ChangeDocument``. But since MongoDB 4.2, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
+Users can inspect the _id on each ``ChangeDocument`` to use as a resume token. But since MongoDB 4.2, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
 
 Drivers MUST expose a mechanism to retrieve the same resume token that would be used to automatically resume. It MUST be possible to use this mechanism after iterating every document. It MUST be possible for users to use this mechanism periodically even when no documents are getting returned (i.e. ``getMore`` has returned empty batches). Drivers have two options to implement this.
 
@@ -551,17 +551,17 @@ This MUST NOT be implemented in synchronous drivers. This MAY be implemented in 
 Updating the Cached Resume Token
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This method returns the cached ``resumeToken`` following these rules:
+The following rules describe how to update the cached ``resumeToken``:
 
 - When the ``ChangeStream`` is started:
-  - If ``startAfter`` is set, return it.
-  - Else if ``resumeAfter`` is set, return it.
+  - If ``startAfter`` is set, cache it.
+  - Else if ``resumeAfter`` is set, cache it.
   - Else, ``resumeToken`` remains unset.
 - When ``aggregate`` or ``getMore`` returns:
-  - If an empty batch was returned and a ``postBatchResumeToken`` was included, return it.
+  - If an empty batch was returned and a ``postBatchResumeToken`` was included, cache it.
 - When returning a document to the user:
-  - If it's the last document in the batch and a ``postBatchResumeToken`` is included, return it.
-  - Else, return the ``_id`` of the document.
+  - If it's the last document in the batch and a ``postBatchResumeToken`` is included, cache it.
+  - Else, cache the ``_id`` of the document.
 
 Not Blocking on Iteration
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -698,7 +698,7 @@ Resume tokens refer to an oplog entry. The resume token from the ``_id`` of a do
 
 Attempting to resume with an old resume token may degrade server performance since the server needs to scan through more oplog entries. Worse, if the resume token is older than the last oplog entry stored on the server, then resuming is impossible.
 
-Imagine the change stream matches a very small percentage of events. On a ``getMore`` the server scans the oplog for the duration of ``maxAwaitTimeMS`` but finds no matching entries and returns an empty response (still containing a ``postBatchResumeToken``). There may be a long sequence of empty responses. Then due to a network error, the change stream tries resuming. If we tried resuming with the cached ``documentResumeToken`` this throws out the oplog scanning the server had done for the long sequence of getMores with empty responses. But resuming with the last ``postBatchResumeToken`` skips the unnecessary scanning of unmatched oplog entries.
+Imagine the change stream matches a very small percentage of events. On a ``getMore`` the server scans the oplog for the duration of ``maxAwaitTimeMS`` but finds no matching entries and returns an empty response (still containing a ``postBatchResumeToken``). There may be a long sequence of empty responses. Then due to a network error, the change stream tries resuming. If we tried resuming with the most recent ``_id``, this throws out the oplog scanning the server had done for the long sequence of getMores with empty responses. But resuming with the last ``postBatchResumeToken`` skips the unnecessary scanning of unmatched oplog entries.
 
 Test Plan
 =========
@@ -762,4 +762,6 @@ Changelog
 | 2018-11-06 | Added handling of ``postBatchResumeToken``.                |
 +------------+------------------------------------------------------------+
 | 2019-01-10 | Clarified error handling for killing the cursor.           |
++------------+------------------------------------------------------------+
+| 2019-04-12 | Clarified caching process for resume token.                |
 +------------+------------------------------------------------------------+
