@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: January 3, 2019
+:Last Modified: April 3, 2019
 :Version: 1.6.0
 
 .. contents::
@@ -169,7 +169,7 @@ The responses to a change stream aggregate or getMore have the following structu
          id: Int64,
          firstBatch: Array<ChangeStreamDocument>,
          /**
-          * postBatchResumeToken is returned in MongoDB 4.2 and later.
+          * postBatchResumeToken is returned in MongoDB 4.0.7 and later.
           */
          postBatchResumeToken: Document
       },
@@ -187,7 +187,7 @@ The responses to a change stream aggregate or getMore have the following structu
          id: Int64,
          nextBatch: Array<ChangeStreamDocument>
          /**
-          * postBatchResumeToken is returned in MongoDB 4.2 and later.
+          * postBatchResumeToken is returned in MongoDB 4.0.7 and later.
           */
          postBatchResumeToken: Document
       },
@@ -329,7 +329,7 @@ Driver API
      *
      * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
-     * @since 4.2
+     * @since 4.0.7
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
      * @note this is an option of the `$changeStream` pipeline stage.
      */
@@ -503,7 +503,7 @@ A driver SHOULD attempt to kill the cursor on the server on which the cursor is 
 Exposing All Resume Tokens
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:since: 4.2
+:since: 4.0.7
 
 Users can inspect the _id on each ``ChangeDocument`` to use as a resume token. But since MongoDB 4.2, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
 
@@ -762,6 +762,9 @@ Changelog
 | 2018-11-06 | Added handling of ``postBatchResumeToken``.                |
 +------------+------------------------------------------------------------+
 | 2019-01-10 | Clarified error handling for killing the cursor.           |
++------------+------------------------------------------------------------+
+| 2019-04-03 | Updated the lowest server version that supports            |
+|            | ``postBatchResumeToken``.                                  |
 +------------+------------------------------------------------------------+
 | 2019-04-12 | Clarified caching process for resume token.                |
 +------------+------------------------------------------------------------+
