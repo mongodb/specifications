@@ -145,13 +145,13 @@ pertaining to URI options apply here.
 
    * - maxIdleTimeMS
      - non-negative integer; 0 means no minimum
-     - defined in `connection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
      - The amount of time a connection can be idle before it's closed
 
    * - maxPoolSize
      - positive integer
-     - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time
 
@@ -163,7 +163,7 @@ pertaining to URI options apply here.
 
    * - minPoolSize
      - positive integer
-     - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time
 
@@ -281,8 +281,8 @@ pertaining to URI options apply here.
 
    * - waitQueueTimeoutMS
      - positive number
-     - defined in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
-     - required for drivers with connection pools, with exceptions described in `collection pooling spec <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling.rst##connection-pool-options-1>`_
+     - defined in the `Connection Pooling spec`_
+     - required for drivers with connection pools, with exceptions described in the `Connection Pooling spec`_
      - The maximum number of clients or connections able to be created by a pool at a given time
 
    * - wTimeoutMS
@@ -387,3 +387,5 @@ Changes
 
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
+
+.. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
