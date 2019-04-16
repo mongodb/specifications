@@ -52,7 +52,7 @@ How to verify the connection pool has not been cleared
 ``````````````````````````````````````````````````````
 
 If the driver implements CMAP specification, verify that no new
-ConnectionCreated CMAP events have been published. Otherwise verify that
+PoolCleared CMAP events have been published. Otherwise verify that
 `connections.totalCreated` serverStatus value has not changed using the same client that was used for test operation.
 
 
