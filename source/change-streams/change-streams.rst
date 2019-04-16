@@ -478,6 +478,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - Perform server selection.
 - Connect to selected server.
 - If there is a cached ``resumeToken``:
+
   - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
   - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
   - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
@@ -488,6 +489,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
   - The driver MUST set ``startAtOperationTime`` to the value of the originally used ``startAtOperationTime`` or the one saved from the original aggregation.
 
 - Else:
+
   - The driver MUST NOT set ``resumeAfter``, ``startAfter``, or ``startAtOperationTime``.
   - The driver MUST use the original aggregation command to resume.
 
@@ -554,12 +556,15 @@ Updating the Cached Resume Token
 The following rules describe how to update the cached ``resumeToken``:
 
 - When the ``ChangeStream`` is started:
+
   - If ``startAfter`` is set, cache it.
   - Else if ``resumeAfter`` is set, cache it.
   - Else, ``resumeToken`` remains unset.
 - When ``aggregate`` or ``getMore`` returns:
+
   - If an empty batch was returned and a ``postBatchResumeToken`` was included, cache it.
 - When returning a document to the user:
+
   - If it's the last document in the batch and a ``postBatchResumeToken`` is included, cache it.
   - Else, cache the ``_id`` of the document.
 
