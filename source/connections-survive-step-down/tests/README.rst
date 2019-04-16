@@ -102,7 +102,8 @@ This test requires server version 4.2 or higher.
 - Verify that the insert failed with an operation failure with 11600 code.
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
-- Verify that no new connections have been created following the instructions in section `How to verify the connection pool has not been cleared`_
+- Verify that the connection pool has not been cleared,
+  following the instructions in section `How to verify the connection pool has not been cleared`_
 
 
 
@@ -145,4 +146,4 @@ Questions and Answers
 Do we need to wait for re-election after the first test?
 ``````````````````````````````````````````````````````````
 
-Since test setup requires an insert into a collection, a primary must exist, so subsequent tests will block in server selection until a primary is available again.
+Since test setup requires creation of a collection, a primary must exist, so subsequent tests will block in server selection until a primary is available again.
