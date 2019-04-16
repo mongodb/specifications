@@ -221,4 +221,6 @@ When the client sees such an error it knows its topology view is out of date.
 It MUST mark the server type "unknown."
 Multi-threaded and asynchronous clients MUST re-check the server soon,
 and single-threaded clients MUST request a scan before the next operation.
-The client SHOULD clear its connection pool for the server.
+The client SHOULD clear its connection pool for the server if the
+server is 4.0 or earlier, and SHOULD NOT clear its connection pool for the
+server if the server is 4.2 or later.

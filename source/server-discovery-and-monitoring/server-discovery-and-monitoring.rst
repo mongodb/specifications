@@ -1232,8 +1232,11 @@ updateRSFromPrimary
   (The Monitor provides a "request refresh" feature for this purpose,
   see `multi-threaded or asynchronous monitoring`_.)
 
-  The client SHOULD clear its connection pool for the old primary, too:
+  If the old primary server version is 4.0 or earlier,
+  the client SHOULD clear its connection pool for the old primary, too:
   the connections are all bad because the old primary has closed its sockets.
+  If the old primary server version is 4.2 or newer, the client SHOULD NOT
+  clear its connection pool for the old primary.
 
   See `replica set monitoring with and without a primary`_.
 
@@ -1510,17 +1513,37 @@ a "not master" or "node is recovering" error means the server is available
 but the client is wrong about its type,
 thus an immediate re-check is likely to provide useful information.
 
-For single-threaded clients, in the case of a "not master" error, the client
-MUST mark the topology as "stale" so the next server selection scans all
-servers. For a "node is recovering" error, single-threaded clients MUST NOT
-mark the topology as "stale". If a node is recovering for some time, an
-immediate scan may not gain useful information.
+For single-threaded clients, in the case of a "not master" or "node is
+shutting down" error, the client MUST mark the topology as "stale" so the next
+server selection scans all servers. For a "node is recovering" error,
+single-threaded clients MUST NOT mark the topology as "stale". If a node is
+recovering for some time, an immediate scan may not gain useful information.
 
-The client SHOULD clear its connection pool for the server.
+The following subset of "node is recovering" errors is defined to be "node is
+shutting down" errors:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - InterruptedAtShutdown
+    - 11600
+  * - ShutdownInProgress
+    - 91
+
+If the client is connected to server version 4.2 or higher, and the client
+receives a "not master" or "node is recovering" error which is not a
+"node is shutting down" error, the client MUST keep any connections it has to
+the server open, and MUST NOT clear its connection pool for the server.
+If the client is connected to server version 4.2 or higher and receives a
+"node is shutting down" error, or if the client is connected to server version
+4.0 or lower and receives a "not master" or "node is recovering" error,
+the client MUST clear its connection pool to the server.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
-transient errors`_.)
+transient errors`_ and `Why close connections when a node is shutting down?`_.)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2296,6 +2319,16 @@ The driver can see a "not master" error in the following scenario:
 See `"not master" and "node is recovering"`_,
 and the test scenario called
 "parsing 'not master' and 'node is recovering' errors".
+
+Why close connections when a node is shutting down?
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+
+When a server shuts down, it will return one of the "node is shutting down"
+errors for each attempted operation and eventually will close all connections.
+Keeping a connection to a server which is shutting down open would only
+produce errors on this connection - such a connection will never be usable for
+any operations. In contrast, when a server 4.2 or later returns "not master"
+error the connection may be usable for other operations (such as secondary reads).
 
 What's the point of periodic monitoring?
 ''''''''''''''''''''''''''''''''''''''''
