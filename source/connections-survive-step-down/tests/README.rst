@@ -100,6 +100,8 @@ This test requires server version 4.2 or higher.
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 11600 code.
+- Execute an insert into the test collection of a ``{test: 1}``
+  document and verify that it succeeds.
 - Verify that no new connections have been created following the instructions in section `How to verify the connection pool has not been cleared`_
 
 
