@@ -43,8 +43,8 @@ value in serverStatus.
 How to verify the connection pool has been cleared
 ``````````````````````````````````````````````````
 
-If the driver implements CMAP specification, verify that no new
-ConnectionCreated CMAP events have been published. Otherwise verify that
+If the driver implements CMAP specification, verify that a
+ConnectionCreated CMAP event have been published. Otherwise verify that
 `connections.totalCreated` serverStatus value has increased by 1 using the same client that was used for test operation.
 
 
