@@ -436,7 +436,7 @@ A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mo
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
-A driver MUST raise an error on the first document received without a resume token (e.g. the user has removed ``_id`` with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
+Drivers MUST raise an error on the first document received without a resume token (e.g. the user has removed ``_id`` with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error.  A change stream MUST NOT attempt to resume on any other type of error, with the exception of a “not master” server error.  If a driver receives a “not master” error (for instance, because the primary it was connected to is stepping down), it will treat the error as a resumable error and attempt to resume.
 
@@ -518,8 +518,8 @@ Option 1: ChangeStream::getResumeToken()
 
   interface ChangeStream extends Iterable<Document> {
     /**
-     * Returns a resume token that should be used to resume after the most
-     * recently returned change.
+     * Returns the cached resume token that will be used to resume
+     * after the most recently returned change.
      */
     public getResumeToken() Optional<Document>;
   }
