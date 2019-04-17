@@ -155,7 +155,10 @@ Read
     count(filter: Document, options: Optional<CountOptions>): Int64;
 
     /**
-     * Gets the number of documents matching the filter.
+     * Count the number of documents in a collection that match the given
+     * filter. Note that an empty filter will force a scan of the entire
+     * collection. For a fast count of the total documents in a collection
+     * see estimatedDocumentCount.
      *
      * See "Count API Details" section below.
      */
