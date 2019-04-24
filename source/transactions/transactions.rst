@@ -584,7 +584,7 @@ Behavior of the recoveryToken field
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Only included for sharded transactions and only when running a
-commitTransaction command. See the
+commitTransaction or abortTransaction command. See the
 `recoveryToken field`_ section for more info.
 
 Constructing the first command within a transaction
@@ -803,8 +803,8 @@ longer available. [#]_
 Every successful (``ok:1``) command response in a sharded transaction includes
 a ``recoveryToken`` field. Drivers MUST track the most recently received
 ``recoveryToken`` field and MUST append this field to any subsequent
-commitTransaction commands. Tracking the most recently returned
-``recoveryToken`` allows the server to update the ``recoveryToken``
+commitTransaction or abortTransaction commands. Tracking the most recently
+returned ``recoveryToken`` allows the server to update the ``recoveryToken``
 mid-transaction if needed.
 
 Drivers can safely assume that the ``recoveryToken`` field is always a BSON
