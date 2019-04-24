@@ -682,6 +682,11 @@ Common API Components
      * server-side is used.
      */
     collation: Document;
+
+    /**
+     * Optionally specifies the wildcard projection of a wildcard index.
+     */
+    wildcardProjection: Document;
   }
 
 
@@ -722,3 +727,5 @@ Changelog
   - Add Q & A addressing write concern and maxTimeMS option.
 7 JUN 2017:
   - Include listIndexes() in Q&A about maxTimeMS.
+24 April 2019:
+  - Added ``wildcardProjection`` attribute to ``IndexOptions`` in order to support setting a wildcard projection on a wildcard index.
