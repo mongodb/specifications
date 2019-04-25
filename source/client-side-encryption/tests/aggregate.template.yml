@@ -1,0 +1,54 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data:
+  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+json_schema: {{schema()}}
+key_vault_data: [{{key()}}]
+
+tests:
+  - description: "Aggregate with deterministic encryption"
+    skipReason: "Blocked on SERVER-39395"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: aggregate
+        arguments:
+          pipeline:
+            - { $match: { ssn: "457-55-5642" } }
+        result:
+          - &doc0 { _id: 1, ssn: "457-55-5462" }
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline:
+              - { $match: { ssn: "457-55-5642" } }
+            ordered: true
+            # SERVER-40354 will remove this field:
+            bypassDocumentValidation: false
+          command_name: aggregate
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc0_encrypted

@@ -1,0 +1,57 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data: []
+json_schema: {{schema()}}
+key_vault_data: [{{key()}}]
+
+tests:
+  - description: "Bulk write with deterministic encryption"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: bulkWrite
+        arguments:
+          requests:
+            - name: insertOne
+              arguments:
+                document: &doc0 { _id: 1, ssn: "457-55-5462" }
+            - name: insertOne
+              arguments:
+                document: &doc1 { _id: 1, ssn: "123-45-6789" }
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+              - &doc1_encrypted { _id: 1, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+            ordered: true
+            # SERVER-40354 will remove this field:
+            bypassDocumentValidation: false
+          command_name: insert
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc0_encrypted
+          - *doc1_encrypted
