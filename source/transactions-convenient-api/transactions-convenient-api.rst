@@ -123,11 +123,11 @@ drivers MUST enforce a 120-second timeout to limit retry behavior and safeguard
 applications from long-running (or infinite) retry loops. Drivers SHOULD use a
 monotonic clock to determine elapsed time.
 
-If an UnknownTransactionCommitResult error is encountered for a commit and the
-error is not MaxTimeMSExpired and the retry timeout has not been exceeded, the
-driver MUST retry the commit. If the retry timeout has been exceeded, drivers
-MUST NOT retry the commit and allow ``withTransaction`` to propagate the
-error to its caller.
+If an UnknownTransactionCommitResult error is encountered for a commit, the
+driver MUST retry the commit if and only if the error is not MaxTimeMSExpired
+and the retry timeout has not been exceeded. Otherwise, the driver MUST NOT
+retry the commit and allow ``withTransaction`` to propagate the error to its
+caller.
 
 If a TransientTransactionError is encountered at any point, the entire
 transaction may be retried. If the retry timeout has not been exceeded, the
@@ -499,4 +499,5 @@ Changes
 
 2019-04-24: withTransaction does not retry when commit fails with
             MaxTimeMSExpired.
+
 2018-02-13: withTransaction should retry commits after a wtimeout
