@@ -204,7 +204,7 @@ tests:
             startTransaction:
             autocommit: false
             writeConcern:
-            recoveryToken:
+            recoveryToken: 42
           command_name: abortTransaction
           database_name: admin
 
