@@ -388,8 +388,8 @@ their users to design idempotent callbacks.
 
 .. _Retry Transactions and Commit Operation: https://docs.mongodb.com/manual/core/transactions/#retry-transaction-and-commit-operation
 
-The commit is retried after a write concern wtimeout error
-----------------------------------------------------------
+The commit is retried after a write concern timeout (i.e. wtimeout) error
+-------------------------------------------------------------------------
 
 Per the Transactions specification, drivers internally retry
 ``commitTransaction`` once if it fails due to a retryable error (as defined in

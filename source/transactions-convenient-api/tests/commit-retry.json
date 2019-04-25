@@ -459,6 +459,9 @@
                   }
                 }
               ]
+            },
+            "options": {
+              "maxTimeMS": 60000
             }
           },
           "result": {
@@ -505,6 +508,7 @@
                 "$numberLong": "1"
               },
               "autocommit": false,
+              "maxTimeMS": 60000,
               "readConcern": null,
               "startTransaction": null,
               "writeConcern": null

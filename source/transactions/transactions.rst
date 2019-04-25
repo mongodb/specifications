@@ -117,6 +117,12 @@ where your driver's and/or language's naming conventions differ you
 SHOULD continue to use them instead. For example, you might use
 StartTransaction or start_transaction instead of startTransaction.
 
+A non-exhaustive list of acceptable naming deviations are as follows:
+
+* Using "maxTimeMS" as an example, .NET would use "MaxTime" where it's type is
+  a TimeSpan structure that includes units. However, calling it "MaximumTime"
+  would not be acceptable.
+
 **Transaction API**
 ~~~~~~~~~~~~~~~~~~~
 
@@ -145,11 +151,6 @@ This section is an overview of the public API for transactions:
          * The writeConcern to use for this transaction.
          */
         Optional<WriteConcern> writeConcern;
-
-        /**
-         * The readPreference to use for this transaction.
-         */
-        Optional<ReadPreference> readPreference;
 
         /**
          * The readPreference to use for this transaction.

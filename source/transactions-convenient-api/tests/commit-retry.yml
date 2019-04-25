@@ -266,7 +266,21 @@ tests:
           failCommands: ["commitTransaction"]
           errorCode: 50 # MaxTimeMSExpired
     operations:
-      - <<: *withTransaction
+      - name: withTransaction
+        object: session0
+        arguments:
+          callback:
+            operations:
+              -
+                name: insertOne
+                object: collection
+                arguments:
+                  session: session0
+                  document: { _id: 1 }
+                result:
+                  insertedId: 1
+          options:
+            maxTimeMS: 60000
         result:
           errorCodeName: MaxTimeMSExpired
           errorLabelsContain: ["UnknownTransactionCommitResult"]
@@ -295,6 +309,7 @@ tests:
             lsid: session0
             txnNumber: { $numberLong: "1" }
             autocommit: false
+            maxTimeMS: 60000
             # omitted fields
             readConcern: ~
             startTransaction: ~

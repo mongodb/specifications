@@ -1566,7 +1566,7 @@
       }
     },
     {
-      "description": "do_not_add_unknown_commit_label_to_MaxTimeMSExpired_inside_transactions",
+      "description": "do not add unknown commit label to MaxTimeMSExpired inside transactions",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1664,7 +1664,8 @@
               "txnNumber": {
                 "$numberLong": "1"
               },
-              "autocommit": false
+              "autocommit": false,
+              "maxTimeMS": 60000
             },
             "command_name": "aggregate",
             "database_name": "transaction-tests"
@@ -1837,7 +1838,6 @@
           ],
           "writeConcernError": {
             "code": 50,
-            "codeName": "MaxTimeMSExpired",
             "errmsg": "operation exceeded time limit"
           }
         }
