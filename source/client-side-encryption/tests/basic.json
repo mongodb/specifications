@@ -80,7 +80,7 @@
     ],
     "tests": [
         {
-            "description": "Insert a document with auto encryption",
+            "description": "Insert a document with auto encryption, then find it and auto decrypt",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -163,8 +163,7 @@
                                     }
                                 }
                             ],
-                            "ordered": true,
-                            "bypassDocumentValidation": false
+                            "ordered": true
                         },
                         "command_name": "insert"
                     }

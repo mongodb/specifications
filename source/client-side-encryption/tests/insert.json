@@ -148,8 +148,7 @@
                                     }
                                 }
                             ],
-                            "ordered": true,
-                            "bypassDocumentValidation": false
+                            "ordered": true
                         },
                         "command_name": "insert"
                     }

@@ -40,8 +40,6 @@ tests:
           documents:
             - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn", schema="local")}} }
           ordered: true
-          # SERVER-40354 will remove this field
-          bypassDocumentValidation: false
         command_name: insert
     outcome:
       collection:

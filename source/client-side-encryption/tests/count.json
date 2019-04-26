@@ -100,7 +100,6 @@
     "tests": [
         {
             "description": "Count with deterministic encryption",
-            "skipReason": "waiting for 4.1.11",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -156,17 +155,16 @@
                     "command_started_event": {
                         "command": {
                             "count": "default",
-                            "filter": {
-                                "$match": {
-                                    "ssn": {
+                            "query": {
+                                "ssn": {
+                                    "$eq": {
                                         "$binary": {
                                             "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
                                             "subType": "06"
                                         }
                                     }
                                 }
-                            },
-                            "bypassDocumentValidation": false
+                            }
                         },
                         "command_name": "count"
                     }

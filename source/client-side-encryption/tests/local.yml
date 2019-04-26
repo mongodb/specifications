@@ -40,8 +40,6 @@ tests:
           documents:
             - &doc0_encrypted { _id: 1, ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=', 'subType': '06'}} }
           ordered: true
-          # SERVER-40354 will remove this field
-          bypassDocumentValidation: false
         command_name: insert
     outcome:
       collection:

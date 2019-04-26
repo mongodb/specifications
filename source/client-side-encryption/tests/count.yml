@@ -11,7 +11,6 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "Count with deterministic encryption"
-    skipReason: "waiting for 4.1.11"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -40,7 +39,5 @@ tests:
       - command_started_event:
           command:
             count: *collection_name
-            filter: { $match: { ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}} } }
-            # SERVER-40354 will remove this field:
-            bypassDocumentValidation: false
+            query: { ssn: { $eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}} } }
           command_name: count

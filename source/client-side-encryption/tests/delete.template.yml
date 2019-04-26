@@ -43,8 +43,6 @@ tests:
               - q: { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
                 limit: 1
             ordered: true
-            # SERVER-40354 will remove this field:
-            bypassDocumentValidation: false
           command_name: delete
     outcome:
       collection:

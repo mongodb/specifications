@@ -11,7 +11,6 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "Count with deterministic encryption"
-    skipReason: "waiting for 4.1.11"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -40,7 +39,5 @@ tests:
       - command_started_event:
           command:
             count: *collection_name
-            filter: { $match: { ssn: {{ciphertext("457-55-5462", field="ssn")}} } }
-            # SERVER-40354 will remove this field:
-            bypassDocumentValidation: false
+            query: { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
           command_name: count

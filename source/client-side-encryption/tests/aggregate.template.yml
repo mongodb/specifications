@@ -43,9 +43,6 @@ tests:
             aggregate: *collection_name
             pipeline:
               - { $match: { ssn: "457-55-5642" } }
-            ordered: true
-            # SERVER-40354 will remove this field:
-            bypassDocumentValidation: false
           command_name: aggregate
     outcome:
       collection:

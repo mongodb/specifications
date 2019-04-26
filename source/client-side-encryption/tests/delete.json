@@ -164,8 +164,7 @@
                                     "limit": 1
                                 }
                             ],
-                            "ordered": true,
-                            "bypassDocumentValidation": false
+                            "ordered": true
                         },
                         "command_name": "delete"
                     }
