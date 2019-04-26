@@ -11,6 +11,7 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "Count with deterministic encryption"
+    skipReason: "waiting for 4.1.11"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
