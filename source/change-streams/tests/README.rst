@@ -156,7 +156,7 @@ The following tests have not yet been automated, but MUST still be tested
 #. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
 #. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on the driver side.
 #. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
-#. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a changestream.
+#. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` and ``<4.0.7`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a changestream.
 #. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
 #. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``>=4.0.7``.
