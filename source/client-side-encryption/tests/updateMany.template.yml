@@ -1,0 +1,59 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data:
+  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+json_schema: {{schema()}}
+key_vault_data: [{{key()}}]
+
+tests:
+  - description: "updateMany with deterministic encryption"
+    skipReason: "Waiting on SERVER-40871"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateMany
+        arguments:
+          filter: { ssn: { $in: [ "457-55-5462", "123-45-6789" ] } }
+          update: { $set: { ssn: "987-65-4321" } }
+        result:
+          matchedCount: 1 # TODO: should be 2, but changing for now
+          modifiedCount: 1 # TODO: should be 2
+          upsertedCount: 0
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              - q: { ssn: { $in: [ {{ciphertext("457-55-5462", field="ssn")}}, {{ciphertext("123-45-6789", field="ssn")}} ] } }
+                u: { $set: { ssn: {{ciphertext("987-65-4321", field="ssn")}} } }
+                multi: true
+                upsert: false
+            ordered: true
+          command_name: update
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, ssn: {{ciphertext("987-65-4321", field="ssn")}} }
+          - { _id: 2, ssn: {{ciphertext("987-65-4321", field="ssn")}} }

@@ -90,8 +90,7 @@
     ],
     "tests": [
         {
-            "description": "Aggregate with deterministic encryption",
-            "skipReason": "Blocked on SERVER-39395",
+            "description": "replaceOne with deterministic encryption",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -101,22 +100,20 @@
             },
             "operations": [
                 {
-                    "name": "aggregate",
+                    "name": "replaceOne",
                     "arguments": {
-                        "pipeline": [
-                            {
-                                "$match": {
-                                    "ssn": "457-55-5642"
-                                }
-                            }
-                        ]
-                    },
-                    "result": [
-                        {
-                            "_id": 1,
+                        "filter": {
                             "ssn": "457-55-5462"
+                        },
+                        "replacement": {
+                            "ssn": "123-45-6789"
                         }
-                    ]
+                    },
+                    "result": {
+                        "matchedCount": 1,
+                        "modifiedCount": 1,
+                        "upsertedCount": 0
+                    }
                 }
             ],
             "expectations": [
@@ -156,16 +153,34 @@
                 {
                     "command_started_event": {
                         "command": {
-                            "aggregate": "default",
-                            "pipeline": [
+                            "update": "default",
+                            "updates": [
                                 {
-                                    "$match": {
-                                        "ssn": "457-55-5642"
-                                    }
+                                    "q": {
+                                        "ssn": {
+                                            "$eq": {
+                                                "$binary": {
+                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                                    "subType": "06"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "u": {
+                                        "ssn": {
+                                            "$binary": {
+                                                "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                                                "subType": "06"
+                                            }
+                                        }
+                                    },
+                                    "multi": false,
+                                    "upsert": false
                                 }
-                            ]
+                            ],
+                            "ordered": true
                         },
-                        "command_name": "aggregate"
+                        "command_name": "update"
                     }
                 }
             ],
@@ -176,7 +191,7 @@
                             "_id": 1,
                             "ssn": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
                                     "subType": "06"
                                 }
                             }

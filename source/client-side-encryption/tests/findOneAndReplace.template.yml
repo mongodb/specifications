@@ -1,0 +1,51 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data:
+  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+json_schema: {{schema()}}
+key_vault_data: [{{key()}}]
+
+tests:
+  - description: "findOneAndReplace with deterministic encryption"
+    skipReason: "Waiting on SERVER-40005"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: findOneAndReplace
+        arguments:
+          filter: &doc0 { ssn: "457-55-5462" }
+          replacement: { ssn: "123-45-6789" }
+          returnDocument: Before
+        result: *doc0
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            findAndModify: *collection_name
+            query: { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
+            update: { ssn: { $eq: {{ciphertext("123-45-6789", field="ssn")}} } }
+          command_name: findAndModify
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, ssn: {{ciphertext("123-45-6789", field="ssn")}} }

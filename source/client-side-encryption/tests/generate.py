@@ -167,6 +167,17 @@ ciphertexts = [
         }
     },
     {
+        "schema": "basic",
+        "field": "ssn",
+        "plaintext": "987-65-4321",
+        "data": {
+            "$binary": {
+                "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQYZlEbByPzwdQ/AMDRHcdlCE/N+eDdikUZLYZ9fkLxIt8qi3nngh69WkFACCuzharx2g3gkiTqfYCkFsM5uu8Y=",
+                "subType": "06"
+            }
+        }
+    },
+    {
         "schema": "local",
         "field": "ssn",
         "plaintext": "457-55-5462",
