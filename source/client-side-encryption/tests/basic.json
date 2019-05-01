@@ -80,7 +80,7 @@
     ],
     "tests": [
         {
-            "description": "Insert a document with auto encryption, then find it and auto decrypt",
+            "description": "Insert with deterministic encryption, then find it",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -100,7 +100,6 @@
                 },
                 {
                     "name": "find",
-                    "collectionOptions": {},
                     "arguments": {
                         "filter": {
                             "_id": 1
@@ -190,6 +189,116 @@
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
                                     "subType": "06"
                                 }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "description": "Insert with randomized encryption, then find it",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "insertOne",
+                    "arguments": {
+                        "document": {
+                            "_id": 1,
+                            "random": "123"
+                        }
+                    }
+                },
+                {
+                    "name": "find",
+                    "arguments": {
+                        "filter": {
+                            "_id": 1
+                        }
+                    },
+                    "result": [
+                        {
+                            "_id": 1,
+                            "random": "123"
+                        }
+                    ]
+                }
+            ],
+            "expectations": [
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "default"
+                            }
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "find": "datakeys",
+                            "filter": {
+                                "_id": {
+                                    "$in": [
+                                        {
+                                            "$binary": {
+                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                "subType": "04"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "find"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "insert": "default",
+                            "documents": [
+                                {
+                                    "_id": 1,
+                                    "random": {
+                                        "$$type": "binData"
+                                    }
+                                }
+                            ],
+                            "ordered": true
+                        },
+                        "command_name": "insert"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "find": "default",
+                            "filter": {
+                                "_id": 1
+                            }
+                        },
+                        "command_name": "find"
+                    }
+                }
+            ],
+            "outcome": {
+                "collection": {
+                    "data": [
+                        {
+                            "_id": 1,
+                            "random": {
+                                "$$type": "binData"
                             }
                         }
                     ]

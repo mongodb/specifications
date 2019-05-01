@@ -100,6 +100,7 @@
     "tests": [
         {
             "description": "countDocuments with deterministic encryption",
+            "skipReason": "waiting on SERVER-39395",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {

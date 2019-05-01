@@ -107,7 +107,8 @@
                         },
                         "update": {
                             "$set": {
-                                "ssn": "123-45-6789"
+                                "ssn": "123-45-6789",
+                                "random": "abc"
                             }
                         }
                     },
@@ -175,6 +176,9 @@
                                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
                                                     "subType": "06"
                                                 }
+                                            },
+                                            "random": {
+                                                "$$type": "binData"
                                             }
                                         }
                                     },
@@ -198,6 +202,9 @@
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
                                     "subType": "06"
                                 }
+                            },
+                            "random": {
+                                "$$type": "binData"
                             }
                         }
                     ]

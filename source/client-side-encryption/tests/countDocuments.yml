@@ -11,6 +11,7 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "countDocuments with deterministic encryption"
+    skipReason: "waiting on SERVER-39395"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:

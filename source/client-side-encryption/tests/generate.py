@@ -131,7 +131,7 @@ schemas = {
                     }
                 }
             },
-            "randomized": {
+            "random": {
                 "encrypt": {
                     "keyId": [keys["local"]["_id"]],
                     "bsonType": "string",

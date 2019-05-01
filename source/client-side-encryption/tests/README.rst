@@ -33,6 +33,8 @@ The spec tests format is an extension of transactions spec tests with some addit
 
 - Addition of `$db` to command in `command_started_event`
 
+- Addition of `$type` to command_started_event and outcome.
+
 Each YAML file has the following keys:
 
 .. |txn| replace:: Unchanged. See `Transactions spec tests <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/README.rst>`_

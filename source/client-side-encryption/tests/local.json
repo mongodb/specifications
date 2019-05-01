@@ -29,7 +29,7 @@
                     }
                 }
             },
-            "randomized": {
+            "random": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -100,7 +100,8 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "ssn": "457-55-5462"
+                            "ssn": "457-55-5462",
+                            "random": "abc"
                         }
                     }
                 }
@@ -151,6 +152,9 @@
                                             "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
                                             "subType": "06"
                                         }
+                                    },
+                                    "random": {
+                                        "$$type": "binData"
                                     }
                                 }
                             ],
@@ -170,6 +174,9 @@
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
                                     "subType": "06"
                                 }
+                            },
+                            "random": {
+                                "$$type": "binData"
                             }
                         }
                     ]

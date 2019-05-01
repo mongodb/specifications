@@ -11,7 +11,7 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "updateMany with deterministic encryption"
-    skipReason: "For some reason, the update has 'multi': false"
+    skipReason: "Waiting on SERVER-40871"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -20,7 +20,7 @@ tests:
       - name: updateMany
         arguments:
           filter: { ssn: { $in: [ "457-55-5462", "123-45-6789" ] } }
-          update: { $set: { ssn: "987-65-4321" } }
+          update: { $set: { ssn: "987-65-4321", random: "abc" } }
         result:
           matchedCount: 1 # TODO: should be 2, but changing for now
           modifiedCount: 1 # TODO: should be 2
@@ -46,7 +46,7 @@ tests:
             update: *collection_name
             updates:
               - q: { ssn: { $in: [ {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}}, {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}} ] } }
-                u: { $set: { ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQYZlEbByPzwdQ/AMDRHcdlCE/N+eDdikUZLYZ9fkLxIt8qi3nngh69WkFACCuzharx2g3gkiTqfYCkFsM5uu8Y=', 'subType': '06'}} } }
+                u: { $set: { ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQYZlEbByPzwdQ/AMDRHcdlCE/N+eDdikUZLYZ9fkLxIt8qi3nngh69WkFACCuzharx2g3gkiTqfYCkFsM5uu8Y=', 'subType': '06'}}, random: { $$type: "binData" } } }
                 multi: true
                 upsert: false
             ordered: true

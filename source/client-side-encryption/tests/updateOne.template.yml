@@ -18,7 +18,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { ssn: "457-55-5462" }
-          update: { $set: { ssn: "123-45-6789" } }
+          update: { $set: { ssn: "123-45-6789", random: "abc" } }
         result:
           matchedCount: 1
           modifiedCount: 1
@@ -44,7 +44,7 @@ tests:
             update: *collection_name
             updates:
               - q: { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
-                u: { $set: {ssn: {{ciphertext("123-45-6789", field="ssn")}} } }
+                u: { $set: {ssn: {{ciphertext("123-45-6789", field="ssn")}}, random: { $$type: "binData" } } }
                 multi: false
                 upsert: false
             ordered: true
@@ -53,4 +53,4 @@ tests:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { _id: 1, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+          - { _id: 1, ssn: {{ciphertext("123-45-6789", field="ssn")}}, random: { $$type: "binData"} }

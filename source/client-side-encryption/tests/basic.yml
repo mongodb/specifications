@@ -8,7 +8,7 @@ json_schema: {'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64'
 key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updatedDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}}]
 
 tests:
-  - description: "Insert a document with auto encryption, then find it and auto decrypt"
+  - description: "Insert with deterministic encryption, then find it"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -18,7 +18,6 @@ tests:
         arguments:
           document: &doc0 { _id: 1, ssn: "457-55-5462" }
       - name: find
-        collectionOptions: {  }
         arguments:
           filter: { _id: 1 }
         result: [*doc0]
@@ -55,3 +54,49 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
+  - description: "Insert with randomized encryption, then find it"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc1 { _id: 1, random: "123" }
+      - name: find
+        arguments:
+          filter: { _id: 1 }
+        result: [*doc1]
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - { _id: 1, random: { $$type: "binData" } }
+            ordered: true
+          command_name: insert
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: 1 }
+          command_name: find
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, random: { $$type: "binData" } }

@@ -80,7 +80,7 @@
     ],
     "tests": [
         {
-            "description": "Bulk write with deterministic encryption",
+            "description": "Bulk write with encryption",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -98,7 +98,8 @@
                                 "arguments": {
                                     "document": {
                                         "_id": 1,
-                                        "ssn": "457-55-5462"
+                                        "ssn": "457-55-5462",
+                                        "random": "abc"
                                     }
                                 }
                             },
@@ -161,6 +162,9 @@
                                             "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
                                             "subType": "06"
                                         }
+                                    },
+                                    "random": {
+                                        "$$type": "binData"
                                     }
                                 },
                                 {
@@ -189,6 +193,9 @@
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
                                     "subType": "06"
                                 }
+                            },
+                            "random": {
+                                "$$type": "binData"
                             }
                         },
                         {

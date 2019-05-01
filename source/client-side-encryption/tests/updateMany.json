@@ -100,7 +100,7 @@
     "tests": [
         {
             "description": "updateMany with deterministic encryption",
-            "skipReason": "For some reason, the update has 'multi': false",
+            "skipReason": "Waiting on SERVER-40871",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -122,7 +122,8 @@
                         },
                         "update": {
                             "$set": {
-                                "ssn": "987-65-4321"
+                                "ssn": "987-65-4321",
+                                "random": "abc"
                             }
                         }
                     },
@@ -198,6 +199,9 @@
                                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQYZlEbByPzwdQ/AMDRHcdlCE/N+eDdikUZLYZ9fkLxIt8qi3nngh69WkFACCuzharx2g3gkiTqfYCkFsM5uu8Y=",
                                                     "subType": "06"
                                                 }
+                                            },
+                                            "random": {
+                                                "$$type": "binData"
                                             }
                                         }
                                     },

@@ -20,7 +20,7 @@ tests:
       - name: updateMany
         arguments:
           filter: { ssn: { $in: [ "457-55-5462", "123-45-6789" ] } }
-          update: { $set: { ssn: "987-65-4321" } }
+          update: { $set: { ssn: "987-65-4321", random: "abc" } }
         result:
           matchedCount: 1 # TODO: should be 2, but changing for now
           modifiedCount: 1 # TODO: should be 2
@@ -46,7 +46,7 @@ tests:
             update: *collection_name
             updates:
               - q: { ssn: { $in: [ {{ciphertext("457-55-5462", field="ssn")}}, {{ciphertext("123-45-6789", field="ssn")}} ] } }
-                u: { $set: { ssn: {{ciphertext("987-65-4321", field="ssn")}} } }
+                u: { $set: { ssn: {{ciphertext("987-65-4321", field="ssn")}}, random: { $$type: "binData" } } }
                 multi: true
                 upsert: false
             ordered: true
