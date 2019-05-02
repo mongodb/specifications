@@ -126,9 +126,21 @@ public class MongoCollectionUsageExample {
         col.updateOne(new Document("x", 1), new Document("$set", new Document("x", 2)),
                       new UpdateOptions().upsert(true));
 
+        // using a pipeline for the update parameter
+        col.updateOne(new Document("x", 1), asList(new Document("$set", new Document("x", 2))));
+
+        col.updateOne(new Document("x", 1), asList(new Document("$set", new Document("x", 2))),
+                      new UpdateOptions().upsert(true));
+
         col.updateMany(new Document("x", 1), new Document("$set", new Document("x", 2)));
 
         col.updateMany(new Document("x", 1), new Document("$set", new Document("x", 2)),
+                       new UpdateOptions().upsert(true));
+
+        // using a pipeline for the update parameter
+        col.updateMany(new Document("x", 1), asList(new Document("$set", new Document("x", 2))));
+
+        col.updateMany(new Document("x", 1), asList(new Document("$set", new Document("x", 2))),
                        new UpdateOptions().upsert(true));
 
 
@@ -173,8 +185,15 @@ public class MongoCollectionUsageExample {
         //   query and update
         col.findOneAndUpdate(new Document("x", 1), new Document("$set", new Document("x", 2)));
 
+        // use a pipeline for the update parameter
+        col.findOneAndUpdate(new Document("x", 1), asList(new Document("$set", new Document("x", 2))));
+
         //   query and update and optional returnUpdated (note we are changing this to returnOriginal)
         col.findOneAndUpdate(new Document("x", 1), new Document("$set", new Document("x", 2)),
+                             new FindOneAndUpdateOptions().returnDocument(ReturnDocument.after));
+
+        // use a pipeline for the update parameter
+        col.findOneAndUpdate(new Document("x", 1), asList(new Document("$set", new Document("x", 2))),
                              new FindOneAndUpdateOptions().returnDocument(ReturnDocument.after));
 
 

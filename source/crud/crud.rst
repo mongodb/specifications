@@ -786,7 +786,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateOne(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
+    updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
 
     /**
      * Updates multiple documents.
@@ -794,7 +794,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateMany(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
+    updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
   }
 
   class BulkWriteOptions {
@@ -1045,11 +1045,11 @@ Bulk Write Models
     filter: Document;
 
     /**
-     * A document containing update operators.
+     * A document or pipeline containing update operators.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
-    update: Update;
+    update: (Document | Document[]);
 
     /**
      * A set of filters specifying to which array elements an update should apply.
@@ -1093,11 +1093,11 @@ Bulk Write Models
     filter: Document;
 
     /**
-     * A document containing update operators.
+     * A document or pipeline containing update operators.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
-    update: Update;
+    update: (Document | Document[]);
 
     /**
      * A set of filters specifying to which array elements an update should apply.
@@ -1444,7 +1444,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndUpdate(filter: Document, update: Document, options: Optional<FindOneAndUpdateOptions>): Document;
+    findOneAndUpdate(filter: Document, update: (Document | Document[]), options: Optional<FindOneAndUpdateOptions>): Document;
 
   }
 
@@ -1655,7 +1655,7 @@ Find And Modify
 Update vs. Replace Validation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``update`` family of operations require that the update document parameter MUST have only atomic modifiers. In practice, this means that introspection needs to happen on that document to enforce this. However, it is enough to only check the first element in the document. If it begins with a ``$`` sign and the rest of the document's elements do not, the server will throw an error. Note that it is required that an update document have at least one atomic modifier.
+The ``update`` family of operations require that the update parameter, which can be either a document or a pipeline, MUST have only atomic modifiers. In practice, this means that introspection needs to happen on the document or pipeline to enforce this. However, it is enough to only check the first element in the update documents. If the element begins with a ``$`` sign and the rest of the document's elements do not, the server will throw an error. Note that it is required that the documents in the update parameter have at least one atomic modifier.
 
 The ``replace`` family of operations require that the replacement document parameter MUST NOT begin with an atomic modifier. In practice, this means that introspection needs to happen on that document to enforce this. However, it is enough to only check the first element in the document. If it does not begin with a ``$`` sign but an element later on does, the server will throw an error.
 
@@ -1762,6 +1762,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-05-01: Specify a document or pipeline for commands with updates.
 * 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
 * 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions
 * 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
