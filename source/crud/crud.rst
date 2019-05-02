@@ -789,7 +789,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateOne(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
+    updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
 
     /**
      * Updates multiple documents.
@@ -797,7 +797,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateMany(filter: Document, update: Document, options: Optional<UpdateOptions>): UpdateResult;
+    updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
   }
 
   class BulkWriteOptions {
@@ -1048,11 +1048,11 @@ Bulk Write Models
     filter: Document;
 
     /**
-     * A document containing update operators.
+     * A document or pipeline containing update operators.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
-    update: Update;
+    update: (Document | Document[]);
 
     /**
      * A set of filters specifying to which array elements an update should apply.
@@ -1096,11 +1096,11 @@ Bulk Write Models
     filter: Document;
 
     /**
-     * A document containing update operators.
+     * A document or pipeline containing update operators.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
-    update: Update;
+    update: (Document | Document[]);
 
     /**
      * A set of filters specifying to which array elements an update should apply.
@@ -1447,7 +1447,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndUpdate(filter: Document, update: Document, options: Optional<FindOneAndUpdateOptions>): Document;
+    findOneAndUpdate(filter: Document, update: (Document | Document[]), options: Optional<FindOneAndUpdateOptions>): Document;
 
   }
 
@@ -1765,6 +1765,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
 * 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
 * 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions
 * 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
