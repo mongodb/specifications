@@ -185,4 +185,41 @@ Then for each element in ``tests``:
 Prose Tests
 ===========
 
-TODO: in progress.
+Tests for the KeyVault type are not included as part of the YAML tests. Tests are described
+as follows.
+
+#. Test creating a data key with the "local" KMS provider.
+  - Create a key vault with a "local" KMS provider.
+  - Create a data key with the "local" KMS provider using `KeyVault.createDataKey()`.
+  - Expect a BSON binary with subtype 4 to be returned.
+  - Expect a `findOne` on the key vault collection with `_id` set to the returned binary to return a document.
+  - Expect that document to have "masterKey.provider" set to "local"
+
+#. Test creating a data key with the "aws" KMS provider.
+  - Create a key vault with a "aws" KMS provider.
+  - Create a data key with the "aws" KMS provider using `KeyVault.createDataKey()`.
+  - Expect a BSON binary with subtype 4 to be returned.
+  - Expect a `findOne` on the key vault collection with `_id` set to the returned binary to return a document.
+  - Expect that document to have "masterKey.provider" set to "aws"
+
+#. Test explicit encrypt and decrypt with the "local" KMS provider.
+  - Create a key vault with a "local" KMS provider.
+  - Insert the a key document in to the key vault.
+  - Use `KeyVault.encrypt` to encrypt the value "hello" with the following:
+    - the algorithm "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+    - a fixed 16 byte initialization vector
+    - the "local" KMS provider
+  - Expect the value is equal to a known BSON binary of subtype 6
+  - Use `KeyVault.decrypt` to decrypt the encrypted value
+  - Expect the value is equal to the string "hello"
+
+#. Test explicit encrypt and decrypt with the "aws" KMS provider.
+  - Create a key vault with a "aws" KMS provider.
+  - Insert the a key document in to the key vault.
+  - Use `KeyVault.encrypt` to encrypt the value "hello" with the following:
+    - the algorithm "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+    - a fixed 16 byte initialization vector
+    - the "aws" KMS provider
+  - Expect the value is equal to a known BSON binary of subtype 6
+  - Use `KeyVault.decrypt` to decrypt the encrypted value
+  - Expect the value is equal to the string "hello"
