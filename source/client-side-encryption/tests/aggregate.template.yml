@@ -10,7 +10,7 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "Aggregate with deterministic encryption"
-    skipReason: "Blocked on SERVER-39395"
+    skipReason: "SERVER-39395"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -31,6 +31,14 @@ tests:
             filter:
               name: *collection_name
           command_name: listCollections
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
       # Then key is fetched from the key vault.
       - command_started_event:
           command:
@@ -49,3 +57,5 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
+  - description: "Aggregate should fail with random encryption"
+    skipReason: "SERVER-39395"

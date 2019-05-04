@@ -32,6 +32,14 @@ tests:
             filter:
               name: *collection_name
           command_name: listCollections
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
       # Then key is fetched from the key vault.
       - command_started_event:
           command:
@@ -52,3 +60,28 @@ tests:
           - *doc0_encrypted
           - *doc1_encrypted
           - *doc2_encrypted
+  - description: "Distinct fails when filtering on a random encrypted field"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment
+    operations:
+      - name: distinct
+        arguments:
+          fieldName: "ssn"
+          filter: { random: "abc" }
+        result:
+          errorContains: "Cannot query on fields encrypted with the randomized encryption"
+  - description: "Distinct fails when filtering on a random encrypted field"
+    skipReason: "SERVER-40299"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment
+    operations:
+      - name: distinct
+        arguments:
+          fieldName: "random"
+          filter: {}
+        result:
+          errorContains: "TODO"

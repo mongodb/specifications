@@ -3,33 +3,28 @@ runOn:
 database_name: &database_name "default"
 collection_name: &collection_name "default"
 
-data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
-  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
-json_schema: {{schema()}}
+data: []
+# configure an empty schema
+json_schema: {}
 key_vault_data: [{{key()}}]
 
 tests:
-  - description: "findOneAndDelete with deterministic encryption"
-    skipReason: "Waiting on SERVER-40005"
+  - description: "A local schema should override"
     clientOptions:
       auto_encrypt_opts:
+        schema_map:
+          "default.default": {{schema('basic')}}
         kms_providers:
           aws: {} # Credentials filled in from environment.
     operations:
-      - name: findOneAndDelete
+      - name: insertOne
         arguments:
-          filter:
-            { ssn: "457-55-5462" }
+          document: &doc0 { _id: 1, ssn: "457-55-5462" }
+      - name: find
+        arguments:
+          filter: { _id: 1 }
+        result: [*doc0]
     expectations:
-      # Auto encryption will request the collection info.
-      - command_started_event:
-          command:
-            listCollections: 1
-            cursor: {}
-            filter:
-              name: *collection_name
-          command_name: listCollections
       - command_started_event:
           command:
             listCollections: 1
@@ -47,13 +42,18 @@ tests:
           command_name: find
       - command_started_event:
           command:
-            findAndModify: *collection_name
-            query:
-              { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
-            remove: true
-          command_name: findAndModify
+            insert: *collection_name
+            documents:
+              - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+            ordered: true
+          command_name: insert
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: 1 }
+          command_name: find
     outcome:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - *doc1_encrypted
+          - *doc0_encrypted

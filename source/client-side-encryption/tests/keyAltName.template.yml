@@ -3,24 +3,21 @@ runOn:
 database_name: &database_name "default"
 collection_name: &collection_name "default"
 
-data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
-  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+data: []
 json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
 tests:
-  - description: "findOneAndDelete with deterministic encryption"
-    skipReason: "Waiting on SERVER-40005"
+  - description: "Insert with encryption using key alt name"
+    skipReason: "Waiting on CDRIVER-3057"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
           aws: {} # Credentials filled in from environment.
     operations:
-      - name: findOneAndDelete
+      - name: insertOne
         arguments:
-          filter:
-            { ssn: "457-55-5462" }
+          document: &doc0 { _id: 1, encrypted_w_altname: "457-55-5462", altname: "abc" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -42,18 +39,36 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            filter: { keyAltNames: { $in: [ {{key()["_id"]}} ] } }
             $db: admin
           command_name: find
       - command_started_event:
           command:
-            findAndModify: *collection_name
-            query:
-              { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
-            remove: true
-          command_name: findAndModify
+            insert: *collection_name
+            documents:
+              - &doc0_encrypted { _id: 1, encrypted_w_altname: {{ciphertext("457-55-5462", field="ssn")}} }
+            ordered: true
+          command_name: insert
     outcome:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - *doc1_encrypted
+          - *doc0_encrypted
+  - description: "Replace with key alt name fails"
+    skipReason: "Waiting on CDRIVER-3057"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: {}
+          update: { encrypted_w_altname: "457-55-5462" }
+          upsert: true
+        result:
+          errorContains: "TODO"
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data: []

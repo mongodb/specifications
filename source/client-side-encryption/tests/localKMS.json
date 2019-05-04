@@ -6,32 +6,9 @@
     ],
     "database_name": "default",
     "collection_name": "default",
-    "data": [
-        {
-            "_id": 1,
-            "ssn": {
-                "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
-                    "subType": "06"
-                }
-            }
-        }
-    ],
+    "data": [],
     "json_schema": {
         "properties": {
-            "encrypted_w_altname": {
-                "encrypt": {
-                    "keyId": "/altname",
-                    "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
-                }
-            },
             "ssn": {
                 "encrypt": {
                     "keyId": [
@@ -71,65 +48,61 @@
     },
     "key_vault_data": [
         {
-            "status": 1,
             "_id": {
                 "$binary": {
                     "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
                     "subType": "04"
                 }
             },
-            "masterKey": {
-                "provider": "aws",
-                "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-                "region": "us-east-1"
-            },
-            "updatedDate": {
-                "$date": {
-                    "$numberLong": "1552949630483"
-                }
-            },
             "keyMaterial": {
                 "$binary": {
-                    "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==",
+                    "base64": "j8V54E0Yp0nnMI9fxTuUlXcNb496dRHeWvVDs/ESv9Iz3sbbD8mZQ3DUjkIIIgFu9NxiJy7INAI2BW50gpbnbESTD5qj7usHzNYdYTC3rrlWzrE/QZZhI1+q5rUQGjGhXFYwbb3zPuk2KngbuQzle3l6BUyK+SQJ5yD4n/2Sx5E=",
                     "subType": "00"
                 }
             },
             "creationDate": {
                 "$date": {
-                    "$numberLong": "1552949630483"
+                    "$numberLong": "1232739599082000"
                 }
             },
-            "keyAltNames": [
-                "altname",
-                "another_altname"
-            ]
+            "updateDate": {
+                "$date": {
+                    "$numberLong": "1232739599082000"
+                }
+            },
+            "status": {
+                "$numberInt": "0"
+            },
+            "masterKey": {
+                "provider": "local"
+            }
         }
     ],
     "tests": [
         {
-            "description": "findOneAndReplace with deterministic encryption",
-            "skipReason": "Waiting on SERVER-40005",
+            "description": "Insert a document with auto encryption using local KMS provider",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
-                        "aws": {}
+                        "aws": {},
+                        "local": {
+                            "key": {
+                                "$binary": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                                "$type": "00"
+                            }
+                        }
                     }
                 }
             },
             "operations": [
                 {
-                    "name": "findOneAndReplace",
+                    "name": "insertOne",
                     "arguments": {
-                        "filter": {
-                            "ssn": "457-55-5462"
-                        },
-                        "replacement": {
-                            "ssn": "123-45-6789"
-                        },
-                        "returnDocument": "Before"
-                    },
-                    "result": {
-                        "ssn": "457-55-5462"
+                        "document": {
+                            "_id": 1,
+                            "ssn": "457-55-5462",
+                            "random": "abc"
+                        }
                     }
                 }
             ],
@@ -183,29 +156,24 @@
                 {
                     "command_started_event": {
                         "command": {
-                            "findAndModify": "default",
-                            "query": {
-                                "ssn": {
-                                    "$eq": {
+                            "insert": "default",
+                            "documents": [
+                                {
+                                    "_id": 1,
+                                    "ssn": {
                                         "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
                                             "subType": "06"
                                         }
+                                    },
+                                    "random": {
+                                        "$$type": "binData"
                                     }
                                 }
-                            },
-                            "update": {
-                                "ssn": {
-                                    "$eq": {
-                                        "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
-                                            "subType": "06"
-                                        }
-                                    }
-                                }
-                            }
+                            ],
+                            "ordered": true
                         },
-                        "command_name": "findAndModify"
+                        "command_name": "insert"
                     }
                 }
             ],
@@ -216,9 +184,12 @@
                             "_id": 1,
                             "ssn": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
                                     "subType": "06"
                                 }
+                            },
+                            "random": {
+                                "$$type": "binData"
                             }
                         }
                     ]

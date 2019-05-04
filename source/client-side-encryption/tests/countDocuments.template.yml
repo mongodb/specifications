@@ -30,6 +30,14 @@ tests:
             filter:
               name: *collection_name
           command_name: listCollections
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
       # Then key is fetched from the key vault.
       - command_started_event:
           command:

@@ -29,6 +29,14 @@ tests:
             filter:
               name: *collection_name
           command_name: listCollections
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
       # Then key is fetched from the key vault.
       - command_started_event:
           command:
@@ -41,3 +49,14 @@ tests:
             count: *collection_name
             query: { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
           command_name: count
+  - description: "Count fails when filtering on a random encrypted field"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment
+    operations:
+      - name: count
+        arguments:
+          filter: { random: "abc" }
+        result:
+          errorContains: "Cannot query on fields encrypted with the randomized encryption"

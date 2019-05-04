@@ -68,7 +68,8 @@ keys = {
             "$date": {
                 "$numberLong": "1552949630483"
             }
-        }
+        },
+        "keyAltNames": ["altname", "another_altname"]
     },
     "local": {
         "_id": {
@@ -93,6 +94,19 @@ keys = {
 schemas = {
     "basic": {
         "properties": {
+            "encrypted_w_altname": {
+                "encrypt": {
+                    "keyId": "/altname",
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                    "initializationVector": {
+                        "$binary": {
+                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
+                            "subType": "00"
+                        }
+                    }
+                }
+            },
             "ssn": {
                 "encrypt": {
                     "keyId": [keys["basic"]["_id"]],
@@ -140,6 +154,60 @@ schemas = {
             }
         },
         "bsonType": "object"
+    },
+    "invalid_array": {
+        "properties": {
+            "ssn": {
+                "encrypt": {
+                    "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+                }
+            }
+        },
+        "bsonType": "array"
+    },
+    "invalid_omitted_type": {
+	    "properties": {
+            "foo": {
+                "properties": {
+                    "bar": {
+                        "encrypt": {
+                            "keyId": [keys["basic"]["_id"]],
+                            "bsonType": "string",
+                            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "invalid_siblings": {
+        "properties": {
+            "ssn": {
+                "encrypt": {
+                    "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+                },
+                "bsonType": "object"
+            }
+        }
+    },
+    "logical_keywords": {
+        "anyOf": [
+            {
+                "properties": {
+                    "ssn": {
+                        "encrypt": {
+                            "keyId": [keys["basic"]["_id"]],
+                            "bsonType": "string",
+                            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+                        }
+                    }
+                }
+            }
+        ]
     }
 }
 

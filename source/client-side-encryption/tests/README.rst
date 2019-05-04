@@ -60,7 +60,7 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
-    - ``client_side_encryption_opts``: Optional
+    - ``auto_encrypt_opts``: Optional
 
       - ``kms_providers`` A dictionary of KMS providers to set on the key vault ("aws" or "local")
 

@@ -32,6 +32,14 @@ tests:
             filter:
               name: *collection_name
           command_name: listCollections
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
       # Then key is fetched from the key vault.
       - command_started_event:
           command:
@@ -54,3 +62,15 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - { _id: 1, ssn: {{ciphertext("123-45-6789", field="ssn")}}, random: { $$type: "binData"} }
+  - description: "updateOne fails when filtering on a random field"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { random: "abc" }
+          update: { $set: { ssn: "123-45-6789" } }
+        result:
+          errorContains: "Cannot query on fields encrypted with the randomized encryption"

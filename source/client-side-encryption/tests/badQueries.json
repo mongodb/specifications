@@ -15,6 +15,15 @@
                     "subType": "06"
                 }
             }
+        },
+        {
+            "_id": 2,
+            "ssn": {
+                "$binary": {
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                    "subType": "06"
+                }
+            }
         }
     ],
     "json_schema": {
@@ -107,8 +116,7 @@
     ],
     "tests": [
         {
-            "description": "findOneAndReplace with deterministic encryption",
-            "skipReason": "Waiting on SERVER-40005",
+            "description": "$expr unconditionally fails",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -118,112 +126,98 @@
             },
             "operations": [
                 {
-                    "name": "findOneAndReplace",
+                    "name": "find",
                     "arguments": {
                         "filter": {
-                            "ssn": "457-55-5462"
-                        },
-                        "replacement": {
-                            "ssn": "123-45-6789"
-                        },
-                        "returnDocument": "Before"
-                    },
-                    "result": {
-                        "ssn": "457-55-5462"
-                    }
-                }
-            ],
-            "expectations": [
-                {
-                    "command_started_event": {
-                        "command": {
-                            "listCollections": 1,
-                            "cursor": {},
-                            "filter": {
-                                "name": "default"
-                            }
-                        },
-                        "command_name": "listCollections"
-                    }
-                },
-                {
-                    "command_started_event": {
-                        "command": {
-                            "listCollections": 1,
-                            "cursor": {},
-                            "filter": {
-                                "name": "datakeys"
-                            },
-                            "$db": "admin"
-                        },
-                        "command_name": "listCollections"
-                    }
-                },
-                {
-                    "command_started_event": {
-                        "command": {
-                            "find": "datakeys",
-                            "filter": {
-                                "_id": {
-                                    "$in": [
-                                        {
-                                            "$binary": {
-                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                                "subType": "04"
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            "$db": "admin"
-                        },
-                        "command_name": "find"
-                    }
-                },
-                {
-                    "command_started_event": {
-                        "command": {
-                            "findAndModify": "default",
-                            "query": {
-                                "ssn": {
-                                    "$eq": {
-                                        "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
-                                            "subType": "06"
-                                        }
-                                    }
-                                }
-                            },
-                            "update": {
-                                "ssn": {
-                                    "$eq": {
-                                        "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
-                                            "subType": "06"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "command_name": "findAndModify"
-                    }
-                }
-            ],
-            "outcome": {
-                "collection": {
-                    "data": [
-                        {
-                            "_id": 1,
-                            "ssn": {
-                                "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
-                                    "subType": "06"
-                                }
+                            "$expr": {
+                                "$eq": [
+                                    1,
+                                    1
+                                ]
                             }
                         }
-                    ]
+                    },
+                    "result": {
+                        "errorContains": "Unsupported match expression operator for encryption"
+                    }
                 }
-            }
+            ]
+        },
+        {
+            "description": "$text unconditionally fails",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "find",
+                    "arguments": {
+                        "filter": {
+                            "$text": {
+                                "$search": "search text"
+                            }
+                        }
+                    },
+                    "result": {
+                        "errorContains": "Unsupported match expression operator for encryption"
+                    }
+                }
+            ]
+        },
+        {
+            "description": "$where unconditionally fails",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "find",
+                    "arguments": {
+                        "filter": {
+                            "$where": {
+                                "$code": "function() { return true }"
+                            }
+                        }
+                    },
+                    "result": {
+                        "errorContains": "Unsupported match expression operator for encryption"
+                    }
+                }
+            ]
+        },
+        {
+            "description": "$jsonSchema unconditionally fails",
+            "skipReason": "SERVER-41012",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "find",
+                    "arguments": {
+                        "filter": {
+                            "$jsonSchema": {
+                                "properties": {}
+                            }
+                        }
+                    },
+                    "result": {
+                        "errorContains": "Unsupported match expression operator for encryption"
+                    }
+                }
+            ]
         }
     ]
 }

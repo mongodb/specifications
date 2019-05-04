@@ -37,6 +37,19 @@
     ],
     "json_schema": {
         "properties": {
+            "encrypted_w_altname": {
+                "encrypt": {
+                    "keyId": "/altname",
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                    "initializationVector": {
+                        "$binary": {
+                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
+                            "subType": "00"
+                        }
+                    }
+                }
+            },
             "ssn": {
                 "encrypt": {
                     "keyId": [
@@ -103,7 +116,11 @@
                 "$date": {
                     "$numberLong": "1552949630483"
                 }
-            }
+            },
+            "keyAltNames": [
+                "altname",
+                "another_altname"
+            ]
         }
     ],
     "tests": [
@@ -139,6 +156,19 @@
                             "filter": {
                                 "name": "default"
                             }
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "datakeys"
+                            },
+                            "$db": "admin"
                         },
                         "command_name": "listCollections"
                     }
@@ -217,6 +247,53 @@
                     ]
                 }
             }
+        },
+        {
+            "description": "Distinct fails when filtering on a random encrypted field",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "distinct",
+                    "arguments": {
+                        "fieldName": "ssn",
+                        "filter": {
+                            "random": "abc"
+                        }
+                    },
+                    "result": {
+                        "errorContains": "Cannot query on fields encrypted with the randomized encryption"
+                    }
+                }
+            ]
+        },
+        {
+            "description": "Distinct fails when filtering on a random encrypted field",
+            "skipReason": "SERVER-40299",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "distinct",
+                    "arguments": {
+                        "fieldName": "random",
+                        "filter": {}
+                    },
+                    "result": {
+                        "errorContains": "TODO"
+                    }
+                }
+            ]
         }
     ]
 }
