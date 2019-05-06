@@ -151,7 +151,8 @@
                         "filter": {
                             "ssn": "457-55-5462"
                         }
-                    }
+                    },
+                    "result": 2
                 }
             ],
             "expectations": [

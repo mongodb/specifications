@@ -19,7 +19,7 @@ tests:
       - name: count
         arguments:
           filter: { ssn: "457-55-5462" }
-        #result: 2
+        result: 2
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
