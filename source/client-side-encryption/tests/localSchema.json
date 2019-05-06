@@ -98,6 +98,26 @@
                                         "bsonType": "string",
                                         "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
                                     }
+                                },
+                                "ssn_equivalent": {
+                                    "encrypt": {
+                                        "keyId": [
+                                            {
+                                                "$binary": {
+                                                    "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                    "subType": "04"
+                                                }
+                                            }
+                                        ],
+                                        "bsonType": "string",
+                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                                        "initializationVector": {
+                                            "$binary": {
+                                                "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
+                                                "subType": "00"
+                                            }
+                                        }
+                                    }
                                 }
                             },
                             "bsonType": "object"
