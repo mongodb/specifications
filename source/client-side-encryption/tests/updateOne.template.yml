@@ -74,3 +74,91 @@ tests:
           update: { $set: { ssn: "123-45-6789" } }
         result:
           errorContains: "Cannot query on fields encrypted with the randomized encryption"
+  - description: "$unset works with an encrypted field"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $unset: { ssn: "" } }
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              - q: { }
+                u: { $unset: {ssn: "" } }
+                multi: false
+                upsert: false
+            ordered: true
+          command_name: update
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, random: { $$type: "binData"} }
+  - description: "$rename works if target value has same encryption options"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $rename: { ssn: "ssn_equivalent" } }
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              - q: { }
+                u: { $rename: {ssn: "ssn_equivalent" } }
+                multi: false
+                upsert: false
+            ordered: true
+          command_name: update
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, ssn_equivalent: {{ciphertext("123-45-6789", field="ssn")}}, random: { $$type: "binData"} }
+  - description: "$rename fails if target value has different encryption options"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $rename: { ssn: "random" } }
+        result:
+          errorContains: "$rename between two encrypted fields must have the same metadata or both be unencrypted"

@@ -257,3 +257,249 @@ tests:
           filter: { ssn: { $in: [null] }}
         result:
           errorContains: "Illegal equality to null inside $in against an encrypted field"
+  - description: "$addToSet succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $addToSet: { "unencrypted": ["a"]}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $addToSet: { "ssn": ["a"]}}
+        result:
+          errorContains: "$addToSet not allowed on encrypted values"
+  - description: "$inc succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $inc: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $inc: { "ssn": 1}}
+        result:
+          errorContains: "$inc and $mul not allowed on encrypted values"
+  - description: "$mul succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $mul: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $mul: { "ssn": 1}}
+        result:
+          errorContains: "$inc and $mul not allowed on encrypted values"
+  - description: "$max succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $max: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $max: { "ssn": 1}}
+        result:
+          errorContains: "$max and $min not allowed on encrypted values"
+  - description: "$min succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $min: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $min: { "ssn": 1}}
+        result:
+          errorContains: "$max and $min not allowed on encrypted values"
+  - description: "$currentDate succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $currentDate: { "unencrypted": true}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $currentDate: { "ssn": true }}
+        result:
+          errorContains: "$currentDate not allowed on encrypted values"
+  - description: "$pop succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $pop: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 0
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $pop: { "ssn": 1 }}
+        result:
+          errorContains: "$pop not allowed on encrypted values"
+  - description: "$pull succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $pull: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 0
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $pull: { "ssn": 1 }}
+        result:
+          errorContains: "$pull not allowed on encrypted values"
+  - description: "$pullAll succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $pullAll: { "unencrypted": [1] }}
+        result:
+          matchedCount: 1
+          modifiedCount: 0
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $pullAll: { "ssn": [1] }}
+        result:
+          errorContains: "$pullAll not allowed on encrypted values"
+  - description: "$push succeeds on unencrypted, error on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $push: { "unencrypted": 1}}
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $push: { "ssn": 1 }}
+        result:
+          errorContains: "$push not allowed on encrypted values"
+  - description: "array filters on encrypted fields does not error in mongocryptd, but errors in mongod"
+    skipReason: "SERVER-41022"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $set : { "ssn.$[i].x": 1 }}
+          arrayFilters: [{ i.x: 1 }]
+        result:
+          errorContains: "TODO"
+  - description: "positional operator succeeds on unencrypted, errors on encrypted"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { "unencrypted": 1 }
+          update: { $set : { "unencrypted.$": 1 }}
+        result:
+          matchedCount: 0
+          modifiedCount: 0
+          upsertedCount: 0
+      - name: updateOne
+        arguments:
+          filter: { "ssn": 1 }
+          update: { $set : { "ssn.$": 1 }}
+        result:
+          errorContains: "Cannot encrypt fields below '$' positional update operator"
+  - description: "an update that would produce an array on an encrypted field errors"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $set : { "ssn": [1,2] }}
+        result:
+          errorContains: "Cannot encrypt a field containing an array"

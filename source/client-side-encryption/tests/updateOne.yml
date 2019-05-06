@@ -5,7 +5,7 @@ collection_name: &collection_name "default"
 
 data:
   - &doc0_encrypted { _id: 1, ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}} }
-json_schema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname', 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}, 'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}, 'random': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}, 'bsonType': 'object'}
+json_schema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname', 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}, 'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}, 'random': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}, 'ssn_equivalent': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}}, 'bsonType': 'object'}
 key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updatedDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}]
 
 tests:
@@ -74,3 +74,91 @@ tests:
           update: { $set: { ssn: "123-45-6789" } }
         result:
           errorContains: "Cannot query on fields encrypted with the randomized encryption"
+  - description: "$unset works with an encrypted field"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $unset: { ssn: "" } }
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              - q: { }
+                u: { $unset: {ssn: "" } }
+                multi: false
+                upsert: false
+            ordered: true
+          command_name: update
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, random: { $$type: "binData"} }
+  - description: "$rename works if target value has same encryption options"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $rename: { ssn: "ssn_equivalent" } }
+        result:
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            update: *collection_name
+            updates:
+              - q: { }
+                u: { $rename: {ssn: "ssn_equivalent" } }
+                multi: false
+                upsert: false
+            ordered: true
+          command_name: update
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, ssn_equivalent: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}}, random: { $$type: "binData"} }
+  - description: "$rename fails if target value has different encryption options"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: updateOne
+        arguments:
+          filter: { }
+          update: { $rename: { ssn: "random" } }
+        result:
+          errorContains: "$rename between two encrypted fields must have the same metadata or both be unencrypted"

@@ -126,6 +126,20 @@ schemas = {
                     "bsonType": "string",
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
                 }
+            },
+            # Same exact as fields as "ssn"
+            "ssn_equivalent": {
+                "encrypt": {
+                    "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                    "initializationVector": {
+                        "$binary": {
+                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
+                            "subType": "00"
+                        }
+                    }
+                }
             }
         },
         "bsonType": "object"
