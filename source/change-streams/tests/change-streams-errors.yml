@@ -69,7 +69,6 @@ tests:
         arguments:
           document:
             z: 3
-    expectations: []
     result:
       error:
         code: 280
