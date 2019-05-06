@@ -144,6 +144,23 @@ schemas = {
         },
         "bsonType": "object"
     },
+    "encrypted_id": {
+        "properties": {
+            "_id": {
+                "encrypt": {
+                    "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                    "initializationVector": {
+                        "$binary": {
+                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
+                            "subType": "00"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "local": {
         "properties": {
             "ssn": {

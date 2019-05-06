@@ -503,3 +503,50 @@ tests:
           update: { $set : { "ssn": [1,2] }}
         result:
           errorContains: "Cannot encrypt a field containing an array"
+  - description: "an insert with encrypted field on _id errors"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+        schema_map:
+          "default.default": {{schema("encrypted_id")}}
+    operations:
+      - name: insertOne
+        arguments:
+          document: { _id: 1 }
+        result:
+          errorContains: "Invalid schema containing the 'encrypt' keyword."
+  - description: "an insert with an array value for an encrypted field fails"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: insertOne
+        arguments:
+          document: { ssn: [ "123", "456"] }
+        result:
+          errorContains: "Cannot encrypt a field containing an array"
+  - description: "an insert with a Timestamp(0,0) value in the top-level fails"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: insertOne
+        arguments:
+          document: { random: {"$timestamp": {"t": 0, "i": 0 }} }
+        result:
+          errorContains: "A command that inserts cannot supply Timestamp(0, 0) for an encrypted"
+  - description: "distinct with the key referring to a field where the keyID is a JSON Pointer errors"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: distinct
+        arguments:
+          fieldName: "encrypted_w_altname"
+          filter: {}
+        result:
+          errorContains: "The distinct key is not allowed to be marked for encryption with a non-UUID keyId"
