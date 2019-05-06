@@ -16,6 +16,14 @@ tests:
         arguments:
             filter: { y: 1 }
             update: [ { $replaceRoot: { newRoot: "$t" } }, { $addFields: { foo: 1 } } ]
+        result:
+          deletedCount: 0
+          insertedCount: 0
+          insertedIds: {}
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+          upsertedIds: {}
     expectations:
       -
         command_started_event:
@@ -30,7 +38,7 @@ tests:
     outcome:
       collection:
         data:
-          - { _id: 1, x: 1, y: 1, u: {v: 1}, foo: 1 }
+          - { _id: 1, u: {v: 1}, foo: 1 }
           - { _id: 2, x: 2, y: 1 }
   -
     description: "UpdateMany using pipelines"
@@ -40,6 +48,14 @@ tests:
         arguments:
             filter: {}
             update: [ { $project: { x: 1 } }, { $addFields: { foo: 1 } } ]
+        result:
+          deletedCount: 0
+          insertedCount: 0
+          insertedIds: {}
+          matchedCount: 2
+          modifiedCount: 2
+          upsertedCount: 0
+          upsertedIds: {}
     expectations:
       -
         command_started_event:
@@ -64,6 +80,14 @@ tests:
         arguments:
             filter: { y: 1 }
             update: [ { $project: { x: 1 } }, { $addFields: { foo: 1 } } ]
+        result:
+          deletedCount: 0
+          insertedCount: 0
+          insertedIds: {}
+          matchedCount: 1
+          modifiedCount: 1
+          upsertedCount: 0
+          upsertedIds: {}
     expectations:
       -
         command_started_event:
