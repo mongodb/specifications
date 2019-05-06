@@ -498,6 +498,16 @@ Events
     }
 
     /**
+     *  Emitted when a Connection Pool is cleared
+     */
+    interface PoolClearedEvent {
+      /**
+       *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+       */
+      address: string;
+    }
+
+    /**
      *  Emitted when a Connection Pool is closed
      */
     interface PoolClosedEvent {
@@ -621,16 +631,6 @@ Events
        *  The ID of the Connection
        */
       connectionId: number;
-    }
-
-    /**
-     *  Emitted when a Connection Pool is cleared
-     */
-    interface PoolClearedEvent {
-      /**
-       *  The ServerAddress of the Endpoint the pool is attempting to connect to.
-       */
-      address: string;
     }
 
 Connection Pool Errors
