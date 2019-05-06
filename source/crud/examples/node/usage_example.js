@@ -61,7 +61,6 @@
 // update
 
   col.updateOne({ x: 1 }, { $set: { x: 2 } }, { upsert: true}, function(err, r) {});
-  col.updateOne({ x: 1 }, [{ $set: { x: 2 } }], { upsert: true}, function(err, r) {});
 
 // bulkWrite
 
@@ -97,8 +96,5 @@
 // findOneAndUpdate
 
   col.findOneAndUpdate({ x: 1 }, { $set: { x: 2 } }, {
-    returnDocument: ReturnDocument.after
-  }, function(err, r) {});
-  col.findOneAndUpdate({ x: 1 }, [{ $set: { x: 2 } }], {
     returnDocument: ReturnDocument.after
   }, function(err, r) {});

@@ -53,10 +53,8 @@
 // update
 
 	col.updateOne({x: 1}, {$set: {x: 2}}, {upsert: true});
-	col.updateOne({x: 1}, [{$set: {x: 2}}, {upsert: true}]);
 
 	col.updateMany({x: 1}, {$set: {x: 2}}, {upsert: true});
-	col.updateMany({x: 1}, [{$set: {x: 2}}, {upsert: true}]);
 
 
 // bulkWrite
@@ -83,4 +81,3 @@
 // findOneAndUpdate
 
 	col.findOneAndUpdate({x: 1}, {$set: {x: 2}}, {returnDocument: ReturnDocument.after});
-	col.findOneAndUpdate({x: 1}, [{$set: {x: 2}}], {returnDocument: ReturnDocument.after});
