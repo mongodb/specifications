@@ -59,7 +59,6 @@ tests:
           - *doc0_encrypted
           - *doc1_encrypted
   - description: "Find with $in with deterministic encryption"
-    skipReason: "Values are re-ordered in the command started event. Doesn't seem to be from mongocryptd or libmongocrypt. I might be misunderstanding something in serialization/parsing in Java driver."
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -100,7 +99,8 @@ tests:
           command:
             find: *collection_name
             filter:
-              { ssn: { $in: [ {{ciphertext("457-55-5462", field="ssn")}}, {{ciphertext("123-45-6789", field="ssn")}} ] } }
+              # Note, the values are re-ordered, but this is logically equivalent.
+              { ssn: { $in: [ {{ciphertext("123-45-6789", field="ssn")}}, {{ciphertext("457-55-5462", field="ssn")}} ] } }
           command_name: find
     outcome:
       collection:

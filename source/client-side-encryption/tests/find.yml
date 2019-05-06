@@ -59,7 +59,6 @@ tests:
           - *doc0_encrypted
           - *doc1_encrypted
   - description: "Find with $in with deterministic encryption"
-    skipReason: "Values are re-ordered in the command started event. Doesn't seem to be from mongocryptd or libmongocrypt. I might be misunderstanding something in serialization/parsing in Java driver."
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -100,7 +99,8 @@ tests:
           command:
             find: *collection_name
             filter:
-              { ssn: { $in: [ {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}}, {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}} ] } }
+              # Note, the values are re-ordered, but this is logically equivalent.
+              { ssn: { $in: [ {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}}, {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}} ] } }
           command_name: find
     outcome:
       collection:
