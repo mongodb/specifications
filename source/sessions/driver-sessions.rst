@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.5.0
+:Spec Version: 1.6.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2018-10-11
+:Last Modified: 2019-05-07
 
 .. contents::
 
@@ -102,6 +102,10 @@ Unacknowledged writes
     without waiting for a reply acknowledging the write. See the "When using
     unacknowledged writes" section below for information on how unacknowledged
     writes interact with sessions.
+
+Network error
+    Any network exception writing to or reading from a socket (e.g. a socket
+    timeout or error).
 
 Specification
 =============
@@ -839,6 +843,14 @@ If they do not, they MUST document how to clear the session pool wherever they
 document fork support.  After clearing the session pool in this way, drivers
 MUST ensure that sessions already checked out are not returned to the new pool.
 
+If a driver has a server session pool and a network error is encountered when
+executing any operation with a ``ClientSession``, the driver MUST mark the
+associated ``ServerSession`` as dirty. Dirty server sessions are discarded
+when returned to the server session pool. It is valid for a dirty session to be
+used for subsequent operations (e.g. an impicit retry attempt), however, it
+MUST remain dirty for the remainder of its lifetime regardless if later
+operations succeed.
+
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
 
@@ -859,8 +871,11 @@ Algorithm to return a ServerSession instance to the server session pool
    from the end of the queue and discarded (or allowed to be garbage collected)
 
 2. Then examine the server session that is being returned to the pool and:
+    * If this session is marked dirty (ie it was involved in a network error)
+      discard it (let it be garbage collected)
+    * If it will expire in less than one minute discard it
+      (let it be garbage collected)
     * If it won't expire for at least one minute add it to the front of the queue
-    * If it will expire in less than one minute discard it (let it be garbage collected)
 
 Gossipping the cluster time
 ===========================
@@ -1163,7 +1178,7 @@ Q&A
 ===
 
 Why do we say drivers MUST NOT attempt to detect unsafe multi-threaded or multi-process use of ``ClientSession``?
-------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
 
 Because doing so would provide an illusion of safety. It doesn't make these
 instances thread safe. And even if when testing an application no such exceptions
@@ -1197,6 +1212,24 @@ Instead, we require users to pass session as a parameter to each function::
   collection.insertOne(session, {})
   session.endSession()
 
+Why does a network error cause the ``ServerSession`` to be discarded from the pool?
+-----------------------------------------------------------------------------------
+
+When a network error is encountered when executing an operation with a
+``ClientSession``, the operation may be left running on the server. Re-using
+this ``ServerSession`` can lead to parallel operations which violates the
+rule that a session must be used sequentially. This results in multiple
+problems:
+
+#. killSessions to end an earlier operation would surprisingly also end a
+   later operation.
+#. An otherwise unrelated operation that just happens to use that same session
+   will potentially block waiting for the previous operation to complete. For
+   example, a transactional write will block a subsequent transactional write.
+
+TODO: Justify why we allow applications to continue using an explicit session
+after a network error.
+
 Change log
 ==========
 
@@ -1221,3 +1254,4 @@ Change log
 :2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
 :2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-10-11: Session pools must be cleared in child process after fork
+:2019-05-01: v1.6.0 A ServerSession that is involved in a network error MUST be discarded

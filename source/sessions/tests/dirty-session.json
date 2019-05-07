@@ -1,0 +1,163 @@
+{
+  "runOn": [
+    {
+      "minServerVersion": "3.6",
+      "topology": [
+        "replicaset",
+        "sharded"
+      ]
+    }
+  ],
+  "database_name": "session-tests",
+  "collection_name": "test",
+  "data": [
+    {
+      "_id": 1
+    }
+  ],
+  "tests": [
+    {
+      "description": "Dirty session is discarded integration test",
+      "clientOptions": {
+        "retryWrites": true,
+        "socketTimeoutMS": 1000
+      },
+      "operations": [
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": {
+              "_id": 2
+            }
+          },
+          "result": {
+            "insertedId": 2
+          }
+        },
+        {
+          "name": "updateOne",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "$where": "function() { sleep(5000); return false; }"
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            }
+          },
+          "error": true
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "document": {
+              "_id": 3
+            }
+          },
+          "result": {
+            "insertedId": 3
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 2
+                }
+              ],
+              "ordered": true
+            },
+            "command_name": "insert",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "update": "test",
+              "updates": [
+                {
+                  "q": {
+                    "$where": "function() { sleep(5000); return false; }"
+                  },
+                  "u": {
+                    "$inc": {
+                      "x": 1
+                    }
+                  },
+                  "multi": false,
+                  "upsert": false
+                }
+              ],
+              "ordered": true
+            },
+            "command_name": "update",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "update": "test",
+              "updates": [
+                {
+                  "q": {
+                    "$where": "function() { sleep(5000); return false; }"
+                  },
+                  "u": {
+                    "$inc": {
+                      "x": 1
+                    }
+                  },
+                  "multi": false,
+                  "upsert": false
+                }
+              ],
+              "ordered": true
+            },
+            "command_name": "update",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 3
+                }
+              ],
+              "ordered": true
+            },
+            "command_name": "insert",
+            "database_name": "session-tests"
+          }
+        }
+      ],
+      "outcome": {
+        "collection": {
+          "data": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
+            },
+            {
+              "_id": 3
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
