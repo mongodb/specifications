@@ -14,16 +14,12 @@ tests:
       -
         name: "updateOne"
         arguments:
-            filter: { y: 1 }
+            filter: { _id: 1 }
             update: [ { $replaceRoot: { newRoot: "$t" } }, { $addFields: { foo: 1 } } ]
         result:
-          deletedCount: 0
-          insertedCount: 0
-          insertedIds: {}
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
-          upsertedIds: {}
     expectations:
       -
         command_started_event:
@@ -31,7 +27,7 @@ tests:
             update: *collection_name
             updates:
               -
-                q: { y: 1 }
+                q: { _id: 1 }
                 u: [ { $replaceRoot: { newRoot: "$t" } }, { $addFields: { foo: 1 } } ]
           command_name: update
           database_name: *database_name
@@ -49,13 +45,9 @@ tests:
             filter: {}
             update: [ { $project: { x: 1 } }, { $addFields: { foo: 1 } } ]
         result:
-          deletedCount: 0
-          insertedCount: 0
-          insertedIds: {}
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 0
-          upsertedIds: {}
     expectations:
       -
         command_started_event:
@@ -78,16 +70,13 @@ tests:
       -
         name: "findOneAndUpdate"
         arguments:
-            filter: { y: 1 }
+            filter: { _id: 1 }
             update: [ { $project: { x: 1 } }, { $addFields: { foo: 1 } } ]
+            returnDocument: After
         result:
-          deletedCount: 0
-          insertedCount: 0
-          insertedIds: {}
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
-          upsertedIds: {}
     expectations:
       -
         command_started_event:
@@ -95,7 +84,7 @@ tests:
             update: *collection_name
             updates:
               -
-                q: { y: 1 }
+                q: { _id: 1 }
                 u: [ { $project: { x: 1 } }, { $addFields: { foo: 1 } } ]
           command_name: update
           database_name: *database_name
