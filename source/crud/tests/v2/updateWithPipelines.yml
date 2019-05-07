@@ -72,11 +72,6 @@ tests:
         arguments:
             filter: { _id: 1 }
             update: [ { $project: { x: 1 } }, { $addFields: { foo: 1 } } ]
-            returnDocument: After
-        result:
-          matchedCount: 1
-          modifiedCount: 1
-          upsertedCount: 0
     expectations:
       -
         command_started_event:
