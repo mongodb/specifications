@@ -191,7 +191,7 @@ tests:
             level: snapshot
           writeConcern:
             w: 1
-          maxTimeMS: 60000
+          maxCommitTimeMS: 60000
 
     operations: *commitAbortOperations
 
@@ -272,7 +272,7 @@ tests:
             level: majority
           writeConcern:
             w: 1
-          maxTimeMS: 30000
+          maxCommitTimeMS: 30000
 
     operations:
       - name: startTransaction
@@ -283,7 +283,7 @@ tests:
               level: snapshot
             writeConcern:
               w: majority
-            maxTimeMS: 60000
+            maxCommitTimeMS: 60000
       - name: insertOne
         object: collection
         arguments:
@@ -393,7 +393,7 @@ tests:
             level: snapshot
           writeConcern:
             w: majority
-          maxTimeMS: 60000
+          maxCommitTimeMS: 60000
 
     operations: *commitAbortOperations
 

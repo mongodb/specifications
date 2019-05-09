@@ -1717,7 +1717,7 @@
               "writeConcern": {
                 "w": "majority"
               },
-              "maxTimeMS": 60000
+              "maxCommitTimeMS": 60000
             }
           }
         },
@@ -1851,7 +1851,7 @@
               "writeConcern": {
                 "w": "majority"
               },
-              "maxTimeMS": 60000
+              "maxCommitTimeMS": 60000
             }
           }
         },

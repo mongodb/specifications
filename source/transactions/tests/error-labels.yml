@@ -1056,7 +1056,7 @@ tests:
           options:
             writeConcern:
               w: majority
-            maxTimeMS: 60000
+            maxCommitTimeMS: 60000
       - name: insertOne
         object: collection
         arguments:
@@ -1139,7 +1139,7 @@ tests:
           options:
             writeConcern:
               w: majority
-            maxTimeMS: 60000
+            maxCommitTimeMS: 60000
       - name: insertOne
         object: collection
         arguments:

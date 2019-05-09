@@ -119,9 +119,9 @@ StartTransaction or start_transaction instead of startTransaction.
 
 A non-exhaustive list of acceptable naming deviations are as follows:
 
-* Using "maxTimeMS" as an example, .NET would use "MaxTime" where it's type is
-  a TimeSpan structure that includes units. However, calling it "MaximumTime"
-  would not be acceptable.
+* Using "maxCommitTimeMS" as an example, .NET would use "MaxCommitTime" where
+  it's type is a TimeSpan structure that includes units. However, calling it
+  "MaximumCommitTime" would not be acceptable.
 
 **Transaction API**
 ~~~~~~~~~~~~~~~~~~~
@@ -158,15 +158,10 @@ This section is an overview of the public API for transactions:
         Optional<ReadPreference> readPreference;
 
         /**
-         * The maximum amount of time to allow the *commit* to run.
-         *
-         * This option is only sent with the commitTransaction command and
-         * only if the caller explicitly provides a value.
-         * The default is to not send a value.
-         *
-         * @see https://docs.mongodb.com/manual/reference/command/commitTransaction/
+         * The maximum amount of time to allow a single commitTransaction
+         * command to run.
          */
-        Optional<Int64> maxTimeMS;
+        Optional<Int64> maxCommitTimeMS;
     }
 
     class SessionOptions {
@@ -307,13 +302,16 @@ See `Why is readPreference part of TransactionOptions?`_.
 In the future, we might relax this restriction and allow any read
 preference on a transaction.
 
-maxTimeMS
-^^^^^^^^^
+maxCommitTimeMS
+^^^^^^^^^^^^^^^
 
-The maximum amount of time to allow the *commit* to run.
+The maximum amount of time to allow a single commitTransaction command to run.
 
 This option is only sent with the commitTransaction command(s) and only if the
 caller explicitly provides a value. The default is to not send a value.
+
+Note, this option is an alias for the `maxTimeMS` commitTransaction command
+option.
 
 **SessionOptions changes**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -411,7 +409,7 @@ commitTransaction
 
 This method commits the currently active transaction on this session.
 Drivers MUST run a commitTransaction command with the writeConcern and,
-if configured, the maxTimeMS from TransactionOptions.
+if configured, the maxCommitTimeMS from TransactionOptions.
 Drivers MUST report an error when the command fails or the command succeeds
 but contains a writeConcernError. This session is in the
 "transaction committed" state after this method returns — even on error.

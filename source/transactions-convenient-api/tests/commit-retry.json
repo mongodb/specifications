@@ -461,7 +461,7 @@
               ]
             },
             "options": {
-              "maxTimeMS": 60000
+              "maxCommitTimeMS": 60000
             }
           },
           "result": {

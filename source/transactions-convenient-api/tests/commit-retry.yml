@@ -280,7 +280,7 @@ tests:
                 result:
                   insertedId: 1
           options:
-            maxTimeMS: 60000
+            maxCommitTimeMS: 60000
         result:
           errorCodeName: MaxTimeMSExpired
           errorLabelsContain: ["UnknownTransactionCommitResult"]
