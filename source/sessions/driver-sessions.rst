@@ -1223,9 +1223,10 @@ problems:
 
 #. killSessions to end an earlier operation would surprisingly also end a
    later operation.
-#. An otherwise unrelated operation that just happens to use that same session
-   will potentially block waiting for the previous operation to complete. For
-   example, a transactional write will block a subsequent transactional write.
+#. An otherwise unrelated operation that just happens to use that same server
+   session will potentially block waiting for the previous operation to
+   complete. For example, a transactional write will block a subsequent
+   transactional write.
 
 TODO: Justify why we allow applications to continue using an explicit session
 after a network error.
