@@ -63,8 +63,9 @@ control the fail point's behavior. ``failCommand`` supports the following
 - ``closeConnection``: Boolean option, which defaults to ``false``. If
   ``true``, the connection on which the command is executed will be closed
   and the client will see a network error.
-- ``errorCode``: Integer option, which is unset by default. If set, the
-  specified command error code will be returned as a command error.
+- ``errorCode``: Integer option, which is unset by default. If set, the command
+  will not be executed and the specified command error code will be returned as
+  a command error.
 - ``writeConcernError``: A document, which is unset by default. If set, the
   server will return this document in the "writeConcernError" field. This
   failure response only applies to commands that support write concern and
