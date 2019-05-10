@@ -21,15 +21,18 @@ by each driver.
 Test Format
 ===========
 
-The same as the Transactions spec tests format.
+The same as the `Transactions Spec Test format
+<../../transactions/tests/README.rst#test-format>`_.
 
 Special Test Operations
 ```````````````````````
 
 Certain operations that appear in the "operations" array do not correspond to
 API methods but instead represent special test operations. Such operations are
-defined on the "testRunner" object and are documented in the Transactions spec
-test. Additional, session test specific operations are documented here:
+defined on the "testRunner" object and are documented in the
+`Transactions Spec Test
+<../../transactions/tests/README.rst#special-test-operations>`_.
+Additional, session test specific operations are documented here:
 
 assertServerSessionPoolSize
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

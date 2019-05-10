@@ -871,7 +871,7 @@ Algorithm to return a ServerSession instance to the server session pool
    from the end of the queue and discarded (or allowed to be garbage collected)
 
 2. Then examine the server session that is being returned to the pool and:
-    * If this session is marked dirty (ie it was involved in a network error)
+    * If this session is marked dirty (i.e. it was involved in a network error)
       discard it (let it be garbage collected)
     * If it will expire in less than one minute discard it
       (let it be garbage collected)
@@ -1255,4 +1255,4 @@ Change log
 :2018-06-07: Document that estimatedDocumentCount does not support explicit sessions
 :2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-10-11: Session pools must be cleared in child process after fork
-:2019-05-01: v1.6.0 A ServerSession that is involved in a network error MUST be discarded
+:2019-05-01: A ServerSession that is involved in a network error MUST be discarded
