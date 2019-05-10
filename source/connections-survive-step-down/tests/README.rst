@@ -95,11 +95,11 @@ Not Master - Keep Connection Pool
 
 This test requires server version 4.2 or higher.
 
-- Set the following fail point: ``{configureFailPoint: "failCommand",
-  data: {failCommands: ["insert"], errorCode: 11600, mode: {times: 1}}``
+- Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
+  data: {failCommands: ["insert"], errorCode: 10107}}``
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
-- Verify that the insert failed with an operation failure with 11600 code.
+- Verify that the insert failed with an operation failure with 10107 code.
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
 - Verify that the connection pool has not been cleared,
@@ -113,30 +113,42 @@ Not Master - Reset Connection Pool
 This test requires server version 4.0 or lower.
 
 
-- Set the following fail point: ``{configureFailPoint: "failCommand",
-  data: {failCommands: ["insert"], errorCode: 11600, mode: {times: 1}}``
+- Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
+  data: {failCommands: ["insert"], errorCode: 10107}}``
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
-- Verify that the insert failed with an operation failure with 11600 code.
+- Verify that the insert failed with an operation failure with 10107 code.
 - Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 
 
-Shutdown - Reset Connection Pool
-````````````````````````````````
+Shutdown in progress - Reset Connection Pool
+````````````````````````````````````````````
 
 This test should be run on all supported server versions.
 
 Perform the following operations on a client configured to NOT retry writes:
 
-- Set the following fail point: ``{configureFailPoint: "failCommand",
-  data: {failCommands: ["insert"], errorCode: 91, mode: {times: 1}}``
+- Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
+  data: {failCommands: ["insert"], errorCode: 91}}``
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 91 code.
 - Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 
 
+Interrupted at shutdown - Reset Connection Pool
+```````````````````````````````````````````````
 
+This test should be run on all supported server versions.
+
+Perform the following operations on a client configured to NOT retry writes:
+
+- Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
+  data: {failCommands: ["insert"], errorCode: 11600}}``
+- Execute an insert into the test collection of a ``{test: 1}``
+  document.
+- Verify that the insert failed with an operation failure with 11600 code.
+- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 
 
 
