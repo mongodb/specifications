@@ -847,7 +847,7 @@ If a driver has a server session pool and a network error is encountered when
 executing any operation with a ``ClientSession``, the driver MUST mark the
 associated ``ServerSession`` as dirty. Dirty server sessions are discarded
 when returned to the server session pool. It is valid for a dirty session to be
-used for subsequent operations (e.g. an impicit retry attempt), however, it
+used for subsequent operations (e.g. an implicit retry attempt), however, it
 MUST remain dirty for the remainder of its lifetime regardless if later
 operations succeed.
 
@@ -1228,8 +1228,26 @@ problems:
    complete. For example, a transactional write will block a subsequent
    transactional write.
 
-TODO: Justify why we allow applications to continue using an explicit session
-after a network error.
+Why do retry automatic retry attempts re-use a dirty implicit session?
+----------------------------------------------------------------------
+
+The retryable writes spec requires that both the original and retry attempt
+use the same server session. The server will block the retry attempt until the
+initial attempt completes at which point the retry attempt will continue
+executing.
+
+For retryable reads that use an implicit session, drivers could choose to use a
+new server session for the retry attempt however this would loose the
+information that these two reads are related.
+
+Why don't drivers run the endSessions command to cleanup dirty server sessions?
+-------------------------------------------------------------------------------
+
+Drivers do not run the endSessions command when discarding a dirty server
+session because disconnects should be relatively rare and the server won't
+normally accumulate a large number of abandoned dirty sessions. Any abandoned
+sessions will be automatically cleaned up by the server after the
+configured ``logicalSessionTimeoutMinutes``.
 
 Change log
 ==========
