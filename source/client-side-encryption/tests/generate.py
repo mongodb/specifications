@@ -53,7 +53,7 @@ keys = {
             }
         },
         "masterKey": master_keys["aws"],
-        "updatedDate": {
+        "updateDate": {
             "$date": {
                 "$numberLong": "1552949630483"
             }

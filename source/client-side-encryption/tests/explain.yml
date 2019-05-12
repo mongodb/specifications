@@ -10,18 +10,20 @@ json_schema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altn
 key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updateDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}]
 
 tests:
-  - description: "Find with deterministic encryption"
+  - description: "Explain a find with deterministic encryption"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
           aws: {} # Credentials filled in from environment.
     operations:
-      - name: find
+      - name: runCommand
+        command_name: explain
         arguments:
-          filter:
-            { ssn: "457-55-5462" }
-        result:
-          - &doc0 { _id: 1, ssn: "457-55-5462" }
+          command:
+            explain:
+              find: *collection_name
+              filter: { ssn : "123-45-6789" }
+          
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -48,74 +50,15 @@ tests:
           command_name: find
       - command_started_event:
           command:
-            find: *collection_name
-            filter:
-              { ssn: { $eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}} } }
-          command_name: find
+            explain:
+                find: *collection_name
+                filter:
+                  { ssn: { $eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}} } }
+            verbosity: "allPlansExecution"
+          command_name: explain
     outcome:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
           - *doc1_encrypted
-  - description: "Find with $in with deterministic encryption"
-    clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
-          aws: {} # Credentials filled in from environment.
-    operations:
-      - name: find
-        arguments:
-          filter:
-            { ssn: { $in: [ "457-55-5462", "123-45-6789" ] } }
-        result:
-          - { _id: 1, ssn: "457-55-5462" }
-          - &doc1 { _id: 2, ssn: "123-45-6789" }
-    expectations:
-      # Auto encryption will request the collection info.
-      - command_started_event:
-          command:
-            listCollections: 1
-            cursor: {}
-            filter:
-              name: *collection_name
-          command_name: listCollections
-      - command_started_event:
-          command:
-            listCollections: 1
-            cursor: {}
-            filter:
-              name: "datakeys"
-            $db: admin
-          command_name: listCollections
-      # Then key is fetched from the key vault.
-      - command_started_event:
-          command:
-            find: datakeys
-            filter: { _id: { $in: [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] } }
-            $db: admin
-          command_name: find
-      - command_started_event:
-          command:
-            find: *collection_name
-            filter:
-              # Note, the values are re-ordered, but this is logically equivalent.
-              { ssn: { $in: [ {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}}, {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=', 'subType': '06'}} ] } }
-          command_name: find
-    outcome:
-      collection:
-        # Outcome is checked using a separate MongoClient without auto encryption.
-        data:
-          - *doc0_encrypted
-          - {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}}
-  - description: "Find fails when filtering on a random encrypted field"
-    clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
-          aws: {} # Credentials filled in from environment
-    operations:
-      - name: find
-        arguments:
-          filter: { random: "abc" }
-        result:
-          errorContains: "Cannot query on fields encrypted with the randomized encryption"
