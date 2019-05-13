@@ -129,8 +129,8 @@
         {
             "description": "updateOne with deterministic encryption",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -264,8 +264,8 @@
         {
             "description": "updateOne fails when filtering on a random field",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -292,8 +292,8 @@
         {
             "description": "$unset works with an encrypted field",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -367,8 +367,8 @@
         {
             "description": "$rename works if target value has same encryption options",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -448,8 +448,8 @@
         {
             "description": "$rename fails if target value has different encryption options",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

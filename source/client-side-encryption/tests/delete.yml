@@ -12,8 +12,8 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 tests:
   - description: "deleteOne with deterministic encryption"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: deleteOne
@@ -60,8 +60,8 @@ tests:
           - *doc1_encrypted
   - description: "deleteMany with deterministic encryption"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: deleteMany

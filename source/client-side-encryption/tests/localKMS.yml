@@ -10,8 +10,8 @@ key_vault_data: [{'_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'sub
 tests:
   - description: "Insert a document with auto encryption using local KMS provider"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
           local: {'key': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==', 'subType': '00'}}}
     operations:

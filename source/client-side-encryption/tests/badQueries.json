@@ -138,8 +138,8 @@
         {
             "description": "$expr unconditionally fails",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -166,8 +166,8 @@
         {
             "description": "$text unconditionally fails",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -191,8 +191,8 @@
         {
             "description": "$where unconditionally fails",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -217,8 +217,8 @@
             "description": "$jsonSchema unconditionally fails",
             "skipReason": "SERVER-41012",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -242,8 +242,8 @@
         {
             "description": "$bit operators succeed on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -350,8 +350,8 @@
         {
             "description": "geo operators succeed on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -570,8 +570,8 @@
         {
             "description": "inequality operators succeed on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -678,8 +678,8 @@
         {
             "description": "other misc operators succeed on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -864,8 +864,8 @@
         {
             "description": "$addToSet succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -910,8 +910,8 @@
         {
             "description": "$inc succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -952,8 +952,8 @@
         {
             "description": "$mul succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -994,8 +994,8 @@
         {
             "description": "$max succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1036,8 +1036,8 @@
         {
             "description": "$min succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1078,8 +1078,8 @@
         {
             "description": "$currentDate succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1120,8 +1120,8 @@
         {
             "description": "$pop succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1162,8 +1162,8 @@
         {
             "description": "$pull succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1204,8 +1204,8 @@
         {
             "description": "$pullAll succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1250,8 +1250,8 @@
         {
             "description": "$push succeeds on unencrypted, error on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1293,8 +1293,8 @@
             "description": "array filters on encrypted fields does not error in mongocryptd, but errors in mongod",
             "skipReason": "SERVER-41022",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1324,8 +1324,8 @@
         {
             "description": "positional operator succeeds on unencrypted, errors on encrypted",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1370,8 +1370,8 @@
         {
             "description": "an update that would produce an array on an encrypted field errors",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1399,11 +1399,11 @@
         {
             "description": "an insert with encrypted field on _id errors",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     },
-                    "schema_map": {
+                    "schemaMap": {
                         "default.default": {
                             "properties": {
                                 "_id": {
@@ -1448,8 +1448,8 @@
         {
             "description": "an insert with an array value for an encrypted field fails",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1474,8 +1474,8 @@
         {
             "description": "an insert with a Timestamp(0,0) value in the top-level fails",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -1502,8 +1502,8 @@
         {
             "description": "distinct with the key referring to a field where the keyID is a JSON Pointer errors",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

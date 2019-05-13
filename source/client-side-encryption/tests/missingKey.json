@@ -84,8 +84,8 @@
         {
             "description": "Insert with encryption on a missing key",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

@@ -9,10 +9,10 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 tests:
   - description: "Schema with an encrypted field in an array"
     clientOptions:
-      auto_encrypt_opts:
-        schema_map:
+      autoEncryptOpts:
+        schemaMap:
           "default.default": {'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}, 'bsonType': 'array'}
-        kms_providers:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -25,10 +25,10 @@ tests:
         data: []
   - description: "Schema without specifying parent object types"
     clientOptions:
-      auto_encrypt_opts:
-        schema_map:
+      autoEncryptOpts:
+        schemaMap:
           "default.default": {'properties': {'foo': {'properties': {'bar': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}}}}
-        kms_providers:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -41,10 +41,10 @@ tests:
         data: []
   - description: "Schema with siblings of encrypt document"
     clientOptions:
-      auto_encrypt_opts:
-        schema_map:
+      autoEncryptOpts:
+        schemaMap:
           "default.default": {'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}, 'bsonType': 'object'}}}
-        kms_providers:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -57,10 +57,10 @@ tests:
         data: []
   - description: "Schema with logical keywords"
     clientOptions:
-      auto_encrypt_opts:
-        schema_map:
+      autoEncryptOpts:
+        schemaMap:
           "default.default": {'anyOf': [{'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}}]}
-        kms_providers:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne

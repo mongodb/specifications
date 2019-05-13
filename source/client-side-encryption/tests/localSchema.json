@@ -48,8 +48,8 @@
         {
             "description": "A local schema should override",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "schema_map": {
+                "autoEncryptOpts": {
+                    "schemaMap": {
                         "default.default": {
                             "properties": {
                                 "encrypted_w_altname": {
@@ -123,7 +123,7 @@
                             "bsonType": "object"
                         }
                     },
-                    "kms_providers": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

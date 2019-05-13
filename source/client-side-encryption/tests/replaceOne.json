@@ -129,8 +129,8 @@
         {
             "description": "replaceOne with encryption",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

@@ -147,8 +147,8 @@
         {
             "description": "distinct with deterministic encryption",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -271,8 +271,8 @@
         {
             "description": "Distinct fails when filtering on a random encrypted field",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -296,8 +296,8 @@
             "description": "Distinct fails when filtering on a random encrypted field",
             "skipReason": "SERVER-40299",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

@@ -11,8 +11,8 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 tests:
   - description: "updateOne with deterministic encryption"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -64,8 +64,8 @@ tests:
           - { _id: 1, ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}}, random: { $$type: "binData"} }
   - description: "updateOne fails when filtering on a random field"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -76,8 +76,8 @@ tests:
           errorContains: "Cannot query on fields encrypted with the randomized encryption"
   - description: "$unset works with an encrypted field"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -114,8 +114,8 @@ tests:
           - { _id: 1, random: { $$type: "binData"} }
   - description: "$rename works if target value has same encryption options"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -152,8 +152,8 @@ tests:
           - { _id: 1, ssn_equivalent: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=', 'subType': '06'}}, random: { $$type: "binData"} }
   - description: "$rename fails if target value has different encryption options"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne

@@ -139,8 +139,8 @@
             "description": "findOneAndDelete with deterministic encryption",
             "skipReason": "Waiting on SERVER-40005",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

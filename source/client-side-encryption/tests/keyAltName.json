@@ -120,8 +120,8 @@
             "description": "Insert with encryption using key alt name",
             "skipReason": "Waiting on CDRIVER-3057",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -226,8 +226,8 @@
             "description": "Replace with key alt name fails",
             "skipReason": "Waiting on CDRIVER-3057",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

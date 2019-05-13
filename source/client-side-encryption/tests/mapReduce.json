@@ -141,8 +141,8 @@
             "description": "mapReduce deterministic encryption",
             "skipReason": "TODO: throw on unsupported commands in Java PoC",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }

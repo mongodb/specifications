@@ -11,10 +11,10 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 tests:
   - description: "A local schema should override"
     clientOptions:
-      auto_encrypt_opts:
-        schema_map:
+      autoEncryptOpts:
+        schemaMap:
           "default.default": {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname', 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}, 'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}, 'random': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}, 'ssn_equivalent': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic', 'initializationVector': {'$binary': {'base64': 'aWlpaWlpaWlpaWlpaWlpaQ==', 'subType': '00'}}}}}, 'bsonType': 'object'}
-        kms_providers:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne

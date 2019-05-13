@@ -12,8 +12,8 @@ tests:
   - description: "Aggregate with deterministic encryption"
     skipReason: "SERVER-39395"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: aggregate
@@ -60,8 +60,8 @@ tests:
   - description: "Aggregate with empty pipeline"
     # skipReason: "SERVER-39395"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: aggregate
@@ -108,8 +108,8 @@ tests:
   - description: "Aggregate should fail with random encryption"
     skipReason: "SERVER-39395"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: aggregate
@@ -120,8 +120,8 @@ tests:
           errorContains: "Cannot query on fields encrypted with the randomized encryption"
   - description: "Database aggregate should fail"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: aggregate

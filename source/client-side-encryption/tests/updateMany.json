@@ -139,8 +139,8 @@
             "description": "updateMany with deterministic encryption",
             "skipReason": "Waiting on SERVER-40871",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
@@ -293,8 +293,8 @@
         {
             "description": "updateMany fails when filtering on a random field",
             "clientOptions": {
-                "auto_encrypt_opts": {
-                    "kms_providers": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
                         "aws": {}
                     }
                 }
