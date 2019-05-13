@@ -11,8 +11,8 @@ tests:
   - description: "Insert with encryption using key alt name"
     skipReason: "Waiting on CDRIVER-3057"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -57,8 +57,8 @@ tests:
   - description: "Replace with key alt name fails"
     skipReason: "Waiting on CDRIVER-3057"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne

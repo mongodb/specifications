@@ -10,8 +10,8 @@ key_vault_data: [{{key()}}]
 tests:
   - description: "Insert with deterministic encryption, then find it"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -64,8 +64,8 @@ tests:
           - *doc0_encrypted
   - description: "Insert with randomized encryption, then find it"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne

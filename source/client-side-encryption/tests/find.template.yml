@@ -12,8 +12,8 @@ key_vault_data: [{{key()}}]
 tests:
   - description: "Find with deterministic encryption"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -60,8 +60,8 @@ tests:
           - *doc1_encrypted
   - description: "Find with $in with deterministic encryption"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -110,8 +110,8 @@ tests:
           - {{ciphertext("123-45-6789", field="ssn")}}
   - description: "Find fails when filtering on a random encrypted field"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment
     operations:
       - name: find

@@ -11,10 +11,10 @@ key_vault_data: [{{key()}}]
 tests:
   - description: "A local schema should override"
     clientOptions:
-      auto_encrypt_opts:
-        schema_map:
+      autoEncryptOpts:
+        schemaMap:
           "default.default": {{schema('basic')}}
-        kms_providers:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne

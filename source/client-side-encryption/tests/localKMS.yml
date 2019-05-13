@@ -13,7 +13,7 @@ tests:
       auto_encrypt_opts:
         kms_providers:
           aws: {} # Credentials filled in from environment.
-          local: {'key': {'$binary': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==', '$type': '00'}}
+          local: {'key': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==', 'subType': '00'}}}
     operations:
       - name: insertOne
         arguments:

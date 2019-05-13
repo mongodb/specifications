@@ -87,8 +87,10 @@
                         "aws": {},
                         "local": {
                             "key": {
-                                "$binary": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-                                "$type": "00"
+                                "$binary": {
+                                    "base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                                    "subType": "00"
+                                }
                             }
                         }
                     }

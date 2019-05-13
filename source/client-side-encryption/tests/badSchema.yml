@@ -4,7 +4,7 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 
 data: []
-key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updatedDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}]
+key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updateDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}]
 
 tests:
   - description: "Schema with an encrypted field in an array"

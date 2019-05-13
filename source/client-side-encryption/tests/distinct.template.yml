@@ -13,8 +13,8 @@ key_vault_data: [{{key()}}]
 tests:
   - description: "distinct with deterministic encryption"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: distinct
@@ -62,8 +62,8 @@ tests:
           - *doc2_encrypted
   - description: "Distinct fails when filtering on a random encrypted field"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment
     operations:
       - name: distinct
@@ -75,8 +75,8 @@ tests:
   - description: "Distinct fails when filtering on a random encrypted field"
     skipReason: "SERVER-40299"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment
     operations:
       - name: distinct

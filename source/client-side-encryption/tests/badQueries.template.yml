@@ -16,8 +16,8 @@ key_vault_data: [{{key()}}]
 tests:
   - description: "$expr unconditionally fails"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -28,8 +28,8 @@ tests:
           errorContains: "Unsupported match expression operator for encryption"
   - description: "$text unconditionally fails"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -40,8 +40,8 @@ tests:
           errorContains: "Unsupported match expression operator for encryption"
   - description: "$where unconditionally fails"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -53,8 +53,8 @@ tests:
   - description: "$jsonSchema unconditionally fails"
     skipReason: "SERVER-41012"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -65,8 +65,8 @@ tests:
           errorContains: "Unsupported match expression operator for encryption"
   - description: "$bit operators succeed on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -107,8 +107,8 @@ tests:
           errorContains: "Invalid match expression operator on encrypted field"
   - description: "geo operators succeed on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -153,8 +153,8 @@ tests:
           errorContains: "Invalid match expression operator on encrypted field"
   - description: "inequality operators succeed on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -195,8 +195,8 @@ tests:
           errorContains: "Invalid match expression operator on encrypted field"
   - description: "other misc operators succeed on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: find
@@ -259,8 +259,8 @@ tests:
           errorContains: "Illegal equality to null inside $in against an encrypted field"
   - description: "$addToSet succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -279,8 +279,8 @@ tests:
           errorContains: "$addToSet not allowed on encrypted values"
   - description: "$inc succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -299,8 +299,8 @@ tests:
           errorContains: "$inc and $mul not allowed on encrypted values"
   - description: "$mul succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -319,8 +319,8 @@ tests:
           errorContains: "$inc and $mul not allowed on encrypted values"
   - description: "$max succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -339,8 +339,8 @@ tests:
           errorContains: "$max and $min not allowed on encrypted values"
   - description: "$min succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -359,8 +359,8 @@ tests:
           errorContains: "$max and $min not allowed on encrypted values"
   - description: "$currentDate succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -379,8 +379,8 @@ tests:
           errorContains: "$currentDate not allowed on encrypted values"
   - description: "$pop succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -399,8 +399,8 @@ tests:
           errorContains: "$pop not allowed on encrypted values"
   - description: "$pull succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -419,8 +419,8 @@ tests:
           errorContains: "$pull not allowed on encrypted values"
   - description: "$pullAll succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -439,8 +439,8 @@ tests:
           errorContains: "$pullAll not allowed on encrypted values"
   - description: "$push succeeds on unencrypted, error on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -460,8 +460,8 @@ tests:
   - description: "array filters on encrypted fields does not error in mongocryptd, but errors in mongod"
     skipReason: "SERVER-41022"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -473,8 +473,8 @@ tests:
           errorContains: "TODO"
   - description: "positional operator succeeds on unencrypted, errors on encrypted"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -493,8 +493,8 @@ tests:
           errorContains: "Cannot encrypt fields below '$' positional update operator"
   - description: "an update that would produce an array on an encrypted field errors"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: updateOne
@@ -505,10 +505,10 @@ tests:
           errorContains: "Cannot encrypt a field containing an array"
   - description: "an insert with encrypted field on _id errors"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
-        schema_map:
+        schemaMap:
           "default.default": {{schema("encrypted_id")}}
     operations:
       - name: insertOne
@@ -518,8 +518,8 @@ tests:
           errorContains: "Invalid schema containing the 'encrypt' keyword."
   - description: "an insert with an array value for an encrypted field fails"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -529,8 +529,8 @@ tests:
           errorContains: "Cannot encrypt a field containing an array"
   - description: "an insert with a Timestamp(0,0) value in the top-level fails"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
@@ -540,8 +540,8 @@ tests:
           errorContains: "A command that inserts cannot supply Timestamp(0, 0) for an encrypted"
   - description: "distinct with the key referring to a field where the keyID is a JSON Pointer errors"
     clientOptions:
-      auto_encrypt_opts:
-        kms_providers:
+      autoEncryptOpts:
+        kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: distinct
