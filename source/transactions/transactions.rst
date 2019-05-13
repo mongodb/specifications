@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 24-April-2019
+:Last Modified: 13-May-2019
 
 .. contents::
 
@@ -310,7 +310,7 @@ The maximum amount of time to allow a single commitTransaction command to run.
 This option is only sent with the commitTransaction command(s) and only if the
 caller explicitly provides a value. The default is to not send a value.
 
-Note, this option is an alias for the `maxTimeMS` commitTransaction command
+Note, this option is an alias for the ``maxTimeMS`` commitTransaction command
 option.
 
 **SessionOptions changes**
@@ -1374,7 +1374,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
-:2019-04-24: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
+:2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
              errors on commit are labelled UnknownTransactionCommitResult.
 :2019-02-19: Add support for sharded transaction recoveryToken.
 :2019-02-19: Clarify FAQ entry for not retrying commit on wtimeout
