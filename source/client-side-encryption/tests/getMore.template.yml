@@ -1,0 +1,70 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data:
+  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+  - &doc2_encrypted { _id: 3, ssn: {{ciphertext("987-65-4321", field="ssn")}} }
+json_schema: {{schema()}}
+key_vault_data: [{{key()}}]
+
+tests:
+  - description: "getMore with encryption"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: find
+        arguments:
+          batchSize: 2
+          filter: {}
+        results:
+          - { _id: 1, ssn: "457-55-5462" }
+          - { _id: 2, ssn: "123-45-6789" }
+          - { _id: 3, ssn: "987-65-4321" }
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            find: *collection_name
+            batchSize: 2
+          command_name: find
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            getMore: { $$type: "long" }
+            collection: *collection_name
+            batchSize: 2
+            $readPreference: { mode: "primaryPreferred" }
+          command_name: getMore
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc0_encrypted
+          - *doc1_encrypted
+          - *doc2_encrypted

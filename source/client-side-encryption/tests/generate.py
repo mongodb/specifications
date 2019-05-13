@@ -305,7 +305,7 @@ def ciphertext(plaintext, field, schema="basic"):
 
 def local_provider():
     return {
-        "key": {"$binary": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "$type": "00"}
+        "key": {"$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "subType": "00"}  }
     }
 
 
