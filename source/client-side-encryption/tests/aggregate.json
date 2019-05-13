@@ -103,7 +103,7 @@
                 "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
                 "region": "us-east-1"
             },
-            "updatedDate": {
+            "updateDate": {
                 "$date": {
                     "$numberLong": "1552949630483"
                 }
@@ -236,8 +236,176 @@
             }
         },
         {
+            "description": "Aggregate with empty pipeline",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "aggregate",
+                    "arguments": {
+                        "pipeline": []
+                    },
+                    "result": [
+                        {
+                            "_id": 1,
+                            "ssn": "457-55-5462"
+                        }
+                    ]
+                }
+            ],
+            "expectations": [
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "default"
+                            }
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "aggregate": "default",
+                            "pipeline": [],
+                            "cursor": {}
+                        },
+                        "command_name": "aggregate"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "datakeys"
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "find": "datakeys",
+                            "filter": {
+                                "_id": {
+                                    "$in": [
+                                        {
+                                            "$binary": {
+                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                "subType": "04"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "find"
+                    }
+                }
+            ],
+            "outcome": {
+                "collection": {
+                    "data": [
+                        {
+                            "_id": 1,
+                            "ssn": {
+                                "$binary": {
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                    "subType": "06"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "description": "Aggregate should fail with random encryption",
-            "skipReason": "SERVER-39395"
+            "skipReason": "SERVER-39395",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "aggregate",
+                    "arguments": {
+                        "pipeline": [
+                            {
+                                "$match": {
+                                    "random": "abc"
+                                }
+                            }
+                        ]
+                    },
+                    "result": {
+                        "errorContains": "Cannot query on fields encrypted with the randomized encryption"
+                    }
+                }
+            ]
+        },
+        {
+            "description": "Database aggregate should fail",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "aggregate",
+                    "object": "database",
+                    "arguments": {
+                        "pipeline": [
+                            {
+                                "$currentOp": {
+                                    "allUsers": false,
+                                    "idleConnections": false,
+                                    "localOps": true
+                                }
+                            },
+                            {
+                                "$match": {
+                                    "command.aggregate": {
+                                        "$eq": 1
+                                    }
+                                }
+                            },
+                            {
+                                "$project": {
+                                    "command": 1
+                                }
+                            },
+                            {
+                                "$project": {
+                                    "command.lsid": 0
+                                }
+                            }
+                        ]
+                    },
+                    "result": {
+                        "errorContains": "Expected collection"
+                    }
+                }
+            ]
         }
     ]
 }

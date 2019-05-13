@@ -15,6 +15,15 @@
                     "subType": "06"
                 }
             }
+        },
+        {
+            "_id": 2,
+            "ssn": {
+                "$binary": {
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                    "subType": "06"
+                }
+            }
         }
     ],
     "json_schema": {
@@ -103,7 +112,7 @@
                 "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
                 "region": "us-east-1"
             },
-            "updatedDate": {
+            "updateDate": {
                 "$date": {
                     "$numberLong": "1552949630483"
                 }
@@ -127,7 +136,7 @@
     ],
     "tests": [
         {
-            "description": "Delete with deterministic encryption",
+            "description": "deleteOne with deterministic encryption",
             "clientOptions": {
                 "auto_encrypt_opts": {
                     "kms_providers": {
@@ -212,6 +221,129 @@
                                         }
                                     },
                                     "limit": 1
+                                }
+                            ],
+                            "ordered": true
+                        },
+                        "command_name": "delete"
+                    }
+                }
+            ],
+            "outcome": {
+                "collection": {
+                    "data": [
+                        {
+                            "_id": 2,
+                            "ssn": {
+                                "$binary": {
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                                    "subType": "06"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "description": "deleteMany with deterministic encryption",
+            "clientOptions": {
+                "auto_encrypt_opts": {
+                    "kms_providers": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "deleteMany",
+                    "arguments": {
+                        "filter": {
+                            "ssn": {
+                                "$in": [
+                                    "457-55-5462",
+                                    "123-45-6789"
+                                ]
+                            }
+                        }
+                    },
+                    "result": {
+                        "deletedCount": 2
+                    }
+                }
+            ],
+            "expectations": [
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "default"
+                            }
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "datakeys"
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "find": "datakeys",
+                            "filter": {
+                                "_id": {
+                                    "$in": [
+                                        {
+                                            "$binary": {
+                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                "subType": "04"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "find"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "delete": "default",
+                            "deletes": [
+                                {
+                                    "q": {
+                                        "ssn": {
+                                            "$in": [
+                                                {
+                                                    "$binary": {
+                                                        "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                                                        "subType": "06"
+                                                    }
+                                                },
+                                                {
+                                                    "$binary": {
+                                                        "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                                        "subType": "06"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "limit": 0
                                 }
                             ],
                             "ordered": true

@@ -57,5 +57,80 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
+  - description: "Aggregate with empty pipeline"
+    # skipReason: "SERVER-39395"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: aggregate
+        arguments:
+          pipeline: []
+        result:
+          - { _id: 1, ssn: "457-55-5462" }
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: []
+            cursor: {}
+          command_name: aggregate
+      # Needs to fetch key when decrypting results
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc0_encrypted
   - description: "Aggregate should fail with random encryption"
     skipReason: "SERVER-39395"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: aggregate
+        arguments:
+          pipeline:
+            - { $match: { random: "abc" } }
+        result:
+          errorContains: "Cannot query on fields encrypted with the randomized encryption"
+  - description: "Database aggregate should fail"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: aggregate
+        object: database
+        arguments:
+          pipeline:
+            - $currentOp: { allUsers: false, idleConnections: false, localOps: true }
+            - $match: { command.aggregate: { $eq: 1 } }
+            - $project: { command: 1 }
+            - $project: { command.lsid: 0 }
+        result:
+          errorContains: "Expected collection"

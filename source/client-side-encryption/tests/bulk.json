@@ -93,7 +93,7 @@
                 "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
                 "region": "us-east-1"
             },
-            "updatedDate": {
+            "updateDate": {
                 "$date": {
                     "$numberLong": "1552949630483"
                 }
@@ -144,12 +144,37 @@
                                 "name": "insertOne",
                                 "arguments": {
                                     "document": {
-                                        "_id": 1,
+                                        "_id": 2,
                                         "ssn": "123-45-6789"
                                     }
                                 }
+                            },
+                            {
+                                "name": "updateOne",
+                                "arguments": {
+                                    "filter": {
+                                        "ssn": "457-55-5462"
+                                    },
+                                    "update": {
+                                        "$set": {
+                                            "ssn": "123-45-6789"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "name": "deleteOne",
+                                "arguments": {
+                                    "filter": {
+                                        "ssn": "123-45-6789",
+                                        "_id": 1
+                                    }
+                                }
                             }
-                        ]
+                        ],
+                        "options": {
+                            "ordered": true
+                        }
                     }
                 }
             ],
@@ -218,7 +243,7 @@
                                     }
                                 },
                                 {
-                                    "_id": 1,
+                                    "_id": 2,
                                     "ssn": {
                                         "$binary": {
                                             "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
@@ -231,13 +256,79 @@
                         },
                         "command_name": "insert"
                     }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "update": "default",
+                            "updates": [
+                                {
+                                    "q": {
+                                        "ssn": {
+                                            "$eq": {
+                                                "$binary": {
+                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                                    "subType": "06"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "u": {
+                                        "$set": {
+                                            "ssn": {
+                                                "$binary": {
+                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                                                    "subType": "06"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "ordered": true
+                        },
+                        "command_name": "update"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "delete": "default",
+                            "deletes": [
+                                {
+                                    "q": {
+                                        "$and": [
+                                            {
+                                                "ssn": {
+                                                    "$eq": {
+                                                        "$binary": {
+                                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                                                            "subType": "06"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "_id": {
+                                                    "$eq": 1
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "limit": 1
+                                }
+                            ],
+                            "ordered": true
+                        },
+                        "command_name": "delete"
+                    }
                 }
             ],
             "outcome": {
                 "collection": {
                     "data": [
                         {
-                            "_id": 1,
+                            "_id": 2,
                             "ssn": {
                                 "$binary": {
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
@@ -246,15 +337,6 @@
                             },
                             "random": {
                                 "$$type": "binData"
-                            }
-                        },
-                        {
-                            "_id": 1,
-                            "ssn": {
-                                "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
-                                    "subType": "06"
-                                }
                             }
                         }
                     ]

@@ -1,0 +1,26 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data:
+  - &doc0_encrypted { _id: 1, x: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+  - &doc1_encrypted { _id: 2, x: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+json_schema: {{schema()}}
+key_vault_data: [{{key()}}]
+
+tests:
+  - description: "mapReduce deterministic encryption"
+    skipReason: "TODO: throw on unsupported commands in Java PoC"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: mapReduce
+        arguments:
+          map: { $code: "function inc() { return emit(0, this.x + 1) }" }
+          reduce: { $code:  "function sum(key, values) { return values.reduce((acc, x) => acc + x); }" }
+          out: { inline: 1 }
+        result:
+          errorContains: "automatic encryption is not supported"

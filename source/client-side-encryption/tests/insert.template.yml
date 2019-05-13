@@ -8,7 +8,7 @@ json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
 tests:
-  - description: "Insert with encryption"
+  - description: "insertOne with encryption"
     clientOptions:
       auto_encrypt_opts:
         kms_providers:
@@ -53,3 +53,52 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
+  - description: "insertMany with encryption"
+    clientOptions:
+      auto_encrypt_opts:
+        kms_providers:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: insertMany
+        arguments:
+          documents:
+            - *doc0
+            - &doc1 { _id: 2, ssn: "123-45-6789" }
+    expectations:
+      # Auto encryption will request the collection info.
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: *collection_name
+          command_name: listCollections
+      - command_started_event:
+          command:
+            listCollections: 1
+            cursor: {}
+            filter:
+              name: "datakeys"
+            $db: admin
+          command_name: listCollections
+      # Then key is fetched from the key vault.
+      - command_started_event:
+          command:
+            find: datakeys
+            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            $db: admin
+          command_name: find
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - *doc0_encrypted
+              - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+            ordered: true
+          command_name: insert
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc0_encrypted
+          - *doc1_encrypted

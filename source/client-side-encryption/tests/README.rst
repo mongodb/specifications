@@ -112,10 +112,6 @@ Then for each element in ``tests``:
 #. Drop the test collection, using writeConcern "majority".
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
-#. If ``failPoint`` is specified, its value is a configureFailPoint command.
-   Run the command on the admin database to enable the fail point.
-
-   - When testing against a sharded cluster run this command on ALL mongoses.
 
 #. Set Command Monitoring listeners on the MongoClient.
 #. For each element in ``operations``:
@@ -158,15 +154,6 @@ Then for each element in ``tests``:
 #. If the test includes a list of command-started events in ``expectations``,
    compare them to the actual command-started events using the
    same logic as the Command Monitoring Spec Tests runner.
-#. If ``failPoint`` is specified, disable the fail point to avoid spurious
-   failures in subsequent tests. The fail point may be disabled like so::
-
-    db.adminCommand({
-        configureFailPoint: <fail point name>,
-        mode: "off"
-    });
-
-   - When testing against a sharded cluster run this command on ALL mongoses.
 
 #. For each element in ``outcome``:
 
