@@ -101,12 +101,16 @@ Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
 Then for each element in ``tests``:
 
-#. If the``skipReason`` field is present, skip this test completely.
+#. If the ``skipReason`` field is present, skip this test completely.
 #. If the ``key_vault_data`` field is present:
+
    #. Drop the ``admin.datakeys`` collection using writeConcern "majority".
    #. Insert the data specified into the ``admin.datakeys`` with write concern "majority".
+
 #. Create a MongoClient using ``clientOptions``.
+
    #. If ``client_side_encryption_opts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
+   
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields from the YAML file.
 #. Drop the test collection, using writeConcern "majority".
