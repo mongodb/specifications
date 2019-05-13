@@ -1228,8 +1228,8 @@ problems:
    complete. For example, a transactional write will block a subsequent
    transactional write.
 
-Why do retry automatic retry attempts re-use a dirty implicit session?
-----------------------------------------------------------------------
+Why do automatic retry attempts re-use a dirty implicit session?
+----------------------------------------------------------------
 
 The retryable writes spec requires that both the original and retry attempt
 use the same server session. The server will block the retry attempt until the
@@ -1237,7 +1237,7 @@ initial attempt completes at which point the retry attempt will continue
 executing.
 
 For retryable reads that use an implicit session, drivers could choose to use a
-new server session for the retry attempt however this would loose the
+new server session for the retry attempt however this would lose the
 information that these two reads are related.
 
 Why don't drivers run the endSessions command to cleanup dirty server sessions?
