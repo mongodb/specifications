@@ -58,7 +58,6 @@ tests:
         data:
           - *doc0_encrypted
   - description: "Aggregate with empty pipeline"
-    # skipReason: "SERVER-39395"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
