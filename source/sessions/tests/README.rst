@@ -34,17 +34,27 @@ defined on the "testRunner" object and are documented in the
 <../../transactions/tests/README.rst#special-test-operations>`_.
 Additional, session test specific operations are documented here:
 
-assertServerSessionPoolSize
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+assertDifferentLsidOnLastTwoCommands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The "assertServerSessionPoolSize" operation instructs the test runner to
-assert that the test's MongoClient has a ServerSession pool containing the
-given number of ServerSessions::
+The "assertDifferentLsidOnLastTwoCommands" operation instructs the test runner
+to assert that the last two command started events from the test's MongoClient
+have different "lsid" fields. This assertion is used to ensure that dirty
+server sessions are discarded from the pool::
 
-      - name: assertServerSessionPoolSize
+      - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner
-        arguments:
-          size: 0
+
+assertSameLsidOnLastTwoCommands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The "assertSameLsidOnLastTwoCommands" operation instructs the test runner
+to assert that the last two command started events from the test's MongoClient
+have the same "lsid" field. This assertion is used to ensure that non-dirty
+server sessions are not discarded from the pool::
+
+      - name: assertSameLsidOnLastTwoCommands
+        object: testRunner
 
 assertSessionDirty
 ~~~~~~~~~~~~~~~~~~

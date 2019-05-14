@@ -25,13 +25,6 @@
       "description": "Clean explicit session is not discarded",
       "operations": [
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
-          "arguments": {
-            "size": 0
-          }
-        },
-        {
           "name": "assertSessionNotDirty",
           "object": "testRunner",
           "arguments": {
@@ -63,11 +56,18 @@
           "object": "session0"
         },
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
+          "name": "find",
+          "object": "collection",
           "arguments": {
-            "size": 1
-          }
+            "filter": {
+              "_id": -1
+            }
+          },
+          "result": []
+        },
+        {
+          "name": "assertSameLsidOnLastTwoCommands",
+          "object": "testRunner"
         }
       ],
       "expectations": [
@@ -80,9 +80,23 @@
                   "_id": 2
                 }
               ],
-              "ordered": true
+              "ordered": true,
+              "lsid": "session0"
             },
             "command_name": "insert",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "filter": {
+                "_id": -1
+              },
+              "lsid": "session0"
+            },
+            "command_name": "find",
             "database_name": "session-tests"
           }
         }
@@ -104,13 +118,6 @@
       "description": "Clean implicit session is not discarded",
       "operations": [
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
-          "arguments": {
-            "size": 0
-          }
-        },
-        {
           "name": "insertOne",
           "object": "collection",
           "arguments": {
@@ -123,11 +130,18 @@
           }
         },
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
+          "name": "find",
+          "object": "collection",
           "arguments": {
-            "size": 1
-          }
+            "filter": {
+              "_id": -1
+            }
+          },
+          "result": []
+        },
+        {
+          "name": "assertSameLsidOnLastTwoCommands",
+          "object": "testRunner"
         }
       ],
       "expectations": [
@@ -143,6 +157,18 @@
               "ordered": true
             },
             "command_name": "insert",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "filter": {
+                "_id": -1
+              }
+            },
+            "command_name": "find",
             "database_name": "session-tests"
           }
         }
@@ -178,13 +204,6 @@
         }
       },
       "operations": [
-        {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
-          "arguments": {
-            "size": 0
-          }
-        },
         {
           "name": "assertSessionNotDirty",
           "object": "testRunner",
@@ -237,11 +256,18 @@
           "object": "session0"
         },
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
+          "name": "find",
+          "object": "collection",
           "arguments": {
-            "size": 0
-          }
+            "filter": {
+              "_id": -1
+            }
+          },
+          "result": []
+        },
+        {
+          "name": "assertDifferentLsidOnLastTwoCommands",
+          "object": "testRunner"
         }
       ],
       "expectations": [
@@ -301,6 +327,18 @@
             "command_name": "insert",
             "database_name": "session-tests"
           }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "filter": {
+                "_id": -1
+              }
+            },
+            "command_name": "find",
+            "database_name": "session-tests"
+          }
         }
       ],
       "outcome": {
@@ -338,13 +376,6 @@
       },
       "operations": [
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
-          "arguments": {
-            "size": 0
-          }
-        },
-        {
           "name": "insertOne",
           "object": "collection",
           "arguments": {
@@ -357,11 +388,18 @@
           }
         },
         {
-          "name": "assertServerSessionPoolSize",
-          "object": "testRunner",
+          "name": "find",
+          "object": "collection",
           "arguments": {
-            "size": 0
-          }
+            "filter": {
+              "_id": -1
+            }
+          },
+          "result": []
+        },
+        {
+          "name": "assertDifferentLsidOnLastTwoCommands",
+          "object": "testRunner"
         }
       ],
       "expectations": [
@@ -398,6 +436,18 @@
               }
             },
             "command_name": "insert",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "filter": {
+                "_id": -1
+              }
+            },
+            "command_name": "find",
             "database_name": "session-tests"
           }
         }

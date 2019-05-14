@@ -14,10 +14,6 @@ tests:
   - description: Clean explicit session is not discarded
 
     operations:
-      - name: assertServerSessionPoolSize
-        object: testRunner
-        arguments:
-          size: 0
       - name: assertSessionNotDirty
         object: testRunner
         arguments:
@@ -35,10 +31,14 @@ tests:
           session: session0
       - name: endSession
         object: session0
-      - name: assertServerSessionPoolSize
-        object: testRunner
+      - &find_with_implicit_session
+        name: find
+        object: collection
         arguments:
-          size: 1
+          filter: {_id: -1}
+        result: []
+      - name: assertSameLsidOnLastTwoCommands
+        object: testRunner
 
     expectations:
       - command_started_event:
@@ -47,7 +47,15 @@ tests:
             documents:
               - {_id: 2}
             ordered: true
+            lsid: session0
           command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {_id: -1}
+            lsid: session0
+          command_name: find
           database_name: *database_name
 
     outcome:
@@ -59,20 +67,15 @@ tests:
   - description: Clean implicit session is not discarded
 
     operations:
-      - name: assertServerSessionPoolSize
-        object: testRunner
-        arguments:
-          size: 0
       - name: insertOne
         object: collection
         arguments:
           document: {_id: 2}
         result:
           insertedId: 2
-      - name: assertServerSessionPoolSize
+      - *find_with_implicit_session
+      - name: assertSameLsidOnLastTwoCommands
         object: testRunner
-        arguments:
-          size: 1
 
     expectations:
       - command_started_event:
@@ -82,6 +85,12 @@ tests:
               - {_id: 2}
             ordered: true
           command_name: insert
+          database_name: *database_name
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {_id: -1}
+          command_name: find
           database_name: *database_name
 
     outcome:
@@ -103,10 +112,6 @@ tests:
             closeConnection: true
 
     operations:
-      - name: assertServerSessionPoolSize
-        object: testRunner
-        arguments:
-          size: 0
       - name: assertSessionNotDirty
         object: testRunner
         arguments:
@@ -135,10 +140,9 @@ tests:
           session: session0
       - name: endSession
         object: session0
-      - name: assertServerSessionPoolSize
+      - *find_with_implicit_session
+      - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner
-        arguments:
-          size: 0
 
     expectations:
       - command_started_event:
@@ -174,6 +178,12 @@ tests:
               $numberLong: "2"
           command_name: insert
           database_name: *database_name
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {_id: -1}
+          command_name: find
+          database_name: *database_name
 
     outcome:
       collection:
@@ -195,20 +205,15 @@ tests:
             closeConnection: true
 
     operations:
-      - name: assertServerSessionPoolSize
-        object: testRunner
-        arguments:
-          size: 0
       - name: insertOne
         object: collection
         arguments:
           document: {_id: 2}
         result:
           insertedId: 2
-      - name: assertServerSessionPoolSize
+      - *find_with_implicit_session
+      - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner
-        arguments:
-          size: 0
 
     expectations:
       - command_started_event:
@@ -231,6 +236,13 @@ tests:
               $numberLong: "1"
           command_name: insert
           database_name: *database_name
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {_id: -1}
+          command_name: find
+          database_name: *database_name
+
 
     outcome:
       collection:
