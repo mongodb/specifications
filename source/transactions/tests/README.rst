@@ -61,8 +61,8 @@ control the fail point's behavior. ``failCommand`` supports the following
 
 - ``failCommands``: Required, the list of command names to fail.
 - ``closeConnection``: Boolean option, which defaults to ``false``. If
-  ``true``, the connection on which the command is executed will be closed
-  and the client will see a network error.
+  ``true``, the command will not be executed, the connection will be closed, and
+  the client will see a network error.
 - ``errorCode``: Integer option, which is unset by default. If set, the command
   will not be executed and the specified command error code will be returned as
   a command error.

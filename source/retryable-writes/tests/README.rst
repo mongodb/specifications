@@ -75,9 +75,9 @@ Some tests depend on a server fail point, ``failCommand``, which allows the
 client to force the server to return an error. Unlike
 ``onPrimaryTransactionalWrite``, ``failCommand`` does not allow the client to
 directly control whether the server will commit the operation (execution of the
-write depends entirely on whether the ``errorCode`` option is specified). See:
-`failCommand <../../transactions/tests#failcommand>`_ in the Transactions spec
-test suite for more information.
+write depends on whether the ``closeConnection`` and/or ``errorCode`` options
+are specified). See: `failCommand <../../transactions/tests#failcommand>`_ in
+the Transactions spec test suite for more information.
 
 Disabling Fail Points after Test Execution
 ------------------------------------------
