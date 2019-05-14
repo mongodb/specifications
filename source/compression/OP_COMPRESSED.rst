@@ -13,9 +13,9 @@ Wire Compression in Drivers
             Dana Groff (2017-05-02) 
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2017-06-13
+:Last Modified: 2019-05-13
 :Minimum Server Version: 3.4
-:Version: 1.1
+:Version: 1.2
 
 
 Abstract
@@ -203,7 +203,9 @@ Each compressor is assigned a predefined compressor ID.
 +-----------------+----------------+-------------------------------------------------------+
 | 2               | zlib           | The content of the message is compressed using zlib   |
 +-----------------+----------------+-------------------------------------------------------+
-| 3-255           | reserved       | Reserved for future used                              |
+| 3               | zstd           | The content of the message is compressed using zstd   |
++-----------------+----------------+-------------------------------------------------------+
+| 4-255           | reserved       | Reserved for future used                              |
 +-----------------+----------------+-------------------------------------------------------+
 
 
@@ -473,6 +475,8 @@ Q & A
 Changelog
 =========
 
++------------+---------------------------------------------------+
+| 2019-05-13 | Add zstd as supported compression algorithm       |
 +------------+---------------------------------------------------+
 | 2017-06-13 | Don't require clients to implement legacy opcodes |
 +------------+---------------------------------------------------+
