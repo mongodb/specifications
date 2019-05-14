@@ -192,7 +192,7 @@ tests:
           - {_id: 2}
           - {_id: 3}
 
-  - description: Dirty implicit session is discarded
+  - description: Dirty implicit session is discarded (write)
 
     clientOptions:
       retryWrites: true
@@ -243,9 +243,39 @@ tests:
           command_name: find
           database_name: *database_name
 
-
     outcome:
       collection:
         data:
           - {_id: 1}
           - {_id: 2}
+
+  - description: Dirty implicit session is discarded (read)
+
+    # Enable the failpoint with times:2 so that this test can pass with or
+    # without retryable reads.
+    failPoint:
+        configureFailPoint: failCommand
+        mode: { times: 2 }
+        data:
+            failCommands: ["aggregate"]
+            closeConnection: true
+
+    operations:
+      - name: aggregate
+        object: collection
+        arguments:
+          pipeline:
+            - $project:
+                _id: 1
+        error: true
+      - *find_with_implicit_session
+      - name: assertDifferentLsidOnLastTwoCommands
+        object: testRunner
+
+    # Don't include expectations because a driver may or may not retry the
+    # aggregate depending on if they have implemented the retryable reads spec.
+
+    outcome:
+      collection:
+        data:
+          - {_id: 1}

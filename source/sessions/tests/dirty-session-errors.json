@@ -358,7 +358,7 @@
       }
     },
     {
-      "description": "Dirty implicit session is discarded",
+      "description": "Dirty implicit session is discarded (write)",
       "clientOptions": {
         "retryWrites": true
       },
@@ -460,6 +460,60 @@
             },
             {
               "_id": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Dirty implicit session is discarded (read)",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$project": {
+                  "_id": 1
+                }
+              }
+            ]
+          },
+          "error": true
+        },
+        {
+          "name": "find",
+          "object": "collection",
+          "arguments": {
+            "filter": {
+              "_id": -1
+            }
+          },
+          "result": []
+        },
+        {
+          "name": "assertDifferentLsidOnLastTwoCommands",
+          "object": "testRunner"
+        }
+      ],
+      "outcome": {
+        "collection": {
+          "data": [
+            {
+              "_id": 1
             }
           ]
         }
