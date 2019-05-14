@@ -13,9 +13,9 @@ Wire Compression in Drivers
             Dana Groff (2017-05-02) 
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2017-06-13
+:Last Modified: 2019-05-13
 :Minimum Server Version: 3.4
-:Version: 1.1
+:Version: 1.2
 
 
 Abstract
@@ -44,8 +44,8 @@ interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 Terms
 =====
 
-*Compressor* - A compression algorithm, such as snappy or zlib.
-
+*Compressor* - A compression algorithm.  There are currently three supported
+algorithms: snappy, zlib, and zstd.
 
 Specification
 =============
@@ -66,7 +66,7 @@ Example::
     {
         isMaster: 1,
         client: {}, /* See MongoDB Handshake */
-        compression: ["snappy", "zlib"]
+        compression: ["snappy", "zlib", "zstd"]
     }
 
 When no compression is enabled on the client, drivers SHOULD send an empty
@@ -133,7 +133,7 @@ list.
 
 Example::
 
-    mongodb://localhost/?compressors=snappy,zlib
+    mongodb://localhost/?compressors=zstd,snappy,zlib
     
 
 zlibCompressionLevel
@@ -203,7 +203,9 @@ Each compressor is assigned a predefined compressor ID.
 +-----------------+----------------+-------------------------------------------------------+
 | 2               | zlib           | The content of the message is compressed using zlib   |
 +-----------------+----------------+-------------------------------------------------------+
-| 3-255           | reserved       | Reserved for future used                              |
+| 3               | zstd           | The content of the message is compressed using zstd   |
++-----------------+----------------+-------------------------------------------------------+
+| 4-255           | reserved       | Reserved for future used                              |
 +-----------------+----------------+-------------------------------------------------------+
 
 
@@ -379,6 +381,9 @@ relevant ``zlibCompressionLevel``. When other compression libraries are
 supported, adding support for configuring that library (if any is needed)
 should be handled on a case by case basis.
 
+More recently, the MongoDB server added Zstandard (zstd) support for another
+modern alternative to zlib.
+
 
 Backwards Compatibility
 =======================
@@ -438,17 +443,15 @@ Q & A
 
 * Which compressors are currently supported?
    * MongoDB 3.4 supports ``snappy``
-   * MongoDB 3.6 supports ``snappy`` and likely ``zlib``
+   * MongoDB 3.6 supports ``snappy`` and ``zlib``
+   * MongoDB 4.2 supports ``snappy``, ``zlib``, and ``zstd``
 
 * My language supports xyz compressor, should I announce them all in the handshake?
    * No. But you are allowed to if you really want to make sure you can use
      that compressor with MongoDB 42 and your current driver versions.
 
-* My language does not support snappy. What do I do?
-   * That is OK. You don’t have to support snappy
-
-* My language does not support zlib. What do I do?
-   * That is OK. You don’t have to support zlib
+* My language does not support xzy xompressor. What do I do?
+   * That is OK. You don’t have to support xyz.
 
 * No MongoDB supported compressors are available for my language
    * That is OK. You don’t have to support compressors you can’t support.
@@ -473,6 +476,8 @@ Q & A
 Changelog
 =========
 
++------------+---------------------------------------------------+
+| 2019-05-13 | Add zstd as supported compression algorithm       |
 +------------+---------------------------------------------------+
 | 2017-06-13 | Don't require clients to implement legacy opcodes |
 +------------+---------------------------------------------------+
