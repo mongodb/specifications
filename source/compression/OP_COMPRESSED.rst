@@ -45,7 +45,7 @@ Terms
 =====
 
 *Compressor* - A compression algorithm.  There are currently three supported
-algorithms: snappy, zlib and zstd.
+algorithms: snappy, zlib, and zstd.
 
 Specification
 =============
