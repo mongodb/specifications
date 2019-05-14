@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.4
+:Spec Version: 1.5
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 19-February-2019
+:Last Modified: 13-May-2019
 
 .. contents::
 
@@ -117,6 +117,12 @@ where your driver's and/or language's naming conventions differ you
 SHOULD continue to use them instead. For example, you might use
 StartTransaction or start_transaction instead of startTransaction.
 
+A non-exhaustive list of acceptable naming deviations are as follows:
+
+* Using "maxCommitTimeMS" as an example, .NET would use "MaxCommitTime" where
+  it's type is a TimeSpan structure that includes units. However, calling it
+  "MaximumCommitTime" would not be acceptable.
+
 **Transaction API**
 ~~~~~~~~~~~~~~~~~~~
 
@@ -150,6 +156,12 @@ This section is an overview of the public API for transactions:
          * The readPreference to use for this transaction.
          */
         Optional<ReadPreference> readPreference;
+
+        /**
+         * The maximum amount of time to allow a single commitTransaction
+         * command to run.
+         */
+        Optional<Int64> maxCommitTimeMS;
     }
 
     class SessionOptions {
@@ -290,6 +302,17 @@ See `Why is readPreference part of TransactionOptions?`_.
 In the future, we might relax this restriction and allow any read
 preference on a transaction.
 
+maxCommitTimeMS
+^^^^^^^^^^^^^^^
+
+The maximum amount of time to allow a single commitTransaction command to run.
+
+This option is only sent with the commitTransaction command(s) and only if the
+caller explicitly provides a value. The default is to not send a value.
+
+Note, this option is an alias for the ``maxTimeMS`` commitTransaction command
+option.
+
 **SessionOptions changes**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -385,11 +408,11 @@ commitTransaction
 ^^^^^^^^^^^^^^^^^
 
 This method commits the currently active transaction on this session.
-Drivers MUST run a commitTransaction command with the writeConcern from
-TransactionOptions. Drivers MUST report an error when the command fails
-or the command succeeds but contains a writeConcernError. This session
-is in the "transaction committed" state after this method returns — even
-on error.
+Drivers MUST run a commitTransaction command with the writeConcern and,
+if configured, the maxCommitTimeMS from TransactionOptions.
+Drivers MUST report an error when the command fails or the command succeeds
+but contains a writeConcernError. This session is in the
+"transaction committed" state after this method returns — even on error.
 
 If this session is in the "no transaction" state, then Drivers MUST
 raise an error containing the message "No transaction started".
@@ -713,6 +736,7 @@ The commitTransaction server command has the following format:
         txnNumber : <Int64>,
         autocommit : false,
         writeConcern : {...},
+        maxTimeMS: <Int64>,
         recoveryToken : {...}
     }
 
@@ -882,7 +906,7 @@ state of the transaction.
 
 The driver MUST add the "UnknownTransactionCommitResult" error label when
 commitTransaction fails with a server selection error, network error, retryable
-writes error, or write concern failed / timeout. (See
+writes error, MaxTimeMSExpired error, or write concern failed / timeout. (See
 `A server selection error is labeled UnknownTransactionCommitResult`_
 for justification.) The approximate meaning of the
 UnknownTransactionCommitResult label is, "We don't know if your commit
@@ -1350,6 +1374,8 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
+             errors on commit are labelled UnknownTransactionCommitResult.
 :2019-02-19: Add support for sharded transaction recoveryToken.
 :2019-02-19: Clarify FAQ entry for not retrying commit on wtimeout
 :2019-01-18: Apply majority write concern when retrying commitTransaction

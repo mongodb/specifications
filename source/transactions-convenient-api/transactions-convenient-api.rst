@@ -3,14 +3,14 @@ Convenient API for Transactions
 ===============================
 
 :Spec Title: Convenient API for Transactions
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Jeremy Mikola
 :Lead: Jeff Yemin
 :Advisors: A\. Jesse Jiryu Davis, Kris Brandow, Oleg Pudeyev, Sam Ritter, Tess Avitabile
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 2019-02-13
+:Last Modified: 2019-04-24
 
 .. contents::
 
@@ -123,12 +123,11 @@ drivers MUST enforce a 120-second timeout to limit retry behavior and safeguard
 applications from long-running (or infinite) retry loops. Drivers SHOULD use a
 monotonic clock to determine elapsed time.
 
-If an UnknownTransactionCommitResult is encountered for a commit, the commit
-operation may be retried. If the retry timeout has not been exceeded, the driver
-MUST retry a commit that fails with an error bearing the
-"UnknownTransactionCommitResult" label. If the retry timeout has been exceeded,
-drivers MUST NOT retry the commit and allow ``withTransaction`` to propagate the
-error to its caller.
+If an UnknownTransactionCommitResult error is encountered for a commit, the
+driver MUST retry the commit if and only if the error is not MaxTimeMSExpired
+and the retry timeout has not been exceeded. Otherwise, the driver MUST NOT
+retry the commit and allow ``withTransaction`` to propagate the error to its
+caller.
 
 If a TransientTransactionError is encountered at any point, the entire
 transaction may be retried. If the retry timeout has not been exceeded, the
@@ -204,9 +203,10 @@ This method should perform the following sequence of actions:
 9. If ``commitTransaction`` reported an error:
 
    a. If the ``commitTransaction`` error includes a
-      "UnknownTransactionCommitResult" label and the elapsed time of
-      ``withTransaction`` is less than 120 seconds, jump back to step eight. We
-      will trust ``commitTransaction`` to apply a majority write concern on
+      "UnknownTransactionCommitResult" label and the error is not
+      MaxTimeMSExpired and the elapsed time of ``withTransaction`` is less
+      than 120 seconds, jump back to step eight. We will trust
+      ``commitTransaction`` to apply a majority write concern on
       retry attempts (see:
       `Majority write concern is used when retrying commitTransaction`_).
 
@@ -268,7 +268,14 @@ This method can be expressed by the following pseudo-code:
                      * being retried (see: DRIVERS-601) */
                     this.commitTransaction();
                 } catch (error) {
-                    if (error.hasErrorLabel("UnknownTransactionCommitResult") &&
+                    /* Note: a maxTimeMS error will have the MaxTimeMSExpired
+                     * code (50) and can be reported as a top-level error or
+                     * inside writeConcernError, ie:
+                     * {ok:0, code: 50, codeName: "MaxTimeMSExpired"}
+                     * {ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}
+                     */
+                    if (!isMaxTimeMSExpiredError(error) &&
+                        error.hasErrorLabel("UnknownTransactionCommitResult") &&
                         Date.now() - startTime < 120000) {
                         continue retryCommit;
                     }
@@ -381,14 +388,14 @@ their users to design idempotent callbacks.
 
 .. _Retry Transactions and Commit Operation: https://docs.mongodb.com/manual/core/transactions/#retry-transaction-and-commit-operation
 
-The commit is retried after a write concern timeout error
----------------------------------------------------------
+The commit is retried after a write concern timeout (i.e. wtimeout) error
+-------------------------------------------------------------------------
 
 Per the Transactions specification, drivers internally retry
 ``commitTransaction`` once if it fails due to a retryable error (as defined in
 the `Retryable Writes`_ specification). Beyond that, applications may manually
 retry ``commitTransaction`` if it fails with any error bearing the
-`UnknownTransactionCommitResult`_ error label. This lable is applied for the
+`UnknownTransactionCommitResult`_ error label. This label is applied for the
 the following errors:
 
 .. _Retryable Writes: ../retryable-writes/retryable-writes.rst#terms
@@ -399,6 +406,8 @@ the following errors:
 - Retryable error (as defined in the `Retryable Writes`_ specification)
 - Write concern failure or timeout (excluding UnsatisfiableWriteConcern and
   UnknownReplWriteConcern)
+- MaxTimeMSExpired errors, ie ``{ok:0, code: 50, codeName: "MaxTimeMSExpired"}``
+  and ``{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}``.
 
 A previous design for ``withTransaction`` retried for all of these errors
 *except* for write concern timeouts, so as not to exceed the user's original
@@ -411,6 +420,13 @@ This change was made in light of the forthcoming Client-side Operations Timeout
 specification (see: `Future Work`_), which we expect will allow the current
 120-second timeout for ``withTransaction`` to be customized and also obviate the
 need for users to specify ``wtimeout``.
+
+The commit is not retried after a MaxTimeMSExpired error
+--------------------------------------------------------
+
+This specification intentionally chooses not to retry commit operations after a
+MaxTimeMSExpired error as doing so would exceed the user's original intention
+for ``maxTimeMS``.
 
 The transaction and commit may be retried any number of times within a timeout period
 -------------------------------------------------------------------------------------
@@ -480,5 +496,8 @@ client-side operation timeout, withTransaction can continue to use the
 
 Changes
 =======
+
+2019-04-24: withTransaction does not retry when commit fails with
+            MaxTimeMSExpired.
 
 2018-02-13: withTransaction should retry commits after a wtimeout
