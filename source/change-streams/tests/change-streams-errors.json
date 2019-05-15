@@ -79,7 +79,8 @@
       "minServerVersion": "4.1.11",
       "target": "collection",
       "topology": [
-        "replicaset"
+        "replicaset",
+        "sharded"
       ],
       "changeStreamPipeline": [
         {
