@@ -143,6 +143,9 @@ Each YAML file has the following keys:
 
     - ``arguments``: Optional, the names and values of arguments.
 
+    - ``error``: Optional. If true, the test should expect an error or
+      exception.
+
     - ``result``: The return value from the operation, if any. This field may
       be a single document or an array of documents in the case of a
       multi-document read. If the operation is expected to return an error, the
@@ -245,6 +248,8 @@ Then for each element in ``tests``:
      method.
    - If the driver throws an exception / returns an error while executing this
      series of operations, store the error message and server error code.
+   - If the operation's ``error`` field is ``true``, verify that the method
+     threw an exception or returned an error.
    - If the result document has an "errorContains" field, verify that the
      method threw an exception or returned an error, and that the value of the
      "errorContains" field matches the error string. "errorContains" is a
@@ -525,6 +530,7 @@ is the only command allowed in a sharded transaction that uses the
 Changelog
 =========
 
+:2019-05-15: Add operation level ``error`` field to assert any error.
 :2019-03-25: Add workaround for StaleDbVersion on distinct.
 :2019-03-01: Add top-level ``runOn`` field to denote server version and/or
              topology requirements requirements for the test file. Removes the
