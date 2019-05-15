@@ -81,4 +81,4 @@ the given session is *not* marked dirty::
 Changelog
 =========
 
-:2019-05-07: Initial version.
+:2019-05-15: Initial version.
