@@ -18,7 +18,8 @@ tests:
         object: testRunner
         arguments:
           session: session0
-      - name: insertOne
+      - &insert_with_explicit_session
+        name: insertOne
         object: collection
         arguments:
           session: session0
@@ -67,7 +68,8 @@ tests:
   - description: Clean implicit session is not discarded
 
     operations:
-      - name: insertOne
+      - &insert_with_implicit_session
+        name: insertOne
         object: collection
         arguments:
           document: {_id: 2}
@@ -116,13 +118,7 @@ tests:
         object: testRunner
         arguments:
           session: session0
-      - name: insertOne
-        object: collection
-        arguments:
-          session: session0
-          document: {_id: 2}
-        result:
-          insertedId: 2
+      - *insert_with_explicit_session
       - name: assertSessionDirty
         object: testRunner
         arguments:
@@ -205,12 +201,7 @@ tests:
             closeConnection: true
 
     operations:
-      - name: insertOne
-        object: collection
-        arguments:
-          document: {_id: 2}
-        result:
-          insertedId: 2
+      - *insert_with_implicit_session
       - *find_with_implicit_session
       - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner

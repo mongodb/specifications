@@ -844,12 +844,13 @@ document fork support.  After clearing the session pool in this way, drivers
 MUST ensure that sessions already checked out are not returned to the new pool.
 
 If a driver has a server session pool and a network error is encountered when
-executing any operation with a ``ClientSession``, the driver MUST mark the
+executing any command with a ``ClientSession``, the driver MUST mark the
 associated ``ServerSession`` as dirty. Dirty server sessions are discarded
 when returned to the server session pool. It is valid for a dirty session to be
-used for subsequent operations (e.g. an implicit retry attempt), however, it
-MUST remain dirty for the remainder of its lifetime regardless if later
-operations succeed.
+used for subsequent commands (e.g. an implicit retry attempt, a later command
+in a bulk write, or a later operation on an explict session), however, it MUST
+remain dirty for the remainder of its lifetime regardless if later commands
+succeed.
 
 Algorithm to acquire a ServerSession instance from the server session pool
 --------------------------------------------------------------------------
