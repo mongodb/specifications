@@ -154,6 +154,12 @@ Each YAML file has the following keys:
       multi-document read. If the operation is expected to return an error, the
       ``result`` is a single document that has one or more of the following
       fields:
+      
+      - ``clientError``: A boolean indicating whether the operation is
+        expected to fail due to a client side error (such as a document
+        being too large, or containing invalid keys). If the ``clientError``
+        key is not present but any of the other error keys are present,
+        the error is expected to have come from the server.
 
       - ``errorContains``: A substring of the expected error message.
 
@@ -165,6 +171,13 @@ Each YAML file has the following keys:
 
       - ``errorLabelsOmit``: A list of error label strings that the
         error is expected not to have.
+        
+      - ``state``: A map of expected session states. The keys can be
+        "session0" or "session1", and the values can be any of the states
+        defined in the transactions spec: "starting transaction",
+        "transaction in progress", "transaction comitted", "transaction aborted".
+        If a session is not specified in the session state map, its
+        state should not be asserted.
 
   - ``expectations``: Optional list of command-started events.
 

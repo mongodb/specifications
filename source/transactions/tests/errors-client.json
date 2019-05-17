@@ -1,0 +1,88 @@
+{
+  "runOn": [
+    {
+      "minServerVersion": "4.0",
+      "topology": [
+        "replicaset"
+      ]
+    },
+    {
+      "minServerVersion": "4.1.8",
+      "topology": [
+        "sharded"
+      ]
+    }
+  ],
+  "database_name": "transaction-tests",
+  "collection_name": "test",
+  "data": [],
+  "tests": [
+    {
+      "description": "Client side error in command starting transaction",
+      "operations": [
+        {
+          "name": "startTransaction",
+          "object": "session0"
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": {
+                ".": "."
+              }
+            }
+          },
+          "result": {
+            "clientError": true,
+            "state": {
+              "session0": "starting transaction"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "Client side error when transaction is in progress",
+      "operations": [
+        {
+          "name": "startTransaction",
+          "object": "session0"
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": 4
+            }
+          },
+          "result": {
+            "insertedId": 4
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection",
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": {
+                ".": "."
+              }
+            }
+          },
+          "result": {
+            "clientError": true,
+            "state": {
+              "session0": "transaction in progress"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

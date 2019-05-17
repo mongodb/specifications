@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5.1
+:Spec Version: 1.5.2
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2019-06-07
+:Last Modified: 2019-06-10
 
 .. contents::
 
@@ -349,6 +349,13 @@ and abortTransaction) MUST reset the session state to "no transaction".
 Note that "error" is not a state, it represents throwing an error due to
 an invalid operation. When such errors are thrown the session state is
 unchanged.
+
+Client side errors MUST NOT change transaction state. For example, if an
+invalid key or an excessively large document is provided by the application
+to an insert when the transaction state is "starting transaction", the
+transaction state MUST remain "starting transaction". If the same situation
+occurs when the transaction state is "transaction in progress", the state
+MUST remain "transaction in progress".
 
 startTransaction
 ^^^^^^^^^^^^^^^^
@@ -1373,6 +1380,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-06-10: Clarified client side error handling.
 :2019-06-07: Mention $merge stage for aggregate alongside $out
 :2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
              errors on commit are labelled UnknownTransactionCommitResult.
