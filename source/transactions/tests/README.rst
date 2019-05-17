@@ -229,7 +229,7 @@ Then for each element in ``tests``:
 #. Call ``client.startSession`` twice to create ClientSession objects
    ``session0`` and ``session1``, using the test's "sessionOptions" if they
    are present. Save their lsids so they are available after calling
-   ``endSession``, see `Logical Session Id`.
+   ``endSession``, see `Logical Session Id`_.
 #. For each element in ``operations``:
 
    - If the operation ``name`` is a special test operation type, execute it and
