@@ -59,7 +59,6 @@ tests:
             getMore: { $$type: "long" }
             collection: *collection_name
             batchSize: 2
-            $readPreference: { mode: "primaryPreferred" }
           command_name: getMore
     outcome:
       collection:

@@ -239,10 +239,7 @@
                                 "$$type": "long"
                             },
                             "collection": "default",
-                            "batchSize": 2,
-                            "$readPreference": {
-                                "mode": "primaryPreferred"
-                            }
+                            "batchSize": 2
                         },
                         "command_name": "getMore"
                     }
