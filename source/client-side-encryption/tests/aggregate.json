@@ -237,6 +237,7 @@
         },
         {
             "description": "Aggregate with empty pipeline",
+            "skipReason": "SERVER-40829 hides agg support behind enableTestCommands flag.",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
