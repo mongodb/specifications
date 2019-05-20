@@ -132,4 +132,4 @@ tests:
             - $project: { command: 1 }
             - $project: { command.lsid: 0 }
         result:
-          errorContains: "Expected collection"
+          errorContains: "automatic encryption is not supported"
