@@ -11,7 +11,6 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "mapReduce deterministic encryption"
-    skipReason: "TODO: throw on unsupported commands in Java PoC"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:

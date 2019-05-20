@@ -402,7 +402,7 @@
                         ]
                     },
                     "result": {
-                        "errorContains": "Expected collection"
+                        "errorContains": "automatic encryption is not supported"
                     }
                 }
             ]
