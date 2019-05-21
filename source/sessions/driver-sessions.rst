@@ -160,18 +160,8 @@ Applications end a session like this:
 
     session.endSession()
 
-While this specification does not deal with multi-document transactions (which
-don't even exist yet), it is expected that when they are implemented they will
-be based upon sessions. We can speculate that in the future we might have some
-additional transaction-related methods for sessions such as:
-
-.. code:: typescript
-
-    transaction = session.beginTransaction()
-    transaction.commit()
-    transaction.abort()
-
-However, multi-document transactions are out of scope for this specification.
+While this specification does not deal with multi-document transactions, which
+are covered in their own specification.
 
 MongoClient changes
 ===================
