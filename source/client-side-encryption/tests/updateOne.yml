@@ -111,7 +111,7 @@ tests:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { _id: 1, random: { $$type: "binData"} }
+          - { _id: 1 }
   - description: "$rename works if target value has same encryption options"
     clientOptions:
       autoEncryptOpts:

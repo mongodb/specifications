@@ -355,10 +355,7 @@
                 "collection": {
                     "data": [
                         {
-                            "_id": 1,
-                            "random": {
-                                "$$type": "binData"
-                            }
+                            "_id": 1
                         }
                     ]
                 }
