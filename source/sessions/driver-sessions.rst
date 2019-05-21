@@ -160,8 +160,8 @@ Applications end a session like this:
 
     session.endSession()
 
-While this specification does not deal with multi-document transactions, which
-are covered in their own specification.
+This specification does not deal with multi-document transactions, which
+are covered in `their own specification <../transactions/transactions.rst>`_.
 
 MongoClient changes
 ===================
