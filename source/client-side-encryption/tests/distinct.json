@@ -291,29 +291,6 @@
                     }
                 }
             ]
-        },
-        {
-            "description": "Distinct fails when filtering on a random encrypted field",
-            "skipReason": "SERVER-40299",
-            "clientOptions": {
-                "autoEncryptOpts": {
-                    "kmsProviders": {
-                        "aws": {}
-                    }
-                }
-            },
-            "operations": [
-                {
-                    "name": "distinct",
-                    "arguments": {
-                        "fieldName": "random",
-                        "filter": {}
-                    },
-                    "result": {
-                        "errorContains": "TODO"
-                    }
-                }
-            ]
         }
     ]
 }

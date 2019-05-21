@@ -72,16 +72,3 @@ tests:
           filter: { random: "abc" }
         result:
           errorContains: "Cannot query on fields encrypted with the randomized encryption"
-  - description: "Distinct fails when filtering on a random encrypted field"
-    skipReason: "SERVER-40299"
-    clientOptions:
-      autoEncryptOpts:
-        kmsProviders:
-          aws: {} # Credentials filled in from environment
-    operations:
-      - name: distinct
-        arguments:
-          fieldName: "random"
-          filter: {}
-        result:
-          errorContains: "TODO"
