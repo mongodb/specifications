@@ -219,9 +219,9 @@ acceptable for backward compatibility to be at the source level).
 
 A ``ClientSession`` MUST be associated with a ``ServerSession`` at the time
 ``startSession`` is called. As an implementation optimization drivers SHOULD reuse
-``ServerSession`` instances across multiple ``ClientSession`` instances subject to the rule that a server
-session MUST NOT be used by two ``ClientSession`` instances at the same time (see the Server
-Session Pool section).
+``ServerSession`` instances across multiple ``ClientSession`` instances subject
+to the rule that a server session MUST NOT be used by two ``ClientSession``
+instances at the same time (see the Server Session Pool section).
 
 ``startSession`` MUST report an error if sessions are not supported by the
 deployment (see How to Check Whether a Deployment Supports Sessions).
@@ -263,14 +263,14 @@ such use is attempted.
 ClientSession
 =============
 
-``ClientSession`` instances are not thread safe or fork safe. They can only be used by one
-thread or process at a time.
+``ClientSession`` instances are not thread safe or fork safe. They can only be
+used by one thread or process at a time.
 
-Drivers MUST document the thread-safety and fork-safety limitations of sessions. Drivers MUST
-NOT attempt to detect simultaneous use by multiple threads or processes (see Q&A for the
-rationale).
+Drivers MUST document the thread-safety and fork-safety limitations of sessions.
+Drivers MUST NOT attempt to detect simultaneous use by multiple threads or
+processes (see Q&A for the rationale).
 
-ClientSession interface summary
+ClientSession interface summary:
 
 .. code:: typescript
 
@@ -284,8 +284,8 @@ ClientSession interface summary
         void endSession();
     }
 
-While it is not part of the public API, a ``ClientSession`` also has a private (or
-internal) reference to a ``ServerSession``.
+While it is not part of the public API, a ``ClientSession`` also has a private
+(or internal) reference to a ``ServerSession``.
 
 Each member is documented below.
 
@@ -781,10 +781,10 @@ corresponding ``ServerSession``. However, starting a server session might requir
 round trip to the server (which can be avoided by generating the session ID
 locally) and ending a session requires a separate round trip to the server.
 Drivers can operate more efficiently and put less load on the server if they
-cache ``ServerSession`` instances for reuse. To this end drivers SHOULD implement a server
-session pool containing ``ServerSession`` instances available for reuse. A
-``ServerSession`` pool MUST belong to a ``MongoClient`` instance and have the same
-lifetime as the ``MongoClient`` instance.
+cache ``ServerSession`` instances for reuse. To this end drivers SHOULD
+implement a server session pool containing ``ServerSession`` instances
+available for reuse. A ``ServerSession`` pool MUST belong to a ``MongoClient``
+instance and have the same lifetime as the ``MongoClient`` instance.
 
 If a driver has a server session pool, then when a new ``ClientSession`` is started
 it MUST attempt to acquire a server session from the server session pool. See
