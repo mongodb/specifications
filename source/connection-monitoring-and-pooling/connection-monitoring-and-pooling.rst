@@ -575,7 +575,7 @@ Events
     }
 
     /**
-     *  Emitted when the driver start to attempt to check out a connection
+     *  Emitted when the driver starts attempting to check out a connection
      */
     interface ConnectionCheckOutStartedEvent {
       /**
@@ -596,11 +596,12 @@ Events
     
       /**
        *  A reason explaining why connection check out failed.
+       *  Can be implemented as a string or enum.
        *  Current valid values are:
        *   - "poolClosed": The pool was previously closed, and cannot provide new connections
        *   - "timeout":    The connection check out attempt exceeded the specified timeout
        */
-      reason: string;
+      reason: string|Enum;
     }
 
     /**
