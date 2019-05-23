@@ -20,13 +20,7 @@
                         }
                     ],
                     "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
             "random": {
@@ -56,7 +50,7 @@
             },
             "keyMaterial": {
                 "$binary": {
-                    "base64": "j8V54E0Yp0nnMI9fxTuUlXcNb496dRHeWvVDs/ESv9Iz3sbbD8mZQ3DUjkIIIgFu9NxiJy7INAI2BW50gpbnbESTD5qj7usHzNYdYTC3rrlWzrE/QZZhI1+q5rUQGjGhXFYwbb3zPuk2KngbuQzle3l6BUyK+SQJ5yD4n/2Sx5E=",
+                    "base64": "db27rshiqK4Jqhb2xnwK4RfdFb9JuKeUe6xt5aYQF4o62tS75b7B4wxVN499gND9UVLUbpVKoyUoaZAeA895OENP335b8n8OwchcTFqS44t+P3zmhteYUQLIWQXaIgon7gEgLeJbaDHmSXS6/7NbfDDFlB37N7BP/2hx1yCOTN6NG/8M1ppw3LYT3CfP6EfXVEttDYtPbJpbb7nBVlxD7w==",
                     "subType": "00"
                 }
             },
@@ -88,7 +82,7 @@
                         "local": {
                             "key": {
                                 "$binary": {
-                                    "base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                                    "base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                                     "subType": "00"
                                 }
                             }
@@ -139,16 +133,25 @@
                         "command": {
                             "find": "datakeys",
                             "filter": {
-                                "_id": {
-                                    "$in": [
-                                        {
-                                            "$binary": {
-                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                                "subType": "04"
-                                            }
+                                "$or": [
+                                    {
+                                        "_id": {
+                                            "$in": [
+                                                {
+                                                    "$binary": {
+                                                        "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                        "subType": "04"
+                                                    }
+                                                }
+                                            ]
                                         }
-                                    ]
-                                }
+                                    },
+                                    {
+                                        "keyAltName": {
+                                            "$in": []
+                                        }
+                                    }
+                                ]
                             },
                             "$db": "admin"
                         },
@@ -164,7 +167,7 @@
                                     "_id": 1,
                                     "ssn": {
                                         "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
+                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACNnpgkgV4PUCayKHJ/K8Qb6nM9Z71cn91//1gC+j7Wsxaow8haaNU5aYlOAeyu+7Akke/QuHb0AqtQa1meuGeDDDUyPCC8xgNwAIh3A1tdbs=",
                                             "subType": "06"
                                         }
                                     },
@@ -183,16 +186,7 @@
                 "collection": {
                     "data": [
                         {
-                            "_id": 1,
-                            "ssn": {
-                                "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
-                                    "subType": "06"
-                                }
-                            },
-                            "random": {
-                                "$$type": "binData"
-                            }
+                            "x": 1
                         }
                     ]
                 }

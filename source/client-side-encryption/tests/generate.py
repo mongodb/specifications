@@ -60,7 +60,7 @@ keys = {
         },
         "keyMaterial": {
             "$binary": {
-                "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==",
+                "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW",
                 "subType": "00"
             }
         },
@@ -80,7 +80,7 @@ keys = {
         },
         "keyMaterial": {
             "$binary": {
-                "base64": "j8V54E0Yp0nnMI9fxTuUlXcNb496dRHeWvVDs/ESv9Iz3sbbD8mZQ3DUjkIIIgFu9NxiJy7INAI2BW50gpbnbESTD5qj7usHzNYdYTC3rrlWzrE/QZZhI1+q5rUQGjGhXFYwbb3zPuk2KngbuQzle3l6BUyK+SQJ5yD4n/2Sx5E=",
+                "base64": "db27rshiqK4Jqhb2xnwK4RfdFb9JuKeUe6xt5aYQF4o62tS75b7B4wxVN499gND9UVLUbpVKoyUoaZAeA895OENP335b8n8OwchcTFqS44t+P3zmhteYUQLIWQXaIgon7gEgLeJbaDHmSXS6/7NbfDDFlB37N7BP/2hx1yCOTN6NG/8M1ppw3LYT3CfP6EfXVEttDYtPbJpbb7nBVlxD7w==",
                 "subType": "00"
             }
         },
@@ -98,26 +98,14 @@ schemas = {
                 "encrypt": {
                     "keyId": "/altname",
                     "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
             "ssn": {
                 "encrypt": {
                     "keyId": [keys["basic"]["_id"]],
                     "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
             "random": {
@@ -132,13 +120,7 @@ schemas = {
                 "encrypt": {
                     "keyId": [keys["basic"]["_id"]],
                     "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             }
         },
@@ -150,13 +132,7 @@ schemas = {
                 "encrypt": {
                     "keyId": [keys["basic"]["_id"]],
                     "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             }
         }
@@ -167,13 +143,7 @@ schemas = {
                 "encrypt": {
                     "keyId": [keys["local"]["_id"]],
                     "bsonType": "string",
-                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                    "initializationVector": {
-                        "$binary": {
-                            "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                            "subType": "00"
-                        }
-                    }
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
             "random": {
@@ -249,7 +219,7 @@ ciphertexts = [
         "plaintext": "457-55-5462",
         "data": {
             "$binary": {
-                "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
                 "subType": "06"
             }
         }
@@ -260,7 +230,7 @@ ciphertexts = [
         "plaintext": "123-45-6789",
         "data": {
             "$binary": {
-                "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQz9fzDR15Wmpcyl9/g8vO1uzwbfeEM53LrLyItCVu+7WcmW8rx8VRF1zlDykXsCL+zm9jRE2+zuhv1ZQwzQlkI=",
+                "base64": "AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=",
                 "subType": "06"
             }
         }
@@ -271,7 +241,7 @@ ciphertexts = [
         "plaintext": "987-65-4321",
         "data": {
             "$binary": {
-                "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaQYZlEbByPzwdQ/AMDRHcdlCE/N+eDdikUZLYZ9fkLxIt8qi3nngh69WkFACCuzharx2g3gkiTqfYCkFsM5uu8Y=",
+                "base64": "AQAAAAAAAAAAAAAAAAAAAAACzcsm4xHv+De4+H3IDRaSJEx1f3Qs19qdophSh+XsQpYMcgo64MeiAP00umr3s7DTSy7mzuSRLZ/iuqxbNdThgp5KQvNB8kWrLnB+Zk0qom8",
                 "subType": "06"
             }
         }
@@ -282,7 +252,7 @@ ciphertexts = [
         "plaintext": "457-55-5462",
         "data": {
             "$binary": {
-                "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpafBneFKswGbiqdun/OpV9uTCNSocPgh3jCyPOo/2fr4vkPdKsoeZHkeL9UQ+5a+9+V7CaJiLQlE448UCcTppaHU=",
+                "base64": "AQAAAAAAAAAAAAAAAAAAAAACNnpgkgV4PUCayKHJ/K8Qb6nM9Z71cn91//1gC+j7Wsxaow8haaNU5aYlOAeyu+7Akke/QuHb0AqtQa1meuGeDDDUyPCC8xgNwAIh3A1tdbs=",
                 "subType": "06"
             }
         }
@@ -305,7 +275,7 @@ def ciphertext(plaintext, field, schema="basic"):
 
 def local_provider():
     return {
-        "key": {"$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "subType": "00"}  }
+        "key": {"$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "subType": "00"}  }
     }
 
 
