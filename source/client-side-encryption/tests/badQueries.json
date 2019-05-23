@@ -20,7 +20,7 @@
             "_id": 2,
             "ssn": {
                 "$binary": {
-                    "base64": "",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=",
                     "subType": "06"
                 }
             }
@@ -779,7 +779,17 @@
                                 "$eq": null
                             }
                         }
-                    }
+                    },
+                    "result": [
+                        {
+                            "_id": 1,
+                            "ssn": "457-55-5462"
+                        },
+                        {
+                            "_id": 2,
+                            "ssn": "123-45-6789"
+                        }
+                    ]
                 },
                 {
                     "name": "find",
@@ -798,14 +808,23 @@
                     "name": "find",
                     "arguments": {
                         "filter": {
-                            "ssn": "123-45-6789",
                             "unencrypted": {
                                 "$in": [
                                     null
                                 ]
                             }
                         }
-                    }
+                    },
+                    "result": [
+                        {
+                            "_id": 1,
+                            "ssn": "457-55-5462"
+                        },
+                        {
+                            "_id": 2,
+                            "ssn": "123-45-6789"
+                        }
+                    ]
                 },
                 {
                     "name": "find",
@@ -1316,11 +1335,11 @@
                     "name": "updateOne",
                     "arguments": {
                         "filter": {
-                            "ssn": 1
+                            "ssn": "abc"
                         },
                         "update": {
                             "$set": {
-                                "ssn.$": 1
+                                "ssn.$": "abc"
                             }
                         }
                     },
@@ -1469,8 +1488,8 @@
                 {
                     "name": "distinct",
                     "arguments": {
-                        "fieldName": "encrypted_w_altname",
-                        "filter": {}
+                        "filter": {},
+                        "fieldName": "encrypted_w_altname"
                     },
                     "result": {
                         "errorContains": "The distinct key is not allowed to be marked for encryption with a non-UUID keyId"

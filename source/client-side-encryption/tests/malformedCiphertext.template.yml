@@ -60,4 +60,4 @@ tests:
         result:
           # ciphertext can only validate subtype (which is correct)
           # but takes the 16 byte UUID to look up key. Fails to find.
-          errorContains: "client did not provide all keys"
+          errorContains: "did not provide all keys"

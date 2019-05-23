@@ -111,9 +111,8 @@ tests:
             find: *collection_name
             filter: { _id: 1 }
           command_name: find
-# Omit the outcome assertion because data is encrypted randomly.
-    # outcome:
-    #   collection:
-    #     # Outcome is checked using a separate MongoClient without auto encryption.
-    #     data:
-    #       - { _id: 1, random: { $$type: "binData" } }
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - { _id: 1, random: { $$type: "binData" } }

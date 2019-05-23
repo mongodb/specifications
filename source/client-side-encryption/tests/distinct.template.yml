@@ -19,8 +19,8 @@ tests:
     operations:
       - name: distinct
         arguments:
-          fieldName: "ssn"
           filter: { ssn: "457-55-5462" }
+          fieldName: "ssn"
         result:
           - "457-55-5462"
     expectations:
@@ -44,7 +44,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
@@ -68,7 +68,7 @@ tests:
     operations:
       - name: distinct
         arguments:
-          fieldName: "ssn"
           filter: { random: "abc" }
+          fieldName: "ssn"
         result:
           errorContains: "Cannot query on fields encrypted with the randomized encryption"

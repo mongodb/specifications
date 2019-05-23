@@ -354,7 +354,19 @@
                         "command_name": "find"
                     }
                 }
-            ]
+            ],
+            "outcome": {
+                "collection": {
+                    "data": [
+                        {
+                            "_id": 1,
+                            "random": {
+                                "$$type": "binData"
+                            }
+                        }
+                    ]
+                }
+            }
         }
     ]
 }

@@ -186,7 +186,16 @@
                 "collection": {
                     "data": [
                         {
-                            "x": 1
+                            "_id": 1,
+                            "ssn": {
+                                "$binary": {
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACNnpgkgV4PUCayKHJ/K8Qb6nM9Z71cn91//1gC+j7Wsxaow8haaNU5aYlOAeyu+7Akke/QuHb0AqtQa1meuGeDDDUyPCC8xgNwAIh3A1tdbs=",
+                                    "subType": "06"
+                                }
+                            },
+                            "random": {
+                                "$$type": "binData"
+                            }
                         }
                     ]
                 }

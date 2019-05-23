@@ -44,7 +44,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: { _id: { $in: [ {{key()["_id"]}} ] } }
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:

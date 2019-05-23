@@ -487,8 +487,8 @@ tests:
           upsertedCount: 0
       - name: updateOne
         arguments:
-          filter: { "ssn": 1 }
-          update: { $set : { "ssn.$": 1 }}
+          filter: { "ssn": "abc" }
+          update: { $set : { "ssn.$": "abc" }}
         result:
           errorContains: "Cannot encrypt fields below '$' positional update operator"
   - description: "an update that would produce an array on an encrypted field errors"
@@ -546,7 +546,7 @@ tests:
     operations:
       - name: distinct
         arguments:
-          fieldName: "encrypted_w_altname"
           filter: {}
+          fieldName: "encrypted_w_altname"
         result:
           errorContains: "The distinct key is not allowed to be marked for encryption with a non-UUID keyId"

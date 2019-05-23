@@ -53,4 +53,4 @@ tests:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - {"x":1}
+          - *doc0_encrypted

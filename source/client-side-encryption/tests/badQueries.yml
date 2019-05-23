@@ -5,7 +5,7 @@ collection_name: &collection_name "default"
 
 data:
   - &doc0_encrypted { _id: 1, ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=', 'subType': '06'}} }
-  - &doc1_encrypted { _id: 2, ssn: {'$binary': {'base64': '', 'subType': '06'}} }
+  - &doc1_encrypted { _id: 2, ssn: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=', 'subType': '06'}} }
 json_schema: {'properties': {'encrypted_w_altname': {'encrypt': {'keyId': '/altname', 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'random': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}, 'ssn_equivalent': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
 key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0', 'region': 'us-east-1'}, 'updateDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}}, 'keyAltNames': ['altname', 'another_altname']}]
 
@@ -238,9 +238,9 @@ tests:
       - name: find
         arguments:
           filter: { unencrypted: { $eq: null }}
-        # result:
-        #   - &doc0 { _id: 1, ssn: "457-55-5462" }
-        #   - &doc1 { _id: 2, ssn: "123-45-6789" }
+        result:
+          - &doc0 { _id: 1, ssn: "457-55-5462" }
+          - &doc1 { _id: 2, ssn: "123-45-6789" }
       - name: find
         arguments:
           filter: { ssn: { $eq: null }}
@@ -248,10 +248,10 @@ tests:
           errorContains: "Illegal equality to null predicate for encrypted field"
       - name: find
         arguments:
-          filter: { ssn: "123-45-6789", unencrypted: { $in: [null] }}
-        # result:
-        #   - *doc0
-        #   - *doc1
+          filter: { unencrypted: { $in: [null] }}
+        result:
+          - *doc0
+          - *doc1
       - name: find
         arguments:
           filter: { ssn: { $in: [null] }}
@@ -487,8 +487,8 @@ tests:
           upsertedCount: 0
       - name: updateOne
         arguments:
-          filter: { "ssn": 1 }
-          update: { $set : { "ssn.$": 1 }}
+          filter: { "ssn": "abc" }
+          update: { $set : { "ssn.$": "abc" }}
         result:
           errorContains: "Cannot encrypt fields below '$' positional update operator"
   - description: "an update that would produce an array on an encrypted field errors"
@@ -546,7 +546,7 @@ tests:
     operations:
       - name: distinct
         arguments:
-          fieldName: "encrypted_w_altname"
           filter: {}
+          fieldName: "encrypted_w_altname"
         result:
           errorContains: "The distinct key is not allowed to be marked for encryption with a non-UUID keyId"

@@ -29,7 +29,7 @@
             },
             "keyMaterial": {
                 "$binary": {
-                    "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEseZD3pQK21IQydtAgPuMjAAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDCRqOG6J3KQJ6fZH/AIBEIBbRtAOLl2PRknCve94T9OfEV+sLeE3Jn+Ewtsq1eGuj9Vldxxfq1lFSou7YwZVJyQpx5nZTsUVx3LgCk7B/WY/j4f6FWHteJ63zw6CNMPC5Gi1fubsu1tqwjwRLg==",
+                    "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW",
                     "subType": "00"
                 }
             },
@@ -56,13 +56,7 @@
                                     "encrypt": {
                                         "keyId": "/altname",
                                         "bsonType": "string",
-                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                                        "initializationVector": {
-                                            "$binary": {
-                                                "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                                                "subType": "00"
-                                            }
-                                        }
+                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                                     }
                                 },
                                 "ssn": {
@@ -76,13 +70,7 @@
                                             }
                                         ],
                                         "bsonType": "string",
-                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                                        "initializationVector": {
-                                            "$binary": {
-                                                "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                                                "subType": "00"
-                                            }
-                                        }
+                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                                     }
                                 },
                                 "random": {
@@ -110,13 +98,7 @@
                                             }
                                         ],
                                         "bsonType": "string",
-                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                                        "initializationVector": {
-                                            "$binary": {
-                                                "base64": "aWlpaWlpaWlpaWlpaWlpaQ==",
-                                                "subType": "00"
-                                            }
-                                        }
+                                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                                     }
                                 }
                             },
@@ -172,16 +154,25 @@
                         "command": {
                             "find": "datakeys",
                             "filter": {
-                                "_id": {
-                                    "$in": [
-                                        {
-                                            "$binary": {
-                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                                "subType": "04"
-                                            }
+                                "$or": [
+                                    {
+                                        "_id": {
+                                            "$in": [
+                                                {
+                                                    "$binary": {
+                                                        "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                        "subType": "04"
+                                                    }
+                                                }
+                                            ]
                                         }
-                                    ]
-                                }
+                                    },
+                                    {
+                                        "keyAltName": {
+                                            "$in": []
+                                        }
+                                    }
+                                ]
                             },
                             "$db": "admin"
                         },
@@ -197,7 +188,7 @@
                                     "_id": 1,
                                     "ssn": {
                                         "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
                                             "subType": "06"
                                         }
                                     }
@@ -227,7 +218,7 @@
                             "_id": 1,
                             "ssn": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACaWlpaWlpaWlpaWlpaWlpaZngC99HenjphHzhJ2/Be2QvqMgm8ZR+ZaLsoUyV1rwcdrAv7jdevtzpndaZDmFcr4vefVrXCssGizpxUtq8p24=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
                                     "subType": "06"
                                 }
                             }
