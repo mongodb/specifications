@@ -198,8 +198,6 @@ Then for each element in ``tests``:
    transactions from previous test failures. Ignore a command failure with
    error code 11601 ("Interrupted") to work around `SERVER-38335`_.
 
-.. _SERVER-38335: https://jira.mongodb.org/browse/SERVER-38335
-
    - Running ``killAllSessions`` cleans up any open transactions from
      a previously failed test to prevent the current test from blocking.
      It is sufficient to run this command once before starting the test suite
@@ -297,6 +295,8 @@ Then for each element in ``tests``:
      latest data by using **primary read preference** with
      **local read concern** even when the MongoClient is configured with
      another read preference or read concern.
+
+.. _SERVER-38335: https://jira.mongodb.org/browse/SERVER-38335
 
 Special Test Operations
 ```````````````````````
