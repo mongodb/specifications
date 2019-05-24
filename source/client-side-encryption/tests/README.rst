@@ -240,14 +240,16 @@ as follows.
    - Create a `KeyVault` with either a "local" or "aws" KMS provider
    - Use `KeyVault.encrypt` to attempt to encrypt each BSON type with deterministic encryption.
 
-     - Expect `document` and `array` to fail. An exception MUST be thrown.
+     - Expect a `string` to succeed. An exception MUST be thrown.
+     - Expect a `document` to fail. An exception MUST be thrown.
+     - Expect a `null` to fail. An exception MUST be thrown.
      - Expect a BSON binary subtype 6 to fail. An exception MUST be thrown.
-     - Expect all other values to succeed.
 
    - Use `KeyVault.encrypt` to attempt to encrypt a document using randomized encryption.
 
+     - Expect a `document` to succeed.
      - Expect a BSON binary subtype 6 to fail. An exception MUST be thrown.
-     - Expect all other values to succeed.
+     - Expect a `null` to fail. An exception MUST be thrown.
 
 #. Test explicit encryption with auto decryption.
 
