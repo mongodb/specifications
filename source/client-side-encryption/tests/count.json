@@ -9,18 +9,18 @@
     "data": [
         {
             "_id": 1,
-            "ssn": {
+            "encrypted_string": {
                 "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                     "subType": "06"
                 }
             }
         },
         {
             "_id": 2,
-            "ssn": {
+            "encrypted_string": {
                 "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                     "subType": "06"
                 }
             }
@@ -35,7 +35,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
-            "ssn": {
+            "encrypted_string": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -63,7 +63,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
                 }
             },
-            "ssn_equivalent": {
+            "encrypted_string_equivalent": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -131,7 +131,7 @@
                     "name": "count",
                     "arguments": {
                         "filter": {
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         }
                     },
                     "result": 2
@@ -198,10 +198,10 @@
                         "command": {
                             "count": "default",
                             "query": {
-                                "ssn": {
+                                "encrypted_string": {
                                     "$eq": {
                                         "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                                             "subType": "06"
                                         }
                                     }

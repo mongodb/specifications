@@ -6,17 +6,17 @@ collection_name: &collection_name "default"
 data:
   - &doc0
     _id: 1
-    ssn:
+    encrypted_string:
       $binary:
-        base64: {{ ciphertext("123-45-6789", field="ssn")["$binary"]["base64"] }}
+        base64: {{ ciphertext("string1", field="encrypted_string")["$binary"]["base64"] }}
         subType: "00"
   - _id: 2
-    ssn:
+    encrypted_string:
       $binary:
         base64: "AQ=="
         subType: "06"
   - _id: 3
-    ssn:
+    encrypted_string:
       $binary:
         base64: "AQAAa2V2aW4gYWxiZXJ0c29uCg=="
         subType: "06"

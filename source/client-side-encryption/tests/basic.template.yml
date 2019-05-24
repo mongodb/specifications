@@ -16,7 +16,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 { _id: 1, ssn: "457-55-5462" }
+          document: &doc0 { _id: 1, encrypted_string: "string0" }
       - name: find
         arguments:
           filter: { _id: 1 }
@@ -42,14 +42,14 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
           command:
             insert: *collection_name
             documents:
-              - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+              - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }
             ordered: true
           command_name: insert
       - command_started_event:
@@ -96,7 +96,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:

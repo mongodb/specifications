@@ -4,7 +4,7 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 
 data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+  - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }
 json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
@@ -19,9 +19,9 @@ tests:
       - name: aggregate
         arguments:
           pipeline:
-            - { $match: { ssn: "457-55-5642" } }
+            - { $match: { encrypted_string: "457-55-5642" } }
         result:
-          - &doc0 { _id: 1, ssn: "457-55-5462" }
+          - &doc0 { _id: 1, encrypted_string: "string0" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -43,14 +43,14 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
           command:
             aggregate: *collection_name
             pipeline:
-              - { $match: { ssn: "457-55-5642" } }
+              - { $match: { encrypted_string: "457-55-5642" } }
           command_name: aggregate
     outcome:
       collection:
@@ -68,7 +68,7 @@ tests:
         arguments:
           pipeline: []
         result:
-          - { _id: 1, ssn: "457-55-5462" }
+          - { _id: 1, encrypted_string: "string0" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -97,7 +97,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
     outcome:

@@ -9,7 +9,6 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "Insert with encryption using key alt name"
-    skipReason: "Waiting on CDRIVER-3057"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -17,7 +16,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 { _id: 1, encrypted_w_altname: "457-55-5462", altname: "abc" }
+          document: &doc0 { _id: 1, encrypted_w_altname: "string0", altname: "altname" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -39,14 +38,14 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: { keyAltNames: { $in: [ {{key()["_id"]}} ] } }
+            filter: {$or: [ { _id: { $in: [] } }, { keyAltNames: { $in: [ "altname" ] } } ] }
             $db: admin
           command_name: find
       - command_started_event:
           command:
             insert: *collection_name
             documents:
-              - &doc0_encrypted { _id: 1, encrypted_w_altname: {{ciphertext("457-55-5462", field="ssn")}} }
+              - &doc0_encrypted { _id: 1, encrypted_w_altname: {{ciphertext("string0", field="encrypted_string")}}, altname: "altname" }
             ordered: true
           command_name: insert
     outcome:
@@ -55,7 +54,6 @@ tests:
         data:
           - *doc0_encrypted
   - description: "Replace with key alt name fails"
-    skipReason: "Waiting on CDRIVER-3057"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -64,10 +62,10 @@ tests:
       - name: updateOne
         arguments:
           filter: {}
-          update: { encrypted_w_altname: "457-55-5462" }
+          update: { encrypted_w_altname: "string0" }
           upsert: true
         result:
-          errorContains: "TODO"
+          errorContains: "A non-static (JSONPointer) keyId is not supported"
     outcome:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.

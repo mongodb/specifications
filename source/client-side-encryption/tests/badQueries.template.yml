@@ -4,8 +4,8 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 
 data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
-  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+  - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }
+  - &doc1_encrypted { _id: 2, encrypted_string: {{ciphertext("string1", field="encrypted_string")}} }
 json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
@@ -75,7 +75,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $bitsAllClear: 35 }}
+          filter: { encrypted_string: { $bitsAllClear: 35 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -84,7 +84,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $bitsAllSet: 35 }}
+          filter: { encrypted_string: { $bitsAllSet: 35 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -93,7 +93,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $bitsAnyClear: 35 }}
+          filter: { encrypted_string: { $bitsAnyClear: 35 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -102,7 +102,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $bitsAnySet: 35 }}
+          filter: { encrypted_string: { $bitsAnySet: 35 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
   - description: "geo operators succeed on unencrypted, error on encrypted"
@@ -119,7 +119,7 @@ tests:
           errorContains: "unable to find index"
       - name: find
         arguments:
-          filter: { ssn: { $near: [0,0] }}
+          filter: { encrypted_string: { $near: [0,0] }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -130,7 +130,7 @@ tests:
           errorContains: "unable to find index"
       - name: find
         arguments:
-          filter: { ssn: { $nearSphere: [0,0] }}
+          filter: { encrypted_string: { $nearSphere: [0,0] }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -139,7 +139,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $geoIntersects: { $geometry: { type: "Polygon", coordinates: [[ [0,0], [1,0], [1,1], [0,0] ]] }} }}
+          filter: { encrypted_string: { $geoIntersects: { $geometry: { type: "Polygon", coordinates: [[ [0,0], [1,0], [1,1], [0,0] ]] }} }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -148,7 +148,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $geoWithin: { $geometry: { type: "Polygon", coordinates: [[ [0,0], [1,0], [1,1], [0,0] ]] }} }}
+          filter: { encrypted_string: { $geoWithin: { $geometry: { type: "Polygon", coordinates: [[ [0,0], [1,0], [1,1], [0,0] ]] }} }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
   - description: "inequality operators succeed on unencrypted, error on encrypted"
@@ -163,7 +163,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $gt: 1 }}
+          filter: { encrypted_string: { $gt: 1 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -172,7 +172,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $lt: 1 }}
+          filter: { encrypted_string: { $lt: 1 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -181,7 +181,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $gte: 1 }}
+          filter: { encrypted_string: { $gte: 1 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -190,7 +190,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $lte: 1 }}
+          filter: { encrypted_string: { $lte: 1 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
   - description: "other misc operators succeed on unencrypted, error on encrypted"
@@ -205,7 +205,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $mod: [3, 1] }}
+          filter: { encrypted_string: { $mod: [3, 1] }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -214,7 +214,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $regex: "pattern", $options: "" }}
+          filter: { encrypted_string: { $regex: "pattern", $options: "" }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -223,7 +223,7 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $size: 2 }}
+          filter: { encrypted_string: { $size: 2 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
@@ -232,18 +232,18 @@ tests:
         result: []
       - name: find
         arguments:
-          filter: { ssn: { $type: 2 }}
+          filter: { encrypted_string: { $type: 2 }}
         result:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
         arguments:
           filter: { unencrypted: { $eq: null }}
         result:
-          - &doc0 { _id: 1, ssn: "457-55-5462" }
-          - &doc1 { _id: 2, ssn: "123-45-6789" }
+          - &doc0 { _id: 1, encrypted_string: "string0" }
+          - &doc1 { _id: 2, encrypted_string: "string1" }
       - name: find
         arguments:
-          filter: { ssn: { $eq: null }}
+          filter: { encrypted_string: { $eq: null }}
         result:
           errorContains: "Illegal equality to null predicate for encrypted field"
       - name: find
@@ -254,7 +254,7 @@ tests:
           - *doc1
       - name: find
         arguments:
-          filter: { ssn: { $in: [null] }}
+          filter: { encrypted_string: { $in: [null] }}
         result:
           errorContains: "Illegal equality to null inside $in against an encrypted field"
   - description: "$addToSet succeeds on unencrypted, error on encrypted"
@@ -274,7 +274,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $addToSet: { "ssn": ["a"]}}
+          update: { $addToSet: { "encrypted_string": ["a"]}}
         result:
           errorContains: "$addToSet not allowed on encrypted values"
   - description: "$inc succeeds on unencrypted, error on encrypted"
@@ -294,7 +294,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $inc: { "ssn": 1}}
+          update: { $inc: { "encrypted_string": 1}}
         result:
           errorContains: "$inc and $mul not allowed on encrypted values"
   - description: "$mul succeeds on unencrypted, error on encrypted"
@@ -314,7 +314,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $mul: { "ssn": 1}}
+          update: { $mul: { "encrypted_string": 1}}
         result:
           errorContains: "$inc and $mul not allowed on encrypted values"
   - description: "$max succeeds on unencrypted, error on encrypted"
@@ -334,7 +334,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $max: { "ssn": 1}}
+          update: { $max: { "encrypted_string": 1}}
         result:
           errorContains: "$max and $min not allowed on encrypted values"
   - description: "$min succeeds on unencrypted, error on encrypted"
@@ -354,7 +354,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $min: { "ssn": 1}}
+          update: { $min: { "encrypted_string": 1}}
         result:
           errorContains: "$max and $min not allowed on encrypted values"
   - description: "$currentDate succeeds on unencrypted, error on encrypted"
@@ -374,7 +374,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $currentDate: { "ssn": true }}
+          update: { $currentDate: { "encrypted_string": true }}
         result:
           errorContains: "$currentDate not allowed on encrypted values"
   - description: "$pop succeeds on unencrypted, error on encrypted"
@@ -394,7 +394,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $pop: { "ssn": 1 }}
+          update: { $pop: { "encrypted_string": 1 }}
         result:
           errorContains: "$pop not allowed on encrypted values"
   - description: "$pull succeeds on unencrypted, error on encrypted"
@@ -414,7 +414,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $pull: { "ssn": 1 }}
+          update: { $pull: { "encrypted_string": 1 }}
         result:
           errorContains: "$pull not allowed on encrypted values"
   - description: "$pullAll succeeds on unencrypted, error on encrypted"
@@ -434,7 +434,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $pullAll: { "ssn": [1] }}
+          update: { $pullAll: { "encrypted_string": [1] }}
         result:
           errorContains: "$pullAll not allowed on encrypted values"
   - description: "$push succeeds on unencrypted, error on encrypted"
@@ -454,7 +454,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $push: { "ssn": 1 }}
+          update: { $push: { "encrypted_string": 1 }}
         result:
           errorContains: "$push not allowed on encrypted values"
   - description: "array filters on encrypted fields does not error in mongocryptd, but errors in mongod"
@@ -467,7 +467,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $set : { "ssn.$[i].x": 1 }}
+          update: { $set : { "encrypted_string.$[i].x": 1 }}
           arrayFilters: [{ i.x: 1 }]
         result:
           errorContains: "TODO"
@@ -487,8 +487,8 @@ tests:
           upsertedCount: 0
       - name: updateOne
         arguments:
-          filter: { "ssn": "abc" }
-          update: { $set : { "ssn.$": "abc" }}
+          filter: { "encrypted_string": "abc" }
+          update: { $set : { "encrypted_string.$": "abc" }}
         result:
           errorContains: "Cannot encrypt fields below '$' positional update operator"
   - description: "an update that would produce an array on an encrypted field errors"
@@ -500,7 +500,7 @@ tests:
       - name: updateOne
         arguments:
           filter: { }
-          update: { $set : { "ssn": [1,2] }}
+          update: { $set : { "encrypted_string": [1,2] }}
         result:
           errorContains: "Cannot encrypt a field containing an array"
   - description: "an insert with encrypted field on _id errors"
@@ -524,7 +524,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: { ssn: [ "123", "456"] }
+          document: { encrypted_string: [ "123", "456"] }
         result:
           errorContains: "Cannot encrypt a field containing an array"
   - description: "an insert with a Timestamp(0,0) value in the top-level fails"

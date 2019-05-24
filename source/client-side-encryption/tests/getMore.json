@@ -9,27 +9,27 @@
     "data": [
         {
             "_id": 1,
-            "ssn": {
+            "encrypted_string": {
                 "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                     "subType": "06"
                 }
             }
         },
         {
             "_id": 2,
-            "ssn": {
+            "encrypted_string": {
                 "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAAC1ijPpI+oG1mNiFChFAz7heo3R150yDhxZ7nOnPUwDM+aEvPRBuU6rXtgkVt7mgLd2H9rq9iChCAV46YKcpNrFw==",
                     "subType": "06"
                 }
             }
         },
         {
             "_id": 3,
-            "ssn": {
+            "encrypted_string": {
                 "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACzcsm4xHv+De4+H3IDRaSJEx1f3Qs19qdophSh+XsQpYMcgo64MeiAP00umr3s7DTSy7mzuSRLZ/iuqxbNdThgp5KQvNB8kWrLnB+Zk0qom8",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==",
                     "subType": "06"
                 }
             }
@@ -44,7 +44,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
-            "ssn": {
+            "encrypted_string": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -72,7 +72,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
                 }
             },
-            "ssn_equivalent": {
+            "encrypted_string_equivalent": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -145,15 +145,15 @@
                     "results": [
                         {
                             "_id": 1,
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         },
                         {
                             "_id": 2,
-                            "ssn": "123-45-6789"
+                            "encrypted_string": "string1"
                         },
                         {
                             "_id": 3,
-                            "ssn": "987-65-4321"
+                            "encrypted_string": "string2"
                         }
                     ]
                 }
@@ -241,27 +241,27 @@
                     "data": [
                         {
                             "_id": 1,
-                            "ssn": {
+                            "encrypted_string": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                                     "subType": "06"
                                 }
                             }
                         },
                         {
                             "_id": 2,
-                            "ssn": {
+                            "encrypted_string": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAAC1ijPpI+oG1mNiFChFAz7heo3R150yDhxZ7nOnPUwDM+aEvPRBuU6rXtgkVt7mgLd2H9rq9iChCAV46YKcpNrFw==",
                                     "subType": "06"
                                 }
                             }
                         },
                         {
                             "_id": 3,
-                            "ssn": {
+                            "encrypted_string": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACzcsm4xHv+De4+H3IDRaSJEx1f3Qs19qdophSh+XsQpYMcgo64MeiAP00umr3s7DTSy7mzuSRLZ/iuqxbNdThgp5KQvNB8kWrLnB+Zk0qom8",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==",
                                     "subType": "06"
                                 }
                             }

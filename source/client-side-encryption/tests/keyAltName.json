@@ -16,7 +16,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
-            "ssn": {
+            "encrypted_string": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -44,7 +44,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
                 }
             },
-            "ssn_equivalent": {
+            "encrypted_string_equivalent": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -100,7 +100,6 @@
     "tests": [
         {
             "description": "Insert with encryption using key alt name",
-            "skipReason": "Waiting on CDRIVER-3057",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -114,8 +113,8 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "encrypted_w_altname": "457-55-5462",
-                            "altname": "abc"
+                            "encrypted_w_altname": "string0",
+                            "altname": "altname"
                         }
                     }
                 }
@@ -151,16 +150,20 @@
                         "command": {
                             "find": "datakeys",
                             "filter": {
-                                "keyAltNames": {
-                                    "$in": [
-                                        {
-                                            "$binary": {
-                                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                                "subType": "04"
-                                            }
+                                "$or": [
+                                    {
+                                        "_id": {
+                                            "$in": []
                                         }
-                                    ]
-                                }
+                                    },
+                                    {
+                                        "keyAltNames": {
+                                            "$in": [
+                                                "altname"
+                                            ]
+                                        }
+                                    }
+                                ]
                             },
                             "$db": "admin"
                         },
@@ -176,10 +179,11 @@
                                     "_id": 1,
                                     "encrypted_w_altname": {
                                         "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                                             "subType": "06"
                                         }
-                                    }
+                                    },
+                                    "altname": "altname"
                                 }
                             ],
                             "ordered": true
@@ -195,10 +199,11 @@
                             "_id": 1,
                             "encrypted_w_altname": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                                     "subType": "06"
                                 }
-                            }
+                            },
+                            "altname": "altname"
                         }
                     ]
                 }
@@ -206,7 +211,6 @@
         },
         {
             "description": "Replace with key alt name fails",
-            "skipReason": "Waiting on CDRIVER-3057",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -220,12 +224,12 @@
                     "arguments": {
                         "filter": {},
                         "update": {
-                            "encrypted_w_altname": "457-55-5462"
+                            "encrypted_w_altname": "string0"
                         },
                         "upsert": true
                     },
                     "result": {
-                        "errorContains": "TODO"
+                        "errorContains": "A non-static (JSONPointer) keyId is not supported"
                     }
                 }
             ],

@@ -17,7 +17,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 { _id: 1, ssn: "457-55-5462" }
+          document: &doc0 { _id: 1, encrypted_string: "string0" }
         result:
           errorContains: "Invalid schema"
     outcome:

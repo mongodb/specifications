@@ -16,7 +16,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
-            "ssn": {
+            "encrypted_string": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -44,7 +44,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
                 }
             },
-            "ssn_equivalent": {
+            "encrypted_string_equivalent": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -78,7 +78,7 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "ssn": "457-55-5462",
+                            "encrypted_string": "string0",
                             "random": "abc"
                         }
                     },

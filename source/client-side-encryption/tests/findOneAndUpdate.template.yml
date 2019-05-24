@@ -4,7 +4,7 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 
 data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
+  - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }
 json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
@@ -18,8 +18,8 @@ tests:
     operations:
       - name: findOneAndReplace
         arguments:
-          filter: &doc0 { ssn: "457-55-5462" }
-          update: { $set: { ssn: "123-45-6789" } }
+          filter: &doc0 { encrypted_string: "string0" }
+          update: { $set: { encrypted_string: "string1" } }
           returnDocument: Before
         result: *doc0
     expectations:
@@ -43,17 +43,17 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
           command:
             findAndModify: *collection_name
-            query: { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
-            update: { $set: { ssn: {{ciphertext("123-45-6789", field="ssn")}} } }
+            query: { encrypted_string: { $eq: {{ciphertext("string0", field="encrypted_string")}} } }
+            update: { $set: { encrypted_string: {{ciphertext("string1", field="encrypted_string")}} } }
           command_name: findAndModify
     outcome:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { _id: 1, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+          - { _id: 1, encrypted_string: {{ciphertext("string1", field="encrypted_string")}} }

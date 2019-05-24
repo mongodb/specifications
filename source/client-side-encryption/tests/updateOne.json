@@ -9,9 +9,9 @@
     "data": [
         {
             "_id": 1,
-            "ssn": {
+            "encrypted_string": {
                 "$binary": {
-                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                     "subType": "06"
                 }
             }
@@ -26,7 +26,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             },
-            "ssn": {
+            "encrypted_string": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -54,7 +54,7 @@
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
                 }
             },
-            "ssn_equivalent": {
+            "encrypted_string_equivalent": {
                 "encrypt": {
                     "keyId": [
                         {
@@ -122,11 +122,11 @@
                     "name": "updateOne",
                     "arguments": {
                         "filter": {
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         },
                         "update": {
                             "$set": {
-                                "ssn": "123-45-6789",
+                                "encrypted_string": "string1",
                                 "random": "abc"
                             }
                         }
@@ -201,10 +201,10 @@
                             "updates": [
                                 {
                                     "q": {
-                                        "ssn": {
+                                        "encrypted_string": {
                                             "$eq": {
                                                 "$binary": {
-                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                                                     "subType": "06"
                                                 }
                                             }
@@ -212,9 +212,9 @@
                                     },
                                     "u": {
                                         "$set": {
-                                            "ssn": {
+                                            "encrypted_string": {
                                                 "$binary": {
-                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=",
+                                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAAC1ijPpI+oG1mNiFChFAz7heo3R150yDhxZ7nOnPUwDM+aEvPRBuU6rXtgkVt7mgLd2H9rq9iChCAV46YKcpNrFw==",
                                                     "subType": "06"
                                                 }
                                             },
@@ -238,9 +238,9 @@
                     "data": [
                         {
                             "_id": 1,
-                            "ssn": {
+                            "encrypted_string": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACUMZIlZ4eQzJmNxnxOi5fqWrhnpXDXdOPdkRG4hbqOTmTIN2+WfGXTcAaszTRg7XhM01c18lfd3XtPl3iUNXU6fEYjGf1mLPkQ3tlO3wOf/k=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAAC1ijPpI+oG1mNiFChFAz7heo3R150yDhxZ7nOnPUwDM+aEvPRBuU6rXtgkVt7mgLd2H9rq9iChCAV46YKcpNrFw==",
                                     "subType": "06"
                                 }
                             },
@@ -270,7 +270,7 @@
                         },
                         "update": {
                             "$set": {
-                                "ssn": "123-45-6789"
+                                "encrypted_string": "string1"
                             }
                         }
                     },
@@ -296,7 +296,7 @@
                         "filter": {},
                         "update": {
                             "$unset": {
-                                "ssn": ""
+                                "encrypted_string": ""
                             }
                         }
                     },
@@ -329,7 +329,7 @@
                                     "q": {},
                                     "u": {
                                         "$unset": {
-                                            "ssn": ""
+                                            "encrypted_string": ""
                                         }
                                     },
                                     "multi": false,
@@ -368,7 +368,7 @@
                         "filter": {},
                         "update": {
                             "$rename": {
-                                "ssn": "ssn_equivalent"
+                                "encrypted_string": "encrypted_string_equivalent"
                             }
                         }
                     },
@@ -401,7 +401,7 @@
                                     "q": {},
                                     "u": {
                                         "$rename": {
-                                            "ssn": "ssn_equivalent"
+                                            "encrypted_string": "encrypted_string_equivalent"
                                         }
                                     },
                                     "multi": false,
@@ -419,9 +419,9 @@
                     "data": [
                         {
                             "_id": 1,
-                            "ssn_equivalent": {
+                            "encrypted_string_equivalent": {
                                 "$binary": {
-                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACsdNMtVDy09S7BbEGrxNeFPKWl/7qb2EFqJfA2FqBEK1jW/5WFUZTPKWls9PBz+4Ro8Z6g5b+zAY+rh0bHmssKfg4g3GZ3j7rBt1tyqh3B2w=",
+                                    "base64": "AQAAAAAAAAAAAAAAAAAAAAACtsdOjHK3CkpNjAAMznkYbeR6Z+yLzCRv4zOb7VfKnJdmU0W5MD8GVODx8K+KuBoCbE1SfGfPgX6NhS/RKpQ12w==",
                                     "subType": "06"
                                 }
                             }
@@ -446,7 +446,7 @@
                         "filter": {},
                         "update": {
                             "$rename": {
-                                "ssn": "random"
+                                "encrypted_string": "random"
                             }
                         }
                     },

@@ -51,7 +51,7 @@
                     "schemaMap": {
                         "default.default": {
                             "properties": {
-                                "ssn": {
+                                "encrypted_string": {
                                     "encrypt": {
                                         "keyId": [
                                             {
@@ -80,7 +80,7 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         }
                     },
                     "result": {
@@ -133,7 +133,7 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         }
                     },
                     "result": {
@@ -154,7 +154,7 @@
                     "schemaMap": {
                         "default.default": {
                             "properties": {
-                                "ssn": {
+                                "encrypted_string": {
                                     "encrypt": {
                                         "keyId": [
                                             {
@@ -183,7 +183,7 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         }
                     },
                     "result": {
@@ -206,7 +206,7 @@
                             "anyOf": [
                                 {
                                     "properties": {
-                                        "ssn": {
+                                        "encrypted_string": {
                                             "encrypt": {
                                                 "keyId": [
                                                     {
@@ -236,7 +236,7 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "ssn": "457-55-5462"
+                            "encrypted_string": "string0"
                         }
                     },
                     "result": {

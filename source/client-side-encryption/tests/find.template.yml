@@ -4,8 +4,8 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 
 data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
-  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+  - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }
+  - &doc1_encrypted { _id: 2, encrypted_string: {{ciphertext("string1", field="encrypted_string")}} }
 json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
@@ -19,9 +19,9 @@ tests:
       - name: find
         arguments:
           filter:
-            { ssn: "457-55-5462" }
+            { encrypted_string: "string0" }
         result:
-          - &doc0 { _id: 1, ssn: "457-55-5462" }
+          - &doc0 { _id: 1, encrypted_string: "string0" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -43,14 +43,14 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
           command:
             find: *collection_name
             filter:
-              { ssn: { $eq: {{ciphertext("457-55-5462", field="ssn")}} } }
+              { encrypted_string: { $eq: {{ciphertext("string0", field="encrypted_string")}} } }
           command_name: find
     outcome:
       collection:
@@ -67,10 +67,10 @@ tests:
       - name: find
         arguments:
           filter:
-            { ssn: { $in: [ "457-55-5462", "123-45-6789" ] } }
+            { encrypted_string: { $in: [ "string0", "string1" ] } }
         result:
-          - { _id: 1, ssn: "457-55-5462" }
-          - &doc1 { _id: 2, ssn: "123-45-6789" }
+          - { _id: 1, encrypted_string: "string0" }
+          - &doc1 { _id: 2, encrypted_string: "string1" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -92,7 +92,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
@@ -100,7 +100,7 @@ tests:
             find: *collection_name
             filter:
               # Note, the values are re-ordered, but this is logically equivalent.
-              { ssn: { $in: [ {{ciphertext("123-45-6789", field="ssn")}}, {{ciphertext("457-55-5462", field="ssn")}} ] } }
+              { encrypted_string: { $in: [ {{ciphertext("string0", field="encrypted_string")}}, {{ciphertext("string1", field="encrypted_string")}} ] } }
           command_name: find
     outcome:
       collection:

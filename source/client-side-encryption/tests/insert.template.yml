@@ -16,7 +16,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 { _id: 1, ssn: "457-55-5462", random: "abc" }
+          document: &doc0 { _id: 1, encrypted_string: "string0", random: "abc" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -38,14 +38,14 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
           command:
             insert: *collection_name
             documents:
-              - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}}, random: { $$type: "binData" } }
+              - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}}, random: { $$type: "binData" } }
             ordered: true
           command_name: insert
     outcome:
@@ -63,7 +63,7 @@ tests:
         arguments:
           documents:
             - *doc0
-            - &doc1 { _id: 2, ssn: "123-45-6789" }
+            - &doc1 { _id: 2, encrypted_string: "string1" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -85,7 +85,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
@@ -93,7 +93,7 @@ tests:
             insert: *collection_name
             documents:
               - *doc0_encrypted
-              - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+              - &doc1_encrypted { _id: 2, encrypted_string: {{ciphertext("string1", field="encrypted_string")}} }
             ordered: true
           command_name: insert
     outcome:

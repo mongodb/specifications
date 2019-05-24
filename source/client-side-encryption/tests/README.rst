@@ -183,6 +183,7 @@ Then for each element in ``tests``:
      **primary read preference** with **local read concern** even when the
      MongoClient is configured with another read preference or read concern.
 
+The spec test MUST be run with *and* without auth.
 
 Prose Tests
 ===========
@@ -292,3 +293,4 @@ as follows.
 
    - Verify both insert operations succeed. Verify that exactly one listCollections command is run on the collection, and that exactly one find is run on the datakeys collection.
  
+#. Test that creating an encrypted client fails if the maxWireVersion < 8.

@@ -11,13 +11,13 @@ tests:
     clientOptions:
       autoEncryptOpts:
         schemaMap:
-          "default.default": {'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}, 'bsonType': 'array'}
+          "default.default": {'properties': {'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}, 'bsonType': 'array'}
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 { _id: 1, ssn: "457-55-5462" }
+          document: &doc0 { _id: 1, encrypted_string: "string0" }
         result:
           errorContains: "Invalid schema"
     outcome:
@@ -43,7 +43,7 @@ tests:
     clientOptions:
       autoEncryptOpts:
         schemaMap:
-          "default.default": {'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}, 'bsonType': 'object'}}}
+          "default.default": {'properties': {'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}, 'bsonType': 'object'}}}
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
@@ -59,7 +59,7 @@ tests:
     clientOptions:
       autoEncryptOpts:
         schemaMap:
-          "default.default": {'anyOf': [{'properties': {'ssn': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}}]}
+          "default.default": {'anyOf': [{'properties': {'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}}]}
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:

@@ -4,8 +4,8 @@ database_name: &database_name "default"
 collection_name: &collection_name "default"
 
 data:
-  - &doc0_encrypted { _id: 1, ssn: {{ciphertext("457-55-5462", field="ssn")}} }
-  - &doc1_encrypted { _id: 2, ssn: {{ciphertext("123-45-6789", field="ssn")}} }
+  - &doc0_encrypted { _id: 1, encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }
+  - &doc1_encrypted { _id: 2, encrypted_string: {{ciphertext("string1", field="encrypted_string")}} }
 json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
@@ -19,7 +19,7 @@ tests:
     operations:
       - name: countDocuments
         arguments:
-          filter: { ssn: "457-55-5462" }
+          filter: { encrypted_string: "string0" }
         result: 1
     expectations:
       # Auto encryption will request the collection info.
@@ -42,14 +42,14 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
           command:
             aggregate: *collection_name
             pipeline:
-              - { $match: { ssn: {{ciphertext("457-55-5462", field="ssn")}} }}
+              - { $match: { encrypted_string: {{ciphertext("string0", field="encrypted_string")}} }}
               - { $group: { _id: 1, n: { $sum: 1 }}}
           command_name: aggregate
     outcome:
