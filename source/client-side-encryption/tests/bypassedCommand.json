@@ -47,7 +47,6 @@
     "tests": [
         {
             "description": "ping is bypassed",
-            "skipReason": "Waiting on CDRIVER-3148",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -64,19 +63,17 @@
                         "command": {
                             "ping": 1
                         }
-                    },
-                    "result": {
-                        "ok": 1
                     }
                 }
             ],
             "expectations": [
                 {
-                    "command_started_event": null,
-                    "command": {
-                        "ping": 1
-                    },
-                    "command_name": "ping"
+                    "command_started_event": {
+                        "command": {
+                            "ping": 1
+                        },
+                        "command_name": "ping"
+                    }
                 }
             ]
         }

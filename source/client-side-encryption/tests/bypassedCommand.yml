@@ -9,7 +9,6 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "ping is bypassed"
-    skipReason: "Waiting on CDRIVER-3148"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -21,11 +20,9 @@ tests:
         arguments:
           command:
             ping: 1
-        result:
-          ok: 1
     expectations:
       # No listCollections, no mongocryptd command, just the ping.
       - command_started_event:
-        command:
-          ping: 1
-        command_name: ping
+          command:
+            ping: 1
+          command_name: ping
