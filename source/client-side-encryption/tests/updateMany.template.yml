@@ -11,7 +11,6 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "updateMany with deterministic encryption"
-    skipReason: "Waiting on SERVER-40871"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -22,8 +21,8 @@ tests:
           filter: { encrypted_string: { $in: [ "string0", "string1" ] } }
           update: { $set: { encrypted_string: "string2", random: "abc" } }
         result:
-          matchedCount: 1 # TODO: should be 2, but changing for now
-          modifiedCount: 1 # TODO: should be 2
+          matchedCount: 2
+          modifiedCount: 2
           upsertedCount: 0
     expectations:
       # Auto encryption will request the collection info.
@@ -63,8 +62,8 @@ tests:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { _id: 1, encrypted_string: {{ciphertext("string2", field="encrypted_string")}} }
-          - { _id: 2, encrypted_string: {{ciphertext("string2", field="encrypted_string")}} }
+          - { _id: 1, encrypted_string: {{ciphertext("string2", field="encrypted_string")}}, random: { $$type: "binData" } }
+          - { _id: 2, encrypted_string: {{ciphertext("string2", field="encrypted_string")}}, random: { $$type: "binData" } }
   - description: "updateMany fails when filtering on a random field"
     clientOptions:
       autoEncryptOpts:

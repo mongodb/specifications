@@ -10,7 +10,6 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "findOneAndReplace with deterministic encryption"
-    skipReason: "Waiting on SERVER-40005"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -18,10 +17,10 @@ tests:
     operations:
       - name: findOneAndReplace
         arguments:
-          filter: &doc0 { encrypted_string: "string0" }
+          filter: { encrypted_string: "string0" }
           replacement: { encrypted_string: "string1" }
           returnDocument: Before
-        result: *doc0
+        result: { _id: 1, encrypted_string: "string0" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:
@@ -50,7 +49,7 @@ tests:
           command:
             findAndModify: *collection_name
             query: { encrypted_string: { $eq: {{ciphertext("string0", field="encrypted_string")}} } }
-            update: { encrypted_string: { $eq: {{ciphertext("string1", field="encrypted_string")}} } }
+            update: { encrypted_string: {{ciphertext("string1", field="encrypted_string")}}  }
           command_name: findAndModify
     outcome:
       collection:

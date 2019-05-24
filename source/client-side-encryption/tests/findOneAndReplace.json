@@ -110,7 +110,6 @@
     "tests": [
         {
             "description": "findOneAndReplace with deterministic encryption",
-            "skipReason": "Waiting on SERVER-40005",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -131,6 +130,7 @@
                         "returnDocument": "Before"
                     },
                     "result": {
+                        "_id": 1,
                         "encrypted_string": "string0"
                     }
                 }
@@ -180,7 +180,7 @@
                                         }
                                     },
                                     {
-                                        "keyAltName": {
+                                        "keyAltNames": {
                                             "$in": []
                                         }
                                     }
@@ -207,11 +207,9 @@
                             },
                             "update": {
                                 "encrypted_string": {
-                                    "$eq": {
-                                        "$binary": {
-                                            "base64": "AQAAAAAAAAAAAAAAAAAAAAAC1ijPpI+oG1mNiFChFAz7heo3R150yDhxZ7nOnPUwDM+aEvPRBuU6rXtgkVt7mgLd2H9rq9iChCAV46YKcpNrFw==",
-                                            "subType": "06"
-                                        }
+                                    "$binary": {
+                                        "base64": "AQAAAAAAAAAAAAAAAAAAAAAC1ijPpI+oG1mNiFChFAz7heo3R150yDhxZ7nOnPUwDM+aEvPRBuU6rXtgkVt7mgLd2H9rq9iChCAV46YKcpNrFw==",
+                                        "subType": "06"
                                     }
                                 }
                             }

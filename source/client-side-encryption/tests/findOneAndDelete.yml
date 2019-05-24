@@ -11,7 +11,6 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "findOneAndDelete with deterministic encryption"
-    skipReason: "Waiting on SERVER-40005"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -42,7 +41,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:

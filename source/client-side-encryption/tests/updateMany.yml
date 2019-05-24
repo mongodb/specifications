@@ -11,7 +11,6 @@ key_vault_data: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAA
 
 tests:
   - description: "updateMany with deterministic encryption"
-    skipReason: "Waiting on SERVER-40871"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -22,8 +21,8 @@ tests:
           filter: { encrypted_string: { $in: [ "string0", "string1" ] } }
           update: { $set: { encrypted_string: "string2", random: "abc" } }
         result:
-          matchedCount: 1 # TODO: should be 2, but changing for now
-          modifiedCount: 1 # TODO: should be 2
+          matchedCount: 2
+          modifiedCount: 2
           upsertedCount: 0
     expectations:
       # Auto encryption will request the collection info.
@@ -46,7 +45,7 @@ tests:
       - command_started_event:
           command:
             find: datakeys
-            filter: {"$or": [{"_id": {"$in": [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] }}, {"keyAltName": {"$in": []}}]}
+            filter: {"$or": [{"_id": {"$in": [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: admin
           command_name: find
       - command_started_event:
@@ -63,8 +62,8 @@ tests:
       collection:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
-          - { _id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==', 'subType': '06'}} }
-          - { _id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==', 'subType': '06'}} }
+          - { _id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==', 'subType': '06'}}, random: { $$type: "binData" } }
+          - { _id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==', 'subType': '06'}}, random: { $$type: "binData" } }
   - description: "updateMany fails when filtering on a random field"
     clientOptions:
       autoEncryptOpts:

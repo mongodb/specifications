@@ -11,7 +11,6 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "findOneAndDelete with deterministic encryption"
-    skipReason: "Waiting on SERVER-40005"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:

@@ -119,7 +119,6 @@
     "tests": [
         {
             "description": "findOneAndDelete with deterministic encryption",
-            "skipReason": "Waiting on SERVER-40005",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -182,7 +181,7 @@
                                         }
                                     },
                                     {
-                                        "keyAltName": {
+                                        "keyAltNames": {
                                             "$in": []
                                         }
                                     }

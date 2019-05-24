@@ -110,7 +110,6 @@
     "tests": [
         {
             "description": "findOneAndUpdate with deterministic encryption",
-            "skipReason": "Waiting on SERVER-40005",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -120,7 +119,7 @@
             },
             "operations": [
                 {
-                    "name": "findOneAndReplace",
+                    "name": "findOneAndUpdate",
                     "arguments": {
                         "filter": {
                             "encrypted_string": "string0"
@@ -133,6 +132,7 @@
                         "returnDocument": "Before"
                     },
                     "result": {
+                        "_id": 1,
                         "encrypted_string": "string0"
                     }
                 }
@@ -182,7 +182,7 @@
                                         }
                                     },
                                     {
-                                        "keyAltName": {
+                                        "keyAltNames": {
                                             "$in": []
                                         }
                                     }

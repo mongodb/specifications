@@ -50,19 +50,6 @@ tests:
             { $where: { $code: "function() { return true }" } }
         result:
           errorContains: "Unsupported match expression operator for encryption"
-  - description: "$jsonSchema unconditionally fails"
-    skipReason: "SERVER-41012"
-    clientOptions:
-      autoEncryptOpts:
-        kmsProviders:
-          aws: {} # Credentials filled in from environment.
-    operations:
-      - name: find
-        arguments:
-          filter:
-            { $jsonSchema: { properties: {} } }
-        result:
-          errorContains: "Unsupported match expression operator for encryption"
   - description: "$bit operators succeed on unencrypted, error on encrypted"
     clientOptions:
       autoEncryptOpts:
@@ -458,7 +445,6 @@ tests:
         result:
           errorContains: "$push not allowed on encrypted values"
   - description: "array filters on encrypted fields does not error in mongocryptd, but errors in mongod"
-    skipReason: "SERVER-41022"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
@@ -470,7 +456,7 @@ tests:
           update: { $set : { "encrypted_string.$[i].x": 1 }}
           arrayFilters: [{ i.x: 1 }]
         result:
-          errorContains: "TODO"
+          errorContains: "Array update operations not allowed on encrypted values"
   - description: "positional operator succeeds on unencrypted, errors on encrypted"
     clientOptions:
       autoEncryptOpts:

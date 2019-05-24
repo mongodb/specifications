@@ -10,18 +10,17 @@ key_vault_data: [{{key()}}]
 
 tests:
   - description: "findOneAndUpdate with deterministic encryption"
-    skipReason: "Waiting on SERVER-40005"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
-      - name: findOneAndReplace
+      - name: findOneAndUpdate
         arguments:
-          filter: &doc0 { encrypted_string: "string0" }
+          filter: { encrypted_string: "string0" }
           update: { $set: { encrypted_string: "string1" } }
           returnDocument: Before
-        result: *doc0
+        result: { _id: 1, encrypted_string: "string0" }
     expectations:
       # Auto encryption will request the collection info.
       - command_started_event:

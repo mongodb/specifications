@@ -119,7 +119,6 @@
     "tests": [
         {
             "description": "updateMany with deterministic encryption",
-            "skipReason": "Waiting on SERVER-40871",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
@@ -147,8 +146,8 @@
                         }
                     },
                     "result": {
-                        "matchedCount": 1,
-                        "modifiedCount": 1,
+                        "matchedCount": 2,
+                        "modifiedCount": 2,
                         "upsertedCount": 0
                     }
                 }
@@ -198,7 +197,7 @@
                                         }
                                     },
                                     {
-                                        "keyAltName": {
+                                        "keyAltNames": {
                                             "$in": []
                                         }
                                     }
@@ -266,6 +265,9 @@
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==",
                                     "subType": "06"
                                 }
+                            },
+                            "random": {
+                                "$$type": "binData"
                             }
                         },
                         {
@@ -275,6 +277,9 @@
                                     "base64": "AQAAAAAAAAAAAAAAAAAAAAACKScltsm9Kw6AsyC/GQ8HZosvXZkixhFqNimPmzaSKu1b0IdTubAjsEG3TAxL5aTsQfT5mtr63hvvXpjMef8jzQ==",
                                     "subType": "06"
                                 }
+                            },
+                            "random": {
+                                "$$type": "binData"
                             }
                         }
                     ]
