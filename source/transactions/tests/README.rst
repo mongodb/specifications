@@ -195,7 +195,8 @@ Then for each element in ``tests``:
 #. If the ``skipReason`` field is present, skip this test completely.
 #. Create a MongoClient and call
    ``client.admin.runCommand({killAllSessions: []})`` to clean up any open
-   transactions from previous test failures.
+   transactions from previous test failures. Ignore a command failure with
+   error code 11601 ("Interrupted") to work around `SERVER-38335`_.
 
    - Running ``killAllSessions`` cleans up any open transactions from
      a previously failed test to prevent the current test from blocking.
@@ -294,6 +295,8 @@ Then for each element in ``tests``:
      latest data by using **primary read preference** with
      **local read concern** even when the MongoClient is configured with
      another read preference or read concern.
+
+.. _SERVER-38335: https://jira.mongodb.org/browse/SERVER-38335
 
 Special Test Operations
 ```````````````````````
