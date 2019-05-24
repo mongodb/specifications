@@ -110,10 +110,9 @@
     "tests": [
         {
             "description": "Insert with bypassAutoEncryption",
-            "skipReason": "bypassAutoEncryption not supported in Java PoC",
             "clientOptions": {
-                "bypassAutoEncryption": true,
                 "autoEncryptOpts": {
+                    "bypassAutoEncryption": true,
                     "kmsProviders": {
                         "aws": {}
                     }
@@ -150,22 +149,10 @@
                 {
                     "command_started_event": {
                         "command": {
-                            "listCollections": 1,
-                            "cursor": {},
-                            "filter": {
-                                "name": "default"
-                            }
-                        },
-                        "command_name": "listCollections"
-                    }
-                },
-                {
-                    "command_started_event": {
-                        "command": {
                             "insert": "default",
                             "documents": [
                                 {
-                                    "_id": 1,
+                                    "_id": 2,
                                     "encrypted_string": "string0"
                                 }
                             ],
@@ -177,14 +164,10 @@
                 {
                     "command_started_event": {
                         "command": {
-                            "listCollections": 1,
-                            "cursor": {},
-                            "filter": {
-                                "name": "datakeys"
-                            },
-                            "$db": "admin"
+                            "find": "default",
+                            "filter": {}
                         },
-                        "command_name": "listCollections"
+                        "command_name": "find"
                     }
                 },
                 {
@@ -213,17 +196,6 @@
                                 ]
                             },
                             "$db": "admin"
-                        },
-                        "command_name": "find"
-                    }
-                },
-                {
-                    "command_started_event": {
-                        "command": {
-                            "find": "default",
-                            "filter": {
-                                "_id": 1
-                            }
                         },
                         "command_name": "find"
                     }
