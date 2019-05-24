@@ -10,7 +10,7 @@ json_schema: {{schema()}}
 key_vault_data: [{{key()}}]
 
 tests:
-  - description: "mapReduce deterministic encryptio (unsupported)"
+  - description: "mapReduce deterministic encryption (unsupported)"
     clientOptions:
       autoEncryptOpts:
         kmsProviders:

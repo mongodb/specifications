@@ -120,7 +120,7 @@
     ],
     "tests": [
         {
-            "description": "mapReduce deterministic encryptio (unsupported)",
+            "description": "mapReduce deterministic encryption (unsupported)",
             "clientOptions": {
                 "autoEncryptOpts": {
                     "kmsProviders": {
