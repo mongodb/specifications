@@ -292,5 +292,3 @@ as follows.
        db.adminCommand({configureFailPoint: "hangBeforeListCollections", mode: "off" })
 
    - Verify both insert operations succeed. Verify that exactly one listCollections command is run on the collection, and that exactly one find is run on the datakeys collection.
- 
-#. Test that creating an encrypted client fails if the maxWireVersion < 8.
