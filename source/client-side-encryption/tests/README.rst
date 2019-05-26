@@ -214,7 +214,6 @@ as follows.
    - Use `KeyVault.encrypt` to encrypt the value "hello" with the following:
 
      - the algorithm "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
-     - a fixed 16 byte initialization vector
      - the "local" KMS provider
 
    - Expect the value is equal to a known BSON binary of subtype 6
@@ -228,7 +227,6 @@ as follows.
    - Use `KeyVault.encrypt` to encrypt the value "hello" with the following:
 
      - the algorithm "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
-     - a fixed 16 byte initialization vector
      - the "aws" KMS provider
 
    - Expect the value is equal to a known BSON binary of subtype 6
@@ -258,14 +256,6 @@ as follows.
    - Create a document, setting some field to the value.
    - Insert the document into a collection.
    - Find the document. Verify both the value matches the originally set value.
-
-#. Test explicit encrypting an auto encrypted field.
-
-   - Create a `KeyVault` with either a "local" or "aws" KMS provider
-   - Create a collection with a JSONSchema specifying an encrypted field.
-   - Use `KeyVault.encrypt` to encrypt a value.
-   - Create a document, setting the auto-encrypted field to the value.
-   - Insert the document. Verify an exception is thrown.
 
 #. Test explicit encrypting an auto encrypted field.
 
