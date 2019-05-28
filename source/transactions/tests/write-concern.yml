@@ -244,8 +244,7 @@ tests:
           session: session0
           document:
             _id: 1
-        result:
-          insertedId: 1
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -269,8 +268,7 @@ tests:
           documents:
             - _id: 1
             - _id: 2
-        result:
-          insertedIds: {0: 1, 1: 2}
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -305,14 +303,7 @@ tests:
             - name: insertOne
               arguments:
                 document: {_id: 1}
-        result:
-          deletedCount: 0
-          insertedCount: 1
-          insertedIds: {0: 1}
-          matchedCount: 0
-          modifiedCount: 0
-          upsertedCount: 0
-          upsertedIds: {}
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -336,8 +327,7 @@ tests:
           session: session0
           filter:
             _id: 0
-        result:
-          deletedCount: 1
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -367,8 +357,7 @@ tests:
           session: session0
           filter:
             _id: 0
-        result:
-          deletedCount: 1
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -400,10 +389,7 @@ tests:
           update:
             $inc: {x: 1}
           upsert: true
-        result:
-          matchedCount: 1
-          modifiedCount: 1
-          upsertedCount: 0
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -438,10 +424,7 @@ tests:
           update:
             $inc: {x: 1}
           upsert: true
-        result:
-          matchedCount: 1
-          modifiedCount: 1
-          upsertedCount: 0
+        # avoid assertion since result fields are inaccessible for unacknowledged write concern
       - *commitTransaction
 
     expectations:
@@ -473,6 +456,7 @@ tests:
         arguments:
           session: session0
           filter: {_id: 0}
+        # findAndModify still returns result for unacknowledged write concern
         result: {_id: 0}
       - *commitTransaction
 
@@ -502,6 +486,7 @@ tests:
           filter: {_id: 0}
           replacement: {x: 1}
           returnDocument: Before
+        # findAndModify still returns result for unacknowledged write concern
         result: {_id: 0}
       - *commitTransaction
 
@@ -534,6 +519,7 @@ tests:
           update:
             $inc: {x: 1}
           returnDocument: Before
+        # findAndModify still returns result for unacknowledged write concern
         result: {_id: 0}
       - *commitTransaction
 

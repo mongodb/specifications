@@ -403,9 +403,6 @@
             "document": {
               "_id": 1
             }
-          },
-          "result": {
-            "insertedId": 1
           }
         },
         {
@@ -492,12 +489,6 @@
                 "_id": 2
               }
             ]
-          },
-          "result": {
-            "insertedIds": {
-              "0": 1,
-              "1": 2
-            }
           }
         },
         {
@@ -592,17 +583,6 @@
                 }
               }
             ]
-          },
-          "result": {
-            "deletedCount": 0,
-            "insertedCount": 1,
-            "insertedIds": {
-              "0": 1
-            },
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0,
-            "upsertedIds": {}
           }
         },
         {
@@ -684,9 +664,6 @@
             "filter": {
               "_id": 0
             }
-          },
-          "result": {
-            "deletedCount": 1
           }
         },
         {
@@ -764,9 +741,6 @@
             "filter": {
               "_id": 0
             }
-          },
-          "result": {
-            "deletedCount": 1
           }
         },
         {
@@ -850,11 +824,6 @@
               }
             },
             "upsert": true
-          },
-          "result": {
-            "matchedCount": 1,
-            "modifiedCount": 1,
-            "upsertedCount": 0
           }
         },
         {
@@ -949,11 +918,6 @@
               }
             },
             "upsert": true
-          },
-          "result": {
-            "matchedCount": 1,
-            "modifiedCount": 1,
-            "upsertedCount": 0
           }
         },
         {
