@@ -58,7 +58,7 @@ Each YAML file has the following keys:
 
 - ``data`` |txn|
 
-- ``json_schema`` A JSONSchema that should be set on the collection (using ``createCollection``) before each test run. 
+- ``json_schema`` A JSON Schema that should be set on the collection (using ``createCollection``) before each test run.
 
 - ``key_vault_data`` The data that should exist in the key vault collection under test before each test run.
 
@@ -260,7 +260,30 @@ as follows.
 #. Test explicit encrypting an auto encrypted field.
 
    - Create a `KeyVault` with either a "local" or "aws" KMS provider
-   - Create a collection with a JSONSchema specifying an encrypted field.
+   - Create a collection with a JSON Schema specifying an encrypted field.
    - Use `KeyVault.encrypt` to encrypt a value.
    - Create a document, setting the auto-encrypted field to the value.
    - Insert the document. Verify an exception is thrown.
+
+#. Test bypassing automatic spawning of mongocryptd.
+
+   Note, values in angle brackets are meant to be substituted.
+
+   - Create a collection with a JSON Schema specifying an encrypted field.
+   - Spawn a mongocryptd process with: `mongocryptd --port 27030`
+   - Create a `MongoClient` configured with `clientSideEncryptionOpts` of the following:
+      - `kmsProviders = { "aws": { "access_key_id": <AWS access key id> "secret_access_key": <AWS secret access key>`
+      - `extraOptions = { "mongocryptdBypassSpawn": true, "mongocryptdURI": "mongodb://localhost:27030" }`
+   - Insert a document into the collection with a value on the encrypted field. Expect this to succeed.
+   - Find the document. Verify the value on the encrypted field matches the originally set value.
+
+#. Test spawning mongocryptd from a different path.
+
+   This test requires a copy of `mongocryptd` to exist in a directory that is not on `PATH`. E.g. `/tmp/mongocryptd`. Note, values in angle brackets are meant to be substituted.
+
+   - Create a collection with a JSON Schema specifying an encrypted field.
+   - Create a `MongoClient` configured with `clientSideEncryptionOpts` of the following:
+      - `kmsProviders = { "aws": { "access_key_id": <AWS access key id> "secret_access_key": <AWS secret access key>`
+      - `extraOptions = { "mongocryptdSpawnPath": "</path/to/mongocryptd>", "mongocryptdURI": "mongodb://localhost:27030" }`
+   - Insert a document into the collection with a value on the encrypted field. Expect this to succeed.
+   - Find the document. Verify the value on the encrypted field matches the originally set value.
