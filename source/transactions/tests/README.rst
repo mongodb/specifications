@@ -137,6 +137,9 @@ Each YAML file has the following keys:
     - ``collectionOptions``: Optional, parameters to pass to the Collection()
       used for this operation.
 
+    - ``databaseOptions``: Optional, parameters to pass to the Database()
+      used for this operation.
+
     - ``command_name``: Present only when ``name`` is "runCommand". The name
       of the command to run. Required for languages that are unable preserve
       the order keys in the "command" argument when parsing JSON/YAML.
@@ -240,8 +243,9 @@ Then for each element in ``tests``:
      field at the top level of the test file.
    - Create a Collection object from the Database, using the
      ``collection_name`` field at the top level of the test file.
-     If ``collectionOptions`` is present create the Collection object with the
-     provided options. Otherwise create the object with the default options.
+     If ``collectionOptions`` or ``databaseOptions`` is present, create the
+     Collection or Database object with the provided options, respectively.
+     Otherwise create the object with the default options.
    - Execute the named method on the provided ``object``, passing the
      arguments listed. Pass ``session0`` or ``session1`` to the method,
      depending on which session's name is in the arguments list.
