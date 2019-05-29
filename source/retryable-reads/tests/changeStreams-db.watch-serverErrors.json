@@ -86,7 +86,7 @@
       ]
     },
     {
-      "description": "db.watch succeeds after InterruptedDueToStepDown",
+      "description": "db.watch succeeds after InterruptedDueToReplStateChange",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

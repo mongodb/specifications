@@ -3,7 +3,7 @@ Retryable Reads
 ===============
 
 :Spec Title: Retryable Reads
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Vincent Kam 
 :Lead: Bernie Hackett
 :Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-2-13
+:Last Modified: 2019-05-29
    
 .. contents::
 
@@ -59,21 +59,21 @@ An error is considered retryable if it meets any of the following criteria:
 
 - a server error response with any the following codes:
 
-=========================== =================
-   **Error Name**              **Error Code**
-=========================== =================
-   InterruptedAtShutdown       11600
-   InterruptedDueToStepDown    11602
-   NotMaster                   10107
-   NotMasterNoSlaveOk          13435
-   NotMasterOrSecondary        13436
-   PrimarySteppedDown          189
-   ShutdownInProgress          91
-   HostNotFound                7
-   HostUnreachable             6
-   NetworkTimeout              89
-   SocketException             9001
-=========================== =================
+=============================== ==============
+**Error Name**                  **Error Code**
+=============================== ==============
+InterruptedAtShutdown           11600
+InterruptedDueToReplStateChange 11602
+NotMaster                       10107
+NotMasterNoSlaveOk              13435
+NotMasterOrSecondary            13436
+PrimarySteppedDown              189
+ShutdownInProgress              91
+HostNotFound                    7
+HostUnreachable                 6
+NetworkTimeout                  89
+SocketException                 9001
+=============================== ==============
 
 MongoClient Configuration 
 --------------------------
@@ -652,6 +652,8 @@ degraded performance can simply disable ``retryableReads``.
 
 Changelog 
 ==========
+
+2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
 
 Endnotes
 ========

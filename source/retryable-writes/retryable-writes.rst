@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.2
+:Spec Version: 1.4
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-03-06
+:Last Modified: 2019-05-29
 
 .. contents::
 
@@ -79,7 +79,7 @@ Retryable Error
          - Error Code
        * - InterruptedAtShutdown
          - 11600
-       * - InterruptedDueToStepDown 
+       * - InterruptedDueToReplStateChange 
          - 11602
        * - NotMaster
          - 10107
@@ -725,6 +725,8 @@ deleteMany) does not seem to pose a problem in practice.
 
 Changes
 =======
+
+2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
 
 2019-03-06: retryWrites now defaults to true.
 

@@ -35,7 +35,7 @@ tests:
                     database_name: admin
             - *retryable_command_started_event
     -
-        description: "client.watch succeeds after InterruptedDueToStepDown"
+        description: "client.watch succeeds after InterruptedDueToReplStateChange"
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 11602 }
