@@ -122,8 +122,8 @@ Each YAML file has the following keys:
     configureFailPoint command to run on the admin database. This option and
     ``useMultipleMongoses: true`` are mutually exclusive.
 
-  - ``sessionOptions``: Optional, parameters to pass to
-    MongoClient.startSession().
+  - ``sessionOptions``: Optional, map of session names (e.g. "session0") to
+    parameters to pass to MongoClient.startSession() when creating that session.
 
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
