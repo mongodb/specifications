@@ -21,13 +21,15 @@ data:
         base64: "AQAAa2V2aW4gYWxiZXJ0c29uCg=="
         subType: "06"
 
-json_schema: {{schema()}}
+# Since test requires invalid data to be inserted, use a local schema.
 key_vault_data: [{{key()}}]
 
 tests:
   - description: "Wrong subtype"
     clientOptions:
       autoEncryptOpts:
+        schemaMap:
+          "default.default": {{ schema() }}
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
@@ -40,6 +42,8 @@ tests:
   - description: "Empty data"
     clientOptions:
       autoEncryptOpts:
+        schemaMap:
+            "default.default": {{ schema() }}
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
@@ -51,6 +55,8 @@ tests:
   - description: "Malformed data"
     clientOptions:
       autoEncryptOpts:
+        schemaMap:
+          "default.default": {{ schema() }}
         kmsProviders:
           aws: {} # Credentials filled in from environment.
     operations:
