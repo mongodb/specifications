@@ -208,7 +208,7 @@
       }
     },
     {
-      "description": "InsertOne succeeds after InterruptedDueToStepDown",
+      "description": "InsertOne succeeds after InterruptedDueToReplStateChange",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -664,7 +664,7 @@
       }
     },
     {
-      "description": "InsertOne succeeds after WriteConcernError InterruptedDueToStepDown",
+      "description": "InsertOne succeeds after WriteConcernError InterruptedDueToReplStateChange",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

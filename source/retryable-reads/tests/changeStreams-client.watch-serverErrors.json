@@ -88,7 +88,7 @@
       ]
     },
     {
-      "description": "client.watch succeeds after InterruptedDueToStepDown",
+      "description": "client.watch succeeds after InterruptedDueToReplStateChange",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.12
-:Last Modified: March 28, 2018
+:Version: 2.13
+:Last Modified: 2019-05-29
 
 .. contents::
 
@@ -1406,7 +1406,7 @@ unusable. These are called "node is recovering" errors:
     - Error Code
   * - InterruptedAtShutdown
     - 11600
-  * - InterruptedDueToStepDown 
+  * - InterruptedDueToReplStateChange 
     - 11602
   * - NotMasterOrSecondary
     - 13436
@@ -2416,3 +2416,5 @@ to auto-retry.
 
 2018-03-28: Specify that monitoring must not do mechanism negotiation or
 authentication.
+
+2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
