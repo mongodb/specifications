@@ -287,13 +287,13 @@ MONGODB-CR
 :deprecated: 3.0
 :removed: 4.0
 
-MongoDB Challenge Response is a nonce and MD5 based system. The driver sends a `getNonce` command, encodes and hashes the password using the returned nonce, and then sends an `authenticate` command.
+MongoDB Challenge Response is a nonce and MD5 based system. The driver sends a `getnonce` command, encodes and hashes the password using the returned nonce, and then sends an `authenticate` command.
 
 Conversation
 ````````````
 
-#. Send ``getNonce`` command
-	* :javascript:`{ getNonce: 1 }`
+#. Send ``getnonce`` command
+	* :javascript:`{ getnonce: 1 }`
 	* Response: :javascript:`{ nonce: <nonce> }`
 #. Compute key
 	* :javascript:`passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))`
