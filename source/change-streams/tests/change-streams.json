@@ -737,7 +737,9 @@
             "command": {
               "aggregate": "test",
               "cursor": {
-                "batchSize": 1
+                "batchSize": {
+                  "$numberInt": "1"
+                }
               },
               "pipeline": [
                 {

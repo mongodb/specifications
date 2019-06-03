@@ -499,7 +499,9 @@ tests:
         command_started_event:
           command:
             aggregate: *collection_name
-            cursor: {batchSize: 1}
+            cursor:
+              batchSize:
+                $numberInt: "1"
             pipeline:
               -
                 $changeStream:
