@@ -62,7 +62,7 @@ tests:
       - name: updateOne
         arguments:
           filter: {}
-          update: { encrypted_w_altname: "string0" }
+          update: { $set: { encrypted_w_altname: "string0" } }
           upsert: true
         result:
           errorContains: "A non-static (JSONPointer) keyId is not supported"

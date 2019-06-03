@@ -224,7 +224,9 @@
                     "arguments": {
                         "filter": {},
                         "update": {
-                            "encrypted_w_altname": "string0"
+                            "$set": {
+                                "encrypted_w_altname": "string0"
+                            }
                         },
                         "upsert": true
                     },
