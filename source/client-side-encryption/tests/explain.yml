@@ -17,6 +17,7 @@ tests:
           aws: {} # Credentials filled in from environment.
     operations:
       - name: runCommand
+        object: database
         command_name: explain
         arguments:
           command:
