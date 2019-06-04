@@ -488,7 +488,7 @@ tests:
           filter: { }
           update: { $set : { "encrypted_string": [1,2] }}
         result:
-          errorContains: "Cannot encrypt a field containing an array"
+          errorContains: "Cannot encrypt element of type array"
   - description: "an insert with encrypted field on _id errors"
     clientOptions:
       autoEncryptOpts:
@@ -512,7 +512,7 @@ tests:
         arguments:
           document: { encrypted_string: [ "123", "456"] }
         result:
-          errorContains: "Cannot encrypt a field containing an array"
+          errorContains: "Cannot encrypt element of type array"
   - description: "an insert with a Timestamp(0,0) value in the top-level fails"
     clientOptions:
       autoEncryptOpts:

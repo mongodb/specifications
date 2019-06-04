@@ -1346,7 +1346,7 @@
                         }
                     },
                     "result": {
-                        "errorContains": "Cannot encrypt a field containing an array"
+                        "errorContains": "Cannot encrypt element of type array"
                     }
                 }
             ]
@@ -1415,7 +1415,7 @@
                         }
                     },
                     "result": {
-                        "errorContains": "Cannot encrypt a field containing an array"
+                        "errorContains": "Cannot encrypt element of type array"
                     }
                 }
             ]

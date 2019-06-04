@@ -528,8 +528,8 @@
                     "arguments": {
                         "document": {
                             "_id": 1,
-                            "encrypted_long": {
-                                "$double": "1.23"
+                            "encrypted_double": {
+                                "$numberDouble": "1.23"
                             }
                         }
                     },

@@ -455,6 +455,30 @@
                     }
                 }
             ]
+        },
+        {
+            "description": "an invalid update (no $ operators) is validated and errors",
+            "clientOptions": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "updateOne",
+                    "arguments": {
+                        "filter": {},
+                        "update": {
+                            "encrypted_string": "random"
+                        }
+                    },
+                    "result": {
+                        "errorContains": ""
+                    }
+                }
+            ]
         }
     ]
 }

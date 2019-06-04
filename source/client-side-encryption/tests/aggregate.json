@@ -403,7 +403,7 @@
                         ]
                     },
                     "result": {
-                        "errorContains": "automatic encryption is not supported"
+                        "errorContains": "non-collection command not supported for auto encryption: aggregate"
                     }
                 }
             ]

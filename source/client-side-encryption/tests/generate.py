@@ -208,7 +208,16 @@ schemas = {
                 }
             }
         ]
-    }
+    },
+    "noencryption": {
+        "properties": {
+            "test": {
+                "bsonType": "string"
+            }
+        },
+        "bsonType": "object",
+        "required": ["test"]
+    },
 }
 
 ciphertexts = [

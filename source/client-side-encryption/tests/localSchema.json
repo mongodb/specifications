@@ -226,6 +226,51 @@
                     ]
                 }
             }
+        },
+        {
+            "description": "A local schema with no encryption is an error",
+            "clientOptions": {
+                "autoEncryptOpts": {
+                    "schemaMap": {
+                        "default.default": {
+                            "properties": {
+                                "test": {
+                                    "bsonType": "string"
+                                }
+                            },
+                            "bsonType": "object",
+                            "required": [
+                                "test"
+                            ]
+                        }
+                    },
+                    "kmsProviders": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "insertOne",
+                    "arguments": {
+                        "document": {
+                            "_id": 1,
+                            "encrypted_string": "string0"
+                        }
+                    }
+                },
+                {
+                    "name": "find",
+                    "arguments": {
+                        "filter": {
+                            "_id": 1
+                        }
+                    },
+                    "result": {
+                        "errorContains": "idklol"
+                    }
+                }
+            ]
         }
     ]
 }

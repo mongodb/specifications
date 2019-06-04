@@ -165,7 +165,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc4 { _id: 1, encrypted_long: {"$double": "1.23"} }
+          document: &doc4 { _id: 1, encrypted_double: {"$numberDouble": "1.23"} }
         result:
             errorContains: "Cannot use deterministic encryption for element of type: double"
   - description: "type=decimal"

@@ -57,3 +57,19 @@ tests:
         # Outcome is checked using a separate MongoClient without auto encryption.
         data:
           - *doc0_encrypted
+  - description: "A local schema with no encryption is an error"
+    clientOptions:
+      autoEncryptOpts:
+        schemaMap:
+          "default.default": {'properties': {'test': {'bsonType': 'string'}}, 'bsonType': 'object', 'required': ['test']}
+        kmsProviders:
+          aws: {} # Credentials filled in from environment.
+    operations:
+      - name: insertOne
+        arguments:
+          document: { _id: 1, encrypted_string: "string0" }
+      - name: find
+        arguments:
+          filter: { _id: 1 }
+        result:
+          errorContains: "idklol"
