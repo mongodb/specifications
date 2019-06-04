@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: December 13, 2018
-:Version: 1.10.1
+:Last Modified: June 3, 2019
+:Version: 1.10.2
 
 .. contents::
 
@@ -885,6 +885,8 @@ to the server differently:
 - Type Mongos: the read preference is sent to the server using the rules
   for `Passing read preference to mongos`_.
 
+- Type Standalone: clients MUST NOT send the read preference to the server
+
 - For all other types, using OP_QUERY: clients MUST always set the ``slaveOK`` wire
   protocol flag on reads to ensure that any server type can handle the
   request.
@@ -1683,6 +1685,8 @@ References
 
 Changes
 =======
+
+2019-05-20: Added rule to not send read preferene to standalone servers
 
 2017-11-10: Added application-configurated server selector.
 
