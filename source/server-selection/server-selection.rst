@@ -885,7 +885,7 @@ to the server differently:
 - Type Mongos: the read preference is sent to the server using the rules
   for `Passing read preference to mongos`_.
 
-- Type Standalone: the read preference is ignored
+- Type Standalone: clients MUST NOT send the read preference to the server
 
 - For all other types, using OP_QUERY: clients MUST always set the ``slaveOK`` wire
   protocol flag on reads to ensure that any server type can handle the
@@ -1686,7 +1686,7 @@ References
 Changes
 =======
 
-2019-05-20: Added rule to ignore read preference for standalone servers
+2019-05-20: Added rule to not send read preferene to standalone servers
 
 2017-11-10: Added application-configurated server selector.
 
