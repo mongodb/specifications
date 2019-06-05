@@ -72,4 +72,4 @@ tests:
         arguments:
           filter: { _id: 1 }
         result:
-          errorContains: "idklol"
+          errorContains: "JSON schema keyword 'required' is only allowed with a remote schema"
