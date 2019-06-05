@@ -257,14 +257,6 @@
                             "_id": 1,
                             "encrypted_string": "string0"
                         }
-                    }
-                },
-                {
-                    "name": "find",
-                    "arguments": {
-                        "filter": {
-                            "_id": 1
-                        }
                     },
                     "result": {
                         "errorContains": "JSON schema keyword 'required' is only allowed with a remote schema"
