@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: January 22, 2019
-:Version: 1.0.0
+:Last Modified: June 6, 2019
+:Version: 1.1.0
 
 .. contents::
 
@@ -401,12 +401,16 @@ A Connection MUST NOT be checked out until it is readyToUse. In addition, the Po
       # This must be done in all drivers
       leave wait queue
 
-      # If the connection has not been connected yet, the connection
-      # (TCP, TLS, handshake, compression, and auth) must be performed
-      # before the connection is returned. This MUST NOT block other threads
-      # from acquiring connections.
-      if connection is not readyToUse:
+    # If the connection has not been connected yet, the connection
+    # (TCP, TLS, handshake, compression, and auth) must be performed
+    # before the connection is returned. This MUST NOT block other threads
+    # from acquiring connections.
+    if connection is not readyToUse:
+      try:
         set up connection
+      except set up connection error:
+        emit ConnectionCheckOutFailedEvent(reason="error")
+        throw
 
     mark connection as in use
     emit ConnectionCheckedOutEvent
@@ -600,6 +604,7 @@ Events
        *  Current valid values are:
        *   - "poolClosed": The pool was previously closed, and cannot provide new connections
        *   - "timeout":    The connection check out attempt exceeded the specified timeout
+       *   - "error":      The connection check out attempt experienced an error while setting up a new connection
        */
       reason: string|Enum;
     }
@@ -729,3 +734,8 @@ Add support for OP_MSG exhaustAllowed
 
 Exhaust Cursors may require changes to how we close connections in the future, specifically to add a way to close and remove from its pool a connection which has unread exhaust messages.
 
+
+Change log
+==========
+
+:2019-06-06: Add "error" as a valid reason for ConnectionCheckOutFailedEvent
