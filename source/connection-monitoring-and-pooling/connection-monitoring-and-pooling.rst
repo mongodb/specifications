@@ -124,7 +124,7 @@ Additionally, Drivers that implement a Connection Pool MUST support the followin
       waitQueueTimeoutMS?: number;
     }
 
-These options MUST be specified at the MongoClient level, and SHOULD be named in a manner idiomatic to the driver’s language. All connection pools created by a MongoClient MUST use the same ConnectionPoolOptions.
+These options MUST be specified at the MongoClient level, and SHOULD be named in a manner idiomatic to the driver's language. All connection pools created by a MongoClient MUST use the same ConnectionPoolOptions.
 
 When parsing a mongodb connection string, a user MUST be able to specify these options using the default names specified above.
 
@@ -166,7 +166,7 @@ A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A Con
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
 -  **Perishable**: it is possible for a connection to become **Perished**. A connection is considered perished if any of the following are true:
 
-   -  **Stale:** The connection’s generation does not match the generation of the parent pool
+   -  **Stale:** The connection's generation does not match the generation of the parent pool
    -  **Idle:** The connection is currently available and readyToUse, and has been for longer than **maxIdleTimeMS**.
    -  **Errored:** The connection has experienced an error that indicates the connection is no longer recommended for use. Examples include, but are not limited to:
 
@@ -199,7 +199,7 @@ A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A Con
 WaitQueue
 ---------
 
-A concept that represents pending requests for connections. When a thread requests a Connection from a Pool, the thread enters the Pool’s WaitQueue. A thread stays in the WaitQueue until it either receives a Connection or times out. A WaitQueue has the following traits:
+A concept that represents pending requests for connections. When a thread requests a Connection from a Pool, the thread enters the Pool's WaitQueue. A thread stays in the WaitQueue until it either receives a Connection or times out. A WaitQueue has the following traits:
 
 -  **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
 -  **Ordered/Fair**: When connections are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
@@ -217,7 +217,7 @@ Connection Pool
 A driver-defined entity that encapsulates all non-monitoring connections associated with a single Endpoint. The pool has the following properties:
 
 -  **Thread Safe:** All Pool behaviors MUST be thread safe.
--  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update it’s pid
+-  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update it's pid
 -  **Single Owner:** A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.
 -  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <https://docs.google.com/document/d/1AT1vCSBXB-0MQUqkusIukMngSvlyNU93qe9tBxbcfiY/edit?disco=AAAACWk9Jo4&ts=5bec82a4#heading=h.75j6jnmktzyn>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
 -  **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
@@ -225,7 +225,7 @@ A driver-defined entity that encapsulates all non-monitoring connections associa
    -  Checking in a Connection to the Pool automatically closes the connection
    -  Attempting to check out a Connection from the Pool results in an Error
 
--  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then it’s total number of connections (including available and in use) MUST NOT exceed **maxPoolSize**
+-  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then it's total number of connections (including available and in use) MUST NOT exceed **maxPoolSize**
 
 .. code:: typescript
 
@@ -452,7 +452,7 @@ Drivers MAY aggressively ResetAfterFork if the driver detects it has been forked
 Optional Behaviors
 ------------------
 
-The following features of a Connection Pool SHOULD be implemented if they make sense in the driver and driver’s language.
+The following features of a Connection Pool SHOULD be implemented if they make sense in the driver and driver's language.
 
 Background Thread
 ^^^^^^^^^^^^^^^^^
@@ -467,7 +467,7 @@ thread SHOULD
 withConnection
 ^^^^^^^^^^^^^^
 
-A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent Connections from not being checked in. Examples include `Python’s "with" statement <https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement>`__ and `C#’s "using" statement <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement>`__. If implemented, drivers SHOULD use this method as the default method of checking out and checking in Connections.
+A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent Connections from not being checked in. Examples include `Python's "with" statement <https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement>`__ and `C#'s "using" statement <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement>`__. If implemented, drivers SHOULD use this method as the default method of checking out and checking in Connections.
 
 .. _connection-pool-monitoring-1:
 
@@ -575,7 +575,7 @@ Events
     }
 
     /**
-     *  Emitted when the driver start to attempt to check out a connection
+     *  Emitted when the driver starts attempting to check out a connection
      */
     interface ConnectionCheckOutStartedEvent {
       /**
@@ -586,7 +586,7 @@ Events
     }
 
     /**
-     *  Emitted when the driver’s attempt to check out a connection fails
+     *  Emitted when the driver's attempt to check out a connection fails
      */
     interface ConnectionCheckOutFailedEvent {
       /**
@@ -596,11 +596,12 @@ Events
     
       /**
        *  A reason explaining why connection check out failed.
+       *  Can be implemented as a string or enum.
        *  Current valid values are:
        *   - "poolClosed": The pool was previously closed, and cannot provide new connections
        *   - "timeout":    The connection check out attempt exceeded the specified timeout
        */
-      reason: string;
+      reason: string|Enum;
     }
 
     /**
