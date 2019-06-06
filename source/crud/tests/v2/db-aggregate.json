@@ -26,12 +26,9 @@
               },
               {
                 "$project": {
-                  "command": 1
-                }
-              },
-              {
-                "$project": {
-                  "command.lsid": 0
+                  "command.aggregate": 1,
+                  "command.cursor": 1,
+                  "command.pipeline": 1
                 }
               }
             ]
@@ -57,17 +54,13 @@
                   },
                   {
                     "$project": {
-                      "command": 1
-                    }
-                  },
-                  {
-                    "$project": {
-                      "command.lsid": 0
+                      "command.aggregate": 1,
+                      "command.cursor": 1,
+                      "command.pipeline": 1
                     }
                   }
                 ],
-                "cursor": {},
-                "$db": "admin"
+                "cursor": {}
               }
             }
           ]
@@ -98,12 +91,10 @@
               },
               {
                 "$project": {
-                  "command": 1
-                }
-              },
-              {
-                "$project": {
-                  "command.lsid": 0
+                  "command.aggregate": 1,
+                  "command.cursor": 1,
+                  "command.pipeline": 1,
+                  "command.allowDiskUse": 1
                 }
               }
             ],
@@ -130,18 +121,15 @@
                   },
                   {
                     "$project": {
-                      "command": 1
-                    }
-                  },
-                  {
-                    "$project": {
-                      "command.lsid": 0
+                      "command.aggregate": 1,
+                      "command.cursor": 1,
+                      "command.pipeline": 1,
+                      "command.allowDiskUse": 1
                     }
                   }
                 ],
                 "allowDiskUse": true,
-                "cursor": {},
-                "$db": "admin"
+                "cursor": {}
               }
             }
           ]
