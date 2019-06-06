@@ -13,8 +13,7 @@ tests:
           pipeline:
             - $currentOp: { allUsers: false, idleConnections: false, localOps: true }
             - $match: { command.aggregate: { $eq: 1 } }
-            - $project: { command: 1 }
-            - $project: { command.lsid: 0 }
+            - $project: { command.aggregate: 1, command.cursor: 1, command.pipeline: 1}
         result:
           -
             command:
@@ -22,10 +21,8 @@ tests:
               pipeline:
                 - $currentOp: { allUsers: false, idleConnections: false, localOps: true }
                 - $match: { command.aggregate: { $eq: 1 } }
-                - $project: { command: 1 }
-                - $project: { command.lsid: 0 }
+                - $project: { command.aggregate: 1, command.cursor: 1, command.pipeline: 1}
               cursor: {}
-              $db: "admin"
   -
     description: "Aggregate with $currentOp and allowDiskUse"
     operations:
@@ -36,8 +33,7 @@ tests:
           pipeline:
             - $currentOp: { allUsers: true, idleConnections: true, localOps: true }
             - $match: { command.aggregate: {$eq: 1} }
-            - $project: { command: 1 }
-            - $project: { command.lsid: 0 }
+            - $project: { command.aggregate: 1, command.cursor: 1, command.pipeline: 1, command.allowDiskUse: 1}
           allowDiskUse: true
         result:
           -
@@ -46,8 +42,6 @@ tests:
               pipeline:
                 - $currentOp: { allUsers: true, idleConnections: true, localOps: true }
                 - $match: { command.aggregate: { $eq: 1 } }
-                - $project: { command: 1 }
-                - $project: { command.lsid: 0 }
+                - $project: { command.aggregate: 1, command.cursor: 1, command.pipeline: 1, command.allowDiskUse: 1}
               allowDiskUse: true
               cursor: {}
-              $db: "admin"
