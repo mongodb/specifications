@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5
+:Spec Version: 1.5.1
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 13-May-2019
+:Last Modified: 2019-06-07
 
 .. contents::
 
@@ -71,8 +71,8 @@ Write operation
 All operations that write and accept a ClientSession argument. All
 MongoClient, Database, Collection helpers that write including (but not
 limited to) creating, updating, or deleting databases, collections,
-indexes, and users. Aggregate (even with $out) is considered a read
-operation, see `Aggregate with $out is a read operation`_.
+indexes, and users. Aggregate (even with a write stage) is considered a read
+operation, see `Aggregate with write stage is a read operation`_.
 
 Retryable Error
 ^^^^^^^^^^^^^^^
@@ -1236,13 +1236,13 @@ In this case the transaction options express a more immediate user
 intent than the client options, so it is not surprising to override the
 client options.
 
-Aggregate with $out is a read operation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Aggregate with write stage is a read operation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We intend to migrate away from designs that require drivers to inspect
-the contents of the aggregation pipeline and override user read
-preferences for aggregate with $out. In general, our specifications
-should stop defining different behaviors based on the contents of
+We intend to migrate away from designs that require drivers to inspect the
+contents of the aggregation pipeline and override user read preferences for
+aggregate with a write stage (e.g. ``$out``, ``$merge``). In general, our
+specifications should stop defining different behaviors based on the contents of
 commands.
 
 A server selection error is labeled UnknownTransactionCommitResult
@@ -1283,8 +1283,9 @@ The following commands are allowed inside transactions:
 
 8.  aggregate (including $lookup)
 
-    -  The $out stage is prohibited because it uses collection create
-       and rename operations.
+    -  The ``$out`` stage is prohibited because it uses collection create and
+       rename operations. The ``$merge`` stage may be prohibited for the same
+       reason if the output collection does not already exist.
 
 9.  distinct
 
@@ -1374,6 +1375,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-06-07: Mention $merge stage for aggregate alongside $out
 :2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
              errors on commit are labelled UnknownTransactionCommitResult.
 :2019-02-19: Add support for sharded transaction recoveryToken.

@@ -1,0 +1,51 @@
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+    - { _id: 3, x: 33 }
+
+minServerVersion: '4.1.12'
+
+collection_name: &collection_name 'test_aggregate_merge'
+
+tests:
+  -
+    description: "Aggregate with $merge"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        arguments:
+          pipeline: &pipeline
+            - $sort: { x : 1 }
+            - $match: { _id: { $gt: 1 } }
+            - $merge: { into: &output_collection "other_test_collection" }
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+    outcome: &outcome
+      collection:
+        name: *output_collection
+        data:
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
+  -
+    description: "Aggregate with $merge and batch size of 0"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        arguments:
+          pipeline: *pipeline
+          batchSize: 0
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+            # TODO: check that cursor.batchSize does not exist once
+            # https://jira.mongodb.org/browse/SPEC-1215 has been resolved.
+    outcome: *outcome
