@@ -1686,10 +1686,6 @@ References
 Changes
 =======
 
-2019-05-20: Added rule to not send read preferene to standalone servers
-
-2017-11-10: Added application-configurated server selector.
-
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
 2015-08-10: Updated single-threaded selection logic to ensure a scan always
@@ -1717,6 +1713,8 @@ future, require maxStalenessSeconds to be at least 90.
 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
 must retry selection after checking an idle socket and discovering it is broken.
 
+2017-11-10: Added application-configurated server selector.
+
 2017-11-12: Specify read preferences for OP_MSG with direct connection, and
 delete obsolete comment direct connections to secondaries getting "not master"
 errors by design.
@@ -1730,6 +1728,8 @@ Pipeline Operator" spec and warns if read preference is not primary.
 selection rules.
 
 2018-12-13: Update tag_set example to use only String values
+
+2019-05-20: Added rule to not send read preferene to standalone servers
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
