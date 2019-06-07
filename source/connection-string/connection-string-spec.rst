@@ -75,7 +75,7 @@ connection string.
 -------------------
 Userinfo (optional)
 -------------------
-The user information if present, is followed by a commercial at-sign ("@") that delimits it from the host. Note, usage of the empty string as a username is considered invalid and MUST raise an error.
+The user information if present, is followed by a commercial at-sign ("@") that delimits it from the host.
 
 A password may be supplied as part of the user information and is anything after the first colon (":") up until the end of the user information.
 
