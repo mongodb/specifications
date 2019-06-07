@@ -14,7 +14,7 @@ tests:
       -
         object: collection
         name: aggregate
-        arguments:
+        arguments: &arguments
           pipeline: &pipeline
             - $sort: { x : 1 }
             - $match: { _id: { $gt: 1 } }
@@ -38,7 +38,7 @@ tests:
         object: collection
         name: aggregate
         arguments:
-          pipeline: *pipeline
+          <<: *arguments
           batchSize: 0
     expectations:
       -
@@ -49,3 +49,88 @@ tests:
             # TODO: check that cursor.batchSize does not exist once
             # https://jira.mongodb.org/browse/SPEC-1215 has been resolved.
     outcome: *outcome
+  -
+    description: "Aggregate with $merge and majority readConcern"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        collectionOptions:
+          readConcern: { level: "majority" }
+        arguments: *arguments
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+            readConcern: { level: "majority" }
+    outcome: *outcome
+  -
+    description: "Aggregate with $merge and local readConcern"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        collectionOptions:
+          readConcern: { level: "local" }
+        arguments: *arguments
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+            readConcern: { level: "local" }
+    outcome: *outcome
+  -
+    description: "Aggregate with $merge and available readConcern"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        collectionOptions:
+          readConcern: { level: "available" }
+        arguments: *arguments
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+            readConcern: { level: "available" }
+    outcome: *outcome
+  -
+    description: "Aggregate with $merge and linearizable readConcern"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        collectionOptions:
+          readConcern: { level: "linearizable" }
+        arguments: *arguments
+        error: true
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+            readConcern: { level: "linearizable" }
+  -
+    description: "Aggregate with $merge and invalid readConcern"
+    operations:
+      -
+        object: collection
+        name: aggregate
+        collectionOptions:
+          readConcern: { level: "!invalid123" }
+        arguments: *arguments
+        error: true
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline: *pipeline
+            readConcern: { level: "!invalid123" }
