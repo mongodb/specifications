@@ -25,11 +25,11 @@ if len(sys.argv) != 2:
 filepath = sys.argv[1]
 filedir = os.path.dirname(filepath)
 (filename, ext) = os.path.splitext(os.path.basename(filepath))
-if ext != ".yml":
-    print("Input file must end with .yml")
+if ext != ".template":
+    print("Input file must end with .template.yml")
     sys.exit(1)
 (filename, ext) = os.path.splitext(filename)
-if ext != ".template":
+if ext != ".yml":
     print("Input file must end with .template.yml")
     sys.exit(1)
 
