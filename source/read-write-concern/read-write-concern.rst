@@ -347,7 +347,7 @@ These commands that write are:
   * ``drop``
   * ``dropDatabase``
   * ``dropIndexes``
-  * ``mapReduce`` where ``out`` option is not ``{ inline: 1 }``
+  * ``mapReduce`` where the ``out`` option is not ``{ inline: 1 }``
   * ``clone``
   * ``cloneCollection``
   * ``cloneCollectionAsCapped``

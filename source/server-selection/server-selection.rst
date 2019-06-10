@@ -711,7 +711,7 @@ the command and how it is invoked:
         - geoNear
         - geoSearch
         - group
-        - mapReduce where ``out`` option is ``{ inline: 1 }``
+        - mapReduce where the ``out`` option is ``{ inline: 1 }``
         - parallelCollectionScan
 
       Associated command-specific helpers SHOULD take a read preference
