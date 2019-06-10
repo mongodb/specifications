@@ -88,7 +88,7 @@ mechanism_properties
 	* Includes additional properties for the given mechanism.
 
 Credential delimiter in URI implies authentication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The presence of a credential delimiter (i.e. @) in the URI connection string is evidence that the user has unambiguously specified user information and MUST be interpreted as a user configuring authentication credentials (even if the username and/or password are empty strings).
 
