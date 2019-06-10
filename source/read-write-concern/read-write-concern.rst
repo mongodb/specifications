@@ -89,7 +89,7 @@ The read concern option is available for the following operations:
 - ``count`` command
 - ``distinct`` command
 - ``find`` command
-- ``mapReduce`` command where ``out`` option is ``{ inline: 1 }``
+- ``mapReduce`` command where the ``out`` option is ``{ inline: 1 }``
 - ``parallelCollectionScan`` command
 - ``geoNear`` command
 - ``geoSearch`` command

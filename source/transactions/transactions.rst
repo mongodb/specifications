@@ -1283,8 +1283,7 @@ The following commands are allowed inside transactions:
 
 8.  aggregate (including $lookup)
 
-    -  The ``$out`` and ``$merge`` stages are prohibited because they use
-       collection create and rename operations.
+    -  The ``$out`` and ``$merge`` stages are prohibited.
 
 9.  distinct
 
