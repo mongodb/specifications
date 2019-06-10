@@ -87,10 +87,10 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
-Specifying userinfo
-~~~~~~~~~~~~~~~~~~~
+Credential delimiter in URI implies authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Providing a credential delimiter (i.e. @) means that the user has unambiguously specified userinfo, and will thus be treated as an authentication request.
+The presence of a credential delimiter (i.e. @) in the URI connection string is evidence that the user has unambiguously specified user information and MUST be interpreted as a user configuring authentication credentials (even if the username and/or password are empty strings).
 
 Ambiguity between authentication source and URI database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
