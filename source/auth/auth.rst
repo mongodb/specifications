@@ -87,6 +87,11 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
+Specifying userinfo
+~~~~~~~~~~~~~~~~~~~
+
+Providing a credential delimiter (i.e. @) means that the user has unambiguously specified userinfo, and will thus be treated as an authentication request.
+
 Ambiguity between authentication source and URI database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

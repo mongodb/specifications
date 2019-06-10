@@ -291,3 +291,11 @@ tests:
         description: "authSource without username is invalid (default mechanism)"
         uri: "mongodb://localhost/?authSource=foo"
         valid: false
+
+        description: "should throw an exception if not username provided"
+        uri: "mongodb://@localhost.com/"
+        valid: false
+
+        description: "should throw an exception if not username/password provided"
+        uri: "mongodb://:@localhost.com/"
+        valid: false
