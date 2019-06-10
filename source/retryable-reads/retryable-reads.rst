@@ -137,7 +137,7 @@ Drivers MUST support retryability for the following operations:
    - ``Collection.find()``
       - This includes the ``find`` operations backing the GridFS API.
    - ``Collection.aggregate()``
-      - Only if the pipeline does not include an ``$out`` stage
+      - Only if the pipeline does not include a write stage (e.g. ``$out``, ``$merge``)
    - ``Collection.distinct()``
    - ``Collection.count()``
       - Only required if the driver already provides ``count()``
@@ -652,6 +652,8 @@ degraded performance can simply disable ``retryableReads``.
 
 Changelog 
 ==========
+
+2019-06-07: Mention $merge stage for aggregate alongside $out
 
 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
 

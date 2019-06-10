@@ -272,7 +272,7 @@ preference, but it only obeys the preference for these commands:
 
 * group
 * inline mapreduce
-* aggregate without $out specified
+* aggregate without write stage specified (e.g. ``$out``, ``$merge``)
 * collStats, dbStats
 * count, distinct
 * geoNear, geoSearch, geoWalk

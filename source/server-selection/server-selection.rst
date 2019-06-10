@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: June 3, 2019
-:Version: 1.10.2
+:Last Modified: 2019-06-07
+:Version: 1.10.3
 
 .. contents::
 
@@ -702,7 +702,7 @@ the command and how it is invoked:
 
       The current list of "may-use-secondary" commands includes:
 
-        - aggregate (without $out specified)
+        - aggregate without a write stage (e.g. ``$out``, ``$merge``)
         - collStats
         - count
         - dbStats
@@ -711,17 +711,18 @@ the command and how it is invoked:
         - geoNear
         - geoSearch
         - group
-        - mapReduce, mapreduce (with out: {inline: 1})
+        - mapReduce where the ``out`` option is ``{ inline: 1 }``
         - parallelCollectionScan
 
       Associated command-specific helpers SHOULD take a read preference
       argument and otherwise MUST use the default read preference from client,
       database or collection configuration.
 
-      The aggregate command succeeds on a secondary unless $out is specified.
-      When $out is specified, the command must be treated as a write command.
-      If the read preference is not 'primary', the driver SHOULD warn if $out
-      is use.
+      The aggregate command succeeds on a secondary unless a write stage (e.g.
+      ``$out``, ``$merge``) is specified. When a write stage is specified, the
+      command must be treated as a write command. If the read preference is not
+      'primary', the driver SHOULD warn if a write stage is included in the
+      pipeline.
 
       If a client provides a specific helper for inline mapreduce, then it is
       "may-use-secondary" and the *regular* mapreduce helper is "must use
@@ -1686,10 +1687,6 @@ References
 Changes
 =======
 
-2019-05-20: Added rule to not send read preferene to standalone servers
-
-2017-11-10: Added application-configurated server selector.
-
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
 2015-08-10: Updated single-threaded selection logic to ensure a scan always
@@ -1717,6 +1714,8 @@ future, require maxStalenessSeconds to be at least 90.
 2017-06-07: Clarify socketCheckIntervalMS behavior, single-threaded drivers
 must retry selection after checking an idle socket and discovering it is broken.
 
+2017-11-10: Added application-configurated server selector.
+
 2017-11-12: Specify read preferences for OP_MSG with direct connection, and
 delete obsolete comment direct connections to secondaries getting "not master"
 errors by design.
@@ -1730,6 +1729,10 @@ Pipeline Operator" spec and warns if read preference is not primary.
 selection rules.
 
 2018-12-13: Update tag_set example to use only String values
+
+2019-05-20: Added rule to not send read preferene to standalone servers
+
+2019-06-07: Clarify language for aggregate and mapReduce commands that write
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

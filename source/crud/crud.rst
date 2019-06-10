@@ -132,10 +132,11 @@ Read
     /**
      * Runs an aggregation framework pipeline.
      *
-     * Note: $out is a special pipeline stage that causes no results to be returned
-     * from the server. As such, the iterable here would never contain documents. Drivers
-     * MAY setup a cursor to be executed upon iteration against the $out collection such
-     * that if a user were to iterate a pipeline including $out, results would be returned.
+     * Note: $out and $merge are special pipeline stages that cause no results
+     * to be returned from the server. As such, the iterable here would never
+     * contain documents. Drivers MAY setup a cursor to be executed upon
+     * iteration against the output collection such that if a user were to
+     * iterate the return value, results would be returned.
      *
      * Note: result iteration should be backed by a cursor. Depending on the implementation,
      * the cursor may back the returned Iterable instance or an iterator that it produces.
@@ -236,9 +237,9 @@ Read
      * If specified, drivers SHOULD apply this option to both the original aggregate command and subsequent
      * getMore operations on the cursor.
      *
-     * Drivers MUST NOT specify a batchSize of zero in an aggregate command that includes an $out stage, as
-     * that will prevent the pipeline from executing. Drivers SHOULD leave the cursor.batchSize command option
-     * unset in an aggregate command that includes an $out stage.
+     * Drivers MUST NOT specify a batchSize of zero in an aggregate command that includes an $out or $merge stage,
+     * as that will prevent the pipeline from executing. Drivers SHOULD leave the cursor.batchSize command option
+     * unset in an aggregate command that includes an $out or $merge stage.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
@@ -246,7 +247,7 @@ Read
 
     /**
      * If true, allows the write to opt-out of document level validation. This only applies
-     * when the $out stage is specified.
+     * when the $out or $merge stage is specified.
      *
      * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
@@ -1765,6 +1766,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-06-07: Consistent treatment for aggregate $merge and $out stages
 * 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
 * 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
 * 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions

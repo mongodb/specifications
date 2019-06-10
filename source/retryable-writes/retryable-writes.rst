@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.3
+:Spec Version: 1.3.1
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-05-29
+:Last Modified: 2019-06-07
 
 .. contents::
 
@@ -228,9 +228,10 @@ as part of the ``bulkWrite()`` (after order and batch splitting) individually.
 
 Write commands other than `insert`_, `update`_, `delete`_, or `findAndModify`_
 will not be initially supported by MongoDB 3.6, although this may change in the
-future. This includes, but is not limited to, an `aggregate`_ command using the
-``$out`` pipeline operator. Drivers MUST NOT add a transaction ID to these
-commands and MUST NOT retry these commands if they fail to return a response.
+future. This includes, but is not limited to, an `aggregate`_ command using a
+write stage (e.g. ``$out``, ``$merge``). Drivers MUST NOT add a transaction ID
+to these commands and MUST NOT retry these commands if they fail to return a
+response.
 
 .. _insert: https://docs.mongodb.com/manual/reference/command/insert/
 .. _findAndModify: https://docs.mongodb.com/manual/reference/command/findAndModify/
@@ -522,7 +523,7 @@ commands for unsupported write operations:
 
 * Unsupported write commands
 
-  - ``aggregate`` with ``$out`` pipeline operator
+  - ``aggregate`` with write stage (e.g. ``$out``, ``$merge``)
 
 Drivers may also be able to verify at-most-once semantics as described above by
 testing their internal implementation (e.g. checking that transaction IDs are
@@ -684,8 +685,8 @@ How will users know which operations are supported?
 
 The initial list of supported operations is already quite permissive. Most
 `CRUD`_ operations are supported apart from ``updateMany()``, ``deleteMany()``,
-and ``aggregate()`` with ``$out``. Other write operations
-(e.g. ``renameCollection``) are rare.
+and ``aggregate()`` with a write stage (e.g. ``$out``, ``$merge``). Other write
+operations (e.g. ``renameCollection``) are rare.
 
 That said, drivers will need to clearly document exactly which operations
 support retryable behavior. In the case ``bulkWrite()``, which may or may not
@@ -725,6 +726,8 @@ deleteMany) does not seem to pose a problem in practice.
 
 Changes
 =======
+
+2019-06-07: Mention $merge stage for aggregate alongside $out
 
 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
 

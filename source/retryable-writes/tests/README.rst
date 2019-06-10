@@ -274,7 +274,7 @@ unsupported write operations:
 
 * Unsupported write commands
 
-  - ``aggregate`` with ``$out`` pipeline operator
+  - ``aggregate`` with write stage (e.g. ``$out``, ``$merge``)
 
 Drivers should test that transactions IDs are always included in commands for
 supported write operations:
@@ -298,6 +298,8 @@ supported write operations:
 
 Changelog
 =========
+
+:2019-06-07: Mention $merge stage for aggregate alongside $out
 
 :2019-03-01: Add top-level ``runOn`` field to denote server version and/or
              topology requirements requirements for the test file. Removes the

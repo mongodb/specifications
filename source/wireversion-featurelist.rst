@@ -58,5 +58,6 @@ Server Wire version and Feature List
    * - 4.2
      - 8
      - | Sharded transactions
+     - | Aggregation $merge pipeline operator
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h

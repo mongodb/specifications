@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: January 29, 2019
-:Version: 1.5.1
+:Last Modified: 2019-06-07
+:Version: 1.5.2
 
 .. contents::
 
@@ -89,17 +89,20 @@ The read concern option is available for the following operations:
 - ``count`` command
 - ``distinct`` command
 - ``find`` command
-- ``mapReduce`` command with {out : inline} output option
+- ``mapReduce`` command where the ``out`` option is ``{ inline: 1 }``
 - ``parallelCollectionScan`` command
 - ``geoNear`` command
 - ``geoSearch`` command
 
-Starting in MongoDB 4.2, an ``aggregate`` command with ``$out`` supports a ``readConcern``; however, it does not support
+Starting in MongoDB 4.2, an ``aggregate`` command with a write stage (e.g.
+``$out``, ``$merge``) supports a ``readConcern``; however, it does not support
 the "linearizable" level (attempting to do so will result in a server error).
 
-Server versions before 4.2 do not support a ``readConcern`` at all for ``aggregate`` commands with ``$out``.
+Server versions before 4.2 do not support a ``readConcern`` at all for
+``aggregate`` commands with a write stage.
 
-The ``mapReduce`` command with ``out`` set to anything other than "inline" does not support a ``readConcern``.
+The ``mapReduce`` command where the ``out`` option is anything other than
+``{ inline: 1 }`` does not support a ``readConcern``.
 
 
 Unknown Levels and Additional Options for String Based ReadConcerns
@@ -336,14 +339,15 @@ If the selected server's MaxWireVersion < 5, these methods SHOULD silently omit 
 on the wire.
 
 These commands that write are:
-  * ``aggregate`` with ``$out``
+
+  * ``aggregate`` with write stage (e.g. ``$out``, ``$merge``)
   * ``copydb``
   * ``create``
   * ``createIndexes``
   * ``drop``
   * ``dropDatabase``
   * ``dropIndexes``
-  * ``mapReduce`` with ``$out``
+  * ``mapReduce`` where the ``out`` option is not ``{ inline: 1 }``
   * ``clone``
   * ``cloneCollection``
   * ``cloneCollectionAsCapped``
@@ -544,3 +548,4 @@ Version History
   - 2017-12-18 : Added "available" to Readconcern level.
   - 2017-05-29 : Added user management commands to list of commands that write 
   - 2019-01-29 : Added section listing all known examples of writeConcernError.
+  - 2019-06-07: Clarify language for aggregate and mapReduce commands that write
