@@ -13,7 +13,7 @@
       "x": 33
     }
   ],
-  "minServerVersion": "4.1.12",
+  "minServerVersion": "4.2.0",
   "collection_name": "test_aggregate_merge",
   "tests": [
     {
