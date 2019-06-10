@@ -46,8 +46,7 @@ tests:
           command:
             aggregate: *collection_name
             pipeline: *pipeline
-            # TODO: check that cursor.batchSize does not exist once
-            # https://jira.mongodb.org/browse/SPEC-1215 has been resolved.
+            cursor: {}
     outcome: *outcome
   -
     description: "Aggregate with $merge and majority readConcern"

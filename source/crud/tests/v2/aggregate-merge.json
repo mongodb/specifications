@@ -142,7 +142,8 @@
                     "into": "other_test_collection"
                   }
                 }
-              ]
+              ],
+              "cursor": {}
             }
           }
         }
