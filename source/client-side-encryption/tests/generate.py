@@ -19,18 +19,18 @@ if sys.version_info < (3, 0):
 
 if len(sys.argv) != 2:
     print(description)
-    print("usage: python generate.py /path/to/<filename>.template.yml")
+    print("usage: python generate.py /path/to/<filename>.yml.template")
     sys.exit(1)
 
 filepath = sys.argv[1]
 filedir = os.path.dirname(filepath)
 (filename, ext) = os.path.splitext(os.path.basename(filepath))
 if ext != ".template":
-    print("Input file must end with .template.yml")
+    print("Input file must end with .yml.template")
     sys.exit(1)
 (filename, ext) = os.path.splitext(filename)
 if ext != ".yml":
-    print("Input file must end with .template.yml")
+    print("Input file must end with .yml.template")
     sys.exit(1)
 
 master_keys = {
