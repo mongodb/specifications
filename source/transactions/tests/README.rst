@@ -347,7 +347,7 @@ assertSessionTransactionState
 
 The "assertSessionTransactionState" operation instructs the test runner to
 assert that the transaction state of the given session is equal to the
-specified value. The possible values are as follows: ``no``, ``starting``,
+specified value. The possible values are as follows: ``none``, ``starting``,
 ``in_progress``, ``committed``, ``aborted``.
 
       - name: assertSessionTransactionState

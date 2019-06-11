@@ -350,7 +350,7 @@ Note that "error" is not a state, it represents throwing an error due to
 an invalid operation. When such errors are thrown the session state is
 unchanged.
 
-Client side errors MUST NOT change transaction state. For example, if an
+Client-side errors MUST NOT change transaction state. For example, if an
 invalid key or an excessively large document is provided by the application
 to an insert when the transaction state is "starting transaction", the
 transaction state MUST remain "starting transaction". If the same situation
@@ -1380,7 +1380,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
-:2019-06-10: Clarified client side error handling.
+:2019-06-10: Client-side errors must not change transaction state.
 :2019-06-07: Mention $merge stage for aggregate alongside $out
 :2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
              errors on commit are labelled UnknownTransactionCommitResult.
