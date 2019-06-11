@@ -147,19 +147,13 @@ Each YAML file has the following keys:
     - ``arguments``: Optional, the names and values of arguments.
 
     - ``error``: Optional. If true, the test should expect an error or
-      exception.
+      exception. This could be a server-generated or a driver-generated error.
 
     - ``result``: The return value from the operation, if any. This field may
       be a single document or an array of documents in the case of a
       multi-document read. If the operation is expected to return an error, the
       ``result`` is a single document that has one or more of the following
       fields:
-      
-      - ``clientError``: A boolean indicating whether the operation is
-        expected to fail due to a client side error (such as a document
-        being too large, or containing invalid keys). If the ``clientError``
-        key is not present but any of the other error keys are present,
-        the error is expected to have come from the server.
 
       - ``errorContains``: A substring of the expected error message.
 
@@ -171,13 +165,6 @@ Each YAML file has the following keys:
 
       - ``errorLabelsOmit``: A list of error label strings that the
         error is expected not to have.
-        
-      - ``state``: A map of expected session states. The keys can be
-        "session0" or "session1", and the values can be any of the states
-        defined in the transactions spec: "starting transaction",
-        "transaction in progress", "transaction comitted", "transaction aborted".
-        If a session is not specified in the session state map, its
-        state should not be asserted.
 
   - ``expectations``: Optional list of command-started events.
 
@@ -354,6 +341,20 @@ fail point on the mongos server which "session0" is pinned to::
             data:
               failCommands: ["commitTransaction"]
               closeConnection: true
+
+assertSessionTransactionState
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The "assertSessionTransactionState" operation instructs the test runner to
+assert that the transaction state of the given session is equal to the
+specified value. The possible values are as follows: ``no``, ``starting``,
+``in_progress``, ``committed``, ``aborted``.
+
+      - name: assertSessionTransactionState
+        object: testRunner
+        arguments:
+          session: session0
+          state: in_progress
 
 assertSessionPinned
 ~~~~~~~~~~~~~~~~~~~

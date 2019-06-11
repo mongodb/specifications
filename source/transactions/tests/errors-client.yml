@@ -22,10 +22,12 @@ tests:
           session: session0
           document:
             _id: {.: .}
-        result:
-          clientError: true
-          state:
-            session0: starting transaction
+        error: true
+      - name: assertSessionTransactionState
+        object: testRunner
+        arguments:
+          session: session0
+          state: starting
 
   - description: Client side error when transaction is in progress
 
@@ -46,7 +48,9 @@ tests:
           session: session0
           document:
             _id: {.: .}
-        result:
-          clientError: true
-          state:
-            session0: transaction in progress
+        error: true
+      - name: assertSessionTransactionState
+        object: testRunner
+        arguments:
+          session: session0
+          state: in_progress

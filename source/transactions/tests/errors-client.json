@@ -35,11 +35,14 @@
               }
             }
           },
-          "result": {
-            "clientError": true,
-            "state": {
-              "session0": "starting transaction"
-            }
+          "error": true
+        },
+        {
+          "name": "assertSessionTransactionState",
+          "object": "testRunner",
+          "arguments": {
+            "session": "session0",
+            "state": "starting"
           }
         }
       ]
@@ -75,11 +78,14 @@
               }
             }
           },
-          "result": {
-            "clientError": true,
-            "state": {
-              "session0": "transaction in progress"
-            }
+          "error": true
+        },
+        {
+          "name": "assertSessionTransactionState",
+          "object": "testRunner",
+          "arguments": {
+            "session": "session0",
+            "state": "in_progress"
           }
         }
       ]
