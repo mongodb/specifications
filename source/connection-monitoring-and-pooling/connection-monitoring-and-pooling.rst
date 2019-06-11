@@ -572,7 +572,7 @@ Events
        * Current valid values are:
        *   - "stale":           The pool was cleared, making the connection no longer valid
        *   - "idle":            The connection became stale by being available for too long
-       *   - "error":           The connection experienced an error, making it no longer valid
+       *   - "connectionError": The connection experienced an error, making it no longer valid
        *   - "poolClosed":      The pool was closed, making the connection no longer valid
        */
       reason: string|Enum;
@@ -602,9 +602,9 @@ Events
        *  A reason explaining why connection check out failed.
        *  Can be implemented as a string or enum.
        *  Current valid values are:
-       *   - "poolClosed": The pool was previously closed, and cannot provide new connections
-       *   - "timeout":    The connection check out attempt exceeded the specified timeout
-       *   - "error":      The connection check out attempt experienced an error while setting up a new connection
+       *   - "poolClosed":      The pool was previously closed, and cannot provide new connections
+       *   - "timeout":         The connection check out attempt exceeded the specified timeout
+       *   - "connectionError": The connection check out attempt experienced an error while setting up a new connection
        */
       reason: string|Enum;
     }
