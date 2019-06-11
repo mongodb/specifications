@@ -147,7 +147,7 @@ Each YAML file has the following keys:
     - ``arguments``: Optional, the names and values of arguments.
 
     - ``error``: Optional. If true, the test should expect an error or
-      exception.
+      exception. This could be a server-generated or a driver-generated error.
 
     - ``result``: The return value from the operation, if any. This field may
       be a single document or an array of documents in the case of a
@@ -341,6 +341,20 @@ fail point on the mongos server which "session0" is pinned to::
             data:
               failCommands: ["commitTransaction"]
               closeConnection: true
+
+assertSessionTransactionState
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The "assertSessionTransactionState" operation instructs the test runner to
+assert that the transaction state of the given session is equal to the
+specified value. The possible values are as follows: ``none``, ``starting``,
+``in_progress``, ``committed``, ``aborted``.
+
+      - name: assertSessionTransactionState
+        object: testRunner
+        arguments:
+          session: session0
+          state: in_progress
 
 assertSessionPinned
 ~~~~~~~~~~~~~~~~~~~
