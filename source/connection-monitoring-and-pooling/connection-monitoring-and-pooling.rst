@@ -9,7 +9,7 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: June 6, 2019
+:Last Modified: June 11, 2019
 :Version: 1.1.0
 
 .. contents::
@@ -738,4 +738,4 @@ Exhaust Cursors may require changes to how we close connections in the future, s
 Change log
 ==========
 
-:2019-06-06: Add "error" as a valid reason for ConnectionCheckOutFailedEvent
+:2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
