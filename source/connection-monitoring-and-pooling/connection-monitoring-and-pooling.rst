@@ -572,7 +572,7 @@ Events
        * Current valid values are:
        *   - "stale":           The pool was cleared, making the connection no longer valid
        *   - "idle":            The connection became stale by being available for too long
-       *   - "connectionError": The connection experienced an error, making it no longer valid
+       *   - "error":           The connection experienced an error, making it no longer valid
        *   - "poolClosed":      The pool was closed, making the connection no longer valid
        */
       reason: string|Enum;
