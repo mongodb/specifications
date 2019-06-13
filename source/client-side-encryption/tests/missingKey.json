@@ -61,12 +61,48 @@
         },
         "bsonType": "object"
     },
-    "key_vault_data": [],
+    "key_vault_data": [
+        {
+            "status": 1,
+            "_id": {
+                "$binary": {
+                    "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                    "subType": "04"
+                }
+            },
+            "masterKey": {
+                "provider": "aws",
+                "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+                "region": "us-east-1"
+            },
+            "updateDate": {
+                "$date": {
+                    "$numberLong": "1552949630483"
+                }
+            },
+            "keyMaterial": {
+                "$binary": {
+                    "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW",
+                    "subType": "00"
+                }
+            },
+            "creationDate": {
+                "$date": {
+                    "$numberLong": "1552949630483"
+                }
+            },
+            "keyAltNames": [
+                "altname",
+                "another_altname"
+            ]
+        }
+    ],
     "tests": [
         {
             "description": "Insert with encryption on a missing key",
             "clientOptions": {
                 "autoEncryptOpts": {
+                    "keyVaultNamespace": "admin.different",
                     "kmsProviders": {
                         "aws": {}
                     }
@@ -91,7 +127,64 @@
                 "collection": {
                     "data": []
                 }
-            }
+            },
+            "expectations": [
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "default"
+                            }
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "listCollections": 1,
+                            "cursor": {},
+                            "filter": {
+                                "name": "different"
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "listCollections"
+                    }
+                },
+                {
+                    "command_started_event": {
+                        "command": {
+                            "find": "different",
+                            "filter": {
+                                "$or": [
+                                    {
+                                        "_id": {
+                                            "$in": [
+                                                {
+                                                    "$binary": {
+                                                        "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                                        "subType": "04"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "keyAltNames": {
+                                            "$in": []
+                                        }
+                                    }
+                                ]
+                            },
+                            "$db": "admin"
+                        },
+                        "command_name": "find"
+                    }
+                }
+            ]
         }
     ]
 }
