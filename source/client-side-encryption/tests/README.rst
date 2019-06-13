@@ -33,6 +33,7 @@ The spec tests format is an extension of `transactions spec tests <https://githu
 The semantics of `$$type` is that any actual value matching the BSON type indicated by the BSON type string is considered a match.
 
 For example, the following matches a command_started_event for an insert of a document where `random` must be of type ``binData``:
+
 ```
 - command_started_event:
     command:
@@ -83,6 +84,8 @@ Each YAML file has the following keys:
 
       - ``schema_map``: Optional, a map from namespaces to local JSON schemas.
 
+      - ``keyVaultNamespace``: Optional, a namespace to the key vault collection. Defaults to "admin.datakeys".
+
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
 
@@ -125,7 +128,8 @@ Then for each element in ``tests``:
 
 #. Create a MongoClient using ``clientOptions``.
 
-   #. If ``client_side_encryption_opts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
+   #. If ``autoEncryptOpts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
+   #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it to ``admin.datakeys``
    
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields from the YAML file.

@@ -70,6 +70,33 @@ keys = {
         },
         "keyAltNames": ["altname", "another_altname"]
     },
+    "different_id": {
+        "status": 1,
+        "_id": {
+            "$binary": {
+                "base64": "BBBBBBBBBBBBBBBBBBBBBB==",
+                "subType": "04"
+            }
+        },
+        "masterKey": master_keys["aws"],
+        "updateDate": {
+            "$date": {
+                "$numberLong": "1552949630483"
+            }
+        },
+        "keyMaterial": {
+            "$binary": {
+                "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW",
+                "subType": "00"
+            }
+        },
+        "creationDate": {
+            "$date": {
+                "$numberLong": "1552949630483"
+            }
+        },
+        "keyAltNames": []
+    },
     "local": {
         "_id": {
             "$binary": {
