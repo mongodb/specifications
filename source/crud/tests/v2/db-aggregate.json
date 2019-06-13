@@ -1,9 +1,9 @@
 {
   "database_name": "admin",
-  "minServerVersion": "4.0",
+  "minServerVersion": "3.6",
   "tests": [
     {
-      "description": "Aggregate with $currentOp",
+      "description": "Aggregate with $listLocalSessions",
       "operations": [
         {
           "name": "aggregate",
@@ -11,64 +11,34 @@
           "arguments": {
             "pipeline": [
               {
-                "$currentOp": {
-                  "allUsers": false,
-                  "idleConnections": false,
-                  "localOps": true
-                }
+                "$listLocalSessions": {}
               },
               {
-                "$match": {
-                  "command.aggregate": {
-                    "$eq": 1
-                  }
+                "$limit": 1
+              },
+              {
+                "$addFields": {
+                  "dummy": "dummy field"
                 }
               },
               {
                 "$project": {
-                  "command.aggregate": 1,
-                  "command.cursor": 1,
-                  "command.pipeline": 1
+                  "_id": 0,
+                  "dummy": 1
                 }
               }
             ]
           },
           "result": [
             {
-              "command": {
-                "aggregate": 1,
-                "pipeline": [
-                  {
-                    "$currentOp": {
-                      "allUsers": false,
-                      "idleConnections": false,
-                      "localOps": true
-                    }
-                  },
-                  {
-                    "$match": {
-                      "command.aggregate": {
-                        "$eq": 1
-                      }
-                    }
-                  },
-                  {
-                    "$project": {
-                      "command.aggregate": 1,
-                      "command.cursor": 1,
-                      "command.pipeline": 1
-                    }
-                  }
-                ],
-                "cursor": {}
-              }
+              "dummy": "dummy field"
             }
           ]
         }
       ]
     },
     {
-      "description": "Aggregate with $currentOp and allowDiskUse",
+      "description": "Aggregate with $listLocalSessions and allowDiskUse",
       "operations": [
         {
           "name": "aggregate",
@@ -76,25 +46,20 @@
           "arguments": {
             "pipeline": [
               {
-                "$currentOp": {
-                  "allUsers": true,
-                  "idleConnections": true,
-                  "localOps": true
-                }
+                "$listLocalSessions": {}
               },
               {
-                "$match": {
-                  "command.aggregate": {
-                    "$eq": 1
-                  }
+                "$limit": 1
+              },
+              {
+                "$addFields": {
+                  "dummy": "dummy field"
                 }
               },
               {
                 "$project": {
-                  "command.aggregate": 1,
-                  "command.cursor": 1,
-                  "command.pipeline": 1,
-                  "command.allowDiskUse": 1
+                  "_id": 0,
+                  "dummy": 1
                 }
               }
             ],
@@ -102,35 +67,7 @@
           },
           "result": [
             {
-              "command": {
-                "aggregate": 1,
-                "pipeline": [
-                  {
-                    "$currentOp": {
-                      "allUsers": true,
-                      "idleConnections": true,
-                      "localOps": true
-                    }
-                  },
-                  {
-                    "$match": {
-                      "command.aggregate": {
-                        "$eq": 1
-                      }
-                    }
-                  },
-                  {
-                    "$project": {
-                      "command.aggregate": 1,
-                      "command.cursor": 1,
-                      "command.pipeline": 1,
-                      "command.allowDiskUse": 1
-                    }
-                  }
-                ],
-                "allowDiskUse": true,
-                "cursor": {}
-              }
+              "dummy": "dummy field"
             }
           ]
         }
