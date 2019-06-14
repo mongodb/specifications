@@ -47,7 +47,7 @@ An error is considered resumable if it meets any of the following criteria:
   network error)
 
 - *any* server error response from a getMore command excluding those
-  containing the error label `NonRetryableChangeStreamError` and those
+  containing the error label `NonResumableChangeStreamError` and those
   containing the following error codes
 
   .. list-table::
