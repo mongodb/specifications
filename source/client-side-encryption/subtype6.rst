@@ -38,8 +38,8 @@ Specification
 =============
 This spec introduces a new BSON binary subtype with value 6. The binary
 has multiple formats determined by the first byte, but are all related
-to FLE. The first byte indicates the type and layout of the remaining
-data.
+to client side encryption. The first byte indicates the type and layout
+of the remaining data.
 
 All values are represented in little endian. The payload is generally
 optimized for storage size. The exception is the intent-to-encrypt
@@ -77,13 +77,13 @@ Type 0: Intent-to-encrypt marking
 
 bson is the raw bytes of the following BSON document:
 
-======== ============= =========== =========================================================================================================================================================================
+======== ============= =========== =============================================================================================
 **Name** **Long Name** **Type**    **Description**
 v        value         any         Value to encrypt.
 a        algorithm     int32       Encryption algorithm to use. Same as fle_blob_subtype: 1 for deterministic, 2 for randomized.
 ki       keyId         UUID        Optional. Used to query the key vault by \_id. If omitted, then "ka" must be specified.
-ka       keyAltName    BSON scalar Optional. Used to query the key vault by keyAltName. If omitted, then "ki" must be specified. This can be any BSON value other than an object, array, or code with scope.
-======== ============= =========== =========================================================================================================================================================================
+ka       keyAltName    string      Optional. Used to query the key vault by keyAltName. If omitted, then "ki" must be specified.
+======== ============= =========== =============================================================================================
 
 Types 1 and 2: Ciphertext
 -------------------------
