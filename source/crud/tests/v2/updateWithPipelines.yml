@@ -1,8 +1,10 @@
+runOn:
+    -
+        minServerVersion: "4.1.11"
+
 data:
     - { _id: 1, x: 1, y: 1, t: {u: {v: 1}} }
     - { _id: 2, x: 2, y: 1 }
-
-minServerVersion: '4.1.11'
 
 collection_name: &collection_name "test"
 database_name: &database_name "crud-tests"
