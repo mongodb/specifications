@@ -25,6 +25,7 @@ tests:
           command:
             aggregate: *collection_name
             pipeline: *pipeline
+          command_name: "aggregate"
     outcome: &outcome
       collection:
         name: *output_collection
@@ -64,6 +65,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "majority" }
+          command_name: "aggregate"
     outcome: *outcome
   -
     description: "Aggregate with $merge and local readConcern"
@@ -81,6 +83,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "local" }
+          command_name: "aggregate"
     outcome: *outcome
   -
     description: "Aggregate with $merge and available readConcern"
@@ -98,4 +101,5 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "available" }
+          command_name: "aggregate"
     outcome: *outcome

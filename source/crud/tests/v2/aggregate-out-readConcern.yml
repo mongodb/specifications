@@ -31,6 +31,7 @@ tests:
               - $match: { _id: { $gt: 1 } }
               - $out: "other_test_collection"
             readConcern: { level: "majority" }
+          command_name: "aggregate"
     outcome: &outcome
       collection:
         name: *output_collection
@@ -53,6 +54,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "local" }
+          command_name: "aggregate"
     outcome: *outcome
   -
     description: "readConcern available with out stage"
@@ -70,6 +72,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "available" }
+          command_name: "aggregate"
     outcome: *outcome
   -
     description: "readConcern linearizable with out stage"
@@ -88,6 +91,7 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "linearizable" }
+          command_name: "aggregate"
   -
     description: "invalid readConcern with out stage"
     operations:
@@ -105,3 +109,4 @@ tests:
             aggregate: *collection_name
             pipeline: *pipeline
             readConcern: { level: "!invalid123" }
+          command_name: "aggregate"

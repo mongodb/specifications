@@ -73,7 +73,8 @@
               "readConcern": {
                 "level": "majority"
               }
-            }
+            },
+            "command_name" : "aggregate"
           }
         }
       ],
@@ -150,7 +151,8 @@
               "readConcern": {
                 "level": "local"
               }
-            }
+            },
+            "command_name" : "aggregate"
           }
         }
       ],
@@ -227,7 +229,8 @@
               "readConcern": {
                 "level": "available"
               }
-            }
+            },
+            "command_name" : "aggregate"
           }
         }
       ],
@@ -305,7 +308,8 @@
               "readConcern": {
                 "level": "linearizable"
               }
-            }
+            },
+            "command_name" : "aggregate"
           }
         }
       ]
@@ -368,7 +372,8 @@
               "readConcern": {
                 "level": "!invalid123"
               }
-            }
+            },
+            "command_name" : "aggregate"
           }
         }
       ]
