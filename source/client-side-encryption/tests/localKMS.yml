@@ -46,7 +46,7 @@ tests:
         command:
           insert: *collection_name
           documents:
-            - &doc0_encrypted { _id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACKWM29kOcLsfSLfJJ3SSmLr+wgrTtpu1lads1NzDz80AjMyrstw/GMdCuzX+AS+JS84Si2cT1WPMemTkBdVdGAw==', 'subType': '06'}}, random: { $$type: "binData" } }
+            - &doc0_encrypted { _id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACKWM29kOcLsfSLfJJ3SSmLlndNjmCz2VYgnjGni3WIUn1Q4CqTHGMkyzFswDHAiMzklSmjsIxbvNoxQ6tazd+zA==', 'subType': '06'}}, random: { $$type: "binData" } }
           ordered: true
         command_name: insert
     outcome:
