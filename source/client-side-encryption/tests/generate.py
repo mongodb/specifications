@@ -374,7 +374,18 @@ ciphertexts = [
                 "subType": "06"
             }
         }
-    }
+    },
+    {
+        "schema": "basic",
+        "field": "random",
+        "plaintext": "abc",
+        "data": {
+            "$binary": {
+                "base64": "AgAAAAAAAAAAAAAAAAAAAAACyfp+lXvKOi7f5vh6ZsCijLEaXFKq1X06RmyS98ZvmMQGixTw8HM1f/bGxZjGwvYwjXOkIEb7Exgb8p2KCDI5TQ==",
+                "subType": "06"
+            }
+        }
+    },
 ]
 
 
