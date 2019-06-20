@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: April 3, 2019
-:Version: 1.6.0
+:Version: 1.6.1
 
 .. contents::
 
@@ -508,7 +508,7 @@ Exposing All Resume Tokens
 
 :since: 4.0.7
 
-Users can inspect the _id on each ``ChangeDocument`` to use as a resume token. But since MongoDB 4.2, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
+Users can inspect the _id on each ``ChangeDocument`` to use as a resume token. But since MongoDB 4.0.7, aggregate and getMore responses also include a ``postBatchResumeToken``. Drivers use one or the other when automatically resuming, as described in `Resume Process`_.
 
 Drivers MUST expose a mechanism to retrieve the same resume token that would be used to automatically resume. It MUST be possible to use this mechanism after iterating every document. It MUST be possible for users to use this mechanism periodically even when no documents are getting returned (i.e. ``getMore`` has returned empty batches). Drivers have two options to implement this.
 
@@ -773,4 +773,6 @@ Changelog
 |            | ``postBatchResumeToken``.                                  |
 +------------+------------------------------------------------------------+
 | 2019-04-12 | Clarified caching process for resume token.                |
++------------+------------------------------------------------------------+
+| 2019-06-20 | Fix server version for addition of postBatchResumeToken    |
 +------------+------------------------------------------------------------+
