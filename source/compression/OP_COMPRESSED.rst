@@ -450,7 +450,7 @@ Q & A
    * No. But you are allowed to if you really want to make sure you can use
      that compressor with MongoDB 42 and your current driver versions.
 
-* My language does not support xzy xompressor. What do I do?
+* My language does not support xzy compressor. What do I do?
    * That is OK. You don’t have to support xyz.
 
 * No MongoDB supported compressors are available for my language
