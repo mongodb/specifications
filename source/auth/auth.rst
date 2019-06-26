@@ -87,6 +87,11 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
+Credential delimiter in URI implies authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The presence of a credential delimiter (i.e. @) in the URI connection string is evidence that the user has unambiguously specified user information and MUST be interpreted as a user configuring authentication credentials (even if the username and/or password are empty strings).
+
 Ambiguity between authentication source and URI database
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -312,7 +317,7 @@ As an example, given a username of "user" and a password of "pencil", the conver
 `````````````````````````````
 
 username
-	MUST be specified.
+	MUST be specified and non-zero length.
 
 source
 	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
@@ -365,7 +370,7 @@ Conversation
 
 username
 	SHOULD NOT be provided for MongoDB 3.4+
-	MUST be specified for MongoDB prior to 3.4
+	MUST be specified and non-zero length for MongoDB prior to 3.4
 
 source
 	MUST be "$external". Defaults to ``$external``.
@@ -418,7 +423,7 @@ GSSAPI is kerberos authentication as defined in `RFC 4752 <http://tools.ietf.org
 `MongoCredential`_ properties:
 
 username
-	MUST be specified.
+	MUST be specified and non-zero length.
 
 source
 	MUST be "$external". Defaults to ``$external``.
@@ -523,7 +528,7 @@ MongoDB supports either of these forms.
 `````````````````````````````
 
 username
-	MUST be specified.
+	MUST be specified and non-zero length.
 
 source
 	MUST be specified. Defaults to the database name if supplied on the connection string or ``$external``.
@@ -610,7 +615,7 @@ This same conversation over mongodb's sasl implementation would appear as follow
 `````````````````````````````
 
 username
-	MUST be specified.
+	MUST be specified and non-zero length.
 
 source
 	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
@@ -662,7 +667,7 @@ follows:
 `````````````````````````````
 
 username
-	MUST be specified.
+	MUST be specified and non-zero length.
 
 source
 	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
