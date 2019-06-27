@@ -1,0 +1,467 @@
+{
+  "_id": "client_side_encryption_corpus",
+  "altname_aws": "aws",
+  "altname_local": "local",
+  "aws_double_rand_auto_id": { "$numberDouble": "1.234" },
+  "aws_double_rand_auto_altname": { "$numberDouble": "1.234" },
+  "aws_double_rand_explicit_id": { "$numberDouble": "1.234" },
+  "aws_double_rand_explicit_altname": { "$numberDouble": "1.234" },
+  "aws_string_rand_auto_id": "mongodb",
+  "aws_string_rand_auto_altname": "mongodb",
+  "aws_string_rand_explicit_id": "mongodb",
+  "aws_string_rand_explicit_altname": "mongodb",
+  "aws_string_det_auto_id": "mongodb",
+  "aws_string_det_auto_altname": "mongodb",
+  "aws_string_det_explicit_id": "mongodb",
+  "aws_string_det_explicit_altname": "mongodb",
+  "aws_object_rand_auto_id": { "x": { "$numberInt": "1" } },
+  "aws_object_rand_auto_altname": { "x": { "$numberInt": "1" } },
+  "aws_object_rand_explicit_id": { "x": { "$numberInt": "1" } },
+  "aws_object_rand_explicit_altname": { "x": { "$numberInt": "1" } },
+  "aws_array_rand_auto_id": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "aws_array_rand_auto_altname": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "aws_array_rand_explicit_id": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "aws_array_rand_explicit_altname": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "aws_binData=00_rand_auto_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_rand_auto_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_rand_explicit_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_rand_explicit_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_det_auto_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_det_auto_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_det_explicit_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=00_det_explicit_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "aws_binData=04_rand_auto_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_rand_auto_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_rand_explicit_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_rand_explicit_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_det_auto_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_det_auto_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_det_explicit_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_binData=04_det_explicit_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "aws_objectId_rand_auto_id": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_rand_auto_altname": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_rand_explicit_id": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_rand_explicit_altname": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_det_auto_id": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_det_auto_altname": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_det_explicit_id": { "$oid": "01234567890abcdef0123456" },
+  "aws_objectId_det_explicit_altname": { "$oid": "01234567890abcdef0123456" },
+  "aws_bool_rand_auto_id": true,
+  "aws_bool_rand_auto_altname": true,
+  "aws_bool_rand_explicit_id": true,
+  "aws_bool_rand_explicit_altname": true,
+  "aws_date_rand_auto_id": { "$date": { "$numberLong": "12345" } },
+  "aws_date_rand_auto_altname": { "$date": { "$numberLong": "12345" } },
+  "aws_date_rand_explicit_id": { "$date": { "$numberLong": "12345" } },
+  "aws_date_rand_explicit_altname": { "$date": { "$numberLong": "12345" } },
+  "aws_date_det_auto_id": { "$date": { "$numberLong": "12345" } },
+  "aws_date_det_auto_altname": { "$date": { "$numberLong": "12345" } },
+  "aws_date_det_explicit_id": { "$date": { "$numberLong": "12345" } },
+  "aws_date_det_explicit_altname": { "$date": { "$numberLong": "12345" } },
+  "aws_regex_rand_auto_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_rand_auto_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_rand_explicit_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_rand_explicit_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_det_auto_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_det_auto_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_det_explicit_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_regex_det_explicit_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "aws_dbPointer_rand_auto_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_rand_auto_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_rand_explicit_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_rand_explicit_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_det_auto_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_det_auto_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_det_explicit_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_dbPointer_det_explicit_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "aws_javascript_rand_auto_id": { "$code": "x=1" },
+  "aws_javascript_rand_auto_altname": { "$code": "x=1" },
+  "aws_javascript_rand_explicit_id": { "$code": "x=1" },
+  "aws_javascript_rand_explicit_altname": { "$code": "x=1" },
+  "aws_symbol_rand_auto_id": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_rand_auto_altname": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_rand_explicit_id": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_rand_explicit_altname": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_det_auto_id": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_det_auto_altname": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_det_explicit_id": { "$symbol": "mongodb-symbol" },
+  "aws_symbol_det_explicit_altname": { "$symbol": "mongodb-symbol" },
+  "aws_javascriptWithScope_rand_auto_id": { "$code": "x=1", "$scope": {} },
+  "aws_javascriptWithScope_rand_auto_altname": { "$code": "x=1", "$scope": {} },
+  "aws_javascriptWithScope_rand_explicit_id": { "$code": "x=1", "$scope": {} },
+  "aws_javascriptWithScope_rand_explicit_altname": {
+    "$code": "x=1",
+    "$scope": {}
+  },
+  "aws_int_rand_auto_id": { "$numberInt": "123" },
+  "aws_int_rand_auto_altname": { "$numberInt": "123" },
+  "aws_int_rand_explicit_id": { "$numberInt": "123" },
+  "aws_int_rand_explicit_altname": { "$numberInt": "123" },
+  "aws_int_det_auto_id": { "$numberInt": "123" },
+  "aws_int_det_auto_altname": { "$numberInt": "123" },
+  "aws_int_det_explicit_id": { "$numberInt": "123" },
+  "aws_int_det_explicit_altname": { "$numberInt": "123" },
+  "aws_timestamp_rand_auto_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "aws_timestamp_rand_auto_altname": { "$timestamp": { "t": 0, "i": 12345 } },
+  "aws_timestamp_rand_explicit_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "aws_timestamp_rand_explicit_altname": {
+    "$timestamp": { "t": 0, "i": 12345 }
+  },
+  "aws_timestamp_det_auto_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "aws_timestamp_det_auto_altname": { "$timestamp": { "t": 0, "i": 12345 } },
+  "aws_timestamp_det_explicit_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "aws_timestamp_det_explicit_altname": {
+    "$timestamp": { "t": 0, "i": 12345 }
+  },
+  "aws_long_rand_auto_id": { "$numberLong": "456" },
+  "aws_long_rand_auto_altname": { "$numberLong": "456" },
+  "aws_long_rand_explicit_id": { "$numberLong": "456" },
+  "aws_long_rand_explicit_altname": { "$numberLong": "456" },
+  "aws_long_det_auto_id": { "$numberLong": "456" },
+  "aws_long_det_auto_altname": { "$numberLong": "456" },
+  "aws_long_det_explicit_id": { "$numberLong": "456" },
+  "aws_long_det_explicit_altname": { "$numberLong": "456" },
+  "aws_decimal_rand_auto_id": { "$numberDecimal": "1.234" },
+  "aws_decimal_rand_auto_altname": { "$numberDecimal": "1.234" },
+  "aws_decimal_rand_explicit_id": { "$numberDecimal": "1.234" },
+  "aws_decimal_rand_explicit_altname": { "$numberDecimal": "1.234" },
+  "local_double_rand_auto_id": { "$numberDouble": "1.234" },
+  "local_double_rand_auto_altname": { "$numberDouble": "1.234" },
+  "local_double_rand_explicit_id": { "$numberDouble": "1.234" },
+  "local_double_rand_explicit_altname": { "$numberDouble": "1.234" },
+  "local_string_rand_auto_id": "mongodb",
+  "local_string_rand_auto_altname": "mongodb",
+  "local_string_rand_explicit_id": "mongodb",
+  "local_string_rand_explicit_altname": "mongodb",
+  "local_string_det_auto_id": "mongodb",
+  "local_string_det_auto_altname": "mongodb",
+  "local_string_det_explicit_id": "mongodb",
+  "local_string_det_explicit_altname": "mongodb",
+  "local_object_rand_auto_id": { "x": { "$numberInt": "1" } },
+  "local_object_rand_auto_altname": { "x": { "$numberInt": "1" } },
+  "local_object_rand_explicit_id": { "x": { "$numberInt": "1" } },
+  "local_object_rand_explicit_altname": { "x": { "$numberInt": "1" } },
+  "local_array_rand_auto_id": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "local_array_rand_auto_altname": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "local_array_rand_explicit_id": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "local_array_rand_explicit_altname": [
+    { "$numberInt": "3" },
+    { "$numberInt": "2" },
+    { "$numberInt": "1" }
+  ],
+  "local_binData=00_rand_auto_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_rand_auto_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_rand_explicit_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_rand_explicit_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_det_auto_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_det_auto_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_det_explicit_id": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=00_det_explicit_altname": {
+    "$binary": { "base64": "AQIDBA==", "subType": "00" }
+  },
+  "local_binData=04_rand_auto_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_rand_auto_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_rand_explicit_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_rand_explicit_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_det_auto_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_det_auto_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_det_explicit_id": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_binData=04_det_explicit_altname": {
+    "$binary": { "base64": "AAECAwQFBgcICQoLDA0ODw==", "subType": "04" }
+  },
+  "local_objectId_rand_auto_id": { "$oid": "01234567890abcdef0123456" },
+  "local_objectId_rand_auto_altname": { "$oid": "01234567890abcdef0123456" },
+  "local_objectId_rand_explicit_id": { "$oid": "01234567890abcdef0123456" },
+  "local_objectId_rand_explicit_altname": {
+    "$oid": "01234567890abcdef0123456"
+  },
+  "local_objectId_det_auto_id": { "$oid": "01234567890abcdef0123456" },
+  "local_objectId_det_auto_altname": { "$oid": "01234567890abcdef0123456" },
+  "local_objectId_det_explicit_id": { "$oid": "01234567890abcdef0123456" },
+  "local_objectId_det_explicit_altname": { "$oid": "01234567890abcdef0123456" },
+  "local_bool_rand_auto_id": true,
+  "local_bool_rand_auto_altname": true,
+  "local_bool_rand_explicit_id": true,
+  "local_bool_rand_explicit_altname": true,
+  "local_date_rand_auto_id": { "$date": { "$numberLong": "12345" } },
+  "local_date_rand_auto_altname": { "$date": { "$numberLong": "12345" } },
+  "local_date_rand_explicit_id": { "$date": { "$numberLong": "12345" } },
+  "local_date_rand_explicit_altname": { "$date": { "$numberLong": "12345" } },
+  "local_date_det_auto_id": { "$date": { "$numberLong": "12345" } },
+  "local_date_det_auto_altname": { "$date": { "$numberLong": "12345" } },
+  "local_date_det_explicit_id": { "$date": { "$numberLong": "12345" } },
+  "local_date_det_explicit_altname": { "$date": { "$numberLong": "12345" } },
+  "local_regex_rand_auto_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_rand_auto_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_rand_explicit_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_rand_explicit_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_det_auto_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_det_auto_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_det_explicit_id": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_regex_det_explicit_altname": {
+    "$regularExpression": { "pattern": ".*", "options": "" }
+  },
+  "local_dbPointer_rand_auto_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_rand_auto_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_rand_explicit_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_rand_explicit_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_det_auto_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_det_auto_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_det_explicit_id": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_dbPointer_det_explicit_altname": {
+    "$dbPointer": {
+      "$ref": "db.example",
+      "$id": { "$oid": "01234567890abcdef0123456" }
+    }
+  },
+  "local_javascript_rand_auto_id": { "$code": "x=1" },
+  "local_javascript_rand_auto_altname": { "$code": "x=1" },
+  "local_javascript_rand_explicit_id": { "$code": "x=1" },
+  "local_javascript_rand_explicit_altname": { "$code": "x=1" },
+  "local_symbol_rand_auto_id": { "$symbol": "mongodb-symbol" },
+  "local_symbol_rand_auto_altname": { "$symbol": "mongodb-symbol" },
+  "local_symbol_rand_explicit_id": { "$symbol": "mongodb-symbol" },
+  "local_symbol_rand_explicit_altname": { "$symbol": "mongodb-symbol" },
+  "local_symbol_det_auto_id": { "$symbol": "mongodb-symbol" },
+  "local_symbol_det_auto_altname": { "$symbol": "mongodb-symbol" },
+  "local_symbol_det_explicit_id": { "$symbol": "mongodb-symbol" },
+  "local_symbol_det_explicit_altname": { "$symbol": "mongodb-symbol" },
+  "local_javascriptWithScope_rand_auto_id": { "$code": "x=1", "$scope": {} },
+  "local_javascriptWithScope_rand_auto_altname": {
+    "$code": "x=1",
+    "$scope": {}
+  },
+  "local_javascriptWithScope_rand_explicit_id": {
+    "$code": "x=1",
+    "$scope": {}
+  },
+  "local_javascriptWithScope_rand_explicit_altname": {
+    "$code": "x=1",
+    "$scope": {}
+  },
+  "local_int_rand_auto_id": { "$numberInt": "123" },
+  "local_int_rand_auto_altname": { "$numberInt": "123" },
+  "local_int_rand_explicit_id": { "$numberInt": "123" },
+  "local_int_rand_explicit_altname": { "$numberInt": "123" },
+  "local_int_det_auto_id": { "$numberInt": "123" },
+  "local_int_det_auto_altname": { "$numberInt": "123" },
+  "local_int_det_explicit_id": { "$numberInt": "123" },
+  "local_int_det_explicit_altname": { "$numberInt": "123" },
+  "local_timestamp_rand_auto_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "local_timestamp_rand_auto_altname": { "$timestamp": { "t": 0, "i": 12345 } },
+  "local_timestamp_rand_explicit_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "local_timestamp_rand_explicit_altname": {
+    "$timestamp": { "t": 0, "i": 12345 }
+  },
+  "local_timestamp_det_auto_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "local_timestamp_det_auto_altname": { "$timestamp": { "t": 0, "i": 12345 } },
+  "local_timestamp_det_explicit_id": { "$timestamp": { "t": 0, "i": 12345 } },
+  "local_timestamp_det_explicit_altname": {
+    "$timestamp": { "t": 0, "i": 12345 }
+  },
+  "local_long_rand_auto_id": { "$numberLong": "456" },
+  "local_long_rand_auto_altname": { "$numberLong": "456" },
+  "local_long_rand_explicit_id": { "$numberLong": "456" },
+  "local_long_rand_explicit_altname": { "$numberLong": "456" },
+  "local_long_det_auto_id": { "$numberLong": "456" },
+  "local_long_det_auto_altname": { "$numberLong": "456" },
+  "local_long_det_explicit_id": { "$numberLong": "456" },
+  "local_long_det_explicit_altname": { "$numberLong": "456" },
+  "local_decimal_rand_auto_id": { "$numberDecimal": "1.234" },
+  "local_decimal_rand_auto_altname": { "$numberDecimal": "1.234" },
+  "local_decimal_rand_explicit_id": { "$numberDecimal": "1.234" },
+  "local_decimal_rand_explicit_altname": { "$numberDecimal": "1.234" }
+}
