@@ -435,6 +435,8 @@ ChangeStream
 
 A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a method to close the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``.
 
+A change stream MUST track the name of the resume option used for creating the change stream as per `Tracking the Resume Option`_.
+
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
 Drivers MUST raise an error on the first document received without a resume token (e.g. the user has removed ``_id`` with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
@@ -480,8 +482,7 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - Connect to selected server.
 - If there is a cached ``resumeToken``:
 
-  - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+  - The driver MUST set the option named ``resumeOption`` (can be either ``resumeAfter`` or ``startAfter``) to the cached ``resumeToken``.
   - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
 - If there is no cached ``resumeToken`` and the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
 
@@ -550,6 +551,18 @@ A possible interface for this callback MAY look like:
   }
 
 This MUST NOT be implemented in synchronous drivers. This MAY be implemented in asynchronous drivers.
+
+Tracking the Resume Option
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``ChangeStreamOptions`` member used to define the logical starting point for a change stream is referred to as the
+resume option. The following rule describes how to track the resume option:
+
+When the ``ChangeStream`` is started:
+
+  - If ``startAfter`` is set, the resume option is ``startAfter``.
+  - Else, the resume option is ``resumeAfter``.
+
 
 Updating the Cached Resume Token
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
