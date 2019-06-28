@@ -197,6 +197,7 @@ The responses to a change stream aggregate or getMore have the following structu
   }
 
 **NOTE:** The above format is provided for illustrative purposes, and is subject to change without warning.
+There may be other fields existing in the ChangeStreamDocument that are left up to the driver to decide to include them in their API.
 
 ----------
 Driver API
