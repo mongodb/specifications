@@ -85,6 +85,9 @@ Server Specification
 Response Format
 ---------------
 
+**NOTE:** The examples in this section are provided for illustrative purposes, and are subject to change without warning.
+Drivers that provide a static type to represent ChangeStreamDocument MAY include additional fields in their API.
+
 If an aggregate command with a ``$changeStream`` stage completes successfully, the response contains documents with the following structure:
 
 .. code:: typescript
@@ -195,9 +198,6 @@ The responses to a change stream aggregate or getMore have the following structu
       operationTime: Timestamp,
       $clusterTime: Document,
   }
-
-**NOTE:** The above format is provided for illustrative purposes, and is subject to change without warning.
-There may be other fields existing in the ChangeStreamDocument that are left up to the driver to decide to include them in their API.
 
 ----------
 Driver API
