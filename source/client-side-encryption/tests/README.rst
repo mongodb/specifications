@@ -243,7 +243,7 @@ as follows.
 Corpus Test
 ===========
 
-The corpus test exhaustively enumerates all ways to encrypt all BSON value types. Note, the test data includes BSON binary subtype 4 (or standard UUID). Run the test as follows.
+The corpus test exhaustively enumerates all ways to encrypt all BSON value types. Note, the test data includes BSON binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtype 4. Run the test as follows.
 
 1. Create a MongoClient without encryption enabled (referred to as ``client``).
 
@@ -253,10 +253,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 4. Create the following:
 
-   - A MongoClient configured with auto encryption (referred to as `client_encrypted`)
-   - A `ClientEncryption` object (referred to as `client_encryption`)
+   - A MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+   - A ``ClientEncryption`` object (referred to as ``client_encryption``)
 
-   Configure both objects with `aws` and the `local` KMS providers as follows:
+   Configure both objects with ``aws`` and the ``local`` KMS providers as follows:
 
    .. code:: javascript
 
@@ -271,9 +271,9 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
       Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 
-   Configure both objects with `keyVaultNamespace` set to `admin.datakeys`.
+   Configure both objects with ``keyVaultNamespace`` set to ``admin.datakeys``.
 
-5. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. Field names have the following layout: `<kms>_<type>_<algo>_<method>`.
+5. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. Field names have the following layout: ``<kms>_<type>_<algo>_<method>``.
 
    - ``kms`` is either ``aws`` or ``local``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
@@ -289,7 +289,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - If the field's method is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
    
      - Encrypt with the algorithm described by ``algo``.
-     - If `identifier` is ``id``
+     - If ``identifier`` is ``id``
         - If ``kms`` is ``local`` set the key_id to the UUID with base64 value ``LOCALAAAAAAAAAAAAAAAAA==``.
         - If ``kms`` is ``aws`` set the key_id to the UUID with base64 value ``AWSAAAAAAAAAAAAAAAAAAA==``.
      - If ``identifier`` is ``altname``
