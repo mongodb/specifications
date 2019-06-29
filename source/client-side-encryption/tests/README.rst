@@ -243,15 +243,16 @@ as follows.
 Corpus Test
 ===========
 
-The corpus test exhaustively enumerates all ways to encrypt all BSON value types. Run the test as follows.
+The corpus test exhaustively enumerates all ways to encrypt all BSON value types. Note, the test data includes BSON binary subtype 4 (or standard UUID). Run the test as follows.
 
-1. Drop and create the collection `db.coll` configured with the included JSON schema `corpus/corpus-schema.json <corpus/corpus-schema.json>`_.
+1. Create a MongoClient without encryption enabled (referred to as ``client``).
 
-2. Drop the collection `admin.datakeys`. Insert the documents `corpus/corpus-key-local.json <corpus/corpus-key-local.json>`_ and `corpus/corpus-key-aws.json <corpus/corpus-key-aws.json>`_.
+2. Using ``client``, drop and create the collection ``db.coll`` configured with the included JSON schema `corpus/corpus-schema.json <corpus/corpus-schema.json>`_.
 
-3. Create the following:
+3. Using ``client``, drop the collection ``admin.datakeys``. Insert the documents `corpus/corpus-key-local.json <corpus/corpus-key-local.json>`_ and `corpus/corpus-key-aws.json <corpus/corpus-key-aws.json>`_.
 
-   - A MongoClient (referred to as `client`)
+4. Create the following:
+
    - A MongoClient configured with auto encryption (referred to as `client_encrypted`)
    - A `ClientEncryption` object (referred to as `client_encryption`)
 
@@ -272,7 +273,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
    Configure both objects with `keyVaultNamespace` set to `admin.datakeys`.
 
-4. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. Field names have the following layout: `<kms>_<type>_<algo>_<method>`.
+5. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. Field names have the following layout: `<kms>_<type>_<algo>_<method>`.
 
    - ``kms`` is either ``aws`` or ``local``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
@@ -280,8 +281,12 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - ``method`` is either ``auto``, for automatic encryption ``explicit``,  explicit encryption, or ``prohibited`` for prohibited explicit encryption
    - ``identifier`` is either ``id`` or ``altname`` for the key identifier
 
-   Iterate over each field of ``corpus`` excluding ``_id``, ``altname_aws`` and ``altname_local``.
-   For each field, if the ``method`` is ``explicit``, replace the value with a value explicitly encrypted with ``client_encryption``.
+   Create a new BSON document, named ``corpus_copied``.
+   Iterate over each field of ``corpus``.
+
+   - If the field name is ``_id``, ``altname_aws`` and ``altname_local``, copy the field to ``corpus_copied``.
+   - If the field's ``method`` is ``auto``, copy the field to ``corpus_copied``.
+   - If the field's method is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
    
      - Encrypt with the algorithm described by ``algo``.
      - If `identifier` is ``id``
@@ -290,24 +295,24 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
      - If ``identifier`` is ``altname``
         - If ``kms`` is ``local`` set the key_alt_name to "local".
         - If ``kms`` is ``aws`` set the key_alt_name to "aws".
+     
+     Copy the field and encrypted value to ``corpus_copied``.
 
-   If the method if ``prohibited``, attempt to explicitly encrypt in the same manner, but verify that an exception is thrown.
+   - Otherwise, the field's method is ``prohibited``. Use ``client_encryption`` to encrypt in the same manner as ``explicit``, but verify that an exception is thrown. Copy the unencrypted value to to ``corpus_copied``.
 
-5. Using ``client_encrypted``, insert ``corpus`` into ``db.coll``.
+6. Using ``client_encrypted``, insert ``corpus_copied`` into ``db.coll``.
 
-6. Using ``client_encrypted``, find the inserted document from ``db.coll`` to a variable named ``corpus_decrypted``. Since it should have been automatically decrypted, assert that it exactly matches the document `corpus/corpus.json <corpus/corpus.json>`_.
+7. Using ``client_encrypted``, find the inserted document from ``db.coll`` to a variable named ``corpus_decrypted``. Since it should have been automatically decrypted, assert the document exactly matches ``corpus``.
 
-7. Load `corpus/corpus_encrypted.json <corpus/corpus-encrypted.json>`_ to a variable named ``corpus_encrypted_expected``.
-
-8. Using ``client`` find the inserted document from ``db.coll`` to a variable named ``corpus_encrypted_actual``.
+8. Load `corpus/corpus_encrypted.json <corpus/corpus-encrypted.json>`_ to a variable named ``corpus_encrypted_expected``.
+   Using ``client`` find the inserted document from ``db.coll`` to a variable named ``corpus_encrypted_actual``.
 
    Iterate over each field of ``corpus_encrypted_actual`` and check the following:
 
-   - If the field name contains ``det``, that the value exactly matches the same field in ``corpus_encrypted_expected``.
-   - If the field name contains ``det`` that field value matches all other corresponding fields with the same ``kms`` and ``type``.
-   - If the field name contains ``rand``, that the value matches no other values.
-   
-   Decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus_decrypted``.
+   - If the field algorithm is ``det``, that the value exactly matches the all fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
+   - If the field algorithm is ``rand`` and the method is not ``prohibited``, that the value matches no other values.
+   - If the field method is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
+   - If the field method is ``prohibited``, validate the value exactly matches the corresponding field of ``corpus``.
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. append step 3 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
 
