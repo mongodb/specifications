@@ -277,10 +277,11 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - ``kms`` is either ``aws`` or ``local``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
    - ``algo`` is either ``rand`` or ``det`` for random or deterministic encryption
-   - ``method`` is either ``auto`` or ``expl`` for automatic or explicit encryption
+   - ``method`` is either ``auto``, for automatic encryption ``explicit``,  explicit encryption, or ``prohibited`` for prohibited explicit encryption
    - ``identifier`` is either ``id`` or ``altname`` for the key identifier
 
-   Iterate over each ``_id`` field of ``corpus``. For each field, if the ``method`` is ``expl``, replace the value with a value explicitly encrypted with ``client_encryption``.
+   Iterate over each field of ``corpus`` excluding ``_id``, ``altname_aws`` and ``altname_local``.
+   For each field, if the ``method`` is ``explicit``, replace the value with a value explicitly encrypted with ``client_encryption``.
    
      - Encrypt with the algorithm described by ``algo``.
      - If `identifier` is ``id``
@@ -289,6 +290,8 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
      - If ``identifier`` is ``altname``
         - If ``kms`` is ``local`` set the key_alt_name to "local".
         - If ``kms`` is ``aws`` set the key_alt_name to "aws".
+
+   If the method if ``prohibited``, attempt to explicitly encrypt in the same manner, but verify that an exception is thrown.
 
 5. Using ``client_encrypted``, insert ``corpus`` into ``db.coll``.
 
