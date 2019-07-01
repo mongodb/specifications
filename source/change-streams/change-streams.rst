@@ -433,7 +433,7 @@ Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``c
 ChangeStream
 ------------
 
-A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a method to close the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``.
+A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. In languages with more idiomatic patterns of closing, such as those with RAII or destructors, drivers may use those patterns instead of a close method. 
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
@@ -775,4 +775,7 @@ Changelog
 | 2019-04-12 | Clarified caching process for resume token.                |
 +------------+------------------------------------------------------------+
 | 2019-06-20 | Fix server version for addition of postBatchResumeToken    |
++------------+------------------------------------------------------------+
+| 2019-07-01 | Clarified that close may be implemented with more idiomatic|
+|            | patterns instead of a method.                              |
 +------------+------------------------------------------------------------+
