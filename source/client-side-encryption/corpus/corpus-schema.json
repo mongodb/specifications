@@ -1,701 +1,2507 @@
 {
   "bsonType": "object",
   "properties": {
-    "aws_double_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_double_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "double"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "double"
+        }
       }
     },
-    "aws_double_rand_explicit": { "bsonType": "binData" },
-    "aws_string_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_double_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "double"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "string"
+        }
       }
     },
-    "aws_string_rand_explicit": { "bsonType": "binData" },
-    "aws_string_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_double_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_double_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_double_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_double_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_string_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "string"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "string"
+        }
       }
     },
-    "aws_string_det_explicit": { "bsonType": "binData" },
-    "aws_object_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_string_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "string"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "object"
+        }
       }
     },
-    "aws_object_rand_explicit": { "bsonType": "binData" },
-    "aws_array_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_string_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_string_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_string_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "string"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "array"
+        }
       }
     },
-    "aws_array_rand_explicit": { "bsonType": "binData" },
-    "aws_binData=00_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_string_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "string"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "binData"
+        }
       }
     },
-    "aws_binData=00_rand_explicit": { "bsonType": "binData" },
-    "aws_binData=00_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_string_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_string_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_object_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "object"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "binData"
+        }
       }
     },
-    "aws_binData=00_det_explicit": { "bsonType": "binData" },
-    "aws_binData=04_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_object_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "object"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "binData"
+        }
       }
     },
-    "aws_binData=04_rand_explicit": { "bsonType": "binData" },
-    "aws_binData=04_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_object_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_object_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_object_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_object_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_array_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "array"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "binData"
+        }
       }
     },
-    "aws_binData=04_det_explicit": { "bsonType": "binData" },
-    "aws_objectId_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_array_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "array"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "objectId"
+        }
       }
     },
-    "aws_objectId_rand_explicit": { "bsonType": "binData" },
-    "aws_objectId_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_array_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_array_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_array_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_array_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=00_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "objectId"
+        }
       }
     },
-    "aws_objectId_det_explicit": { "bsonType": "binData" },
-    "aws_bool_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=00_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "bool"
+        }
       }
     },
-    "aws_bool_rand_explicit": { "bsonType": "binData" },
-    "aws_date_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=00_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=00_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=00_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "date"
+        }
       }
     },
-    "aws_date_rand_explicit": { "bsonType": "binData" },
-    "aws_date_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=00_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "date"
+        }
       }
     },
-    "aws_date_det_explicit": { "bsonType": "binData" },
-    "aws_regex_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=00_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=00_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=04_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "regex"
+        }
       }
     },
-    "aws_regex_rand_explicit": { "bsonType": "binData" },
-    "aws_regex_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=04_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "regex"
+        }
       }
     },
-    "aws_regex_det_explicit": { "bsonType": "binData" },
-    "aws_dbPointer_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=04_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=04_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=04_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "dbPointer"
+        }
       }
     },
-    "aws_dbPointer_rand_explicit": { "bsonType": "binData" },
-    "aws_dbPointer_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=04_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "dbPointer"
+        }
       }
     },
-    "aws_dbPointer_det_explicit": { "bsonType": "binData" },
-    "aws_javascript_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_binData=04_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_binData=04_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_undefined_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_undefined_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_undefined_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_undefined_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_objectId_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "objectId"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "javascript"
+        }
       }
     },
-    "aws_javascript_rand_explicit": { "bsonType": "binData" },
-    "aws_symbol_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_objectId_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "objectId"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "symbol"
+        }
       }
     },
-    "aws_symbol_rand_explicit": { "bsonType": "binData" },
-    "aws_symbol_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_objectId_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_objectId_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_objectId_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "objectId"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "symbol"
+        }
       }
     },
-    "aws_symbol_det_explicit": { "bsonType": "binData" },
-    "aws_javascriptWithScope_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_objectId_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "objectId"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "javascriptWithScope"
+        }
       }
     },
-    "aws_javascriptWithScope_rand_explicit": { "bsonType": "binData" },
-    "aws_int_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_objectId_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_objectId_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_bool_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "bool"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "int"
+        }
       }
     },
-    "aws_int_rand_explicit": { "bsonType": "binData" },
-    "aws_int_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_bool_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "bool"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "int"
+        }
       }
     },
-    "aws_int_det_explicit": { "bsonType": "binData" },
-    "aws_timestamp_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_bool_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_bool_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_bool_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_bool_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_date_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "date"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "timestamp"
+        }
       }
     },
-    "aws_timestamp_rand_explicit": { "bsonType": "binData" },
-    "aws_timestamp_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_date_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "date"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "timestamp"
+        }
       }
     },
-    "aws_timestamp_det_explicit": { "bsonType": "binData" },
-    "aws_long_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_date_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_date_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_date_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "date"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "long"
+        }
       }
     },
-    "aws_long_rand_explicit": { "bsonType": "binData" },
-    "aws_long_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_date_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "date"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "long"
+        }
       }
     },
-    "aws_long_det_explicit": { "bsonType": "binData" },
-    "aws_decimal_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_date_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_date_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_null_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_null_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_null_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_null_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_regex_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "regex"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "decimal"
+        }
       }
     },
-    "aws_decimal_rand_explicit": { "bsonType": "binData" },
-    "local_double_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_regex_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "regex"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "double"
+        }
       }
     },
-    "local_double_rand_explicit": { "bsonType": "binData" },
-    "local_string_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_regex_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_regex_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_regex_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "regex"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "string"
+        }
       }
     },
-    "local_string_rand_explicit": { "bsonType": "binData" },
-    "local_string_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_regex_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "regex"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "string"
+        }
       }
     },
-    "local_string_det_explicit": { "bsonType": "binData" },
-    "local_object_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_regex_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_regex_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_dbPointer_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "dbPointer"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "object"
+        }
       }
     },
-    "local_object_rand_explicit": { "bsonType": "binData" },
-    "local_array_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_dbPointer_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "dbPointer"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "array"
+        }
       }
     },
-    "local_array_rand_explicit": { "bsonType": "binData" },
-    "local_binData=00_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_dbPointer_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_dbPointer_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_dbPointer_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "dbPointer"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "binData"
+        }
       }
     },
-    "local_binData=00_rand_explicit": { "bsonType": "binData" },
-    "local_binData=00_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_dbPointer_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "dbPointer"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "binData"
+        }
       }
     },
-    "local_binData=00_det_explicit": { "bsonType": "binData" },
-    "local_binData=04_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_dbPointer_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_dbPointer_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascript_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascript"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "binData"
+        }
       }
     },
-    "local_binData=04_rand_explicit": { "bsonType": "binData" },
-    "local_binData=04_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_javascript_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascript"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "binData"
+        }
       }
     },
-    "local_binData=04_det_explicit": { "bsonType": "binData" },
-    "local_objectId_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_javascript_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascript_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascript_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascript_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_symbol_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "symbol"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "objectId"
+        }
       }
     },
-    "local_objectId_rand_explicit": { "bsonType": "binData" },
-    "local_objectId_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_symbol_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "symbol"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "objectId"
+        }
       }
     },
-    "local_objectId_det_explicit": { "bsonType": "binData" },
-    "local_bool_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_symbol_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_symbol_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_symbol_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "symbol"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "bool"
+        }
       }
     },
-    "local_bool_rand_explicit": { "bsonType": "binData" },
-    "local_date_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_symbol_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "symbol"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "date"
+        }
       }
     },
-    "local_date_rand_explicit": { "bsonType": "binData" },
-    "local_date_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_symbol_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_symbol_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascriptWithScope_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascriptWithScope"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "date"
+        }
       }
     },
-    "local_date_det_explicit": { "bsonType": "binData" },
-    "local_regex_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_javascriptWithScope_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascriptWithScope"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "regex"
+        }
       }
     },
-    "local_regex_rand_explicit": { "bsonType": "binData" },
-    "local_regex_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_javascriptWithScope_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascriptWithScope_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascriptWithScope_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_javascriptWithScope_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_int_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "int"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "regex"
+        }
       }
     },
-    "local_regex_det_explicit": { "bsonType": "binData" },
-    "local_dbPointer_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_int_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "int"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "dbPointer"
+        }
       }
     },
-    "local_dbPointer_rand_explicit": { "bsonType": "binData" },
-    "local_dbPointer_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_int_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_int_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_int_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "int"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "dbPointer"
+        }
       }
     },
-    "local_dbPointer_det_explicit": { "bsonType": "binData" },
-    "local_javascript_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_int_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "int"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "javascript"
+        }
       }
     },
-    "local_javascript_rand_explicit": { "bsonType": "binData" },
-    "local_symbol_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_int_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_int_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_timestamp_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "timestamp"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "symbol"
+        }
       }
     },
-    "local_symbol_rand_explicit": { "bsonType": "binData" },
-    "local_symbol_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_timestamp_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "timestamp"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "symbol"
+        }
       }
     },
-    "local_symbol_det_explicit": { "bsonType": "binData" },
-    "local_javascriptWithScope_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_timestamp_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_timestamp_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_timestamp_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "timestamp"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "javascriptWithScope"
+        }
       }
     },
-    "local_javascriptWithScope_rand_explicit": { "bsonType": "binData" },
-    "local_int_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_timestamp_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "timestamp"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "int"
+        }
       }
     },
-    "local_int_rand_explicit": { "bsonType": "binData" },
-    "local_int_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_timestamp_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_timestamp_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_long_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "long"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "int"
+        }
       }
     },
-    "local_int_det_explicit": { "bsonType": "binData" },
-    "local_timestamp_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_long_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "long"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "timestamp"
+        }
       }
     },
-    "local_timestamp_rand_explicit": { "bsonType": "binData" },
-    "local_timestamp_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_long_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_long_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_long_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "long"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "timestamp"
+        }
       }
     },
-    "local_timestamp_det_explicit": { "bsonType": "binData" },
-    "local_long_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_long_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "long"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "long"
+        }
       }
     },
-    "local_long_rand_explicit": { "bsonType": "binData" },
-    "local_long_det_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_long_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_long_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_decimal_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "AWSAAAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "decimal"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        "bsonType": "long"
+        }
       }
     },
-    "local_long_det_explicit": { "bsonType": "binData" },
-    "local_decimal_rand_auto": {
-      "encrypt": {
-        "keyId": [
-          {
-            "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" }
+    "aws_decimal_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_aws",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "decimal"
           }
-        ],
-        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-        "bsonType": "decimal"
+        }
       }
     },
-    "local_decimal_rand_explicit": { "bsonType": "binData" }
+    "aws_decimal_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_decimal_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_decimal_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_decimal_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_minKey_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_minKey_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_minKey_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_minKey_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_maxKey_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_maxKey_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_maxKey_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "aws_maxKey_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_double_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "double"
+          }
+        }
+      }
+    },
+    "local_double_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "double"
+          }
+        }
+      }
+    },
+    "local_double_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_double_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_double_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_double_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_string_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "string"
+          }
+        }
+      }
+    },
+    "local_string_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "string"
+          }
+        }
+      }
+    },
+    "local_string_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_string_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_string_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "string"
+          }
+        }
+      }
+    },
+    "local_string_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "string"
+          }
+        }
+      }
+    },
+    "local_string_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_string_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_object_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "object"
+          }
+        }
+      }
+    },
+    "local_object_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "object"
+          }
+        }
+      }
+    },
+    "local_object_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_object_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_object_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_object_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_array_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "array"
+          }
+        }
+      }
+    },
+    "local_array_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "array"
+          }
+        }
+      }
+    },
+    "local_array_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_array_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_array_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_array_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=00_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=00_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=00_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=00_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=00_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=00_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=00_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=00_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=04_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=04_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=04_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=04_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=04_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=04_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "binData"
+          }
+        }
+      }
+    },
+    "local_binData=04_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_binData=04_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_undefined_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_undefined_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_undefined_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_undefined_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_objectId_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "objectId"
+          }
+        }
+      }
+    },
+    "local_objectId_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "objectId"
+          }
+        }
+      }
+    },
+    "local_objectId_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_objectId_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_objectId_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "objectId"
+          }
+        }
+      }
+    },
+    "local_objectId_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "objectId"
+          }
+        }
+      }
+    },
+    "local_objectId_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_objectId_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_bool_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "bool"
+          }
+        }
+      }
+    },
+    "local_bool_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "bool"
+          }
+        }
+      }
+    },
+    "local_bool_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_bool_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_bool_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_bool_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_date_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "date"
+          }
+        }
+      }
+    },
+    "local_date_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "date"
+          }
+        }
+      }
+    },
+    "local_date_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_date_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_date_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "date"
+          }
+        }
+      }
+    },
+    "local_date_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "date"
+          }
+        }
+      }
+    },
+    "local_date_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_date_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_null_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_null_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_null_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_null_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_regex_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "regex"
+          }
+        }
+      }
+    },
+    "local_regex_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "regex"
+          }
+        }
+      }
+    },
+    "local_regex_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_regex_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_regex_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "regex"
+          }
+        }
+      }
+    },
+    "local_regex_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "regex"
+          }
+        }
+      }
+    },
+    "local_regex_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_regex_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_dbPointer_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "dbPointer"
+          }
+        }
+      }
+    },
+    "local_dbPointer_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "dbPointer"
+          }
+        }
+      }
+    },
+    "local_dbPointer_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_dbPointer_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_dbPointer_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "dbPointer"
+          }
+        }
+      }
+    },
+    "local_dbPointer_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "dbPointer"
+          }
+        }
+      }
+    },
+    "local_dbPointer_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_dbPointer_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascript_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascript"
+          }
+        }
+      }
+    },
+    "local_javascript_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascript"
+          }
+        }
+      }
+    },
+    "local_javascript_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascript_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascript_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascript_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_symbol_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "symbol"
+          }
+        }
+      }
+    },
+    "local_symbol_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "symbol"
+          }
+        }
+      }
+    },
+    "local_symbol_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_symbol_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_symbol_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "symbol"
+          }
+        }
+      }
+    },
+    "local_symbol_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "symbol"
+          }
+        }
+      }
+    },
+    "local_symbol_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_symbol_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascriptWithScope_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascriptWithScope"
+          }
+        }
+      }
+    },
+    "local_javascriptWithScope_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "javascriptWithScope"
+          }
+        }
+      }
+    },
+    "local_javascriptWithScope_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascriptWithScope_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascriptWithScope_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_javascriptWithScope_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_int_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "int"
+          }
+        }
+      }
+    },
+    "local_int_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "int"
+          }
+        }
+      }
+    },
+    "local_int_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_int_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_int_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "int"
+          }
+        }
+      }
+    },
+    "local_int_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "int"
+          }
+        }
+      }
+    },
+    "local_int_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_int_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_timestamp_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "timestamp"
+          }
+        }
+      }
+    },
+    "local_timestamp_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "timestamp"
+          }
+        }
+      }
+    },
+    "local_timestamp_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_timestamp_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_timestamp_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "timestamp"
+          }
+        }
+      }
+    },
+    "local_timestamp_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "timestamp"
+          }
+        }
+      }
+    },
+    "local_timestamp_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_timestamp_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_long_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "long"
+          }
+        }
+      }
+    },
+    "local_long_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "long"
+          }
+        }
+      }
+    },
+    "local_long_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_long_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_long_det_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "long"
+          }
+        }
+      }
+    },
+    "local_long_det_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+            "bsonType": "long"
+          }
+        }
+      }
+    },
+    "local_long_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_long_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_decimal_rand_auto_id": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": [
+              {
+                "$binary": {
+                  "base64": "LOCALAAAAAAAAAAAAAAAAA==",
+                  "subType": "04"
+                }
+              }
+            ],
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "decimal"
+          }
+        }
+      }
+    },
+    "local_decimal_rand_auto_altname": {
+      "bsonType": "object",
+      "properties": {
+        "value": {
+          "encrypt": {
+            "keyId": "/altname_local",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+            "bsonType": "decimal"
+          }
+        }
+      }
+    },
+    "local_decimal_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_decimal_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_decimal_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_decimal_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_minKey_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_minKey_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_minKey_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_minKey_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_maxKey_rand_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_maxKey_rand_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_maxKey_det_explicit_id": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    },
+    "local_maxKey_det_explicit_altname": {
+      "bsonType": "object",
+      "properties": { "value": { "bsonType": "binData" } }
+    }
   }
 }

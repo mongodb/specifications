@@ -18,22 +18,23 @@ axes = [
 
 codec_options = CodecOptions(uuid_representation=bson.binary.STANDARD)
 json_options = json_util.JSONOptions(json_mode=json_util.JSONMode.CANONICAL, uuid_representation=bson.binary.STANDARD)
-schema_fields = []
-corpus = []
 
-def prohibited(map):
+def allowed(map):
     if map["type"] in ["undefined", "minKey", "maxKey", "null"]:
-        return True
-    if map["type"] in ["object", "array", "double", "decimal", "javascriptWithScope", "javascript", "bool"]  and map["algo"] == "det":
-        return True
-    return False
+        return False
+    if map["type"] in ["object", "array", "double", "decimal", "javascriptWithScope", "bool"]  and map["algo"] == "det":
+        return False
+    return True
 
 def gen_schema (map):
-    fmt = """"%s": { "encrypt": { "keyId": %s, "algorithm": "%s", "bsonType": "%s" } }"""
-    field_name = map["kms"] + "_" + map["type"] + "_" + map["algo"] + "_" + map["method"] + "_" + map["identifier"]
+    fmt = """ "%s" : { "bsonType": "object", "properties": { "value": { "encrypt": { "keyId": %s, "algorithm": "%s", "bsonType": "%s" } } } } """
+
+    if not allowed(map):
+        # We cannot even set a schema, don't test auto with prohibited fields.
+        return None
 
     if map["method"] == "explicit":
-        return """"%s": { "bsonType": "binData" }""" % field_name
+        return """ "%s" : { "bsonType": "object", "properties": { "value": { "bsonType": "binData" } } } """ % field_name(map)
 
     if map["identifier"] == "id":
         if map["kms"] == "local":
@@ -54,18 +55,18 @@ def gen_schema (map):
     type = map["type"]
     if map["type"].startswith("binData"):
         type = "binData"
-            
-    return fmt % (field_name, key_id, algorithm, type)
+    
+    return fmt % (field_name(map), key_id, algorithm, type)
 
 def get_bson_value (bson_type):
     if bson_type == "double":
-        return """{ "$numberDouble" : 1.234 }"""
+        return """{ "$numberDouble" : "1.234" }"""
     if bson_type == "string":
         return """ "mongodb" """
     if bson_type == "object":
-        return """ { "x" : { "$numberInt": 1 } } """
+        return """ { "x" : { "$numberInt": "1" } } """
     if bson_type == "array":
-        return """ [ { "$numberInt": 1 }, { "$numberInt": 2 }, { "$numberInt": 3 } ] """
+        return """ [ { "$numberInt": "1" }, { "$numberInt": "2" }, { "$numberInt": "3" } ] """
     if bson_type == "binData=00":
         return """ { "$binary": { "base64": "AQIDBA==", "subType": "00" } } """
     if bson_type == "binData=04":
@@ -79,7 +80,7 @@ def get_bson_value (bson_type):
     if bson_type == "regex":
         return """ { "$regularExpression": { "pattern": ".*", "options": "" } } """
     if bson_type == "dbPointer":
-        return """ { "$ref": "db.example", "$id": { "$oid": "01234567890abcdef0123456" } } """
+        return """ { "$dbPointer": { "$ref": "db.example", "$id": { "$oid": "01234567890abcdef0123456" } } } """
     if bson_type == "javascript":
         return """ { "$code": "x=1" } """
     if bson_type == "javascriptWithScope":
@@ -103,34 +104,39 @@ def get_bson_value (bson_type):
     if bson_type == "maxKey":
         return """{"$maxKey": 1}"""
 
-def gen_field (map):
-    field_name = map["kms"] + "_" + map["type"] + "_" + map["algo"] + "_" + map["method"] + "_" + map["identifier"]
+def field_name(map):
+    return "%s_%s_%s_%s_%s" % (map["kms"], map["type"], map["algo"], map["method"], map["identifier"])
 
-    bson_value = get_bson_value (map["type"])
-    return """ "%s" : %s """ % (field_name, bson_value)
+def gen_field (map):
+    if not allowed(map) and map["method"] == "auto":
+        # We cannot even set a schema, don't test auto with prohibited fields.
+        return None
+    allow = "true" if allowed(map) else "false"
+    return """ "%s" : { "kms": "%s", "type": "%s", "algo": "%s", "method": "%s", "identifier": "%s", "allowed": %s, "value": %s }""" % (field_name(map), map["kms"], map["type"], map["algo"], map["method"], map["identifier"], allow, get_bson_value (map["type"]))
+
+schema_sections = []
+corpus_sections = [
+    """ "_id": "client_side_encryption_corpus" """ ,
+    """ "altname_aws": "aws" """ ,
+    """ "altname_local": "local" """ ,
+]
 
 def enumerate_axis (map, axis, remaining):
     name = axis[0]
     for item in axis[1]:
         map[name] = item
         if remaining == []:
-            is_prohibited = prohibited(map)
-            # for prohibited mappings, only allow explicit, replace it with prohibited.
-            if is_prohibited:
-                if map["method"] == "explicit":
-                    map["method"] = "prohibited"
-                else:
-                    continue
-                
-            if not is_prohibited:
-                schema_fields.append(gen_schema(map))
-
-            corpus.append(gen_field(map))
+            schema_section = gen_schema (map)
+            corpus_section = gen_field (map)
+            if schema_section:
+                schema_sections.append(schema_section)
+            if corpus_section:
+                corpus_sections.append(corpus_section)
         else:
             enumerate_axis (map, remaining[0], remaining[1:])
 
 enumerate_axis({}, axes[0], axes[1:])
 
-schema = """{ "bsonType": "object", "properties": { %s } }""" % (",\n".join(schema_fields))
-open("schema.json", "w").write(schema)
-open("corpus.json", "w").write("{%s}" % ",\n".join(corpus))
+schema = """{ "bsonType": "object", "properties": { %s } }""" % (",\n".join(schema_sections))
+open("corpus-schema.json", "w").write(schema)
+open("corpus.json", "w").write("{%s}" % ",\n".join(corpus_sections))

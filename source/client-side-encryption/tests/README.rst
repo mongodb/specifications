@@ -273,20 +273,22 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
    Configure both objects with ``keyVaultNamespace`` set to ``admin.datakeys``.
 
-5. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. Field names have the following layout: ``<kms>_<type>_<algo>_<method>``.
+5. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. The corpus contains subdocuments with the following fields:
 
    - ``kms`` is either ``aws`` or ``local``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
    - ``algo`` is either ``rand`` or ``det`` for random or deterministic encryption
    - ``method`` is either ``auto``, for automatic encryption ``explicit``,  explicit encryption, or ``prohibited`` for prohibited explicit encryption
    - ``identifier`` is either ``id`` or ``altname`` for the key identifier
+   - ``allowed`` is a boolean indicating whether the encryption for the given parameters is permitted.
+   - ``value`` is the value to be tested.
 
    Create a new BSON document, named ``corpus_copied``.
    Iterate over each field of ``corpus``.
 
    - If the field name is ``_id``, ``altname_aws`` and ``altname_local``, copy the field to ``corpus_copied``.
-   - If the field's ``method`` is ``auto``, copy the field to ``corpus_copied``.
-   - If the field's method is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
+   - If ``method`` is ``auto``, copy the field to ``corpus_copied``.
+   - If ``method`` is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
    
      - Encrypt with the algorithm described by ``algo``.
      - If ``identifier`` is ``id``
@@ -296,9 +298,9 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
         - If ``kms`` is ``local`` set the key_alt_name to "local".
         - If ``kms`` is ``aws`` set the key_alt_name to "aws".
      
-     Copy the field and encrypted value to ``corpus_copied``.
+     If ``allowed`` is true, copy the field and encrypted value to ``corpus_copied``.
+     If ``allowed`` is false. verify that an exception is thrown. Copy the unencrypted value to to ``corpus_copied``.
 
-   - Otherwise, the field's method is ``prohibited``. Use ``client_encryption`` to encrypt in the same manner as ``explicit``, but verify that an exception is thrown. Copy the unencrypted value to to ``corpus_copied``.
 
 6. Using ``client_encrypted``, insert ``corpus_copied`` into ``db.coll``.
 
@@ -309,10 +311,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
    Iterate over each field of ``corpus_encrypted_actual`` and check the following:
 
-   - If the field algorithm is ``det``, that the value exactly matches the all fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
-   - If the field algorithm is ``rand`` and the method is not ``prohibited``, that the value matches no other values.
-   - If the field method is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
-   - If the field method is ``prohibited``, validate the value exactly matches the corresponding field of ``corpus``.
+   - If the ``algo`` is ``det``, that the value exactly matches the all fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
+   - If the ``algo`` is ``rand`` and the method is not ``prohibited``, that the value matches no other values.
+   - If the ``method`` is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
+   - If the ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus``.
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. append step 3 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
 
