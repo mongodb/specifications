@@ -63,8 +63,8 @@ tests:
         options:
             tlsInsecure: true
     -  
-        description: "Invalid tlsAllowInsecure causes a warning"
-        uri: "mongodb://example.com/?tlsAllowInsecure=invalid"
+        description: "Invalid tlsInsecure causes a warning"
+        uri: "mongodb://example.com/?tlsInsecure=invalid"
         valid: true
         warning: true
         hosts: ~
