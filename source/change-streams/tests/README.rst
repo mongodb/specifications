@@ -168,7 +168,6 @@ The following tests have not yet been automated, but MUST still be tested
       - The batch is empty or has been iterated to the last document.
    - Expected result: 
       - ``getResumeToken`` must return the ``_id`` of the last document returned if one exists.
-      - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
       - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
 #. - For a ``ChangeStream`` under these conditions:
@@ -198,6 +197,5 @@ The following tests have not yet been automated, but MUST still be tested
       - The stream has iterated beyond a previous batch and a ``getMore`` command has just been executed.
    - Expected result:
       - ``getResumeToken`` must return the ``_id`` of the previous document returned if one exists.
-      - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
       - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.

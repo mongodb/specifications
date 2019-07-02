@@ -331,7 +331,7 @@ Driver API
      *
      * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
-     * @since 4.0.7
+     * @since 4.1.1
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
      * @note this is an option of the `$changeStream` pipeline stage.
      */
@@ -779,4 +779,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2019-07-01 | Clarified that close may be implemented with more idiomatic|
 |            | patterns instead of a method.                              |
++------------+------------------------------------------------------------+
+| 2019-07-02 | Fix server version for startAfter                          |
 +------------+------------------------------------------------------------+
