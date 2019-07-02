@@ -70,6 +70,18 @@ tests:
         arguments:
           document:
             z: 3
+    expectations:
+      -
+        command_started_event:
+          command:
+            aggregate: *collection_name
+            cursor: {}
+            pipeline:
+              -
+                $changeStream:
+                  fullDocument: default
+              -
+                $project: { _id: 0 }
     result:
       error:
         code: 280

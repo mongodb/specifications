@@ -102,6 +102,28 @@
           }
         }
       ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                },
+                {
+                  "$project": {
+                    "_id": 0
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
       "result": {
         "error": {
           "code": 280,
