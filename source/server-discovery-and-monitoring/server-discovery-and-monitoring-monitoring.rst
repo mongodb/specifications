@@ -65,8 +65,6 @@ Events that MUST be published (with their conditions) are as follows.
 
    * - Event Type
      - Condition
-
-
    * - ``TopologyOpeningEvent``
      - When a topology description is initialized - this MUST be the first SDAM event fired.
    * - ``ServerOpeningEvent``
