@@ -1,0 +1,10 @@
+dist: xenial
+
+language: python
+
+python:
+  - 3.7
+
+install: pip3 install rstcheck==3.3.1
+
+script: rstcheck -r source/ --ignore-language c,python,java --report error

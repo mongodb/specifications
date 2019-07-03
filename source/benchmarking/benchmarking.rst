@@ -587,7 +587,7 @@ Phases:
 +--------------------------------------+--------------------------------------+
 | Do task                              | Insert the document with the         |
 |                                      | insertOne CRUD method.               |
-|                                      |  DO NOT manually add an \_id field;  |
+|                                      | DO NOT manually add an \_id field;   |
 |                                      | leave it to the driver or            |
 |                                      | database.  Repeat this 10,000 times. |
 +--------------------------------------+--------------------------------------+
@@ -628,9 +628,9 @@ Phases:
 +--------------------------------------+--------------------------------------+
 | Do task                              | Insert the document with the         |
 |                                      | insertOne CRUD method.               |
-|                                      |  DO NOT manually add an \_id field;  |
+|                                      | DO NOT manually add an \_id field;   |
 |                                      | leave it to the driver or database.  |
-|                                      |  Repeat this 10 times.               |
+|                                      | Repeat this 10 times.                |
 +--------------------------------------+--------------------------------------+
 | After task                           | n/a                                  |
 +--------------------------------------+--------------------------------------+
@@ -725,7 +725,7 @@ Phases:
 +--------------------------------------+--------------------------------------+
 | Do task                              | Do an ordered 'insert\_many' with    |
 |                                      | 10,000 copies of the document.       |
-|                                      |  DO NOT manually add an \_id field;  |
+|                                      | DO NOT manually add an \_id field;   |
 |                                      | leave it to the driver or database.  |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
@@ -764,7 +764,7 @@ Phases:
 +--------------------------------------+--------------------------------------+
 | Do task                              | Do an ordered 'insert\_many' with 10 |
 |                                      | copies of the document.              |
-|                                      |  DO NOT manually add an \_id field;  |
+|                                      | DO NOT manually add an \_id field;   |
 |                                      | leave it to the driver or database.  |
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
@@ -802,7 +802,7 @@ Phases:
 |                                      | bucket. (This ensures the bucket     |
 |                                      | collections and indices have been    |
 |                                      | created.)                            |
-|                                      |  Construct                           |
+|                                      | Construct                            |
 |                                      | a GridFSBucket object to use for     |
 |                                      | uploads.                             |
 +--------------------------------------+--------------------------------------+
@@ -852,7 +852,7 @@ Phases:
 |                                      | is most natural for each language    |
 |                                      | (e.g. open\_download\_stream(), read |
 |                                      | from the stream into a variable).    |
-|                                      |  Discard the downloaded data.        |
+|                                      | Discard the downloaded data.         |
 +--------------------------------------+--------------------------------------+
 | After task                           | n/a                                  |
 +--------------------------------------+--------------------------------------+
@@ -915,7 +915,7 @@ Phases:
 |                                      | into the 'corpus' collection as fast |
 |                                      | as possible.  Data must be loaded    |
 |                                      | from disk during this phase.         |
-|                                      |  Concurrency is encouraged.          |
+|                                      | Concurrency is encouraged.           |
 +--------------------------------------+--------------------------------------+
 | After task                           | n/a                                  |
 +--------------------------------------+--------------------------------------+
@@ -957,7 +957,7 @@ Phases:
 |                                      | possible.  Data must be completely   |
 |                                      | written/flushed to disk during this  |
 |                                      | phase.  Concurrency is encouraged.   |
-|                                      |  The order and distribution of       |
+|                                      | The order and distribution of        |
 |                                      | documents across files does not need |
 |                                      | to match the original LDJSON\_MULTI  |
 |                                      | files.                               |

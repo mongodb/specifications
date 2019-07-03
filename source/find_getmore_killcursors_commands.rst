@@ -288,10 +288,12 @@ The accepted parameters are described in the table below.  Parameters marked "Re
        MAY be set on CRUD specification (see readConcern specification for details)
      - Allows driver to specify if the query should be performed against a specific snapshot view of the documents in a collection. (N.B. this is not the same as the "snapshot" option, above.)
 
-       The readConcern option takes the following document specification.
-       {
-         level: "[majority|local]",
-       }
+       .. code:: javascript
+
+         The readConcern option takes the following document specification.
+         {
+           level: "[majority|local]",
+         }
 
        level: “local” is the default, if no level is explicitly specified.
        level: “local” means to do a read with no snapshot; this is the behavior of reads in 3.0 and prior versions of MongoDB.
