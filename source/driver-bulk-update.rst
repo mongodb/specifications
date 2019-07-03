@@ -751,12 +751,12 @@ Code      Description
 
 Thee are also some some errors only detectable by inspecting the **errmsg** field.
 
-===================  =============================================================
-ErrMsg               Description
-===================  =============================================================
-exceeded time limit  Operation exceeded time limit.
-execution terminated Operation exceeded time limit.
-===================  =============================================================
+====================  =============================================================
+ErrMsg                Description
+====================  =============================================================
+exceeded time limit   Operation exceeded time limit.
+execution terminated  Operation exceeded time limit.
+====================  =============================================================
 
 If an error does not return a code the driver can set the returned value to **8** (unknown error).  A BSON serializing error should be marked with **22** (illegal BSON).
 
