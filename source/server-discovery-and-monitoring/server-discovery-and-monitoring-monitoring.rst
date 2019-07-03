@@ -77,12 +77,12 @@ Events that MUST be published (with their conditions) are as follows.
      - Published when the server monitor’s connection is closed and the server is shutdown.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
-    * - ``ServerHeartbeatStartedEvent``
-      - Published when the server monitor sends its ismaster call to the server.
-    * - ``ServerHeartbeatSucceededEvent``
-       - Published on successful completion of the server monitor’s ismaster call.
-    * - ``ServerHeartbeatFailedEvent``
-      - Published on failure of the server monitor’s ismaster call, either with an ok: 0 result or a socket exception from the connection.
+   * - ``ServerHeartbeatStartedEvent``
+     - Published when the server monitor sends its ismaster call to the server.
+   * - ``ServerHeartbeatSucceededEvent``
+     - Published on successful completion of the server monitor’s ismaster call.
+   * - ``ServerHeartbeatFailedEvent``
+     - Published on failure of the server monitor’s ismaster call, either with an ok: 0 result or a socket exception from the connection.
 
 
 Operations
