@@ -287,9 +287,9 @@ The accepted parameters are described in the table below.  Parameters marked "Re
 
        MAY be set on CRUD specification (see readConcern specification for details)
      - Allows driver to specify if the query should be performed against a specific snapshot view of the documents in a collection. (N.B. this is not the same as the "snapshot" option, above.)
-     
+
        .. code:: javascript
-       
+
          The readConcern option takes the following document specification.
          {
            level: "[majority|local]",
