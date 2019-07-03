@@ -32,17 +32,16 @@ The spec tests format is an extension of `transactions spec tests <https://githu
 
 The semantics of `$$type` is that any actual value matching the BSON type indicated by the BSON type string is considered a match.
 
-For example, the following matches a command_started_event for an insert of a document where `random` must be of type ``binData``:
+For example, the following matches a command_started_event for an insert of a document where `random` must be of type ``binData``::
 
-```
-- command_started_event:
-    command:
-      insert: *collection_name
-      documents:
-        - { random: { $$type: "binData" } }
-      ordered: true
-    command_name: insert
-```
+  - command_started_event:
+      command:
+        insert: *collection_name
+        documents:
+          - { random: { $$type: "binData" } }
+        ordered: true
+      command_name: insert
+
 
 The values of `$$type` correspond to `these documented string representations of BSON types <https://docs.mongodb.com/manual/reference/bson-types/>`_.
 
@@ -130,7 +129,7 @@ Then for each element in ``tests``:
 
    #. If ``autoEncryptOpts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
    #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it to ``admin.datakeys``
-   
+
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields from the YAML file.
 #. Drop the test collection, using writeConcern "majority".
@@ -182,7 +181,7 @@ Then for each element in ``tests``:
 #. For each element in ``outcome``:
 
    - If ``name`` is "collection", create a new MongoClient *without encryption*
-     and verify that the test collection contains exactly the documents in the 
+     and verify that the test collection contains exactly the documents in the
      ``data`` array. Ensure this find reads the latest data by using
      **primary read preference** with **local read concern** even when the
      MongoClient is configured with another read preference or read concern.

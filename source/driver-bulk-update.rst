@@ -119,8 +119,8 @@ remove.
 
 Current shell implementation
 ----------------------------
-The shell implementation serves as a guide only. One main difference between the shell implementation and a proper driver implementation 
-is that unordered bulk operations are not optimized by re-ordering the writes; only the execution semantics are kept correct. 
+The shell implementation serves as a guide only. One main difference between the shell implementation and a proper driver implementation
+is that unordered bulk operations are not optimized by re-ordering the writes; only the execution semantics are kept correct.
 You can find it here:
 
 https://github.com/mongodb/mongo/blob/master/src/mongo/shell/bulk_api.js
@@ -234,17 +234,17 @@ Supporting unlimited batch sizes poses two problems - the BSONObj internal size 
 Both of these limits can be found using isMaster():
 
 * ``maxBsonObjectSize`` : currently 16 MiB, this is the maximum size of writes (excepting command overhead)
-  that should be sent to the server.  Documents to be inserted, query documents for updates and 
+  that should be sent to the server.  Documents to be inserted, query documents for updates and
   deletes, and update expression documents must be <= this size.
 
   Batches containing more than one insert, update, or delete must be less than ``maxBsonObjectSize``.
   Note that this means a single-item batch can exceed ``maxBsonObjectSize``.  The additional overhead of
-  the command itself is guaranteed not to trigger an error from the server, except in the case of 
+  the command itself is guaranteed not to trigger an error from the server, except in the case of
   `SERVER-12305 <https://jira.mongodb.org/browse/SERVER-12305>`_.
 
-* ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
+* ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that
   can be included in a write batch.  If more than this number of writes are included, the server cannot
-  guarantee space in the response document to reply to the batch. 
+  guarantee space in the response document to reply to the batch.
 
 If the batch is too large in size or bytes, the command may fail. The bulk API should ensure that this does not happen by splitting a batch into multiple batches of the same type if any of the limits are hit.
 
@@ -266,7 +266,7 @@ If it is less than maxBsonObjectSize (incorporate additional headroom for your i
 
 The un-appended incremental serialization from before will be appended on the new message. Continue incremental serialization, appending, and execution as above until the bulk operation is completed. Your implementation may need additional headroom for whatever is not already in the preamble, e.g., write concern, finish bytes, etc.
 
-There are two maximum write command sizes a driver needs to take into account. The first one is **maxBsonObjectSize** that defines the maximum size of a single write command. The current tolerance is **maxBsonObjectSize** + 16K. If the driver sends a message that overflows this tolerance the server will respond with an error. 
+There are two maximum write command sizes a driver needs to take into account. The first one is **maxBsonObjectSize** that defines the maximum size of a single write command. The current tolerance is **maxBsonObjectSize** + 16K. If the driver sends a message that overflows this tolerance the server will respond with an error.
 
 The second value is the **maxWriteBatchSize** value which specifies the maximum number of operations allowed in a single write command. In 2.6 this is currently set to **1000** operations. If the driver sends a write command with more than **maxWriteBatchSize** operations in it, the server will error out.
 
@@ -535,11 +535,11 @@ Handling upserts
 When performing updates with upsert true the write command might return an upserted field. If it's a single document update command that causes an upsert it will look like.
 
 .. code:: javascript
-    
+
     {
         ok: 1
       , nModified: 0
-      , n: 1      
+      , n: 1
       , upserted: {index:0, _id:ObjectId(".....")}
     }
 
@@ -751,12 +751,12 @@ Code      Description
 
 Thee are also some some errors only detectable by inspecting the **errmsg** field.
 
-===================  =============================================================
-ErrMsg               Description
-===================  =============================================================
-exceeded time limit  Operation exceeded time limit.
-execution terminated Operation exceeded time limit.
-===================  =============================================================
+====================  =============================================================
+ErrMsg                Description
+====================  =============================================================
+exceeded time limit   Operation exceeded time limit.
+execution terminated  Operation exceeded time limit.
+====================  =============================================================
 
 If an error does not return a code the driver can set the returned value to **8** (unknown error).  A BSON serializing error should be marked with **22** (illegal BSON).
 
@@ -884,23 +884,23 @@ INSERT
 Test Case 1:
     Dynamic languages: raise error if wrong arg type
         initializeUnorderedBulkOp().insert('foo') throws a reasonable error
-        
+
         initializeUnorderedBulkOp().insert([{}, {}]) throws a reasonable error: we can’t do a bulk insert with an array
-        
+
         Same for initializeOrderedBulkOp().
 
 Test Case 2:
     Insert not allowed with find({}):
         initializeUnorderedBulkOp().find({}).insert({}) is a type error.
-        
-        Same for initializeOrderedBulkOp().    
+
+        Same for initializeOrderedBulkOp().
 
 Test Case 3:
     Key validation, no $-prefixed keys allowed:
         batch = initializeUnorderedBulkOp().insert({$key: 1})
-        
+
         bulk.execute() throws reasonable error (server does the validation)
-        
+
         Same for initializeOrderedBulkOp().
 
 Test Case 4:
@@ -923,7 +923,7 @@ Test Case 4:
             }
 
         Collection contains only {_id: 1}.
-        
+
         Same for initializeOrderedBulkOp().
 
 Test Case 5:
@@ -957,7 +957,7 @@ Test Case 6:
     Insert doesn’t accept an array of documents:
         initializeUnorderedBulkOp().insert([{}, {}]) throws
 
-        Same for initializeOrderedBulkOp().  
+        Same for initializeOrderedBulkOp().
 
 FIND
 ----
@@ -1021,7 +1021,7 @@ Test Case 4:
             }
 
         nModified is NULL or omitted if legacy server.
-        
+
         Collection has:
             .. code:: javascript
 
@@ -1168,7 +1168,7 @@ Test Case 4:
         nModified is NULL or omitted if legacy server.
 
         .. code:: javascript
-    
+
             collection.distinct('key') == [1, 3].
 
         Same for initializeOrderedBulkOp().
@@ -1201,7 +1201,7 @@ Test Case 1:
             }
 
         nModified is NULL or omitted if legacy server.
-        
+
         collection has only {_id: ObjectId(...), key: 2, x: 2}.
 
         Repeat the whole batch. Now nMatched == 1, nUpserted == 0.
@@ -1228,7 +1228,7 @@ Test Case 2:
             }
 
         nModified is NULL or omitted if legacy server.
-        
+
         collection has only {key: 1, x: 1}, {key: 1, x: 1}.
 
         Same for initializeOrderedBulkOp().
@@ -1236,7 +1236,7 @@ Test Case 2:
         We can upsert() a 16 MiB document—the driver can make a command document slightly larger than the max document size.
 
         Empty collection.
-        
+
         .. code:: javascript
 
             var bigstring = “string of length 16 MiB - 30 bytes”
@@ -1323,7 +1323,7 @@ Test Case 1:
             }
 
         nModified is NULL or omitted if legacy server.
-        
+
         collection contains {x: 2}.
 
         Same for initializeOrderedBulkOp().
@@ -1496,7 +1496,7 @@ MIXED OPERATIONS, AUTH
 ----------------------
 Verify that auth failures are handled gracefully, especially in conjunction with other errors, such as write concern or normal write errors.
 
-Example: Using user defined roles (UDR) create a user who can do insert but not remove and run an ordered batch performing both of these operations. 
+Example: Using user defined roles (UDR) create a user who can do insert but not remove and run an ordered batch performing both of these operations.
 
 An ordered batch is expected to stop executing when the error is encountered, then raise the appropriate authentication error. If there have been write concern errors they may be lost. The behavior of an unordered batch is unspecified in the face of auth failure.
 
@@ -1658,7 +1658,7 @@ Empty collection.
 
 .. code:: javascript
 
-    batch = initializeUnorderedBulkOp()   
+    batch = initializeUnorderedBulkOp()
     batch.insert({_id: 1})
     batch.insert({_id: 1})
     batch.execute({w: 3, wtimeout: 1}) raises error with details.

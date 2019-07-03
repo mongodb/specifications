@@ -289,9 +289,12 @@ The accepted parameters are described in the table below.  Parameters marked "Re
      - Allows driver to specify if the query should be performed against a specific snapshot view of the documents in a collection. (N.B. this is not the same as the "snapshot" option, above.)
 
        The readConcern option takes the following document specification.
-       {
-         level: "[majority|local]",
-       }
+
+       .. code:: javascript
+
+         {
+           level: "[majority|local]",
+         }
 
        level: “local” is the default, if no level is explicitly specified.
        level: “local” means to do a read with no snapshot; this is the behavior of reads in 3.0 and prior versions of MongoDB.
@@ -367,7 +370,7 @@ The new **find** command has different semantics to the existing 3.0 and earlier
 
 Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILL_CURSORS** wire protocol message when it limit is reached.
 
-When setting the **batchSize** on the **find** and **getMore** command the value MUST be based on the cursor limit calculations specified in the `CRUD`_ specification. 
+When setting the **batchSize** on the **find** and **getMore** command the value MUST be based on the cursor limit calculations specified in the `CRUD`_ specification.
 
 In the following example the **limit** is set to **4** and the **batchSize** is set to **3** the following commands are executed.
 
@@ -460,7 +463,7 @@ Semantics of maxTimeMS for a Driver
 
 In the case of  a **non-tailable cursor query** OR **a tailable cursor query with awaitData == false**, the driver MUST set maxTimeMS on the **find** command and MUST NOT set maxTimeMS on the **getMore** command.
 
-In the case of **a tailable cursor with awaitData == true** the driver MUST provide a Cursor level option named **maxAwaitTimeMS** (See CRUD specification for details). The **maxTimeMS** option on the **getMore** command MUST be set to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command. 
+In the case of **a tailable cursor with awaitData == true** the driver MUST provide a Cursor level option named **maxAwaitTimeMS** (See CRUD specification for details). The **maxTimeMS** option on the **getMore** command MUST be set to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command.
 
 getMore
 -------
@@ -630,7 +633,7 @@ MongoDB 3.0 and earlier where a **OP_QUERY** query will set **numberReturned**
 to >= 0.
 
 A driver MUST deserialize the command result and extract the **firstBatch**
-and **nextBatch** arrays for the **find** and **getMore** commands to access 
+and **nextBatch** arrays for the **find** and **getMore** commands to access
 the returned documents.
 
 The result from the **killCursors** command MAY be safely ignored.
@@ -709,4 +712,4 @@ Changes
 
 2015-10-13 added guidance on batchSize values as related to the **getMore** command. SlaveOk flag SHOULD not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore commands when the cursor is a tailable cursor with awaitData set.
 
-2015-10-21 If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command. 
+2015-10-21 If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command.

@@ -46,7 +46,7 @@ Definitions
 Credential
 	The pieces of information used to establish the authenticity of a user. This is composed of an identity and some form of evidence such as a password or a certificate.
 
-FQDN 
+FQDN
 	Fully Qualified Domain Name
 
 Mechanism
@@ -233,8 +233,8 @@ Caching credentials in SCRAM
 
 In the implementation of SCRAM authentication mechanisms (e.g. SCRAM-SHA-1
 and SCRAM-SHA-256), drivers MUST maintain a cache of computed SCRAM credentials.
-The cache entries SHOULD be identified by the password, salt, iteration count, 
-and a value that uniquely identifies the authentication mechanism (e.g. "SHA1" 
+The cache entries SHOULD be identified by the password, salt, iteration count,
+and a value that uniquely identifies the authentication mechanism (e.g. "SHA1"
 or "SCRAM-SHA-256").
 
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
@@ -413,7 +413,7 @@ Many languages will have the ability to utilize 3rd party libraries. The server 
 GSSAPI
 ~~~~~~
 
-:since: 
+:since:
 	2.4 Enterprise
 
 	2.6 Enterprise on Windows
@@ -621,7 +621,7 @@ source
 	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
-	MUST be specified. 
+	MUST be specified.
 
 mechanism
 	MUST be "SCRAM-SHA-1"
@@ -704,7 +704,7 @@ authSource
 	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
 authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
-	A generic method to set mechanism properties in the connection string. 
+	A generic method to set mechanism properties in the connection string.
 
 	For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be ``authMechanismProperties=CANONICALIZE_HOST_NAME:true,SERVICE_REALM:AWESOME``.
 
@@ -844,22 +844,22 @@ Q: It's possible to continue using authenticated sockets even if new sockets fai
 	Yes, that's technically true. The issue with doing that is for drivers using connection pooling. An application would function normally until an operation needed an additional connection(s) during a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to understand for a user.
 
 Q: Should a driver support multiple credentials?
-    No. 
+    No.
 
-    Historically, the MongoDB server and drivers have supported multiple credentials, one per authSource, on a single connection.  It was necessary because early versions of MongoDB allowed a user to be granted privileges 
-    to access the database in which the user was defined (or all databases in the special case of the "admin" database).  But with the introduction of role-based access control in MongoDB 2.6, that restriction was 
+    Historically, the MongoDB server and drivers have supported multiple credentials, one per authSource, on a single connection.  It was necessary because early versions of MongoDB allowed a user to be granted privileges
+    to access the database in which the user was defined (or all databases in the special case of the "admin" database).  But with the introduction of role-based access control in MongoDB 2.6, that restriction was
     removed and it became possible to create applications that access multiple databases with a single authenticated user.
 
-    Role-based access control also introduces the potential for accidental privilege escalation.  An application may, for example, authenticate user A from authSource X, and user B from authSource Y, thinking that 
+    Role-based access control also introduces the potential for accidental privilege escalation.  An application may, for example, authenticate user A from authSource X, and user B from authSource Y, thinking that
     user A has privileges only on collections in X and user B has privileges only on collections in Y.  But with role-based access control that restriction no longer exists, and it's possible that user B has, for example,
     more privileges on collections in X than user A does.  Due to this risk it's generally safer to create a single user with only the privileges required for a given application, and authenticate only that one user
     in the application.
 
-    In addition, since only a single credential is supported per authSource, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the "$external" database). 
+    In addition, since only a single credential is supported per authSource, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the "$external" database).
 
-    Finally, MongoDB 3.6 introduces sessions, and allows at most a single authenticated user on any connection which makes use of one. Therefore any application that requires multiple authenticated users will not be able to make use of any feature that builds on sessions (e.g. retryable writes).  
-    
-    Drivers should therefore guide application creators in the right direction by supporting the association of at most one credential with a MongoClient instance. 
+    Finally, MongoDB 3.6 introduces sessions, and allows at most a single authenticated user on any connection which makes use of one. Therefore any application that requires multiple authenticated users will not be able to make use of any feature that builds on sessions (e.g. retryable writes).
+
+    Drivers should therefore guide application creators in the right direction by supporting the association of at most one credential with a MongoClient instance.
 
 Q: Should a driver support lazy authentication?
     No, for the same reasons as given in the previous section, as lazy authentication is another mechanism for allowing multiple credentials to be associated with a single MongoClient instance.
@@ -934,7 +934,7 @@ Version 1.3 Changes
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
-	* Added `Connection Handshake`_
+	* Added connection handshake
 	* Changed connection string to support mechanism properties in generic form
 	* Added example conversations for all mechanisms except GSSAPI
 	* Miscellaneous wording changes for clarification
