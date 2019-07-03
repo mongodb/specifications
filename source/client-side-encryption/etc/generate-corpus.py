@@ -1,11 +1,20 @@
-
-"""
-A utility script written to generate the corpus data and schema.
-"""
 from pymongo import MongoClient
 from bson import json_util
 import bson 
 from bson.codec_options import CodecOptions
+import sys
+import os
+
+description = """Generates the data and JSON Schema for the corpus test in the target directory.
+"""
+
+if len(sys.argv) != 2:
+    print(description)
+    print("usage: python generate-corpus.py <target directory>")
+    print("example: python ./generate-corpus.py ./")
+    sys.exit(1)
+
+targetdir = sys.argv[1]
 
 # Generate test data from this matrix of axes.
 axes = [
@@ -141,5 +150,6 @@ def enumerate_axis (map, axis, remaining):
 enumerate_axis({}, axes[0], axes[1:])
 
 schema = """{ "bsonType": "object", "properties": { %s } }""" % (",\n".join(schema_sections))
-open("corpus-schema.json", "w").write(schema)
-open("corpus.json", "w").write("{%s}" % ",\n".join(corpus_sections))
+open(os.path.join(targetdir, "corpus-schema.json"), "w").write(schema)
+open(os.path.join(targetdir, "corpus.json"), "w").write("{%s}" % ",\n".join(corpus_sections))
+print("Generated corpus.json and corpus-schema.json in target directory")

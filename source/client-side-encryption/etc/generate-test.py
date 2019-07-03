@@ -17,13 +17,15 @@ if sys.version_info < (3, 0):
     print("Use Python 3")
     sys.exit(1)
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print(description)
-    print("usage: python generate.py /path/to/<filename>.yml.template")
+    print("usage: python generate-test.py ./test-templates/<filename>.yml.template <target directory>")
+    print("example: python ./generate-test.py ./test-templates/bulk.yml.template ./")
     sys.exit(1)
 
 filepath = sys.argv[1]
 filedir = os.path.dirname(filepath)
+targetdir = sys.argv[2]
 (filename, ext) = os.path.splitext(os.path.basename(filepath))
 if ext != ".template":
     print("Input file must end with .yml.template")
@@ -465,6 +467,6 @@ rendered = template.render(**injections)
 parsed = yaml.load(rendered)
 # print as JSON.
 as_json = json.dumps(parsed, indent=4)
-open(f"{os.path.join(filedir,filename + '.yml')}", "w").write(rendered)
-open(f"{os.path.join(filedir,filename + '.json')}", "w").write(as_json)
-print(f"Generated {os.path.join(filedir,filename)}.yml|json")
+open(f"{os.path.join(targetdir,filename + '.yml')}", "w").write(rendered)
+open(f"{os.path.join(targetdir,filename + '.json')}", "w").write(as_json)
+print(f"Generated {os.path.join(targetdir,filename)}.yml|json")
