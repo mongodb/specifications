@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.13
-:Last Modified: 2019-05-29
+:Version: 2.14
+:Last Modified: 2019-07-11
 
 .. contents::
 
@@ -1233,9 +1233,9 @@ updateRSFromPrimary
   see `multi-threaded or asynchronous monitoring`_.)
 
   If the old primary server version is 4.0 or earlier,
-  the client SHOULD clear its connection pool for the old primary, too:
+  the client MUST clear its connection pool for the old primary, too:
   the connections are all bad because the old primary has closed its sockets.
-  If the old primary server version is 4.2 or newer, the client SHOULD NOT
+  If the old primary server version is 4.2 or newer, the client MUST NOT
   clear its connection pool for the old primary.
 
   See `replica set monitoring with and without a primary`_.
@@ -1372,7 +1372,7 @@ referring to the table above we see the subroutine is `checkIfHasPrimary`_.
 The result is the TopologyType changes to ReplicaSetNoPrimary.
 See the test scenario called "Network error writing to primary".
 
-The client SHOULD close all idle sockets in its connection pool for the server:
+The client MUST close all idle sockets in its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
 Clients MUST NOT request an immediate check of the server;
