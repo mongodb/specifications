@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.3.1
+:Spec Version: 1.3.2
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-06-07
+:Last Modified: 2019-07-03
 
 .. contents::
 
@@ -99,6 +99,12 @@ Retryable Error
          - 89
        * - SocketException
          - 9001
+       * - ExceededTimeLimit
+         - 262
+       * - LockTimeout
+         - 24
+       * - ClientDisconnect
+         - 279
 
    - a server error response without an error code or one different from those
      listed above, but with an error message containing the substring "not
@@ -727,6 +733,7 @@ deleteMany) does not seem to pose a problem in practice.
 Changes
 =======
 
+2019-07-03: Added ExceededTimeLimit, LockTimeout, and ClientDisconnect as retryable writes errors and corresponding error codes.
 2019-06-07: Mention $merge stage for aggregate alongside $out
 
 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
