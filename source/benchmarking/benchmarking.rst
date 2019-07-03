@@ -587,7 +587,7 @@ Phases:
 +--------------------------------------+--------------------------------------+
 | Do task                              | Insert the document with the         |
 |                                      | insertOne CRUD method.               |
-|                                      |  DO NOT manually add an \_id field;  |
+|                                      | DO NOT manually add an \_id field;   |
 |                                      | leave it to the driver or            |
 |                                      | database.  Repeat this 10,000 times. |
 +--------------------------------------+--------------------------------------+
