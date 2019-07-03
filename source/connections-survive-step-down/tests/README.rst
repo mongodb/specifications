@@ -110,7 +110,7 @@ This test requires server version 4.2 or higher.
 Not Master - Reset Connection Pool
 ``````````````````````````````````
 
-This test requires server version 4.0 or lower.
+This test requires server version 4.0.
 
 
 - Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
@@ -124,7 +124,7 @@ This test requires server version 4.0 or lower.
 Shutdown in progress - Reset Connection Pool
 ````````````````````````````````````````````
 
-This test should be run on all supported server versions.
+This test should be run on all server versions >= 4.0.
 
 Perform the following operations on a client configured to NOT retry writes:
 
@@ -139,7 +139,7 @@ Perform the following operations on a client configured to NOT retry writes:
 Interrupted at shutdown - Reset Connection Pool
 ```````````````````````````````````````````````
 
-This test should be run on all supported server versions.
+This test should be run on all server versions >= 4.0.
 
 Perform the following operations on a client configured to NOT retry writes:
 
