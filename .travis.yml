@@ -1,6 +1,7 @@
 matrix:
   include:
-    - dist: xenial
+    - name: "reStructuredText syntax check"
+      dist: xenial
       language: python
       python:
         - 3.7
@@ -9,7 +10,8 @@ matrix:
       script:
         - rstcheck -r source/ --ignore-language c,python,java --report error
 
-    - dist: trusty
+    - name: "JSON regeneration check"
+      dist: trusty
       language: node_js
       node_js:
         - 12
