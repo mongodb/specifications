@@ -934,7 +934,7 @@ Version 1.3 Changes
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
-	* Added `Connection Handshake`_
+	* Added connection handshake
 	* Changed connection string to support mechanism properties in generic form
 	* Added example conversations for all mechanisms except GSSAPI
 	* Miscellaneous wording changes for clarification
