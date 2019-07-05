@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: February 20, 2019
+:Last Modified: September 26, 2019
 
 .. contents::
 
@@ -885,6 +885,17 @@ Basic
     collation: Optional<Document>;
 
     /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
      * When true, creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -915,6 +926,17 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     collation: Optional<Document>;
+
+    /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    hint: Optional<(String | Document)>;
 
     /**
      * When true, creates a new document if no document matches the query.
@@ -1030,6 +1052,17 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
      * When true, creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1078,6 +1111,17 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
      * When true, creates a new document if no document matches the query.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1124,6 +1168,17 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     collation: Optional<Document>;
+
+    /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    hint: Optional<(String | Document)>;
 
     /**
      * When true, creates a new document if no document matches the query.
@@ -1766,6 +1821,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages
 * 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
 * 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
