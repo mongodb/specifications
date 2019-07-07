@@ -319,6 +319,6 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - If the ``method`` is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
    - If the ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus``.
 
-9. Repeat steps 1-8 with a local JSON schema. I.e. append step 3 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
+9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
 
    
