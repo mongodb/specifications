@@ -269,7 +269,7 @@ Driver API
      *
      * @note this is an option of the `$changeStream` pipeline stage.
      */
-    fullDocument: string = ‘default’;
+    fullDocument: Optional<String>;
 
     /**
      * Specifies the logical starting point for the new change stream.
