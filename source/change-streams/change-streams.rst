@@ -260,13 +260,12 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: ‘default’, ‘updateLookup’.  Defaults to ‘default’.  When set to
-     * ‘updateLookup’, the change notification for partial updates will include both
-     * a delta describing the changes to the document, as well as a copy of the entire
-     * document that was changed from some time after the change occurred.  For forward
-     * compatibility, a driver MUST NOT raise an error when a user provides an unknown
-     * value. The driver relies on the server to validate this option.
-     *
+     * Allowed values: ‘updateLookup’.  When set to ‘updateLookup’, the change notification
+     * for partial updates will include both a delta describing the changes to the document,
+     * as well as a copy of the entire document that was changed from some time after the 
+     * change occurred. The default is to not send a value. 
+     * For forward compatibility, a driver MUST NOT raise an error when a user provides an
+     * unknown value. The driver relies on the server to validate this option.
      * @note this is an option of the `$changeStream` pipeline stage.
      */
     fullDocument: Optional<String>;
