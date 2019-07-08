@@ -246,11 +246,12 @@ Then, test creating and using data keys from a ``local`` KMS provider:
 
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``local_datakey_id``.
    - Use ``client`` to run a ``find`` on ``admin.datakeys`` by querying with the ``_id`` set to the ``local_datakey_id``.
-   - Expect that exactly one document is returned with the "masterKey.provider" set to "local".
+   - Expect that exactly one document is returned with the "masterKey.provider" equal to "local".
 
 #. Call ``client_encryption.encrypt()`` with the value "hello local", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``local_datakey_id``.
+
    - Expect the return value to be a BSON binary subtype 6, referred to as ``local_encrypted``.
-   - Use ``client_encrypted`` to insert ``{ _id: "local", "value": (local_encrypted) }`` into ``db.coll``.
+   - Use ``client_encrypted`` to insert ``{ _id: "local", "value": <local_encrypted> }`` into ``db.coll``.
    - Use ``client_encrypted`` to run a find querying with ``_id`` of "local" and expect ``value`` to be "hello local".
 
 #. Call ``client_encryption.encrypt()`` with the value "hello local", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``local_altname``.
@@ -262,11 +263,12 @@ Then, repeat the above tests with the ``aws`` KMS provider:
 
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``aws_datakey_id``.
    - Use ``client`` to run a ``find`` on ``admin.datakeys`` by querying with the ``_id`` set to the ``aws_datakey_id``.
-   - Expect that exactly one document is returned with the "masterKey.provider" set to "aws".
+   - Expect that exactly one document is returned with the "masterKey.provider" equal to "aws".
 
 #. Call ``client_encryption.encrypt()`` with the value "hello aws", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``aws_datakey_id``.
+
    - Expect the return value to be a BSON binary subtype 6, referred to as ``aws_encrypted``.
-   - Use ``client_encrypted`` to insert ``{ _id: "aws", "value": (aws_encrypted) }`` into ``db.coll``.
+   - Use ``client_encrypted`` to insert ``{ _id: "aws", "value": <aws_encrypted> }`` into ``db.coll``.
    - Use ``client_encrypted`` to run a find querying with ``_id`` of "aws" and expect ``value`` to be "hello aws".
 
 #. Call ``client_encryption.encrypt()`` with the value "hello aws", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``aws_altname``.
