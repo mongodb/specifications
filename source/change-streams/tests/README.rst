@@ -110,13 +110,10 @@ For each YAML file, for each element in ``tests``:
 
 - Create a new MongoClient ``client``
 - Begin monitoring all APM events for ``client``. (If the driver uses global listeners, filter out all events that do not originate with ``client``). Filter out any "internal" commands (e.g. ``isMaster``)
-- Using ``client``, create a changeStream ``changeStream`` against the specified ``target``. Use ``changeStreamPipeline`` and ``changeStreamOptions`` if they are non-empty
-- Using ``globalClient``, run every operation in ``operations`` in serial against the server
-- Wait until either:
-
-  - An error occurs
-  - All operations have been successful AND the changeStream has received as many changes as there are in ``result.success``
-
+- Using ``client``, create a changeStream ``changeStream`` against the specified ``target``. Use ``changeStreamPipeline`` and ``changeStreamOptions`` if they are non-empty. Capture any error.
+- If there was no error, use ``globalClient`` and run every operation in ``operations`` in serial against the server until all operations have been executed or an error is thrown. Capture any error.
+- If there was no error and ``result.error`` is set, iterate ``changeStream`` once and capture any error.
+- If there was no error and ``result.success`` is non-empty, iterate ``changeStream`` until it returns as many changes as there are elements in the ``result.success`` array or an error is thrown. Capture any error.
 - Close ``changeStream``
 - If there was an error:
 
@@ -142,6 +139,12 @@ After running all tests
 - Drop database ``database_name``
 - Drop database ``database2_name``
 
+Iterating the Change Stream
+---------------------------
+
+Although synchronous drivers must provide a [non-blocking mode of iteration](../change-streams.rst#not-blocking-on-iteration), asynchronous drivers may not have such a mechanism. Those drivers with only a blocking mode of iteration should be careful not to iterate the change stream unnecessarily, as doing so could cause the test runner to block indefinitely. For this reason, the test runner procedure above advises drivers to take a conservative approach to iteration.
+
+If the test expects an error and one was not thrown by either creating the change stream or executing the test's operations, iterating the change stream once allows for an error to be thrown by a ``getMore`` command. If the test does not expect any error, the change stream should be iterated only until it returns as many result documents as are expected by the test.
 
 Prose Tests
 ===========
