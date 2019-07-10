@@ -155,3 +155,30 @@ tests:
         operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
+   -
+        description: "Aggregate fails after ExceededTimeLimit"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 262 }
+        operations: [*retryable_operation_fails]
+        expectations:
+   -
+        description: "Aggregate fails after ClientTimeout"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 24 }
+        operations: [*retryable_operation_fails]
+        expectations:
+   -
+        description: "Aggregate fails after ClientDisconnect"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 279 }
+        operations: [*retryable_operation_fails]
+        expectations:
