@@ -227,6 +227,7 @@ First, perform the setup.
 
       {
         "db.coll": {
+          "bsonType": "object",
           "properties": {
             "encrypted_placeholder": {
               "encrypt": {
