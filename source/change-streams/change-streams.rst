@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: April 3, 2019
-:Version: 1.6.1
+:Version: 1.7.0
 
 .. contents::
 
@@ -775,4 +775,6 @@ Changelog
 | 2019-04-12 | Clarified caching process for resume token.                |
 +------------+------------------------------------------------------------+
 | 2019-06-20 | Fix server version for addition of postBatchResumeToken    |
++------------+------------------------------------------------------------+
+| 2019-07-09 | Changed ``fullDocument`` to be an optional string.         |
 +------------+------------------------------------------------------------+
