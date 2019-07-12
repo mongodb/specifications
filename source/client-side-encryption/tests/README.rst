@@ -321,7 +321,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - ``kms`` is either ``aws`` or ``local``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
    - ``algo`` is either ``rand`` or ``det`` for random or deterministic encryption
-   - ``method`` is either ``auto``, for automatic encryption ``explicit``,  explicit encryption, or ``prohibited`` for prohibited explicit encryption
+   - ``method`` is either ``auto``, for automatic encryption or ``explicit`` for  explicit encryption
    - ``identifier`` is either ``id`` or ``altname`` for the key identifier
    - ``allowed`` is a boolean indicating whether the encryption for the given parameters is permitted.
    - ``value`` is the value to be tested.
@@ -355,7 +355,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    Iterate over each field of ``corpus_encrypted_actual`` and check the following:
 
    - If the ``algo`` is ``det``, that the value exactly matches the all fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
-   - If the ``algo`` is ``rand`` and the method is not ``prohibited``, that the value matches no other values.
+   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not match any fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
    - If the ``method`` is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
    - If the ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus``.
 
