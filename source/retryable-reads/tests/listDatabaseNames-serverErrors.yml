@@ -141,3 +141,30 @@ tests:
         operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
+    -
+        description: "ListDatabaseNames succeeds after ExceededTimeLimit"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listDatabases], errorCode: 262 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "ListDatabaseNames succeeds after LockTimeout"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listDatabases], errorCode: 24 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "ListDatabaseNames succeeds after ClientDisconnect"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listDatabases], errorCode: 279 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event

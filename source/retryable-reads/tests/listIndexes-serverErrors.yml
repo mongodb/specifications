@@ -142,4 +142,30 @@ tests:
         operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
-
+    -
+        description: "ListIndexes succeeds after ExceededTimeLimit"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listIndexes], errorCode: 262 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "ListIndexes succeeds after LockTimeout"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listIndexes], errorCode: 24 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "ListIndexes succeeds after ClientDisconnect"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listIndexes], errorCode: 279 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event

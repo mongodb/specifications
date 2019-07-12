@@ -157,4 +157,30 @@ tests:
         operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
-
+    -
+        description: "Find succeeds after ExceededTimeLimit"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [find], errorCode: 262 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "Find succeeds after LockTimeout"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [find], errorCode: 24 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "Find succeeds after ClientDisconnect"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [find], errorCode: 279 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event

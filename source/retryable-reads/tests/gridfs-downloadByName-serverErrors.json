@@ -843,6 +843,198 @@
           }
         }
       ]
+    },
+    {
+      "description": "DownloadByName succeeds after ExceededTimeLimit",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 262
+        }
+      },
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
+              "filter": {
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              },
+              "sort": {
+                "n": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "DownloadByName succeeds after LockTimeout",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 24
+        }
+      },
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
+              "filter": {
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              },
+              "sort": {
+                "n": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "DownloadByName succeeds after ClientDisconnect",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "errorCode": 279
+        }
+      },
+      "operations": [
+        {
+          "name": "download_by_name",
+          "object": "gridfsbucket",
+          "arguments": {
+            "filename": "abc"
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
+              "filter": {
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              },
+              "sort": {
+                "n": 1
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

@@ -153,4 +153,30 @@ tests:
         operations: [*retryable_operation_fails]
         expectations:
              - *retryable_command_started_event
-
+    -
+        description: "Distinct succeeds after ExceededTimeLimit"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [distinct], errorCode: 262 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "Distinct succeeds after LockTimeout"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [distinct], errorCode: 24 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "Distinct succeeds after ClientDisconnect"
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [distinct], errorCode: 279 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event

@@ -758,6 +758,177 @@
           }
         }
       ]
+    },
+    {
+      "description": "client.watch succeeds after ExceededTimeLimit",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 262
+        }
+      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after ClientTimeout",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 24
+        }
+      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds after ClientDisconnect",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 279
+        }
+      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
     }
   ]
 }
