@@ -352,10 +352,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 8. Load `corpus/corpus_encrypted.json <corpus/corpus-encrypted.json>`_ to a variable named ``corpus_encrypted_expected``.
    Using ``client`` find the inserted document from ``db.coll`` to a variable named ``corpus_encrypted_actual``.
 
-   Iterate over each field of ``corpus_encrypted_actual`` and check the following:
+   Iterate over each field of ``corpus_encrypted_expected`` and check the following:
 
-   - If the ``algo`` is ``det``, that the value exactly matches the all fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
-   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not match any fields in ``corpus_encrypted_expected`` with the same ``kms`` and ``type``.
+   - If the ``algo`` is ``det``, that the value exactly matches the all fields in ``corpus_encrypted_actual`` with the same ``kms`` and ``type``.
+   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not match any fields in ``corpus_encrypted_actual`` with the same ``kms`` and ``type``.
    - If the ``method`` is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
    - If the ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus``.
 
