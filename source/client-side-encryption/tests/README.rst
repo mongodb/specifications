@@ -269,6 +269,7 @@ Then, repeat the above tests with the ``aws`` KMS provider:
        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
      }
 
+
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``aws_datakey_id``.
    - Use ``client`` to run a ``find`` on ``admin.datakeys`` by querying with the ``_id`` set to the ``aws_datakey_id``.
    - Expect that exactly one document is returned with the "masterKey.provider" equal to "aws".
