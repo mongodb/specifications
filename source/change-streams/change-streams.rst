@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: April 3, 2019
-:Version: 1.6.3
+:Version: 1.7.0
 
 .. contents::
 
@@ -260,16 +260,15 @@ Driver API
 
   class ChangeStreamOptions {
     /**
-     * Allowed values: ‘default’, ‘updateLookup’.  Defaults to ‘default’.  When set to
-     * ‘updateLookup’, the change notification for partial updates will include both
-     * a delta describing the changes to the document, as well as a copy of the entire
-     * document that was changed from some time after the change occurred.  For forward
-     * compatibility, a driver MUST NOT raise an error when a user provides an unknown
-     * value. The driver relies on the server to validate this option.
-     *
+     * Allowed values: ‘updateLookup’.  When set to ‘updateLookup’, the change notification
+     * for partial updates will include both a delta describing the changes to the document,
+     * as well as a copy of the entire document that was changed from some time after the 
+     * change occurred. The default is to not send a value. 
+     * For forward compatibility, a driver MUST NOT raise an error when a user provides an
+     * unknown value. The driver relies on the server to validate this option.
      * @note this is an option of the `$changeStream` pipeline stage.
      */
-    fullDocument: string = ‘default’;
+    fullDocument: Optional<String>;
 
     /**
      * Specifies the logical starting point for the new change stream.
@@ -790,6 +789,8 @@ Changelog
 |            | patterns instead of a method.                              |
 +------------+------------------------------------------------------------+
 | 2019-07-02 | Fix server version for startAfter                          |
++------------+------------------------------------------------------------+
+| 2019-07-09 | Changed ``fullDocument`` to be an optional string.         |
 +------------+------------------------------------------------------------+
 | 2019-07-15 | Clarify resume process for change streams started with     |
 |            | the ``startAfter`` option.                                 |
