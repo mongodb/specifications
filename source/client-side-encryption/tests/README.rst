@@ -255,11 +255,19 @@ Then, test creating and using data keys from a ``local`` KMS provider:
    - Use ``client_encrypted`` to run a find querying with ``_id`` of "local" and expect ``value`` to be "hello local".
 
 #. Call ``client_encryption.encrypt()`` with the value "hello local", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``local_altname``.
+
    - Expect the return value to be a BSON binary subtype 6. Expect the value to exactly match the value of ``local_encrypted``.
 
 Then, repeat the above tests with the ``aws`` KMS provider:
 
-#. Call ``client_encryption.createDataKey()`` with the ``aws`` KMS provider and keyAltNames set to ``["aws_altname"]``.
+#. Call ``client_encryption.createDataKey()`` with the ``aws`` KMS provider, keyAltNames set to ``["aws_altname"]``, and ``masterKey`` as follows:
+
+  .. code:: javascript
+
+     {
+       region: "us-east-1",
+       key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+     }
 
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``aws_datakey_id``.
    - Use ``client`` to run a ``find`` on ``admin.datakeys`` by querying with the ``_id`` set to the ``aws_datakey_id``.
@@ -272,6 +280,7 @@ Then, repeat the above tests with the ``aws`` KMS provider:
    - Use ``client_encrypted`` to run a find querying with ``_id`` of "aws" and expect ``value`` to be "hello aws".
 
 #. Call ``client_encryption.encrypt()`` with the value "hello aws", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``aws_altname``.
+
    - Expect the return value to be a BSON binary subtype 6. Expect the value to exactly match the value of ``aws_encrypted``.
 
 
