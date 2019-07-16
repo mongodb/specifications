@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: April 3, 2019
-:Version: 1.6.2
+:Version: 1.6.3
 
 .. contents::
 
@@ -481,10 +481,19 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - Connect to selected server.
 - If there is a cached ``resumeToken``:
 
-  - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
-  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
-- If there is no cached ``resumeToken`` and the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
+  - If the ``ChangeStream`` was started with ``startAfter`` and has yet to return a result document:
+
+    - The driver MUST set ``startAfter`` to the cached ``resumeToken``.
+    - The driver MUST NOT set ``resumeAfter``.
+    - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+
+  - Else:
+
+    - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
+    - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+    - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+
+- Else if there is no cached ``resumeToken`` and the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
 
   - The driver MUST NOT set ``resumeAfter``.
   - The driver MUST NOT set ``startAfter``.
@@ -781,4 +790,7 @@ Changelog
 |            | patterns instead of a method.                              |
 +------------+------------------------------------------------------------+
 | 2019-07-02 | Fix server version for startAfter                          |
++------------+------------------------------------------------------------+
+| 2019-07-15 | Clarify resume process for change streams started with     |
+|            | the ``startAfter`` option.                                 |
 +------------+------------------------------------------------------------+
