@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.8.0
+:Spec Version: 1.8.1
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2019-04-26
+:Last Modified: 2019-07-12
 
 .. contents::
 
@@ -184,8 +184,10 @@ authentication mechanism, drivers MUST negotiate a mechanism via an
 
     {isMaster: 1, saslSupportedMechs: "<dbname>.<username>"}
 
-In this example ``<dbname>`` is the authentication database name (default
-'admin') and ``<username>`` is the username provided in the auth credential.
+In this example ``<dbname>`` is the authentication database name that
+either SCRAM-SHA-1 or SCRAM-SHA-256 would use (they are the same; either from
+the connection string or else defaulting to 'admin') and ``<username>``
+is the username provided in the auth credential.
 The username MUST NOT be modified from the form provided by the user (i.e.  do
 not normalize with SASLprep), as the server uses the raw form to look for
 conflicts with legacy credentials.
@@ -891,6 +893,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
+Version 1.8.1 Changes
+    * Clarify database to use for auth mechanism negotiation.
+
 Version 1.8.0 Changes
     * Test format changed to improve specificity of behavior assertions.
 
@@ -934,7 +939,7 @@ Version 1.3 Changes
 
 Version 1.2 Changes
 	* Added SCRAM-SHA-1 sasl mechanism
-	* Added `Connection Handshake`_
+	* Added connection handshake
 	* Changed connection string to support mechanism properties in generic form
 	* Added example conversations for all mechanisms except GSSAPI
 	* Miscellaneous wording changes for clarification

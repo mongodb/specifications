@@ -1,0 +1,21 @@
+matrix:
+  include:
+    - name: "reStructuredText syntax check"
+      dist: xenial
+      language: python
+      python:
+        - 3.7
+      install:
+        - pip3 install rstcheck==3.3.1
+      script:
+        - rstcheck -r source/ --ignore-language c,python,java --report error
+
+    - name: "JSON regeneration check"
+      dist: trusty
+      language: node_js
+      node_js:
+        - 12
+      install:
+        - npm install -g js-yaml
+      script:
+        - cd source && make && git diff --exit-code

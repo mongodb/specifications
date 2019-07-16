@@ -8,7 +8,7 @@ Server Discovery And Monitoring -- Summary
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: September 8, 2014
+:Last Modified: July 11, 2019
 
 .. contents::
 
@@ -212,7 +212,7 @@ the behavior is different from a failed application operation.
 The ismaster call is retried once, immediately,
 before the server is marked "down".
 
-In either case the client SHOULD clear its connection pool for the server:
+In either case the client MUST clear its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
 An algorithm is specified for parsing
@@ -221,6 +221,6 @@ When the client sees such an error it knows its topology view is out of date.
 It MUST mark the server type "unknown."
 Multi-threaded and asynchronous clients MUST re-check the server soon,
 and single-threaded clients MUST request a scan before the next operation.
-The client SHOULD clear its connection pool for the server if the
-server is 4.0 or earlier, and SHOULD NOT clear its connection pool for the
+The client MUST clear its connection pool for the server if the
+server is 4.0 or earlier, and MUST NOT clear its connection pool for the
 server if the server is 4.2 or later.

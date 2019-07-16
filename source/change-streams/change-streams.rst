@@ -330,7 +330,7 @@ Driver API
      *
      * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
-     * @since 4.0.7
+     * @since 4.1.1
      * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
      * @note this is an option of the `$changeStream` pipeline stage.
      */
@@ -433,7 +433,7 @@ Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``c
 ChangeStream
 ------------
 
-A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a method to close the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``.
+A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method. 
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
@@ -480,10 +480,19 @@ Once a ``ChangeStream`` has encountered a resumable error, it MUST attempt to re
 - Connect to selected server.
 - If there is a cached ``resumeToken``:
 
-  - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
-  - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
-  - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
-- If there is no cached ``resumeToken`` and the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
+  - If the ``ChangeStream`` was started with ``startAfter`` and has yet to return a result document:
+
+    - The driver MUST set ``startAfter`` to the cached ``resumeToken``.
+    - The driver MUST NOT set ``resumeAfter``.
+    - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+
+  - Else:
+
+    - The driver MUST set ``resumeAfter`` to the cached ``resumeToken``.
+    - The driver MUST NOT set ``startAfter``. If ``startAfter`` was in the original aggregation command, the driver MUST remove it.
+    - The driver MUST NOT set ``startAtOperationTime``. If ``startAtOperationTime`` was in the original aggregation command, the driver MUST remove it.
+
+- Else if there is no cached ``resumeToken`` and the ``ChangeStream`` has a saved operation time (either from an originally specified ``startAtOperationTime`` or saved from the original aggregation) and the max wire version is >= ``7``:
 
   - The driver MUST NOT set ``resumeAfter``.
   - The driver MUST NOT set ``startAfter``.
@@ -776,5 +785,13 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2019-06-20 | Fix server version for addition of postBatchResumeToken    |
 +------------+------------------------------------------------------------+
+| 2019-07-01 | Clarified that close may be implemented with more idiomatic|
+|            | patterns instead of a method.                              |
++------------+------------------------------------------------------------+
+| 2019-07-02 | Fix server version for startAfter                          |
++------------+------------------------------------------------------------+
 | 2019-07-09 | Changed ``fullDocument`` to be an optional string.         |
++------------+------------------------------------------------------------+
+| 2019-07-15 | Clarify resume process for change streams started with     |
+|            | the ``startAfter`` option.                                 |
 +------------+------------------------------------------------------------+
