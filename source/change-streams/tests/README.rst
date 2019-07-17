@@ -172,7 +172,7 @@ The following tests have not yet been automated, but MUST still be tested
    - Expected result: 
       - ``getResumeToken`` must return the ``_id`` of the last document returned if one exists.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
-      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
+      - If ``resumeAfter`` was not specified, the ``getResumeToken`` result must be empty.
 #. - For a ``ChangeStream`` under these conditions:
       - The batch is not empty.
       - The batch has been iterated up to but not including the last element.
