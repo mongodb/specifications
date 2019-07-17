@@ -148,32 +148,29 @@ tests:
         expectations:
              - *retryable_command_started_event
     -
-        description: "db.coll.watch fails after ExceededTimeLimit"
-        clientOptions:
-            retryReads: false
+        description: "db.coll.watch succeeds after ExceededTimeLimit"
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 262 }
-        operations: [*retryable_operation_fails]
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event
     -
-        description: "db.coll.watch fails after LockTimeout"
-        clientOptions:
-            retryReads: false
+        description: "db.coll.watch succeeds after LockTimeout"
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 24 }
-        operations: [*retryable_operation_fails]
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event
     -
-        description: "db.coll.watch fails after ClientDisconnect"
-        clientOptions:
-            retryReads: false
+        description: "db.coll.watch succeeds after ClientDisconnect"
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 279 }
-        operations: [*retryable_operation_fails]
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
+             - *retryable_command_started_event 
