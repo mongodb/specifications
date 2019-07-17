@@ -24,6 +24,9 @@ def allowed(map):
         return False
     if map["type"] in ["object", "array", "double", "decimal", "javascriptWithScope", "bool"]  and map["algo"] == "det":
         return False
+    if map["algo"] == "det" and map["identifier"] == "altname" and map["method"] == "auto":
+        # prohibited per SERVER-42010
+        return False
     return True
 
 def gen_schema (map):
