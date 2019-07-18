@@ -151,34 +151,34 @@ Prose Tests
 
 The following tests have not yet been automated, but MUST still be tested
 
-#. ``ChangeStream`` must continuously track the last seen ``resumeToken``
-#. ``ChangeStream`` will throw an exception if the server response is missing the resume token (if wire version is < 8, this is a driver-side error; for 8+, this is a server-side error)
-#. ``ChangeStream`` will automatically resume one time on a resumable error (including `not master`) with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
-#. ``ChangeStream`` will not attempt to resume on any error encountered while executing an ``aggregate`` command.
-#. ``ChangeStream`` will not attempt to resume after encountering error code 11601 (Interrupted), 136 (CappedPositionLost), or 237 (CursorKilled) while executing a ``getMore`` command.
-#. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
-#. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on the driver side.
-#. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
-#. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` and ``<4.0.7`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a change stream.
-#. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
-#. - For a ``ChangeStream`` under these conditions:
+1. ``ChangeStream`` must continuously track the last seen ``resumeToken``
+2. ``ChangeStream`` will throw an exception if the server response is missing the resume token (if wire version is < 8, this is a driver-side error; for 8+, this is a server-side error)
+3. ``ChangeStream`` will automatically resume one time on a resumable error (including `not master`) with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
+4. ``ChangeStream`` will not attempt to resume on any error encountered while executing an ``aggregate`` command.
+5. ``ChangeStream`` will not attempt to resume after encountering error code 11601 (Interrupted), 136 (CappedPositionLost), or 237 (CursorKilled) while executing a ``getMore`` command.
+6. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
+7. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on the driver side.
+8. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
+9. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` and ``<4.0.7`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a change stream.
+10. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
+11. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``>=4.0.7``.
       - The batch is empty or has been iterated to the last document.
    - Expected result: 
        - ``getResumeToken`` must return the ``postBatchResumeToken`` from the current command response.
-#. - For a ``ChangeStream`` under these conditions:
+12. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``<4.0.7``.
       - The batch is empty or has been iterated to the last document.
    - Expected result: 
       - ``getResumeToken`` must return the ``_id`` of the last document returned if one exists.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
-      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
-#. - For a ``ChangeStream`` under these conditions:
+      - If ``resumeAfter`` was not specified, the ``getResumeToken`` result must be empty.
+13. - For a ``ChangeStream`` under these conditions:
       - The batch is not empty.
       - The batch has been iterated up to but not including the last element.
    - Expected result:
       - ``getResumeToken`` must return the ``_id`` of the previous document returned.
-#. - For a ``ChangeStream`` under these conditions:
+14. - For a ``ChangeStream`` under these conditions:
       - The batch is not empty.
       - The batch hasn’t been iterated at all.
       - Only the initial ``aggregate`` command has been executed.
@@ -186,14 +186,14 @@ The following tests have not yet been automated, but MUST still be tested
       - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
       - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
-#. - For a ``ChangeStream`` under these conditions:
+15. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``>=4.0.7``.
       - The batch is not empty.
       - The batch hasn’t been iterated at all.
       - The stream has iterated beyond a previous batch and a ``getMore`` command has just been executed.
    - Expected result:
       - ``getResumeToken`` must return the ``postBatchResumeToken`` from the previous command response.
-#. - For a ``ChangeStream`` under these conditions:
+16. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``<4.0.7``.
       - The batch is not empty.
       - The batch hasn’t been iterated at all.
