@@ -186,5 +186,6 @@ The following tests have not yet been automated, but MUST still be tested
       - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
       - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
+    - Note that this test cannot be run against sharded topologies because in that case the initial ``aggregate`` command only establishes cursors on the shards and always returns an empty ``firstBatch``.
 17. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has not received any results yet MUST include a ``startAfter`` option and MUST NOT include a ``resumeAfter`` option when resuming a change stream.
 18. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has received at least one result MUST include a ``resumeAfter`` option and MUST NOT include a ``startAfter`` option when resuming a change stream.
