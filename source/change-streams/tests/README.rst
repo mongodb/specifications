@@ -185,6 +185,7 @@ The following tests have not yet been automated, but MUST still be tested
    - Expected result:
       - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
+      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
 #. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``>=4.0.7``.
       - The batch is not empty.
