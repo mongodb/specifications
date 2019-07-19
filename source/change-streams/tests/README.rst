@@ -149,7 +149,7 @@ If the test expects an error and one was not thrown by either creating the chang
 Prose Tests
 ===========
 
-The following tests have not yet been automated, but MUST still be tested
+The following tests have not yet been automated, but MUST still be tested. All tests SHOULD be run on both replica sets and sharded clusters unless otherwise specified:
 
 1. ``ChangeStream`` must continuously track the last seen ``resumeToken``
 2. ``ChangeStream`` will throw an exception if the server response is missing the resume token (if wire version is < 8, this is a driver-side error; for 8+, this is a server-side error)
