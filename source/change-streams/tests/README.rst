@@ -149,7 +149,7 @@ If the test expects an error and one was not thrown by either creating the chang
 Prose Tests
 ===========
 
-The following tests have not yet been automated, but MUST still be tested
+The following tests have not yet been automated, but MUST still be tested. All tests SHOULD be run on both replica sets and sharded clusters unless otherwise specified:
 
 1. ``ChangeStream`` must continuously track the last seen ``resumeToken``
 2. ``ChangeStream`` will throw an exception if the server response is missing the resume token (if wire version is < 8, this is a driver-side error; for 8+, this is a server-side error)
@@ -164,43 +164,28 @@ The following tests have not yet been automated, but MUST still be tested
 11. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``>=4.0.7``.
       - The batch is empty or has been iterated to the last document.
-   - Expected result: 
+    - Expected result:
        - ``getResumeToken`` must return the ``postBatchResumeToken`` from the current command response.
 12. - For a ``ChangeStream`` under these conditions:
       - Running against a server ``<4.0.7``.
       - The batch is empty or has been iterated to the last document.
-   - Expected result: 
+    - Expected result:
       - ``getResumeToken`` must return the ``_id`` of the last document returned if one exists.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
       - If ``resumeAfter`` was not specified, the ``getResumeToken`` result must be empty.
 13. - For a ``ChangeStream`` under these conditions:
       - The batch is not empty.
       - The batch has been iterated up to but not including the last element.
-   - Expected result:
+    - Expected result:
       - ``getResumeToken`` must return the ``_id`` of the previous document returned.
 14. - For a ``ChangeStream`` under these conditions:
       - The batch is not empty.
       - The batch hasn’t been iterated at all.
       - Only the initial ``aggregate`` command has been executed.
-   - Expected result:
+    - Expected result:
       - ``getResumeToken`` must return ``startAfter`` from the initial aggregate if the option was specified.
       - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
       - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
-15. - For a ``ChangeStream`` under these conditions:
-      - Running against a server ``>=4.0.7``.
-      - The batch is not empty.
-      - The batch hasn’t been iterated at all.
-      - The stream has iterated beyond a previous batch and a ``getMore`` command has just been executed.
-   - Expected result:
-      - ``getResumeToken`` must return the ``postBatchResumeToken`` from the previous command response.
-16. - For a ``ChangeStream`` under these conditions:
-      - Running against a server ``<4.0.7``.
-      - The batch is not empty.
-      - The batch hasn’t been iterated at all.
-      - The stream has iterated beyond a previous batch and a ``getMore`` command has just been executed.
-   - Expected result:
-      - ``getResumeToken`` must return the ``_id`` of the previous document returned if one exists.
-      - ``getResumeToken`` must return ``resumeAfter`` from the initial aggregate if the option was specified.
-      - If neither the ``startAfter`` nor ``resumeAfter`` options were specified, the ``getResumeToken`` result must be empty.
-#. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has not received any results yet MUST include a ``startAfter`` option and MUST NOT include a ``resumeAfter`` option when resuming a change stream.
-#. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has received at least one result MUST include a ``resumeAfter`` option and MUST NOT include a ``startAfter`` option when resuming a change stream.
+    - Note that this test cannot be run against sharded topologies because in that case the initial ``aggregate`` command only establishes cursors on the shards and always returns an empty ``firstBatch``.
+17. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has not received any results yet MUST include a ``startAfter`` option and MUST NOT include a ``resumeAfter`` option when resuming a change stream.
+18. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has received at least one result MUST include a ``resumeAfter`` option and MUST NOT include a ``startAfter`` option when resuming a change stream.
