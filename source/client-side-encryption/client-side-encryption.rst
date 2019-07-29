@@ -254,9 +254,10 @@ AutoEncryptionOpts:
 
 Automatic encryption is an enterprise only feature that only applies to
 operations on a collection. Automatic encryption is not supported for
-operations on a database or view and will result in error. To bypass
-automatic encryption, set bypassAutoEncryption=true in
-AutoEncryptionOpts.
+operations on a database or view, and operations that are not bypassed
+will result in error (see `libmongocrypt: Auto Encryption Whitelist`_).
+To bypass automatic encryption for all operations, set
+bypassAutoEncryption=true in AutoEncryptionOpts.
 
 Explicit encryption/decryption and automatic decryption is a community
 feature. A MongoClient configured with bypassAutoEncryption=true will

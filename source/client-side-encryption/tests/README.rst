@@ -193,6 +193,12 @@ Prose Tests
 
 Tests for the ClientEncryption type are not included as part of the YAML tests.
 
+In the prose tests LOCAL_MASTERKEY refers to the following base64:
+
+.. code:: javascript
+
+  Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
+
 Data key and double encryption
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -215,12 +221,6 @@ First, perform the setup.
           "aws": { <AWS credentials> },
           "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
       }
-
-   Where LOCAL_MASTERKEY is the following base64:
-
-   .. code:: javascript
-
-      Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 
    Configure both objects with ``keyVaultNamespace`` set to ``admin.datakeys``.
 
@@ -318,12 +318,6 @@ Run the following tests twice, parameterized by a boolean ``withExternalKeyVault
 
       { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
 
-   Where LOCAL_MASTERKEY is the following base64:
-
-   .. code:: javascript
-
-      Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
-
    Configure both objects with ``keyVaultNamespace`` set to ``admin.datakeys``.
 
    Configure ``client_encrypted`` to use the schema `external/external-schema.json <../external/external-schema.json>`_  for ``db.coll`` by setting a schema map like: ``{ "db.coll": <contents of external-schema.json>}``
@@ -355,15 +349,7 @@ First, perform the setup.
 
    .. code:: javascript
 
-      {
-          "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
-      }
-
-   Where LOCAL_MASTERKEY is the following base64:
-
-   .. code:: javascript
-
-      Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
 
    Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
 
@@ -400,6 +386,26 @@ Using ``client_encrypted`` perform the following operations:
    Expect the bulk write to succeed and split after first doc (i.e. two inserts occur).
 
 Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that setting maxWriteBatchSize=1 and inserting the two documents ``{ "_id": "a" }, { "_id": "b" }`` with ``client_encrypted`` splits the operation into two inserts.
+
+
+Views are prohibited
+~~~~~~~~~~~~~~~~~~~~
+
+#. Create a MongoClient without encryption enabled (referred to as ``client``).
+
+#. Using ``client``, drop and create a view named ``db.view`` with an empty pipeline. E.g. using the command ``{ "create": "view", "viewOn": "coll" }``.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure with the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+#. Using ``client_encrypted``, attempt to insert a document into ``db.view``. Expect an exception to be thrown containing the message: "cannot auto encrypt a view".
 
 
 Corpus Test
