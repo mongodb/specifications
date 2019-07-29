@@ -409,9 +409,9 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 1. Create a MongoClient without encryption enabled (referred to as ``client``).
 
-2. Using ``client``, drop and create the collection ``db.coll`` configured with the included JSON schema `corpus/corpus-schema.json <corpus/corpus-schema.json>`_.
+2. Using ``client``, drop and create the collection ``db.coll`` configured with the included JSON schema `corpus/corpus-schema.json <../corpus/corpus-schema.json>`_.
 
-3. Using ``client``, drop the collection ``admin.datakeys``. Insert the documents `corpus/corpus-key-local.json <corpus/corpus-key-local.json>`_ and `corpus/corpus-key-aws.json <corpus/corpus-key-aws.json>`_.
+3. Using ``client``, drop the collection ``admin.datakeys``. Insert the documents `corpus/corpus-key-local.json <../corpus/corpus-key-local.json>`_ and `corpus/corpus-key-aws.json <../corpus/corpus-key-aws.json>`_.
 
 4. Create the following:
 
@@ -435,7 +435,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
    Configure both objects with ``keyVaultNamespace`` set to ``admin.datakeys``.
 
-5. Load `corpus/corpus.json <corpus/corpus.json>`_ to a variable named ``corpus``. The corpus contains subdocuments with the following fields:
+5. Load `corpus/corpus.json <../corpus/corpus.json>`_ to a variable named ``corpus``. The corpus contains subdocuments with the following fields:
 
    - ``kms`` is either ``aws`` or ``local``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
@@ -468,7 +468,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 7. Using ``client_encrypted``, find the inserted document from ``db.coll`` to a variable named ``corpus_decrypted``. Since it should have been automatically decrypted, assert the document exactly matches ``corpus``.
 
-8. Load `corpus/corpus_encrypted.json <corpus/corpus-encrypted.json>`_ to a variable named ``corpus_encrypted_expected``.
+8. Load `corpus/corpus_encrypted.json <../corpus/corpus-encrypted.json>`_ to a variable named ``corpus_encrypted_expected``.
    Using ``client`` find the inserted document from ``db.coll`` to a variable named ``corpus_encrypted_actual``.
 
    Iterate over each field of ``corpus_encrypted_expected`` and check the following:
