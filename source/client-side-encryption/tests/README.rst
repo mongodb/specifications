@@ -193,6 +193,9 @@ Prose Tests
 
 Tests for the ClientEncryption type are not included as part of the YAML tests.
 
+Data key and double encryption
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 First, perform the setup.
 
 #. Create a MongoClient without encryption enabled (referred to as ``client``).
@@ -293,6 +296,7 @@ Then, run the following final tests:
    - Expect an exception to be thrown, since this is an attempt to auto encrypt an already encrypted value.
 
 
+
 External Key Vault Test
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -332,6 +336,70 @@ Run the following tests twice, parameterized by a boolean ``withExternalKeyVault
 
 #. Use ``client_encryption`` to explicitly encrypt the string ``"test"`` with key ID ``LOCALAAAAAAAAAAAAAAAAA==`` and deterministic algorithm.
    If ``withExternalKeyVault == true``, expect an authentication exception to be thrown. Otherwise, expect the insert to succeed.
+
+
+BSON size limits and batch splitting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First, perform the setup.
+
+#. Create a MongoClient without encryption enabled (referred to as ``client``).
+
+#. Using ``client``, drop and create the collection ``db.coll`` configured with the included JSON schema `limits/limits-schema.json <../limits/limits-schema.json>`_.
+
+#. Using ``client``, drop the collection ``admin.datakeys``. Insert the document `limits/limits-key.json <../limits/limits-key.json>`_
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure with the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      {
+          "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
+      }
+
+   Where LOCAL_MASTERKEY is the following base64:
+
+   .. code:: javascript
+
+      Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
+
+   Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+Using ``client_encrypted`` perform the following operations:
+
+#. Insert ``{ "_id": "no_encryption_under_2mib", "unencrypted": <the string "a" repeated (2097152 - 1000) times> }``. (Note 2097152 is 2^21 bytes, or 2 MiB).
+
+   Expect this to succeed.
+
+#. Insert ``{ "_id": "no_encryption_over_2mib", "unencrypted": <the string "a" repeated 2097152 times> }``.
+
+   Expect this to throw an exception due to exceeding the reduced maximum BSON document size.
+
+#. Insert the document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_2mib", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }``
+   Note: limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
+
+   Expect this to succeed since after encryption this still is below the normal maximum BSON document size.
+   Note, before auto encryption this document is under the 2 MiB limit. After encryption it exceeds the 2 MiB limit, but does NOT exceed the 16 MiB limit.
+
+#. Bulk insert the following:
+
+   - ``{ "_id": "no_encryption_under_2mib_1", "unencrypted": <the string "a" repeated (2097152 - 1000) times> }``
+
+   - ``{ "_id": "no_encryption_under_2mib_2", "unencrypted": <the string "a" repeated (2097152 - 1000) times> }``
+
+   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command monitoring <https://github.com/mongodb/specifications/tree/master/source/command-monitoring/command-monitoring.rst>`_.
+
+#. Bulk insert the following:
+
+   - The document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_2mib_1", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }``
+
+   - The document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_2mib_2", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }``
+
+   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur).
+
+Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that setting maxWriteBatchSize=1 and inserting the two documents ``{ "_id": "a" }, { "_id": "b" }`` with ``client_encrypted`` splits the operation into two inserts.
 
 
 Corpus Test
@@ -412,4 +480,3 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
 
-   
