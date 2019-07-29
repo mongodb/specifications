@@ -345,7 +345,7 @@ detail described in the `Implementation`_ section:
 .. code:: typescript
 
    {
-      // Defaults to "mongodb://%2Fvar%2Fmongocryptd.sock" if domain sockets are available or
+      // Defaults to "mongodb://%2Ftmp%2Fmongocryptd.sock" if domain sockets are available or
       // "mongodb://localhost:27020" otherwise.
       mongocryptdURI: Optional<String>,
 
