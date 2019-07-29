@@ -293,6 +293,47 @@ Then, run the following final tests:
    - Expect an exception to be thrown, since this is an attempt to auto encrypt an already encrypted value.
 
 
+External Key Vault Test
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Run the following tests twice, parameterized by a boolean ``withExternalKeyVault``.
+
+#. Create a MongoClient without encryption enabled (referred to as ``client``).
+
+#. Using ``client``, drop the collections ``admin.datakeys`` and ``db.coll``.
+   Insert the document `external/external-key.json <../external/external-key.json>`_ into ``admin.datakeys``.
+
+#. Create the following:
+
+   - A MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+   - A ``ClientEncryption`` object (referred to as ``client_encryption``)
+
+   Configure both objects with the ``local`` KMS providers as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Where LOCAL_MASTERKEY is the following base64:
+
+   .. code:: javascript
+
+      Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
+
+   Configure both objects with ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+   Configure ``client_encrypted`` to use the schema `external/external-schema.json <../external/external-schema.json>`_  for ``db.coll`` by setting a schema map like: ``{ "db.coll": <contents of external-schema.json>}``
+
+   If ``withExternalKeyVault == true``, configure both objects with an external key vault client. The external client MUST connect to the same
+   MongoDB cluster that is being tested against, except it MUST use the username ``fake-user`` and password ``fake-pwd``.
+
+#. Use ``client_encrypted`` to insert the document ``{"encrypt": "test"}`` into ``db.coll``.
+   If ``withExternalKeyVault == true``, expect an authentication exception to be thrown. Otherwise, expect the insert to succeed.
+
+#. Use ``client_encryption`` to explicitly encrypt the string ``"test"`` with key ID ``LOCALAAAAAAAAAAAAAAAAA==`` and deterministic algorithm.
+   If ``withExternalKeyVault == true``, expect an authentication exception to be thrown. Otherwise, expect the insert to succeed.
+
+
 Corpus Test
 ===========
 
