@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5.2
+:Spec Version: 1.5.3
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2019-06-10
+:Last Modified: 2019-07-30
 
 .. contents::
 
@@ -838,6 +838,9 @@ commitTransaction or abortTransaction commands. Tracking the most recently
 returned ``recoveryToken`` allows the server to update the ``recoveryToken``
 mid-transaction if needed.
 
+Drivers MUST clear a session's cached ``recoveryToken`` when transitioning to
+the "no transaction" or "starting transaction" state.
+
 Drivers can safely assume that the ``recoveryToken`` field is always a BSON
 document but drivers MUST NOT modify the contents of the document.
 
@@ -1380,6 +1383,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-07-30: Clarify when the cached recoveryToken should be cleared.
 :2019-06-10: Client-side errors must not change transaction state.
 :2019-06-07: Mention $merge stage for aggregate alongside $out
 :2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired
