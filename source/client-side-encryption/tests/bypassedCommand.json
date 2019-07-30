@@ -76,6 +76,31 @@
                     }
                 }
             ]
+        },
+        {
+            "description": "current op is not bypassed",
+            "clientOptions": {
+                "autoEncryptOpts": {
+                    "kmsProviders": {
+                        "aws": {}
+                    }
+                }
+            },
+            "operations": [
+                {
+                    "name": "runCommand",
+                    "object": "database",
+                    "command_name": "currentOp",
+                    "arguments": {
+                        "command": {
+                            "currentOp": 1
+                        }
+                    },
+                    "result": {
+                        "errorContains": "command not supported for auto encryption: currentOp"
+                    }
+                }
+            ]
         }
     ]
 }
