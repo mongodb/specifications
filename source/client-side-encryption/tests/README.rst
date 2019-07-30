@@ -428,7 +428,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
       }
 
    Where LOCAL_MASTERKEY is the following base64:
-   
+
    .. code:: javascript
 
       Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
@@ -451,15 +451,18 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - If the field name is ``_id``, ``altname_aws`` and ``altname_local``, copy the field to ``corpus_copied``.
    - If ``method`` is ``auto``, copy the field to ``corpus_copied``.
    - If ``method`` is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
-   
+
      - Encrypt with the algorithm described by ``algo``.
      - If ``identifier`` is ``id``
-        - If ``kms`` is ``local`` set the key_id to the UUID with base64 value ``LOCALAAAAAAAAAAAAAAAAA==``.
-        - If ``kms`` is ``aws`` set the key_id to the UUID with base64 value ``AWSAAAAAAAAAAAAAAAAAAA==``.
+
+       - If ``kms`` is ``local`` set the key_id to the UUID with base64 value ``LOCALAAAAAAAAAAAAAAAAA==``.
+       - If ``kms`` is ``aws`` set the key_id to the UUID with base64 value ``AWSAAAAAAAAAAAAAAAAAAA==``.
+
      - If ``identifier`` is ``altname``
-        - If ``kms`` is ``local`` set the key_alt_name to "local".
-        - If ``kms`` is ``aws`` set the key_alt_name to "aws".
-     
+
+       - If ``kms`` is ``local`` set the key_alt_name to "local".
+       - If ``kms`` is ``aws`` set the key_alt_name to "aws".
+
      If ``allowed`` is true, copy the field and encrypted value to ``corpus_copied``.
      If ``allowed`` is false. verify that an exception is thrown. Copy the unencrypted value to to ``corpus_copied``.
 
@@ -473,10 +476,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
    Iterate over each field of ``corpus_encrypted_expected`` and check the following:
 
-   - If the ``algo`` is ``det``, that the value exactly matches all fields in ``corpus_encrypted_actual`` with the same ``kms``, ``type``, and ``algo``.
-   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not match any fields in ``corpus_encrypted_actual`` with the same ``kms`` and ``type``.
-   - If the ``method`` is ``auto`` or ``explicit``, decrypt the value with ``client_encryption`` and validate the value exactly matches the corresponding field of ``corpus``.
-   - If the ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus``.
+   - If the ``algo`` is ``det``, that the value exactly the value of the corresponding field in ``corpus_encrypted_actual``.
+   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not the value of the corresponding field in ``corpus_encrypted_actual``.
+   - If ``allowed`` is true, decrypt the value with ``client_encryption``. Decrypt the corresponding field of ``corpus_encrypted`` and validate that they both match.
+   - If ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus`` (neither was encrypted).
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
 
