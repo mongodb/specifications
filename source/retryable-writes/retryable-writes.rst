@@ -155,10 +155,20 @@ Supported Server Versions
 Like sessions, retryable writes require a MongoDB 3.6 replica set or shard
 cluster operating with feature compatibility version 3.6 (i.e. the
 ``{setFeatureCompatibilityVersion: 3.6}`` administrative command has been run on
-the cluster). Drivers SHOULD verify server eligibility by ensuring that
+the cluster). Drivers MUST verify server eligibility by ensuring that
 ``maxWireVersion`` is at least six, the ``logicalSessionTimeoutMinutes``
 field is present in the server's ``isMaster`` response, and the server type is
 not standalone.
+
+Retryable writes are only supported by storage engines that support document-
+level locking. Notably, that excludes the MMAPv1 storage engine which is
+available in both MongoDB 3.6 and 4.0. Since ``retryWrites`` defaults to
+``true``, Drivers MUST raise an actionable error message when the server
+returns code 20 with errmsg starting with "Transaction numbers". The
+replacement error message MUST be::
+
+  This MongoDB deployment does not support retryable writes. Please add
+  retryWrites=false to your connection string.
 
 If the server selected for the first attempt of a retryable write operation does
 not support retryable writes, drivers MUST execute the write as if retryable
@@ -395,13 +405,21 @@ Consider the following pseudo-code:
 
     /* NetworkException and NotMasterException are both retryable errors. If
      * caught, remember the exception, update SDAM accordingly, and proceed with
-     * retrying the operation. */
+     * retrying the operation.
+     *
+     * IllegalOperation (code 20) with errmsg starting with "Transaction
+     * numbers" MUST be re-raised with an actionable error message. */
     try {
       return executeCommand(server, retryableCommand);
     } catch (NetworkException originalError) {
       updateTopologyDescriptionForNetworkError(server, originalError);
     } catch (NotMasterException originalError) {
       updateTopologyDescriptionForNotMasterError(server, originalError);
+    } catch (IllegalOperation originalError) {
+      if ( originalError.code == 20 && originalError.errmsg.startsWith("Transaction numbers") ) {
+        originalError.errmsg = "This MongoDB deployment does not support retryable...";
+        throw originalError;
+      }
     }
 
     /* If we cannot select a writable server, do not proceed with retrying and
@@ -724,8 +742,28 @@ was no risk in changing the default. Additionally, the fact that some
 operations continue to be unsupported for retryable writes (updateMany and
 deleteMany) does not seem to pose a problem in practice.
 
+Why do drivers have to parse errmsg to determine storage engine support?
+------------------------------------------------------------------------
+
+There is no reliable way to determine the storage engine in use for shards
+in a sharded cluster, and replica sets (and shards) can have mixed deployments
+using different storage engines on different members. This is especially
+true when a replica set or sharded cluster is being upgraded from one
+storage engine to another. This could be common when upgrading to MongoDB
+4.2, where MMAPv1 is no longer supported.
+
+The server returns error code 20 (IllegalOperation) when the storage engine
+doesn't support document-level locking and txnNumbers. Error code 20 is used
+for a large number of different error cases in the server so we need some other
+way to differentiate this error case from any other. The error code and errmsg
+are the same in MongoDB 3.6 and 4.0, and the same from a replica set or sharded
+cluster (mongos just forwards the error from the shard's replica set).
+
 Changes
 =======
+
+2019-07-30: Drivers must rewrite error messages for error code 20 when
+txnNumber is not supported by the storage engine.
 
 2019-06-07: Mention $merge stage for aggregate alongside $out
 
