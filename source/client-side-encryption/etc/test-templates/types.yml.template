@@ -25,7 +25,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc0
+        result: *doc0
     expectations:
       - command_started_event:
           command:
@@ -73,7 +73,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc1
+        result: *doc1
     expectations:
       - command_started_event:
           command:
@@ -121,7 +121,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc2
+        result: *doc2
     expectations:
       - command_started_event:
           command:
@@ -195,7 +195,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc6
+        result: *doc6
     expectations:
       - command_started_event:
           command:
@@ -243,7 +243,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc7
+        result: *doc7
     expectations:
       - command_started_event:
           command:
@@ -317,7 +317,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc10
+        result: *doc10
     expectations:
       - command_started_event:
           command:
@@ -365,7 +365,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc11
+        result: *doc11
     expectations:
       - command_started_event:
           command:
@@ -413,7 +413,7 @@ tests:
       - name: findOne
         arguments:
           filter: { _id: 1 }
-          result: *doc13
+        result: *doc13
     expectations:
       - command_started_event:
           command:
