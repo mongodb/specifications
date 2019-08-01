@@ -24,7 +24,7 @@ The spec tests format is an extension of `transactions spec tests <https://githu
 
 - A ``key_vault_data`` of data that should be inserted in the key vault collection before each test.
 
-- Introduction ``client_side_encryption_opts`` to `clientOptions`
+- Introduction ``autoEncryptOpts`` to `clientOptions`
 
 - Addition of `$db` to command in `command_started_event`
 
