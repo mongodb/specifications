@@ -1,8 +1,6 @@
-from bson import json_util
 import bson
 import os
 import sys
-import json
 import yaml
 from jinja2 import Template
 description = """Generates YAML/JSON tests from a template file.
@@ -465,8 +463,6 @@ injections = {
 rendered = template.render(**injections)
 # check for valid YAML.
 parsed = yaml.load(rendered)
-# print as JSON.
-as_json = json.dumps(parsed, indent=4)
 open(f"{os.path.join(targetdir,filename + '.yml')}", "w").write(rendered)
-open(f"{os.path.join(targetdir,filename + '.json')}", "w").write(as_json)
-print(f"Generated {os.path.join(targetdir,filename)}.yml|json")
+print(f"Generated {os.path.join(targetdir,filename)}.yml.")
+print("""Run "make" from specifications/source directory to generate corresponding JSON file""")
