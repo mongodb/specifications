@@ -1,7 +1,4 @@
-from pymongo import MongoClient
-from bson import json_util
-import bson 
-from bson.codec_options import CodecOptions
+import json
 import sys
 import os
 
@@ -25,9 +22,6 @@ axes = [
     ("identifier", [ "id", "altname" ])
 ]
 
-codec_options = CodecOptions(uuid_representation=bson.binary.STANDARD)
-json_options = json_util.JSONOptions(json_mode=json_util.JSONMode.CANONICAL, uuid_representation=bson.binary.STANDARD)
-
 def allowed(map):
     if map["type"] in ["undefined", "minKey", "maxKey", "null"]:
         return False
@@ -39,14 +33,14 @@ def allowed(map):
     return True
 
 def gen_schema (map):
-    fmt = """ "%s" : { "bsonType": "object", "properties": { "value": { "encrypt": { "keyId": %s, "algorithm": "%s", "bsonType": "%s" } } } } """
+    fmt = """ { "bsonType": "object", "properties": { "value": { "encrypt": { "keyId": %s, "algorithm": "%s", "bsonType": "%s" } } } } """
 
     if not allowed(map):
         # We cannot even set a schema, don't test auto with prohibited fields.
         return None
 
     if map["method"] == "explicit":
-        return """ "%s" : { "bsonType": "object", "properties": { "value": { "bsonType": "binData" } } } """ % field_name(map)
+        return """ { "bsonType": "object", "properties": { "value": { "bsonType": "binData" } } } """ 
 
     if map["identifier"] == "id":
         if map["kms"] == "local":
@@ -68,7 +62,7 @@ def gen_schema (map):
     if map["type"].startswith("binData"):
         type = "binData"
     
-    return fmt % (field_name(map), key_id, algorithm, type)
+    return fmt % (key_id, algorithm, type)
 
 def get_bson_value (bson_type):
     if bson_type == "double":
@@ -124,7 +118,7 @@ def gen_field (map):
         # We cannot even set a schema, don't test auto with prohibited fields.
         return None
     allow = "true" if allowed(map) else "false"
-    return """ "%s" : { "kms": "%s", "type": "%s", "algo": "%s", "method": "%s", "identifier": "%s", "allowed": %s, "value": %s }""" % (field_name(map), map["kms"], map["type"], map["algo"], map["method"], map["identifier"], allow, get_bson_value (map["type"]))
+    return """ { "kms": "%s", "type": "%s", "algo": "%s", "method": "%s", "identifier": "%s", "allowed": %s, "value": %s }""" % (map["kms"], map["type"], map["algo"], map["method"], map["identifier"], allow, get_bson_value (map["type"]))
 
 schema_sections = []
 corpus_sections = [
@@ -138,16 +132,33 @@ def enumerate_axis (map, axis, remaining):
     for item in axis[1]:
         map[name] = item
         if remaining == []:
+            key = field_name (map)
             schema_section = gen_schema (map)
             corpus_section = gen_field (map)
             if schema_section:
-                schema_sections.append(schema_section)
+                schema_sections.append(""" "%s": %s """ % (key, schema_section))
             if corpus_section:
-                corpus_sections.append(corpus_section)
+                corpus_sections.append(""" "%s": %s """ % (key, corpus_section))
         else:
             enumerate_axis (map, remaining[0], remaining[1:])
 
 enumerate_axis({}, axes[0], axes[1:])
+
+# Add padding cases
+for algo in ("rand", "det"):
+    for i in range(17):
+        key = "payload=%d,algo=%s" % (i, algo)
+        map = {
+            "kms": "local",
+            "type": "string",
+            "algo": algo,
+            "method": "explicit",
+            "identifier": "id",
+            "allowed": True,
+            "value": "a" * i
+        }
+        corpus_sections.append (""" "%s": %s """ % (key, json.dumps(map)))
+
 
 schema = """{ "bsonType": "object", "properties": { %s } }""" % (",\n".join(schema_sections))
 open(os.path.join(targetdir, "corpus-schema.json"), "w").write(schema)
