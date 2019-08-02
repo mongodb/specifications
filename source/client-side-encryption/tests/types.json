@@ -92,12 +92,12 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_objectId": {
-                                "$oid": "AAAAAAAAAAAAAAAAAAAAAAAA"
-                            }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_objectId": {
+                            "$oid": "AAAAAAAAAAAAAAAAAAAAAAAA"
                         }
                     }
                 }
@@ -241,12 +241,12 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_symbol": {
-                                "$symbol": "test"
-                            }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_symbol": {
+                            "$symbol": "test"
                         }
                     }
                 }
@@ -390,12 +390,12 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_int": {
-                                "$numberInt": "123"
-                            }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_int": {
+                            "$numberInt": "123"
                         }
                     }
                 }
@@ -636,14 +636,14 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_binData": {
-                                "$binary": {
-                                    "base64": "AAAA",
-                                    "subType": "00"
-                                }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_binData": {
+                            "$binary": {
+                                "base64": "AAAA",
+                                "subType": "00"
                             }
                         }
                     }
@@ -788,12 +788,12 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_javascript": {
-                                "$code": "var x = 1;"
-                            }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_javascript": {
+                            "$code": "var x = 1;"
                         }
                     }
                 }
@@ -1033,14 +1033,14 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_timestamp": {
-                                "$timestamp": {
-                                    "t": 123,
-                                    "i": 456
-                                }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_timestamp": {
+                            "$timestamp": {
+                                "t": 123,
+                                "i": 456
                             }
                         }
                     }
@@ -1188,14 +1188,14 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_regex": {
-                                "$regularExpression": {
-                                    "pattern": "test",
-                                    "options": ""
-                                }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_regex": {
+                            "$regularExpression": {
+                                "pattern": "test",
+                                "options": ""
                             }
                         }
                     }
@@ -1342,13 +1342,13 @@
                     "arguments": {
                         "filter": {
                             "_id": 1
-                        },
-                        "result": {
-                            "_id": 1,
-                            "encrypted_date": {
-                                "$date": {
-                                    "$numberLong": "123"
-                                }
+                        }
+                    },
+                    "result": {
+                        "_id": 1,
+                        "encrypted_date": {
+                            "$date": {
+                                "$numberLong": "123"
                             }
                         }
                     }
