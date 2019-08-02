@@ -476,10 +476,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
    Iterate over each field of ``corpus_encrypted_expected`` and check the following:
 
-   - If the ``algo`` is ``det``, that the value exactly the value of the corresponding field in ``corpus_encrypted_actual``.
-   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not the value of the corresponding field in ``corpus_encrypted_actual``.
-   - If ``allowed`` is true, decrypt the value with ``client_encryption``. Decrypt the corresponding field of ``corpus_encrypted`` and validate that they both match.
-   - If ``allowed`` is false, validate the value exactly matches the corresponding field of ``corpus`` (neither was encrypted).
+   - If the ``algo`` is ``det``, that the value equals the value of the corresponding field in ``corpus_encrypted_actual``.
+   - If the ``algo`` is ``rand`` and ``allowed`` is true, that the value does not equal the value of the corresponding field in ``corpus_encrypted_actual``.
+   - If ``allowed`` is true, decrypt the value with ``client_encryption``. Decrypt the value of the corresponding field of ``corpus_encrypted`` and validate that they are both equal.
+   - If ``allowed`` is false, validate the value exactly equals the value of the corresponding field of ``corpus`` (neither was encrypted).
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` and ``client_encryption`` with the ``schema_map`` option.
 
