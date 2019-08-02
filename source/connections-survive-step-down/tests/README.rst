@@ -118,9 +118,9 @@ This test requires a replica set with server version 4.0.
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 10107 code.
+- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
-- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 
 
 Shutdown in progress - Reset Connection Pool
@@ -135,9 +135,9 @@ Perform the following operations on a client configured to NOT retry writes:
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 91 code.
+- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
-- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 
 
 Interrupted at shutdown - Reset Connection Pool
@@ -152,9 +152,9 @@ Perform the following operations on a client configured to NOT retry writes:
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 11600 code.
+- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
-- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
 
 
 
