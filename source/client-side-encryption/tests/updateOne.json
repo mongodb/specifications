@@ -222,9 +222,7 @@
                         "$$type": "binData"
                       }
                     }
-                  },
-                  "multi": false,
-                  "upsert": false
+                  }
                 }
               ],
               "ordered": true
@@ -331,9 +329,7 @@
                     "$unset": {
                       "encrypted_string": ""
                     }
-                  },
-                  "multi": false,
-                  "upsert": false
+                  }
                 }
               ],
               "ordered": true
@@ -403,9 +399,7 @@
                     "$rename": {
                       "encrypted_string": "encrypted_string_equivalent"
                     }
-                  },
-                  "multi": false,
-                  "upsert": false
+                  }
                 }
               ],
               "ordered": true

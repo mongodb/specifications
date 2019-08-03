@@ -10,29 +10,6 @@ handwritten test files to make them more readable and easier
 to change.
 """
 
-
-if sys.version_info < (3, 0):
-    print("Use Python 3")
-    sys.exit(1)
-
-if len(sys.argv) != 3:
-    print(description)
-    print("usage: python generate-test.py ./test-templates/<filename>.yml.template <target directory>")
-    print("example: python ./generate-test.py ./test-templates/bulk.yml.template ./")
-    sys.exit(1)
-
-filepath = sys.argv[1]
-filedir = os.path.dirname(filepath)
-targetdir = sys.argv[2]
-(filename, ext) = os.path.splitext(os.path.basename(filepath))
-if ext != ".template":
-    print("Input file must end with .yml.template")
-    sys.exit(1)
-(filename, ext) = os.path.splitext(filename)
-if ext != ".yml":
-    print("Input file must end with .yml.template")
-    sys.exit(1)
-
 master_keys = {
     "aws": {
         "provider": "aws",
@@ -450,19 +427,41 @@ def local_provider():
         "key": {"$binary": {"base64": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk", "subType": "00"}}
     }
 
+if sys.version_info < (3, 0):
+    print("Use Python 3")
+    sys.exit(1)
 
-template = Template(open(filepath, "r").read())
-injections = {
-    "schema": schema,
-    "ciphertext": ciphertext,
-    "key": key,
-    "local_provider": local_provider,
-    "schema_w_type": schema_w_type
-}
+if len(sys.argv) < 3:
+    print(description)
+    print("usage: python generate-test.py ./test-templates/<filename>.yml.template [...] <target directory>")
+    print("example: python ./generate-test.py ./test-templates/bulk.yml.template ./")
+    sys.exit(1)
 
-rendered = template.render(**injections)
-# check for valid YAML.
-parsed = yaml.load(rendered)
-open(f"{os.path.join(targetdir,filename + '.yml')}", "w").write(rendered)
-print(f"Generated {os.path.join(targetdir,filename)}.yml.")
-print("""Run "make" from specifications/source directory to generate corresponding JSON file""")
+targetdir = sys.argv[-1]
+
+for filepath in sys.argv[1:-1]:
+    filedir = os.path.dirname(filepath)
+    (filename, ext) = os.path.splitext(os.path.basename(filepath))
+    if ext != ".template":
+        print("Input file must end with .yml.template")
+        sys.exit(1)
+    (filename, ext) = os.path.splitext(filename)
+    if ext != ".yml":
+        print("Input file must end with .yml.template")
+        sys.exit(1)
+
+    template = Template(open(filepath, "r").read())
+    injections = {
+        "schema": schema,
+        "ciphertext": ciphertext,
+        "key": key,
+        "local_provider": local_provider,
+        "schema_w_type": schema_w_type
+    }
+
+    rendered = template.render(**injections)
+    # check for valid YAML.
+    parsed = yaml.load(rendered)
+    open(f"{os.path.join(targetdir,filename + '.yml')}", "w").write(rendered)
+    print(f"Generated {os.path.join(targetdir,filename)}.yml")
+    print("""Run "make" from specifications/source directory to generate corresponding JSON file""")

@@ -218,9 +218,7 @@
                     "random": {
                       "$$type": "binData"
                     }
-                  },
-                  "multi": false,
-                  "upsert": false
+                  }
                 }
               ],
               "ordered": true
