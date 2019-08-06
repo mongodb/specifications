@@ -400,8 +400,8 @@ collection that cannot be done directly on a MongoClient. Similar to
 configuring auto encryption on a MongoClient, it is
 constructed with a MongoClient (to a MongoDB cluster containing the key
 vault collection), KMS provider configuration, and keyVaultNamespace. It
-provides API for explicitly encrypting and decrypting values, and
-creating data keys. It does not provide API to query keys from the key
+provides an API for explicitly encrypting and decrypting values, and
+creating data keys. It does not provide an API to query keys from the key
 vault collection, as this can be done directly on the MongoClient.
 
 See `Why do we have a separate top level type for ClientEncryption?`_ and `Why do we need to pass a client to create a ClientEncryption?`_.
