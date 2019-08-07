@@ -316,6 +316,8 @@ and sharded clusters.
 Changelog
 =========
 
+:2019-08-07: Add Prose Tests section
+
 :2019-06-07: Mention $merge stage for aggregate alongside $out
 
 :2019-03-01: Add top-level ``runOn`` field to denote server version and/or
