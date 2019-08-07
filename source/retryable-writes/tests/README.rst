@@ -296,8 +296,26 @@ supported write operations:
   - ``bulkWrite()`` with ``ordered=true`` (no ``UpdateMany`` or ``DeleteMany``)
   - ``bulkWrite()`` with ``ordered=false`` (no ``UpdateMany`` or ``DeleteMany``)
 
+Prose Tests
+===========
+
+The following tests ensure that retryable writes work properly with replica sets
+and sharded clusters.
+
+1. Test that retryable writes raise an exception when using the MMAPv1 storage
+   engine. For this test, execute a write operation, such as ``insertOne``,
+   which should generate an exception. Assert that the error message is the
+   replacement error message::
+
+    This MongoDB deployment does not support retryable writes. Please add
+    retryWrites=false to your connection string.
+
+   and the error code is 20.
+
 Changelog
 =========
+
+:2019-08-07: Add Prose Tests section
 
 :2019-06-07: Mention $merge stage for aggregate alongside $out
 
