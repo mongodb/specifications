@@ -325,7 +325,7 @@ Run the following tests twice, parameterized by a boolean ``withExternalKeyVault
    If ``withExternalKeyVault == true``, configure both objects with an external key vault client. The external client MUST connect to the same
    MongoDB cluster that is being tested against, except it MUST use the username ``fake-user`` and password ``fake-pwd``.
 
-#. Use ``client_encrypted`` to insert the document ``{"encrypt": "test"}`` into ``db.coll``.
+#. Use ``client_encrypted`` to insert the document ``{"encrypted": "test"}`` into ``db.coll``.
    If ``withExternalKeyVault == true``, expect an authentication exception to be thrown. Otherwise, expect the insert to succeed.
 
 #. Use ``client_encryption`` to explicitly encrypt the string ``"test"`` with key ID ``LOCALAAAAAAAAAAAAAAAAA==`` and deterministic algorithm.
