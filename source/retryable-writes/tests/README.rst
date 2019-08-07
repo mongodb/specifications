@@ -308,8 +308,8 @@ and sharded clusters.
    ``IllegalOperation`` exception. Assert that the error message is the
    replacement error message::
 
-  This MongoDB deployment does not support retryable writes. Please add
-  retryWrites=false to your connection string.
+    This MongoDB deployment does not support retryable writes. Please add
+    retryWrites=false to your connection string.
 
    and the error code is 20.
 
