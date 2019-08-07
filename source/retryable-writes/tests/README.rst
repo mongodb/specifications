@@ -296,6 +296,41 @@ supported write operations:
   - ``bulkWrite()`` with ``ordered=true`` (no ``UpdateMany`` or ``DeleteMany``)
   - ``bulkWrite()`` with ``ordered=false`` (no ``UpdateMany`` or ``DeleteMany``)
 
+Prose Tests
+===========
+
+The following tests ensure that retryable writes work properly with replica sets
+and sharded clusters.
+
+#. Test that retryable writes raise an exception when using the MMAPv1 storage engine,
+   available in both MongoDB 3.6 and 4.0.
+
+   .. code:: java
+
+    @Test
+    public void testRetryWritesAgainstMMAPv1RaisesError() {
+        boolean exceptionFound = false;
+
+        try {
+            collection.insertOne(Document.parse("{x: 1}"));
+        } catch (MongoClientException e) {
+            assertTrue(e.getMessage().equals("This MongoDB deployment does not support retryable writes. "
+                    + "Please add retryWrites=false to your connection string."));
+            assertTrue(((MongoException) e.getCause()).getCode() == 20);
+            assertTrue(((MongoException) e.getCause()).getMessage().contains("Transaction numbers"));
+            exceptionFound = true;
+        }
+        assertTrue(exceptionFound);
+    }
+
+    private boolean canRunTests() {
+        Document storageEngine = (Document) getServerStatus().get("storageEngine");
+
+        return ((isSharded() || isDiscoverableReplicaSet()) &&
+                storageEngine != null && storageEngine.get("name").equals("mmapv1") &&
+                serverVersionAtLeast(3, 6) && serverVersionLessThan(4, 1));
+    }
+
 Changelog
 =========
 
