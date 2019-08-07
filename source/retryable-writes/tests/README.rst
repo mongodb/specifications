@@ -303,33 +303,15 @@ The following tests ensure that retryable writes work properly with replica sets
 and sharded clusters.
 
 #. Test that retryable writes raise an exception when using the MMAPv1 storage engine,
-   available in both MongoDB 3.6 and 4.0.
+   available in both MongoDB 3.6 and 4.0. For this test, execute a write
+   operation, such as ``insertOne``, which should generate an
+   ``IllegalOperation`` exception. Assert that the error message is the
+   replacement error message::
 
-   .. code:: java
+  This MongoDB deployment does not support retryable writes. Please add
+  retryWrites=false to your connection string.
 
-    @Test
-    public void testRetryWritesAgainstMMAPv1RaisesError() {
-        boolean exceptionFound = false;
-
-        try {
-            collection.insertOne(Document.parse("{x: 1}"));
-        } catch (MongoClientException e) {
-            assertTrue(e.getMessage().equals("This MongoDB deployment does not support retryable writes. "
-                    + "Please add retryWrites=false to your connection string."));
-            assertTrue(((MongoException) e.getCause()).getCode() == 20);
-            assertTrue(((MongoException) e.getCause()).getMessage().contains("Transaction numbers"));
-            exceptionFound = true;
-        }
-        assertTrue(exceptionFound);
-    }
-
-    private boolean canRunTests() {
-        Document storageEngine = (Document) getServerStatus().get("storageEngine");
-
-        return ((isSharded() || isDiscoverableReplicaSet()) &&
-                storageEngine != null && storageEngine.get("name").equals("mmapv1") &&
-                serverVersionAtLeast(3, 6) && serverVersionLessThan(4, 1));
-    }
+   and the error code is 20.
 
 Changelog
 =========
