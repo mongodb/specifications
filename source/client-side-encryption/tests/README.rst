@@ -71,9 +71,9 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
-    - ``auto_encrypt_opts``: Optional
+    - ``autoEncryptOpts``: Optional
 
-      - ``kms_providers`` A dictionary of KMS providers to set on the key vault ("aws" or "local")
+      - ``kmsProviders`` A dictionary of KMS providers to set on the key vault ("aws" or "local")
 
         - ``aws`` The AWS KMS provider. An empty object. Drivers MUST fill in AWS credentials from the environment.
 
@@ -81,16 +81,18 @@ Each YAML file has the following keys:
 
           - ``key`` A 96 byte local key.
 
-      - ``schema_map``: Optional, a map from namespaces to local JSON schemas.
+      - ``schemaMap``: Optional, a map from namespaces to local JSON schemas.
 
       - ``keyVaultNamespace``: Optional, a namespace to the key vault collection. Defaults to "admin.datakeys".
+
+      - ``bypassAutoEncryption``: Optional, a boolean to indicate whether or not auto encryption should be bypassed. Defaults to ``false``.
 
   - ``operations``: Array of documents, each describing an operation to be
     executed. Each document has the following fields:
 
     - ``name``: |txn|
 
-    - ``object``: |txn|
+    - ``object``: |txn|. Defaults to "collection" if omitted.
 
     - ``collectionOptions``: |txn|
 
@@ -125,18 +127,24 @@ Then for each element in ``tests``:
    #. Drop the ``admin.datakeys`` collection using writeConcern "majority".
    #. Insert the data specified into the ``admin.datakeys`` with write concern "majority".
 
-#. Create a MongoClient using ``clientOptions``.
-
-   #. If ``autoEncryptOpts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
-   #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it to ``admin.datakeys``
+#. Create a MongoClient.
    
 #. Create a collection object from the MongoClient, using the ``database_name``
-   and ``collection_name`` fields from the YAML file.
+   and ``collection_name`` fields from the YAML file. If a ``json_schema`` is defined in the test,
+   use the ``createCollection`` command to explicitly create the collection:
+    .. code:: typescript
+
+      {"create": <collection>, "validator": {"$jsonSchema": <json_schema>}}
+
 #. Drop the test collection, using writeConcern "majority".
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
 
-#. Set Command Monitoring listeners on the MongoClient.
+#. Create a **new** MongoClient using ``clientOptions``.
+
+   #. If ``autoEncryptOpts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
+   #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it to ``admin.datakeys``.
+
 #. For each element in ``operations``:
 
    - Enter a "try" block or your programming language's closest equivalent.
