@@ -686,8 +686,8 @@ Binary
 ......
 
 The form ``{"$binary": "AQIDBAU=", "$type": "80"}`` has until this specification
-been canonical. The change to ``{"$binary": {"base64": AQIDBAU=", "subType":
-"80"}`` is motivated by a conflict between the previous canonical form and the
+been canonical. The change to ``{"$binary": {"base64": "AQIDBAU=", "subType":
+"80"}}`` is motivated by a conflict between the previous canonical form and the
 ``$type`` MongoDB query operator. The form specified here disambiguates between
 the two, such that a parser can accept any MongoDB query filter, even one
 containing the ``$type`` operator.
