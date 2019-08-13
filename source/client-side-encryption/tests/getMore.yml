@@ -21,7 +21,7 @@ tests:
         arguments:
           batchSize: 2
           filter: {}
-        results:
+        result:
           - { _id: 1, encrypted_string: "string0" }
           - { _id: 2, encrypted_string: "string1" }
           - { _id: 3, encrypted_string: "string2" }
