@@ -77,7 +77,7 @@ The driver should implement the following tests:
 getMore Iteration
 `````````````````
 
-This test requires server version 4.2 or higher.
+This test requires a replica set with server version 4.2 or higher.
 
 Perform the following operations:
 
@@ -93,7 +93,7 @@ Perform the following operations:
 Not Master - Keep Connection Pool
 `````````````````````````````````
 
-This test requires server version 4.2 or higher.
+This test requires a replica set with server version 4.2 or higher.
 
 - Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
   data: {failCommands: ["insert"], errorCode: 10107}}``
@@ -110,7 +110,7 @@ This test requires server version 4.2 or higher.
 Not Master - Reset Connection Pool
 ``````````````````````````````````
 
-This test requires server version 4.0.
+This test requires a replica set with server version 4.0.
 
 
 - Set the following fail point: ``{configureFailPoint: "failCommand", mode: {times: 1},
