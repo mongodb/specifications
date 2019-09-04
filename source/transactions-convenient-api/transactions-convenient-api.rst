@@ -240,7 +240,7 @@ This method can be expressed by the following pseudo-code:
             this.startTransaction(options); // may throw on error
 
             try {
-                userDefinedFunction(this);
+                callback(this);
             } catch (error) {
                 if (this.transactionState == STARTING ||
                     this.transactionState == IN_PROGRESS) {
