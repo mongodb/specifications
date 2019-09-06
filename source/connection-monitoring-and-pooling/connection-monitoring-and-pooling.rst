@@ -307,6 +307,8 @@ When a pool is closed, it MUST first close all available connections in that poo
     mark pool as CLOSED
     for connection in availableConnections:
       close connection
+
+    # Skip if not implemented
     emit PoolClosedEvent
 
 Creating a Connection (Internal Implementation)
@@ -513,6 +515,11 @@ Events
 
     /**
      *  Emitted when a Connection Pool is closed
+     *
+     *  NOTE: Implementation of this event is OPTIONAL for drivers which implicitly
+     *  close the pool when the object is destroyed, e.g. through destructors or
+     *  RAII. See the "Why is the PoolClosedEvent optional?" section in "Design
+     *	Rationale" for more details.
      */
     interface PoolClosedEvent {
       /**
@@ -699,6 +706,10 @@ Why is waitQueueTimeoutMS optional for some drivers?
 
 We are anticipating eventually introducing a single client-side timeout mechanism, making us hesitant to introduce another granular timeout control. Therefore, if a driver/language already has an idiomatic way to implement their timeouts, they should leverage that mechanism over implementing waitQueueTimeoutMS.
 
+Why is the `PoolClosedEvent` optional?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In languages that make use of destructors/RAII to close the connection pool, it's difficult to emit the event in the same place as other drivers; assuming that all event handling is done directly in the pool rather than being spread across auxiliary types like the connection and wait queue, the connections will need a strong reference to the pool, making it impossible to destroy (and therefore close) the pool until all connections have been returned. Given that drivers emitting events in different orders when the same operations are performed is undesirable, the ``PoolClosedEvent`` should be made optional so that for all event types that any set of drivers all emit, those drivers will emit events of those types in the same order when the same sequence of operations is performed.
 
 Backwards Compatibility
 =======================
