@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.3.1
+:Spec Version: 1.4.0
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2019-04-26
+:Last Modified: 2019-09-08
 
 
 **Abstract**
@@ -196,6 +196,12 @@ pertaining to URI options apply here.
      - no replica set name provided
      - no
      - The name of the replica set to connect to
+
+   * - retryReads
+     - "true" or "false
+     - defined in `retryable reads spec <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/retryable-reads.rst#retryreads>`_
+     - no
+     - Enables retryable reads on server 3.6+
 
    * - retryWrites
      - "true" or "false
@@ -389,5 +395,6 @@ Changes
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
 - 2019-04-26 authSource and authMechanism have no default value
+- 2019-09-08 Add retryReads option
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
