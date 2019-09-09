@@ -234,7 +234,7 @@ $collection->explain(
             // Required update param
             ['$inc' => ['x' => 2]],
             // Optional named params in an associative array
-            ['upsert' => false],
+            ['upsert' => true],
         ],
     ]
 );

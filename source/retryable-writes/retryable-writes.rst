@@ -310,7 +310,7 @@ The following example illustrates a possible write command for an
     lsid: { ... },
     txnNumber: 100,
     updates: [
-      { q: { x: 1 }, u: { $inc: { y: 1 } }, multi: false, upsert: false },
+      { q: { x: 1 }, u: { $inc: { y: 1 } } },
     ],
     ordered: true
   }
