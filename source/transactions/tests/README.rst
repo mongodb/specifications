@@ -342,6 +342,12 @@ fail point on the mongos server which "session0" is pinned to::
               failCommands: ["commitTransaction"]
               closeConnection: true
 
+Tests that use the "targetedFailPoint" operation do not include
+``configureFailPoint`` commands in their command expectations. Drivers MUST
+ensure that ``configureFailPoint`` commands do not appear in the list of logged
+commands, either by manually filtering it from the list of observed commands or
+by using a different MongoClient to execute ``configureFailPoint``.
+
 assertSessionTransactionState
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
