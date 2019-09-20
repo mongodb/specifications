@@ -284,10 +284,9 @@ Creating a Connection Pool
 This specification does not define how a pool is to be created, leaving it
 up to the driver. Creation of a connection pool is generally an implementation
 detail of the driver, i.e., is not a part of the public API of the driver.
-
-The driver SHOULD only create connection pools for servers it has determined
-to be `data-bearing
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_.
+The SDAM specification defines `when
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-creation>`_
+the driver should create connection pools.
 
 Once a pool is created, if minPoolSize is set, the pool MUST immediately
 begin creating enough connections such that totalConnections >= minPoolSize.

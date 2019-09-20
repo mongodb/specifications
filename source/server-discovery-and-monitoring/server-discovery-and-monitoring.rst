@@ -1292,6 +1292,16 @@ See the Driver Sessions Spec for the purpose of this value.
 
 .. _drivers update their topology view in response to errors:
 
+
+Connection Pool Creation
+''''''''''''''''''''''''
+
+After a server check is complete, if the server is determined to be
+`data-bearing
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_,
+if the server in question does not already have a connection pool,
+the driver SHOULD create a connection pool for the server.
+
 Error handling
 ''''''''''''''
 
