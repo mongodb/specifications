@@ -160,6 +160,15 @@ The legacy format should not conflict with the newer, multi-operation format
 used by other specs (e.g. Transactions). It is possible to create a unified test
 runner capable of executing both formats (as some drivers do).
 
+Error Assertions for Bulk Write Operations
+==========================================
+
+When asserting errors (e.g. ``errorContains``, ``errorCodeName``) for bulk write
+operations, the test harness should inspect the ``writeConcernError`` and/or
+``writeErrors`` properties of the bulk write exception. This may not be needed for
+``errorContains`` if a driver concatenates all write and write concern error
+messages into the bulk write exception's top-level message.
+
 Test Runner Implementation
 ==========================
 
