@@ -149,13 +149,6 @@ single operation. Notable differences from the current format are as follows:
   defined under the ``tests[i].outcome.error`` and ``tests[i].outcome.result``
   fields.
 
-- Instead of a top-level ``runOn`` field, server requirements are denoted by
-  separate top-level ``minServerVersion`` and ``maxServerVersion`` fields. The
-  minimum server version is an inclusive lower bound for running the test. The
-  maximum server version is an exclusive upper bound for running the test. If a
-  field is not present, it should be assumed that there is no corresponding bound
-  on the required server version.
-
 The legacy format should not conflict with the newer, multi-operation format
 used by other specs (e.g. Transactions). It is possible to create a unified test
 runner capable of executing both formats (as some drivers do).
