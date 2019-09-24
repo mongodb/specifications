@@ -1554,7 +1554,7 @@ Empty collection, unique index on 'a’.
     error['code'] == 11000
     error['errmsg'] is a string.
     error['index'] == 1
-    error['op'] == {q: {b: 2}, u: {$set: {a: 1}}, multi: false, upsert: True}
+    error['op'] == {q: {b: 2}, u: {$set: {a: 1}}, upsert: true}
     collection.count() == 1  // subsequent inserts weren’t attempted
 
 BATCH SPLITTING: maxBsonObjectSize
