@@ -428,7 +428,7 @@ Tests
 See the `BSON Corpus <https://github.com/mongodb/specifications/tree/master/source/bson-corpus>`_ for tests.
 
 Most of the tests are converted from the
-[General Decimal Arithmetic Testcases](http://speleotrove.com/decimal/dectest.html>).
+`General Decimal Arithmetic Testcases <http://speleotrove.com/decimal/dectest.html>`_.
 
 Q&A
 ===
