@@ -676,7 +676,7 @@ An encrypted MongoClient MUST attempt to auto decrypt the results of all
 commands.
 
 Drivers MUST raise an error when attempting to auto encrypt a command if
-the maxWireVersion is less than 8. The error message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2".
+the maxWireVersion is less than 8.
 
 Interaction with Command Monitoring
 ===================================
