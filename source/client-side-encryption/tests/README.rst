@@ -132,7 +132,7 @@ Then for each element in ``tests``:
 #. Create a collection object from the MongoClient, using the ``database_name``
    and ``collection_name`` fields from the YAML file. If a ``json_schema`` is defined in the test,
    use the ``createCollection`` command to explicitly create the collection:
-    .. code:: typescript
+   .. code:: typescript
 
       {"create": <collection>, "validator": {"$jsonSchema": <json_schema>}}
 
