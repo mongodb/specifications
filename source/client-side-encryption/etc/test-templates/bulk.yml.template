@@ -29,7 +29,7 @@ tests:
                 update: { $set: { encrypted_string: "string1" } }
             - name: deleteOne
               arguments:
-                filter: { encrypted_string: "string1", _id: 2 }
+                filter: { $and: [{ encrypted_string: "string1" }, { _id: 2 }]}
           options: { ordered: true }
     expectations:
       # Auto encryption will request the collection info.
