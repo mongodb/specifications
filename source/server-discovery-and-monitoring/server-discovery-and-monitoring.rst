@@ -1296,11 +1296,11 @@ See the Driver Sessions Spec for the purpose of this value.
 Connection Pool Creation
 ''''''''''''''''''''''''
 
-After a server check is complete, if the server is determined to be
-`data-bearing
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_,
-if the server in question does not already have a connection pool,
-the driver SHOULD create a connection pool for the server.
+For drivers that support connection pools, after a server check is complete,
+if the server is determined to be `data-bearing
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_
+and does not already have a connection pool, the driver MUST create
+the connection pool for the server.
 
 Error handling
 ''''''''''''''
