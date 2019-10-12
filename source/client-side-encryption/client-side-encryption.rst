@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: June 14, 2019
-:Version: 1.0.0
+:Version: 1.1.0
 
 .. contents::
 
@@ -1254,3 +1254,7 @@ in the end libmongocrypt would create multiple OP_MSGs to send.
 
 Changelog
 =========
+
++------------+------------------------------------------------------------+
+| 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
++------------+------------------------------------------------------------+
