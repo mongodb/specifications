@@ -419,14 +419,14 @@ DataKeyOpts
 masterKey
 ^^^^^^^^^
 The masterKey identifies a KMS-specific key used to encrypt the new data
-key. If the kmsProvider is "aws" it is required and must have the
-following fields:
+key. If the kmsProvider is "aws" it is required and has the following fields:
 
 .. code:: typescript
 
    {
-      region: String,
-      key: String // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      region: String, // Required.
+      key: String // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      endpoint: String // Optional. An alternate host to send KMS requests to. May include port number.
    }
 
 Drivers MUST document the expected value of masterKey for "aws" and that
