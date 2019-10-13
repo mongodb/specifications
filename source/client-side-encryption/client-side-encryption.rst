@@ -374,8 +374,8 @@ ClientEncryption
       ClientEncryption (opts: ClientEncryptionOpts);
 
       // Creates a new key document and inserts into the key vault collection.
-      // Returns the \_id of the created document.
-      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): BSONValue;
+      // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
+      createDataKey(kmsProvider: String, opts: Optional<DataKeyOpts>): Binary;
 
       // Encrypts a BSONValue with a given key and algorithm.
       // Returns an encrypted value (BSON binary of subtype 6). The underlying implementation may return an error for prohibited BSON values.
