@@ -610,9 +610,15 @@ If a MongoClient is configured for Client Side Encryption, than by
 default (unless mongocryptdBypassSpawn=true), mongocryptd MUST be
 spawned by the driver. Spawning MUST include the command line argument
 --idleShutdownTimeoutSecs. If the user does not supply one through
-extraOptions.mongocryptdSpawnArgs, then the driver MUST append
---idleShutdownTimeoutSecs=60 to the arguments. This tells mongocryptd to
-automatically terminate after 60 seconds of non-use.
+extraOptions.mongocryptdSpawnArgs (which may be either in the form
+"--idleShutdownTimeoutSecs=60" or as two consecutive arguments
+["--idleShutdownTimeoutSecs", 60], then the driver MUST append
+--idleShutdownTimeoutSecs=60 to the arguments. This tells mongocryptd
+to automatically terminate after 60 seconds of non-use. The stdout
+and stderr of the spawned process MUST not be exposed in the driver (e.g.
+redirect to /dev/null). Users can pass the argument --logpath to
+extraOptions.mongocryptdSpawnArgs if they need to inspect mongocryptd
+logs.
 
 Upon construction, the ClientEncryption MUST create a MongoClient to
 mongocryptd configured with serverSelectionTimeoutMS=1000.
