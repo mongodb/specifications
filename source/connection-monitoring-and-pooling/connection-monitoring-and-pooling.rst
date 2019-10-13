@@ -281,7 +281,18 @@ Connection Pool Behaviors
 Creating a Connection Pool
 --------------------------
 
-Pool creation is mostly an implementation detail specific to the driver language. If minPoolSize is set, the pool MUST immediately create enough connections such that totalConnections >= minPoolSize. These connections MUST be created in a non-blocking manner. Drivers SHOULD additionally connect these connections if it is possible to do so in a non-blocking manner, either via the use of a Background Thread or via asynchronous I/O.
+This specification does not define how a pool is to be created, leaving it
+up to the driver. Creation of a connection pool is generally an implementation
+detail of the driver, i.e., is not a part of the public API of the driver.
+The SDAM specification defines `when
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-creation>`_
+the driver should create connection pools.
+
+Once a pool is created, if minPoolSize is set, the pool MUST immediately
+begin creating enough connections such that totalConnections >= minPoolSize.
+These connections MUST be created in a non-blocking manner. The driver SHOULD
+set up (connect, handshake and authenticate) these connections in a non-blocking
+manner, such as via the use of a background thread or asynchronous I/O.
 
 .. code::
 
