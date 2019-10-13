@@ -213,7 +213,7 @@ Data key and double encryption
 
 First, perform the setup.
 
-#. Create a MongoClient without encryption enabled (referred to as ``client``).
+#. Create a MongoClient without encryption enabled (referred to as ``client``). Enable command monitoring to listen for command_started events.
 
 #. Using ``client``, drop the collections ``admin.datakeys`` and ``db.coll``.
 
@@ -252,6 +252,8 @@ First, perform the setup.
         }
       }
 
+   Configure ``client_encryption`` with the ``keyVaultClient`` of the previously created ``client``.
+
 Then, test creating and using data keys from a ``local`` KMS provider:
 
 #. Call ``client_encryption.createDataKey()`` with the ``local`` KMS provider and keyAltNames set to ``["local_altname"]``.
@@ -259,6 +261,7 @@ Then, test creating and using data keys from a ``local`` KMS provider:
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``local_datakey_id``.
    - Use ``client`` to run a ``find`` on ``admin.datakeys`` by querying with the ``_id`` set to the ``local_datakey_id``.
    - Expect that exactly one document is returned with the "masterKey.provider" equal to "local".
+   - Check that ``client`` captured a command_started event for the ``insert`` command containing a majority writeConcern.
 
 #. Call ``client_encryption.encrypt()`` with the value "hello local", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``local_datakey_id``.
 
@@ -285,6 +288,7 @@ Then, repeat the above tests with the ``aws`` KMS provider:
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``aws_datakey_id``.
    - Use ``client`` to run a ``find`` on ``admin.datakeys`` by querying with the ``_id`` set to the ``aws_datakey_id``.
    - Expect that exactly one document is returned with the "masterKey.provider" equal to "aws".
+   - Check that ``client`` captured a command_started event for the ``insert`` command containing a majority writeConcern.
 
 #. Call ``client_encryption.encrypt()`` with the value "hello aws", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``aws_datakey_id``.
 
