@@ -82,6 +82,9 @@ commands and decrypts results. Automatic encryption is enterprise only.
 But users can manually encrypt and decrypt with a new ClientEncryption
 object.
 
+Client side encryption requires MongoDB 4.2 compatible drivers, and is
+only supported against 4.2 or higher servers. See `Why is a 4.2 server required?`_.
+
 The following shows basic usage of the new API.
 
 .. code:: python
@@ -685,6 +688,11 @@ Drivers MUST raise an error when attempting to auto encrypt a command if
 the maxWireVersion is less than 8. The error message MUST contain
 "Auto-encryption requires a minimum MongoDB version of 4.2".
 
+Note, all client side features (including all of ``ClientEncryption``)
+are only supported against 4.2 or higher servers. However, errors are
+only raised for automatic encryption/decryption against older servers.
+See `Why is a 4.2 server required?`_.
+
 Interaction with Command Monitoring
 ===================================
 Unencrypted data MUST NOT appear in the data of any command monitoring
@@ -1196,6 +1204,15 @@ would be necessary to know the schema of the underlying collection. But,
 the driver does know whether or not a namespace is a view based on the
 response to listCollections. And the driver will run listCollections on
 all namespaces omitted from the schemaMap.
+
+Why is a 4.2 server required?
+-----------------------------
+
+Limiting to 4.2 reduces testing complexity. Additionally The ``encrypt``
+subdocument in JSON schema is only supported on 4.2 or higher servers.
+Although not technically necessary for client side encryption, it does
+provide a fallback against accidentally sending unencrypted data from
+misconfigured clients.
 
 Future work
 ===========
