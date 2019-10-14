@@ -29,32 +29,34 @@ subsequent tests. The fail point may be disabled like so::
         mode: "off"
     });
 
-
 How to verify connection count
 ``````````````````````````````
 
-Drivers which do not implement connection pools and CMAP specification may,
-instead of using CMAP events to assert that no new connections have been
-established, check the `connections.totalCreated
-<https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated>`_
-value in serverStatus.
-
+If the driver implements the CMAP specification, verify that a
+ConnectionCreatedEvent event has been published. Otherwise, verify that
+`connections.totalCreated <https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated>`_
+in ``serverStatus`` has increased by 1.
 
 How to verify the connection pool has been cleared
 ``````````````````````````````````````````````````
 
-If the driver implements CMAP specification, verify that a
-PoolCleared CMAP event have been published. Otherwise verify that
-`connections.totalCreated` serverStatus value has increased by 1 using the same client that was used for test operation.
-
+If the driver implements the CMAP specification, verify that a PoolCleared event
+has been published. Otherwise, verify that ``connections.totalCreated`` in
+``serverStatus`` has increased by 1.
 
 How to verify the connection pool has not been cleared
 ``````````````````````````````````````````````````````
 
-If the driver implements CMAP specification, verify that no new
-PoolCleared CMAP events have been published. Otherwise verify that
-`connections.totalCreated` serverStatus value has not changed using the same client that was used for test operation.
+If the driver implements the CMAP specification, verify that no new PoolCleared
+CMAP event has been published. Otherwise verify that
+``connections.totalCreated`` in ``serverStatus`` has not changed.
 
+Consideration when using serverStatus
+`````````````````````````````````````
+
+Drivers executing ``serverStatus`` for connection assertions MUST take its own
+connection into account when making their calculations. Those drivers SHOULD
+execute ``serverStatus`` using a separate client not under test.
 
 
 Tests
