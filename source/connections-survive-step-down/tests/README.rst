@@ -100,11 +100,10 @@ This test requires a replica set with server version 4.2 or higher.
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 10107 code.
+- Verify that the connection pool has not been cleared,
+  following the instructions in section `How to verify the connection pool has not been cleared`_ 
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
-- Verify that the connection pool has not been cleared,
-  following the instructions in section `How to verify the connection pool has not been cleared`_
-
 
 
 Not Master - Reset Connection Pool
