@@ -699,40 +699,28 @@ Unencrypted data MUST NOT appear in the data of any command monitoring
 events. Encryption MUST occur before generating a CommandStartedEvent,
 and decryption MUST occur after generating a CommandSucceededEvent.
 
-Size limits and Wire Protocol Considerations
-============================================
-Because encryption increases the size of commands, the driver MUST
-instead use the following reduced size limits when constructing commands
-for encryption:
+Size limits for Write Commands
+==============================
+Automatic encryption requires the driver to serialize write commands as
+a single BSON document before automatically encrypting with libmongocrypt
+(analogous to constructing `OP_MSG payload type 0 <https://github.com/mongodb/specifications/blob/70628e30c96361346f7b6872571c0ec4d54846cb/source/message/OP_MSG.rst#sections>`_, not a document sequence).
+Automatic encryption returns a single (possibly modified) BSON document as the
+command to send.
 
--  maxBsonObjectSize = 2097152 bytes
--  maxMessageSizeBytes = 6000000 bytes
+Because automatic encryption increases the size of commands, the driver
+MUST split bulk writes at a reduced size limit before undergoing automatic
+encryption. The write payload MUST be split at 2MiB (2097152). Where batch
+splitting occurs relative to automatic encryption is implementation-dependent.
 
-(Note, these are 1/8th of the corresponding reported sizes of a MongoDB
-4.2 server).
+Drivers MUST not reduce the size limits for a single write before automatic
+encryption. I.e. if a single document has size larger than 2MiB (but less than
+`maxBsonObjectSize`) proceed with automatic encryption.
 
 Drivers MUST document the performance limitation of enabling client side
 encryption by including the following documentation in MongoClient:
 
-Enabling Client Side Encryption reduces the maximum document and message
-size (using a maxBsonObjectSize of 2MiB and maxMessageSizeBytes of 6MB)
-and may have a negative performance impact.
-
-The driver MAY send an OP_MSG document sequence to mongocryptd, though
-there is little benefit since maxMessageSizeBytes is no larger than
-maxBsonObjectSize.
-
-The final encrypted command returned by libmongocrypt is returned as a
-BSON document that could be passed to a run command helper. Therefore,
-it is subject to the maxBsonObjectSize limit.
-
-To clarify, the following diagram shows the sequence of communication
-between components in the case where the driver uses an OP_MSG document
-sequence to communicate with mongocryptd.
-
-.. image:: includes/wire_protocol_diagram.png
-
-Throughout, the maximum message size is bounded by the 16MB limit.
+   Enabling Client Side Encryption reduces the maximum write batch size
+   and may have a negative performance impact.
 
 Appendix
 ========
@@ -1042,7 +1030,7 @@ db.getCollection ("coll", { autoEncrypt: { clientEncryption:
 clientEncryption } })
 
 But this would require a MongoCollection to peek into the internals of a
-ClientEncryption object. This is messy and language dependant to
+ClientEncryption object. This is messy and language dependent to
 implement and makes mocking out the key vault difficult for tests.
 
 Why do we need to pass a client to create a ClientEncryption?
