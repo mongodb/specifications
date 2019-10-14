@@ -150,7 +150,7 @@ specification. However, it might be possible to mock changes to DNS SRV
 records such that automated testing is doable. In any case, the following
 tests should be executed, either manually, or programmatically.
 
-To test, start a sharded cluster and mongos servers on ports 27017, 27018,
+To test, start a sharded cluster with mongos servers on ports 27017, 27018,
 27019, and 27020.
 
 For each test, take as starting point the test1 SRV records from the `test
