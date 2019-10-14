@@ -75,6 +75,10 @@ NetworkTimeout                  89
 SocketException                 9001
 =============================== ==============
 
+- a server error response without an error code or one different from those
+  listed above, but with an error message containing the substring "not
+  master" or "node is recovering"
+
 MongoClient Configuration 
 --------------------------
 
