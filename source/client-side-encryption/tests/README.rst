@@ -367,13 +367,9 @@ First, perform the setup.
 
 Using ``client_encrypted`` perform the following operations:
 
-#. Insert ``{ "_id": "no_encryption_under_2mib", "unencrypted": <the string "a" repeated (2097152 - 1000) times> }``. (Note 2097152 is 2^21 bytes, or 2 MiB).
+#. Insert ``{ "_id": "over_2mib_under_16mib", "unencrypted": <the string "a" repeated 2097152 times> }``.
 
-   Expect this to succeed.
-
-#. Insert ``{ "_id": "no_encryption_over_2mib", "unencrypted": <the string "a" repeated 2097152 times> }``.
-
-   Expect this to throw an exception due to exceeding the reduced maximum BSON document size.
+   Expect this to succeed since this is still under the ``maxBsonObjectSize`` limit.
 
 #. Insert the document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_2mib", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }``
    Note: limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
@@ -383,9 +379,9 @@ Using ``client_encrypted`` perform the following operations:
 
 #. Bulk insert the following:
 
-   - ``{ "_id": "no_encryption_under_2mib_1", "unencrypted": <the string "a" repeated (2097152 - 1000) times> }``
+   - ``{ "_id": "over_2mib_1", "unencrypted": <the string "a" repeated (2097152) times> }``
 
-   - ``{ "_id": "no_encryption_under_2mib_2", "unencrypted": <the string "a" repeated (2097152 - 1000) times> }``
+   - ``{ "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }``
 
    Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command monitoring <https://github.com/mongodb/specifications/tree/master/source/command-monitoring/command-monitoring.rst>`_.
 
@@ -395,7 +391,15 @@ Using ``client_encrypted`` perform the following operations:
 
    - The document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_2mib_2", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }``
 
-   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur).
+   Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using `command monitoring <https://github.com/mongodb/specifications/tree/master/source/command-monitoring/command-monitoring.rst>`_.
+
+#. Insert ``{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>``.
+
+   Expect this to succeed since this is still (just) under the ``maxBsonObjectSize`` limit.
+
+#. Insert the document `limits/limits-doc.json <../limits/limits-doc.json>`_ concatenated with ``{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }``
+
+   Expect this to fail since encryption results in a document exceeding the ``maxBsonObjectSize`` limit.
 
 Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that setting maxWriteBatchSize=1 and inserting the two documents ``{ "_id": "a" }, { "_id": "b" }`` with ``client_encrypted`` splits the operation into two inserts.
 
