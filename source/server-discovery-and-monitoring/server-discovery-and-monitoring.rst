@@ -1308,10 +1308,11 @@ Error handling
 Network error during server check
 `````````````````````````````````
 
-When a server `check`_ fails due to a network error,
-the client SHOULD clear its connection pool for the server:
+When a server `check`_ fails due to a network error (including a timeout),
+the client MUST clear its connection pool for the server:
 if the monitor's socket is bad it is likely that all are.
-(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_.)
+(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_,
+`SPEC-1396 <https://jira.mongodb.org/browse/SPEC-1396>`_.)
 
 Once a server is connected, the client MUST change its type
 to Unknown
