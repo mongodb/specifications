@@ -572,7 +572,7 @@ Data keys created with AWS KMS may specify a custom endpoint to contact (instead
         endpoint: "kms.us-east-2.amazonaws.com"
       }
 
-   Expect this to fail with an exception containing the message: "Credential should be scoped to a valid region, not 'us-east-1'"
+   Expect this to fail with an exception with a message containing the string: "us-east-1"
 
 7. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
 
@@ -584,5 +584,5 @@ Data keys created with AWS KMS may specify a custom endpoint to contact (instead
         endpoint: "example.com"
       }
 
-   Expect this to fail with an exception containing the message: "parse error"
+   Expect this to fail with an exception with a message containing the string: "parse error"
 
