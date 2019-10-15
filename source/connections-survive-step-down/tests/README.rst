@@ -162,13 +162,13 @@ Questions and Answers
 ---------------------
 
 Do we need to wait for re-election after the first test?
-``````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````
 
 Since test setup requires creation of a collection, a primary must exist, so subsequent tests will block in server selection until a primary is available again.
 
 
 Why do tests check for a successful insert operation in addition to checking that the pool was updated appropriately?
-```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+`````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
 Ensuring that we can run a successful insert after the primary steps down and without needing to recreate the
 ``MongoClient`` serves to test the resiliency of drivers in the event of a failover/election. Even though checking for
