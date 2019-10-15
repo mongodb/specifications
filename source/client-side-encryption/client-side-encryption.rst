@@ -898,39 +898,42 @@ libmongocrypt determines whether or not the command requires encryption
 (i.e. is sent to mongocryptd) based on the table below. Commands not
 listed in this table will result in an error returned by libmongocrypt.
 
-====================== ===========
-**Command**            **Action**
-aggregate (collection) AUTOENCRYPT
-count                  AUTOENCRYPT
-distinct               AUTOENCRYPT
-delete                 AUTOENCRYPT
-find                   AUTOENCRYPT
-findAndModify          AUTOENCRYPT
-getMore                BYPASS
-insert                 AUTOENCRYPT
-update                 AUTOENCRYPT
-authenticate           BYPASS
-getnonce               BYPASS
-logout                 BYPASS
-isMaster               BYPASS
-abortTransaction       BYPASS
-commitTransaction      BYPASS
-endSessions            BYPASS
-startSession           BYPASS
-create                 BYPASS
-createIndexes          BYPASS
-drop                   BYPASS
-dropDatabase           BYPASS
-dropIndexes            BYPASS
-killCursors            BYPASS
-listCollections        BYPASS
-listDatabases          BYPASS
-listIndexes            BYPASS
-renameCollection       BYPASS
-explain                AUTOENCRYPT
-ping                   BYPASS
-killAllSessions        BYPASS
-====================== ===========
+======================== ===========
+**Command**              **Action**
+aggregate (collection)   AUTOENCRYPT
+count                    AUTOENCRYPT
+distinct                 AUTOENCRYPT
+delete                   AUTOENCRYPT
+find                     AUTOENCRYPT
+findAndModify            AUTOENCRYPT
+getMore                  BYPASS
+insert                   AUTOENCRYPT
+update                   AUTOENCRYPT
+authenticate             BYPASS
+getnonce                 BYPASS
+logout                   BYPASS
+isMaster                 BYPASS
+abortTransaction         BYPASS
+commitTransaction        BYPASS
+endSessions              BYPASS
+startSession             BYPASS
+create                   BYPASS
+createIndexes            BYPASS
+drop                     BYPASS
+dropDatabase             BYPASS
+dropIndexes              BYPASS
+killCursors              BYPASS
+listCollections          BYPASS
+listDatabases            BYPASS
+listIndexes              BYPASS
+renameCollection         BYPASS
+explain                  AUTOENCRYPT
+ping                     BYPASS
+killAllSessions          BYPASS
+killSessions             BYPASS
+killAllSessionsByPattern BYPASS
+refreshSessions          BYPASS
+======================== ===========
 
 All AUTOENCRYPT commands are sent to mongocryptd, even if there is no
 JSONSchema. This is to ensure that commands that reference other
