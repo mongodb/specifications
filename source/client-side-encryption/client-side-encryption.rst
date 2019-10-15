@@ -929,6 +929,7 @@ listIndexes            BYPASS
 renameCollection       BYPASS
 explain                AUTOENCRYPT
 ping                   BYPASS
+killAllSessions        BYPASS
 ====================== ===========
 
 All AUTOENCRYPT commands are sent to mongocryptd, even if there is no
