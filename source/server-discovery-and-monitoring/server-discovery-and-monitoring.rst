@@ -431,7 +431,9 @@ and `what's the point of periodic monitoring?`_)
 Client construction
 '''''''''''''''''''
 
-Except for the initial SRV lookup if given an SRV URI,
+Except for `initial DNS seed list discovery
+<https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+when given a connection string with ``mongodb+srv`` scheme,
 the client's constructor MUST NOT do any I/O.
 This means that the constructor does not throw an exception
 if servers are unavailable:
@@ -442,9 +444,6 @@ Instead, all subsequent operations on the client fail
 as long as the error persists.
 
 See `clients do no I/O in the constructor`_ for the justification.
-
-If given an SRV URI, the constructor MUST perform I/O to resolve the URI
-to the initial seed list, and MUST NOT do any other I/O.
 
 Multi-threaded and asynchronous client construction
 ```````````````````````````````````````````````````
