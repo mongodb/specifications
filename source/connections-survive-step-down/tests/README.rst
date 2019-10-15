@@ -121,6 +121,8 @@ This test requires a replica set with server version 4.0.
   document.
 - Verify that the insert failed with an operation failure with 10107 code.
 - Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
+- Execute an insert into the test collection of a ``{test: 1}``
+  document and verify that it succeeds.
 
 
 Shutdown in progress - Reset Connection Pool
@@ -136,6 +138,8 @@ Perform the following operations on a client configured to NOT retry writes:
   document.
 - Verify that the insert failed with an operation failure with 91 code.
 - Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
+- Execute an insert into the test collection of a ``{test: 1}``
+  document and verify that it succeeds.
 
 
 Interrupted at shutdown - Reset Connection Pool
@@ -151,6 +155,8 @@ Perform the following operations on a client configured to NOT retry writes:
   document.
 - Verify that the insert failed with an operation failure with 11600 code.
 - Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
+- Execute an insert into the test collection of a ``{test: 1}``
+  document and verify that it succeeds.
 
 
 
@@ -158,6 +164,17 @@ Questions and Answers
 ---------------------
 
 Do we need to wait for re-election after the first test?
-``````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````
 
 Since test setup requires creation of a collection, a primary must exist, so subsequent tests will block in server selection until a primary is available again.
+
+
+Why do tests check for a successful insert operation in addition to checking that the pool was updated appropriately?
+`````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+
+Ensuring that we can run a successful insert after the primary steps down and without needing to recreate the
+``MongoClient`` serves to test the resiliency of drivers in the event of a failover/election. Even though checking for
+a successful insert operation does not directly test functionality introduced in this specification, it is a
+straightforward way to test driver resiliency against a live replica set undergoing an election. This testing
+methodology is in contrast to the one adopted by the SDAM spec tests that rely entirely on mocking with no actual
+server communication.
