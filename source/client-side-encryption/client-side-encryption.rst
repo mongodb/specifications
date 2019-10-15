@@ -255,12 +255,12 @@ feature. and that auto encryption only occurs on collection level
 operations by including the following in the driver documentation for
 AutoEncryptionOpts:
 
-Automatic encryption is an enterprise only feature that only applies to
-operations on a collection. Automatic encryption is not supported for
-operations on a database or view, and operations that are not bypassed
-will result in error (see `libmongocrypt: Auto Encryption Whitelist`_).
-To bypass automatic encryption for all operations, set
-bypassAutoEncryption=true in AutoEncryptionOpts.
+   Automatic encryption is an enterprise only feature that only applies to
+   operations on a collection. Automatic encryption is not supported for
+   operations on a database or view, and operations that are not bypassed
+   will result in error (see `libmongocrypt: Auto Encryption Whitelist`_).
+   To bypass automatic encryption for all operations, set
+   bypassAutoEncryption=true in AutoEncryptionOpts.
 
 Explicit encryption/decryption and automatic decryption is a community
 feature. A MongoClient configured with bypassAutoEncryption=true will
@@ -270,9 +270,9 @@ Drivers MUST document that auto encryption requires the authenticated
 user to have the listCollections privilege action by including the
 following in the driver documentation for MongoClient.
 
-Automatic encryption requires the authenticated user to have the
-`listCollections privilege
-action <https://docs.mongodb.com/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
+   Automatic encryption requires the authenticated user to have the
+   `listCollections privilege
+   action <https://docs.mongodb.com/manual/reference/command/listCollections/#dbcmd.listCollections>`__.
 
 See `Why is client side encryption configured on a MongoClient?`_
 
