@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: June 14, 2019
-:Version: 1.0.0
+:Version: 1.1.0
 
 .. contents::
 
@@ -419,14 +419,14 @@ DataKeyOpts
 masterKey
 ^^^^^^^^^
 The masterKey identifies a KMS-specific key used to encrypt the new data
-key. If the kmsProvider is "aws" it is required and must have the
-following fields:
+key. If the kmsProvider is "aws" it is required and has the following fields:
 
 .. code:: typescript
 
    {
-      region: String,
-      key: String // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      region: String, // Required.
+      key: String // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      endpoint: String // Optional. An alternate host to send KMS requests to. May include port number.
    }
 
 Drivers MUST document the expected value of masterKey for "aws" and that
@@ -1254,3 +1254,7 @@ in the end libmongocrypt would create multiple OP_MSGs to send.
 
 Changelog
 =========
+
++------------+------------------------------------------------------------+
+| 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
++------------+------------------------------------------------------------+

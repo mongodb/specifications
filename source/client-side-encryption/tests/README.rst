@@ -128,15 +128,16 @@ Then for each element in ``tests``:
    #. Insert the data specified into the ``admin.datakeys`` with write concern "majority".
 
 #. Create a MongoClient.
-   
+
 #. Create a collection object from the MongoClient, using the ``database_name``
-   and ``collection_name`` fields from the YAML file. If a ``json_schema`` is defined in the test,
+   and ``collection_name`` fields from the YAML file. Drop the collection 
+   with writeConcern "majority". If a ``json_schema`` is defined in the test,
    use the ``createCollection`` command to explicitly create the collection:
+
    .. code:: typescript
 
       {"create": <collection>, "validator": {"$jsonSchema": <json_schema>}}
 
-#. Drop the test collection, using writeConcern "majority".
 #. If the YAML file contains a ``data`` array, insert the documents in ``data``
    into the test collection, using writeConcern "majority".
 
@@ -496,4 +497,92 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    - If ``allowed`` is false, validate the value exactly equals the value of the corresponding field of ``corpus`` (neither was encrypted).
 
 9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` with the ``schema_map`` option.
+
+Custom Endpoint Test
+====================
+
+Data keys created with AWS KMS may specify a custom endpoint to contact (instead of the default endpoint derived from the AWS region).
+
+1. Create a ``ClientEncryption`` object (referred to as ``client_encryption``)
+
+   Configure with ``aws`` KMS providers as follows:
+
+   .. code:: javascript
+
+      {
+          "aws": { <AWS credentials> }
+      }
+
+   Configure with ``keyVaultNamespace`` set to ``admin.datakeys``, and a default MongoClient as the ``keyVaultClient``.
+
+2. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+3. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-1.amazonaws.com"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+4. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-1.amazonaws.com:443"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+5. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-1.amazonaws.com:12345"
+      }
+
+   Expect this to fail with a socket connection error.
+
+6. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-2.amazonaws.com"
+      }
+
+   Expect this to fail with an exception with a message containing the string: "us-east-1"
+
+7. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "example.com"
+      }
+
+   Expect this to fail with an exception with a message containing the string: "parse error"
 
