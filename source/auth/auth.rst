@@ -159,8 +159,8 @@ handshake:
    MongoDB Handshake fails with an error, drivers MUST treat this as
    an authentication error.
 
-#. If the server is not of type Standalone, RSPrimary, RSSecondary or
-   Mongos, no authentication is possible and the handshake is complete.
+#. If the server is of type RSArbiter, no authentication is possible and the
+   handshake is complete.
 
 #. If credentials exist:
 
