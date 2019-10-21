@@ -150,9 +150,16 @@ specification. However, it might be possible to mock changes to DNS SRV
 records such that automated testing is doable. In any case, the following
 tests should be executed, either manually, or programmatically.
 
+To test, start a sharded cluster with mongos servers on ports 27017, 27018,
+27019, and 27020.
+
 For each test, take as starting point the test1 SRV records from the `test
 set-up`_ from the `Initial DNS Seedlist Discovery`_ specification::
 
+    Record                                    TTL    Class   Address
+    localhost.test.test.build.10gen.cc.        86400  IN A    127.0.0.1
+
+    Record                                    TTL    Class   Port   Target
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
 
