@@ -1,6 +1,6 @@
 runOn:
     -
-        minServerVersion: "4.1.x"
+        minServerVersion: "4.3.x"
         topology: ["replicaset", "sharded"]
 
 data: []
@@ -43,7 +43,7 @@ tests:
                 data:
                     - { _id: 1, x: 11 }
     -
-        description: "InsertOne fails with a RetryableWriteError label after two "
+        description: "InsertOne fails with a RetryableWriteError label after two network errors"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
