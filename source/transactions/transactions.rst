@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2019-07-30
+:Last Modified: 2019-10-21
 
 .. contents::
 
@@ -928,6 +928,11 @@ code) and UnknownReplWriteConcern. These errors codes mean that the
 provided write concern is not valid and therefore a retry attempt would
 fail with the same error.
 
+In the case that the commitTransaction fails with a retryable writes error,
+that error will have both an UnknownTransactionCommitResult label and
+a RetryableWriteError label. This is currently the only scenario in which
+an error can be assigned two error labels.
+
 Retrying commitTransaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1196,7 +1201,7 @@ Users cannot pass readConcern or writeConcern to operations in transactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For drivers that allow readConcern and/or writeConcern to be passed to a
-particular operation, 
+particular operation,
 If the driver did not prohibit the readConcern parameter to methods in a
 transaction, the following code would be ambiguous:
 
@@ -1219,7 +1224,7 @@ We *could* specify that if a user passes an explicit writeConcern to an
 operation in a transaction, that the driver passes this writeConcern to the
 server. The server correctly returns an error in this scenario; there is not the
 same ambiguity with an explicit writeConcern as there is with an explicit
-readConcern passed to the first operation in a transaction. For consistency, 
+readConcern passed to the first operation in a transaction. For consistency,
 however, we specify that an explicit writeConcern passed to an operation in a
 transaction provokes a client-side error, the same as for readConcern.
 
@@ -1358,7 +1363,7 @@ the above scenario would lead to one of the following possible outcomes:
   TransientTransactionError label, which indicates it is safe to retry the
   entire transaction. Drivers can trust that a server response will not include
   both a write concern error and TransientTransactionError label (see:
-  `SERVER-37179 <https://jira.mongodb.org/browse/SERVER-37179>`_). 
+  `SERVER-37179 <https://jira.mongodb.org/browse/SERVER-37179>`_).
 
 Adding a majority write concern only when retrying commitTransaction provides a
 good compromise of performance and durability. Applications can use ``w:1`` for
@@ -1383,6 +1388,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2019-10-21: Specify that a commit error can have two error labels
 :2019-07-30: Clarify when the cached recoveryToken should be cleared.
 :2019-06-10: Client-side errors must not change transaction state.
 :2019-06-07: Mention $merge stage for aggregate alongside $out

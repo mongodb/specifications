@@ -59,3 +59,20 @@ tests:
                 errorLabelsContain: ["RetryableWriteError"]
             collection:
                 data: []
+
+    -
+        description: "InsertOne does not retry and fails on error without RetryableWriteError label"
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands: ["insert"]
+                errorLabels: []
+        operaion:
+            name: "insertOne"
+            arguments:
+                document: { _id: 1, x: 11 }
+        outcome:
+            collection:
+                data: []
+
