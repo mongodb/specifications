@@ -431,7 +431,10 @@ and `what's the point of periodic monitoring?`_)
 Client construction
 '''''''''''''''''''
 
-The client's constructor MUST NOT do any I/O.
+Except for `initial DNS seed list discovery
+<https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+when given a connection string with ``mongodb+srv`` scheme,
+the client's constructor MUST NOT do any I/O.
 This means that the constructor does not throw an exception
 if servers are unavailable:
 the topology is not yet known when the constructor returns.
