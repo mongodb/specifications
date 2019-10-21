@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-06-07
+:Last Modified: 2019-10-21
 
 .. contents::
 
@@ -59,6 +59,7 @@ Transaction ID
    .. _Driver Session: ../sessions/driver-sessions.rst
 
 ClientSession
+
    Driver object representing a client session, which is defined in the
    `Driver Session`_ specification. This object is always associated with a
    server session; however, drivers will pool server sessions so that creating a
@@ -66,7 +67,28 @@ ClientSession
    name of this object MAY vary across drivers.
 
 Retryable Error
-   An error is considered retryable if it meets any of the following criteria:
+   An error is considered retryable if it has a "RetryableWriteError" label in
+   its top-level "errorLabels" field.
+
+   An error can be labeled as a RetryableWriteError in a few different ways:
+
+   **Server versions 4.3.x and newer**
+   Starting in version 4.3.x, the MongoDB server will add a RetryableWriteError label
+   to errors it considers retryable. The types of errors to which this label is added
+   are subject to change, and the driver is expected to retry any supported retryable
+   operation when the server responds with a RetryableWriteError label, regardless of
+   its error code.
+
+   The driver MUST add a RetryableWriteError label to an error or server response that
+   meets the following criteria:
+   - any network exception
+   - any server error with an error message containing the substrings "not master"
+   or "node is recovering"
+
+   **Server versions older than 4.3.x**
+   For versions older than 4.3.x, MongoDB does not add the RetryableWriteError label to
+   any errors or server responses; for these server versions, the driver MUST add
+   a RetryableWriteError label to errors that meet the following criteria:
 
    - any network exception (e.g. socket timeout or error)
 
@@ -79,7 +101,7 @@ Retryable Error
          - Error Code
        * - InterruptedAtShutdown
          - 11600
-       * - InterruptedDueToReplStateChange 
+       * - InterruptedDueToReplStateChange
          - 11602
        * - NotMaster
          - 10107
@@ -111,7 +133,10 @@ Retryable Error
    `What do the additional error codes mean?`_ for the reasoning behind these
    additional errors.
 
+   For more information about error labels, see the `Transactions specification`_.
+
    .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+   .. _Transactions specification: ../transactions/transactions.rst#error-labels
 
 Additional terms may be defined in the `Driver Session`_ specification.
 
@@ -761,6 +786,9 @@ cluster (mongos just forwards the error from the shard's replica set).
 
 Changes
 =======
+
+2019-10-21: Change the definition of "retryable write" to reflect the introduction
+of the RetryableWriteError label.
 
 2019-07-30: Drivers must rewrite error messages for error code 20 when
 txnNumber is not supported by the storage engine.
