@@ -86,7 +86,7 @@ Retryable Error
    or "node is recovering"
 
    **Server versions older than 4.3.x**
-  
+
    For versions older than 4.3.x, MongoDB does not add the RetryableWriteError label to
    any errors or server responses; for these server versions, the driver MUST add
    a RetryableWriteError label to errors that meet the following criteria:

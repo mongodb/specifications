@@ -1,0 +1,61 @@
+runOn:
+    -
+        minServerVersion: "4.1.x"
+        topology: ["replicaset", "sharded"]
+
+data: []
+
+tests:
+    -
+        description: "InsertOne succeeds after RetryableWriteError from server"
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands: ["insert"]
+                errorLabels: ["RetryableWriteError"]
+                errorCode: 112 # WriteConflict, not normally a retryable error code
+            operation:
+                name: "insertOne"
+                arguments:
+                    document: { _id: 1, x: 11 }
+            outcome:
+                result:
+                    insertedId: 1
+                collection:
+                    data:
+                        - { _id: 1, x: 11 }
+    -
+        description: "InsertOne succeeds after a connection failure"
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands: ["insert"]
+                closeConnection: true
+        operation:
+            name: "insertOne"
+            arguments: { _id: 1, x: 11 }
+        outcome:
+            result:
+                insertedId: 1
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+    -
+        description: "InsertOne fails with a RetryableWriteError label after two "
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+                failCommands: ["insert"]
+                closeConnection: true
+        operaion:
+            name: "insertOne"
+            arguments:
+                document: { _id: 1, x: 11 }
+        outcome:
+            result:
+                errorLabelsContain: ["RetryableWriteError"]
+            collection:
+                data: []
