@@ -59,7 +59,6 @@ Transaction ID
    .. _Driver Session: ../sessions/driver-sessions.rst
 
 ClientSession
-
    Driver object representing a client session, which is defined in the
    `Driver Session`_ specification. This object is always associated with a
    server session; however, drivers will pool server sessions so that creating a
@@ -67,12 +66,13 @@ ClientSession
    name of this object MAY vary across drivers.
 
 Retryable Error
-   An error is considered retryable if it has a "RetryableWriteError" label in
+   An error is considered retryable if it has a RetryableWriteError label in
    its top-level "errorLabels" field.
 
    An error can be labeled as a RetryableWriteError in a few different ways:
 
    **Server versions 4.3.x and newer**
+
    Starting in version 4.3.x, the MongoDB server will add a RetryableWriteError label
    to errors it considers retryable. The types of errors to which this label is added
    are subject to change, and the driver is expected to retry any supported retryable
@@ -86,6 +86,7 @@ Retryable Error
    or "node is recovering"
 
    **Server versions older than 4.3.x**
+  
    For versions older than 4.3.x, MongoDB does not add the RetryableWriteError label to
    any errors or server responses; for these server versions, the driver MUST add
    a RetryableWriteError label to errors that meet the following criteria:
