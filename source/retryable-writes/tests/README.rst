@@ -168,7 +168,7 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Parameters to pass to MongoClient().
 
-  - ``useMultipleMongses`` (optional): If ``true``, the MongoClient for this
+  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
     test should be initialized with multiple mongos seed addresses. If ``false``
     or omitted, only a single mongos address should be specified. This field has
     no effect for non-sharded topologies.
