@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2019-10-17
+:Last Modified: 2019-10-22
 
 .. contents::
 
@@ -1267,5 +1267,5 @@ Change log
 :2018-07-19: Justify why session must be an explicit parameter to each function
 :2018-10-11: Session pools must be cleared in child process after fork
 :2019-05-15: A ServerSession that is involved in a network error MUST be discarded
-:2019-10-17: Drivers may defer checking if a deployment supports sessions until the first
+:2019-10-22: Drivers may defer checking if a deployment supports sessions until the first
 operation performed with a session
