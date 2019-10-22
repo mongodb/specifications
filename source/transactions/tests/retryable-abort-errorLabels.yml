@@ -1,6 +1,6 @@
 runOn:
     -
-        minServerVersion: "4.3.x"
+        minServerVersion: "4.3.0"
         topology: ["replicaset, sharded"]
 
 database_name: &database_name "transaction-tests"

@@ -71,7 +71,7 @@ Retryable Error
 
    An error can be labeled as a RetryableWriteError in a few different ways:
 
-   Starting in version 4.3.x, the MongoDB server will add a RetryableWriteError label
+   Starting in version 4.3.0, the MongoDB server will add a RetryableWriteError label
    to errors it considers retryable. The types of errors to which this label is added
    are subject to change, and the driver is expected to retry any supported retryable
    operation when the server responds with a RetryableWriteError label, regardless of
@@ -83,7 +83,7 @@ Retryable Error
    - any server error with an error message containing the substrings "not master"
    or "node is recovering"
 
-   For versions older than 4.3.x, MongoDB does not add the RetryableWriteError label to
+   For versions older than 4.3.0, MongoDB does not add the RetryableWriteError label to
    any errors or server responses; for these server versions, the driver MUST add
    a RetryableWriteError label to errors that meet the following criteria:
 
