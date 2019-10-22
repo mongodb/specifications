@@ -1,80 +1,74 @@
 runOn:
-    -
-        minServerVersion: "4.3.0"
-        topology: ["replicaset", "sharded"]
+    - minServerVersion: "4.3.0"
+      topology: ["replicaset", "sharded"]
 
 data: []
 
 tests:
-    -
-        description: "InsertOne succeeds after RetryableWriteError from server"
-        failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands: ["insert"]
-                errorLabels: ["RetryableWriteError"]
-                errorCode: 112 # WriteConflict, not normally a retryable error code
-            operation:
-                name: "insertOne"
-                arguments:
-                    document: { _id: 1, x: 11 }
-            outcome:
-                result:
-                    insertedId: 1
-                collection:
-                    data:
-                        - { _id: 1, x: 11 }
-    -
-        description: "InsertOne succeeds after a connection failure"
-        failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands: ["insert"]
-                closeConnection: true
-        operation:
-            name: "insertOne"
-            arguments: { _id: 1, x: 11 }
-        outcome:
-            result:
-                insertedId: 1
-            collection:
-                data:
-                    - { _id: 1, x: 11 }
-    -
-        description: "InsertOne fails with a RetryableWriteError label after two connection failures"
-        failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 2 }
-            data:
-                failCommands: ["insert"]
-                closeConnection: true
-        operaion:
-            name: "insertOne"
-            arguments:
-                document: { _id: 1, x: 11 }
-        outcome:
-            error: true
-            result:
-                errorLabelsContain: ["RetryableWriteError"]
-            collection:
-                data: []
+    - description: "InsertOne succeeds after RetryableWriteError from server"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["insert"]
+              errorLabels: ["RetryableWriteError"]
+              errorCode: 112 # WriteConflict, not normally a retryable error code
+          operation:
+              name: "insertOne"
+              arguments:
+                  document: { _id: 1, x: 11 }
+          outcome:
+              result:
+                  insertedId: 1
+              collection:
+                  data:
+                      - { _id: 1, x: 11 }
+    - description: "InsertOne succeeds after a connection failure"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["insert"]
+              closeConnection: true
+      operation:
+          name: "insertOne"
+          arguments: { _id: 1, x: 11 }
+      outcome:
+          result:
+              insertedId: 1
+          collection:
+              data:
+                  - { _id: 1, x: 11 }
+    - description: "InsertOne fails with a RetryableWriteError label after two connection failures"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 2 }
+          data:
+              failCommands: ["insert"]
+              closeConnection: true
+      operaion:
+          name: "insertOne"
+          arguments:
+              document: { _id: 1, x: 11 }
+      outcome:
+          error: true
+          result:
+              errorLabelsContain: ["RetryableWriteError"]
+          collection:
+              data: []
 
-    -
-        description: "InsertOne does not retry and fails on error without RetryableWriteError label"
-        failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-                failCommands: ["insert"]
-                errorLabels: []
-        operaion:
-            name: "insertOne"
-            arguments:
-                document: { _id: 1, x: 11 }
-        outcome:
-            error: true
-            collection:
-                data: []
-
+    - description: "InsertOne does not retry and fails on error without RetryableWriteError label"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["insert"]
+              errorLabels: []
+      operaion:
+          name: "insertOne"
+          arguments:
+              document: { _id: 1, x: 11 }
+      outcome:
+          error: true
+          collection:
+              data: []

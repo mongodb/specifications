@@ -318,6 +318,8 @@ and sharded clusters.
 Changelog
 =========
 
+:2019-10-21: Add ``errorLabelsContain`` field to ``result``
+
 :2019-08-07: Add Prose Tests section
 
 :2019-06-07: Mention $merge stage for aggregate alongside $out
