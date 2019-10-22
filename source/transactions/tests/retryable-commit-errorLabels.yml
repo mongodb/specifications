@@ -17,7 +17,8 @@ tests:
       mode: { times: 1 }
       data:
         failCommands: ["commitTransaction"]
-        errorCode: 112 # WriteConflict, not a retryable error code
+        errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+        errorLabels: []
     operations:
       - name: startTransaction
         object: session0

@@ -23,3 +23,22 @@ tests:
               collection:
                   data:
                       - { _id: 1, x: 11 }
+
+    - description: "InsertOne fails if server does not return RetryableWriteError"
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands: ["insert"]
+                errorLabels: []
+                errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+            operation:
+                name: "insertOne"
+                arguments:
+                  document: { _id: 1, x: 11 }
+          outcome:
+            error: true
+            result:
+                errorLabelsOmit: ["RetryableWriteError"]
+            collection:
+                data: []

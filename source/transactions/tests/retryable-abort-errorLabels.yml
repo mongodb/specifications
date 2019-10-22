@@ -77,7 +77,8 @@ tests:
       mode: { times: 1 }
       data:
         failCommands: ["abortTransaction"]
-        errorCode: 112 # WriteConflict, not a retryable error code
+        errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+        errorLabels: []
     operations:
       - name: startTransaction
         object: session0
@@ -91,6 +92,8 @@ tests:
             insertedId: 1
       - name: abortTransaction
         object: session0
+        result:
+          errorLabelsContain: ["RetryableWriteError"]
     expectations:
       - command_started_event:
         command:
