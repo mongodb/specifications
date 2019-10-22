@@ -3,7 +3,7 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.3.1
+:Spec Version: 1.4.0
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
@@ -69,22 +69,22 @@ Retryable Error
    An error is considered retryable if it has a RetryableWriteError label in
    its top-level "errorLabels" field.
 
-   For server versions 4.3 and newer, MongoDB will add a RetryableWriteError label to
+   For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
    errors or server responses that it considers retryable before returning them to the
    driver. As new server versions are released, the errors that are labeled with the
    RetryableWriteError may change.
 
-   There are some cases where the driver MUST add the RetryableWriteError label to
-   an error or server response from a supported retryable write operation:
-   - any network exception
+   For all server versions that support retryable writes (MongoDB 3.6+), the driver
+   MUST add the RetryableWriteError label to an error or server response from a
+   supported retryable write operation that meets the following criteria:
+   - any network exception (e.g. socket timeout or error)
    - any error with an error message containing the substrings "not master"
    or "node is recovering"
 
-   For versions older than 4.3, the MongoDB server does not add the RetryableWriteError
+   For versions older than 4.4, the MongoDB server does not add the RetryableWriteError
    label to any errors; for these server versions, the driver MUST add
-   a RetryableWriteError label to errors that meet the following criteria:
-
-   - any network exception (e.g. socket timeout or error)
+   a RetryableWriteError label to errors that meet the following criteria (in addition
+   to the criteria defined above):
 
    - a server error response with any the following codes:
 
@@ -116,11 +116,8 @@ Retryable Error
        * - SocketException
          - 9001
 
-   - a server error response without an error code or one different from those
-     listed above, but with an error message containing the substring "not
-     master" or "node is recovering"
-
-   - a server response with a write concern error meeting the above criteria
+   - a server response with a write concern error meeting any of the
+   previously stated criteria
 
    The criteria for retryable errors is similar to the discussion in the SDAM
    spec's section on `Error Handling`_, but includes additional error codes. See

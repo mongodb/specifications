@@ -207,6 +207,9 @@ Each YAML file has the following keys:
 
       - ``errorLabelsContain``: A list of error label strings that the
         error is expected to have.
+       
+      - ``errorLabelsOmit``: A list of error label strings that the
+        error is expected not to have.
 
     - ``collection``:
 

@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5.3
+:Spec Version: 1.5.4
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody

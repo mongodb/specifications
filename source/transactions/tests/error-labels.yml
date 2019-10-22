@@ -261,7 +261,7 @@ tests:
         result:
           # Note, the server will return the errorLabel in this case.
           errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
 
     expectations:
       - command_started_event:
@@ -408,7 +408,7 @@ tests:
       collection:
         data: []
 
-  - description: add unknown commit label to connection errors
+  - description: add retryable error and unknown commit label to connection errors
 
     failPoint:
       configureFailPoint: failCommand
@@ -431,7 +431,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
       - name: commitTransaction
         object: session0
@@ -492,14 +492,14 @@ tests:
         data:
           - _id: 1
 
-  - description: add unknown commit label to retryable commit errors
+  - description: add retryable error and unknown commit label to retryable commit errors
 
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 2 }
       data:
           failCommands: ["commitTransaction"]
-          errorCode: 11602  # InterruptedDueToReplStateChange 
+          errorCode: 11602  # InterruptedDueToReplStateChange
 
     operations:
       - name: startTransaction
@@ -515,7 +515,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
       - name: commitTransaction
         object: session0
@@ -576,7 +576,7 @@ tests:
         data:
           - _id: 1
 
-  - description: add unknown commit label to writeConcernError ShutdownInProgress
+  - description: add retryable error and unknown commit label to writeConcernError ShutdownInProgress
 
     failPoint:
       configureFailPoint: failCommand
@@ -605,7 +605,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
       - name: commitTransaction
         object: session0
@@ -698,7 +698,7 @@ tests:
         object: session0
         result:
           errorLabelsContain: ["UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError"]
       - name: commitTransaction
         object: session0
 
@@ -780,7 +780,7 @@ tests:
         object: session0
         result:
           errorLabelsContain: ["UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError"]
       - name: commitTransaction
         object: session0
 
@@ -859,7 +859,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError", "UnknownTransactionCommitResult"]
 
     expectations:
       - command_started_event:
@@ -924,7 +924,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsOmit: ["TransientTransactionError", "UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteConcern", "TransientTransactionError", "UnknownTransactionCommitResult"]
 
     expectations:
       - command_started_event:
@@ -989,7 +989,7 @@ tests:
           maxTimeMS: 60000
           session: session0
         result:
-          errorLabelsOmit: ["UnknownTransactionCommitResult", "TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult", "TransientTransactionError"]
       - name: abortTransaction
         object: session0
 
@@ -1069,7 +1069,7 @@ tests:
         object: session0
         result:
           errorLabelsContain: ["UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError"]
       - name: commitTransaction
         object: session0
 
@@ -1152,7 +1152,7 @@ tests:
         object: session0
         result:
           errorLabelsContain: ["UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError"]
       - name: commitTransaction
         object: session0
 
