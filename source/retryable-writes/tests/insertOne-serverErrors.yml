@@ -1,11 +1,9 @@
 runOn:
     -
         minServerVersion: "4.0"
-        maxServerVersion: "4.2.1"
         topology: ["replicaset"]
     -
         minServerVersion: "4.1.7"
-        maxServerVersion: "4.2.1"
         topology: ["sharded"]
 
 data:

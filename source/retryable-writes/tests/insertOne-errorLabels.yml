@@ -43,7 +43,7 @@ tests:
                 data:
                     - { _id: 1, x: 11 }
     -
-        description: "InsertOne fails with a RetryableWriteError label after two network errors"
+        description: "InsertOne fails with a RetryableWriteError label after two connection failures"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -55,6 +55,7 @@ tests:
             arguments:
                 document: { _id: 1, x: 11 }
         outcome:
+            error: true
             result:
                 errorLabelsContain: ["RetryableWriteError"]
             collection:
@@ -73,6 +74,7 @@ tests:
             arguments:
                 document: { _id: 1, x: 11 }
         outcome:
+            error: true
             collection:
                 data: []
 

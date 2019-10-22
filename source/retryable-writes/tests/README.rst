@@ -168,7 +168,7 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Parameters to pass to MongoClient().
 
-  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
+  - ``useMultipleMongtses`` (optional): If ``true``, the MongoClient for this
     test should be initialized with multiple mongos seed addresses. If ``false``
     or omitted, only a single mongos address should be specified. This field has
     no effect for non-sharded topologies.
@@ -204,6 +204,9 @@ Each YAML file has the following keys:
       unrecoverable failure. In that case, drivers may choose to check the
       result object if their BulkWriteException (or equivalent) provides access
       to a write result object.
+
+      - ``errorLabelsContain``: A list of error label strings that the
+        error is expected to have.
 
     - ``collection``:
 

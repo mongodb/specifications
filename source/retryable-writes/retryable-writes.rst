@@ -69,22 +69,20 @@ Retryable Error
    An error is considered retryable if it has a RetryableWriteError label in
    its top-level "errorLabels" field.
 
-   An error can be labeled as a RetryableWriteError in a few different ways:
-
-   Starting in version 4.3.0, the MongoDB server will add a RetryableWriteError label
-   to errors it considers retryable. The types of errors to which this label is added
-   are subject to change, and the driver is expected to retry any supported retryable
-   operation when the server responds with a RetryableWriteError label, regardless of
-   its error code.
+   For server versions 4.3 and newer, MongoDB will keep track of all errors or server responses
+   that it considers retryable and add a RetryableWriteError label to those errors before returning
+   them to the driver. The errors to which this label is added are subject to change, and the driver
+   MUST retry any supported retryable operation when the server responds with a RetryableWriteError
+   label, regardless of its error code.
 
    The driver MUST add a RetryableWriteError label to an error or server response that
    meets the following criteria:
    - any network exception
-   - any server error with an error message containing the substrings "not master"
+   - any  error with an error message containing the substrings "not master"
    or "node is recovering"
 
-   For versions older than 4.3.0, MongoDB does not add the RetryableWriteError label to
-   any errors or server responses; for these server versions, the driver MUST add
+   For versions older than 4.3, the MongoDB server does not add the RetryableWriteError
+   label to any errors; for these server versions, the driver MUST add
    a RetryableWriteError label to errors that meet the following criteria:
 
    - any network exception (e.g. socket timeout or error)
@@ -125,7 +123,7 @@ Retryable Error
 
    - a server response with a write concern error meeting the above criteria
 
-   In this case, the criteria for retryable errors is similar to the discussion in the SDAM
+   The criteria for retryable errors is similar to the discussion in the SDAM
    spec's section on `Error Handling`_, but includes additional error codes. See
    `What do the additional error codes mean?`_ for the reasoning behind these
    additional errors.
@@ -784,8 +782,8 @@ cluster (mongos just forwards the error from the shard's replica set).
 Changes
 =======
 
-2019-10-21: Change the definition of "retryable write" to reflect the introduction
-of the RetryableWriteError label.
+2019-10-21: Change the definition of "retryable write" to be based on the
+RetryableWriteError label.
 
 2019-07-30: Drivers must rewrite error messages for error code 20 when
 txnNumber is not supported by the storage engine.
