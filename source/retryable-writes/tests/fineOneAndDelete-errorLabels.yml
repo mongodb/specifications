@@ -1,0 +1,49 @@
+runOn:
+    - minServerVersion: "4.3.x"
+      topology: ["replicaset", "sharded"]
+
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+
+tests:
+    - description: "FindOneAndDelete succeeds after RetryableWriteError from server"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["findAndModify"]
+              errorLabels: ["RetryableWriteError"]
+              errorCode: 112 # WriteConflict, not a retryable error code
+      operation:
+          name: "findOneAndDelete"
+          arguments:
+              filter: { x: { $gte: 11 } }
+              sort: { x: 1 }
+      outcome:
+          result: { _id: 1, x: 11 }
+          collection:
+              data:
+                  - { _id: 2, x: 22 }
+
+    - description: "FindOneAndDelete fails if server does not return RetryableWriteError"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["findAndModify"]
+              errorLabels: []
+              errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+      operation:
+          name: "findOneAndDelete"
+          arguments:
+              filter: { x: { $gte: 11 } }
+              sort: { x: 1 }
+      outcome:
+          error: true
+          result:
+              errorLabelsOmit: ["RetryableWriteError"]
+          collection:
+              data:
+                  - { _id: 1, x: 11 }
+                  - { _id: 2, x: 22 }
