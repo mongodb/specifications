@@ -121,8 +121,8 @@ tests:
         outcome:
           error: true
           result:
-              errorLabelsContain: ["RetryableWriteError"]
-            collection:
+                errorLabelsContain: ["RetryableWriteError"]
+          collection:
                 data:
                     - { _id: 2, x: 23 }
                     - { _id: 3, x: 33 }

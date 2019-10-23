@@ -467,7 +467,7 @@ tests:
       collection:
         data: []
 
-  - description: abortTransaction succeeds after InterruptedDueToReplStateChange
+  - description: abortTransaction succeeds after InterruptedDueToReplStateChange 
 
     failPoint:
       configureFailPoint: failCommand
@@ -1077,7 +1077,7 @@ tests:
       collection:
         data: []
 
-  - description: abortTransaction succeeds after WriteConcernError InterruptedDueToReplStateChange
+  - description: abortTransaction succeeds after WriteConcernError InterruptedDueToReplStateChange 
 
     failPoint:
       configureFailPoint: failCommand

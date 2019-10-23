@@ -73,5 +73,5 @@ tests:
                 errorLabelsContain: ["RetryableWriteError"]
             collection:
                 data:
-                    - { _id: 1, x: 12 }
+                    - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }

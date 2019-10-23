@@ -50,14 +50,13 @@ tests:
                 data:
                     - { _id: 2, x: 22 }
     -
-        description: "FindOneAndDelete fails if server does not return RetryableWriteError"
+        description: "FindOneAndDelete fails with a RetryableWriteError label after two connection failures"
         failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            mode: { times: 2 }
             data:
                 failCommands: ["findAndModify"]
-                errorLabels: []
-                errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+                closeConnection: true
         operation:
             name: "findOneAndDelete"
             arguments:
@@ -66,7 +65,7 @@ tests:
         outcome:
             error: true
             result:
-                errorLabelsOmit: ["RetryableWriteError"]
+                errorLabelsContain: ["RetryableWriteError"]
             collection:
                 data:
                     - { _id: 1, x: 11 }
