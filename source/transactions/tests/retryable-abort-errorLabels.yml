@@ -93,7 +93,7 @@ tests:
       - name: abortTransaction
         object: session0
         result:
-          errorLabelsContain: ["RetryableWriteError"]
+          errorLabelsOmit: ["RetryableWriteError"]
     expectations:
       - command_started_event:
         command:
