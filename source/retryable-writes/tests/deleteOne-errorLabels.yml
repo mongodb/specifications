@@ -2,43 +2,48 @@ runOn:
     - minServerVersion: "4.3.x"
       topology: ["replicaset", "sharded"]
 
-data: []
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
 
 tests:
-    - description: "InsertOne succeeds after RetryableWriteError from server"
+    - description: "DeleteOne succeeds after RetryableWriteError from server"
       failPoint:
           configureFailPoint: failCommand
           mode: { times: 1 }
           data:
-              failCommands: ["insert"]
+              failCommands: ["delete"]
               errorLabels: ["RetryableWriteError"]
               errorCode: 112 # WriteConflict, not a retryable error code
       operation:
-          name: "insertOne"
+          name: "deleteOne"
           arguments:
-              document: { _id: 1, x: 11 }
+              filter: { _id: 1 }
       outcome:
           result:
-              insertedId: 1
+              deletedCount: 1
           collection:
               data:
-                  - { _id: 1, x: 11 }
+                  - { _id: 2, x: 22 }
 
-    - description: "InsertOne fails if server does not return RetryableWriteError"
+    - description: "DeleteOne fails if server does not return RetryableWriteError"
       failPoint:
           configureFailPoint: failCommand
           mode: { times: 1 }
           data:
-              failCommands: ["insert"]
+              failCommands: ["delete"]
               errorLabels: []
               errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
       operation:
-          name: "insertOne"
+          name: "deleteOne"
           arguments:
-              document: { _id: 1, x: 11 }
+              filter: { _id: 1 }
       outcome:
           error: true
           result:
               errorLabelsOmit: ["RetryableWriteError"]
           collection:
-              data: []
+
+              data:
+                  - { _id: 1, x: 11 }
+                  - { _id: 2, x: 22 }
