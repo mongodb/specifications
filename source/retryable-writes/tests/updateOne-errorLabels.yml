@@ -1,0 +1,53 @@
+runOn:
+    - minServerVersion: "4.3.x"
+      topology: ["replicaset", "sharded"]
+
+data:
+    - { _id: 1, x: 11 }
+    - { _id: 2, x: 22 }
+
+tests:
+    - description: "UpdateOne succeeds after RetryableWriteError from server"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["update"]
+              errorLabels: ["RetryableWriteError"]
+              errorCode: 112 # WriteConflict, not a retryable error code
+      operation:
+          name: "updateOne"
+          arguments:
+              filter: { _id: 1 }
+              update: { $inc: { x: 1 } }
+      outcome:
+          result:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedCount: 0
+          collection:
+              data:
+                  - { _id: 1, x: 12 }
+                  - { _id: 2, x: 22 }
+
+    - description: "UpdateOne fails if server does not return RetryableWriteError"
+      failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+              failCommands: ["update"]
+              errorLabels: []
+              errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+      operation:
+          name: "updateOne"
+          arguments:
+              filter: { _id: 1 }
+              update: { $inc: { x: 1 } }
+      outcome:
+          error: true
+          result:
+              errorLabelsOmit: ["RetryableWriteError"]
+          collection:
+              data:
+                  - { _id: 1, x: 11 }
+                  - { _id: 2, x: 22 }
