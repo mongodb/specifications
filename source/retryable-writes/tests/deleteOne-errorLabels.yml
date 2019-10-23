@@ -14,13 +14,13 @@ tests:
           mode: { times: 1 }
           data:
               failCommands: ["delete"]
-              errorLabels: ["RetryableWriteError"]
               errorCode: 112 # WriteConflict, not a retryable error code
+              errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
       operation:
           name: "deleteOne"
           arguments:
               filter: { _id: 1 }
-      outcome:
+      outcome: # Driver retries operation and it succeeds
           result:
               deletedCount: 1
           collection:
@@ -33,14 +33,14 @@ tests:
           mode: { times: 1 }
           data:
               failCommands: ["delete"]
-              errorLabels: []
               errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+              errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
       operation:
           name: "deleteOne"
           arguments:
               filter: { _id: 1 }
       outcome:
-          error: true
+          error: true # Driver does not retry operation because there was no RetryableWriteError label on response
           result:
               errorLabelsOmit: ["RetryableWriteError"]
           collection:

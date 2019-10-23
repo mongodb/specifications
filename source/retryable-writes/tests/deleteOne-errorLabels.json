@@ -30,10 +30,10 @@
           "failCommands": [
             "delete"
           ],
+          "errorCode": 112,
           "errorLabels": [
             "RetryableWriteError"
-          ],
-          "errorCode": 112
+          ]
         }
       },
       "operation": {
@@ -69,8 +69,8 @@
           "failCommands": [
             "delete"
           ],
-          "errorLabels": [],
-          "errorCode": 11600
+          "errorCode": 11600,
+          "errorLabels": []
         }
       },
       "operation": {

@@ -15,8 +15,8 @@ tests:
       mode: { times: 2 }
       data:
         failCommands: ["abortTransaction"]
-        errorLabels: ["RetryableWriteError"]
         errorCode: 112 # WriteConflict, not a retryable error code
+        errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
     operations:
       - name: startTransaction
         object: session0
@@ -57,7 +57,7 @@ tests:
             writeConcern:
           command_name: abortTransaction
           database_name: admin
-      - command_started_event:
+      - command_started_event: # Driver retries abort once
           command:
             abortTransaction: 1
             lsid: session0
@@ -79,7 +79,7 @@ tests:
       data:
         failCommands: ["abortTransaction"]
         errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
-        errorLabels: []
+        errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
     operations:
       - name: startTransaction
         object: session0
@@ -122,6 +122,6 @@ tests:
             writeConcern:
           command_name: abortTransaction
           database_name: admin
-    outcome:
+    outcome: # Driver does not retry abort
       collection:
           data: []

@@ -19,7 +19,7 @@ tests:
       data:
         failCommands: ["commitTransaction"]
         errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
-        errorLabels: []
+        errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
     operations:
       - name: startTransaction
         object: session0
@@ -62,7 +62,7 @@ tests:
             writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
-    outcome:
+    outcome: # Driver does not retry commit because there was no RetryableWriteError label on response
       collection:
         data: []
 
@@ -74,8 +74,8 @@ tests:
       mode: { times: 1 }
       data:
         failCommands: ["commitTransaction"]
-        errorLabels: ["RetryableWriteError"]
         errorCode: 112 # WriteConflict, not a retryable error code
+        errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
     operations:
       - name: startTransaction
         object: session0
@@ -127,7 +127,7 @@ tests:
             writeConcern: { w: majority, wtimeout: 10000 }
           command_name: commitTransaction
           database_name: admin
-    outcome:
+    outcome: # Driver retries commit and it succeeds
       collection:
         data:
           - _id: 1

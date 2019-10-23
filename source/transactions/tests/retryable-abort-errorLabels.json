@@ -22,10 +22,10 @@
           "failCommands": [
             "abortTransaction"
           ],
+          "errorCode": 112,
           "errorLabels": [
             "RetryableWriteError"
-          ],
-          "errorCode": 112
+          ]
         }
       },
       "operations": [

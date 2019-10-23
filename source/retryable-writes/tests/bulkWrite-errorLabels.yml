@@ -14,8 +14,8 @@ tests:
           mode: { times: 1 }
           data:
               failCommands: ["update"]
-              errorLabels: ["RetryableWriteError"]
               errorCode: 112 # WriteConflict, not a retryable error code
+              errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
       operation:
           name: "bulkWrite"
           arguments:
@@ -31,7 +31,7 @@ tests:
                         filter: { _id: 2 }
                         update: { $inc: { x: 1 } }
               options: { ordered: true }
-      outcome:
+      outcome: # Driver retries operation and it succeeds
           result:
               deletedCount: 1
               insertedCount: 1
@@ -51,8 +51,8 @@ tests:
           mode: { times: 1 }
           data:
               failCommands: ["update"]
-              errorLabels: []
               errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+              errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
       operation:
           name: "bulkWrite"
           arguments:
@@ -69,7 +69,7 @@ tests:
                         update: { $inc: { x: 1 } }
               options: { ordered: true }
       outcome:
-          error: true
+          error: true # Driver does not retry operation because there was no RetryableWriteError label on response
           result:
               errorLabelsOmit: ["RetryableWriteError"]
           collection:

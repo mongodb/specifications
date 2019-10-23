@@ -14,14 +14,14 @@ tests:
           mode: { times: 1 }
           data:
               failCommands: ["findAndModify"]
-              errorLabels: ["RetryableWriteError"]
               errorCode: 112 # WriteConflict, not a retryable error code
+              errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
       operation:
           name: "findOneAndDelete"
           arguments:
               filter: { x: { $gte: 11 } }
               sort: { x: 1 }
-      outcome:
+      outcome: # Driver retries operation and it succeeds
           result: { _id: 1, x: 11 }
           collection:
               data:
@@ -33,15 +33,15 @@ tests:
           mode: { times: 1 }
           data:
               failCommands: ["findAndModify"]
-              errorLabels: []
               errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+              errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
       operation:
           name: "findOneAndDelete"
           arguments:
               filter: { x: { $gte: 11 } }
               sort: { x: 1 }
       outcome:
-          error: true
+          error: true # Driver does not retry operation because there was no RetryableWriteError label on response
           result:
               errorLabelsOmit: ["RetryableWriteError"]
           collection:

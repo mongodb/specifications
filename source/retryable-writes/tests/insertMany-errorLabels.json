@@ -26,10 +26,10 @@
           "failCommands": [
             "insert"
           ],
+          "errorCode": 112,
           "errorLabels": [
             "RetryableWriteError"
-          ],
-          "errorCode": 112
+          ]
         }
       },
       "operation": {
@@ -86,8 +86,8 @@
           "failCommands": [
             "insert"
           ],
-          "errorLabels": [],
-          "errorCode": 11600
+          "errorCode": 11600,
+          "errorLabels": []
         }
       },
       "operation": {

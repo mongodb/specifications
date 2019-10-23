@@ -30,10 +30,10 @@
           "failCommands": [
             "update"
           ],
+          "errorCode": 112,
           "errorLabels": [
             "RetryableWriteError"
-          ],
-          "errorCode": 112
+          ]
         }
       },
       "operation": {
@@ -80,8 +80,8 @@
           "failCommands": [
             "update"
           ],
-          "errorLabels": [],
-          "errorCode": 11600
+          "errorCode": 11600,
+          "errorLabels": []
         }
       },
       "operation": {
