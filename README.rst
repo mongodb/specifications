@@ -104,6 +104,16 @@ Store all source documents in the ``source/`` directory.
 
 .. _`reStructuredText`: http://docutils.sourceforge.net/rst.html
 
+Prose test numbering
+--------------------
+
+When numbering prose tests, always use relative numbered bullets (``#.``). New
+tests must be appended at the end of the test list, since drivers may refer to
+existing tests by number.
+
+Outdated tests must not be removed completely, but may be marked as such (e.g.
+by striking through or replacing the entire test with a note (e.g. **Removed**).
+
 Building Documents
 ------------------
 
