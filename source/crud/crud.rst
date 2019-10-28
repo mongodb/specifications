@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: September 26, 2019
+:Last Modified: October 28, 2019
 
 .. contents::
 
@@ -1724,14 +1724,6 @@ Test Plan
 
 See the `README <tests/README.rst>`_ for tests.
 
-In addition, we have constructed some example usages in different languages that show how different implementations are able to conform to the specification and still look and feel idiomatic to a user.
-
-* `C++ <examples/cpp/usage_example.cpp>`_
-* `Javascript <examples/javascript/usage_example.js>`_
-* `Java <examples/java/src/main/java/examples/MongoCollectionUsageExample.java>`_
-* `Node <examples/node/usage_example.js>`_
-* `PHP <examples/php/usage_example.php>`_
-
 
 Motivation
 ==========
@@ -1821,6 +1813,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-10-28: Removed link to old language examples.
 * 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages
 * 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
