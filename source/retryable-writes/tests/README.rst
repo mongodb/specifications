@@ -302,7 +302,7 @@ Prose Tests
 The following tests ensure that retryable writes work properly with replica sets
 and sharded clusters.
 
-1. Test that retryable writes raise an exception when using the MMAPv1 storage
+#. Test that retryable writes raise an exception when using the MMAPv1 storage
    engine. For this test, execute a write operation, such as ``insertOne``,
    which should generate an exception. Assert that the error message is the
    replacement error message::
