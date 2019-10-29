@@ -161,10 +161,11 @@ Keys are strings and the character case must be normalized by lower casing the u
 
 When defining and documenting keys, specifications should follow the camelCase naming convention with the first letter in lowercase, snake\_case MUST not be used. Keys that aren't supported by a driver MUST be ignored.
 
-A WARN level logging message MUST be issued. For example::
+Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported keys. For example::
 
-  Unsupported option 'connectMS'. Keys should be descriptive and follow existing conventions:
-
+  Unsupported option 'connectMS'.
+  
+Keys should be descriptive and follow existing conventions:
 
 Time based keys
 ~~~~~~~~~~~~~~~
