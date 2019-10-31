@@ -429,11 +429,18 @@ key. If the kmsProvider is "aws" it is required and has the following fields:
    {
       region: String, // Required.
       key: String // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
-      endpoint: String // Optional. An alternate host to send KMS requests to. May include port number.
+      endpoint: String // Optional. An alternate host identifier to send KMS requests to. May include port number.
    }
 
 Drivers MUST document the expected value of masterKey for "aws" and that
 it is required, not optional.
+
+The value of "endpoint" is a host name with optional port number separated by a
+colon. E.g. "kms.us-east-1.amazonaws.com" or "kms.us-east-1.amazonaws.com:443".
+It is assumed that the host name is not an IP address or IP literal. Though
+drivers MUST NOT inspect the value of "endpoint" that a user sets when creating
+a data key, a driver will inspect it when connecting to KMS to determine a port
+number if present.
 
 If the kmsProvider is "local" the masterKey is not applicable.
 
@@ -757,7 +764,7 @@ masterKey contents
 provider String   Either "aws" or "local". More providers will be available in the future.
 key      String   AWS ARN. Only applicable for "aws" provider.
 region   String   AWS Region that contains AWS ARN. Only applicable for "aws" provider.
-endpoint string   Alternate AWS endpoint (needed for FIPS endpoints, local testing)
+endpoint string   Alternate AWS endpoint (needed for FIPS endpoints)
 ======== ======== ========================================================================
 
 Data keys are needed for encryption and decryption. They are identified
