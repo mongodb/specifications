@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2019-06-07
-:Version: 1.5.2
+:Last Modified: 2019-10-31
+:Version: 1.5.3
 
 .. contents::
 
@@ -681,4 +681,5 @@ Version History
   - 2017-12-18 : Added "available" to Readconcern level.
   - 2017-05-29 : Added user management commands to list of commands that write 
   - 2019-01-29 : Added section listing all known examples of writeConcernError.
-  - 2019-06-07: Clarify language for aggregate and mapReduce commands that write
+  - 2019-06-07: Clarify language for aggregate and mapReduce commands that write.
+  - 2019-10-31: Explicitly define write concern option mappings.
