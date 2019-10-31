@@ -60,3 +60,5 @@ MUST NOT update its internal list of discovered mongos servers:
 - DNS record lookup timeout
 - DNS record lookup failure (i.e.: domain no longer exists because it's no longer registered)
 - The removal of all DNS SRV records (e.g., the lookup returns 0 SRV records)
+
+.. _`Initial DNS Seedlist Discovery`: ../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
