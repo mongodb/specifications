@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2019-06-07
-:Version: 1.5.2
+:Last Modified: 2019-10-31
+:Version: 1.5.3
 
 .. contents::
 
@@ -243,9 +243,8 @@ MaxWireVersion < 4
 Write Concern
 -------------
 
-For naming and deviation guidance, see the `CRUD specification
-<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_.
-Below are defined the constructs for drivers.
+When a driver sends a write concern document to the server, the structure
+of the write concern document MUST be as follows:
 
 .. code:: typescript
   
@@ -256,7 +255,7 @@ Below are defined the constructs for drivers.
      *
      * @see http://docs.mongodb.org/manual/core/write-concern/#journaled
      */
-    journal: Optional<Boolean>,
+    j: Optional<Boolean>,
 
     /**
      * When an integer, specifies the number of nodes that should acknowledge
@@ -268,12 +267,40 @@ Below are defined the constructs for drivers.
     w: Optional<Int32 | String>,
 
     /**
-     * If the write concern is not satisfied within the specified timeout
-     * (in milliseconds), the operation will return an error.
-     * The value MUST be greater than or equal to 0.
-     * When not specified, a driver should not send "wtimeout".
+     * If provided, and the write concern is not satisfied within the
+     * specified timeout (in milliseconds), the server will return an error
+     * for the operation. When unspecified, a driver SHOULD NOT send "wtimeout".
+     *
+     * The value, if provided, MUST be greater than or equal to 0.
      *
      * @see http://docs.mongodb.org/manual/core/write-concern/#timeouts
+     */
+    wtimeout: Optional<Int64>
+  }
+
+When a driver provides a way for the application to specify the write concern,
+the following data structure SHOULD be used. For acceptable naming and
+deviation guidance, see the `CRUD specification
+<https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#naming>`_.
+
+.. code:: typescript
+  
+  class WriteConcern {
+    /**
+     * Corresponds to the "j" field in the WriteConcern document sent to
+     * the server.
+     */
+    journal: Optional<Boolean>,
+
+    /**
+     * Corresponds to the "w" field in the WriteConcern document sent to
+     * the server.
+     */
+    w: Optional<Int32 | String>,
+
+    /**
+     * Corresponds to the "wtimeout" field in the WriteConcern document sent to
+     * the server.
      */
     wtimeoutMS: Optional<Int64>
   }
@@ -654,4 +681,5 @@ Version History
   - 2017-12-18 : Added "available" to Readconcern level.
   - 2017-05-29 : Added user management commands to list of commands that write 
   - 2019-01-29 : Added section listing all known examples of writeConcernError.
-  - 2019-06-07: Clarify language for aggregate and mapReduce commands that write
+  - 2019-06-07: Clarify language for aggregate and mapReduce commands that write.
+  - 2019-10-31: Explicitly define write concern option mappings.
