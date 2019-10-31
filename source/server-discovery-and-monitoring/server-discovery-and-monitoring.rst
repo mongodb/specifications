@@ -1308,7 +1308,7 @@ Error handling
 Network error during server check
 `````````````````````````````````
 
-When a server `check`_ fails due to a network error (including a timeout),
+When a server `check`_ fails due to a network error (including a network timeout),
 the client MUST clear its connection pool for the server:
 if the monitor's socket is bad it is likely that all are.
 (See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_,
