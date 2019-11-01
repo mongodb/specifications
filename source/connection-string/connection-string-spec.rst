@@ -79,7 +79,7 @@ The user information if present, is followed by a commercial at-sign ("@") that 
 
 A password may be supplied as part of the user information and is anything after the first colon (":") up until the end of the user information.
 
-RFC 3986 has guidance for encoding user information in `Section 2.1 ("Percent-Encoding") <https://tools.ietf.org/html/rfc3986#section-2.1>`_, `Section 2.2 ("Reserved Characters") <https://tools.ietf.org/html/rfc3986#section-2.1>`_, and `Section 3.2.1 ("User Information") <https://tools.ietf.org/html/rfc3986#section-2.1>`_.
+RFC 3986 has guidance for encoding user information in `Section 2.1 ("Percent-Encoding") <https://tools.ietf.org/html/rfc3986#section-2.1>`_, `Section 2.2 ("Reserved Characters") <https://tools.ietf.org/html/rfc3986#section-2.2>`_, and `Section 3.2.1 ("User Information") <https://tools.ietf.org/html/rfc3986#section-3.2.1>`_.
 
 Specifically, Section 3.2.1 provides for the following allowed characters::
 
