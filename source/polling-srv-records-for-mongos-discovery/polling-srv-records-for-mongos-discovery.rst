@@ -141,6 +141,13 @@ scanning_ functionality, but only if *rescanSRVIntervalMS* has passed.
 
 .. _scanning: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#scanning
 
+Test Plan
+=========
+
+See README.rst in the accompanying `test directory`_.
+
+.. _`test directory`: tests
+
 Motivation for Change
 =====================
 
