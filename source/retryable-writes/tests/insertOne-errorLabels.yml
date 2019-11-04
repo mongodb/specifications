@@ -6,7 +6,7 @@ runOn:
 data: []
 
 tests:
-    - description: "InsertOne succeeds after RetryableWriteError from server"
+    - description: "InsertOne succeeds with RetryableWriteError from server"
       failPoint:
           configureFailPoint: failCommand
           mode: { times: 1 }

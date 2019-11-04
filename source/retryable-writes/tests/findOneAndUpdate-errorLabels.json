@@ -20,7 +20,7 @@
   ],
   "tests": [
     {
-      "description": "FindOneAndUpdate succeeds after RetryableWriteError from server",
+      "description": "FindOneAndUpdate succeeds with RetryableWriteError from server",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

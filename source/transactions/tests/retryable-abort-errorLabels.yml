@@ -9,7 +9,7 @@ collection_name: &collection_name "test"
 
 data: []
 tests:
-  - description: abortTransaction only retries once after RetryableWriteError from server
+  - description: abortTransaction only retries once with RetryableWriteError from server
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 2 }

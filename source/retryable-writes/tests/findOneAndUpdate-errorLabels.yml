@@ -8,7 +8,7 @@ data:
     - { _id: 2, x: 22 }
 
 tests:
-    - description: "FindOneAndUpdate succeeds after RetryableWriteError from server"
+    - description: "FindOneAndUpdate succeeds with RetryableWriteError from server"
       failPoint:
           configureFailPoint: failCommand
           mode: { times: 1 }

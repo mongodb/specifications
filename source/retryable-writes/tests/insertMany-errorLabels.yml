@@ -7,7 +7,7 @@ data:
     - { _id: 1, x: 11 }
 
 tests:
-    - description: "InsertMany succeeds after RetryableWriteError from server"
+    - description: "InsertMany succeeds with RetryableWriteError from server"
       failPoint:
           configureFailPoint: failCommand
           mode: { times: 1 }

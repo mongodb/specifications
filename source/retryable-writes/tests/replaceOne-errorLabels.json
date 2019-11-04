@@ -20,7 +20,7 @@
   ],
   "tests": [
     {
-      "description": "ReplaceOne succeeds after RetryableWriteError from server",
+      "description": "ReplaceOne succeeds with RetryableWriteError from server",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

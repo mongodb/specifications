@@ -66,7 +66,7 @@ tests:
       collection:
         data: []
 
-  - description: commitTransaction retries once after RetryableWriteError from server
+  - description: commitTransaction retries once with RetryableWriteError from server
     clientOptions:
       retryWrites: false
     failPoint:

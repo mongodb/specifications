@@ -772,11 +772,30 @@ way to differentiate this error case from any other. The error code and errmsg
 are the same in MongoDB 3.6 and 4.0, and the same from a replica set or sharded
 cluster (mongos just forwards the error from the shard's replica set).
 
+Why did an earlier version of the spec require the driver to parse the error message to categorize retryable errors?
+--------------------------------------------------------------------------------------------------------------------
+
+Earlier versions of the spec defined retryable errors to include any error with
+the substring "not master" or "node is recovering" in its error messages.
+This was copied over from the definitions of NotMaster and NodeIsRecovering
+errors in the SDAM specification, which was written before MongoDB reliably
+used error codes to communicate error categories to the driver (see
+`Use error messages to detect "not master" and "node is recovering"`_).
+
+Retryable writes are only available on MongoDB versions 3.6 and newer. These
+server versions can be relied on to consistently return the proper error codes.
+Thus, it is sufficient that the driver check errors for the appropriate
+error codes or error labels to determine whether they are retryable without
+performing any error message parsing.
+
+_Use error messages to detect "not master" and "node is recovering": ..server-discovery-and-monitoring/server-discovery-and-monitoring.rst#use-error-messages-to-detect-not-master-and-node-is-recovering
+
 Changes
 =======
 
 2019-10-21: Change the definition of "retryable write" to be based on the
-RetryableWriteError label.
+RetryableWriteError label. Stop requiring drivers to parse errmsg to
+categorize retryable errors for pre-4.4 servers.
 
 2019-07-30: Drivers must rewrite error messages for error code 20 when
 txnNumber is not supported by the storage engine.
