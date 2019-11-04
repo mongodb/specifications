@@ -462,7 +462,7 @@
       }
     },
     {
-      "description": "add transient label to connection errors",
+      "description": "add TransientTransactionError label to connection errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -664,7 +664,7 @@
       }
     },
     {
-      "description": "add retryable error and unknown commit label to connection errors",
+      "description": "add RetryableWriteError and UnknownTransactionCommitResult labels to connection errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -803,7 +803,7 @@
       }
     },
     {
-      "description": "add retryable error and unknown commit label to retryable commit errors",
+      "description": "add RetryableWriteError and UnknownTransactionCommitResult labels to retryable commit errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -942,7 +942,7 @@
       }
     },
     {
-      "description": "add retryable error and unknown commit label to writeConcernError ShutdownInProgress",
+      "description": "add RetryableWriteError and UnknownTransactionCommitResult labels to writeConcernError ShutdownInProgress",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1093,7 +1093,7 @@
       }
     },
     {
-      "description": "add unknown commit label to writeConcernError WriteConcernFailed",
+      "description": "add UnknownTransactionCommitResult label to writeConcernError WriteConcernFailed",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1225,7 +1225,7 @@
       }
     },
     {
-      "description": "add unknown commit label to writeConcernError WriteConcernFailed with wtimeout",
+      "description": "add UnknownTransactionCommitResult label to writeConcernError WriteConcernFailed with wtimeout",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1361,7 +1361,7 @@
       }
     },
     {
-      "description": "omit unknown commit label to writeConcernError UnsatisfiableWriteConcern",
+      "description": "omit UnknownTransactionCommitResult label from writeConcernError UnsatisfiableWriteConcern",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1468,7 +1468,7 @@
       }
     },
     {
-      "description": "omit unknown commit label to writeConcernError UnknownReplWriteConcern",
+      "description": "omit UnknownTransactionCommitResult label from writeConcernError UnknownReplWriteConcern",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1575,7 +1575,7 @@
       }
     },
     {
-      "description": "do not add unknown commit label to MaxTimeMSExpired inside transactions",
+      "description": "do not add UnknownTransactionCommitResult label to MaxTimeMSExpired inside transactions",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1705,7 +1705,7 @@
       }
     },
     {
-      "description": "add unknown commit label to MaxTimeMSExpired",
+      "description": "add UnknownTransactionCommitResult label to MaxTimeMSExpired",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1837,7 +1837,7 @@
       }
     },
     {
-      "description": "add unknown commit label to writeConcernError MaxTimeMSExpired",
+      "description": "add UnknownTransactionCommitResult label to writeConcernError MaxTimeMSExpired",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
