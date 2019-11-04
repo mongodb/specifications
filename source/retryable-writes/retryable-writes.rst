@@ -788,7 +788,7 @@ Thus, it is sufficient that the driver check errors for the appropriate
 error codes or error labels to determine whether they are retryable without
 performing any error message parsing.
 
-_Use error messages to detect "not master" and "node is recovering": ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#use-error-messages-to-detect-not-master-and-node-is-recovering
+.. _Use error messages to detect "not master" and "node is recovering": ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#use-error-messages-to-detect-not-master-and-node-is-recovering
 
 Changes
 =======
