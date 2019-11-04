@@ -167,3 +167,5 @@ the server.
 
 Outcome: the server MUST be marked Unknown, and the server's connection
 pool must be cleared.
+
+.. _failCommand fail point: https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point
