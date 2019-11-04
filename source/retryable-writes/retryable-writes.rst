@@ -126,9 +126,6 @@ Retryable Error
    .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
    .. _Transactions specification: ../transactions/transactions.rst#error-labels
 
- In all cases, when a driver receives an error with a RetryableWriteError label, it MUST retry
- the corresponding command.
-
 Additional terms may be defined in the `Driver Session`_ specification.
 
 Naming Deviations
