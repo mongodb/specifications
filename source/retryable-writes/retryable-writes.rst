@@ -114,7 +114,7 @@ Retryable Error
        * - SocketException
          - 9001
 
-   - a server write concern error response with any of the previously listed codes
+   - a server response with a write concern error response containing any of the previously listed codes
 
    The criteria for retryable errors is similar to the discussion in the SDAM
    spec's section on `Error Handling`_, but includes additional error codes. See
