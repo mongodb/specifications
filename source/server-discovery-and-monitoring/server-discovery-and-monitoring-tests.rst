@@ -143,3 +143,27 @@ Command response on an arbiter, recovering member, ghost, or secondary
 when slaveOk is false:
 
     {ok: 0, errmsg: "not master"}
+
+Network error on monitoring connection
+--------------------------------------
+
+Non-timeout network error
+'''''''''''''''''''''''''
+
+Scenario: mock a non-timeout network error on a monitoring connection.
+Alternatively, set a `failCommand fail point`_ on ``isMaster`` command
+with ``closeConnection: true`` parameter. Then, either perform a server
+scan manually or wait for the driver to scan the server.
+
+Outcome: the server MUST be marked Unknown, and the server's connection
+pool must be cleared.
+
+Network timeout error
+'''''''''''''''''''''
+
+Scenario: mock a network timeout error on a monitoring connection.
+Then, either perform a server scan manually or wait for the driver to scan
+the server.
+
+Outcome: the server MUST be marked Unknown, and the server's connection
+pool must be cleared.
