@@ -156,7 +156,7 @@ with ``closeConnection: true`` parameter. Then, either perform a server
 scan manually or wait for the driver to scan the server.
 
 Outcome: the server MUST be marked Unknown, and the server's connection
-pool must be cleared.
+pool MUST be cleared.
 
 Network timeout error
 '''''''''''''''''''''
@@ -166,6 +166,6 @@ Then, either perform a server scan manually or wait for the driver to scan
 the server.
 
 Outcome: the server MUST be marked Unknown, and the server's connection
-pool must be cleared.
+pool MUST be cleared.
 
 .. _failCommand fail point: https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point
