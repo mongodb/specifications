@@ -74,7 +74,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 
 username (string)
 	* Applies to all mechanisms.
-	* Optional for MONGODB-X509.
+	* Optional for MONGODB-X509 and MONGODB-IAM.
 source (string)
 	* Applies to all mechanisms.
 	* Always '$external' for GSSAPI and MONGODB-X509.
@@ -683,6 +683,176 @@ mechanism
 mechanism_properties
 	MUST NOT be specified.
 
+MONGODB-IAM
+~~~~~~~~~~~
+
+:since: 4.4
+
+MONGODB-IAM authenticates using AWS IAM credentials or temporary IAM credentials 
+assigned to an EC2 machine or ECS task.
+
+MONGODB-IAM requires that a client create a randomly generated nonce. It is 
+imperative, for security sake, that this be as secure and truly random as possible. 
+
+All messages between MongoDB clients and servers are sent as base64 encoded BSON V1.1 Objects. 
+All fields in these messages have a "short name" which is used in the serialized 
+BSON representation and a human readable "friendly name" which is used in this document. They are as follows:
+
+==== ==================== ========== ============================================================================================================================================== 
+Name Friendly Name        Type       Description
+==== ==================== ========== ==============================================================================================================================================
+r    client nonce         BinData    32 byte cryptographically secure random number 
+p    gs2-cb-flag          32-bit int The integer representation of the ASCII charater 'n' or 'y', i.e., ``110`` or ``121``
+s    server nonce         BinData    64 bytes total. The first 32 bytes from the client nonce and the second 32 bytes from the server nonce
+h    sts hosts            string     DNS Host name of the STS service 
+a    auth_header          string     Authorization header for `AWS Signature Version 4 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+d    X-AMZ-Date           string     Current date in UTC -see `AWS Signature Version 4 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+t    X-AMZ-Security-Token string     Optional AWS security token
+==== ==================== ========== ============================================================================================================================================== 
+
+Drivers MUST NOT advertise support for channel binding, as the server does
+not support it and legacy servers may fail authentication if drivers advertise
+support. The client-first-message MUST set ``p`` to the integer representation 
+of the ASCII character ``n``, i.e., ``110``.
+
+Conversation
+````````````
+As an example, given an ``r`` value of "enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1Q=", a MONGODB-IAM conversation would appear as
+follows:
+
+| C: ``r=enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1Q=,p=110``
+| S: ``s=enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1RHbnN1IWy6vp7GvmtRmcGWYEtjedGEI0ZXi13r7y4V+A==,h="sts.amazonaws.com"``
+
+.. note::
+	Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce, i.e., ``r``. Drivers must 
+        also validate that the host is greater than 0 and less than or equal to 255 bytes per `RFC 1035 <https://tools.ietf.org/html/rfc1035>`_. Drivers MUST reject
+        DNS names with empty labels, e.g., "abc..def" and error on any additional fields.
+
+| C: ``a="AWS4-HMAC-SHA256 Credential=AKIAICGVLKOKZVY3X3DA/20191017/us-east-1/sts/aws4_request, SignedHeaders=content-length;content-type;host;x-amz-date;x-mongodb-gs2-cb-flag;x-mongodb-server-nonce, Signature=6f67c4dfbc05da04ea8d571bc6f7d11833f9d1909d0068be302c5379e1867d15",d="20191017T173547Z"``
+
+Signature Version 4 Signing Process
+        In response to the Server First message, the driver MUST construct a call to `sts::GetCallerIdentity <https://docs.aws.amazon.com/STS/latest/APIReference/API_GetCallerIdentity.html>`_ with
+        its credentials including the base 64 representation of the server nonce, .i.e., ``s``, as a signed header named ``X-MongoDB-Server-Nonce``. It must 
+        also include ``X-MongoDB-GS2-CB-Flag`` as a signed header. The value of ``X-MongoDB-GS2-CB-Flag`` MUST be the single ASCII character ``n``. These headers must be included in the list
+        of ``SignedHeaders`` in the authorization header, i.e., ``a``, of the AWS Signature V4. There is one optional field, ``X-Amz-Security-Token``, which are temporary credentials used
+        to generate the signature. The values that drivers should use to generate the authorization signature are as follows:
+
+======================== ======================================================================================================
+Name                     Value       
+======================== ======================================================================================================
+HTTP Request Method      POST 
+URI                      /
+Content-Type*            application/x-www-form-urlencoded
+Content-Length*          43
+Host*                    Host field from Server First Message
+Region                   Derived from Host - see below
+X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+X-Amz-Security-Token*    Optional, See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+X-MongoDB-Server-Nonce*  Base64 string of server nonce
+X-MongoDB-GS2-CB-Flag*   ASCII lower-case character ‘n’ or ‘y’ or ‘p’
+X-MongoDB-Optional-Data* Optional, Optional data, base64 encoded representation of the optional object provided by the client
+Body                     Action=GetCallerIdentity&Version=2011-06-15\n
+======================== ======================================================================================================
+
+.. note::
+        ``*``, Denotes a header that MUST be included in SignedHeaders if present.
+
+.. note::
+        Region is not a header, but simply part of the authorization header. Region by default is ‘us-east-1’ since this is the implicit region for ‘sts.amazonaws.com’.
+        Drivers will need to derive the region to use from the endpoint. The region is the second piece of a DNS name. While all official AWS STS 
+        endpoints start with “sts.”, there are non-AWS hosted endpoints and test endpoints that will not follow this rule.
+
+================= =========
+Host              Region
+================= =========
+sts.amazonaws.com us-east-1
+first.second      second
+first             us-east-1
+================= ========= 
+
+Example:
+
+.. code:: javascript
+
+           Content-Length:43
+           Content-Type:application/x-www-form-urlencoded
+           Host:sts.amazonaws.com
+           X-Amz-Date:20191017T173547Z
+           X-MongoDB-Server-Nonce:enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1RHbnN1IWy6vp7GvmtRmcGWYEtjedGEI0ZXi13r7y4V+A==
+           X-MongoDB-GS2-CB-Flag:n
+           Authorization:AWS4-HMAC-SHA256 Credential=AKIAICGVLKOKZVY3X3DA/20191017/us-east-1/sts/aws4_request, SignedHeaders=content-length;content-type;host;x-amz-date;x-mongodb-gs2-cb-flag;x-mongodb-server-nonce, Signature=6f67c4dfbc05da04ea8d571bc6f7d11833f9d1909d0068be302c5379e1867d15
+           Action=GetCallerIdentity&Version=2011-06-15
+
+
+`MongoCredential`_ Properties
+`````````````````````````````
+
+username
+        MAY be specified. The non-sensitive IAM access key.
+
+source
+	MUST be "$external". Defaults to ``$external``.
+
+password
+	MAY be specified. The sensitive IAM secret key.
+
+mechanism
+	MUST be "MONGODB-IAM"
+
+mechanism_properties
+	AWS_SESSION_TOKEN
+		Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
+
+IAM Credentials
+
+If a username and password is provided drivers MUST use these for the IAM access key and IAM secret key, respectively. Drivers
+MUST use this secret key to generate a signature using HMAC-SHA256.
+
+Temporary Credentials
+
+If a username and password is not provided drivers MUST query the standard local AWS endpoint for temporary credentials.
+If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error.
+
+EC2 Instance
+      Calling the endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/`` in an EC2 instance will return the role attached to the EC2 instance 
+      in plaintext, if it exist:
+
+      ``role-name``
+
+      It ends with a trailing newline, ``\n``.
+      ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>`` will return the following json response: 
+
+.. code:: javascript
+
+      {
+          "Code": "Success",
+          "LastUpdated" : <date>,
+          "Type": "AWS-HMAC",
+          "AccessKeyId" : <access_key>,
+          "SecretAccessKey": <secret_access_key>,
+          "Token" : <security_token>,
+          "Expiration": <date>
+      }
+
+From this response, drivers will need to extract the ``AccessKeyId``, ``SecretAccessKey`` and the ``Token`` argument values. Drivers will use these values
+to construct the call to ``sts::getCallerIdentity`` as part of the Amazon Signature V4 algorithm. Drivers who cache the security temporary credentials 
+must check the expiration date before using them. If the credentials expire, they must refetch them. 
+
+ECS Tasks
+     ECS temporary credentials can be retrieved by calling a URL at ``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` 
+     where ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is an environment variable set by the AWS EC2 container agent.
+
+.. code:: javascript
+
+   {
+       "AccessKeyId": "ACCESS_KEY_ID",
+       "Expiration": "EXPIRATION_DATE",
+       "RoleArn": "TASK_ROLE_ARN",
+       "SecretAccessKey": "SECRET_ACCESS_KEY",
+       "Token": "SECURITY_TOKEN_STRING"
+   }
+
+
 -------------------------
 Connection String Options
 -------------------------
@@ -694,14 +864,14 @@ Auth Related Options
 --------------------
 
 authMechanism
-	MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256
+	MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-IAM
 
 	Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
 
 authSource
 	Sets the Source property on the MongoCredential.
 
-	For GSSAPI and MONGODB-X509 authMechanisms the authSource defaults to ``$external``.
+	For GSSAPI, MONGODB-X509 and MONGODB-IAM authMechanisms the authSource defaults to ``$external``.
 	For PLAIN the authSource defaults to the database name if supplied on the connection string or ``$external``.
 	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
