@@ -208,6 +208,8 @@ In the prose tests LOCAL_MASTERKEY refers to the following base64:
 
   Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
 
+Perform all applicable operations on key vault collections (e.g. inserting an example data key, or running a find command) with readConcern/writeConcern "majority".
+
 Data key and double encryption
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
