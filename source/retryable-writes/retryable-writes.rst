@@ -67,64 +67,8 @@ ClientSession
 
 Retryable Error
    An error is considered retryable if it has a RetryableWriteError label in
-   its top-level "errorLabels" field.
-
-   For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
-   errors or server responses that it considers retryable before returning them to the
-   driver. As new server versions are released, the errors that are labeled with the
-   RetryableWriteError may change. When receiving a command result with an error from
-   a 4.4+ server that supports retryable writes, the driver MUST NOT add a
-   RetryableWriteError label to that error under any condition.
-
-   When the driver encounters a network error communicating with any server version
-   that supports retryable writes, it MUST add a RetryableWriteError label to that
-   error.
-
-   When receiving a command result with an error from a pre-4.4 server that supports
-   retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
-   the following criteria:
-
-   - a server error response with any the following codes:
-
-     .. list-table::
-       :header-rows: 1
-
-       * - Error Name
-         - Error Code
-       * - InterruptedAtShutdown
-         - 11600
-       * - InterruptedDueToReplStateChange
-         - 11602
-       * - NotMaster
-         - 10107
-       * - NotMasterNoSlaveOk
-         - 13435
-       * - NotMasterOrSecondary
-         - 13436
-       * - PrimarySteppedDown
-         - 189
-       * - ShutdownInProgress
-         - 91
-       * - HostNotFound
-         - 7
-       * - HostUnreachable
-         - 6
-       * - NetworkTimeout
-         - 89
-       * - SocketException
-         - 9001
-
-   - a server response with a write concern error response containing any of the previously listed codes
-
-   The criteria for retryable errors is similar to the discussion in the SDAM
-   spec's section on `Error Handling`_, but includes additional error codes. See
-   `What do the additional error codes mean?`_ for the reasoning behind these
-   additional errors.
-
-   For more information about error labels, see the `Transactions specification`_.
-
-   .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-   .. _Transactions specification: ../transactions/transactions.rst#error-labels
+   its top-level "errorLabels" field. See `Determining Retryable Errors`_ for
+   more information.
 
 Additional terms may be defined in the `Driver Session`_ specification.
 
@@ -262,6 +206,70 @@ response.
 
 Implementing Retryable Writes
 -----------------------------
+
+Determining Retryable Errors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When connected to a MongoDB instance that supports retryable writes (versions 3.6+),
+the driver MUST treat all errors with the RetryableWriteError label as retryable.
+This label might be added to an error in a variety of ways:
+
+For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
+errors or server responses that it considers retryable before returning them to the
+driver. As new server versions are released, the errors that are labeled with the
+RetryableWriteError label may change. When receiving a command result
+with an error from a 4.4+ server that supports retryable writes, the driver
+MUST NOT add a RetryableWriteError label to that error under any condition.
+
+When the driver encounters a network error communicating with any server version
+that supports retryable writes, it MUST add a RetryableWriteError label to that
+error.
+
+When receiving a command result with an error from a pre-4.4 server that supports
+retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
+the following criteria:
+
+- a server error response with any the following codes:
+
+  .. list-table::
+    :header-rows: 1
+
+    * - Error Name
+      - Error Code
+    * - InterruptedAtShutdown
+      - 11600
+    * - InterruptedDueToReplStateChange
+      - 11602
+    * - NotMaster
+      - 10107
+    * - NotMasterNoSlaveOk
+      - 13435
+    * - NotMasterOrSecondary
+      - 13436
+    * - PrimarySteppedDown
+      - 189
+    * - ShutdownInProgress
+      - 91
+    * - HostNotFound
+      - 7
+    * - HostUnreachable
+      - 6
+    * - NetworkTimeout
+      - 89
+    * - SocketException
+      - 9001
+
+- a server response with a write concern error response containing any of the previously listed codes
+
+The criteria for retryable errors is similar to the discussion in the SDAM
+spec's section on `Error Handling`_, but includes additional error codes. See
+`What do the additional error codes mean?`_ for the reasoning behind these
+additional errors.
+
+For more information about error labels, see the `Transactions specification`_.
+
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+.. _Transactions specification: ../transactions/transactions.rst#error-labels
 
 Generating Transaction IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
