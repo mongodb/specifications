@@ -42,7 +42,7 @@ encrypted MongoClient
 data key
    A key used to encrypt and decrypt BSON values. Data keys are
    encrypted with a key management service (AWS KMS) and stored within a document in the
-   MongoDB key vault collection (see `Key vault collection schema for data keys`_ for a description of the datakey document). Therefore, a client needs access to both
+   MongoDB key vault collection (see `Key vault collection schema for data keys`_ for a description of the data key document). Therefore, a client needs access to both
    MongoDB and the external KMS service to utilize a data key.
 
 MongoDB key vault collection
@@ -1215,7 +1215,7 @@ Why aren't we creating a unique index in the key vault collection?
 There should be a unique index on keyAltNames. Although GridFS
 automatically creates indexes as a convenience upon first write, it has
 been problematic before. It requires the createIndex privilege, which a
-user might not have if they are just querying the datakeys collection
+user might not have if they are just querying the key vault collection
 with find and adding keys with insert.
 
 Why do operations on views fail?
