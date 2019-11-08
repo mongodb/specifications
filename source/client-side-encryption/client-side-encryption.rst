@@ -41,8 +41,8 @@ encrypted MongoClient
 
 data key
    A key used to encrypt and decrypt BSON values. Data keys are
-   encrypted with a key management service (AWS KMS) and stored in the
-   MongoDB key vault collection (described in the `Appendix`_). Therefore, a client needs access to both
+   encrypted with a key management service (AWS KMS) and stored within a document in the
+   MongoDB key vault collection (see `Key vault collection schema for data keys`_ for a description of the datakey document). Therefore, a client needs access to both
    MongoDB and the external KMS service to utilize a data key.
 
 MongoDB key vault collection
@@ -141,7 +141,7 @@ encryption.
 The driver communicates with…
 
 -  **MongoDB cluster** to get remote JSON Schemas.
--  **MongoDB key vault** to get encrypted data keys and create new data
+-  **MongoDB key vault collection** to get encrypted data keys and create new data
    keys.
 -  **AWS KMS** to decrypt fetched data keys and encrypt new data keys.
 -  **mongocryptd** to ask what values in BSON commands must be
@@ -154,11 +154,11 @@ co-locate with their data.
 MongoDB Key Vault collection
 ----------------------------
 The key vault collection is a special MongoDB collection containing key
-documents. See the appendix section `Key Vault Keys <#_k677j27rx49q>`__
+documents. See the appendix section `Key vault collection schema for data keys`_
 for a description of the documents.
 
-The key material in the key vault is encrypted with a separate KMS
-service. Therefore, encryption and decryption requires access to a
+The key material in the key vault collection is encrypted with a separate
+KMS service. Therefore, encryption and decryption requires access to a
 MongoDB cluster and the KMS service.
 
 AWS KMS
@@ -199,7 +199,7 @@ external components. `Located here <https://github.com/mongodb/libmongocrypt>`_.
 
    -  speaking to mongocryptd to mark commands.
 
-   -  fetching encrypted data keys from key vault (mongod).
+   -  fetching encrypted data keys from key vault collection (mongod).
 
    -  running listCollections on mongod.
 
@@ -235,7 +235,7 @@ MongoClient Changes
       // Implementation details.
       private mongocrypt_t libmongocrypt_handle; // Handle to libmongocrypt.
       private Optional<MongoClient> mongocryptd_client; // Client to mongocryptd.
-      private Optional<MongoClient> keyvault_client; // Optional external client for key vault.
+      private Optional<MongoClient> keyvault_client; // Optional external client containing the key vault collection.
    }
 
    class AutoEncryptionOpts {
@@ -278,8 +278,8 @@ See `Why is client side encryption configured on a MongoClient?`_
 
 keyVaultNamespace
 ^^^^^^^^^^^^^^^^^
-The key vault namespace refers to a collection that contains all data
-keys used for encryption and decryption (aka the key vault collection).
+The key vault collection namespace refers to a collection that contains all
+data keys used for encryption and decryption (aka the key vault collection).
 Data keys are stored as documents in a special MongoDB collection. Data
 keys are protected with encryption by a KMS provider (AWS KMS or a local
 master key).
@@ -479,7 +479,7 @@ Identifies a data key by \_id. The value is a UUID (binary subtype 4).
 
 keyAltName
 ^^^^^^^^^^
-Identifies a key vault document by 'keyAltName'.
+Identifies a key vault collection document by 'keyAltName'.
 
 algorithm
 ^^^^^^^^^
@@ -740,9 +740,9 @@ intent-to-encrypt marking
    subtype 6, representing an encoded BSON document containing plaintext
    and metadata.
 
-Key vault collection schema
----------------------------
-Data keys are stored in the MongoDB key vault with the following schema:
+Key vault collection schema for data keys
+-----------------------------------------
+Data keys are stored in the MongoDB key vault collection with the following schema:
 
 ============ ================ ==========================================================================================================
 **Name**     **Type**         **Description**
@@ -773,6 +773,28 @@ retrieved by querying the "_id" with a UUID or by querying the
 "keyAltName" with a string.
 
 Note, "status" is unused and is purely informational.
+
+Example data key document
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code::
+
+   {
+      "_id" : UUID("00000000-0000-0000-0000-000000000000"),
+      "status" : 1,
+      "masterKey" : {
+         "provider" : "aws",
+         "key" : "arn:aws...",
+         "region" : "us-east-1"
+      },
+      "updateDate" : ISODate("2019-03-18T22:53:50.483Z"),
+      "keyMaterial" : BinData(0,"AQICAH..."),
+      "creationDate" : ISODate("2019-03-18T22:53:50.483Z"),
+      "keyAltNames" : [
+         "altname",
+         "another_altname"
+      ]
+   }
 
 BSON binary subtype 6
 ---------------------
@@ -1034,7 +1056,7 @@ Why not pass the ClientEncryption into db.getCollection() to enable auto encrypt
 
 As it is now, a ClientEncryption and a MongoClient cannot share state
 (libmongocrypt handle or MongoClient to mongocryptd). Foreseeably, they
-could share state if auto encryption was enabled by passing a key vault
+could share state if auto encryption was enabled by passing a ClientEncryption
 object like:
 
 db.getCollection ("coll", { autoEncrypt: { clientEncryption:
@@ -1042,12 +1064,12 @@ clientEncryption } })
 
 But this would require a MongoCollection to peek into the internals of a
 ClientEncryption object. This is messy and language dependent to
-implement and makes mocking out the key vault difficult for tests.
+implement and makes mocking out the ClientEncryption difficult for tests.
 
 Why do we need to pass a client to create a ClientEncryption?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We need to support an external key vault (i.e. on another MongoDB
+We need to support an external key vault collection (i.e. on another MongoDB
 cluster).
 
 Why are extraOptions and kmsProviders maps?
@@ -1138,24 +1160,25 @@ with EC2 instance metadata. But we've decided to implement the simplest
 authentication mechanism for v1, and defer more sophisticated ones as
 future work.
 
-Why not pass a URI for external key vaults instead of a MongoClient?
---------------------------------------------------------------------
+Why not pass a URI for external key vault collections instead of a MongoClient?
+-------------------------------------------------------------------------------
 
 Some configuration on a MongoClient can only be done programmatically.
 E.g. in Java TLS configuration can only be done at runtime since it is
 abstracted in an SSLContext which cannot be accessed or altered by the
 driver.
 
-What happened to multiple key vaults?
--------------------------------------
+What happened to multiple key vault collections?
+------------------------------------------------
 
 An earlier revision of this specification supported multiple active key
-vaults with the notion of a "key vault alias". The key vault alias
-identified one of possibly many key vaults that stored the key to
-decrypt the ciphertext. However, enforcing one key vault is a reasonable
-restriction for users. There isn't clear value in having multiple key
-vaults. And having active multiple key vaults is not necessary to
-migrate key vaults.
+vaults with the notion of a "key vault collection alias". The key vault
+collection alias identified one of possibly many key vault collections
+that stored the key to decrypt the ciphertext. However, enforcing one
+key vault collection is a reasonable restriction for users. There isn't
+clear value in having multiple key vault collections. And having active
+multiple key vault collections is not necessary to migrate key vault
+collections.
 
 Why auto encrypt a command instead of a wire protocol message?
 --------------------------------------------------------------
@@ -1186,8 +1209,8 @@ mongocryptd, mongocryptd is an implementation detail we'd like to have
 the freedom to remove in the future. So we want to expose mongocryptd as
 little as possible.
 
-Why aren't we creating a unique index in the key vault?
--------------------------------------------------------
+Why aren't we creating a unique index in the key vault collection?
+------------------------------------------------------------------
 
 There should be a unique index on keyAltNames. Although GridFS
 automatically creates indexes as a convenience upon first write, it has
@@ -1240,9 +1263,9 @@ logic into libmongocrypt. Therefore, this spec mandates that drivers use
 libmongocrypt to abstract encryption logic, deduplicate work, and to
 provide a simpler future path to removing mongocryptd.
 
-Support external key vaults discovery
--------------------------------------
-The only way to configure an external key vault is by passing a
+Support external key vault collection discovery
+-----------------------------------------------
+The only way to configure an external key vault collection is by passing a
 MongoClient.
 
 For apps like Compass, where it may not be possible for users to
@@ -1250,9 +1273,9 @@ configure this app side, there should ideally be enough information in
 the database to decrypt data. (Excluding KMS credentials, which are
 still passed as MongoClient options).
 
-We may want to store a URI to the external key vault somewhere in the
-data bearing cluster, so clients can connect to the external key vault
-without additional user supplied configuration.
+We may want to store a URI to the external key vault collection somewhere
+in the data bearing cluster, so clients can connect to the external key vault
+collection without additional user supplied configuration.
 
 Batch listCollections requests on expired schema cache entries
 --------------------------------------------------------------
