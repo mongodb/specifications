@@ -1288,7 +1288,7 @@ The following commands are allowed inside transactions:
 
 3.  killCursors
 
-4.  insert
+4.  insert, including into a non-existing collection that implicitly creates it
 
 5.  update
 
@@ -1303,6 +1303,11 @@ The following commands are allowed inside transactions:
 9.  distinct
 
 10. geoSearch
+
+11. create
+
+12. createIndexes on an empty collection created in the same transaction or on a
+    non-existing collection
 
 Why don’t drivers automatically retry commit after a write concern timeout error?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
