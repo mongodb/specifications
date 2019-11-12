@@ -1,6 +1,5 @@
 runOn:
-    # TODO: Update once SERVER-43941 is released
-    - minServerVersion: "4.3.x"
+    - minServerVersion: "4.3.1"
       topology: ["replicaset", "sharded"]
 
 data:
