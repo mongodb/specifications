@@ -630,7 +630,7 @@ redirect to /dev/null). Users can pass the argument --logpath to
 extraOptions.mongocryptdSpawnArgs if they need to inspect mongocryptd
 logs.
 
-Upon construction, the ClientEncryption MUST create a MongoClient to
+Upon construction, the MongoClient MUST create a MongoClient to
 mongocryptd configured with serverSelectionTimeoutMS=1000.
 
 If spawning is necessary, the driver MUST spawn mongocryptd whenever
