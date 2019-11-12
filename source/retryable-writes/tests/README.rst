@@ -205,6 +205,12 @@ Each YAML file has the following keys:
       result object if their BulkWriteException (or equivalent) provides access
       to a write result object.
 
+      - ``errorLabelsContain``: A list of error label strings that the
+        error is expected to have.
+
+      - ``errorLabelsOmit``: A list of error label strings that the
+        error is expected not to have.
+
     - ``collection``:
 
       - ``name`` (optional): The name of the collection to verify. If this isn't
@@ -314,6 +320,8 @@ and sharded clusters.
 
 Changelog
 =========
+
+:2019-10-21: Add ``errorLabelsContain`` and ``errorLabelsContain`` fields to ``result``
 
 :2019-08-07: Add Prose Tests section
 

@@ -57,6 +57,7 @@
           "object": "session0",
           "result": {
             "errorLabelsContain": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ],
             "errorLabelsOmit": [
@@ -207,6 +208,7 @@
           "object": "session0",
           "result": {
             "errorLabelsContain": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ],
             "errorLabelsOmit": [
@@ -353,7 +355,9 @@
           "result": {
             "errorCodeName": "Interrupted",
             "errorLabelsOmit": [
-              "TransientTransactionError"
+              "RetryableWriteError",
+              "TransientTransactionError",
+              "UnknownTransactionCommitResult"
             ]
           }
         }
@@ -452,7 +456,9 @@
           "object": "session0",
           "result": {
             "errorLabelsOmit": [
-              "TransientTransactionError"
+              "RetryableWriteError",
+              "TransientTransactionError",
+              "UnknownTransactionCommitResult"
             ]
           }
         }

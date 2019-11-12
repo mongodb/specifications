@@ -277,6 +277,8 @@ tests:
                 document: { _id: 3, x: 33 }
         outcome:
             error: true
+            result:
+                errorLabelsOmit: ["RetryableWriteError"]
             collection:
                 data:
                     - { _id: 1, x: 11 }
@@ -385,6 +387,8 @@ tests:
                 document: { _id: 3, x: 33 }
         outcome:
             error: true
+            result:
+                errorLabelsContain: ["RetryableWriteError"]
             collection:
                 data:
                     - { _id: 1, x: 11 }
@@ -406,6 +410,8 @@ tests:
                 document: { _id: 3, x: 33 }
         outcome:
             error: true
+            result:
+                errorLabelsOmit: ["RetryableWriteError"]
             collection:
                 data:
                     - { _id: 1, x: 11 }
@@ -429,8 +435,29 @@ tests:
                 document: { _id: 3, x: 33 }
         outcome:
             error: true
+            result:
+                errorLabelsOmit: ["RetryableWriteError"]
             collection:
                 data:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }  # The write was still applied.
+
+    -
+        description: "InsertOne fails with a RetryableWriteError label after two connection failures"
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+                failCommands: ["insert"]
+                closeConnection: true
+        operation:
+            name: "insertOne"
+            arguments:
+                document: { _id: 1, x: 11 }
+        outcome:
+            error: true
+            result:
+                errorLabelsContain: ["RetryableWriteError"]
+            collection:
+                data: []

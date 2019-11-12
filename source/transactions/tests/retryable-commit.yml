@@ -39,7 +39,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
       # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
@@ -131,7 +131,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsContain: ["UnknownTransactionCommitResult"]
+          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
           errorLabelsOmit: ["TransientTransactionError"]
       # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
@@ -218,7 +218,7 @@ tests:
         object: session0
         result:
           errorCodeName: Interrupted
-          errorLabelsOmit: ["TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError", "UnknownTransactionCommitResult"]
 
     expectations:
       - command_started_event:
@@ -281,7 +281,7 @@ tests:
       - name: commitTransaction
         object: session0
         result:
-          errorLabelsOmit: ["TransientTransactionError"]
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError", "UnknownTransactionCommitResult"]
 
     expectations:
       - command_started_event:
@@ -592,7 +592,7 @@ tests:
         data:
           - _id: 1
 
-  - description: commitTransaction succeeds after InterruptedDueToReplStateChange 
+  - description: commitTransaction succeeds after InterruptedDueToReplStateChange
 
     failPoint:
       configureFailPoint: failCommand
@@ -1219,7 +1219,7 @@ tests:
         data:
           - _id: 1
 
-  - description: commitTransaction succeeds after WriteConcernError InterruptedDueToReplStateChange 
+  - description: commitTransaction succeeds after WriteConcernError InterruptedDueToReplStateChange
 
     failPoint:
       configureFailPoint: failCommand

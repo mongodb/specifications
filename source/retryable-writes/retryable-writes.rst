@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.3.1
+:Spec Version: 1.4.0
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-06-07
+:Last Modified: 2019-10-21
 
 .. contents::
 
@@ -66,52 +66,9 @@ ClientSession
    name of this object MAY vary across drivers.
 
 Retryable Error
-   An error is considered retryable if it meets any of the following criteria:
-
-   - any network exception (e.g. socket timeout or error)
-
-   - a server error response with any the following codes:
-
-     .. list-table::
-       :header-rows: 1
-
-       * - Error Name
-         - Error Code
-       * - InterruptedAtShutdown
-         - 11600
-       * - InterruptedDueToReplStateChange 
-         - 11602
-       * - NotMaster
-         - 10107
-       * - NotMasterNoSlaveOk
-         - 13435
-       * - NotMasterOrSecondary
-         - 13436
-       * - PrimarySteppedDown
-         - 189
-       * - ShutdownInProgress
-         - 91
-       * - HostNotFound
-         - 7
-       * - HostUnreachable
-         - 6
-       * - NetworkTimeout
-         - 89
-       * - SocketException
-         - 9001
-
-   - a server error response without an error code or one different from those
-     listed above, but with an error message containing the substring "not
-     master" or "node is recovering"
-
-   - a server response with a write concern error meeting the above criteria
-
-   The criteria for retryable errors is similar to the discussion in the SDAM
-   spec's section on `Error Handling`_, but includes additional error codes. See
-   `What do the additional error codes mean?`_ for the reasoning behind these
-   additional errors.
-
-   .. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+   An error is considered retryable if it has a RetryableWriteError label in
+   its top-level "errorLabels" field. See `Determining Retryable Errors`_ for
+   more information.
 
 Additional terms may be defined in the `Driver Session`_ specification.
 
@@ -249,6 +206,70 @@ response.
 
 Implementing Retryable Writes
 -----------------------------
+
+Determining Retryable Errors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When connected to a MongoDB instance that supports retryable writes (versions 3.6+),
+the driver MUST treat all errors with the RetryableWriteError label as retryable.
+This label might be added to an error in a variety of ways:
+
+For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
+errors or server responses that it considers retryable before returning them to the
+driver. As new server versions are released, the errors that are labeled with the
+RetryableWriteError label may change. When receiving a command result
+with an error from a 4.4+ server that supports retryable writes, the driver
+MUST NOT add a RetryableWriteError label to that error under any condition.
+
+When the driver encounters a network error communicating with any server version
+that supports retryable writes, it MUST add a RetryableWriteError label to that
+error.
+
+When receiving a command result with an error from a pre-4.4 server that supports
+retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
+the following criteria:
+
+- a server error response with any the following codes:
+
+  .. list-table::
+    :header-rows: 1
+
+    * - Error Name
+      - Error Code
+    * - InterruptedAtShutdown
+      - 11600
+    * - InterruptedDueToReplStateChange
+      - 11602
+    * - NotMaster
+      - 10107
+    * - NotMasterNoSlaveOk
+      - 13435
+    * - NotMasterOrSecondary
+      - 13436
+    * - PrimarySteppedDown
+      - 189
+    * - ShutdownInProgress
+      - 91
+    * - HostNotFound
+      - 7
+    * - HostUnreachable
+      - 6
+    * - NetworkTimeout
+      - 89
+    * - SocketException
+      - 9001
+
+- a server response with a write concern error response containing any of the previously listed codes
+
+The criteria for retryable errors is similar to the discussion in the SDAM
+spec's section on `Error Handling`_, but includes additional error codes. See
+`What do the additional error codes mean?`_ for the reasoning behind these
+additional errors.
+
+For more information about error labels, see the `Transactions specification`_.
+
+.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+.. _Transactions specification: ../transactions/transactions.rst#error-labels
 
 Generating Transaction IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -759,8 +780,30 @@ way to differentiate this error case from any other. The error code and errmsg
 are the same in MongoDB 3.6 and 4.0, and the same from a replica set or sharded
 cluster (mongos just forwards the error from the shard's replica set).
 
+Why did an earlier version of the spec require the driver to parse the error message to categorize retryable errors?
+--------------------------------------------------------------------------------------------------------------------
+
+Earlier versions of the spec defined retryable errors to include any error with
+the substring "not master" or "node is recovering" in its error messages.
+This was copied over from the definitions of NotMaster and NodeIsRecovering
+errors in the SDAM specification, which was written before MongoDB reliably
+used error codes to communicate error categories to the driver (see
+`Use error messages to detect "not master" and "node is recovering"`_).
+
+Retryable writes are only available on MongoDB versions 3.6 and newer. These
+server versions can be relied on to consistently return the proper error codes.
+Thus, it is sufficient that the driver check errors for the appropriate
+error codes or error labels to determine whether they are retryable without
+performing any error message parsing.
+
+.. _Use error messages to detect "not master" and "node is recovering": ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#use-error-messages-to-detect-not-master-and-node-is-recovering
+
 Changes
 =======
+
+2019-10-21: Change the definition of "retryable write" to be based on the
+RetryableWriteError label. Stop requiring drivers to parse errmsg to
+categorize retryable errors for pre-4.4 servers.
 
 2019-07-30: Drivers must rewrite error messages for error code 20 when
 txnNumber is not supported by the storage engine.
