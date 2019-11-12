@@ -495,9 +495,9 @@ will propagate to prevent the possibility of the client sending
 unencrypted data that should be encrypted. Drivers MUST include the
 following in the documentation for MongoClient:
 
-If automatic encryption fails on an operation, use a MongoClient
-configured with bypassAutoEncryption=true and use
-ClientEncryption.encrypt() to manually encrypt values.
+   If automatic encryption fails on an operation, use a MongoClient
+   configured with bypassAutoEncryption=true and use
+   ClientEncryption.encrypt() to manually encrypt values.
 
 For example, currently an aggregate with $lookup into a foreign
 collection is unsupported (mongocryptd returns an error):
