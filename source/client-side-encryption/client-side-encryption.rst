@@ -374,7 +374,7 @@ ClientEncryption
 .. code:: typescript
 
    class ClientEncryption {
-      ClientEncryption (opts: ClientEncryptionOpts);
+      ClientEncryption(opts: ClientEncryptionOpts);
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
@@ -543,7 +543,7 @@ occurs).
       key_vault_namespace="admin.keyvault",
       kms_providers=kms,
       bypass_auto_encryption=True)
-   client_encryption = ClientEncryption (opts)
+   client_encryption = ClientEncryption(opts)
 
    accounts = client.db.accounts
    results = accounts.aggregate([
