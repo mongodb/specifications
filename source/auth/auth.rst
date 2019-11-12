@@ -696,7 +696,7 @@ or temporary IAM credentials assigned to an `EC2 instance <https://docs.aws.amaz
 MONGODB-IAM requires that a client create a randomly generated nonce. It is 
 imperative, for security sake, that this be as secure and truly random as possible. 
 
-All messages between MongoDB clients and servers are sent as base64 encoded BSON V1.1 Objects. 
+All messages between MongoDB clients and servers are sent as BSON V1.1 Objects in the payload field of saslStart and saslContinue.
 All fields in these messages have a "short name" which is used in the serialized 
 BSON representation and a human readable "friendly name" which is used in this specification. They are as follows:
 
@@ -720,7 +720,7 @@ of the ASCII character ``n``, i.e., ``110``.
 Conversation
 ````````````
 As an example, given a client nonce value of "enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1Q=", a MONGODB-IAM conversation decoded from
-base64 and converted from BSON to JSON would appear as follows:
+BSON to JSON would appear as follows:
 
 Client First
 
@@ -749,11 +749,35 @@ Client Second
        "d" : "20191107T002607Z"
    }
 |
-The same conversation as base64 encoded BSON would appear as:
+Each message above will be encoded as BSON V1.1 objects and sent to the server as the value of ``payload``. Therefore, the SASL conversation would appear as:
 
-| C: ``NAAAAAVyACAAAAAAdzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjIQcABuAAAAAA==``
-| S: ``ZgAAAAVzAEAAAAAAdzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjIGS0J9EgLwzEZ9dIzr/hnnK2mgd4D7F52t8g9yTC5cIAJoABIAAABzdHMuYW1hem9uYXdzLmNvbQAA`` 
-| C: ``LQEAAAJhAAkBAABBV1M0LUhNQUMtU0hBMjU2IENyZWRlbnRpYWw9QUtJQUlDR1ZMS09LWlZZM1gzREEvMjAxOTExMDcvdXMtZWFzdC0xL3N0cy9hd3M0X3JlcXVlc3QsIFNpZ25lZEhlYWRlcnM9Y29udGVudC1sZW5ndGg7Y29udGVudC10eXBlO2hvc3Q7eC1hbXotZGF0ZTt4LW1vbmdvZGItZ3MyLWNiLWZsYWc7eC1tb25nb2RiLXNlcnZlci1ub25jZSwgU2lnbmF0dXJlPWFiNjJjZTFjNzVmMTljNGM4YjkxOGIyZWQ2M2I0NjUxMjc2NWVkOWI4YmI1ZDc5YjM3NGFlODNlZWFjMTFmNTUAAmQAEQAAADIwMTkxMTA3VDAwMjYwN1oAAA==``
+Client First
+
+.. code:: javascript
+   { 
+       "saslStart" : 1, 
+       "mechanism" : "MONGODB-IAM", 
+       "payload" : new BinData(0, "NAAAAAVyACAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz4QcABuAAAAAA==")
+   }
+|
+Server First
+
+.. code:: javascript
+   {
+       "conversationId" : 1, 
+       "done" : false, 
+       "payload" : new BinData(0, "ZgAAAAVzAEAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz5Rj7x9UOBHJLvPgvgPS9sSzZUWgAPTy8HBbI1cG1WJ9gJoABIAAABzdHMuYW1hem9uYXdzLmNvbQAA"),
+       "ok" : 1.0
+   }
+|
+Client Second:
+
+.. code:: javascript
+   {
+       "saslContinue" : 1,
+       "conversationId" : 1,
+       "payload" : new BinData(0, "LQEAAAJhAAkBAABBV1M0LUhNQUMtU0hBMjU2IENyZWRlbnRpYWw9QUtJQUlDR1ZMS09LWlZZM1gzREEvMjAxOTExMTIvdXMtZWFzdC0xL3N0cy9hd3M0X3JlcXVlc3QsIFNpZ25lZEhlYWRlcnM9Y29udGVudC1sZW5ndGg7Y29udGVudC10eXBlO2hvc3Q7eC1hbXotZGF0ZTt4LW1vbmdvZGItZ3MyLWNiLWZsYWc7eC1tb25nb2RiLXNlcnZlci1ub25jZSwgU2lnbmF0dXJlPThhMTI0NGZjODYyZTI5YjZiZjc0OTFmMmYwNDE5NDY2ZGNjOTFmZWU1MTJhYTViM2ZmZjQ1NDY3NDEwMjJiMmUAAmQAEQAAADIwMTkxMTEyVDIxMDEyMloAAA==")
+   }
 |
 Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. 
 Drivers must also validate that the host is greater than 0 and less than or equal to 255 bytes per 
