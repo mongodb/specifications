@@ -90,39 +90,39 @@ The following shows basic usage of the new API.
 .. code:: python
 
    # The schema map identifies fields on collections that must undergo encryption.
-   
+
    schema_map = open("./schemas.json", "r").read()
-   
+
    # AWS KMS is used to decrypt data keys stored in the key vault collection.
-   
+
    aws_creds = open("./aws_credentials.json", "r").read()
-   
+
    # A client is configured for automatic encryption and decryption by passing
    # AutoEncryptionOpts. Automatic encryption is an enterprise only feature.
-   
+
    opts = AutoEncryptionOpts(
        kms_providers={"aws": aws_creds},
        key_vault_namespace="db.datakeys",
        schema_map=schema_map)
-   
+
    db = MongoClient(auto_encryption_opts=opts).db
-   
+
    # Commands are encrypted, as determined by the JSON Schema from the schema_map.
    db.coll.insert_one({"ssn": "457-55-5462"})
-   
+
    # Replies are decrypted.
    print(db.coll.find_one()) # { "ssn": "457-55-5462" } but stored and transported as ciphertext.
-   
+
    # A ClientEncryption object is used for explicit encryption, decryption, and creating data keys.
    opts = ClientEncryptionOpts(kms_providers=kms, key_vault_namespace="db.datakeys")
    clientencryption = ClientEncryption(client, opts)
-   
+
    # Use a ClientEncryption to create new data keys.
    # The master key identifies the CMK on AWS KMS to use for encrypting the data key.
    master_key = open("./aws_masterkey.json", "r").read()
    opts = DataKeyOpts (master_key=master_key)
    created_key_id = clientencryption.create_data_key("aws", opts)
-   
+
    # Use a ClientEncryption to explicitly encrypt and decrypt.
    opts = EncryptOpts(key_id=created_key_id,
        algorithm="AEAD_AES_256_CBC_HMAC_SHA_512-Random")
@@ -251,7 +251,7 @@ A MongoClient can be configured to automatically encrypt collection
 commands and decrypt results.
 
 Drivers MUST document that auto encryption is an enterprise-only
-feature. and that auto encryption only occurs on collection level
+feature and that auto encryption only occurs on collection level
 operations by including the following in the driver documentation for
 AutoEncryptionOpts:
 
@@ -319,10 +319,10 @@ may be specified locally with the schemaMap option. Drivers MUST
 document that a local schema is more secure and MUST include the
 following in the driver documentation for MongoClient:
 
-Supplying a schemaMap provides more security than relying on JSON
-Schemas obtained from the server. It protects against a malicious server
-advertising a false JSON Schema, which could trick the client into
-sending unencrypted data that should be encrypted.
+   Supplying a schemaMap provides more security than relying on JSON
+   Schemas obtained from the server. It protects against a malicious server
+   advertising a false JSON Schema, which could trick the client into
+   sending unencrypted data that should be encrypted.
 
 Drivers MUST document that a local schema only applies to client side
 encryption, and specifying JSON Schema features unrelated to encryption
@@ -374,7 +374,7 @@ ClientEncryption
 .. code:: typescript
 
    class ClientEncryption {
-      ClientEncryption (opts: ClientEncryptionOpts);
+      ClientEncryption(opts: ClientEncryptionOpts);
 
       // Creates a new key document and inserts into the key vault collection.
       // Returns the \_id of the created document as a UUID (BSON binary subtype 4).
@@ -495,9 +495,9 @@ will propagate to prevent the possibility of the client sending
 unencrypted data that should be encrypted. Drivers MUST include the
 following in the documentation for MongoClient:
 
-If automatic encryption fails on an operation, use a MongoClient
-configured with bypassAutoEncryption=true and use
-ClientEncryption.encrypt() to manually encrypt values.
+   If automatic encryption fails on an operation, use a MongoClient
+   configured with bypassAutoEncryption=true and use
+   ClientEncryption.encrypt() to manually encrypt values.
 
 For example, currently an aggregate with $lookup into a foreign
 collection is unsupported (mongocryptd returns an error):
@@ -543,8 +543,8 @@ occurs).
       key_vault_namespace="admin.keyvault",
       kms_providers=kms,
       bypass_auto_encryption=True)
-   client_encryption = ClientEncryption (opts)
-   
+   client_encryption = ClientEncryption(opts)
+
    accounts = client.db.accounts
    results = accounts.aggregate([
       {
@@ -630,7 +630,7 @@ redirect to /dev/null). Users can pass the argument --logpath to
 extraOptions.mongocryptdSpawnArgs if they need to inspect mongocryptd
 logs.
 
-Upon construction, the ClientEncryption MUST create a MongoClient to
+Upon construction, the MongoClient MUST create a MongoClient to
 mongocryptd configured with serverSelectionTimeoutMS=1000.
 
 If spawning is necessary, the driver MUST spawn mongocryptd whenever
@@ -855,7 +855,7 @@ Each field is briefly described as follows:
 bsonType  string                  The bsonType of the underlying encrypted field.
 algorithm string                  "AEAD_AES_256_CBC_HMAC_SHA_512-Random" or "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
 keyId     string or array of UUID If string, it is a JSON pointer to a field with a scalar value identifying a key by keyAltName.
-                                 
+
                                   If array, an array of eligible keys.
 ========= ======================= ===============================================================================================
 
