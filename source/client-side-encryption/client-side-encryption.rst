@@ -319,10 +319,10 @@ may be specified locally with the schemaMap option. Drivers MUST
 document that a local schema is more secure and MUST include the
 following in the driver documentation for MongoClient:
 
-Supplying a schemaMap provides more security than relying on JSON
-Schemas obtained from the server. It protects against a malicious server
-advertising a false JSON Schema, which could trick the client into
-sending unencrypted data that should be encrypted.
+   Supplying a schemaMap provides more security than relying on JSON
+   Schemas obtained from the server. It protects against a malicious server
+   advertising a false JSON Schema, which could trick the client into
+   sending unencrypted data that should be encrypted.
 
 Drivers MUST document that a local schema only applies to client side
 encryption, and specifying JSON Schema features unrelated to encryption
