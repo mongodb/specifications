@@ -142,7 +142,7 @@ After running all tests
 Iterating the Change Stream
 ---------------------------
 
-Although synchronous drivers must provide a [non-blocking mode of iteration](../change-streams.rst#not-blocking-on-iteration), asynchronous drivers may not have such a mechanism. Those drivers with only a blocking mode of iteration should be careful not to iterate the change stream unnecessarily, as doing so could cause the test runner to block indefinitely. For this reason, the test runner procedure above advises drivers to take a conservative approach to iteration.
+Although synchronous drivers must provide a `non-blocking mode of iteration <../change-streams.rst#not-blocking-on-iteration>`_, asynchronous drivers may not have such a mechanism. Those drivers with only a blocking mode of iteration should be careful not to iterate the change stream unnecessarily, as doing so could cause the test runner to block indefinitely. For this reason, the test runner procedure above advises drivers to take a conservative approach to iteration.
 
 If the test expects an error and one was not thrown by either creating the change stream or executing the test's operations, iterating the change stream once allows for an error to be thrown by a ``getMore`` command. If the test does not expect any error, the change stream should be iterated only until it returns as many result documents as are expected by the test.
 
