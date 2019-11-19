@@ -418,11 +418,11 @@ tests:
         configureFailPoint: failCommand
         mode: { times: 2 }
         data:
-            failCommands: ["count"]
+            failCommands: ["aggregate"]
             closeConnection: true
 
     operations:
-      - name: count
+      - name: countDocuments
         object: collection
         arguments:
           filter: {}

@@ -793,14 +793,14 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "closeConnection": true
         }
       },
       "operations": [
         {
-          "name": "count",
+          "name": "countDocuments",
           "object": "collection",
           "arguments": {
             "filter": {}
