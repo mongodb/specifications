@@ -863,13 +863,30 @@ mechanism_properties
 	AWS_SESSION_TOKEN
 		Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
 
-IAM Credentials
-   If a username and password is provided drivers MUST use these for the IAM access key and IAM secret key, respectively. Drivers
-   MUST use this secret key to generate a signature using HMAC-SHA256.
 
-Temporary Credentials
-   If a username and password is not provided drivers MUST query the standard local AWS endpoint for temporary credentials.
-   If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error.
+Obtaining Credentials
+`````````````````````
+IAM Credentials
+   If a username and password is provided drivers MUST use these for the IAM access key and IAM secret key, respectively. Drivers MUST 
+   use this secret key to generate a signature using HMAC-SHA256. If a username is provided without a password (or vice-versa) drivers 
+   MUST raise an error. An example URI for authentication with MONGODB-IAM using IAM credentials is as follows:
+
+   ``mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM``
+
+Temporary IAM Credentials
+   If a username and password is not provided drivers MUST query the standard local AWS endpoint for temporary credentials. If 
+   temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. If an `AWS_SESSION_TOKEN` is
+   provided in addition to a username and password this is considered an `Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request. An example URI for authentication with MONGODB-IAM using temporary IAM credentials from an EC2 instance
+   or ECS tasks is as follows:
+
+   ``mongodb://mongodb.example.com/?authMechanism=MONGODB-IAM``
+
+   An example using temporary IAM credentials as an Assume Role request is as follows:
+
+   ``mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>``
+
+.. note::
+   "session token" and "security token" are used interchangeably here and throughout the AWS documentation.
 
    EC2 Instance
       Calling the endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/`` from an EC2 instance 
