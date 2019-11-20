@@ -11,8 +11,8 @@ Driver CRUD API
 :Advisors: Jeremy Mikola, Jeff Yemin
 :Status: Approved
 :Type: Standards
-:Minimum Server Version: 2.6
-:Last Modified: October 28, 2019
+:Minimum Server Version: 2.7
+:Last Modified: November 20, 2019
 
 .. contents::
 
@@ -406,6 +406,17 @@ Read
   }
 
   class FindOptions {
+
+    /**
+     * Enables writing to temporary files. When set to true, the find operation
+     * can write temporary data to disk.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default
+     * is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    allowDiskUse: Optional<Boolean>;
 
     /**
      * Get partial results from a mongos if some shards are down (instead of throwing an error).
@@ -1813,6 +1824,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2019-11-20: Add allowDiskUse to FindOptions.
 * 2019-10-28: Removed link to old language examples.
 * 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages

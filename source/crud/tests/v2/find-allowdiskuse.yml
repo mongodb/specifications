@@ -1,0 +1,50 @@
+runOn:
+  - { minServerVersion: "4.4.0" }
+
+collection_name: &collection_name 'test_find_allowdiskuse'
+
+tests:
+  -
+    description: "Find does not send allowDiskuse when unspecified"
+    operations:
+      -
+        object: collection
+        name: find
+        arguments:
+          filter: { }
+    expectations:
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            allowDiskUse:
+  -
+    description: "Find sends allowDiskuse false"
+    operations:
+      -
+        object: collection
+        name: find
+        arguments:
+          filter: { }
+          allowDiskUse: false
+    expectations:
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            allowDiskUse: false
+  -
+    description: "Find sends allowDiskuse true"
+    operations:
+      -
+        object: collection
+        name: find
+        arguments:
+          filter: { }
+          allowDiskUse: true
+    expectations:
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            allowDiskUse: true
