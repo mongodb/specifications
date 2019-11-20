@@ -9,8 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: July 5, 2018
-:Version: 1.3
+:Last Modified: November 20, 2019
+:Version: 1.4
 
 .. contents::
 
