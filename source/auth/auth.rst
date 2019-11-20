@@ -754,6 +754,7 @@ Each message above will be encoded as BSON V1.1 objects and sent to the server a
 Client First
 
 .. code:: javascript
+
    { 
        "saslStart" : 1, 
        "mechanism" : "MONGODB-IAM", 
@@ -763,6 +764,7 @@ Client First
 Server First
 
 .. code:: javascript
+
    {
        "conversationId" : 1, 
        "done" : false, 
@@ -773,6 +775,7 @@ Server First
 Client Second:
 
 .. code:: javascript
+
    {
        "saslContinue" : 1,
        "conversationId" : 1,
