@@ -8,8 +8,8 @@ Enumerating Databases
 :Author: Jeremy Mikola
 :Status: Accepted
 :Type: Standards
-:Minimum Server Version: 3.6
-:Last Modified: 2018-02-02
+:Minimum Server Version: 3.7
+:Last Modified: 2019-11-20
 
 .. contents::
 
@@ -81,6 +81,22 @@ For example, to list only databases whose names begin with "foo":
 
   > db.adminCommand({listDatabases: 1, filter: {name: /^foo/}});
 
+AuthorizedDatabases
+-------------------
+
+MongoDB 4.0.5 added an ``authorizedDatabases`` boolean option to the `listDatabases`_
+database command, which can be used to limit the command result to only include databases
+the user is authorized to use. Drivers SHOULD support the new ``authorizedDatabases``
+option when implementing the `listDatabases`_ database command.
+
+The possible values for `authorizedDatabases` are:
+
+- unspecified (missing entirely from the command document sent to the server)
+- ``false``
+- ``true``
+
+See the server's `listDatabases`_ documentation for an explanation of what each value means.
+
 Driver Methods
 --------------
 
@@ -127,7 +143,7 @@ result. This method SHOULD be named ``listDatabases``.
 Drivers MAY report ``totalSize`` (e.g. through an additional output variable on
 the ``listDatabases`` method), but this is not necessary.
 
-Drivers SHOULD support the ``filter`` option when implementing this method. 
+Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method. 
 
 Enumerating Database Names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,7 +173,7 @@ Older versions of the server that do not support the ``nameOnly`` option for the
 drivers SHOULD always specify the ``nameOnly`` option when they only intend to
 access database names from the ``listDatabases`` command result.
 
-Drivers SHOULD support the ``filter`` option when implementing this method. 
+Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method. 
 
 Enumerating MongoDatabase Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +190,7 @@ MongoDatabase through MongoClient (e.g. read preference, write concern).
 Drivers SHOULD specify the ``nameOnly`` option when executing the
 ``listDatabases`` command for this method.
 
-Drivers SHOULD support the ``filter`` option when implementing this method. 
+Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method. 
 
 Replica Sets
 ------------
@@ -265,3 +281,4 @@ Changes
 =======
 
 2017-10-30 Support filter option in listDatabases command
+2019-11-20 Support authorizedDatabases option in listDatabases command
