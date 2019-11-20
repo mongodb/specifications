@@ -396,6 +396,18 @@ than checking the count in the case where the files collection is sharded.
 Drivers MUST check whether the indexes already exist before attempting to create them.
 This supports the scenario where an application is running with read-only authorizations.
 
+NOTE: when checking whether an index exists drivers MUST compare numeric values by value
+even when they are of different types, because the actual type will depend on how the index
+was created (for example, indexes created using the shell will have double as the type
+for numeric values).
+
+For example, the following index specifications should all be treated as equivalent:
+
+- { filename : 1, uploadDate : 1 } // where 1 is either a 32-bit or 64-bit integer
+- { filename : 1, uploadDate : 1.0 }
+- { filename : 1.0, uploadDate : 1 }
+- { filename : 1.0, uploadDate : 1.0 }
+
 If a driver determines that it should create the indexes, it  MUST raise an error
 if the attempt to create the indexes fails.
 
