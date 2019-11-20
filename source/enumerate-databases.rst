@@ -280,5 +280,5 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
-2017-10-30 Support filter option in listDatabases command
-2019-11-20 Support authorizedDatabases option in listDatabases command
+* 2017-10-30: Support filter option in listDatabases command
+* 2019-11-20: Support authorizedDatabases option in listDatabases command
