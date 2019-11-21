@@ -703,7 +703,13 @@ ConnectionClosed indicates that the connection is no longer a member of the pool
 Why are waitQueueSize and waitQueueMultiple deprecated?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-These options are not implemented across many drivers. Additionally, they have the effect of prioritizing older requests over newer requests, which is not necessarily the behavior that users want. They can also can result in cases where queue access oscillates back and forth instead of restricting access until the size drops. We may eventually pursue an alternative solutions in `Advanced Pooling Behaviors <#advanced-pooling-behaviors>`__.
+These options were originally only implemented in three drivers (Java, C#, and Python), and provided little value. While these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error from occuring. 
+
+Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily the behavior that users want. They can also result in cases where queue access oscillates back and forth between full and not full. If a driver has a full waitQueue, then all requests for connections will be rejected. If the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness guarantee that the waitQueue normally provides. 
+
+Because of these issues, it does not make sense to `go against driver mantras and provide an additional knob <../../README.rst#>`__. We may eventually pursue an alternative configurations to address wait queue size in `Advanced Pooling Behaviors <#advanced-pooling-behaviors>`__.
+
+Users that wish to have this functionality can achieve similar results by utizing other methods to limit concurrency. Examples include implementing either a thread pool or an operation queue with a capped size in the user application. Drivers that need to deprecate ``waitQueueSize`` and/or ``waitQueueMultiple`` SHOULD refer users to these examples.
 
 Why is waitQueueTimeoutMS optional for some drivers?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
