@@ -874,7 +874,7 @@ IAM Credentials
    ``mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM``
 
 Temporary IAM Credentials
-   If a username and password is not provided drivers MUST query the standard local AWS endpoint for temporary credentials. If 
+   If a username and password are not provided drivers MUST query the standard local AWS endpoint for temporary credentials. If 
    temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. If an `AWS_SESSION_TOKEN` is
    provided in addition to a username and password this is considered an `Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request. An example URI for authentication with MONGODB-IAM using temporary IAM credentials from an EC2 instance
    or ECS tasks is as follows:
