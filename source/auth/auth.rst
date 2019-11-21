@@ -920,18 +920,21 @@ Temporary IAM Credentials
 
    ECS Tasks
       ECS temporary credentials can be retrieved by calling a URL at ``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` 
-      where ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is an environment variable set by the AWS EC2 container agent.
+      where ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is an environment variable set by the AWS ECS agent.
 
-   .. code:: javascript
+      .. code:: javascript
 
-      {
-       "AccessKeyId": "ACCESS_KEY_ID",
-       "Expiration": "EXPIRATION_DATE",
-       "RoleArn": "TASK_ROLE_ARN",
-       "SecretAccessKey": "SECRET_ACCESS_KEY",
-       "Token": "SECURITY_TOKEN_STRING"
-      }
+         {
+          "AccessKeyId": "ACCESS_KEY_ID",
+          "Expiration": "EXPIRATION_DATE",
+          "RoleArn": "TASK_ROLE_ARN",
+          "SecretAccessKey": "SECRET_ACCESS_KEY",
+          "Token": "SECURITY_TOKEN_STRING"
+         }
 
+      Drivers can use the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to determine if it should query the ECS tasks or 
+      the EC2 instance endpoint. If the ECS agent populates the ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` environment variable then driver
+      MUST use the ECS endpoint. Otherwise, drivers should attempt to query the EC2 instance endpoint.
 
 -------------------------
 Connection String Options
