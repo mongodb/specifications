@@ -61,8 +61,9 @@ as optional. If an option is marked as optional, a driver MUST meet any
 conditions specified for leaving it out if it is not included. If a driver
 already provides the option under a different name, the driver MAY
 implement the old and new names as aliases. All keys and values MUST be
-encoded in UTF-8. Note that all requirements and recommendations described
-in the `Connection String spec
+encoded in UTF-8. All integer options are 32-bit unless specified otherwise.
+Note that all requirements and recommendations described in the `Connection
+String spec
 <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_ 
 pertaining to URI options apply here.
 
@@ -293,7 +294,7 @@ pertaining to URI options apply here.
      - The maximum number of clients or connections able to be created by a pool at a given time
 
    * - wTimeoutMS
-     - non-negative integer; 0 means no timeout
+     - non-negative 64-bit integer; 0 means no timeout
      - no timeout
      - no
      - Default write concern "wtimeout" field for the client
