@@ -710,14 +710,14 @@ Why is waitQueueTimeoutMS optional for some drivers?
 
 We are anticipating eventually introducing a single client-side timeout mechanism, making us hesitant to introduce another granular timeout control. Therefore, if a driver/language already has an idiomatic way to implement their timeouts, they should leverage that mechanism over implementing waitQueueTimeoutMS.
 
-Why is there a distinction between a Pool being "closed" and the Pool resources being free-d / garbage collected? (a.k.a. why does a Pool have a "half-closed" state?)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Why is there a distinction between a Pool being "closed" and the Pool resources being free-d / garbage collected?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There are a few motivating factors for this decision:
 
-#. When a pool is closed, there may be connections belonging to the pool that are still checked out. In many situations, it would be very dangerous for the pool to aggressively close these checked-out connections. Therefore, **when a pool is closed, it does not aggresively close checked-out connections**.
-#. Blocking the driver on waiting for all connections to be closed by a pool could lead to performance hits, and in some cases deadlocks. Therefore, **when the driver closes a pool, it does not block on all connections being destroyed** (an exception may be made for application shutdown).
-#. A closed pool should not hold on to more resources than necessary. Consider the scenario of a server with a ``minPoolSize=100`` being removed from the topology, while another server is added. In this case, one pool (Pool A) is being closed, while another (Pool B) is being created. If Pool A were to wait until all connections are checked in before destroying connections, then a single checked-out connection on Pool A could result in 99 or more connections continuing to persist in Pool A even while it is closed. To avoid this scenario, **when a pool is closed, it agressively closes any connections that are not checked out**
+#. When a pool is closed, there may be connections belonging to the pool that are still checked out. An aggressive closing strategy could lead to risky situations like a monitoring thread attempting to close a connection that is actively being used by another thread. Therefore, **when a pool is closed, it does not aggresively close checked-out connections**.
+#. Blocking the driver on waiting for all connections to be closed by a pool could lead to performance hits. Therefore, **when the driver closes a pool, it does not block on all connections being destroyed** (an exception may be made for application shutdown).
+#. A closed pool should not hold on to more resources than necessary. Consider the scenario of a server with a ``minPoolSize=100`` being removed from the topology, while another server is added. In this case, one pool (Pool A) is being closed, while another (Pool B) is being created. If Pool A were to wait until all connections are checked in before destroying connections, then a single checked-out connection on Pool A could result in 99 or more connections continuing to persist in Pool A even while it is closed. To avoid this scenario, **when a pool is closed, it agressively closes any connections that are not checked out, and any connections checked back in are immediately closed.**
 
 Because of these requirements, there is a distinction between `Closing a Connection Pool <#closing-a-connection-pool>`__ and reclaiming the resources associated with a connection pool.
 
