@@ -2115,27 +2115,34 @@ without relying on any clock synchronization.
 Using me field to detect seed list members that do not match host names in the replica set configuration
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Removal from the topology of seed list members where the "me" property does not match the address used to connect
-prevents clients from being able to select a server, only to fail to re-select that server once the primary has responded.
+Removal from the topology of seed list members where the "me" property does not
+match the address used to connect prevents clients from being able to select
+a server, only to fail to re-select that server once the primary has responded.
 
 This scenario illustrates the problems that arise if this is NOT done:
 
 * The client specifies a seed list of A, B, C
 * Server A responds as a secondary with hosts D, E, F
-* The client executes a query with read preference of secondary, and server A is selected
-* Server B responds as a primary with hosts D, E, F.  Servers A, B, C are removed, as they don't appear in the primary's hosts list
-* The client iterates the cursor and attempts to execute a get-more against server A.
+* The client executes a query with read preference of secondary, and server A
+  is selected
+* Server B responds as a primary with hosts D, E, F.  Servers A, B, C are
+  removed, as they don't appear in the primary's hosts list
+* The client iterates the cursor and attempts to execute a get-more against
+  server A.
 * Server selection fails because server A is no longer part of the topology.
 
 With checking for "me" in place, it looks like this instead:
 
 * The client specifies a seed list of A, B, C
-* Server A responds as a secondary with hosts D, E, F, where "me" is D, and so the client adds D, E, F as type "Unknown" and starts
-  monitoring them, but removes A from the topology.
-* The client executes a query with read preference of secondary, and goes in to the server selection loop
+* Server A responds as a secondary with hosts D, E, F, where "me" is D, and so
+  the client adds D, E, F as type "Unknown" and starts monitoring them, but
+  removes A from the topology.
+* The client executes a query with read preference of secondary, and goes into
+  the server selection loop
 * Server D responds as a secondary where "me" is D
 * Server selection completes by matching D
-* The client iterates the cursor and attempts to execute a get-more against server D.
+* The client iterates the cursor and attempts to execute a get-more against
+  server D.
 * Server selection completes by matching D.
 
 Ignore setVersion unless the server is primary
