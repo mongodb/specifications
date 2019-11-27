@@ -2127,7 +2127,7 @@ This scenario illustrates the problems that arise if this is NOT done:
   is selected
 * Server B responds as a primary with hosts D, E, F.  Servers A, B, C are
   removed, as they don't appear in the primary's hosts list
-* The client iterates the cursor and attempts to execute a get-more against
+* The client iterates the cursor and attempts to execute a getMore against
   server A.
 * Server selection fails because server A is no longer part of the topology.
 
@@ -2141,7 +2141,7 @@ With checking for "me" in place, it looks like this instead:
   the server selection loop
 * Server D responds as a secondary where "me" is D
 * Server selection completes by matching D
-* The client iterates the cursor and attempts to execute a get-more against
+* The client iterates the cursor and attempts to execute a getMore against
   server D.
 * Server selection completes by matching D.
 
