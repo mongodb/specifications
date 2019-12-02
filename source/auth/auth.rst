@@ -698,7 +698,7 @@ imperative, for security sake, that this be as secure and truly random as possib
 
 All messages between MongoDB clients and servers are sent as BSON V1.1 Objects in the payload field of saslStart and saslContinue.
 All fields in these messages have a "short name" which is used in the serialized 
-BSON representation and a human readable "friendly name" which is used in this specification. They are as follows:
+BSON representation and a human-readable "friendly name" which is used in this specification. They are as follows:
 
 ==== ==================== ================= ============================================================================================================================================== 
 Name Friendly Name        Type              Description
@@ -719,7 +719,14 @@ of the ASCII character ``n``, i.e., ``110``.
 
 Conversation
 ````````````
-As an example, given a client nonce value of "enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1Q=", a MONGODB-IAM conversation decoded from
+
+The first message sent by drivers MUST contain a ``client nonce`` and ``gs2-cb-flag``. In response, the server will send a ``server nonce``
+and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. 
+Drivers must also validate that the host is greater than 0 and less than or equal to 255 bytes per 
+`RFC 1035 <https://tools.ietf.org/html/rfc1035>`_.  Drivers MUST reject FQDN names with empty labels, e.g., "abc..def", and error on any 
+additional fields. Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
+
+As an example, given a client nonce value of "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI=", a MONGODB-IAM conversation decoded from
 BSON to JSON would appear as follows:
 
 Client First
@@ -749,7 +756,7 @@ Client Second
        "d" : "20191107T002607Z"
    }
 |
-Each message above will be encoded as BSON V1.1 objects and sent to the server as the value of ``payload``. Therefore, the SASL conversation would appear as:
+Each message above will be encoded as BSON V1.1 objects and sent to the peer as the value of ``payload``. Therefore, the SASL conversation would appear as:
 
 Client First
 
@@ -782,33 +789,24 @@ Client Second:
        "payload" : new BinData(0, "LQEAAAJhAAkBAABBV1M0LUhNQUMtU0hBMjU2IENyZWRlbnRpYWw9QUtJQUlDR1ZMS09LWlZZM1gzREEvMjAxOTExMTIvdXMtZWFzdC0xL3N0cy9hd3M0X3JlcXVlc3QsIFNpZ25lZEhlYWRlcnM9Y29udGVudC1sZW5ndGg7Y29udGVudC10eXBlO2hvc3Q7eC1hbXotZGF0ZTt4LW1vbmdvZGItZ3MyLWNiLWZsYWc7eC1tb25nb2RiLXNlcnZlci1ub25jZSwgU2lnbmF0dXJlPThhMTI0NGZjODYyZTI5YjZiZjc0OTFmMmYwNDE5NDY2ZGNjOTFmZWU1MTJhYTViM2ZmZjQ1NDY3NDEwMjJiMmUAAmQAEQAAADIwMTkxMTEyVDIxMDEyMloAAA==")
    }
 |
-Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. 
-Drivers must also validate that the host is greater than 0 and less than or equal to 255 bytes per 
-`RFC 1035 <https://tools.ietf.org/html/rfc1035>`_.  Drivers MUST reject FQDN names with empty labels, e.g., 
-"abc..def", and error on any additional fields.  
 
-`Signing AWS API Requests <https://docs.aws.amazon.com/general/latest/gr/signing_aws_api_requests.html>`_
-   In response to the Server First message, the driver MUST construct a call to sts::GetCallerIdentity with its credentials 
-   including the base 64 representation of the server nonce, as a signed header named X-MongoDB-Server-Nonce. It must also 
-   include X-MongoDB-GS2-CB-Flag as a signed header. The value of X-MongoDB-GS2-CB-Flag MUST be the single ASCII character n. 
-   These headers must be included in the list of SignedHeaders in the authorization header. For constructing an authorization header
-   see `Adding Signing Information to the Authorization Header 
-   <https://docs.aws.amazon.com/general/latest/gr/sigv4-add-signature-to-request.html>`_.
-   For generating the Signature see `Calculate the Signature for AWS Signature Version 4 
-   <https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html>`_. 
-   There is one optional field, X-Amz-Security-Token, which are temporary credentials used to generate the signature. See the table
-   below for the values drivers must use when generating an authorization header. An example request is as follows:
+In response to the Server First message, drivers MUST follow the `Signature Version 4 Signing Process 
+<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to construct the ``authorization header``. The required and optional 
+headers and their associated values drivers MUST use for the canonical request (see `Summary of Signing Steps
+<https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table below. An example 
+canonical request that drivers MUST create is as follows: 
 
 .. code:: javascript
 
-           Content-Length:43
-           Content-Type:application/x-www-form-urlencoded
-           Host:sts.amazonaws.com
-           X-Amz-Date:20191017T173547Z
-           X-MongoDB-Server-Nonce:enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1RHbnN1IWy6vp7GvmtRmcGWYEtjedGEI0ZXi13r7y4V+A==
-           X-MongoDB-GS2-CB-Flag:n
-           Authorization:AWS4-HMAC-SHA256 Credential=AKIAICGVLKOKZVY3X3DA/20191017/us-east-1/sts/aws4_request, SignedHeaders=content-length;content-type;host;x-amz-date;x-mongodb-gs2-cb-flag;x-mongodb-server-nonce, Signature=6f67c4dfbc05da04ea8d571bc6f7d11833f9d1909d0068be302c5379e1867d15
-           Action=GetCallerIdentity&Version=2011-06-15
+   POST
+   /
+   action=GetCallerIdentity&Version=2011-06-15
+   content-length:43
+   content-type:application/x-www-form-urlencoded
+   host:sts.amazonaws.com
+   x-amz-date:20191017T173547Z
+   x-mongodb-gs2-cb-flag:n
+   x-mongodb-server-nonce:enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1RHbnN1IWy6vp7GvmtRmcGWYEtjedGEI0ZXi13r7y4V+A==
 |
 ======================== ======================================================================================================
 Name                     Value       
@@ -820,19 +818,19 @@ Content-Length*          43
 Host*                    Host field from Server First Message
 Region                   Derived from Host - see below
 X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
-X-Amz-Security-Token*    Optional, See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
 X-MongoDB-GS2-CB-Flag*   ASCII lower-case character ‘n’ or ‘y’ or ‘p’
-X-MongoDB-Optional-Data* Optional, Optional data, base64 encoded representation of the optional object provided by the client
+X-MongoDB-Optional-Data* Optional data, base64 encoded representation of the optional object provided by the client
 Body                     Action=GetCallerIdentity&Version=2011-06-15\n
 ======================== ======================================================================================================
 
 .. note::
-        ``*``, Denotes a header that MUST be included in SignedHeaders if present.
+        ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
 .. note::
         Region is not a header, but simply part of the authorization header. Region by default is ‘us-east-1’ since this is the 
-        implicit region for ‘sts.amazonaws.com’.  Drivers will need to derive the region to use from the endpoint. The region 
+        implicit region for ‘sts.amazonaws.com’. Drivers will need to derive the region to use from the endpoint. The region 
         is the second piece of a FQDN name. While all official AWS STS endpoints start with “sts.”, there are non-AWS hosted 
         endpoints and test endpoints that will not follow this rule.
 
@@ -866,75 +864,56 @@ mechanism_properties
 
 Obtaining Credentials
 `````````````````````
-IAM Credentials
-   If a username and password is provided drivers MUST use these for the IAM access key and IAM secret key, respectively. Drivers MUST 
-   use this secret key to generate a signature using HMAC-SHA256. If a username is provided without a password (or vice-versa) drivers 
-   MUST raise an error. An example URI for authentication with MONGODB-IAM using IAM credentials is as follows:
+Drivers will need IAM credentials (an access key and a secret access key) to complete the steps in the `Signature Version 4 Signing Process 
+<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
+MUST use these for the IAM access key and IAM secret key, respectively. If a username is provided without a password (or vice-versa) drivers 
+MUST raise an error. An example URI for authentication with MONGODB-IAM using IAM credentials is as follows:
 
-   ``mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM``
+.. code:: javascript
 
-Temporary IAM Credentials
-   If a username and password are not provided drivers MUST query the standard local AWS endpoint for temporary credentials. If 
-   temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. If an `AWS_SESSION_TOKEN` is
-   provided in addition to a username and password this is considered an `Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request. An example URI for authentication with MONGODB-IAM using temporary IAM credentials from an EC2 instance
-   or ECS tasks is as follows:
+   "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM"
+|
+Users MAY have obtained temporary credentials through an `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ 
+request. If so, then in addition to a username and password, users MAY also provide an ``AWS_SESSION_TOKEN`` as a ``mechanism_property``. 
 
-   ``mongodb://mongodb.example.com/?authMechanism=MONGODB-IAM``
+.. code:: javascript
 
-   An example using temporary IAM credentials as an Assume Role request is as follows:
+   "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
+|
+If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials. If temporary credentials 
+cannot be obtained then drivers MUST fail authentication and raise an error. If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI``
+is set then drivers MUST assume that it was set by an AWS ECS agent and use the URI 
+``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to obtain temporary credentials. Querying the URI will return the JSON response: 
 
-   ``mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>``
+.. code:: javascript
 
-.. note::
-   "session token" and "security token" are used interchangeably here and throughout the AWS documentation.
+   {
+    "AccessKeyId": <access_key>,
+    "Expiration": <date>,
+    "RoleArn": <task_role_arn>,
+    "SecretAccessKey": <secret_access_key>,
+    "Token": <security_token>
+   }
 
-   EC2 Instance
-      Calling the endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/`` from an EC2 instance 
-      will return the role attached to the EC2 instance in plaintext, if it exist:
+If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is not set drivers MUST assume we are on an EC2 instance and use the 
+endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>`` whereas ``role-name`` can be obtained from querying the
+URI ``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. The JSON response will have the format:
 
-      ``role-name``
+.. code:: javascript
 
-      ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>`` will return the following json response: 
+      {
+          "Code": "Success",
+          "LastUpdated" : <date>,
+          "Type": "AWS-HMAC",
+          "AccessKeyId" : <access_key>,
+          "SecretAccessKey": <secret_access_key>,
+          "Token" : <security_token>,
+          "Expiration": <date>
+      }
 
-      .. code:: javascript
-
-            {
-                "Code": "Success",
-                "LastUpdated" : <date>,
-                "Type": "AWS-HMAC",
-                "AccessKeyId" : <access_key>,
-                "SecretAccessKey": <secret_access_key>,
-                "Token" : <security_token>,
-                "Expiration": <date>
-            }
-
-      .. note::
-
-      The IP address 169.254.169.254 is a link-local address and is valid only from the instance. 
-      See `Instance Metadata and User Data <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html>`_.
-
-      From this response, drivers will need to extract the ``AccessKeyId``, ``SecretAccessKey`` and the ``Token`` argument values. 
-      Drivers will use these values to construct the call to ``sts::getCallerIdentity`` as part of the Amazon Signature V4 algorithm. 
-      Drivers who cache the security temporary credentials must check the expiration date before using them. 
-      If the credentials expire, they must refetch them. 
-
-   ECS Tasks
-      ECS temporary credentials can be retrieved by calling a URL at ``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` 
-      where ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is an environment variable set by the AWS ECS agent.
-
-      .. code:: javascript
-
-         {
-          "AccessKeyId": "ACCESS_KEY_ID",
-          "Expiration": "EXPIRATION_DATE",
-          "RoleArn": "TASK_ROLE_ARN",
-          "SecretAccessKey": "SECRET_ACCESS_KEY",
-          "Token": "SECURITY_TOKEN_STRING"
-         }
-
-      Drivers can use the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to determine if it should query the ECS tasks or 
-      the EC2 instance endpoint. If the ECS agent populates the ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` environment variable then driver
-      MUST use the ECS endpoint. Otherwise, drivers should attempt to query the EC2 instance endpoint.
+See `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_. From either JSON response drivers 
+MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
+<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
 
 -------------------------
 Connection String Options
