@@ -639,7 +639,7 @@ MongoClient fails to connect after spawning, the server selection error
 is propagated to the user.
 
 Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-selection/server-selection.rst#serverselectiontryonce>`_
-and MUST bypass `cooldownMS <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers?`_.
+and MUST bypass `cooldownMS <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
 then the driver is not responsible for spawning mongocryptd. If server
@@ -1239,8 +1239,8 @@ Although not technically necessary for client side encryption, it does
 provide a fallback against accidentally sending unencrypted data from
 misconfigured clients.
 
-Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers?
------------------------------------------------------------------------------------
+Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?
+-------------------------------------------------------------------------------------------------------------
 
 By default, single threaded clients set serverSelectionTryOnce to true, which
 means server selection fails if a topology scan fails the first time (i.e. it
