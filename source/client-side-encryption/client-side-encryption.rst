@@ -638,6 +638,9 @@ server selection on the MongoClient to mongocryptd fails. If the
 MongoClient fails to connect after spawning, the server selection error
 is propagated to the user.
 
+Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-selection/server-selection.rst#serverselectiontryonce>`_
+and MUST bypass `cooldownMS <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers?`_.
+
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
 then the driver is not responsible for spawning mongocryptd. If server
 selection ever fails when connecting to mongocryptd, the server
@@ -1235,6 +1238,24 @@ subdocument in JSON schema is only supported on 4.2 or higher servers.
 Although not technically necessary for client side encryption, it does
 provide a fallback against accidentally sending unencrypted data from
 misconfigured clients.
+
+Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers?
+-----------------------------------------------------------------------------------
+
+By default, single threaded clients set serverSelectionTryOnce to true, which
+means server selection fails if a topology scan fails the first time (i.e. it
+will not make repeat attempts until serverSelectionTimeoutMS expires). This
+behavior is overriden since there may be a small delay between spawning
+mongocryptd (which the driver may be responsible for) and for mongocryptd to
+listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-selection/server-selection.rst#serverselectiontryonce>`_.
+
+Similarly, single threaded clients will by default wait for 5 second cooldown
+period after failing to connect to a server before making another attempt.
+Meaning if the first attempt to mongocryptd fails to connect, then the user
+would observe a 5 second delay. This is not configurable in the URI, so this
+must be overriden internally. Since mongocryptd is a local process, there should
+only be a very short delay after spawning mongocryptd for it to start listening
+on sockets. See the SDAM spec description of `cooldownMS <https://github.com/mongodb/specifications/blob/6bc8afe3516d2274c3f646e8293af15cf8651e8c/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_.
 
 Future work
 ===========
