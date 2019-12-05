@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.8.1
+:Spec Version: 1.8.2
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2019-07-12
+:Last Modified: 2019-12-04
 
 .. contents::
 
@@ -1124,6 +1124,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.8.2 Changes
+    * Added MONGODB-IAM auth mechanism
 
 Version 1.8.1 Changes
     * Clarify database to use for auth mechanism negotiation.
