@@ -200,9 +200,7 @@ Implementation Notes
 
 Since changing the default UUID representation can reasonably be considered a backwards-breaking change, drivers that implement the full specification should stage implementation according to semantic versioning guidelines.  Specifically, support for this specification can be added to a minor release, but with several exceptions: 
 
-The default UUID representation should be left as is (e.g. JAVA_LEGACY for the Java driver) rather than be changed to UNSPECIFIED.  In a subsequent major release, the default UUID representation can be changed to UNSPECIFIED (along with appropriate documentation indicating the backwards-breaking change).
-Subtype 4 BSON Binary values should continue to be decoded to native UUID values regardless of UUID representation
-
+The default UUID representation should be left as is (e.g. JAVA_LEGACY for the Java driver) rather than be changed to UNSPECIFIED.  In a subsequent major release, the default UUID representation can be changed to UNSPECIFIED (along with appropriate documentation indicating the backwards-breaking change). Drivers MUST document this in a prior minor release.
 
 Test Plan
 =========
