@@ -300,7 +300,7 @@ Implicit Decoding
    a. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value.
    b. Assert that the value of the "legacy" field is of the native UUID type and is equal to the given UUID
 
-Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
+   Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
 
 2. Set the uuidRepresentation of the client to "standard". Insert a document containing two fields. The "standard" field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD UuidRepresentation.  The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the PYTHON_LEGACY UuidRepresentation. Find the document.
   
@@ -312,7 +312,7 @@ Repeat this test with the uuidRepresentation of the client set to "csharpLegacy"
    a. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value
    b. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
 
-Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
+   Repeat this test with the uuidRepresentation of the client set to "csharpLegacy" and "pythonLegacy".
 
 Note: the assertions will be different in the release prior to the major release, to avoid breaking changes.  Adjust accordingly!
 
