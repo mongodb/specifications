@@ -427,7 +427,7 @@ key. If the kmsProvider is "aws" it is required and has the following fields:
 
    {
       region: String, // Required.
-      key: String // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      key: String, // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
       endpoint: String // Optional. An alternate host identifier to send KMS requests to. May include port number.
    }
 
@@ -636,6 +636,9 @@ If spawning is necessary, the driver MUST spawn mongocryptd whenever
 server selection on the MongoClient to mongocryptd fails. If the
 MongoClient fails to connect after spawning, the server selection error
 is propagated to the user.
+
+Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
+, connectTimeoutMS=1000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
 then the driver is not responsible for spawning mongocryptd. If server
@@ -1234,6 +1237,27 @@ subdocument in JSON schema is only supported on 4.2 or higher servers.
 Although not technically necessary for client side encryption, it does
 provide a fallback against accidentally sending unencrypted data from
 misconfigured clients.
+
+Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?
+-------------------------------------------------------------------------------------------------------------
+
+By default, single threaded clients set serverSelectionTryOnce to true, which
+means server selection fails if a topology scan fails the first time (i.e. it
+will not make repeat attempts until serverSelectionTimeoutMS expires). This
+behavior is overriden since there may be a small delay between spawning
+mongocryptd (which the driver may be responsible for) and for mongocryptd to
+listen on sockets. See the Server Selection spec description of `serverSelectionTryOnce <../server-selection/server-selection.rst#serverselectiontryonce>`_.
+
+Similarly, single threaded clients will by default wait for 5 second cooldown
+period after failing to connect to a server before making another attempt.
+Meaning if the first attempt to mongocryptd fails to connect, then the user
+would observe a 5 second delay. This is not configurable in the URI, so this
+must be overriden internally. Since mongocryptd is a local process, there should
+only be a very short delay after spawning mongocryptd for it to start listening
+on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_.
+
+Because single threaded drivers may exceed ``serverSelectionTimeoutMS`` by the
+duration of the topology scan, ``connectTimeoutMS`` is also reduced.
 
 Future work
 ===========
