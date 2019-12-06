@@ -349,13 +349,13 @@ Example return (in PHP, but abbreviated)::
 Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method,
 except drivers MUST NOT set ``nameOnly`` if a filter specifies any keys other than ``name``.
 
-Replicasets
-~~~~~~~~~~~
+Replica Sets
+~~~~~~~~~~~~
 
-- ``listCollections`` can be run on a secondary
-- querying ``system.namespaces`` on a secondary requires slaveOkay to be set.
-- Drivers MUST run ``listCollections`` on the primary node in "replicaset"
-  mode, unless directly connected to a secondary node in "standalone" mode.
+- ``listCollections`` can be run on a secondary node.
+- Querying ``system.indexes`` on a secondary node requires slaveOkay to be set.
+- Drivers MUST run ``listCollections`` on the primary node when in a replica set
+  topology, unless directly connected to a secondary node in Single topology.
 
 
 Test Plan

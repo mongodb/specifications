@@ -315,13 +315,13 @@ Example return (a cursor which returns documents, not a simple array)::
 When returning this information as a cursor, a driver SHOULD use the
 method name ``listIndexes`` or an idiomatic variant.
 
-Replicasets
-~~~~~~~~~~~
+Replica Sets
+~~~~~~~~~~~~
 
-- ``listIndexes`` can be run on a secondary
-- querying ``system.indexes`` on a secondary requires slaveOkay to be set.
-- Drivers MUST run ``listIndexes`` on the primary node in "replicaset"
-  mode, unless directly connected to a secondary node in "standalone" mode.
+- ``listIndexes`` can be run on a secondary node.
+- Querying ``system.indexes`` on a secondary node requires slaveOkay to be set.
+- Drivers MUST run ``listIndexes`` on the primary node when in a replica set
+  topology, unless directly connected to a secondary node in Single topology.
 
 
 Test Plan

@@ -179,9 +179,9 @@ Drivers SHOULD support the ``filter`` option when implementing this method.
 Replica Sets
 ------------
 
-The ``listDatabases`` command may be run on a secondary. Drivers MUST run the
-``listDatabases`` command only on the primary node in “replicaset” mode, unless
-directly connected to a secondary node in “standalone” mode.
+The ``listDatabases`` command may be run on a secondary node. Drivers MUST run
+the ``listDatabases`` command only on the primary node in replica set topology,
+unless directly connected to a secondary node in Single topology.
 
 Test Plan
 =========
