@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 17, 2020
+:Last Modified: January 24, 2020
 
 .. contents::
 
@@ -1602,6 +1602,17 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
+     * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1681,6 +1692,17 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     collation: Optional<Document>;
+
+    /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
+     * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    hint: Optional<(String | Document)>;
 
     /**
      * The maximum amount of time to allow the query to run.
@@ -1837,6 +1859,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2020-01-24: Added hint option for findAndModify update/replace operations.
 * 2020-01-17: Add allowDiskUse to FindOptions.
 * 2020-01-14: Deprecate oplogReplay option for find command
 * 2020-01-10: Clarify client-side error reporting for unsupported options
