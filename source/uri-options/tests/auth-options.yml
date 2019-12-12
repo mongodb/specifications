@@ -21,5 +21,4 @@ tests:
         auth: ~
         options:
             authMechanism: "SCRAM-SHA-1"
-            authMechanismProperties: ~
             authSource: "authSourceDB"
