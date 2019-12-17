@@ -172,8 +172,9 @@ mongocryptd is a singleton local process needed for auto
 encryption. It speaks the MongoDB wire protocol and the driver uses
 mongocryptd by connecting with a MongoClient. By default, the driver
 will attempt to automatically spawn mongocryptd. If the MongoClient is
-configured with `extraOptions.mongocryptdBypassSpawn=true`, then the
-driver will not attempt to spawn mongocryptd. The mongocryptd process is
+configured with `extraOptions.mongocryptdBypassSpawn=true`, or 
+`AutoEncryptionOpts.bypassAutoEncryption=true` then the driver will not 
+attempt to spawn mongocryptd. The mongocryptd process is
 responsible for self terminating after idling for a time period.
 
 libmongocrypt
@@ -338,8 +339,9 @@ bypassAutoEncryption
 ^^^^^^^^^^^^^^^^^^^^
 
 Drivers MUST disable auto encryption when the 'bypassAutoEncryption'
-option is true. Automatic encryption may be disabled with the
-bypassAutoEncryption option. See `Why is there a bypassAutoEncryption?`_.
+option is true and not try to spawn mongocryptd. Automatic encryption 
+may be disabled with the bypassAutoEncryption option. 
+See `Why is there a bypassAutoEncryption?`_.
 
 extraOptions
 ^^^^^^^^^^^^
@@ -615,8 +617,9 @@ encryption.
 
 Managing mongocryptd
 ====================
-If a MongoClient is configured for Client Side Encryption, than by
-default (unless mongocryptdBypassSpawn=true), mongocryptd MUST be
+If a MongoClient is configured for Client Side Encryption 
+(eg. bypassAutoEncryption=false), then by default 
+(unless mongocryptdBypassSpawn=true), mongocryptd MUST be
 spawned by the driver. Spawning MUST include the command line argument
 --idleShutdownTimeoutSecs. If the user does not supply one through
 extraOptions.mongocryptdSpawnArgs (which may be either in the form
@@ -1325,4 +1328,5 @@ Changelog
 
 +------------+------------------------------------------------------------+
 | 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
+| 2019-12-17 | Clarified bypassAutoEncryption and managing mongocryptd    |
 +------------+------------------------------------------------------------+
