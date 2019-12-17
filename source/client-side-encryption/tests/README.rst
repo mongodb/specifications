@@ -596,3 +596,66 @@ Data keys created with AWS KMS may specify a custom endpoint to contact (instead
 
    Expect this to fail with an exception with a message containing the string: "parse error"
 
+Bypass spawning mongocryptd
+===========================
+
+The following tests that setting ``mongocryptdBypassSpawn`` really does bypass spawning mongocryptd.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure the required options. Use the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+   Configure the following ``extraOptions``:
+
+   .. code:: javascript
+
+      {
+        "mongocryptdBypassSpawn": true
+        "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"]
+      }
+
+   Drivers MAY pass a different value to ``--port`` if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+
+#. Use ``client_encrypted`` to run a "ping" command.
+
+#. Validate that mongocryptd was not spawned. This may be done in one of the following was:
+
+   - Check that the file ``bypass-spawning-mongocryptd.pid`` does not exist (preferred)
+   - Creating a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=100
+
+The following tests that setting ``bypassAutoEncryption`` really does bypass spawning mongocryptd.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure the required options. Use the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+   Configure with ``bypassAutoEncryption=true``.
+
+   Configure the following ``extraOptions``:
+
+   .. code:: javascript
+
+      {
+        "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"]
+      }
+
+   Drivers MAY pass a different value to ``--port`` if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+
+#. Use ``client_encrypted`` to run a "ping" command.
+
+#. Validate that mongocryptd was not spawned. This may be done in one of the following was:
+
+   - Check that the file ``bypass-spawning-mongocryptd.pid`` does not exist (preferred)
+   - Creating a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=100
