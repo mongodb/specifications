@@ -634,7 +634,7 @@ The following tests that setting ``mongocryptdBypassSpawn=true`` really does byp
 
 #. Use ``client_encrypted`` to run a "ping" command.
 
-#. Validate that mongocryptd was not spawned. This may be done in one of the following was:
+#. Validate that mongocryptd was not spawned. This may be done in one of the following ways:
 
    - Check that the file ``bypass-spawning-mongocryptd.pid`` does not exist (preferred)
    - Creating a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=100
