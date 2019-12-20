@@ -303,7 +303,7 @@ Fields:
 * lastWriteDate: a 64-bit BSON datetime or null.
   The "lastWriteDate" from the server's most recent ismaster response.
 * opTime: an opTime or null.
-  An opaque value representing the position in the oplog of the most recent write. Default null.
+  An opaque value representing the position in the oplog of the most recently seen write. Default null.
   (Only mongos and shard servers record this field when monitoring
   config servers as replica sets, at least until `drivers allow applications to use readConcern "afterOptime". <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#future-feature-to-support-readconcern-afteroptime>`_)
 * (=) type: a `ServerType`_ enum value. Default Unknown.

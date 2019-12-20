@@ -121,7 +121,7 @@ with these fields (SERVER-8858):
 
 * lastWriteDate: a BSON UTC datetime,
   the wall-clock time of the **primary** when it most recently recorded a write to the oplog.
-* opTime: an opaque value representing the most recent replicated write.
+* opTime: an opaque value representing the position in the oplog of the most recently seen write.
   Needed for sharding, not used for the maxStalenessSeconds read preference option.
 
 
