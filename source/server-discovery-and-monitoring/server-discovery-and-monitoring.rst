@@ -302,10 +302,10 @@ Fields:
 * roundTripTime: the duration of the ismaster call. Default null.
 * lastWriteDate: a 64-bit BSON datetime or null.
   The "lastWriteDate" from the server's most recent ismaster response.
-* opTime: an ObjectId or null.
-  The last opTime reported by the server; an ObjectId or null.
+* opTime: an opTime or null.
+  An opaque value representing the position in the oplog of the most recently seen write. Default null.
   (Only mongos and shard servers record this field when monitoring
-  config servers as replica sets.)
+  config servers as replica sets, at least until `drivers allow applications to use readConcern "afterOptime". <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#future-feature-to-support-readconcern-afteroptime>`_)
 * (=) type: a `ServerType`_ enum value. Default Unknown.
 * (=) minWireVersion, maxWireVersion:
   the wire protocol version range supported by the server.
