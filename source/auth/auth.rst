@@ -754,9 +754,11 @@ Client Second
    { 
        "a" : "AWS4-HMAC-SHA256 Credential=AKIAICGVLKOKZVY3X3DA/20191107/us-east-1/sts/aws4_request, SignedHeaders=content-length;content-type;host;x-amz-date;x-mongodb-gs2-cb-flag;x-mongodb-server-nonce, Signature=ab62ce1c75f19c4c8b918b2ed63b46512765ed9b8bb5d79b374ae83eeac11f55",
        "d" : "20191107T002607Z"
+       "t" : "<security_token>"
    }
 |
-Each message above will be encoded as BSON V1.1 objects and sent to the peer as the value of ``payload``. Therefore, the SASL conversation would appear as:
+Note that `X-AMZ-Security-Token` is optional. Each message above will be encoded as BSON V1.1 objects and sent to the
+peer as the value of ``payload``. Therefore, the SASL conversation would appear as:
 
 Client First
 
@@ -822,7 +824,7 @@ Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
 Host*                    Host field from Server First Message
 Region                   Derived from Host - see below
-X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`_
 X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
 X-MongoDB-GS2-CB-Flag*   ASCII lower-case character ‘n’ or ‘y’ or ‘p’
@@ -885,10 +887,12 @@ request. If so, then in addition to a username and password, users MAY also prov
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
 |
-If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials. If temporary credentials 
-cannot be obtained then drivers MUST fail authentication and raise an error. If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI``
-is set then drivers MUST assume that it was set by an AWS ECS agent and use the URI 
-``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to obtain temporary credentials. Querying the URI will return the JSON response: 
+If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials.
+If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. Drivers SHOULD
+enforce a 10 second read timeout while waiting for incoming content from both the ECS and EC2 endpoints. If the
+environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set then drivers MUST assume that it was set by an
+AWS ECS agent and use the URI ``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to obtain temporary
+credentials. Querying the URI will return the JSON response:
 
 .. code:: javascript
 
