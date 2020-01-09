@@ -28,16 +28,16 @@
             "relaxed_extjson": "{\"d\" : -1.0001220703125}"
         },
         {
-            "description": "1.23456789012345677E+18",
+            "description": "1.2345678901234568e+18 - precision adjusted for Ruby",
             "canonical_bson": "1000000001640081E97DF41022B14300",
-            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"1.23456789012345677E+18\"}}",
-            "relaxed_extjson": "{\"d\" : 1.23456789012345677E+18}"
+            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"1.2345678901234568e+18\"}}",
+            "relaxed_extjson": "{\"d\" : 1.23456789012345678e+18}"
         },
         {
-            "description": "-1.23456789012345677E+18",
+            "description": "-1.2345678901234568e+18 - precision adjusted for Ruby",
             "canonical_bson": "1000000001640081E97DF41022B1C300",
-            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"-1.23456789012345677E+18\"}}",
-            "relaxed_extjson": "{\"d\" : -1.23456789012345677E+18}"
+            "canonical_extjson": "{\"d\" : {\"$numberDouble\": \"-1.2345678901234568e+18\"}}",
+            "relaxed_extjson": "{\"d\" : -1.2345678901234568e+18}"
         },
         {
             "description": "0.0",
