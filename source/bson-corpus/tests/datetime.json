@@ -6,7 +6,7 @@
         {
             "description": "epoch",
             "canonical_bson": "10000000096100000000000000000000",
-            "relaxed_extjson": "{\"a\" : {\"$date\" : \"1970-01-01T00:00:00Z\"}}",
+            "relaxed_extjson": "{\"a\" : {\"$date\" : \"1970-01-01T00:00:00.000Z\"}}",
             "canonical_extjson": "{\"a\" : {\"$date\" : {\"$numberLong\" : \"0\"}}}"
         },
         {
