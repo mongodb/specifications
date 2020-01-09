@@ -790,23 +790,28 @@ Client Second:
    }
 |
 
-In response to the Server First message, drivers MUST follow the `Signature Version 4 Signing Process 
-<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to construct the ``authorization header``. The required and optional 
-headers and their associated values drivers MUST use for the canonical request (see `Summary of Signing Steps
-<https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table below. An example 
-canonical request that drivers MUST create is as follows: 
+In response to the Server First message, drivers MUST send an ``authorization header``. Drivers MUST follow the
+`Signature Version 4 Signing Process <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to
+calculate the signature for the ``authorization header``. The required and optional headers and their associated
+values drivers MUST use for the canonical request (see `Summary of Signing Steps
+<https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table
+below. The following pseudocode shows the construction of the Authorization header.
 
 .. code:: javascript
 
-   POST
-   /
-   action=GetCallerIdentity&Version=2011-06-15
-   content-length:43
-   content-type:application/x-www-form-urlencoded
-   host:sts.amazonaws.com
-   x-amz-date:20191017T173547Z
-   x-mongodb-gs2-cb-flag:n
-   x-mongodb-server-nonce:enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1RHbnN1IWy6vp7GvmtRmcGWYEtjedGEI0ZXi13r7y4V+A==
+    Authorization: algorithm Credential=access key ID/credential scope, SignedHeaders=SignedHeaders, Signature=signature
+|
+
+The following example shows a finished Authorization header.
+
+.. code:: javascript
+
+    Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7    
+|
+
+The following diagram is a summary of the steps drivers MUST follow to calculate the signature.
+
+.. image:: includes/calculating_a_signature.png
 |
 ======================== ======================================================================================================
 Name                     Value       
