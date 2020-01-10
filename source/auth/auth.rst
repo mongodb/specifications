@@ -913,7 +913,7 @@ requests
 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_
 to retrieve content from the EC2 instance's link-locally address. This will require drivers to first retrieve a
 secret token to use as a password to make requests to IMDSv2 for credentials. On subsequent request, clients MUST set
-a header named `X-aws-ec2-metadata-token` when this token. For example, this curl recipe retrieves a session token
+a header named `X-aws-ec2-metadata-token` with this token. For example, this curl recipe retrieves a session token
 that's valid for 30 seconds and then uses that token to access the EC2 instance's credentials:
 
 .. code:: shell-session
