@@ -904,9 +904,23 @@ credentials. Querying the URI will return the JSON response:
     "Token": <security_token>
    }
 
-If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is not set drivers MUST assume we are on an EC2 instance and use the 
-endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>`` whereas ``role-name`` can be obtained from querying the
-URI ``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. The JSON response will have the format:
+If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is not set drivers MUST assume we are on an
+EC2 instance and use the endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>``
+whereas ``role-name`` can be obtained from querying the URI
+``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. Drivers MUST use `IMDSv2, session-oriented
+requests
+<https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_
+to retrieve content from the EC2 instance's link-locally address. This will require drivers to first retrieve a
+secret token to use as a password to make requests to IMDSv2 for credentials. For example, this curl recipe retrieves
+a session token that's valid for 30 seconds and then uses that token to access the EC2 instance's credentials:
+
+.. code:: javascript
+
+    TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
+    ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
+    curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
+
+The JSON response will have the format:
 
 .. code:: javascript
 
