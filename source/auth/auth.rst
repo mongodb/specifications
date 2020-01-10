@@ -914,7 +914,7 @@ to retrieve content from the EC2 instance's link-locally address. This will requ
 secret token to use as a password to make requests to IMDSv2 for credentials. For example, this curl recipe retrieves
 a session token that's valid for 30 seconds and then uses that token to access the EC2 instance's credentials:
 
-.. code-block:: type 
+.. code:: shell-session
 
     $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
     $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
