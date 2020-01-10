@@ -815,7 +815,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
   }
@@ -827,7 +827,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
   }
@@ -839,7 +839,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -858,7 +858,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -869,7 +869,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -878,7 +878,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -913,7 +913,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
      * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
 
@@ -922,7 +922,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -957,7 +957,7 @@ Basic
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -998,7 +998,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -1019,7 +1019,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -1047,7 +1047,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1096,7 +1096,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1107,7 +1107,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1156,7 +1156,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1167,7 +1167,7 @@ Bulk Write Models
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using opcodes, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1815,9 +1815,13 @@ Q: Where is ``useCursor`` in AggregateOptions?
 Q: Where is ``singleBatch`` in FindOptions?
   Drivers have historically allowed users to request a single batch of results (after which the cursor is closed) by specifying a negative value for the ``limit`` option. For servers < 3.2, a single batch may be requested by specifying a negative value in the ``numberToReturn`` wire protocol field. For servers >= 3.2, the ``find`` command defines ``limit`` as a non-negative integer option but introduces a ``singleBatch`` boolean option. Rather than introduce a ``singleBatch`` option to FindOptions, the spec preserves the existing API for ``limit`` and instructs drivers to convert negative values accordingly for servers >= 3.2.
 
+Q: Why are client-side errors raised for some unsupported options?
+  Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field with which to express these options so a client-side error is the only mechanism to inform the user that such options are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
+
 Changes
 =======
 
+* 2020-01-10: Clarify client-side error reporting for unsupported options
 * 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
 * 2019-10-28: Removed link to old language examples.
 * 2019-09-26: Added hint option for update commands.
