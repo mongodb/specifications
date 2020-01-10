@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: October 28, 2019
+:Last Modified: January 10, 2020
 
 .. contents::
 
@@ -890,6 +890,7 @@ Basic
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -933,6 +934,7 @@ Basic
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1057,6 +1059,7 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1116,6 +1119,7 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1175,6 +1179,7 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1813,6 +1818,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
+* 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
 * 2019-10-28: Removed link to old language examples.
 * 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages
