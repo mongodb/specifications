@@ -757,8 +757,9 @@ Client Second
        "t" : "<security_token>"
    }
 |
-Note that `X-AMZ-Security-Token` is optional. Each message above will be encoded as BSON V1.1 objects and sent to the
-peer as the value of ``payload``. Therefore, the SASL conversation would appear as:
+Note that `X-AMZ-Security-Token` is required when using temporary credentials. When using regular credentials, it
+MUST be omitted. Each message above will be encoded as BSON V1.1 objects and sent to the peer as the value of
+``payload``. Therefore, the SASL conversation would appear as:
 
 Client First
 
