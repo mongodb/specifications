@@ -604,11 +604,6 @@ Via mongocryptdBypassSpawn
 
 The following tests that setting ``mongocryptdBypassSpawn=true`` really does bypass spawning mongocryptd.
 
-#. Create a MongoClient without encryption enabled (referred to as ``client``).
-
-#. Using ``client``, drop the collections ``admin.datakeys`` and ``db.coll``.
-   Insert the document `external/external-key.json <../external/external-key.json>`_ into ``admin.datakeys``.
-
 #. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
 
    Configure the required options. Use the ``local`` KMS provider as follows:
@@ -627,23 +622,13 @@ The following tests that setting ``mongocryptdBypassSpawn=true`` really does byp
 
       {
         "mongocryptdBypassSpawn": true
+        "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000",
         "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"]
       }
 
-   Drivers MAY pass a different value to ``--port`` if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+   Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
 
-#. Use ``client_encrypted`` to run a "ping" command.
-
-#. Validate that mongocryptd was not spawned. This may be done in one of the following ways:
-
-   - Check that the file ``bypass-spawning-mongocryptd.pid`` does not exist (preferred)
-   - Creating a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=100
-
-#. Spawn mongocryptd manually. This may be done by creating a separate MongoClient with automatic encryption enabled and running a ``ping`` command.
-
-#. Use ``client_encrypted`` to insert the document ``{"encrypted": "test"}`` into ``db.coll``. Since ``client_encrypted`` was not configured with a custom ``mongocryptdURI``, it should use the recently spawned mongocryptd for auto encryption.
-
-#. Use ``client`` to find the inserted document from ``db.coll`` and assert that the field ``encrypted`` is a BSON binary of subtype 6.
+#. Use ``client_encrypted`` to insert the document ``{"encrypted": "test"}`` into ``db.coll``. Expect a server selection error propagated from the internal MongoClient failing to connect to mongocryptd on port 27021.
 
 Via bypassAutoEncryption
 ````````````````````````
@@ -672,9 +657,6 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 
    Drivers MAY pass a different value to ``--port`` if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
 
-#. Use ``client_encrypted`` to run a "ping" command.
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed. 
 
-#. Validate that mongocryptd was not spawned. This may be done in one of the following was:
-
-   - Check that the file ``bypass-spawning-mongocryptd.pid`` does not exist (preferred)
-   - Creating a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=100
+#. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run an ``isMaster`` command and ensure it fails with a server selection timeout.
