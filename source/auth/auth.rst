@@ -13,7 +13,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2019-12-04
+:Last Modified: 2020-01-13
 
 .. contents::
 
@@ -911,7 +911,7 @@ whereas ``role-name`` can be obtained from querying the URI
 ``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. Drivers MUST use `IMDSv2, session-oriented
 requests
 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_
-to retrieve content from the EC2 instance's link-locally address. This will require drivers to first retrieve a
+to retrieve content from the EC2 instance's link-local address. This will require drivers to first retrieve a
 secret token to use as a password to make requests to IMDSv2 for credentials. On subsequent request, clients MUST set
 a header named `X-aws-ec2-metadata-token` with this token. For example, this curl recipe retrieves a session token
 that's valid for 30 seconds and then uses that token to access the EC2 instance's credentials:
