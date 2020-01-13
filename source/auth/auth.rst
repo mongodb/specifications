@@ -13,7 +13,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2019-12-04
+:Last Modified: 2020-01-13
 
 .. contents::
 
@@ -754,9 +754,12 @@ Client Second
    { 
        "a" : "AWS4-HMAC-SHA256 Credential=AKIAICGVLKOKZVY3X3DA/20191107/us-east-1/sts/aws4_request, SignedHeaders=content-length;content-type;host;x-amz-date;x-mongodb-gs2-cb-flag;x-mongodb-server-nonce, Signature=ab62ce1c75f19c4c8b918b2ed63b46512765ed9b8bb5d79b374ae83eeac11f55",
        "d" : "20191107T002607Z"
+       "t" : "<security_token>"
    }
 |
-Each message above will be encoded as BSON V1.1 objects and sent to the peer as the value of ``payload``. Therefore, the SASL conversation would appear as:
+Note that `X-AMZ-Security-Token` is required when using temporary credentials. When using regular credentials, it
+MUST be omitted. Each message above will be encoded as BSON V1.1 objects and sent to the peer as the value of
+``payload``. Therefore, the SASL conversation would appear as:
 
 Client First
 
@@ -790,23 +793,28 @@ Client Second:
    }
 |
 
-In response to the Server First message, drivers MUST follow the `Signature Version 4 Signing Process 
-<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to construct the ``authorization header``. The required and optional 
-headers and their associated values drivers MUST use for the canonical request (see `Summary of Signing Steps
-<https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table below. An example 
-canonical request that drivers MUST create is as follows: 
+In response to the Server First message, drivers MUST send an ``authorization header``. Drivers MUST follow the
+`Signature Version 4 Signing Process <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to
+calculate the signature for the ``authorization header``. The required and optional headers and their associated
+values drivers MUST use for the canonical request (see `Summary of Signing Steps
+<https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table
+below. The following pseudocode shows the construction of the Authorization header.
 
 .. code:: javascript
 
-   POST
-   /
-   action=GetCallerIdentity&Version=2011-06-15
-   content-length:43
-   content-type:application/x-www-form-urlencoded
-   host:sts.amazonaws.com
-   x-amz-date:20191017T173547Z
-   x-mongodb-gs2-cb-flag:n
-   x-mongodb-server-nonce:enJwWTtNSkR+WztFZCE3d1NWSiMpfU54YCgmPU5lY1RHbnN1IWy6vp7GvmtRmcGWYEtjedGEI0ZXi13r7y4V+A==
+    Authorization: algorithm Credential=access key ID/credential scope, SignedHeaders=SignedHeaders, Signature=signature
+|
+
+The following example shows a finished Authorization header.
+
+.. code:: javascript
+
+    Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7    
+|
+
+The following diagram is a summary of the steps drivers MUST follow to calculate the signature.
+
+.. image:: includes/calculating_a_signature.png
 |
 ======================== ======================================================================================================
 Name                     Value       
@@ -817,7 +825,7 @@ Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
 Host*                    Host field from Server First Message
 Region                   Derived from Host - see below
-X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
+X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`_
 X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
 X-MongoDB-GS2-CB-Flag*   ASCII lower-case character ‘n’ or ‘y’ or ‘p’
@@ -880,10 +888,12 @@ request. If so, then in addition to a username and password, users MAY also prov
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
 |
-If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials. If temporary credentials 
-cannot be obtained then drivers MUST fail authentication and raise an error. If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI``
-is set then drivers MUST assume that it was set by an AWS ECS agent and use the URI 
-``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to obtain temporary credentials. Querying the URI will return the JSON response: 
+If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials.
+If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. Drivers SHOULD
+enforce a 10 second read timeout while waiting for incoming content from both the ECS and EC2 endpoints. If the
+environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set then drivers MUST assume that it was set by an
+AWS ECS agent and use the URI ``http://169.254.170.2/$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` to obtain temporary
+credentials. Querying the URI will return the JSON response:
 
 .. code:: javascript
 
@@ -895,9 +905,24 @@ is set then drivers MUST assume that it was set by an AWS ECS agent and use the 
     "Token": <security_token>
    }
 
-If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is not set drivers MUST assume we are on an EC2 instance and use the 
-endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>`` whereas ``role-name`` can be obtained from querying the
-URI ``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. The JSON response will have the format:
+If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is not set drivers MUST assume we are on an
+EC2 instance and use the endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>``
+whereas ``role-name`` can be obtained from querying the URI
+``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. Drivers MUST use `IMDSv2, session-oriented
+requests
+<https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_
+to retrieve content from the EC2 instance's link-local address. This will require drivers to first retrieve a
+secret token to use as a password to make requests to IMDSv2 for credentials. On subsequent request, clients MUST set
+a header named `X-aws-ec2-metadata-token` with this token. For example, this curl recipe retrieves a session token
+that's valid for 30 seconds and then uses that token to access the EC2 instance's credentials:
+
+.. code:: shell-session
+
+    $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
+    $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
+    $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
+
+The JSON response will have the format:
 
 .. code:: javascript
 
