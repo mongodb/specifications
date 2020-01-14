@@ -285,9 +285,9 @@ In MongoDB 4.4, the ``ns`` field was removed from the index specifications retur
   necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the ``ns`` field
   will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
   special mention of the ``ns`` field is necessary.
-- For drivers that report those index specifications in the form of statically defined models, the ``ns`` field, if
-  present in the models, MUST be populated with the appropriate namespace if the server does not report it in
-  the ``listIndexes`` command response. The ``ns`` field is not required to be a part of the models, however.
+- For drivers that report those index specifications in the form of statically defined models, the driver MUST manually populate
+  the ``ns`` field of the models with the appropriate namespace if the server does not report it in the ``listIndexes`` command
+  response. The ``ns`` field is not required to be a part of the models, however.
 
 Example return (a cursor which returns documents, not a simple array)::
 
