@@ -365,8 +365,8 @@ Tests
   - verify all the indexes are represented in the result
   - verify the "unique" flags show up for the unique index
   - verify there are no duplicates in the returned list
-  - if the result consists of statically defined index models, verify that the ``ns`` fields are accurate if such a field is
-    defined as part of the model.
+  - if the result consists of statically defined index models that include an ``ns`` field, verify
+    that its value is accurate
 
 
 Backwards Compatibility
@@ -387,8 +387,7 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 0.5.0 - 2020-01-14
-    Update to mention handling of the ``ns`` field being removed from the
-    response to the ``listIndexes`` server command.
+    MongoDB 4.4 no longer inclues ``ns`` field in ``listIndexes`` responses.
 
 0.4.1 - 2018-04-05
     Fix typo.
