@@ -428,7 +428,7 @@ Views are prohibited
 
 
 Corpus Test
-===========
+~~~~~~~~~~~
 
 The corpus test exhaustively enumerates all ways to encrypt all BSON value types. Note, the test data includes BSON binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtype 4. Run the test as follows.
 
@@ -509,7 +509,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 9. Repeat steps 1-8 with a local JSON schema. I.e. amend step 4 to configure the schema on ``client_encrypted`` with the ``schema_map`` option.
 
 Custom Endpoint Test
-====================
+~~~~~~~~~~~~~~~~~~~~
 
 Data keys created with AWS KMS may specify a custom endpoint to contact (instead of the default endpoint derived from the AWS region).
 
@@ -596,3 +596,67 @@ Data keys created with AWS KMS may specify a custom endpoint to contact (instead
 
    Expect this to fail with an exception with a message containing the string: "parse error"
 
+Bypass spawning mongocryptd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Via mongocryptdBypassSpawn
+``````````````````````````
+
+The following tests that setting ``mongocryptdBypassSpawn=true`` really does bypass spawning mongocryptd.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure the required options. Use the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+   Configure ``client_encrypted`` to use the schema `external/external-schema.json <../external/external-schema.json>`_  for ``db.coll`` by setting a schema map like: ``{ "db.coll": <contents of external-schema.json>}``
+
+   Configure the following ``extraOptions``:
+
+   .. code:: javascript
+
+      {
+        "mongocryptdBypassSpawn": true
+        "mongocryptdURI": "mongodb://localhost:27021/db?serverSelectionTimeoutMS=1000",
+        "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"]
+      }
+
+   Drivers MAY pass a different port if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+
+#. Use ``client_encrypted`` to insert the document ``{"encrypted": "test"}`` into ``db.coll``. Expect a server selection error propagated from the internal MongoClient failing to connect to mongocryptd on port 27021.
+
+Via bypassAutoEncryption
+````````````````````````
+
+The following tests that setting ``bypassAutoEncryption=true`` really does bypass spawning mongocryptd.
+
+#. Create a MongoClient configured with auto encryption (referred to as ``client_encrypted``)
+
+   Configure the required options. Use the ``local`` KMS provider as follows:
+
+   .. code:: javascript
+
+      { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+
+   Configure with the ``keyVaultNamespace`` set to ``admin.datakeys``.
+
+   Configure with ``bypassAutoEncryption=true``.
+
+   Configure the following ``extraOptions``:
+
+   .. code:: javascript
+
+      {
+        "mongocryptdSpawnArgs": [ "--pidfilepath=bypass-spawning-mongocryptd.pid", "--port=27021"]
+      }
+
+   Drivers MAY pass a different value to ``--port`` if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
+
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed. 
+
+#. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run an ``isMaster`` command and ensure it fails with a server selection timeout.
