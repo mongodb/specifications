@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 10, 2020
+:Last Modified: January 14, 2020
 
 .. contents::
 
@@ -546,12 +546,16 @@ Read
     noCursorTimeout: Optional<Boolean>;
 
     /**
-     * Internal replication use only - driver should not set
+     * Enables optimization when querying the oplog for a range of ts values
+     *
+     * Note: this option is intended for internal replication use only.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * For servers < 3.2, the OplogReplay wire protocol flag is used and defaults to false.
+     * For servers >= 4.4, the server will ignore this option if set (see: SERVER-36186).
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
+     * @deprecated 4.4
      */
     oplogReplay: Optional<Boolean>;
 
@@ -1821,6 +1825,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2020-01-14: Deprecate oplogReplay option for find command
 * 2020-01-10: Clarify client-side error reporting for unsupported options
 * 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
 * 2019-10-28: Removed link to old language examples.
