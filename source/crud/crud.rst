@@ -408,8 +408,8 @@ Read
   class FindOptions {
 
     /**
-     * Enables writing to temporary files. When set to true, the find operation
-     * can write temporary data to disk.
+     * Enables writing to temporary files on the server. When set to true, the server
+     * can write temporary data to disk while executing the find operation.
      *
      * This option is sent only if the caller explicitly provides a value. The default
      * is to not send a value.

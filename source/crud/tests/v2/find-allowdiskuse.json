@@ -7,7 +7,7 @@
     "collection_name": "test_find_allowdiskuse",
     "tests": [
        {
-          "description": "Find does not send allowDiskuse when unspecified",
+          "description": "Find does not send allowDiskuse when not specified",
           "operations": [
              {
                 "object": "collection",
@@ -29,7 +29,7 @@
           ]
        },
        {
-          "description": "Find sends allowDiskuse false",
+          "description": "Find sends allowDiskuse false when false is specified",
           "operations": [
              {
                 "object": "collection",
@@ -52,7 +52,7 @@
           ]
        },
        {
-          "description": "Find sends allowDiskuse true",
+          "description": "Find sends allowDiskuse true when true is specified",
           "operations": [
              {
                 "object": "collection",
