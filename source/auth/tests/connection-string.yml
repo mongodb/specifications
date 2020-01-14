@@ -20,6 +20,16 @@ tests:
             mechanism: ~
             mechanism_properties: ~
     -
+        description: "should use the database when the authSource is empty"
+        uri: "mongodb://user:password@localhost/foo?authSource="
+        valid: true
+        credential:
+            username: "user"
+            password: "password"
+            source: "foo"
+            mechanism: ~
+            mechanism_properties: ~
+    -
         description: "should use the authSource when specified"
         uri: "mongodb://user:password@localhost/foo?authSource=bar"
         valid: true
@@ -30,8 +40,29 @@ tests:
             mechanism: ~
             mechanism_properties: ~
     -
+        description: "should use the authSource when specified and authMechanism is empty"
+        uri: "mongodb://user:password@localhost/foo?authSource=bar&authMechanism="
+        valid: true
+        credential:
+            username: "user"
+            password: "password"
+            source: "bar"
+            mechanism: ~
+            mechanism_properties: ~
+    -
         description: "should recognise the mechanism (GSSAPI)"
         uri: "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI"
+        valid: true
+        credential:
+            username: "user@DOMAIN.COM"
+            password: ~
+            source: "$external"
+            mechanism: "GSSAPI"
+            mechanism_properties:
+                SERVICE_NAME: "mongodb"
+    -
+        description: "should recognise the mechanism (GSSAPI) and properties is empty"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties="
         valid: true
         credential:
             username: "user@DOMAIN.COM"
@@ -106,6 +137,16 @@ tests:
     -
         description: "should use the database when no authSource is specified (MONGODB-CR)"
         uri: "mongodb://user:password@localhost/foo?authMechanism=MONGODB-CR"
+        valid: true
+        credential:
+            username: "user"
+            password: "password"
+            source: "foo"
+            mechanism: "MONGODB-CR"
+            mechanism_properties: ~
+    -
+        description: "should use the database when authSource is empty (MONGODB-CR)"
+        uri: "mongodb://user:password@localhost/foo?authMechanism=MONGODB-CR&authSource="
         valid: true
         credential:
             username: "user"

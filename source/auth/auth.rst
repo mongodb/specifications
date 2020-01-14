@@ -974,6 +974,8 @@ authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VAL
 gssapiServiceName (deprecated)
 	An alias for ``authMechanismProperties=SERVICE_NAME:mongodb``.
 
+If any of the auth related options are specified in the connection string without a value, e.g. ``mongodb://localhost/admin?authSource=``, the default value for the option should be used.
+
 
 Implementation
 --------------
