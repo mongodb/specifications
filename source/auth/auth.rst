@@ -979,6 +979,12 @@ gssapiServiceName (deprecated)
 	An alias for ``authMechanismProperties=SERVICE_NAME:mongodb``.
 
 
+Errors
+------
+
+Drivers MUST raise an error if the ``authSource`` option is specified in the connection string with an empty value, e.g. ``mongodb://localhost/admin?authSource=``.
+
+
 Implementation
 --------------
 
@@ -1160,6 +1166,10 @@ Version History
 
 Version 1.9.1 Changes
     * Clarify when authentication will occur.
+
+Version 1.9.0 Changes
+    * Clarify that drivers must raise an error when a connection string
+      has an empty value for authSource.
 
 Version 1.8.3 Changes
     * Clarify that authSource in URI is not treated as a user configuring
