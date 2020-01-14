@@ -258,7 +258,7 @@ the following criteria:
       - 89
     * - SocketException
       - 9001
-    * - Exceeded Time limit
+    * - ExceededTimeLimit
       - 262
 
 - a server response with a write concern error response containing any of the previously listed codes
