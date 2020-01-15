@@ -586,10 +586,8 @@
           "failCommands": [
             "insert"
           ],
-          "writeConcernError": {
-            "code": 262,
-            "closeConnection": false
-          }
+          "errorCode": 262,
+          "closeConnection": false
         }
       },
       "operation": {
