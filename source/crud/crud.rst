@@ -11,8 +11,8 @@ Driver CRUD API
 :Advisors: Jeremy Mikola, Jeff Yemin
 :Status: Approved
 :Type: Standards
-:Minimum Server Version: 2.7
-:Last Modified: November 20, 2019
+:Minimum Server Version: 2.6
+:Last Modified: January 15, 2020
 
 .. contents::
 
@@ -1824,7 +1824,7 @@ Q: Where is ``singleBatch`` in FindOptions?
 Changes
 =======
 
-* 2019-11-20: Add allowDiskUse to FindOptions.
+* 2020-01-15: Add allowDiskUse to FindOptions.
 * 2019-10-28: Removed link to old language examples.
 * 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages
