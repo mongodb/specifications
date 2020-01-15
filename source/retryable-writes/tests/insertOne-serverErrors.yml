@@ -269,9 +269,8 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: ["insert"]
-                writeConcernError:
-                    code: 262
-                    closeConnection: false
+                errorCode: 262
+                closeConnection: false
         operation:
             name: "insertOne"
             arguments:
