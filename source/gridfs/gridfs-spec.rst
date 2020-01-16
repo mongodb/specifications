@@ -59,8 +59,8 @@ Chunk
   The default size for the data field in chunks is 255 KiB. Chunk documents have the following form:
 
   .. code:: javascript
-  
-    { 
+
+    {
       "_id" : <ObjectId>,
       "files_id" : <TFileId>,
       "n" : <Int32>,
@@ -102,7 +102,7 @@ Files collection document
       "aliases" : <string array>,
       "metadata" : <Document>
     }
-  
+
   :_id: a unique ID for this document. Usually this will be of type ObjectId, but a custom _id value provided by
     the application may be of any type.
   :length: the length of this stored file, in bytes
@@ -114,7 +114,7 @@ Files collection document
   :contentType: DEPRECATED, any MIME type, for application use only
   :aliases: DEPRECATED, for application use only
   :metadata: any additional application data the user wishes to store
-  
+
   Note: some older versions of GridFS implementations allowed applications to
   add arbitrary fields to the files collection document at the root level. New
   implementations of GridFS will not allow this, but must be prepared to
@@ -134,15 +134,15 @@ Stored File
   A user file that has been stored in GridFS, consisting
   of a files collection document in the files collection and zero or more
   documents in the chunks collection.
-  
+
 Stream
   An abstraction that represents streamed I/O. In some languages a different
   word is used to represent this abstraction.
 
 TFileId
   While GridFS file id values are ObjectIds by default, an application may choose
-  to use custom file id values, which may be of any type. In this spec the term 
-  TFileId refers to whatever data type is appropriate in the driver's programming 
+  to use custom file id values, which may be of any type. In this spec the term
+  TFileId refers to whatever data type is appropriate in the driver's programming
   language to represent a file id. This would be something like object, BsonValue or
   a generic <TFileId> type parameter.
 
@@ -185,13 +185,13 @@ A non-exhaustive list of acceptable deviations are as follows:
 - Using named parameters instead of an options hash. For instance,
 
   .. code:: javascript
-  
+
     id = bucket.upload_from_stream(filename, source, chunkSizeBytes: 16 * 1024);
 
 - Using a fluent style for constructing a GridFSBucket instance:
 
   .. code:: javascript
-  
+
     bucket = new GridFSBucket(database)
       .withReadPreference(ReadPreference.Secondary);
 
@@ -229,7 +229,7 @@ A non-exhaustive list of acceptable naming deviations are as follows:
   to name it while other drivers might prefer to call it
   "GridFSUploadArgs" or "GridFSUploadParams". However, calling it
   "UploadOptions" would not be acceptable.
-  
+
 - Languages that use a different word than "Stream" to represent a
   streamed I/O abstraction may replace the word "Stream" with their
   language's equivalent word. For example, open_upload_stream might
@@ -260,17 +260,17 @@ Configurable GridFSBucket class
 .. code:: javascript
 
   class GridFSBucketOptions {
-    
+
     /**
      * The bucket name. Defaults to 'fs'.
-     */  
+     */
     bucketName : String optional;
-    
+
     /**
      * The chunk size in bytes. Defaults to 255 KiB.
      */
     chunkSizeBytes : Int32 optional;
-    
+
     /**
      * The write concern. Defaults to the write concern of the database.
      */
@@ -280,12 +280,12 @@ Configurable GridFSBucket class
      * The read concern. Defaults to the read concern of the database.
      */
     readConcern : ReadConcern optional;
-    
+
     /**
      * The read preference. Defaults to the read preference of the database.
      */
     readPreference : ReadPreference optional;
-    
+
     /**
      * TRANSITIONAL: This option is provided for backwards compatibility.
      * It MUST be supported while a driver supports MD5 and MUST be removed
@@ -297,12 +297,12 @@ Configurable GridFSBucket class
   }
 
   class GridFSBucket {
-  
+
     /**
      * Create a new GridFSBucket object on @db with the given @options.
      */
     GridFSBucket new(Database db, GridFSBucketOptions options=null);
-  
+
   }
 
 Creates a new GridFSBucket object, managing a GridFS bucket within the
@@ -364,7 +364,7 @@ indexes MUST exist:
 
 Normally we leave it up to the user to create whatever indexes they see
 fit, but because GridFS is likely to be looked at as a black box we
-should create these indexes automatically in a way that involves the 
+should create these indexes automatically in a way that involves the
 least amount of overhead possible.
 
 Before read operations
@@ -390,7 +390,7 @@ the equivalent of the following shell command:
 
 If no document is returned the files collection is empty.
 
-This method of determining whether the files collection is empty should perform better 
+This method of determining whether the files collection is empty should perform better
 than checking the count in the case where the files collection is sharded.
 
 Drivers MUST check whether the indexes already exist before attempting to create them.
@@ -407,20 +407,20 @@ File Upload
 .. code:: javascript
 
   class GridFSUploadOptions {
-  
+
     /**
      * The number of bytes per chunk of this file. Defaults to the
      * chunkSizeBytes in the GridFSBucketOptions.
      */
     chunkSizeBytes : Int32 optional;
-    
+
     /**
      * User data for the 'metadata' field of the files collection document.
      * If not provided the driver MUST omit the metadata field from the
      * files collection document.
      */
     metadata : Document optional;
-    
+
     /**
      * DEPRECATED: A valid MIME type. If not provided the driver MUST omit the
      * contentType field from the files collection document.
@@ -429,7 +429,7 @@ File Upload
      * to the metadata document instead.
      */
     contentType : String optional;
-    
+
     /**
      * DEPRECATED: An array of aliases. If not provided the driver MUST omit the
      * aliases field from the files collection document.
@@ -438,11 +438,11 @@ File Upload
      * metadata document instead.
      */
     aliases: String[] optional;
-  
+
   }
-  
+
   class GridFSBucket {
-  
+
     /**
      * Opens a Stream that the application can write the contents of the file to.
      * The driver generates the file id.
@@ -454,7 +454,7 @@ File Upload
      * the TFileId type might not be an ObjectId.
      */
     Stream open_upload_stream(string filename, GridFSUploadOptions options=null);
-    
+
     /**
      * Opens a Stream that the application can write the contents of the file to.
      * The application provides a custom file id.
@@ -462,7 +462,7 @@ File Upload
      * Returns a Stream to which the application will write the contents.
      */
     Stream open_upload_stream_with_id(TFileId id, string filename, GridFSUploadOptions options=null);
-    
+
     /**
      * Uploads a user file to a GridFS bucket. The driver generates the file id.
      *
@@ -477,7 +477,7 @@ File Upload
      * the TFileId type might not be an ObjectId.
      */
     ObjectId upload_from_stream(string filename, Stream source, GridFSUploadOptions options=null);
-  
+
     /**
      * Uploads a user file to a GridFS bucket. The application supplies a custom file id.
      *
@@ -506,7 +506,7 @@ files collection document has been created) a driver MUST NOT allow further writ
 to the upload Stream.
 
 The driver MUST make the Id of the new file available to the caller. Typically
-a driver SHOULD make the Id available as a property named Id on the 
+a driver SHOULD make the Id available as a property named Id on the
 Stream that is returned. In languages where that is not idiomatic, a driver
 MUST make the Id available in a way that is appropriate for that language.
 
@@ -544,7 +544,7 @@ as follows:
 :files_id: the id generated for this stored file.
 :n: this is the n\ :sup:`th` section of the stored file, zero based.
 :data: a section of file data, stored as BSON binary data with subtype 0x00. All chunks except
-  the last one must be exactly 'chunkSizeBytes' long. The last chunk can be smaller, 
+  the last one must be exactly 'chunkSizeBytes' long. The last chunk can be smaller,
   and should only be as large as necessary.
 
 Historically, while streaming the user file, drivers computed an MD5 digest for
@@ -620,20 +620,20 @@ File Download
 .. code:: javascript
 
   class GridFSBucket {
-  
+
     /** Opens a Stream from which the application can read the contents of the stored file
      * specified by @id.
      *
      * Returns a Stream.
      */
     Stream open_download_stream(TFileId id);
-    
+
     /**
      * Downloads the contents of the stored file specified by @id and writes
      * the contents to the @destination Stream.
      */
     void download_to_stream(TFileId id, Stream destination);
-  
+
   }
 
 Downloads a stored file from a GridFS bucket. For languages that have a
@@ -661,7 +661,7 @@ is in the process of being deleted, or has been corrupted, and the
 driver MUST raise an error.
 
 Then, implementers retrieve all chunks with files_id equal to id,
-sorted in ascending order on “n”. 
+sorted in ascending order on “n”.
 
 However, when downloading a zero length stored file the driver MUST NOT
 issue a query against the chunks collection, since that query is not
@@ -691,7 +691,7 @@ File Deletion
      * associated chunks from a GridFS bucket.
      */
     void delete(TFileId id);
-  
+
   }
 
 Deletes the stored file’s files collection document and associated
@@ -727,47 +727,58 @@ Generic Find on Files Collection
 .. code:: javascript
 
   class GridFSFindOptions {
-  
+
+    /**
+     * Enables writing to temporary files on the server. When set to true, the server
+     * can write temporary data to disk while executing the find operation on the files collection.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default
+     * is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    allowDiskUse: Optional<Boolean>;
+
     /**
      * The number of documents to return per batch.
      */
     batchSize : Int32 optional;
-    
+
     /**
      * The maximum number of documents to return.
      */
     limit : Int32 optional;
-    
+
     /**
      * The maximum amount of time to allow the query to run.
      */
     maxTimeMS: Int64 optional;
-    
+
     /**
      * The server normally times out idle cursors after an inactivity period (10 minutes)
      * to prevent excess memory use. Set this option to prevent that.
      */
     noCursorTimeout : Boolean optional;
-    
+
     /**
      * The number of documents to skip before returning.
      */
     skip : Int32;
-    
+
     /**
      * The order by which to sort results. Defaults to not sorting.
      */
     sort : Document optional;
-  
+
   }
-  
+
   class GridFSBucket {
-  
+
     /**
      * Find and return the files collection documents that match @filter.
-     */  
+     */
     Iterable find(Document filter, GridFSFindOptions options=null);
-  
+
   }
 
 This call will trigger a find() operation on the files collection using
@@ -783,6 +794,9 @@ Drivers SHOULD NOT perform any validation on the filter. If the filter
 contains fields that do not exist within files collection documents,
 then an empty result set will be returned.
 
+Drivers MUST propagate the GridFSFindOptions to the FindOptions passed
+to the underlying Find operation.
+
 Drivers MUST document how users query files collection documents,
 including how to query metadata, e.g. using a filter like {
 metadata.fieldname : “some_criteria” }.
@@ -796,7 +810,7 @@ File Download by Filename
 .. code:: javascript
 
   class GridFSDownloadByNameOptions {
-  
+
     /**
      * Which revision (documents with the same filename and different uploadDate)
      * of the file to retrieve. Defaults to -1 (the most recent revision).
@@ -810,25 +824,25 @@ File Download by Filename
      * -1 = the most recent revision
      */
     revision : Int32 optional;
-  
+
   }
-  
+
   class GridFSBucket {
-  
+
     /** Opens a Stream from which the application can read the contents of the stored file
      * specified by @filename and the revision in @options.
      *
      * Returns a Stream.
      */
     Stream open_download_stream_by_name(string filename, GridFSDownloadByNameOptions options=null);
-    
+
     /**
      * Downloads the contents of the stored file specified by @filename and by the
      * revision in @options and writes the contents to the @destination Stream.
      */
     void download_to_stream_by_name(string filename, Stream destination,
       GridFSDownloadByNameOptions options=null);
-  
+
   }
 
 Retrieves a stored file from a GridFS bucket. For languages that have a
@@ -887,12 +901,12 @@ Renaming stored files
 .. code:: javascript
 
   class GridFSBucket {
-  
+
     /**
      * Renames the stored file with the specified @id.
      */
     void rename(TFileId id, string new_filename);
-  
+
   }
 
 Sets the filename field in the stored file’s files collection document
@@ -1093,33 +1107,33 @@ Should drivers report an error if a stored file has extra chunks?
   but this is an extremely unlikely state and we don't want to pay a
   performance penalty checking for an error that is almost never there.
   Therefore, drivers MAY ignore extra chunks.
-  
+
 Why have we changed our mind about requiring the file id to be an ObjectId?
   This spec originally required the file id for all new GridFS files to be
-  an ObjectId and specified that the driver itself would be the one to 
+  an ObjectId and specified that the driver itself would be the one to
   generate the ObjectId when a new file was uploaded. While this sounded like
   a good idea, it has since become evident that there are valid use cases
-  for an application to want to generate its own file id, and that an 
+  for an application to want to generate its own file id, and that an
   application wouldn't necessarily want to use ObjectId as the type of
   the file id. The most common case where an application would want to use
   a custom file id is when the chunks collection is to be sharded and the
-  application wants to use a custom file id that is suitable for sharding. 
+  application wants to use a custom file id that is suitable for sharding.
   Accordingly, we have relaxed this spec to allow an application
   to supply a custom file id (of any type) when uploading a new file.
-  
+
 How can we maintain backward compatibility while supporting custom file ids?
   For most methods supporting custom file ids is as simple as relaxing the
-  type of the id parameter from ObjectId to something more general like object 
+  type of the id parameter from ObjectId to something more general like object
   or BSON value (or to a type parameter like <TFileId> in languages that
   support generic methods). In a few cases new methods were added to support custom file ids.
   The original upload_from_stream method returned an ObjectId, and support for
   custom file ids is implemented by adding a new method that takes the custom
   file id as an additional parameter. Drivers should continue to support the original
-  method if possible to maintain backward compatibility. This spec does 
+  method if possible to maintain backward compatibility. This spec does
   not attempt to completely mandate how each driver should maintain backward
-  compatibility, as different languages have different approaches and 
-  capabilities for maintaining backward compatibility. 
-  
+  compatibility, as different languages have different approaches and
+  capabilities for maintaining backward compatibility.
+
 Backwards Compatibility
 =======================
 
