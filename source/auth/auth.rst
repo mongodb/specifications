@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.8.2
+:Spec Version: 1.8.3
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2020-01-13
+:Last Modified: 2020-01-16
 
 .. contents::
 
@@ -92,14 +92,18 @@ Credential delimiter in URI implies authentication
 
 The presence of a credential delimiter (i.e. @) in the URI connection string is evidence that the user has unambiguously specified user information and MUST be interpreted as a user configuring authentication credentials (even if the username and/or password are empty strings).
 
-Ambiguity between authentication source and URI database
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Authentication source and URI database do not imply authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The presence of a database name in the URI connection string MUST NOT be
 interpreted as a user configuring authentication credentials.  The URI database
 name is only used as a default source for some mechanisms when authentication
 has been configured and a source is required but has not been specified.  See
 individual mechanism definitions for details.
+
+Similarly, the presence of the ``authSource`` option in the URI connection
+string without other credential data such as Userinfo or authentication parameters
+in connection options MUST NOT be interpreted as a request for authentication.
 
 Errors
 ~~~~~~
@@ -1149,6 +1153,10 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.8.3 Changes
+    * Clarify that authSource in URI is not treated as a user configuring
+      auth credentials.
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
