@@ -974,7 +974,11 @@ authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VAL
 gssapiServiceName (deprecated)
 	An alias for ``authMechanismProperties=SERVICE_NAME:mongodb``.
 
-If any of the auth related options are specified in the connection string without a value, e.g. ``mongodb://localhost/admin?authSource=``, the default value for the option should be used.
+
+Errors
+------
+
+Drivers SHOULD raise an error if the ``authSource`` option is specified in the connection string with an empty value, e.g. ``mongodb://localhost/admin?authSource=``.
 
 
 Implementation
@@ -1162,6 +1166,8 @@ Version 1.8.3 Changes
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
+    * Clarify that drivers should raise and error when a connection string
+      has an empty value for authSource.
 
 Version 1.8.1 Changes
     * Clarify database to use for auth mechanism negotiation.
