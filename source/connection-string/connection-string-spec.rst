@@ -180,9 +180,9 @@ The values in connection options MUST be URL decoded by the parser. The values c
 - Strings:
     The value
 - Integer:
-    The value parsed as a integer
+    The value parsed as a integer. If the value is the empty string, then the value MUST be parsed as 0.
 - Boolean:
-    "true" and "false" strings MUST be supported.
+    "true" and "false" strings MUST be supported. If the value is the empty string, then the value MUST be parsed as false.
 
   - For legacy reasons it is RECOMMENDED that alternative values for true and false be supported:
 
