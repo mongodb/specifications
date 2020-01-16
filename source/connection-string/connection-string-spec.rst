@@ -12,7 +12,7 @@ Connection String Spec
 :Status: Approved
 :Type: Standards
 :Last Modified: 2019-04-26
-:Version: 1.4.2
+:Version: 1.5.0
 
 .. contents::
 
@@ -180,9 +180,9 @@ The values in connection options MUST be URL decoded by the parser. The values c
 - Strings:
     The value
 - Integer:
-    The value parsed as a integer
+  The value parsed as a integer. If the value is the empty string, the key MUST be ignored.
 - Boolean:
-    "true" and "false" strings MUST be supported.
+  "true" and "false" strings MUST be supported. If the value is the empty string, the key MUST be ignored.
 
   - For legacy reasons it is RECOMMENDED that alternative values for true and false be supported:
 
@@ -391,3 +391,4 @@ Changes
   override the repeated key behavior described here for certain options.
 - 2019-03-04: Require drivers to document option precedence rules
 - 2019-04-26: Database name in URI alone does not trigger authentication
+- 2020-01-21: Clarified how empty values in a connection string are parsed.
