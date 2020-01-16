@@ -13,7 +13,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2020-01-13
+:Last Modified: 2020-01-16
 
 .. contents::
 
@@ -100,6 +100,10 @@ interpreted as a user configuring authentication credentials.  The URI database
 name is only used as a default source for some mechanisms when authentication
 has been configured and a source is required but has not been specified.  See
 individual mechanism definitions for details.
+
+Similarly, the presence of the ``authSource`` option in the URI connection
+string without other credential data such as Userinfo or authentication parameters
+in connection options MUST NOT be interpreted as a request for authentication.
 
 Errors
 ~~~~~~
@@ -1152,6 +1156,8 @@ Version History
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
+    * Clarify that authSource in URI is not treated as a user configuring
+      auth credentials.
 
 Version 1.8.1 Changes
     * Clarify database to use for auth mechanism negotiation.
