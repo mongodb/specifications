@@ -15,31 +15,3 @@ tests:
             db: "admin"
         options:
             authmechanism: "MONGODB-CR"
-    -
-        description: "Empty integer option value parses as zero"
-        uri: "mongodb://localhost/admin?maxIdleTimeMS="
-        valid: true
-        warning: false
-        hosts:
-            -
-                type: "hostname"
-                host: "localhost"
-                port: ~
-        auth:
-            db: "admin"
-        options:
-            maxidletimems: 0
-    -
-        description: "Empty boolean option value parses as false"
-        uri: "mongodb://localhost/admin?journal="
-        valid: true
-        warning: false
-        hosts:
-            -
-                type: "hostname"
-                host: "localhost"
-                port: ~
-        auth:
-            db: "admin"
-        options:
-            journal: false
