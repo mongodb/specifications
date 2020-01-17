@@ -521,15 +521,15 @@ Alternatively, the test application can attempt to connect to a
 OCSP-only certificate. The connection will fail of course, but we are
 only interested in the TLS handshake and the OCSP requests that may
 follow. For example, the following connection string could be used:
-mongodb://valid-isrgrootx1.letsencrypt.org:443/?tls=true
+``mongodb://valid-isrgrootx1.letsencrypt.org:443/?tls=true``
 
 Run the test application and verify through packet analysis that the
-driver’s ClientHello message’s TLS extension section include the
-status\_request extension, thus indicate that the driver is advertising
+driver’s ClientHello message’s TLS extension section includes the
+``status_request`` extension, thus indicating that the driver is advertising
 that it supports OCSP stapling.
 
 Note: If using `WireShark <https://www.wireshark.org/>`__ as your
-chosen packet analyzer, the “tls” (case-sensitive) display filter may be
+chosen packet analyzer, the ``tls`` (case-sensitive) display filter may be
 useful in this endeavor.
 
 OCSP Caching and the optional test to ensure that the driver’s TLS library supports non-stapled OCSP
