@@ -92,8 +92,8 @@ Credential delimiter in URI implies authentication
 
 The presence of a credential delimiter (i.e. @) in the URI connection string is evidence that the user has unambiguously specified user information and MUST be interpreted as a user configuring authentication credentials (even if the username and/or password are empty strings).
 
-Ambiguity between authentication source and URI database
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Authentication source and URI database do not imply authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The presence of a database name in the URI connection string MUST NOT be
 interpreted as a user configuring authentication credentials.  The URI database
