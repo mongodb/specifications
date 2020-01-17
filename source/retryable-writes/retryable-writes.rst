@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.4.0
+:Spec Version: 1.5.0
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-10-21
+:Last Modified: 2020-01-14
 
 .. contents::
 
@@ -258,6 +258,8 @@ the following criteria:
       - 89
     * - SocketException
       - 9001
+    * - ExceededTimeLimit
+      - 262
 
 - a server response with a write concern error response containing any of the previously listed codes
 
@@ -800,6 +802,9 @@ performing any error message parsing.
 
 Changes
 =======
+
+2020-01-14: Add ExceededTimeLimit to the list of error codes that should
+receive a RetryableWriteError label.
 
 2019-10-21: Change the definition of "retryable write" to be based on the
 RetryableWriteError label. Stop requiring drivers to parse errmsg to
