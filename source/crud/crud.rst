@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 14, 2020
+:Last Modified: January 17, 2020
 
 .. contents::
 
@@ -406,6 +406,17 @@ Read
   }
 
   class FindOptions {
+
+    /**
+     * Enables writing to temporary files on the server. When set to true, the server
+     * can write temporary data to disk while executing the find operation.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default
+     * is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/find/
+     */
+    allowDiskUse: Optional<Boolean>;
 
     /**
      * Get partial results from a mongos if some shards are down (instead of throwing an error).
@@ -1825,6 +1836,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2020-01-17: Add allowDiskUse to FindOptions.
 * 2020-01-14: Deprecate oplogReplay option for find command
 * 2020-01-10: Clarify client-side error reporting for unsupported options
 * 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
