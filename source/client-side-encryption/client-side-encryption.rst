@@ -653,7 +653,7 @@ ClientEncryption
 The new ClientEncryption type interacts uses libmongocrypt to perform
 encryption and decryption, and to implement
 ClientEncryption.createDataKey(), ClientEncryption.encrypt(), and
-ClientEncryption.decrypt(). See the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h>`_ for more information.
+ClientEncryption.decrypt(). See the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_ for more information.
 
 The ClientEncryption contains a MongoClient connected to the MongoDB
 cluster containing the key vault collection. It does not contain a
@@ -682,7 +682,14 @@ Auto encrypt and decrypt
 An encrypted MongoClient automatically encrypts values for filtering and
 decrypts results.
 
-The driver MUST use libmongocrypt to perform auto encryption and decryption. See the `libmongocrypt API documentation <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h>`_ for more information.
+The driver MUST use libmongocrypt to initiate auto encryption and decryption.
+Create the BSON command meant to be sent over the wire, then pass that through
+the libmongocrypt state machine and use the returned BSON command in its place.
+The state machine is created with the libmongocrypt function
+``mongocrypt_ctx_new`` and initialized with a ``mongocrypt_ctx_encrypt_init`` or
+``mongocrypt_ctx_decrypt_init``. See the `libmongocrypt API documentation
+<https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_ for
+more information. 
 
 An encrypted MongoClient configured with bypassAutoEncryption MUST NOT
 attempt automatic encryption for any command.
