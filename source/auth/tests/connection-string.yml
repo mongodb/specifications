@@ -86,7 +86,7 @@ tests:
             mechanism_properties:
                 SERVICE_NAME: "mongodb"
     -
-        description: "should raise an error when the authSource is empty"
+        description: "must raise an error when the authSource is empty"
         uri: "mongodb://user:password@localhost/foo?authSource="
         valid: false
     -

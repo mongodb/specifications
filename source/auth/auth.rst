@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.8.3
+:Spec Version: 1.9.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -978,7 +978,7 @@ gssapiServiceName (deprecated)
 Errors
 ------
 
-Drivers SHOULD raise an error if the ``authSource`` option is specified in the connection string with an empty value, e.g. ``mongodb://localhost/admin?authSource=``.
+Drivers MUST raise an error if the ``authSource`` option is specified in the connection string with an empty value, e.g. ``mongodb://localhost/admin?authSource=``.
 
 
 Implementation
@@ -1160,14 +1160,16 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
+Version 1.9.0 Changes
+    * Clarify that drivers should raise and error when a connection string
+      has an empty value for authSource.
+
 Version 1.8.3 Changes
     * Clarify that authSource in URI is not treated as a user configuring
       auth credentials.
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
-    * Clarify that drivers should raise and error when a connection string
-      has an empty value for authSource.
 
 Version 1.8.1 Changes
     * Clarify database to use for auth mechanism negotiation.
