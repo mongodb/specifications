@@ -6,22 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-<<<<<<< HEAD
-:Spec Version: 1.8.3
-=======
 :Spec Version: 1.9.1
->>>>>>> 8a27bde... SPEC-1470: Explicitly state when authentication should occur
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-<<<<<<< HEAD
-:Last Modified: 2020-01-16
-=======
 :Last Modified: 2020-01-21
->>>>>>> 8a27bde... SPEC-1470: Explicitly state when authentication should occur
 
 .. contents::
 
@@ -1166,14 +1158,12 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
-<<<<<<< HEAD
+Version 1.9.1 Changes
+    * Clarify when authentication will occur.
+
 Version 1.8.3 Changes
     * Clarify that authSource in URI is not treated as a user configuring
       auth credentials.
-=======
-Version 1.9.1 Changes
-    * Clarify when authentication will occur.
->>>>>>> 8a27bde... SPEC-1470: Explicitly state when authentication should occur
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
