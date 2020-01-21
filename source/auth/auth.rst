@@ -13,7 +13,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2020-01-13
+:Last Modified: 2020-01-21
 
 .. contents::
 
@@ -86,6 +86,8 @@ mechanism (string)
 	* Indicates which mechanism to use with the credential.
 mechanism_properties
 	* Includes additional properties for the given mechanism.
+
+Each mechanism requires certain pieces of information to be present in a MongoCredential for authentication to occur. For example, `username`, `source` and `password` must be present if the mechanism is SCRAM-SHA-256. See the individual mechanism definitions for the information each mechanism requires for authentication.
 
 Credential delimiter in URI implies authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1149,6 +1151,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.9.1 Changes
+    * Clarify when authentication will occur.
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
