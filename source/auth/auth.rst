@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.8.2
+:Spec Version: 1.9.1
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -87,7 +87,7 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
-Each mechanism requires certain pieces of information to be present in a MongoCredential for authentication to occur. For example, `username`, `source` and `password` must be present if the mechanism is SCRAM-SHA-256. See the individual mechanism definitions for the information each mechanism requires for authentication.
+Each mechanism requires certain pieces of information to be present in a MongoCredential for authentication to occur. See the individual mechanism definitions in the "MongoCredential Properties" section. All requirements listed for a mechanism must be met for authentication to occur.
 
 Credential delimiter in URI implies authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,6 +107,8 @@ Errors
 ~~~~~~
 
 Drivers SHOULD raise an error as early as possible when detecting invalid values in a credential. For instance, if a ``mechanism_property`` is specified for `MONGODB-CR`_, the driver should raise an error indicating that the property does not apply.
+
+Drivers MUST raise an error if any required information for a mechanism is missing. For instance, if a ``username`` is not specified for `SCRAM-SHA-256`, the driver must raise an error indicating the the property is missing.
 
 
 Naming
