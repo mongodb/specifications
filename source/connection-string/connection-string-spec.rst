@@ -12,7 +12,7 @@ Connection String Spec
 :Status: Approved
 :Type: Standards
 :Last Modified: 2019-04-26
-:Version: 1.4.2
+:Version: 1.5.0
 
 .. contents::
 
@@ -391,3 +391,4 @@ Changes
   override the repeated key behavior described here for certain options.
 - 2019-03-04: Require drivers to document option precedence rules
 - 2019-04-26: Database name in URI alone does not trigger authentication
+- 2020-01-21: Clarified how empty values in a connection string are parsed.
