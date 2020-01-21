@@ -6,14 +6,22 @@ Driver Authentication
 =====================
 
 :Spec: 100
+<<<<<<< HEAD
 :Spec Version: 1.8.3
+=======
+:Spec Version: 1.9.1
+>>>>>>> 8a27bde... SPEC-1470: Explicitly state when authentication should occur
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
+<<<<<<< HEAD
 :Last Modified: 2020-01-16
+=======
+:Last Modified: 2020-01-21
+>>>>>>> 8a27bde... SPEC-1470: Explicitly state when authentication should occur
 
 .. contents::
 
@@ -87,6 +95,8 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
+Each mechanism requires certain properties to be present in a MongoCredential for authentication to occur. See the individual mechanism definitions in the "MongoCredential Properties" section. All requirements listed for a mechanism must be met for authentication to occur.
+
 Credential delimiter in URI implies authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -109,6 +119,8 @@ Errors
 ~~~~~~
 
 Drivers SHOULD raise an error as early as possible when detecting invalid values in a credential. For instance, if a ``mechanism_property`` is specified for `MONGODB-CR`_, the driver should raise an error indicating that the property does not apply.
+
+Drivers MUST raise an error if any required information for a mechanism is missing. For instance, if a ``username`` is not specified for SCRAM-SHA-256, the driver must raise an error indicating the the property is missing.
 
 
 Naming
@@ -280,7 +292,7 @@ mechanism negotiation, then SCRAM-SHA-1 MUST be used when talking to servers >=
 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
 
 When a user has specified a mechanism, regardless of the server version, the
-driver MUST honor this and attempt to authenticate.
+driver MUST honor this.
 
 Determining Server Version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1154,9 +1166,14 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
+<<<<<<< HEAD
 Version 1.8.3 Changes
     * Clarify that authSource in URI is not treated as a user configuring
       auth credentials.
+=======
+Version 1.9.1 Changes
+    * Clarify when authentication will occur.
+>>>>>>> 8a27bde... SPEC-1470: Explicitly state when authentication should occur
 
 Version 1.8.2 Changes
     * Added MONGODB-IAM auth mechanism
