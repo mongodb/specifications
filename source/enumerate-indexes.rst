@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2018-04-05
-:Version: 0.4.1
+:Last Modified: 2020-01-14
+:Version: 0.5.0
 
 .. contents::
 
@@ -279,10 +279,15 @@ subsequent retrieved documents through getmore on the cursor constructed from
 ``res.cursor.ns`` and ``res.cursor.id``), and the query result for
 ``system.indexes``.
 
-The returned result for each variant MUST be equivalent, and each index
-that is returned MUST use the field names ``v``, ``key``, ``name`` and ``ns``.
-If the result contains additional fields, they MUST be included verbatim (like
-``2dsphereIndexVersion`` in the example below).
+In MongoDB 4.4, the ``ns`` field was removed from the index specifications returned from the ``listIndexes`` command.
+
+- For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
+  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the ``ns`` field
+  will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
+  special mention of the ``ns`` field is necessary.
+- For drivers that report those index specifications in the form of statically defined models, the driver MUST manually populate
+  the ``ns`` field of the models with the appropriate namespace if the server does not report it in the ``listIndexes`` command
+  response. The ``ns`` field is not required to be a part of the models, however.
 
 Example return (a cursor which returns documents, not a simple array)::
 
@@ -353,13 +358,15 @@ Tests
 
   - verify that *all* index names are represented in the result
   - verify that there are no duplicate index names
-  - there are no returned indexes that do not exist
+  - verify there are no returned indexes that do not exist
 
 - Run the driver's method that returns a list of index information records, and:
 
-  - all the indexes are represented in the result
-  - the "unique" flags show up for the unique index
-  - there are no duplicates in the returned list
+  - verify all the indexes are represented in the result
+  - verify the "unique" flags show up for the unique index
+  - verify there are no duplicates in the returned list
+  - if the result consists of statically defined index models that include an ``ns`` field, verify
+    that its value is accurate
 
 
 Backwards Compatibility
@@ -379,6 +386,8 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+0.5.0 - 2020-01-14
+    MongoDB 4.4 no longer inclues ``ns`` field in ``listIndexes`` responses.
 
 0.4.1 - 2018-04-05
     Fix typo.
