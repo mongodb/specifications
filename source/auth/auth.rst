@@ -1154,10 +1154,12 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
-Version 1.8.2 Changes
-    * Added MONGODB-IAM auth mechanism
+Version 1.8.3 Changes
     * Clarify that authSource in URI is not treated as a user configuring
       auth credentials.
+
+Version 1.8.2 Changes
+    * Added MONGODB-IAM auth mechanism
 
 Version 1.8.1 Changes
     * Clarify database to use for auth mechanism negotiation.
