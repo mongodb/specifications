@@ -108,7 +108,7 @@ Errors
 
 Drivers SHOULD raise an error as early as possible when detecting invalid values in a credential. For instance, if a ``mechanism_property`` is specified for `MONGODB-CR`_, the driver should raise an error indicating that the property does not apply.
 
-Drivers MUST raise an error if any required information for a mechanism is missing. For instance, if a ``username`` is not specified for `SCRAM-SHA-256`, the driver must raise an error indicating the the property is missing.
+Drivers MUST raise an error if any required information for a mechanism is missing. For instance, if a ``username`` is not specified for SCRAM-SHA-256, the driver must raise an error indicating the the property is missing.
 
 
 Naming
