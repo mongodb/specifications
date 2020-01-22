@@ -87,7 +87,7 @@ mechanism (string)
 mechanism_properties
 	* Includes additional properties for the given mechanism.
 
-Each mechanism requires certain pieces of information to be present in a MongoCredential for authentication to occur. See the individual mechanism definitions in the "MongoCredential Properties" section. All requirements listed for a mechanism must be met for authentication to occur.
+Each mechanism requires certain properties to be present in a MongoCredential for authentication to occur. See the individual mechanism definitions in the "MongoCredential Properties" section. All requirements listed for a mechanism must be met for authentication to occur.
 
 Credential delimiter in URI implies authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -280,7 +280,7 @@ mechanism negotiation, then SCRAM-SHA-1 MUST be used when talking to servers >=
 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
 
 When a user has specified a mechanism, regardless of the server version, the
-driver MUST honor this and attempt to authenticate.
+driver MUST honor this.
 
 Determining Server Version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
