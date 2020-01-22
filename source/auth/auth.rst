@@ -1161,7 +1161,7 @@ Version History
 ===============
 
 Version 1.9.0 Changes
-    * Clarify that drivers should raise and error when a connection string
+    * Clarify that drivers must raise an error when a connection string
       has an empty value for authSource.
 
 Version 1.8.3 Changes
