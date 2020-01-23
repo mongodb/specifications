@@ -112,7 +112,7 @@ invalid, the driver SHOULD end the connection.
 9.  If any unvalidated intermediate certificates remain and those
     certificates have CRL distribution points, the driver SHOULD NOT
     download those CRLs and attempt to validate the status of all
-    the other certificates using the CRL.\*
+    the other certificates using those CRLs.\*
 
 10. Finally, the driver SHOULD continue the connection, even if the
     status of all the unvalidated intermediate certificates has not
