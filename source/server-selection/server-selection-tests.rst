@@ -269,9 +269,3 @@ of the spec MUST test that:
   set: Register a server selector that selects the suitable server with the highest port number. Execute 10
   queries with nearest read preference and, using command monitoring, assert that all the operations execute
   on the member with the highest port number.
-
-- The application-provided server selector is not executed as part of the server selection process when
-  there are no candidate or eligible servers. For example, execute a test against a replica set
-  with no primary: Register a server selector that increments an internal counter (starting at 0) each time
-  it is called. Attempt server selection with primary read preference, catch the resulting server selection
-  timeout exception, and assert that the internal counter of the server selector is still 0.
