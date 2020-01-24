@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.9.1
+:Spec Version: 1.9.2
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2020-01-21
+:Last Modified: 2020-01-24
 
 .. contents::
 
@@ -613,13 +613,7 @@ This same conversation over mongodb's sasl implementation would appear as follow
 | C: :javascript:`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM")}`
 | S: :javascript:`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`
 | C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`
-| S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: false, ok: 1}`
-| C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "")}`
-| S: :javascript:`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`
-
-.. note::
-
-	There is an extra round trip due to an implementation decision on the server. This is accomplished by sending no bytes back to the server for what is effectively a no-op.
+| S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: true, ok: 1}`
 
 `MongoCredential`_ Properties
 `````````````````````````````
@@ -1093,6 +1087,17 @@ Drivers may need to remove support for association of more than one credential w
 	* Deprecation and removal of MongoClient constructors that take as an argument more than a single credential
 	* Deprecation and removal of methods that allow lazy authentication (i.e post-MongoClient construction)
 
+Drivers need to support both the shorter and longer SCRAM conversations over mongodb's sasl implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip italicized):
+
+| C: :javascript:`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM")}`
+| S: :javascript:`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`
+| C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`
+| S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: false, ok: 1}`
+| *C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "")}`*
+| *S: :javascript:`{conversationId: 1, payload: BinData(0,""), done: true, ok: 1}`*
+
+The extra round trip has been removed in server version 4.4.
+
 Reference Implementation
 ========================
 
@@ -1157,6 +1162,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.9.2 Changes
+    * Support shorter SCRAM conversation starting in version 4.4 of the server.
 
 Version 1.9.1 Changes
     * Clarify when authentication will occur.
