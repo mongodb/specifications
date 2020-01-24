@@ -1173,7 +1173,7 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
 
             servers = all servers in topologyDescription matching criteria
 
-            if serverSelector is not null and servers is not empty:
+            if serverSelector is not null:
                 servers = serverSelector(servers)
 
             if servers is not empty:
@@ -1248,7 +1248,7 @@ Pseudocode for `single-threaded server selection`_::
 
             servers = all servers in topologyDescription matching criteria
 
-            if serverSelector is not null and servers is not empty:
+            if serverSelector is not null:
                 servers = serverSelector(servers)
 
             if servers is not empty:
