@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.0
+:Spec Version: 1.0.1
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2019-1-16
+:Last Modified: 2019-1-28
 
 .. contents::
 
@@ -417,7 +417,7 @@ Q&A
 ====
 
 Can we use one Evergreen task combined with distinct certificates for each column in the test matrix to prevent OCSP caching from affecting testing?
------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
 
 No. This is because Evergreen may reuse a host with an OCSP cache from a
 previous execution, so using distinct certificates per column would not
@@ -425,6 +425,19 @@ obviate the need to clear all relevant OCSP caches prior to each test
 run. Since Evergreen does perform some cleanup between executions,
 having separate tasks for each test column offers an additional layer of
 safety in protecting against stale data in OCSP caches.
+
+Should drivers use a nonce when creating an OCSP request?
+---------------------------------------------------------
+A driver MAY use a nonce if desired, but `including a nonce in an OCSP
+request <https://tools.ietf.org/html/rfc6960#section-4.4.1>`__
+is not required as the server does not explicitly support nonces.
+
+Should drivers utilize a tolerance period when accepting OCSP responses?
+------------------------------------------------------------------------
+No. Although `RFC 5019, The Lightweight Online Certificate Status Protocol
+(OCSP) Profile for High-Volume Environments, <https://tools.ietf.org/html/rfc5019>`__
+allows for the configuration of a tolerance period for the acceptance of OCSP
+responses after ``nextUpdate``, this spec is not adhering to that RFC.
 
 Appendix
 ========
@@ -581,6 +594,8 @@ of checking this are:
 
 Changelog
 ==========
+**2020-1-28**: Clarify behavior regarding nonces and tolerance periods.
+
 **2020-1-16**: Initial commit.
 
 Endnotes
