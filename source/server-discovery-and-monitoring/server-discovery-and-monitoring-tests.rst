@@ -150,22 +150,50 @@ Network error on monitoring connection
 Non-timeout network error
 '''''''''''''''''''''''''
 
-Scenario: mock a non-timeout network error on a monitoring connection.
-Alternatively, set a `failCommand fail point`_ on ``isMaster`` command
-with ``closeConnection: true`` parameter. Then, either perform a server
-scan manually or wait for the driver to scan the server.
+Scenario:
 
-Outcome: the server MUST be marked Unknown, and the server's connection
-pool MUST be cleared.
+Subscribe to `TopologyDescriptionChangedEvent
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`_
+SDAM event on the MongoClient.
+
+Subsribe to `PoolClearedEvent
+<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`_
+CMAP event on the MongoClient.
+
+Set a `failCommand fail point`_ on ``isMaster`` command
+with ``closeConnection: true`` parameter.
+
+Perform a server scan manually or wait for the driver to scan the server.
+
+Outcome:
+
+A TopologyDescriptionChangedEvent must have been published with the server's
+address and new description set to Unknown.
+
+A PoolClearedEvent must have been published with the server's address.
 
 Network timeout error
 '''''''''''''''''''''
 
-Scenario: mock a network timeout error on a monitoring connection.
-Then, either perform a server scan manually or wait for the driver to scan
-the server.
+Scenario:
 
-Outcome: the server MUST be marked Unknown, and the server's connection
-pool MUST be cleared.
+Subscribe to `TopologyDescriptionChangedEvent
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`_
+SDAM event on the MongoClient.
+
+Subsribe to `PoolClearedEvent
+<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`_
+CMAP event on the MongoClient.
+
+Mock a network timeout error on the monitoring connection.
+
+Perform a server scan manually or wait for the driver to scan the server.
+
+Outcome:
+
+A TopologyDescriptionChangedEvent must have been published with the server's
+address and new description set to Unknown.
+
+A PoolClearedEvent must have been published with the server's address.
 
 .. _failCommand fail point: https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point
