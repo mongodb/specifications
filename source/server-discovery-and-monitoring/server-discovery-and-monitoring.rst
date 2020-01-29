@@ -850,18 +850,28 @@ are parsed from the ismaster response in the obvious way.
 Server Description Equality
 ```````````````````````````
 
-For the purposes of updating topology description and publishing SDAM events,
-two server descriptions having the same address
-MUST be considered equal if and only if the values of
-`ServerDescription`_ fields marked (=) are respectively equal.
+For the purpose of determining whether to publish SDAM events, two server
+descriptions having the same address MUST be considered equal if and only if
+the values of `ServerDescription`_ fields marked (=) are respectively equal.
+Two topology descriptions MUST be considered equal if and only if they have
+the same set of server addresses, and the server descriptions for each address
+are respectively equal as just defined.
 
 This specification does not prescribe how to compare server descriptions
 with different addresses for equality.
 
-Note: Server description for each server MUST be updated (replaced)
-every heartbeat. However, new description MUST NOT cause the SDAM flow
-to be executed if the new description is equal, as defined in this section,
-to the previous description.
+Server description for each server MUST be updated (replaced) on every
+heartbeat. The driver MUST execute the SDAM flow on every heartbeat after
+updating each server description. If, as a result of SDAM flow execution,
+the only events to be published are:
+
+1. The server description change event, and the new server description is
+equal to the old server description as defined in this section, and
+2. The topology description change event, and the new topology is equal to the
+old topology as defined in this section, then
+
+... the driver MUST NOT publish the server description change nor the topology
+description change event because no meaningful change occurred.
 
 Updating the TopologyDescription
 ''''''''''''''''''''''''''''''''
@@ -2372,6 +2382,33 @@ If the application uses some servers very infrequently,
 monitoring can also proactively detect state changes
 (primary stepdown, server becoming unavailable)
 that would otherwise cause future errors.
+
+Why is the driver required to run SDAM flow if server description has not changed?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+The following scenario illustrates the problem that would happen if SDAM flow
+was not run when a driver receives a response identical to the previous
+response:
+
+1. Replica set is configured with servers A, B and C. B is the primary.
+2. B and C are shut down.
+3. Another server is started at B's address which is a standalone.
+4. Another server is started at C's address which is a standalone.
+3. Driver connects to A and receives a description A1 which is secondary,
+   also referencing B and C in the hosts.
+6. The driver connects to B, receives the standalone description B1,
+   removes B from topology.
+7. The driver connects to C, receives the standalone description C1,
+   removes C from topology.
+8. Standalone servers at B and C's addresses are shut down and the original
+   replica set nodes are started again.
+9. The driver checks A again and receives the same description A1 it did
+   previously.
+
+At this point, if the driver does not process the description A1 again
+(thus adding B and C back to the topology), it will be stuck in
+ReplicaSetWithoutPrimary state.
+
 
 Acknowledgments
 ---------------
