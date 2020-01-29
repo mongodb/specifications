@@ -152,13 +152,9 @@ Non-timeout network error
 
 Scenario:
 
-Subscribe to `TopologyDescriptionChangedEvent
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`_
-SDAM event on the MongoClient.
+Subscribe to `TopologyDescriptionChanged SDAM event`_ on the MongoClient.
 
-Subsribe to `PoolClearedEvent
-<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`_
-CMAP event on the MongoClient.
+Subsribe to `PoolCleared CMAP event`_ on the MongoClient.
 
 Set a `failCommand fail point`_ on ``isMaster`` command
 with ``closeConnection: true`` parameter.
@@ -177,13 +173,9 @@ Network timeout error
 
 Scenario:
 
-Subscribe to `TopologyDescriptionChangedEvent
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events>`_
-SDAM event on the MongoClient.
+Subscribe to `TopologyDescriptionChanged SDAM event`_ on the MongoClient.
 
-Subsribe to `PoolClearedEvent
-<https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`_
-CMAP event on the MongoClient.
+Subsribe to `PoolCleared CMAP event`_ on the MongoClient.
 
 Mock a network timeout error on the monitoring connection.
 
@@ -197,3 +189,5 @@ address and new description set to Unknown.
 A PoolClearedEvent must have been published with the server's address.
 
 .. _failCommand fail point: https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point
+.. _TopologyDescriptionChanged SDAM event: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst#events
+.. _PoolCleared CMAP event: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events
