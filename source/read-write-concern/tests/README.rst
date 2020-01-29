@@ -52,6 +52,26 @@ array of test case objects, each of which have the following keys:
 - ``isServerDefault:`` Indicates whether the read or write concern is considered the server's default.
 - ``isAcknowledged:`` Indicates if the write concern should be considered acknowledged.
 
+Operation
+~~~~~~~~~
+
+These tests check that the default write concern is omitted in operations.
+
+The spec test format is an extension of `transactions spec tests <https://github.com/mongodb/specifications/blob/master/source/transactions/tests/README.rst>`_ with the following additions:
+
+- ``clientOptions`` may include a ``writeConcern``, distinct from the URI option ``w``, to indicate a client level write concern.
+- ``writeConcern`` in the ``clientOptions``, ``databaseOptions``, or ``collectionOptions`` may be an empty document to indicate a `server default write concern <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#servers-default-writeconcern>`_. For example, in libmongoc:
+
+    .. code:: c
+
+       /* Create a default write concern, and set on a collection object. */
+       mongoc_write_concern_t *wc = mongoc_write_concern_new ();
+       mongoc_collection_set_write_concern (collection, wc);
+
+    If the driver has no way to explicitly set a default write concern on a client, database, or collection, then take no action.
+- The operations ``createIndex``, ``dropIndex`` are introduced.
+
+
 Use as unit tests
 =================
 
