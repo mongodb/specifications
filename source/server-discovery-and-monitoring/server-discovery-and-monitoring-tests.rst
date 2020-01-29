@@ -150,7 +150,7 @@ Network error on monitoring connection
 Non-timeout network error
 '''''''''''''''''''''''''
 
-Scenario:
+**Scenario:**
 
 Subscribe to `TopologyDescriptionChanged SDAM event`_ on the MongoClient.
 
@@ -161,7 +161,7 @@ with ``closeConnection: true`` parameter.
 
 Perform a server scan manually or wait for the driver to scan the server.
 
-Outcome:
+**Outcome:**
 
 A TopologyDescriptionChangedEvent must have been published with the server's
 address and new description set to Unknown.
@@ -171,7 +171,7 @@ A PoolClearedEvent must have been published with the server's address.
 Network timeout error
 '''''''''''''''''''''
 
-Scenario:
+**Scenario:**
 
 Subscribe to `TopologyDescriptionChanged SDAM event`_ on the MongoClient.
 
@@ -181,7 +181,7 @@ Mock a network timeout error on the monitoring connection.
 
 Perform a server scan manually or wait for the driver to scan the server.
 
-Outcome:
+**Outcome:**
 
 A TopologyDescriptionChangedEvent must have been published with the server's
 address and new description set to Unknown.
