@@ -2394,7 +2394,7 @@ response:
 2. B and C are shut down.
 3. Another server is started at B's address which is a standalone.
 4. Another server is started at C's address which is a standalone.
-3. Driver connects to A and receives a description A1 which is secondary,
+5. Driver connects to A and receives a description A1 which is secondary,
    also referencing B and C in the hosts.
 6. The driver connects to B, receives the standalone description B1,
    removes B from topology.
