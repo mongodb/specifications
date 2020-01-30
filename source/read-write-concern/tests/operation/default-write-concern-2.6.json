@@ -20,16 +20,10 @@
   "tests": [
     {
       "description": "DeleteOne omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "name": "deleteOne",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -60,16 +54,10 @@
     },
     {
       "description": "DeleteMany omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "name": "deleteMany",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -100,16 +88,10 @@
     },
     {
       "description": "BulkWrite with all models omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "name": "bulkWrite",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -342,16 +324,10 @@
     },
     {
       "description": "InsertOne and InsertMany omit default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "name": "insertOne",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -364,9 +340,6 @@
         {
           "name": "insertMany",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -440,16 +413,10 @@
     },
     {
       "description": "UpdateOne, UpdateMany, and ReplaceOne omit default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "name": "updateOne",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -467,9 +434,6 @@
         {
           "name": "updateMany",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -487,9 +451,6 @@
         {
           "name": "replaceOne",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -581,118 +542,7 @@
       ]
     },
     {
-      "description": "DeleteOne with client write concern unset omits default write concern",
-      "operations": [
-        {
-          "name": "deleteOne",
-          "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
-          "collectionOptions": {
-            "writeConcern": {}
-          },
-          "arguments": {
-            "filter": {}
-          },
-          "result": {
-            "deletedCount": 1
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "default_write_concern_coll",
-              "deletes": [
-                {
-                  "q": {},
-                  "limit": 1
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "DeleteOne with database write concern unset omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
-      "operations": [
-        {
-          "name": "deleteOne",
-          "object": "collection",
-          "collectionOptions": {
-            "writeConcern": {}
-          },
-          "arguments": {
-            "filter": {}
-          },
-          "result": {
-            "deletedCount": 1
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "default_write_concern_coll",
-              "deletes": [
-                {
-                  "q": {},
-                  "limit": 1
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "DeleteOne with collection write concern unset omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
-      "operations": [
-        {
-          "name": "deleteOne",
-          "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
-          "arguments": {
-            "filter": {}
-          },
-          "result": {
-            "deletedCount": 1
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "default_write_concern_coll",
-              "deletes": [
-                {
-                  "q": {},
-                  "limit": 1
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "DeleteOne with client/database/collection write concern unset omits default write concern",
+      "description": "DeleteOne with write concern unset omits default write concern",
       "operations": [
         {
           "name": "deleteOne",

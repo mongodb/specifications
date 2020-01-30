@@ -20,15 +20,9 @@
   "tests": [
     {
       "description": "Aggregate with $out omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -86,9 +80,6 @@
     },
     {
       "description": "RunCommand with a write command omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "object": "database",
@@ -117,15 +108,9 @@
     },
     {
       "description": "CreateIndex and dropIndex omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -138,9 +123,6 @@
         },
         {
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -180,16 +162,10 @@
     },
     {
       "description": "MapReduce omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
       "operations": [
         {
           "name": "mapReduce",
           "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
           "collectionOptions": {
             "writeConcern": {}
           },
@@ -227,196 +203,7 @@
       ]
     },
     {
-      "description": "Aggregate with $out and client write concern unset omits default write concern",
-      "operations": [
-        {
-          "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
-          "collectionOptions": {
-            "writeConcern": {}
-          },
-          "name": "aggregate",
-          "arguments": {
-            "pipeline": [
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$out": "other_collection_name"
-              }
-            ],
-            "batchSize": 2
-          }
-        }
-      ],
-      "outcome": {
-        "collection": {
-          "name": "other_collection_name",
-          "data": [
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "default_write_concern_coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$out": "other_collection_name"
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "Aggregate with $out and database write concern unset omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
-      "operations": [
-        {
-          "object": "collection",
-          "collectionOptions": {
-            "writeConcern": {}
-          },
-          "name": "aggregate",
-          "arguments": {
-            "pipeline": [
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$out": "other_collection_name"
-              }
-            ],
-            "batchSize": 2
-          }
-        }
-      ],
-      "outcome": {
-        "collection": {
-          "name": "other_collection_name",
-          "data": [
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "default_write_concern_coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$out": "other_collection_name"
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "Aggregate with $out and collection write concern unset omits default write concern",
-      "clientOptions": {
-        "writeConcern": {}
-      },
-      "operations": [
-        {
-          "object": "collection",
-          "databaseOptions": {
-            "writeConcern": {}
-          },
-          "name": "aggregate",
-          "arguments": {
-            "pipeline": [
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$out": "other_collection_name"
-              }
-            ],
-            "batchSize": 2
-          }
-        }
-      ],
-      "outcome": {
-        "collection": {
-          "name": "other_collection_name",
-          "data": [
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "default_write_concern_coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$out": "other_collection_name"
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "Aggregate with $out and client/database/collection write concern unset omits default write concern",
+      "description": "Aggregate with $out and write concern unset omits default write concern",
       "operations": [
         {
           "object": "collection",

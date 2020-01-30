@@ -15,10 +15,8 @@ runOn:
 
 tests:
   - description: Aggregate with $out omits default write concern
-    clientOptions: {writeConcern: {}}
     operations:
       - object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         name: aggregate
         arguments:
@@ -38,7 +36,6 @@ tests:
             pipeline: *out_pipeline
             writeConcern: null
   - description: RunCommand with a write command omits default write concern
-    clientOptions: {writeConcern: {}}
     operations:
       - object: database
         databaseOptions: {writeConcern: {}}
@@ -53,16 +50,13 @@ tests:
             create: test_collection
             writeConcern: null
   - description: CreateIndex and dropIndex omits default write concern 
-    clientOptions: {writeConcern: {}}
     operations:
       - object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         name: createIndex
         arguments:
           keys: {x: 1}
       - object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         name: dropIndex
         arguments:
@@ -81,101 +75,23 @@ tests:
             index: x_1
             writeConcern: null
   - description: MapReduce omits default write concern
-    clientOptions: {writeConcern: {}}
     operations:
       - name: mapReduce
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
-          map:
-            $code: 'function inc() { return emit(0, this.x + 1) }'
-          reduce:
-            $code: >-
-              function sum(key, values) { return values.reduce((acc, x) => acc +
-              x); }
-          out:
-            inline: 1
+          map: { $code: 'function inc() { return emit(0, this.x + 1) }' }
+          reduce: { $code: 'function sum(key, values) { return values.reduce((acc, x) => acc + x); }' }
+          out: { inline: 1 }
     expectations:
       - command_started_event:
           command:
             mapReduce: *collection_name
-            map:
-              $code: 'function inc() { return emit(0, this.x + 1) }'
-            reduce:
-              $code: >-
-                function sum(key, values) { return values.reduce((acc, x) => acc
-                + x); }
-            out:
-              inline: 1
+            map: { $code: 'function inc() { return emit(0, this.x + 1) }' }
+            reduce: { $code: 'function sum(key, values) { return values.reduce((acc, x) => acc + x); }' }
+            out: { inline: 1 }
             writeConcern: null
-  - description: Aggregate with $out and client write concern unset omits default write concern
-    operations:
-      - object: collection
-        databaseOptions: {writeConcern: {}}
-        collectionOptions: {writeConcern: {}}
-        name: aggregate
-        arguments:
-          pipeline: &out_pipeline
-            - $match: {_id: {$gt: 1}}
-            - $out: *other_collection_name
-          batchSize: 2
-    outcome:
-      collection:
-        name: *other_collection_name
-        data:
-          - {_id: 2, x: 22}
-    expectations:
-      - command_started_event:
-          command:
-            aggregate: *collection_name
-            pipeline: *out_pipeline
-            writeConcern: null
-  - description: Aggregate with $out and database write concern unset omits default write concern
-    clientOptions: {writeConcern: {}}
-    operations:
-      - object: collection
-        collectionOptions: {writeConcern: {}}
-        name: aggregate
-        arguments:
-          pipeline: &out_pipeline
-            - $match: {_id: {$gt: 1}}
-            - $out: *other_collection_name
-          batchSize: 2
-    outcome:
-      collection:
-        name: *other_collection_name
-        data:
-          - {_id: 2, x: 22}
-    expectations:
-      - command_started_event:
-          command:
-            aggregate: *collection_name
-            pipeline: *out_pipeline
-            writeConcern: null
-  - description: Aggregate with $out and collection write concern unset omits default write concern
-    clientOptions: {writeConcern: {}}
-    operations:
-      - object: collection
-        databaseOptions: {writeConcern: {}}
-        name: aggregate
-        arguments:
-          pipeline: &out_pipeline
-            - $match: {_id: {$gt: 1}}
-            - $out: *other_collection_name
-          batchSize: 2
-    outcome:
-      collection:
-        name: *other_collection_name
-        data:
-          - {_id: 2, x: 22}
-    expectations:
-      - command_started_event:
-          command:
-            aggregate: *collection_name
-            pipeline: *out_pipeline
-            writeConcern: null
-  - description: Aggregate with $out and client/database/collection write concern unset omits default write concern
+  - description: Aggregate with $out and write concern unset omits default write concern
     operations:
       - object: collection
         name: aggregate

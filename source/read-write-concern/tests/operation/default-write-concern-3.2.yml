@@ -15,25 +15,21 @@ runOn:
 
 tests:
   - description: 'findAndModify operations omit default write concern'
-    clientOptions: {writeConcern: {}}
     operations:
       - name: findOneAndUpdate
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {_id: 1}
           update: {$set: {x: 1}}
       - name: findOneAndReplace
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {_id: 2}
           replacement: {x: 2}
       - name: findOneAndDelete
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {_id: 2}
@@ -61,55 +57,7 @@ tests:
             query: {_id: 2}
             remove: true
             writeConcern: null
-  - description: 'findOneAndUpdate with client write concern unset omits default write concern'
-    operations:
-      - name: findOneAndUpdate
-        object: collection
-        databaseOptions: {writeConcern: {}}
-        collectionOptions: {writeConcern: {}}
-        arguments:
-          filter: {_id: 1}
-          update: {$set: {x: 1}}
-    expectations:
-      - command_started_event:
-          command:
-            findAndModify: *collection_name
-            query: {_id: 1}
-            update: {$set: {x: 1}}
-            writeConcern: null
-  - description: 'findOneAndUpdate with database write concern unset omits default write concern'
-    clientOptions: {writeConcern: {}}
-    operations:
-      - name: findOneAndUpdate
-        object: collection
-        collectionOptions: {writeConcern: {}}
-        arguments:
-          filter: {_id: 1}
-          update: {$set: {x: 1}}
-    expectations:
-      - command_started_event:
-          command:
-            findAndModify: *collection_name
-            query: {_id: 1}
-            update: {$set: {x: 1}}
-            writeConcern: null
-  - description: 'findOneAndUpdate with collection write concern unset omits default write concern'
-    clientOptions: {writeConcern: {}}
-    operations:
-      - name: findOneAndUpdate
-        object: collection
-        databaseOptions: {writeConcern: {}}
-        arguments:
-          filter: {_id: 1}
-          update: {$set: {x: 1}}
-    expectations:
-      - command_started_event:
-          command:
-            findAndModify: *collection_name
-            query: {_id: 1}
-            update: {$set: {x: 1}}
-            writeConcern: null
-  - description: 'findOneAndUpdate with client/database/collection write concern unset omits default write concern'
+  - description: 'findOneAndUpdate with write concern unset omits default write concern'
     operations:
       - name: findOneAndUpdate
         object: collection

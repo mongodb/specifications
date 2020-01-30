@@ -14,11 +14,9 @@ runOn:
 
 tests:
   - description: DeleteOne omits default write concern
-    clientOptions: {writeConcern: {}}
     operations:
       - name: deleteOne
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {}
@@ -32,11 +30,9 @@ tests:
               - {q: {}, limit: 1}
             writeConcern: null
   - description: DeleteMany omits default write concern
-    clientOptions: {writeConcern: {}}
     operations:
       - name: deleteMany
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {}
@@ -49,11 +45,9 @@ tests:
             deletes: [{q: {}, limit: 0}]
             writeConcern: null
   - description: BulkWrite with all models omits default write concern
-    clientOptions: {writeConcern: {}}
     operations:
       - name: bulkWrite
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           ordered: true
@@ -139,17 +133,14 @@ tests:
             deletes: [{q: {_id: 3}, limit: 1}]
             writeConcern: null
   - description: 'InsertOne and InsertMany omit default write concern'
-    clientOptions: {writeConcern: {}}
     operations:
       - name: insertOne
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           document: {_id: 3}
       - name: insertMany
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           documents:
@@ -179,25 +170,21 @@ tests:
               - {_id: 5}
             writeConcern: null
   - description: 'UpdateOne, UpdateMany, and ReplaceOne omit default write concern'
-    clientOptions: {writeConcern: {}}
     operations:
       - name: updateOne
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {_id: 1}
           update: {$set: {x: 1}}
       - name: updateMany
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {_id: 2}
           update: {$set: {x: 2}}
       - name: replaceOne
         object: collection
-        databaseOptions: {writeConcern: {}}
         collectionOptions: {writeConcern: {}}
         arguments:
           filter: {_id: 2}
@@ -227,58 +214,7 @@ tests:
             updates:
               - {q: {_id: 2}, u: {x: 3}}
             writeConcern: null
-  - description: DeleteOne with client write concern unset omits default write concern
-    operations:
-      - name: deleteOne
-        object: collection
-        databaseOptions: {writeConcern: {}}
-        collectionOptions: {writeConcern: {}}
-        arguments:
-          filter: {}
-        result:
-          deletedCount: 1
-    expectations:
-      - command_started_event:
-          command:
-            delete: *collection_name
-            deletes:
-              - {q: {}, limit: 1}
-            writeConcern: null
-  - description: DeleteOne with database write concern unset omits default write concern
-    clientOptions: {writeConcern: {}}
-    operations:
-      - name: deleteOne
-        object: collection
-        collectionOptions: {writeConcern: {}}
-        arguments:
-          filter: {}
-        result:
-          deletedCount: 1
-    expectations:
-      - command_started_event:
-          command:
-            delete: *collection_name
-            deletes:
-              - {q: {}, limit: 1}
-            writeConcern: null
-  - description: DeleteOne with collection write concern unset omits default write concern
-    clientOptions: {writeConcern: {}}
-    operations:
-      - name: deleteOne
-        object: collection
-        databaseOptions: {writeConcern: {}}
-        arguments:
-          filter: {}
-        result:
-          deletedCount: 1
-    expectations:
-      - command_started_event:
-          command:
-            delete: *collection_name
-            deletes:
-              - {q: {}, limit: 1}
-            writeConcern: null
-  - description: DeleteOne with client/database/collection write concern unset omits default write concern
+  - description: DeleteOne with write concern unset omits default write concern
     operations:
       - name: deleteOne
         object: collection
