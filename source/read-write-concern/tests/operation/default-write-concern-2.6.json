@@ -540,37 +540,6 @@
           }
         }
       ]
-    },
-    {
-      "description": "DeleteOne with write concern unset omits default write concern",
-      "operations": [
-        {
-          "name": "deleteOne",
-          "object": "collection",
-          "arguments": {
-            "filter": {}
-          },
-          "result": {
-            "deletedCount": 1
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "default_write_concern_coll",
-              "deletes": [
-                {
-                  "q": {},
-                  "limit": 1
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ]
     }
   ]
 }

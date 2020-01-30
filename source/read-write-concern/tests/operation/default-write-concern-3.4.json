@@ -39,8 +39,7 @@
               {
                 "$out": "other_collection_name"
               }
-            ],
-            "batchSize": 2
+            ]
           }
         }
       ],
@@ -196,63 +195,6 @@
               "out": {
                 "inline": 1
               },
-              "writeConcern": null
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "Aggregate with $out and write concern unset omits default write concern",
-      "operations": [
-        {
-          "object": "collection",
-          "name": "aggregate",
-          "arguments": {
-            "pipeline": [
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$out": "other_collection_name"
-              }
-            ],
-            "batchSize": 2
-          }
-        }
-      ],
-      "outcome": {
-        "collection": {
-          "name": "other_collection_name",
-          "data": [
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      },
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "default_write_concern_coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$out": "other_collection_name"
-                }
-              ],
               "writeConcern": null
             }
           }

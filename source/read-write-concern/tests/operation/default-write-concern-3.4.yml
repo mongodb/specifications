@@ -23,7 +23,6 @@ tests:
           pipeline: &out_pipeline
             - $match: {_id: {$gt: 1}}
             - $out: *other_collection_name
-          batchSize: 2
     outcome:
       collection:
         name: *other_collection_name
@@ -90,24 +89,4 @@ tests:
             map: { $code: 'function inc() { return emit(0, this.x + 1) }' }
             reduce: { $code: 'function sum(key, values) { return values.reduce((acc, x) => acc + x); }' }
             out: { inline: 1 }
-            writeConcern: null
-  - description: Aggregate with $out and write concern unset omits default write concern
-    operations:
-      - object: collection
-        name: aggregate
-        arguments:
-          pipeline: &out_pipeline
-            - $match: {_id: {$gt: 1}}
-            - $out: *other_collection_name
-          batchSize: 2
-    outcome:
-      collection:
-        name: *other_collection_name
-        data:
-          - {_id: 2, x: 22}
-    expectations:
-      - command_started_event:
-          command:
-            aggregate: *collection_name
-            pipeline: *out_pipeline
             writeConcern: null

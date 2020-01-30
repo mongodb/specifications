@@ -121,43 +121,6 @@
           }
         }
       ]
-    },
-    {
-      "description": "findOneAndUpdate with write concern unset omits default write concern",
-      "operations": [
-        {
-          "name": "findOneAndUpdate",
-          "object": "collection",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            },
-            "update": {
-              "$set": {
-                "x": 1
-              }
-            }
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "findAndModify": "default_write_concern_coll",
-              "query": {
-                "_id": 1
-              },
-              "update": {
-                "$set": {
-                  "x": 1
-                }
-              },
-              "writeConcern": null
-            }
-          }
-        }
-      ]
     }
   ]
 }

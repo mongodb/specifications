@@ -214,18 +214,3 @@ tests:
             updates:
               - {q: {_id: 2}, u: {x: 3}}
             writeConcern: null
-  - description: DeleteOne with write concern unset omits default write concern
-    operations:
-      - name: deleteOne
-        object: collection
-        arguments:
-          filter: {}
-        result:
-          deletedCount: 1
-    expectations:
-      - command_started_event:
-          command:
-            delete: *collection_name
-            deletes:
-              - {q: {}, limit: 1}
-            writeConcern: null

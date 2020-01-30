@@ -83,66 +83,6 @@
           ]
         }
       }
-    },
-    {
-      "description": "Aggregate with $merge and write concern unset omits default write concern",
-      "operations": [
-        {
-          "object": "collection",
-          "name": "aggregate",
-          "arguments": {
-            "pipeline": [
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$merge": {
-                  "into": "other_collection_name"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "default_write_concern_coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$merge": {
-                    "into": "other_collection_name"
-                  }
-                }
-              ],
-              "writeConcern": null
-            }
-          }
-        }
-      ],
-      "outcome": {
-        "collection": {
-          "name": "other_collection_name",
-          "data": [
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
-      }
     }
   ]
 }

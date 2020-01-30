@@ -57,17 +57,3 @@ tests:
             query: {_id: 2}
             remove: true
             writeConcern: null
-  - description: 'findOneAndUpdate with write concern unset omits default write concern'
-    operations:
-      - name: findOneAndUpdate
-        object: collection
-        arguments:
-          filter: {_id: 1}
-          update: {$set: {x: 1}}
-    expectations:
-      - command_started_event:
-          command:
-            findAndModify: *collection_name
-            query: {_id: 1}
-            update: {$set: {x: 1}}
-            writeConcern: null
