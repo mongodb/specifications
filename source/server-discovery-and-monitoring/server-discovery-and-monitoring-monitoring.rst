@@ -13,8 +13,8 @@ SDAM Monitoring Specification
 :Advisory Group: Jeff Yemin, Craig Wilson, Jesse Davis
 :Status: Approved
 :Type: Standards
-:Minimum Server Version: 2.4
-:Last Modified: 12-Dec-2018
+:Minimum Server Version: 2.5
+:Last Modified: 29-Jan-2020
 
 .. contents::
 
@@ -434,3 +434,4 @@ Changelog
 - 12 DEC 2018: Clarified table of rules for readable/writable servers
 - 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
 - 11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.
+- 29 JAN 2020: Require that only meaningful changes produce events.
