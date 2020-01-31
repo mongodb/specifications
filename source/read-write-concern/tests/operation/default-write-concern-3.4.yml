@@ -39,14 +39,18 @@ tests:
       - object: database
         databaseOptions: {writeConcern: {}}
         name: runCommand
-        command_name: drop
+        command_name: delete
         arguments:
           command:
-            drop: test_collection
+            delete: *collection_name
+            deletes:
+              - {q: {}, limit: 1}
     expectations:
       - command_started_event:
           command:
-            drop: test_collection
+            delete: *collection_name
+            deletes:
+              - {q: {}, limit: 1}
             writeConcern: null
   - description: CreateIndex and dropIndex omits default write concern 
     operations:

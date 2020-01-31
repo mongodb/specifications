@@ -86,10 +86,16 @@
             "writeConcern": {}
           },
           "name": "runCommand",
-          "command_name": "drop",
+          "command_name": "delete",
           "arguments": {
             "command": {
-              "drop": "test_collection"
+              "delete": "default_write_concern_coll",
+              "deletes": [
+                {
+                  "q": {},
+                  "limit": 1
+                }
+              ]
             }
           }
         }
@@ -98,7 +104,13 @@
         {
           "command_started_event": {
             "command": {
-              "drop": "test_collection",
+              "delete": "default_write_concern_coll",
+              "deletes": [
+                {
+                  "q": {},
+                  "limit": 1
+                }
+              ],
               "writeConcern": null
             }
           }
