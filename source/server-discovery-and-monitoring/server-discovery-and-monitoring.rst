@@ -860,6 +860,19 @@ are respectively equal as just defined.
 This specification does not prescribe how to compare server descriptions
 with different addresses for equality.
 
+Server description for each server MUST be updated (replaced) on every
+heartbeat. The driver MUST execute the SDAM flow on every heartbeat after
+updating each server description. If, as a result of SDAM flow execution,
+the only events to be published are:
+
+1. The server description change event, and the new server description is
+equal to the old server description as defined in this section, and
+2. The topology description change event, and the new topology is equal to the
+old topology as defined in this section, then
+
+... the driver MUST NOT publish the server description change nor the topology
+description change event because no meaningful change occurred.
+
 Updating the TopologyDescription
 ''''''''''''''''''''''''''''''''
 
@@ -867,13 +880,13 @@ Each time the client checks a server,
 it processes the outcome (successful or not)
 to create a `ServerDescription`_,
 and then it processes the ServerDescription to update its `TopologyDescription`_.
-The ServerDescription MUST be processed even if it is equal (as defined in
-`Server Description Equality`_) to the previous description.
 
-The TopologyDescription's `TopologyType`_ influences how the ServerDescription
-is processed. The following subsection specifies how the client updates its
-TopologyDescription when the TopologyType is Single. The next subsection
-treats the other types.
+The TopologyDescription's `TopologyType`_ influences
+how the ServerDescription is processed.
+The following subsection
+specifies how the client updates its TopologyDescription
+when the TopologyType is Single.
+The next subsection treats the other types.
 
 TopologyType Single
 ```````````````````
@@ -1555,8 +1568,8 @@ the client MUST clear its connection pool to the server.
 error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_ and `Why close connections when a node is shutting down?`_.)
 
-SDAM events
-'''''''''''
+Monitoring SDAM events
+''''''''''''''''''''''
 
 The required driver specification for providing lifecycle hooks into server
 discovery and monitoring for applications to consume can be found in the

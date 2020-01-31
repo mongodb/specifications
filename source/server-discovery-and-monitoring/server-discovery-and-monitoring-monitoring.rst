@@ -104,9 +104,7 @@ Guidance
 Publishing and Subscribing
 --------------------------
 
-The driver SHOULD publish events in a manner that is standard to the driver's
-language publish/subscribe patterns and is not strictly mandated in this
-specification.
+The driver SHOULD publish events in a manner that is standard to the driver's language publish/subscribe patterns and is not strictly mandated in this specification.
 
 ----------
 Guarantees
@@ -116,60 +114,34 @@ Event Order and Concurrency
 ---------------------------
 
 Events MUST be published in the order they were applied in the driver.
-
-Events MUST NOT be published concurrently for the same topology id or server
-id, but MAY be published concurrently for differing topology ids and server ids.
+Events MUST NOT be published concurrently for the same topology id or server id, but MAY be published concurrently for differing topology ids and server ids.
 
 Heartbeats
 ----------
 
-The driver MUST guarantee that every ServerHeartbeatStartedEvent has either
-a correlating ServerHeartbeatSucceededEvent or ServerHeartbeatFailedEvent.
+The driver MUST guarantee that every ServerHeartbeatStartedEvent has either a correlating ServerHeartbeatSucceededEvent or ServerHeartbeatFailedEvent.
 
 Error Handling
 --------------
 
-If an exception occurs while sending the ismaster operation to the server,
-the driver MUST generate a ServerHeartbeatFailedEvent with the exception or
-message and re-raise the exception. The SDAM mandated retry of the ismaster
-call should be visible to consumers.
+If an exception occurs while sending the ismaster operation to the server, the driver MUST generate a ServerHeartbeatFailedEvent with the exception or message and re-raise the exception. The SDAM mandated retry of the ismaster call should be visible to consumers.
 
 Topology Ids
 ------------
 
-These MUST be a unique value that is specific to the Topology in which the
-events are fired. The language may decide how to generate the value and what
-type the value is, as long as it is unique to the Topology. The id MUST be
-created once when the Topology is created and remain the same until the
-Topology is destroyed.
+These MUST be a unique value that is specific to the Topology in which the events are fired. The language may decide how to generate the value and what type the value is, as long as it is unique to the Topology. The id MUST be created once when the Topology is created and remain the same until the Topology is destroyed.
 
 Topology Description
 --------------------
 
-The TopologyDescription object MUST expose the new methods defined in the
-API below, in order for subscribers to take action on certain conditions
-based on the driver options.
+The TopologyDescription object MUST expose the new methods defined in the API below, in order for subscribers to take action on certain conditions based on the driver options.
 
 TopologyDescription objects MAY have additional methods and properties.
 
 Initial Server Description
 --------------------------
 
-ServerDescriptions MUST be initialized with a default description in an
-"unknown" state, guaranteeing that the previous description in the events will
-never be null.
-
-Meaningful Changes
-------------------
-
-If the driver processes a ServerDescription which is equal (as server
-description equality is defined in the SDAM specification) to the previous
-description for ServerDescription's server, and after processing, the topology
-type is the same as it was before processing, the set of servers in the
-topology is the same as it was before processing, and the server descriptions
-for each server are equal to the previous descriptions for each respective
-server, then the driver MUST NOT publish the server description change event
-nor the topology description change event because no meaningful change occurred.
+ServerDescriptions MUST be initialized with a default description in an “unknown” state, guaranteeing that the previous description in the events will never be null.
 
 ---
 API
