@@ -2370,33 +2370,6 @@ monitoring can also proactively detect state changes
 (primary stepdown, server becoming unavailable)
 that would otherwise cause future errors.
 
-Why is the driver required to run SDAM flow if server description has not changed?
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-The following scenario illustrates the problem that would happen if SDAM flow
-was not run when a driver receives a response identical to the previous
-response:
-
-1. Replica set is configured with servers A, B and C. B is the primary.
-2. B and C are shut down.
-3. Another server is started at B's address which is a standalone.
-4. Another server is started at C's address which is a standalone.
-5. Driver connects to A and receives a description A1 which is secondary,
-   also referencing B and C in the hosts.
-6. The driver connects to B, receives the standalone description B1,
-   removes B from topology.
-7. The driver connects to C, receives the standalone description C1,
-   removes C from topology.
-8. Standalone servers at B and C's addresses are shut down and the original
-   replica set nodes are started again.
-9. The driver checks A again and receives the same description A1 it did
-   previously.
-
-At this point, if the driver does not process the description A1 again
-(thus adding B and C back to the topology), it will be stuck in
-ReplicaSetWithoutPrimary state.
-
-
 Acknowledgments
 ---------------
 
