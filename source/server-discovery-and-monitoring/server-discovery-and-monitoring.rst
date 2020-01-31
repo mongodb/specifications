@@ -860,19 +860,6 @@ are respectively equal as just defined.
 This specification does not prescribe how to compare server descriptions
 with different addresses for equality.
 
-Server description for each server MUST be updated (replaced) on every
-heartbeat. The driver MUST execute the SDAM flow on every heartbeat after
-updating each server description. If, as a result of SDAM flow execution,
-the only events to be published are:
-
-1. The server description change event, and the new server description is
-equal to the old server description as defined in this section, and
-2. The topology description change event, and the new topology is equal to the
-old topology as defined in this section, then
-
-... the driver MUST NOT publish the server description change nor the topology
-description change event because no meaningful change occurred.
-
 Updating the TopologyDescription
 ''''''''''''''''''''''''''''''''
 
