@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.1
+:Spec Version: 1.10.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -1170,7 +1170,7 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
-Version 1.10.1 Changes
+Version 1.10.0 Changes
     * Support shorter SCRAM conversation starting in version 4.4 of the server.
 
 Version 1.9.1 Changes
