@@ -78,7 +78,7 @@
       ]
     },
     {
-      "description": "RunCommand with a write command omits default write concern",
+      "description": "RunCommand with a write command omits default write concern (runCommand should never inherit write concern)",
       "operations": [
         {
           "object": "database",
@@ -86,10 +86,10 @@
             "writeConcern": {}
           },
           "name": "runCommand",
-          "command_name": "create",
+          "command_name": "drop",
           "arguments": {
             "command": {
-              "create": "test_collection"
+              "drop": "test_collection"
             }
           }
         }
@@ -98,7 +98,7 @@
         {
           "command_started_event": {
             "command": {
-              "create": "test_collection",
+              "drop": "test_collection",
               "writeConcern": null
             }
           }
