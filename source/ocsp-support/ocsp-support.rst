@@ -3,7 +3,7 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.1.0
+:Spec Version: 1.1.1
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
@@ -78,8 +78,9 @@ invalid, the driver SHOULD end the connection.
     stapled OCSP response, a driver SHOULD end the connection.
 
 2.  If a driver’s TLS library supports Stapled OCSP and the server
-    staples an OCSP response that does not cover the certificate it
-    presents, a driver SHOULD end the connection.
+    staples an OCSP response that does not cover the certificate it presents or
+    is invalid per `RFC 6960 Section 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`_,
+    a driver SHOULD end the connection.
 
 3.  If a driver’s TLS library supports Stapled OCSP and the server
     staples an OCSP response that does cover the certificate it
@@ -102,9 +103,13 @@ invalid, the driver SHOULD end the connection.
     attempt to validate the status of the unvalidated certificates
     using the cached CRLs.
 
-7.  If the server’s certificate remains unvalidated and that certificate
-    has an OCSP endpoint, the driver SHOULD reach out to the OCSP
-    endpoint specified and attempt to validate that certificate.
+7.  If the server's certificate remains unvalidated and that certificate
+    has a list of OCSP responder endpoints, the driver SHOULD send HTTP
+    requests to the responders in parallel. The first valid response
+    that concretely marks the certificate status as good or revoked
+    should be used. A five-second timeout SHOULD be used for the requests.
+    The status for a response should only be checked if the response is
+    valid per `RFC 6960 Section 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`_
 
 8.  If any unvalidated intermediate certificates remain and those
     certificates have OCSP endpoints, for each certificate, the
@@ -117,8 +122,8 @@ invalid, the driver SHOULD end the connection.
     the other certificates using those CRLs.\*
 
 10. Finally, the driver SHOULD continue the connection, even if the
-    status of all the unvalidated intermediate certificates has not
-    been confirmed yet. This means that the driver SHOULD default to
+    status of all the unvalidated certificates has not been
+    confirmed yet. This means that the driver SHOULD default to
     “soft fail” behavior, connecting as long as there are no
     explicitly invalid certificates—i.e. the driver will connect
     even if the status of all the unvalidated certificates has not
@@ -643,13 +648,14 @@ of checking this are:
 
 Changelog
 ==========
+**2020-2-19**: Clarify behavior for reaching out to OCSP responders.
+
 **2020-2-10**: 1.1.0: Add cache requirement.
 
 **2020-1-31**: 1.0.2: Add SNI requirement and clarify design rationale
 regarding minimizing round trips.
 
-**2020-1-28**: 1.0.1: Clarify behavior regarding nonces and tolerance
-periods.
+**2020-1-28**: Clarify behavior regarding nonces and tolerance periods.
 
 **2020-1-16**: 1.0.0: Initial commit.
 
