@@ -67,7 +67,7 @@ The spec test format is an extension of `transactions spec tests <https://github
        mongoc_write_concern_t *wc = mongoc_write_concern_new ();
        mongoc_collection_set_write_concern (collection, wc);
 
-    If the driver has no way to explicitly set a default write concern on a database or collection, then take no action.
+    If the driver has no way to explicitly set a default write concern on a database or collection, ignore the empty ``writeConcern`` document and continue with the test.
 - The operations ``createIndex``, ``dropIndex`` are introduced.
 
 
