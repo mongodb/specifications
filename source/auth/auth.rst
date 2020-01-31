@@ -596,6 +596,15 @@ Drivers MUST NOT advertise support for channel binding, as the server does
 not support it and legacy servers may fail authentication if drivers advertise
 support. I.e. the client-first-message MUST start with ``n,``.
 
+Drivers MUST add a top-level ``options`` field to the saslStart command, whose value
+is a document containing a field named ``skipEmptyExchange`` whose value is true.
+Older servers will ignore the ``options`` field and continue with the longer
+conversation as shown in the "Backwards Compatibility" section.  Newer servers will
+set the ``done`` field to ``true`` when it responds to the client at the end of the
+second round trip, showing proof that it knows the password. This will shorten the
+conversation by one round trip.
+
+
 Conversation
 ````````````
 
@@ -608,7 +617,7 @@ follows:
 | C: ``c=biws,r=fyko+d2lbbFgONRv9qkxdawLHo+Vgk7qvUOKUwuWLIWg4l/9SraGMHEE,p=MC2T8BvbmWRckDw8oWl5IVghwCY=``
 | S: ``v=UMWeI25JD1yNYZRMpZ4VHvhZ9e0=``
 
-This same conversation over mongodb's sasl implementation would appear as follows:
+This same conversation over MongoDB's SASL implementation would appear as follows:
 
 | C: :javascript:`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}`
 | S: :javascript:`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`
@@ -655,6 +664,14 @@ Additionally, drivers MUST enforce a minimum iteration count of 4096 and MUST
 error if the authentication conversation specifies a lower count.  This
 mitigates downgrade attacks by a man-in-the-middle attacker.
 
+Drivers MUST add a top-level ``options`` field to the saslStart command, whose value
+is a document containing a field named ``skipEmptyExchange`` whose value is true.
+Older servers will ignore the ``options`` field and continue with the longer
+conversation as shown in the "Backwards Compatibility" section.  Newer servers will
+set the ``done`` field to ``true`` when it responds to the client at the end of the
+second round trip, showing proof that it knows the password. This will shorten the
+conversation by one round trip.
+
 Conversation
 ````````````
 
@@ -667,7 +684,7 @@ follows:
 | C: ``c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=``
 | S: ``v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4=``
 
-This same conversation over mongodb's sasl implementation would appear as follows:
+This same conversation over MongoDB's SASL implementation would appear as follows:
 
 | C: :javascript:`{saslStart: 1, mechanism:"SCRAM-SHA-256", options: {skipEmptyExchange: true}, payload: BinData(0, "biwsbj11c2VyLHI9ck9wck5HZndFYmVSV2diTkVrcU8=")}`
 | S: :javascript:`{conversationId: 1, payload: BinData(0, "cj1yT3ByTkdmd0ViZVJXZ2JORWtxTyVodllEcFdVYTJSYVRDQWZ1eEZJbGopaE5sRiRrMCxzPVcyMlphSjBTTlk3c29Fc1VFamI2Z1E9PSxpPTQwOTY="), done: false, ok: 1}`
@@ -1094,7 +1111,7 @@ Drivers may need to remove support for association of more than one credential w
 	* Deprecation and removal of MongoClient constructors that take as an argument more than a single credential
 	* Deprecation and removal of methods that allow lazy authentication (i.e post-MongoClient construction)
 
-Drivers need to support both the shorter and longer SCRAM-SHA-1 and SCRAM-SHA-256 conversations over mongodb's sasl implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip italicized):
+Drivers need to support both the shorter and longer SCRAM-SHA-1 and SCRAM-SHA-256 conversations over MongoDB's SASL implementation. Earlier versions of the server required an extra round trip due to an implementation decision. This was accomplished by sending no bytes back to the server, as seen in the following conversation (extra round trip italicized):
 
 | C: :javascript:`{saslStart: 1, mechanism: "SCRAM-SHA-1", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: {skipEmptyExchange: true}}`
 | S: :javascript:`{conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false, ok: 1}`
