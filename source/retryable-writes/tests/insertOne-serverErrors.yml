@@ -475,10 +475,12 @@ tests:
         operation:
             name: "insertOne"
             arguments:
-                document: { _id: 1, x: 11 }
+                document: { _id: 3, x: 33 }
         outcome:
             error: true
             result:
                 errorLabelsContain: ["RetryableWriteError"]
             collection:
-                data: []
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
