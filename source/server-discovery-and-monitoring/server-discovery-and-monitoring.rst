@@ -853,9 +853,6 @@ Server Description Equality
 For the purpose of determining whether to publish SDAM events, two server
 descriptions having the same address MUST be considered equal if and only if
 the values of `ServerDescription`_ fields marked (=) are respectively equal.
-Two topology descriptions MUST be considered equal if and only if they have
-the same set of server addresses, and the server descriptions for each address
-are respectively equal as just defined.
 
 This specification does not prescribe how to compare server descriptions
 with different addresses for equality.
@@ -953,9 +950,6 @@ If any server's wire protocol version range does not overlap with the client's,
 the client updates the "compatible" and "compatibilityError" fields
 as described above for TopologyType Single.
 Otherwise "compatible" is set to true.
-
-If the new server description is equal to the previous server description
-as defined in `Server Description Equality`_, stop the processing.
 
 It is possible for a multi-threaded client to receive an ismaster outcome
 from a server after the server has been removed from the TopologyDescription.
