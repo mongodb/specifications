@@ -3,7 +3,7 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.0.1
+:Spec Version: 1.0.2
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
@@ -62,6 +62,8 @@ settings. Otherwise:
 -  If a driver’s TLS library supports verifying stapled OCSP responses,
    this option MUST be enabled by default whenever possible (even if
    this also enables CRL checking).
+
+.. _Suggested OCSP Behavior:
 
 Suggested OCSP Behavior
 -----------------------
@@ -122,8 +124,8 @@ invalid, the driver SHOULD end the connection.
     even if the status of all the unvalidated certificates has not
     been confirmed yet (e.g. because an OCSP responder is down).
 
-\*: See `Design Rationale: Suggested OCSP
-Behavior <#suggested-ocsp-behavior-1>`__
+\*: See :ref:`Design Rationale: Suggested OCSP
+Behavior <Design Rationale for Suggested OCSP Behavior>`
 
 Suggested OCSP Response Validation Behavior
 -------------------------------------------
@@ -155,6 +157,16 @@ per MongoClient basis.
 2. Drivers SHOULD throw an error if ``tlsInsecure=true`` or
    ``tlsAllowInvalidCertificates=true`` are specified alongside the
    option to enable certificate revocation checking.
+
+TLS Requirements
+----------------
+`Server Name Indication
+<https://en.wikipedia.org/wiki/Server_Name_Indication>`__ (SNI) MUST BE
+used in the TLS connection that obtains the server's certificate,
+otherwise the server may present the incorrect certificate. This
+requirement is especially relevent to drivers whose TLS libraries allow
+for finer-grained control over their TLS behavior (e.g. Python, C).
+
 
 Documentation Requirements
 --------------------------
@@ -291,17 +303,18 @@ No additional Atlas connectivity tests will be added because the
 existing tests should provide sufficient coverage (provided that one of
 the non-free tier clusters is upgraded ≥ 3.6).
 
+.. _Design Rationale for Suggested OCSP Behavior:
+
 Suggested OCSP Behavior
 -----------------------
 
 For drivers with finer-grain control over their OCSP behavior, the
 suggested OCSP behavior was chosen as a balance between security and
 availability, erring on availability while minimizing network round
-trips. Therefore, in the `Suggested Stapled OCSP
-Behavior <#suggested-ocsp-behavior>`__ and `Suggested Non-Stapled OCSP
-Behavior <#_win0ckq3thfv>`__ sections, drivers are advised not to reach
-out to OCSP endpoints and CRL distribution points to minimize network
-round trips.
+trips. Therefore, in the :ref:`Suggested OCSP Behavior` section,
+in order to minimize network round trips, drivers are advised not to
+reach out to OCSP endpoints and CRL distribution points in order to
+verify the revocation status of intermediate certificates.
 
 Backwards Compatibility
 ========================
@@ -594,6 +607,9 @@ of checking this are:
 
 Changelog
 ==========
+**2020-1-31**: Add SNI requirement and clarify design rationale
+regarding minimizing round trips.
+
 **2020-1-28**: Clarify behavior regarding nonces and tolerance periods.
 
 **2020-1-16**: Initial commit.
