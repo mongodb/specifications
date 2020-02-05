@@ -3,7 +3,7 @@ MongoDB Handshake
 =================
 
 :Spec Title: MongoDB Handshake
-:Spec Version: 1.1.0
+:Spec Version: 1.1.1
 :Author: Hannes Magnusson
 :Kernel Advisory: Mark Benvenuto
 :Driver Advisory: Anna Herlihy, Justin Lee
@@ -224,6 +224,70 @@ Example::
         - "Oracle JVM EE 9.1.1"
 
 
+--------------------------
+Speculative Authentication
+--------------------------
+
+As of MongoDB 4.4, the ``isMaster`` handshake supports a new argument, ``speculativeSaslStart``,
+provided as a BSON object. This argument would permit clients to merge their
+``saslStart`` message with their ``isMaster`` request, and receive the ``saslStart``
+reply with the isMaster reply. This object has the following structure::
+
+    {
+        isMaster: 1,
+        speculativeSaslStart: {
+            /* REQUIRED */
+            mechanism: "<string>"
+            /* REQUIRED */
+            payload: BinData(...)
+        }
+    }
+
+
+speculativeSaslStart.mechanism
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This value is required.
+
+This value indicates which SASL mechanism to use with the credential.
+
+
+speculativeSaslStart.payload
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This value is required.
+
+A sequence of bytes or a base64 encoded string (depending on input) to pass
+into the SASL library to transition the state machine.
+
+
+Alternatively, the ``isMaster`` handshake supports another new argument,
+``speculativeAuthenticate``, provided as a BSON object. This argument
+provides an instance of the ``authenticate`` command with the ``MONGODB-X509``
+mechanism. Servers accepting the request will respond with an ``isMaster``
+reply containing the results in a field named ``speculativeAuthenticate``.
+Note that concurrent use of ``speculativeSaslStart`` and ``speculativeAuthenticate``
+will result in ``isMaster`` returning an error. This object has the following
+structure::
+
+    {
+        isMaster: 1,
+        speculativeAuthenticate: {
+            /* REQUIRED */
+            mechanism: "<string>"
+        }
+    }
+
+
+speculativeAuthenticate.mechanism
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This value is required.
+
+This value indicates which SASL mechanism to use with the credential. Currently,
+the only mechanism supported for ``speculativeAuthenticate`` is ``MONGODB-X509``.
+
+
 Supporting Wrapping Libraries
 =============================
 
@@ -379,3 +443,4 @@ Changes
 =======
 
 * 2019-11-13: Added section about supporting wrapping libraries
+* 2020-02-03: Added section about speculative authentication

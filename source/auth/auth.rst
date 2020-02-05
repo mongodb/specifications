@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.0
+:Spec Version: 1.11.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -249,6 +249,48 @@ or "SCRAM-SHA-256").
 
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
+
+Speculative Authentication via Handshake
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:since: 4.4
+
+The ``isMaster`` handshake supports a new argument, ``speculativeSaslStart``,
+provided as a BSON object. Clients specifying this argument to ``isMaster`` will
+speculatively include the first ``saslStart`` command of an authentication handshake.
+This command may be provided to the server in parallel with any standard request for
+supported authentication mechanisms. This would permit clients to merge their
+``saslStart`` message with their ``isMaster`` request, and receive the ``saslStart``
+reply with the ``isMaster`` reply.
+
+If the speculatively issued command succeeds, the client should proceed with the next
+step of the exchange. If the command fails, the client should determine whether the
+``isMaster`` response contains enough information to select another mechanism.
+
+Older servers will ignore this argument. New servers will participate in the standard
+authentication conversation if this argument is missing.
+
+An example conversation using ``speculativeSaslStart`` is as follows:
+
+| C: :javascript:`{ isMaster: 1, speculativeSaslStart: { mechanism: "SCRAM-SHA-256", db: "admin", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}, ... }`
+| S: :javascript:`{ isMaster: true, speculativeSaslStart: { conversationId: 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false }, ... }`
+| C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`
+| S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: true, ok: 1}`
+  
+
+Alternatively, the ``isMaster`` handshake supports another new argument,
+``speculativeAuthenticate``, provided as a BSON object. This argument provides an
+instance of the ``authenticate`` command with the ``MONGODB-X509`` mechanism.
+Servers accepting the request will respond with an ``isMaster`` reply containing the results
+in a field named ``speculativeAuthenticate``. Concurrent use of ``speculativeSaslStart``
+and ``speculativeAuthenticate`` will result in ``isMaster`` returning an error.  In this
+mode, authentication can occur in zero round trips and will be completed once ``isMaster``
+returns.
+
+An example conversation using ``speculativeAuthenticate`` is as follows:
+
+| C: :javascript:`{ isMaster: 1, speculativeAuthenticate: { mechanism: "MONGODB-X509", db: "$external" }, ... }`
+| S: :javascript:`{ ismaster: true, speculativeAuthenticate: { dbname: "$external", user : "CN=client,OU=KernelUser,O=MongoDB,L=New York City,ST=New York,C=US" }, ok: 1, ... }`
 
 --------------------------------
 Supported Authentication Methods
@@ -1192,6 +1234,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.11.0 Changes
+    * Support speculative authentication via handshake starting in version 4.4 of the server.
 
 Version 1.10.0 Changes
     * Support shorter SCRAM conversation starting in version 4.4 of the server.
