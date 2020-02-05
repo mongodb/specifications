@@ -3,14 +3,14 @@ MongoDB Handshake
 =================
 
 :Spec Title: MongoDB Handshake
-:Spec Version: 1.1.0
+:Spec Version: 1.2.0
 :Author: Hannes Magnusson
 :Kernel Advisory: Mark Benvenuto
 :Driver Advisory: Anna Herlihy, Justin Lee
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 3.4
-:Last Modified: 2019-11-13
+:Last Modified: 2020-02-12
 
 
 .. contents::
@@ -224,6 +224,48 @@ Example::
         - "Oracle JVM EE 9.1.1"
 
 
+--------------------------
+Speculative Authentication
+--------------------------
+
+:since: 4.4
+
+The ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
+provided as a BSON document. Clients specifying this argument to ``isMaster`` will
+speculatively include the first command of an authentication handshake.
+This command may be provided to the server in parallel with any standard request for
+supported authentication mechanisms (i.e. ``saslSupportedMechs``). This would permit
+clients to merge the contents of their first authentication command with their
+``isMaster`` request, and receive the first authentication reply along with the
+``isMaster`` reply.
+
+When the mechanism is ``MONGODB-X509``, ``speculativeAuthenticate`` has the same
+structure as seen in the MONGODB-X509 conversation section in the
+`Driver Authentication spec`_.
+
+When the mechanism is ``SCRAM-SHA-1`` or ``SCRAM-SHA-256``, ``speculativeAuthenticate``
+has the same fields as seen in the conversation subsection of the SCRAM-SHA-1 and
+SCRAM-SHA-256 sections in the `Driver Authentication spec`_ with an additional ``db``
+field to specify the name of the authentication database.
+
+If the ``isMaster`` command with a ``speculativeAuthenticate`` argument succeeds,
+the client should proceed with the next step of the exchange. If the ``isMaster``
+response does not include a ``speculativeAuthenticate`` reply and the ``ok`` field
+in the ``isMaster`` response is set to 1, drivers MUST authenticate using the standard
+authentication handshake.
+
+The ``speculativeAuthenticate`` reply has the same fields, except for the ``ok`` field,
+as seen in the conversation sections for MONGODB-X509, SCRAM-SHA-1 and SCRAM-SHA-256
+in the `Driver Authentication spec`_.
+
+If an authentication mechanism is not provided either via connection string or code, but
+a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
+authentication and drivers MUST send ``saslSupportedMechs``.
+
+Older servers will ignore the ``speculativeAuthenticate`` argument. New servers will
+participate in the standard authentication conversation if this argument is missing.
+
+
 Supporting Wrapping Libraries
 =============================
 
@@ -379,3 +421,4 @@ Changes
 =======
 
 * 2019-11-13: Added section about supporting wrapping libraries
+* 2020-02-12: Added section about speculative authentication
