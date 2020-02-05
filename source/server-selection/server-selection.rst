@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2019-06-07
-:Version: 1.10.3
+:Last Modified: 2020-02-12
+:Version: 1.11.0
 
 .. contents::
 
@@ -125,6 +125,10 @@ Terms
     Describes candidate servers that also meet the criteria specified by the
     ``tag_sets`` and ``maxStalenessSeconds`` read preference parameters.
 
+**Hedged Read**
+    A server mode in which the same query is dispatched in parallel to multiple
+    replica set members.
+
 **Immediate topology check**
     For a multi-threaded or asynchronous client, this means waking all
     server monitors for an immediate check.  For a single-threaded client,
@@ -153,7 +157,8 @@ Terms
 
 **Read preference**
     The parameters describing which servers in a deployment can receive
-    read operations, including ``mode``, ``tag_sets``, and ``maxStalenessSeconds``.
+    read operations, including ``mode``, ``tag_sets``, ``maxStalenessSeconds``,
+    and ``hedge``.
 
 **RS**
     Abbreviation for "replica set".
@@ -370,14 +375,15 @@ Components of a read preference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A read preference consists of a ``mode`` and optional
-``tag_sets`` and ``maxStalenessSeconds``.  The ``mode`` prioritizes between primaries and
-secondaries to produce either a single suitable server or a list of candidate
-servers.  If ``tag_sets`` and ``maxStalenessSeconds`` are set, they determine
-which candidate servers are eligible for selection.
+``tag_sets``, ``maxStalenessSeconds``, and ``hedge``.  The ``mode`` prioritizes
+between primaries and secondaries to produce either a single suitable server or
+a list of candidate servers.  If ``tag_sets`` and ``maxStalenessSeconds`` are
+set, they determine which candidate servers are eligible for selection. If
+``hedge`` is set, it configures how server hedged reads are used.
 
 The default ``mode`` is 'primary'.  The default ``tag_sets``
 is a list with an empty tag set: ``[{}]``. The default ``maxStalenessSeconds``
-is -1 or null, depending on the language.
+is -1 or null, depending on the language. The default ``hedge`` is unset.
 
 Each is explained in greater detail below.
 
@@ -521,6 +527,25 @@ Eligibility MUST be determined from ``tag_sets`` as follows:
 - If the ``tag_sets`` list is not empty and no tag set in the list matches any
   candidate server, no servers are eligible servers.
 
+hedge
+`````
+
+The read preference ``hedge`` parameter is a document that configures how the
+server will perform hedged reads. It consists of the following keys:
+
+- ``enabled`` (default true): This enables hedging
+- ``delay`` (default true): This enables staggered reads
+
+To explicitly enable hedging, an empty document must be sent to the server for
+the ``hedge`` option. This enables hedging with the default values specified
+above. Hedging will be disabled if the ``hedge`` option is omitted.
+
+Drivers MUST NOT fill in default values for any keys in the ``hedge`` document
+if they are omitted. Drivers MUST NOT send a read preference where the hedge
+option is set to server version before 4.4 (i.e. maxWireVersion < 9) and MUST
+raise an error instead. This pertains to `Passing read preference to mongos`_.
+
+
 Read preference configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -545,7 +570,8 @@ in Python::
         {},
         read_preference=ReadPreference.NEAREST,
         tag_sets=[{'dc': 'ny'}],
-        maxStalenessSeconds=120)
+        maxStalenessSeconds=120,
+        hedge={'enabled': true})
 
 If a driver API allows users to potentially set both the legacy ``slaveOK``
 configuration option and a default read preference configuration option,
@@ -579,8 +605,9 @@ Therefore, when sending queries to a mongos, the following rules apply:
 
   - For mode 'secondaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag.
     If the read preference contains a non-empty ``tag_sets`` parameter,
-    or ``maxStalenessSeconds`` is a positive integer, drivers MUST
-    use ``$readPreference``; otherwise, drivers MUST NOT use ``$readPreference``
+    ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
+    non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
+    use ``$readPreference``
 
   - For mode 'nearest', drivers MUST set the ``slaveOK`` wire protocol flag
     and MUST also use ``$readPreference``
@@ -600,7 +627,8 @@ the query MUST be provided using the ``$query`` modifier like so::
         $readPreference: {
             mode: 'secondary',
             tags: [ { 'dc': 'ny' } ],
-            maxStalenessSeconds: 120
+            maxStalenessSeconds: 120,
+            hedge: { enabled: true }
         }
     }
 
@@ -615,7 +643,8 @@ A valid ``$readPreference`` document for mongos has the following requirements:
     - 'secondaryPreferred'
     - 'nearest'
 
-2.  If the ``mode`` field is "primary", the ``tags`` and ``maxStalenessSeconds`` fields MUST be absent.
+2.  If the ``mode`` field is "primary", the ``tags``, ``maxStalenessSeconds``,
+    and ``hedge`` fields MUST be absent.
 
     Otherwise, for other ``mode`` values, the ``tags`` field MUST either be
     absent or be present exactly once and have an array value containing at
@@ -624,9 +653,11 @@ A valid ``$readPreference`` document for mongos has the following requirements:
     The ``maxStalenessSeconds`` field MUST be either be absent or be present
     exactly once with an integer value.
 
+    The ``hedge`` field MUST be either absent or be a document.
+
 Mongos receiving a query with ``$readPreference`` SHOULD validate the
-``mode``, ``tags``, and ``maxStalenessSeconds`` fields according to rules 1 and 2 above,
-but SHOULD ignore unrecognized fields for
+``mode``, ``tags``, ``maxStalenessSeconds``, and ``hedge`` fields according to
+rules 1 and 2 above, but SHOULD ignore unrecognized fields for
 forward-compatibility rather than throwing an error.
 
 Use of read preferences with commands
@@ -1733,6 +1764,8 @@ selection rules.
 2019-05-20: Added rule to not send read preferene to standalone servers
 
 2019-06-07: Clarify language for aggregate and mapReduce commands that write
+
+2020-02-12: Specify read preferences with support for server hedged reads
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

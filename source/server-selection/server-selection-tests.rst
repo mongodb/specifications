@@ -209,7 +209,7 @@ correctly passed to Mongos in the following scenarios:
 - SECONDARY_PREFERRED
 
   - the slaveOK wire protocol flag is set
-  - if tags are specified $readPreference is used, otherwise $readPreference is NOT used
+  - if tags or hedging are specified $readPreference is used, otherwise $readPreference is NOT used
 
 - NEAREST
 
