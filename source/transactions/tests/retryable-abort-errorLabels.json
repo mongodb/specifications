@@ -36,10 +36,11 @@
         {
           "name": "insertOne",
           "object": "collection",
-          "arguments": null,
-          "session": "session0",
-          "document": {
-            "_id": 1
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": 1
+            }
           },
           "result": {
             "insertedId": 1
@@ -79,8 +80,9 @@
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": null
@@ -94,8 +96,9 @@
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": null
@@ -138,10 +141,10 @@
             "session": "session0",
             "document": {
               "_id": 1
-            },
-            "result": {
-              "insertedId": 1
             }
+          },
+          "result": {
+            "insertedId": 1
           }
         },
         {
@@ -156,34 +159,36 @@
       ],
       "expectations": [
         {
-          "command_started_event": null,
-          "command": {
-            "insert": "test",
-            "documents": [
-              {
-                "_id": 1
-              }
-            ],
-            "ordered": true,
-            "readConcern": null,
-            "lsid": "session0",
-            "txnNumber": {
-              "$numberLong": "1"
+          "command_started_event": {
+            "command": {
+              "insert": "test",
+              "documents": [
+                {
+                  "_id": 1
+                }
+              ],
+              "ordered": true,
+              "readConcern": null,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "startTransaction": true,
+              "autocommit": false,
+              "writeConcern": null
             },
-            "startTransaction": true,
-            "autocommit": false,
-            "writeConcern": null
-          },
-          "command_name": "insert",
-          "database_name": "transaction-tests"
+            "command_name": "insert",
+            "database_name": "transaction-tests"
+          }
         },
         {
           "command_started_event": {
             "command": {
               "abortTransaction": 1,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": null

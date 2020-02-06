@@ -813,7 +813,10 @@
           "failCommands": [
             "commitTransaction"
           ],
-          "errorCode": 11602
+          "errorCode": 11602,
+          "errorLabels": [
+            "RetryableWriteError"
+          ]
         }
       },
       "operations": [

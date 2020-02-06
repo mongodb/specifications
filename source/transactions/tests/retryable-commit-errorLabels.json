@@ -38,13 +38,15 @@
         {
           "name": "insertOne",
           "object": "collection",
-          "arguments": null,
-          "session": "session0",
-          "document": {
-            "_id": 1
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": 1
+            }
           },
-          "result": null,
-          "insertedId": 1
+          "result": {
+            "insertedId": 1
+          }
         },
         {
           "name": "commitTransaction",
@@ -71,8 +73,9 @@
               "ordered": true,
               "readConcern": null,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": true,
               "autocommit": false,
               "writeConcern": null
@@ -86,14 +89,12 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": null,
               "autocommit": false,
-              "writeConcern": {
-                "w": "majority",
-                "wtimeout": 10000
-              }
+              "writeConcern": null
             },
             "command_name": "commitTransaction",
             "database_name": "admin"
@@ -134,13 +135,15 @@
         {
           "name": "insertOne",
           "object": "collection",
-          "arguments": null,
-          "session": "session0",
-          "document": {
-            "_id": 1
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": 1
+            }
           },
-          "result": null,
-          "insertedId": 1
+          "result": {
+            "insertedId": 1
+          }
         },
         {
           "name": "commitTransaction",
@@ -160,8 +163,9 @@
               "ordered": true,
               "readConcern": null,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": true,
               "autocommit": false,
               "writeConcern": null
@@ -175,8 +179,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": null
@@ -190,8 +195,9 @@
             "command": {
               "commitTransaction": 1,
               "lsid": "session0",
-              "txnNumber": null,
-              "$numberLong": "1",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
               "startTransaction": null,
               "autocommit": false,
               "writeConcern": {
