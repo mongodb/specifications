@@ -1552,8 +1552,8 @@ shutting down" errors:
   * - ShutdownInProgress
     - 91
 
-When handling a "not master" or "node is recovering" error, the client
-clears the server's connection pool if and only if the error is
+When handling a "not master" or "node is recovering" error, the client MUST
+clear the server's connection pool if and only if the error is
 "node is shutting down" or the error originated from server version < 4.2.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
