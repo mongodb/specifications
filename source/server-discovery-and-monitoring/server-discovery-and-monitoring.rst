@@ -1455,6 +1455,7 @@ recovering" error::
 
     recovering_codes = [11600, 11602, 13436, 189, 91]
     notmaster_codes = [10107, 13435]
+    shutdown_codes = [11600, 91]
 
     def is_recovering(message, code):
         if code and code in recovering_codes:
@@ -1470,6 +1471,11 @@ recovering" error::
         if is_recovering(message, None):
             return false
         return ("not master" in message)
+
+    def is_shutdown(code):
+        if code and code in shutdown_codes:
+            return true
+        return false
 
     def is_notmaster_or_recovering(message, code):
         return is_recovering(message, code) or is_notmaster(message, code)
@@ -1507,7 +1513,8 @@ recovering" error::
             if is_notmaster(message):
                 check failing server
 
-        clear connection pool for server
+        if is_shutdown(code) or (error was from <4.2):
+            clear connection pool for server
 
 See the test scenario called
 "parsing 'not master' and 'node is recovering' errors"
@@ -1545,14 +1552,9 @@ shutting down" errors:
   * - ShutdownInProgress
     - 91
 
-If the client is connected to server version 4.2 or higher, and the client
-receives a "not master" or "node is recovering" error which is not a
-"node is shutting down" error, the client MUST keep any connections it has to
-the server open, and MUST NOT clear its connection pool for the server.
-If the client is connected to server version 4.2 or higher and receives a
-"node is shutting down" error, or if the client is connected to server version
-4.0 or lower and receives a "not master" or "node is recovering" error,
-the client MUST clear its connection pool to the server.
+When handling a "not master" or "node is recovering" error, the client MUST
+clear the server's connection pool if and only if the error is
+"node is shutting down" or the error originated from server version < 4.2.
 
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
