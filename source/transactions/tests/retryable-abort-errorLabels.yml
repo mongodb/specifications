@@ -13,18 +13,18 @@ tests:
       configureFailPoint: failCommand
       mode: { times: 2 }
       data:
-        failCommands: ["abortTransaction"]
-        errorCode: 112 # WriteConflict, not a retryable error code
-        errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
+          failCommands: ["abortTransaction"]
+          errorCode: 112 # WriteConflict, not a retryable error code
+          errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
     operations:
       - name: startTransaction
         object: session0
       - name: insertOne
         object: collection
         arguments:
-        session: session0
-        document:
-          _id: 1
+          session: session0
+          document:
+            _id: 1
         result:
           insertedId: 1
       - name: abortTransaction
@@ -50,7 +50,7 @@ tests:
             abortTransaction: 1
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern:
@@ -61,7 +61,7 @@ tests:
             abortTransaction: 1
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern:
@@ -76,9 +76,9 @@ tests:
       configureFailPoint: failCommand
       mode: { times: 1 }
       data:
-        failCommands: ["abortTransaction"]
-        errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
-        errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
+          failCommands: ["abortTransaction"]
+          errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+          errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
     operations:
       - name: startTransaction
         object: session0
@@ -88,34 +88,34 @@ tests:
           session: session0
           document:
             _id: 1
-          result:
-            insertedId: 1
+        result:
+          insertedId: 1
       - name: abortTransaction
         object: session0
         result:
           errorLabelsOmit: ["RetryableWriteError"]
     expectations:
       - command_started_event:
-        command:
-          insert: *collection_name
-          documents:
-            - _id: 1
-          ordered: true
-          readConcern:
-          lsid: session0
-          txnNumber:
-            $numberLong: "1"
-          startTransaction: true
-          autocommit: false
-          writeConcern:
-        command_name: insert
-        database_name: *database_name
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 1
+            ordered: true
+            readConcern:
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction: true
+            autocommit: false
+            writeConcern:
+          command_name: insert
+          database_name: *database_name
       - command_started_event:
           command:
             abortTransaction: 1
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern:

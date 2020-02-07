@@ -635,6 +635,9 @@
             "commitTransaction"
           ],
           "errorCode": 10107,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -743,6 +746,9 @@
             "commitTransaction"
           ],
           "errorCode": 13436,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -851,6 +857,9 @@
             "commitTransaction"
           ],
           "errorCode": 13435,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -959,6 +968,9 @@
             "commitTransaction"
           ],
           "errorCode": 11602,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1067,6 +1079,9 @@
             "commitTransaction"
           ],
           "errorCode": 11600,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1175,6 +1190,9 @@
             "commitTransaction"
           ],
           "errorCode": 189,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1283,6 +1301,9 @@
             "commitTransaction"
           ],
           "errorCode": 91,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1391,6 +1412,9 @@
             "commitTransaction"
           ],
           "errorCode": 7,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1499,6 +1523,9 @@
             "commitTransaction"
           ],
           "errorCode": 6,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1607,6 +1634,9 @@
             "commitTransaction"
           ],
           "errorCode": 9001,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1715,6 +1745,9 @@
             "commitTransaction"
           ],
           "errorCode": 89,
+          "errorLabels": [
+            "RetryableWriteError"
+          ],
           "closeConnection": false
         }
       },
@@ -1824,6 +1857,9 @@
           ],
           "writeConcernError": {
             "code": 11600,
+            "errorLabels": [
+              "RetryableWriteError"
+            ],
             "errmsg": "Replication is being shut down"
           }
         }
@@ -1943,6 +1979,9 @@
           ],
           "writeConcernError": {
             "code": 11602,
+            "errorLabels": [
+              "RetryableWriteError"
+            ],
             "errmsg": "Replication is being shut down"
           }
         }
@@ -2062,6 +2101,9 @@
           ],
           "writeConcernError": {
             "code": 189,
+            "errorLabels": [
+              "RetryableWriteError"
+            ],
             "errmsg": "Replication is being shut down"
           }
         }
@@ -2181,6 +2223,9 @@
           ],
           "writeConcernError": {
             "code": 91,
+            "errorLabels": [
+              "RetryableWriteError"
+            ],
             "errmsg": "Replication is being shut down"
           }
         }

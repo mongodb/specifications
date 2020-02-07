@@ -16,20 +16,20 @@ tests:
       configureFailPoint: failCommand
       mode: { times: 1 }
       data:
-        failCommands: ["commitTransaction"]
-        errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
-        errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
+          failCommands: ["commitTransaction"]
+          errorCode: 11600 # InterruptedAtShutdown, normally a retryable error code
+          errorLabels: []  # Override server behavior: do not send RetryableWriteError label with retryable code
     operations:
       - name: startTransaction
         object: session0
       - name: insertOne
         object: collection
         arguments:
-        session: session0
-        document:
-          _id: 1
+          session: session0
+          document:
+            _id: 1
         result:
-        insertedId: 1
+          insertedId: 1
       - name: commitTransaction
         object: session0
         result:
@@ -39,12 +39,12 @@ tests:
           command:
             insert: *collection_name
             documents:
-            - _id: 1
+              - _id: 1
             ordered: true
             readConcern:
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -55,10 +55,10 @@ tests:
             commitTransaction: 1
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction:
             autocommit: false
-            writeConcern: { w: majority, wtimeout: 10000 }
+            writeConcern:
           command_name: commitTransaction
           database_name: admin
     outcome: # Driver does not retry commit because there was no RetryableWriteError label on response
@@ -72,20 +72,20 @@ tests:
       configureFailPoint: failCommand
       mode: { times: 1 }
       data:
-        failCommands: ["commitTransaction"]
-        errorCode: 112 # WriteConflict, not a retryable error code
-        errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
+          failCommands: ["commitTransaction"]
+          errorCode: 112 # WriteConflict, not a retryable error code
+          errorLabels: ["RetryableWriteError"] # Override server behavior: send RetryableWriteError label with non-retryable error code
     operations:
       - name: startTransaction
         object: session0
       - name: insertOne
         object: collection
         arguments:
-        session: session0
-        document:
+          session: session0
+          document:
             _id: 1
         result:
-        insertedId: 1
+          insertedId: 1
       - name: commitTransaction
         object: session0
     expectations:
@@ -93,12 +93,12 @@ tests:
           command:
             insert: *collection_name
             documents:
-                - _id: 1
+              - _id: 1
             ordered: true
             readConcern:
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction: true
             autocommit: false
             writeConcern:
@@ -109,7 +109,7 @@ tests:
             commitTransaction: 1
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern:
@@ -120,7 +120,7 @@ tests:
             commitTransaction: 1
             lsid: session0
             txnNumber:
-            $numberLong: "1"
+              $numberLong: "1"
             startTransaction:
             autocommit: false
             writeConcern: { w: majority, wtimeout: 10000 }
