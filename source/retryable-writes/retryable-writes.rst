@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.5.0
+:Spec Version: 1.5.1
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2020-01-14
+:Last Modified: 2020-02-10
 
 .. contents::
 
@@ -547,28 +547,7 @@ enabled:
   contain only supported single-statement write operations. Both ordered and
   unordered execution should be tested.
 
-If possible, drivers should test that transaction IDs are never included in
-commands for unsupported write operations:
-
-* Write commands with unacknowledged write concerns (e.g. ``{w: 0}``)
-
-* Unsupported single-statement write operations
-
-  - ``updateMany()``
-  - ``deleteMany()``
-
-* Unsupported multi-statement write operations
-
-  - commands that include ``UpdateMany`` or ``DeleteMany`` executed as part of a
-    ``bulkWrite()``
-
-* Unsupported write commands
-
-  - ``aggregate`` with write stage (e.g. ``$out``, ``$merge``)
-
-Drivers may also be able to verify at-most-once semantics as described above by
-testing their internal implementation (e.g. checking that transaction IDs are
-added to outgoing commands).
+Additional prose tests for other scenarios are also included.
 
 Motivation for Change
 =====================
@@ -802,6 +781,8 @@ performing any error message parsing.
 
 Changes
 =======
+
+2020-02-10: Remove redundant content in Tests section.
 
 2020-01-14: Add ExceededTimeLimit to the list of error codes that should
 receive a RetryableWriteError label.
