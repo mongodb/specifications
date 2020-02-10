@@ -43,24 +43,56 @@ Resumable Error
 
 An error is considered resumable if it meets any of the following criteria:
 
-- any error encountered which is not a server error (e.g. a timeout error or
+- Any error encountered which is not a server error (e.g. a timeout error or
   network error)
 
-- *any* server error response from a getMore command excluding those
-  containing the error label `NonResumableChangeStreamError` and those
-  containing the following error codes
+- For servers with wire version 9 or higher (server version 4.4 or higher), any
+  server error with the `ResumableChangeStreamError` error label.
+
+- For servers with wire version less than 9, a server error with one of the
+  following codes:
 
   .. list-table::
     :header-rows: 1
 
     * - Error Name
       - Error Code
-    * - Interrupted
-      - 11601
-    * - CappedPositionLost
-      - 136
-    * - CursorKilled
-      - 237
+    * - HostUnreachable
+      - 6
+    * - HostNotFound
+      - 7
+    * - NetworkTimeout
+      - 89
+    * - ShutdownInProgress
+      - 91
+    * - PrimarySteppedDown
+      - 189
+    * - ExceededTimeLimit
+      - 262
+    * - SocketException
+      - 9001
+    * - NotMaster
+      - 10107
+    * - InterruptedAtShutdown
+      - 11600
+    * - InterruptedDueToReplStateChange
+      - 11602
+    * - NotMasterNoSlaveOk
+      - 13435
+    * - NotMasterOrSecondary
+      - 13436
+    * - StaleShardVersion
+      - 63
+    * - StaleEpoch
+      - 150
+    * - StaleConfig
+      - 13388
+    * - RetryChangeStream
+      - 234
+    * - FailedToSatisfyReadPreference
+      - 133
+    * - ElectionInProgress
+      - 216
 
 An error on an aggregate command is not a resumable error. Only errors on a
 getMore command may be considered resumable errors.
@@ -439,7 +471,7 @@ A change stream MUST track the last resume token, per `Updating the Cached Resum
 
 Drivers MUST raise an error on the first document received without a resume token (e.g. the user has removed ``_id`` with a pipeline stage), and close the change stream.  The error message SHOULD resemble “Cannot provide resume functionality when the resume token is missing”.
 
-A change stream MUST attempt to resume a single time if it encounters any resumable error.  A change stream MUST NOT attempt to resume on any other type of error, with the exception of a “not master” server error.  If a driver receives a “not master” error (for instance, because the primary it was connected to is stepping down), it will treat the error as a resumable error and attempt to resume.
+A change stream MUST attempt to resume a single time if it encounters any resumable error per `Resumable Error`_.  A change stream MUST NOT attempt to resume on any other type of error.
 
 In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
 
@@ -679,10 +711,9 @@ It was decided to remove this example from the specification for the following r
 What do the additional error codes mean?
 ----------------------------------------
 
-The `CursorKilled` or `Interrupted` error implies some other actor killed the cursor.
-
-The `CappedPositionLost` error implies falling off of the back of the oplog,
-so resuming is impossible.
+The additional codes were added to match the server changes made in
+https://github.com/mongodb/mongo/commit/3d821c25e2944668b7359a0bf6e586cc8625b9a2#diff-cf7105bb60d0308203e7ef6ec12e07c3R74
+to classify resumable change stream errors.
 
 -------------------------------------------------------------------------------------------
 Why do we need to send a default ``startAtOperationTime`` when resuming a ``ChangeStream``?
@@ -794,4 +825,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2019-07-15 | Clarify resume process for change streams started with     |
 |            | the ``startAfter`` option.                                 |
++------------+------------------------------------------------------------+
+| 2020-02-10 | Changed error handling approach to use a whitelist         |
 +------------+------------------------------------------------------------+
