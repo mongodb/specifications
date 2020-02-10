@@ -332,16 +332,12 @@ same as :javascript:`writeConcern: {journal: false}`.
 Inconsistent WriteConcern
 -------------------------
 
-Drivers SHOULD raise an error when an inconsistent ``WriteConcern`` is
+Drivers MUST raise an error when an inconsistent ``WriteConcern`` is
 specified. The following is an exhaustive list of inconsistent ``WriteConcerns``:
 
 .. code:: typescript
 
    writeConcern = { w: 0, journal: true };
-
-If, for the sake of backwards compatibility, the driver allows inconsistent
-write concerns where ``w`` equals 0 but ``journal`` is set to ``true``, the
-driver MUST treat it as an ``Acknowledged WriteConcern``.
 
 
 Unacknowledged WriteConcern
