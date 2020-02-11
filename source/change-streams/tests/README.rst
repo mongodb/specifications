@@ -128,8 +128,8 @@ For each YAML file, for each element in ``tests``:
 - If there are any ``expectations``
 
   - For each (``expected``, ``idx``) in ``expectations``
-
-    - Assert that ``actual[idx]`` MATCHES ``expected``
+    - If ``actual[idx]`` is a ``killCursors`` event, skip it and move to ``actual[idx+1]``.
+    - Else assert that ``actual[idx]`` MATCHES ``expected``
 
 - Close the MongoClient ``client``
 
