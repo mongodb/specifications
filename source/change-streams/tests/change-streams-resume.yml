@@ -47,12 +47,6 @@ tests:
       -
         command_started_event:
           command:
-            killCursors: *collection_name
-          command_name: killCursors
-          database_name: *database_name
-      -
-        command_started_event:
-          command:
             aggregate: *collection_name
             cursor: {}
             pipeline:
@@ -111,12 +105,6 @@ tests:
             getMore: "42"
             collection: *collection_name
           command_name: getMore
-          database_name: *database_name
-      -
-        command_started_event:
-          command:
-            killCursors: *collection_name
-          command_name: killCursors
           database_name: *database_name
       -
         command_started_event:

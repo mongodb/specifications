@@ -67,15 +67,6 @@
         {
           "command_started_event": {
             "command": {
-              "killCursors": "test"
-            },
-            "command_name": "killCursors",
-            "database_name": "change-stream-tests"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
               "aggregate": "test",
               "cursor": {},
               "pipeline": [
@@ -164,15 +155,6 @@
               "collection": "test"
             },
             "command_name": "getMore",
-            "database_name": "change-stream-tests"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
-              "killCursors": "test"
-            },
-            "command_name": "killCursors",
             "database_name": "change-stream-tests"
           }
         },
