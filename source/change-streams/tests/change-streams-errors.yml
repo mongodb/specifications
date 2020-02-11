@@ -71,5 +71,4 @@ tests:
             z: 3
     result:
       error:
-        code: 280
-        errorLabels: [ "NonResumableChangeStreamError" ]
+        code: 20
