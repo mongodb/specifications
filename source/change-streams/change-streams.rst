@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: Febrary 10, 2020
-:Version: 1.7.1
+:Version: 1.8.0
 
 .. contents::
 

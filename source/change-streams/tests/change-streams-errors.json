@@ -74,7 +74,7 @@
     },
     {
       "description": "Change Stream should error when _id is projected out",
-      "minServerVersion": "4.1.11",
+      "minServerVersion": "4.3.4",
       "target": "collection",
       "topology": [
         "replicaset",
