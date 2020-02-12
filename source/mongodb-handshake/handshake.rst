@@ -3,14 +3,14 @@ MongoDB Handshake
 =================
 
 :Spec Title: MongoDB Handshake
-:Spec Version: 1.1.1
+:Spec Version: 1.2.0
 :Author: Hannes Magnusson
 :Kernel Advisory: Mark Benvenuto
 :Driver Advisory: Anna Herlihy, Justin Lee
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 3.4
-:Last Modified: 2019-11-13
+:Last Modified: 2020-02-12
 
 
 .. contents::
@@ -228,53 +228,26 @@ Example::
 Speculative Authentication
 --------------------------
 
-As of MongoDB 4.4, the ``isMaster`` handshake supports a new argument, ``speculativeSaslStart``,
+As of MongoDB 4.4, the ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
 provided as a BSON object. This argument would permit clients to merge their
-``saslStart`` message with their ``isMaster`` request, and receive the ``saslStart``
-reply with the isMaster reply. This object has the following structure::
-
-    {
-        isMaster: 1,
-        speculativeSaslStart: {
-            /* REQUIRED */
-            mechanism: "<string>"
-            /* REQUIRED */
-            payload: BinData(...)
-        }
-    }
-
-
-speculativeSaslStart.mechanism
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This value is required.
-
-This value indicates which SASL mechanism to use with the credential.
-
-
-speculativeSaslStart.payload
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This value is required.
-
-A sequence of bytes or a base64 encoded string (depending on input) to pass
-into the SASL library to transition the state machine.
-
-
-Alternatively, the ``isMaster`` handshake supports another new argument,
-``speculativeAuthenticate``, provided as a BSON object. This argument
-provides an instance of the ``authenticate`` command with the ``MONGODB-X509``
-mechanism. Servers accepting the request will respond with an ``isMaster``
-reply containing the results in a field named ``speculativeAuthenticate``.
-Note that concurrent use of ``speculativeSaslStart`` and ``speculativeAuthenticate``
-will result in ``isMaster`` returning an error. This object has the following
-structure::
+initial authentication message with their ``isMaster`` request, and receive the
+reply with the ``isMaster`` reply. This object has the following structure::
 
     {
         isMaster: 1,
         speculativeAuthenticate: {
+            /* OPTIONAL */
+            authenticate: 1
+            /* OPTIONAL. If present, "payload" and "options" are required */
+            saslStart: 1
             /* REQUIRED */
             mechanism: "<string>"
+            /* REQUIRED */
+            db: "<string>"
+            payload: BinData(...)
+            options: {
+                skipEmptyExchange: true         /* REQUIRED */        
+            }
         }
     }
 
@@ -284,8 +257,35 @@ speculativeAuthenticate.mechanism
 
 This value is required.
 
-This value indicates which SASL mechanism to use with the credential. Currently,
-the only mechanism supported for ``speculativeAuthenticate`` is ``MONGODB-X509``.
+This value indicates which authentication mechanism to use with the credential.
+Currently, the only mechanism supported when ``speculativeAuthenticate.authenticate``
+is present is ``MONGODB-X509``.
+
+speculativeAuthenticate.db
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This value is required.
+
+This value indicates the name of the database used for authentication. 
+The database used when ``speculativeAuthenticate.authenticate`` is present is
+``$external``. When ``speculativeAuthenticate.saslStart`` is present, the database
+name defaults to the database name provided in the connection string or ``admin``.
+
+speculativeAuthenticate.payload
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This value is required when ``speculativeAuthenticate.saslStart`` is present.
+
+A sequence of bytes or a base64 encoded string (depending on input) to pass
+into the SASL library to transition the state machine.
+
+speculativeAuthenticate.options.skipEmptyExchange
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This value is required when ``speculativeAuthenticate.saslStart`` is present.
+
+This value notifies newer servers to shorten the authentication conversation by
+one round trip. Older servers will ignore this field.
 
 
 Supporting Wrapping Libraries
@@ -443,4 +443,4 @@ Changes
 =======
 
 * 2019-11-13: Added section about supporting wrapping libraries
-* 2020-02-03: Added section about speculative authentication
+* 2020-02-12: Added section about speculative authentication

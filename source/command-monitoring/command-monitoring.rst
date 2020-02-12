@@ -12,7 +12,7 @@ Command Monitoring
 :Type: Standards
 :Minimum Server Version: 2.4
 :Last Modified: Apr 16, 2018
-:Version: 1.7
+:Version: 1.8
 
 .. contents::
 
@@ -250,6 +250,7 @@ value MUST be replaced with an empty BSON document. The list is as follows:
    * - ``copydbgetnonce``
    * - ``copydbsaslstart``
    * - ``copydb``
+   * - ``isMaster`` when ``speculativeAuthenticate`` is present
 
 ---
 API
@@ -446,3 +447,6 @@ Changelog
 16 APR 2018:
   - Made inclusion of BSON serialization/deserialization in command durations
     to be optional.
+
+12 FEB 2020:
+  - Added ``isMaster.speculativeAuthenticate`` to the list of values that should be redacted.

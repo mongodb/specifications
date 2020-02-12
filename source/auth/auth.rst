@@ -255,41 +255,46 @@ Speculative Authentication via Handshake
 
 :since: 4.4
 
-The ``isMaster`` handshake supports a new argument, ``speculativeSaslStart``,
+The ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
 provided as a BSON object. Clients specifying this argument to ``isMaster`` will
-speculatively include the first ``saslStart`` command of an authentication handshake.
+speculatively include the first command of an authentication handshake.
 This command may be provided to the server in parallel with any standard request for
-supported authentication mechanisms. This would permit clients to merge their
-``saslStart`` message with their ``isMaster`` request, and receive the ``saslStart``
-reply with the ``isMaster`` reply.
+supported authentication mechanisms (i.e. ``saslSupportedMechs``). This would permit
+clients to merge their first message with their ``isMaster`` request, and
+receive the authentication reply with the ``isMaster`` reply.
 
 If the speculatively issued command succeeds, the client should proceed with the next
-step of the exchange. If the command fails, the client should determine whether the
-``isMaster`` response contains enough information to select another mechanism.
+step of the exchange. If the ``isMaster`` response does not include a
+``speculativeAuthenticate`` reply, either due to failure or the server's lack of support
+for speculative authentication, and the ``ok`` field in the ``isMaster`` response is
+set to 1, drivers MUST authenticate using the standard authentication handshake.
 
-Older servers will ignore this argument. New servers will participate in the standard
-authentication conversation if this argument is missing.
+If an authentication mechanism is not provided either via connection string or code, but
+a password is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
+authentication. If no authentication mechanism and no password are provided, drivers
+MUST continue to authenticate using the standard authentication handshake.
 
-An example conversation using ``speculativeSaslStart`` is as follows:
+Older servers will ignore the ``speculativeAuthenticate`` argument. New servers will
+participate in the standard authentication conversation if this argument is missing.
 
-| C: :javascript:`{ isMaster: 1, speculativeSaslStart: { mechanism: "SCRAM-SHA-256", db: "admin", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}, ... }`
-| S: :javascript:`{ isMaster: true, speculativeSaslStart: { conversationId: 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false }, ... }`
+Drivers MUST set ``speculativeAuthenticate.saslStart`` if either of the authentication
+mechanisms SCRAM-SHA-1 or SCRAM-SHA-256 has been indicated, or if no mechanism has been
+provided. ``speculativeAuthenticate.saslStart`` MUST NOT be set for any other
+authentication mechanism. An example conversation using ``speculativeAuthenticate`` for
+a SASL mechanism is as follows:
+
+| C: :javascript:`{ isMaster: 1, speculativeAuthenticate: { saslStart: 1, mechanism: "SCRAM-SHA-256", db: "admin", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}, ... }`
+| S: :javascript:`{ isMaster: true, speculativeAuthenticate: { conversationId: 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false }, ... }`
 | C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`
 | S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: true, ok: 1}`
   
 
-Alternatively, the ``isMaster`` handshake supports another new argument,
-``speculativeAuthenticate``, provided as a BSON object. This argument provides an
-instance of the ``authenticate`` command with the ``MONGODB-X509`` mechanism.
-Servers accepting the request will respond with an ``isMaster`` reply containing the results
-in a field named ``speculativeAuthenticate``. Concurrent use of ``speculativeSaslStart``
-and ``speculativeAuthenticate`` will result in ``isMaster`` returning an error.  In this
-mode, authentication can occur in zero round trips and will be completed once ``isMaster``
-returns.
+Drivers MUST set ``speculativeAuthenticate.authenticate`` if the authentication mechanism
+MONGODB-X509 has been indicated. ``speculativeAuthenticate.authenticate`` MUST NOT be set
+for any other authentication mechanism. An example conversation using
+``speculativeAuthenticate`` for the ``MONGODB-X509`` mechanism is as follows:
 
-An example conversation using ``speculativeAuthenticate`` is as follows:
-
-| C: :javascript:`{ isMaster: 1, speculativeAuthenticate: { mechanism: "MONGODB-X509", db: "$external" }, ... }`
+| C: :javascript:`{ isMaster: 1, speculativeAuthenticate: { authenticate: 1, mechanism: "MONGODB-X509", db: "$external" }, ... }`
 | S: :javascript:`{ ismaster: true, speculativeAuthenticate: { dbname: "$external", user : "CN=client,OU=KernelUser,O=MongoDB,L=New York City,ST=New York,C=US" }, ok: 1, ... }`
 
 --------------------------------
@@ -1143,6 +1148,44 @@ As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 - mongodb://%E2%85%A8:IV@mongodb.example.com/admin
 - mongodb://%E2%85%A8:I%C2%ADV@mongodb.example.com/admin
 
+--------------------------
+Speculative Authentication
+--------------------------
+
+Testing speculative authentication requires a server that supports the authentication
+mechanisms.
+
+On servers running version 4.4 or later, run the following test for each authentication
+mechanism:
+
+- Send the ``isMaster`` command with a ``speculativeAuthenticate`` argument appropriately
+  constructed for the authentication mechanism.
+- Receive the ``isMaster`` response and ensure the response contains a
+  ``speculativeAuthenticate`` argument.
+- Continue with the next steps in the authentication exchange until authentication is
+  completed.
+
+Run tests for each authentication mechanism where speculative authentication fails on the
+server:
+
+- Send the ``isMaster`` command with a ``speculativeAuthenticate`` argument containing
+  invalid authentication information.
+- Receive the ``isMaster`` response and confirm the response does not contain a
+  ``speculativeAuthenticate`` argument and the top-level field ``ok`` is set to 1.
+
+Run a test where no authentication mechanism is specified, but a valid password is
+provided:
+
+- Confirm that the default authentication mechanism, SCRAM-SHA-256, is used
+  in the ``speculativeAuthenticate`` argument.
+- Receive the ``isMaster`` response and ensure the response contains a
+  ``speculativeAuthenticate`` argument.
+- Continue with the next steps in the authentication exchange until authentication is
+  completed.
+
+On older servers, test that the ``speculativeAuthenticate`` argument in the ``isMaster``
+command is ignored and the standard authentication exchange takes place.
+  
 -----------------------
 Minimum iteration count
 -----------------------
