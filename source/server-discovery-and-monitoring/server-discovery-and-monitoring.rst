@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.14
-:Last Modified: 2019-07-11
+:Version: 2.15
+:Last Modified: 2020-02-13
 
 .. contents::
 
@@ -2429,3 +2429,6 @@ to auto-retry.
 authentication.
 
 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
+
+2020-02-13: Drivers must run SDAM flow even when server description is equal
+to the last one.
