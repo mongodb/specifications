@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.0.2
+:Spec Version: 1.1.0
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2019-1-28
+:Last Modified: 2020-2-10
 
 .. contents::
 
@@ -134,6 +134,42 @@ Drivers SHOULD validate OCSP Responses in the manner specified in `RFC
 6960: 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`__ to the
 extent that their TLS library allows.
 
+Suggested OCSP Caching Behavior
+-------------------------------
+Drivers with sufficient control over their TLS library's OCSP
+behavior SHOULD implement an OCSP cache. The key for this cache
+SHOULD be the certificate identifier (CertID) of the OCSP request
+as specified in `RFC 6960: 4.1.1
+<https://tools.ietf.org/html/rfc6960#section-4.1.1>`__.
+For convenience, the relevant section has been duplicated below:
+
+.. code:: ASN.1
+
+   CertID          ::=     SEQUENCE {
+       hashAlgorithm       AlgorithmIdentifier,
+       issuerNameHash      OCTET STRING, -- Hash of issuer's DN
+       issuerKeyHash       OCTET STRING, -- Hash of issuer's public key
+       serialNumber        CertificateSerialNumber }
+
+If a driver would accept a conclusive OCSP response (stapled or
+non-stapled), the driver SHOULD cache that response. We define a
+conclusive OCSP response as an OCSP response that indicates that a
+certificate is either valid or revoked. Thus, an unknown certificate
+status SHOULD NOT be considered conclusive, and the corresponding OCSP
+response SHOULD NOT be cached.
+
+In accordance with `RFC: 6960: 3.2
+<https://tools.ietf.org/html/rfc6960#section-3.2>`__,
+a cached response SHOULD be considered valid up to and excluding
+the time specified in the response's ``nextUpdate`` field.
+In other words, if the current time is *t*, then the cache entry
+SHOULD be considered valid if *thisUpdate ⩽ t < nextUpdate*.
+
+If a driver would accept a stapled OCSP response and that response
+has a later ``nextUpdate`` than the response already in the cache,
+drivers SHOULD replace the older entry in the cache with the fresher
+response.
+
 How OCSP interacts with existing configuration options
 ------------------------------------------------------
 
@@ -164,7 +200,7 @@ TLS Requirements
 <https://en.wikipedia.org/wiki/Server_Name_Indication>`__ (SNI) MUST BE
 used in the TLS connection that obtains the server's certificate,
 otherwise the server may present the incorrect certificate. This
-requirement is especially relevent to drivers whose TLS libraries allow
+requirement is especially relevant to drivers whose TLS libraries allow
 for finer-grained control over their TLS behavior (e.g. Python, C).
 
 
@@ -607,12 +643,15 @@ of checking this are:
 
 Changelog
 ==========
-**2020-1-31**: Add SNI requirement and clarify design rationale
+**2020-2-10**: 1.1.0: Add cache requirement.
+
+**2020-1-31**: 1.0.2: Add SNI requirement and clarify design rationale
 regarding minimizing round trips.
 
-**2020-1-28**: Clarify behavior regarding nonces and tolerance periods.
+**2020-1-28**: 1.0.1: Clarify behavior regarding nonces and tolerance
+periods.
 
-**2020-1-16**: Initial commit.
+**2020-1-16**: 1.0.0: Initial commit.
 
 Endnotes
 ========
