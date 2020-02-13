@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.14
-:Last Modified: 2019-07-11
+:Version: 2.15
+:Last Modified: 2020-02-13
 
 .. contents::
 
@@ -850,18 +850,12 @@ are parsed from the ismaster response in the obvious way.
 Server Description Equality
 ```````````````````````````
 
-For the purposes of updating topology description and publishing SDAM events,
-two server descriptions having the same address
-MUST be considered equal if and only if the values of
-`ServerDescription`_ fields marked (=) are respectively equal.
+For the purpose of determining whether to publish SDAM events, two server
+descriptions having the same address MUST be considered equal if and only if
+the values of `ServerDescription`_ fields marked (=) are respectively equal.
 
 This specification does not prescribe how to compare server descriptions
 with different addresses for equality.
-
-Note: Server description for each server MUST be updated (replaced)
-every heartbeat. However, new description MUST NOT cause the SDAM flow
-to be executed if the new description is equal, as defined in this section,
-to the previous description.
 
 Updating the TopologyDescription
 ''''''''''''''''''''''''''''''''
@@ -956,9 +950,6 @@ If any server's wire protocol version range does not overlap with the client's,
 the client updates the "compatible" and "compatibilityError" fields
 as described above for TopologyType Single.
 Otherwise "compatible" is set to true.
-
-If the new server description is equal to the previous server description
-as defined in `Server Description Equality`_, stop the processing.
 
 It is possible for a multi-threaded client to receive an ismaster outcome
 from a server after the server has been removed from the TopologyDescription.
@@ -2440,3 +2431,6 @@ to auto-retry.
 authentication.
 
 2019-05-29: Renamed InterruptedDueToStepDown to InterruptedDueToReplStateChange
+
+2020-02-13: Drivers must run SDAM flow even when server description is equal
+to the last one.
