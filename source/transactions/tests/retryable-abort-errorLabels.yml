@@ -92,8 +92,6 @@ tests:
           insertedId: 1
       - name: abortTransaction
         object: session0
-        result:
-          errorLabelsOmit: ["RetryableWriteError"]
     expectations:
       - command_started_event:
           command:

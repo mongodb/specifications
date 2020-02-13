@@ -150,12 +150,7 @@
         },
         {
           "name": "abortTransaction",
-          "object": "session0",
-          "result": {
-            "errorLabelsOmit": [
-              "RetryableWriteError"
-            ]
-          }
+          "object": "session0"
         }
       ],
       "expectations": [
