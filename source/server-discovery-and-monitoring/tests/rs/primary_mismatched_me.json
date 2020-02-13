@@ -1,22 +1,8 @@
 {
   "description": "Primary mismatched me",
+  "uri": "mongodb://localhost:27017/?replicaSet=rs",
   "phases": [
     {
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "setName": null,
-            "type": "Unknown"
-          },
-          "b:27017": {
-            "setName": null,
-            "type": "Unknown"
-          }
-        },
-        "setName": "rs",
-        "topologyType": "ReplicaSetNoPrimary",
-        "logicalSessionTimeoutMinutes": null
-      },
       "responses": [
         [
           "localhost:27017",
@@ -33,8 +19,22 @@
             "maxWireVersion": 6
           }
         ]
-      ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "setName": null,
+            "type": "Unknown"
+          },
+          "b:27017": {
+            "setName": null,
+            "type": "Unknown"
+          }
+        },
+        "setName": "rs",
+        "topologyType": "ReplicaSetNoPrimary",
+        "logicalSessionTimeoutMinutes": null
+      }
     }
-  ],
-  "uri": "mongodb://localhost:27017/?replicaSet=rs"
+  ]
 }
