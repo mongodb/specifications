@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2019-10-31
-:Version: 1.5.3
+:Last Modified: 2020-02-13
+:Version: 1.5.4
 
 .. contents::
 
@@ -679,3 +679,4 @@ Version History
   - 2019-01-29 : Added section listing all known examples of writeConcernError.
   - 2019-06-07: Clarify language for aggregate and mapReduce commands that write.
   - 2019-10-31: Explicitly define write concern option mappings.
+  - 2020-02-13: Inconsistent write concern must be considered an error.
