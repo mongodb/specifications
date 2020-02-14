@@ -74,7 +74,7 @@ Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some o
 
 username (string)
 	* Applies to all mechanisms.
-	* Optional for MONGODB-X509 and MONGODB-IAM.
+	* Optional for MONGODB-X509 and MONGODB-AWS.
 source (string)
 	* Applies to all mechanisms.
 	* Always '$external' for GSSAPI and MONGODB-X509.
@@ -709,17 +709,17 @@ mechanism
 mechanism_properties
 	MUST NOT be specified.
 
-MONGODB-IAM
+MONGODB-AWS
 ~~~~~~~~~~~
 
 :since: 4.4
 
-MONGODB-IAM authenticates using AWS IAM credentials (an access key ID and a secret access key), `temporary IAM credentials <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html>`_ obtained from an 
+MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secret access key), `temporary AWS IAM credentials <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html>`_ obtained from an 
 `AWS Security Token Service (STS) <https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html>`_ 
 `Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, 
-or temporary IAM credentials assigned to an `EC2 instance <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html>`_ or ECS task. Temporary credentials, in addition to an access key ID and a secret access key, includes a security (or session) token.
+or temporary AWS IAM credentials assigned to an `EC2 instance <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html>`_ or ECS task. Temporary credentials, in addition to an access key ID and a secret access key, includes a security (or session) token.
 
-MONGODB-IAM requires that a client create a randomly generated nonce. It is 
+MONGODB-AWS requires that a client create a randomly generated nonce. It is 
 imperative, for security sake, that this be as secure and truly random as possible. 
 
 All messages between MongoDB clients and servers are sent as BSON V1.1 Objects in the payload field of saslStart and saslContinue.
@@ -752,7 +752,7 @@ Drivers must also validate that the host is greater than 0 and less than or equa
 `RFC 1035 <https://tools.ietf.org/html/rfc1035>`_.  Drivers MUST reject FQDN names with empty labels, e.g., "abc..def", and error on any 
 additional fields. Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
 
-As an example, given a client nonce value of "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI=", a MONGODB-IAM conversation decoded from
+As an example, given a client nonce value of "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI=", a MONGODB-AWS conversation decoded from
 BSON to JSON would appear as follows:
 
 Client First
@@ -793,7 +793,7 @@ Client First
 
    { 
        "saslStart" : 1, 
-       "mechanism" : "MONGODB-IAM", 
+       "mechanism" : "MONGODB-AWS" 
        "payload" : new BinData(0, "NAAAAAVyACAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz4QcABuAAAAAA==")
    }
 |
@@ -880,16 +880,16 @@ first             us-east-1
 `````````````````````````````
 
 username
-	MAY be specified. The non-sensitive IAM access key.
+	MAY be specified. The non-sensitive AWS access key.
 
 source
 	MUST be "$external". Defaults to ``$external``.
 
 password
-	MAY be specified. The sensitive IAM secret key.
+	MAY be specified. The sensitive AWS secret key.
 
 mechanism
-	MUST be "MONGODB-IAM"
+	MUST be "MONGODB-AWS"
 
 mechanism_properties
 	AWS_SESSION_TOKEN
@@ -898,21 +898,21 @@ mechanism_properties
 
 Obtaining Credentials
 `````````````````````
-Drivers will need IAM credentials (an access key and a secret access key) to complete the steps in the `Signature Version 4 Signing Process 
+Drivers will need AWS IAM credentials (an access key and a secret access key) to complete the steps in the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
-MUST use these for the IAM access key and IAM secret key, respectively. If a username is provided without a password (or vice-versa) drivers 
-MUST raise an error. An example URI for authentication with MONGODB-IAM using IAM credentials is as follows:
+MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If a username is provided without a password (or vice-versa) drivers 
+MUST raise an error. An example URI for authentication with MONGODB-AWS using AWS IAM credentials is as follows:
 
 .. code:: javascript
 
-   "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM"
+   "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS"
 |
 Users MAY have obtained temporary credentials through an `AssumeRole <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ 
 request. If so, then in addition to a username and password, users MAY also provide an ``AWS_SESSION_TOKEN`` as a ``mechanism_property``. 
 
 .. code:: javascript
 
-   "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-IAM&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
+   "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
 |
 If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials.
 If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. Drivers SHOULD
@@ -977,14 +977,14 @@ Auth Related Options
 --------------------
 
 authMechanism
-	MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-IAM
+	MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
 
 	Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256, SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
 
 authSource
 	Sets the Source property on the MongoCredential.
 
-	For GSSAPI, MONGODB-X509 and MONGODB-IAM authMechanisms the authSource defaults to ``$external``.
+	For GSSAPI, MONGODB-X509 and MONGODB-AWS authMechanisms the authSource defaults to ``$external``.
 	For PLAIN the authSource defaults to the database name if supplied on the connection string or ``$external``.
 	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
@@ -1192,6 +1192,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.10.1 Changes
+    * Rename MONGODB-IAM to MONGODB-AWS
 
 Version 1.10.0 Changes
     * Support shorter SCRAM conversation starting in version 4.4 of the server.
