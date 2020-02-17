@@ -228,10 +228,16 @@ Example::
 Speculative Authentication
 --------------------------
 
-As of MongoDB 4.4, the ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
-provided as a BSON object. This argument would permit clients to merge their
-initial authentication message with their ``isMaster`` request, and receive the
-reply with the ``isMaster`` reply. This object has the following structure::
+:since: 4.4
+
+The ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
+provided as a BSON object. Clients specifying this argument to ``isMaster`` will
+speculatively include the first command of an authentication handshake.
+This command may be provided to the server in parallel with any standard request for
+supported authentication mechanisms (i.e. ``saslSupportedMechs``). This would permit
+clients to merge their first message with their ``isMaster`` request, and
+receive the authentication reply with the ``isMaster`` reply. This argument has the
+following structure::
 
     {
         isMaster: 1,
@@ -286,6 +292,29 @@ This value is required when ``speculativeAuthenticate.saslStart`` is present.
 
 This value notifies newer servers to shorten the authentication conversation by
 one round trip. Older servers will ignore this field.
+
+If the ``isMaster`` command with a ``speculativeAuthenticate`` argument succeeds,
+the client should proceed with the next step of the exchange. If the ``isMaster``
+response does not include a ``speculativeAuthenticate`` reply and the ``ok`` field
+in the ``isMaster`` response is set to 1, drivers MUST authenticate using the standard
+authentication handshake.
+
+If an authentication mechanism is not provided either via connection string or code, but
+a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
+authentication. If no authentication mechanism and no credential are provided, drivers
+MUST continue to authenticate using the standard authentication handshake.
+
+Older servers will ignore the ``speculativeAuthenticate`` argument. New servers will
+participate in the standard authentication conversation if this argument is missing.
+
+Drivers MUST set ``speculativeAuthenticate.saslStart`` if either of the authentication
+mechanisms SCRAM-SHA-1 or SCRAM-SHA-256 has been indicated, or if no mechanism has been
+provided. ``speculativeAuthenticate.saslStart`` MUST NOT be set for any other
+authentication mechanism.
+
+Drivers MUST set ``speculativeAuthenticate.authenticate`` if the authentication mechanism
+MONGODB-X509 has been indicated. ``speculativeAuthenticate.authenticate`` MUST NOT be set
+for any other authentication mechanism.
 
 
 Supporting Wrapping Libraries

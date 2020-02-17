@@ -270,8 +270,8 @@ for speculative authentication, and the ``ok`` field in the ``isMaster`` respons
 set to 1, drivers MUST authenticate using the standard authentication handshake.
 
 If an authentication mechanism is not provided either via connection string or code, but
-a password is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
-authentication. If no authentication mechanism and no password are provided, drivers
+a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
+authentication. If no authentication mechanism and no credential are provided, drivers
 MUST continue to authenticate using the standard authentication handshake.
 
 Older servers will ignore the ``speculativeAuthenticate`` argument. New servers will
