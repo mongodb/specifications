@@ -1,43 +1,81 @@
-description: "Replica set member with large maxWireVersion"
+description: "Discover passives with replicaSet URI option"
 
-uri: "mongodb://a,b/?replicaSet=rs"
+uri: "mongodb://a/?replicaSet=rs"
 
 phases: [
+
     {
         responses: [
+
                 ["a:27017", {
+
                     ok: 1,
                     ismaster: true,
+                    hosts: ["a:27017"],
+                    passives: ["b:27017"],
                     setName: "rs",
-                    hosts: ["a:27017", "b:27017"],
                     minWireVersion: 0,
                     maxWireVersion: 6
-                }],
-                ["b:27017", {
-                    ok: 1,
-                    ismaster: false,
-                    secondary: true,
-                    setName: "rs",
-                    hosts: ["a:27017", "b:27017"],
-                    minWireVersion: 0,
-                    maxWireVersion: 1000
                 }]
         ],
+
         outcome: {
+
             servers: {
+
                 "a:27017": {
+
                     type: "RSPrimary",
                     setName: "rs"
                 },
+
                 "b:27017": {
+
+                    type: "Unknown",
+                    setName:
+                }
+            },
+            topologyType: "ReplicaSetWithPrimary",
+            logicalSessionTimeoutMinutes: null,
+            setName: "rs"
+        }
+    },
+    {
+        responses: [
+
+                ["b:27017", {
+
+                    ok: 1,
+                    ismaster: false,
+                    secondary: true,
+                    passive: true,
+                    hosts: ["a:27017"],
+                    passives: ["b:27017"],
+                    setName: "rs",
+                    minWireVersion: 0,
+                    maxWireVersion: 6
+                }]
+        ],
+
+        outcome: {
+
+            servers: {
+
+                "a:27017": {
+
+                    type: "RSPrimary",
+                    setName: "rs"
+                },
+
+                "b:27017": {
+
                     type: "RSSecondary",
                     setName: "rs"
                 }
             },
             topologyType: "ReplicaSetWithPrimary",
-            setName: "rs",
             logicalSessionTimeoutMinutes: null,
-            compatible: true
+            setName: "rs"
         }
     }
 ]
