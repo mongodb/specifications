@@ -365,18 +365,36 @@ The hostname portion of each address MUST be normalized to lower-case.
 Initial TopologyType
 ~~~~~~~~~~~~~~~~~~~~
 
-The user MUST be able to set the initial TopologyType to Single.
+If the ``directConnect`` URI option is specified when a MongoClient is
+constructed, the TopologyType must be initialized based on the value of
+the option according to the following table:
 
-The user MAY be able to initialize it to ReplicaSetNoPrimary.
-This provides the user a way to tell the client
-it can only connect to replica set members.
-Similarly the user MAY be able to initialize it to Sharded,
-to connect only to mongoses.
++-------------------------------+-----------------------+
+| directConnect option value    | Initial TopologyType  |
++===============================+=======================+
+| true                          | Single                |
++-------------------------------+-----------------------+
+| false                         | Unknown               |
++-------------------------------+-----------------------+
 
-The user MAY be able to initialize it to Unknown, to allow for discovery of any
-topology type based only on ismaster responses.
+If directConnect option is not specified, newly developed drivers MUST behave
+as if it was specified with the false value.
 
-The API for initializing TopologyType is not specified here.
+Since changing the starting topology can reasonably be considered a
+backwards-breaking change, existing drivers SHOULD stage implementation
+according to semantic versioning guidelines. Specifically, support for the
+``directConnection`` URI option can be added in a minor release.
+In a subsequent major release, the default starting topology can be changed
+to Unknown. Drivers MUST document this in a prior minor release.
+
+Existing drivers MUST deprecate other URI options, if any, for controlling
+topology discovery or specifying the deployment topology. If such a egacy
+option is specified and the ``directConnection`` option is also
+specified, and the values of the two options are semantically different,
+the driver MUST report an error during URI option parsing.
+
+The API for initializing TopologyType using language-specific native options
+is not specified here.
 Drivers might already have a convention, e.g. a single seed means Single,
 a setName means ReplicaSetNoPrimary,
 and a list of seeds means Unknown.
@@ -394,7 +412,13 @@ as long as all the required features are somehow supported.
 Initial setName
 ~~~~~~~~~~~~~~~
 
-The user MUST be able to set the client's initial replica set name.
+It is allowed to use ``directConnection=true`` in conjunction with the
+``replicaSet`` URI option. The driver must connect in Single topology and
+verify that setName matches the specified name, as per
+`verifying setName with TopologyType Single`_.
+
+When a MongoClient is initialized using language-specific native options,
+the user MUST be able to set the client's initial replica set name.
 A driver MAY require the set name in order to connect to a replica set,
 or it MAY be able to discover the replica set name as it connects.
 
@@ -404,10 +428,21 @@ Allowed configuration combinations
 Drivers MUST enforce:
 
 * TopologyType Single cannot be used with multiple seeds.
+* ``directConnection=true`` cannot be used with multiple seeds.
 * If setName is not null, only TopologyType ReplicaSetNoPrimary,
   and possibly Single,
   are allowed.
   (See `verifying setName with TopologyType Single`_.)
+
+Handling of SRV URIs resolving to single host
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a driver is given an SRV URI, if the ``directConnection`` URI option
+is not specified, and the ``replicaSet`` URI option is not specified, the
+driver MUST start in Unknown topology, and follow the rules in the
+`TopologyType table`_ for transitioning to other topologies. In particular,
+the driver MUST NOT use the number of hosts from the initial SRV lookup
+to decide what topology to start in.
 
 heartbeatFrequencyMS
 ````````````````````
@@ -2365,6 +2400,12 @@ If the application uses some servers very infrequently,
 monitoring can also proactively detect state changes
 (primary stepdown, server becoming unavailable)
 that would otherwise cause future errors.
+
+Why is auto-discovery the preferred default?
+''''''''''''''''''''''''''''''''''''''''''''
+
+Auto-discovery is most resilient and is therefore preferred.
+
 
 Acknowledgments
 ---------------
