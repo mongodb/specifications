@@ -1,4 +1,4 @@
-description: "Replica set discovery from primary"
+description: "Hidden discovered"
 
 uri: "mongodb://a/?directConnection=false"
 
@@ -10,12 +10,14 @@ phases: [
                 ["a:27017", {
 
                     ok: 1,
-                    ismaster: true,
+                    ismaster: false,
+                    secondary: true,
+                    hidden: true,
+                    hosts: ["c:27017", "d:27017"],
                     setName: "rs",
-                    hosts: ["a:27017", "b:27017"],
                     minWireVersion: 0,
                     maxWireVersion: 6
-                }]
+                }],
         ],
 
         outcome: {
@@ -24,17 +26,23 @@ phases: [
 
                 "a:27017": {
 
-                    type: "RSPrimary",
+                    type: "RSOther",
                     setName: "rs"
                 },
 
-                "b:27017": {
+                "c:27017": {
 
                     type: "Unknown",
-                    setName:
+                    setName: 
+                },
+
+                "d:27017": {
+
+                    type: "Unknown",
+                    setName: 
                 }
             },
-            topologyType: "ReplicaSetWithPrimary",
+            topologyType: "ReplicaSetNoPrimary",
             logicalSessionTimeoutMinutes: null,
             setName: "rs"
         }

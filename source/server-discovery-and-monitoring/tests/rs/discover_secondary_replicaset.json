@@ -1,6 +1,6 @@
 {
-  "description": "Ghost discovered",
-  "uri": "mongodb://a,b/?replicaSet=rs",
+  "description": "Discover secondary with replicaSet URI option",
+  "uri": "mongodb://b/?replicaSet=rs",
   "phases": [
     {
       "responses": [
@@ -9,7 +9,12 @@
           {
             "ok": 1,
             "ismaster": false,
-            "isreplicaset": true,
+            "secondary": true,
+            "setName": "rs",
+            "hosts": [
+              "a:27017",
+              "b:27017"
+            ],
             "minWireVersion": 0,
             "maxWireVersion": 6
           }
@@ -22,8 +27,8 @@
             "setName": null
           },
           "b:27017": {
-            "type": "RSGhost",
-            "setName": null
+            "type": "RSSecondary",
+            "setName": "rs"
           }
         },
         "topologyType": "ReplicaSetNoPrimary",

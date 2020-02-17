@@ -1,6 +1,6 @@
 {
-  "description": "Direct connection to mongos",
-  "uri": "mongodb://a/?directConnection=true",
+  "description": "Discover single mongos",
+  "uri": "mongodb://a/?directConnection=false",
   "phases": [
     {
       "responses": [
@@ -9,9 +9,7 @@
           {
             "ok": 1,
             "ismaster": true,
-            "msg": "isdbgrid",
-            "minWireVersion": 0,
-            "maxWireVersion": 6
+            "msg": "isdbgrid"
           }
         ]
       ],
@@ -22,8 +20,7 @@
             "setName": null
           }
         },
-        "topologyType": "Single",
-        "logicalSessionTimeoutMinutes": null,
+        "topologyType": "Sharded",
         "setName": null
       }
     }
