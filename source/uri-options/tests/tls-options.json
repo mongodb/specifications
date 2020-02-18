@@ -13,17 +13,17 @@
         "tlsCertificateKeyFile": "cert.pem"
       }
     },
-	{
-		"description": "Valid tlsCertificateKeyFilePassword is parsed correctly",
-        "uri": "mongodb://example.com/?tlsCertificateKeyFilePassword=hunter2",
-      	"valid": true,
-		"warning": false,
-		"hosts": null,
-		"auth": null,
-		"options": {
-		  "tlsCertificateKeyFilePassword": "hunter2"
-		}
-	},
+    {
+      "description": "Valid tlsCertificateKeyFilePassword is parsed correctly",
+      "uri": "mongodb://example.com/?tlsCertificateKeyFilePassword=hunter2",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "tlsCertificateKeyFilePassword": "hunter2"
+      }
+    },
     {
       "description": "Invalid tlsAllowInvalidCertificates causes a warning",
       "uri": "mongodb://example.com/?tlsAllowInvalidCertificates=invalid",
