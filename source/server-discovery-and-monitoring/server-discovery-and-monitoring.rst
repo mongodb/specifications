@@ -9,7 +9,7 @@ Server Discovery And Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: 2.16
-:Last Modified: 2020-02-20
+:Last Modified: 2020-03-31
 
 .. contents::
 
@@ -214,6 +214,54 @@ minHeartbeatFrequencyMS
 Defined in the `Server Monitoring spec`_. This value MUST be 500 ms, and
 it MUST NOT be configurable.
 
+pool generation number
+``````````````````````
+
+The pool's generation number which starts at 0 and is incremented each time
+the pool is cleared. Defined in the `Connection Monitoring and Pooling spec`_.
+
+connection generation number
+````````````````````````````
+
+The pool's generation number at the time this connection was created.
+Defined in the `Connection Monitoring and Pooling spec`_.
+
+error generation number
+```````````````````````
+
+The error's generation number is the generation of the connection on which the
+application error occured. Note that when a network error occurs before the
+handshake completes then the error's generation number is the generation of
+the pool at the time the connection attempt was started.
+
+State Change Error
+``````````````````
+
+A server reply document indicating a "not master" or "node is recovering"
+error. One of the following errors:
+
+.. list-table::
+  :header-rows: 1
+
+  * - Error Name
+    - Error Code
+  * - NotMaster
+    - 10107
+  * - NotMasterNoSlaveOk
+    - 13435
+  * - InterruptedAtShutdown
+    - 11600
+  * - InterruptedDueToReplStateChange
+    - 11602
+  * - NotMasterOrSecondary
+    - 13436
+  * - PrimarySteppedDown
+    - 189
+  * - ShutdownInProgress
+    - 91
+
+Starting in MongoDB 4.4 these errors may also include a toplogyVersion field.
+
 Data structures
 '''''''''''''''
 
@@ -332,6 +380,9 @@ Fields:
   Default null.
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
 * (=) logicalSessionTimeoutMinutes: integer or null. Default null.
+* (=) topologyVersion: A topologyVersion or null. Default null.
+  The "topologyVersion" from the server's most recent ismaster or State Change
+  Error response.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -514,11 +565,20 @@ Parsing an ismaster response
 ''''''''''''''''''''''''''''
 
 The client represents its view of each server with a `ServerDescription`_.
-Each time the client `checks`_ a server,
-it MUST replace its description of that server with a new one.
-This replacement MUST happen even if the new server description compares
-equal to the previous one, in order to keep client-tracked attributes
-like last update time and round trip time up to date.
+Each time the client `checks`_ a server, it MUST replace its description of
+that server with a new one if and only if one or more of the following
+conditions are true:
+
+#. The current ServerDescription's topologyVersion is null.
+#. The new ServerDescription's topologyVersion is null.
+#. The current ServerDescription's topologyVersion is less or equal to the
+   new ServerDescription's topologyVersion.
+
+(See `Replacing the TopologyDescription`_ for an example implementation.)
+
+This replacement MUST happen even if the new server description compares equal
+to the previous one, in order to keep client-tracked attributes like last
+update time and round trip time up to date.
 
 ServerDescriptions are created from ismaster outcomes as follows:
 
@@ -669,6 +729,43 @@ MongoDB 3.6 and later include a ``logicalSessionTimeoutMinutes`` field if
 logical sessions are enabled in the deployment. Clients MUST check for this
 field and set the ServerDescription's logicalSessionTimeoutMinutes field to this
 value, or to null otherwise.
+
+topologyVersion
+```````````````
+
+MongoDB 4.4 and later include a ``topologyVersion`` field in all isMaster
+and State Change Error responses. Clients MUST check for this field in both
+"ok: 1" and "ok: 0" replies and set the ServerDescription's topologyVersion
+field to this value, or to null otherwise. The topologyVersion helps the
+client and server determine the relative freshness of topology information
+in concurrent messages. (See `What is the purpose of topologyVersion?`_)
+
+The topologyVersion is a subdocument with two fields, "processId" and
+"counter":
+
+.. code:: typescript
+
+    {
+        topologyVersion: {processId: <ObjectId>, counter: <int64>},
+        ( ... other fields ...)
+    }
+
+topologyVersion Comparison
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To compare a topologyVersion from an isMaster or State Change Error
+response to the current ServerDescription's topologyVersion:
+
+#. If the response topologyVersion is unset or the ServerDescription's
+   topologyVersion is null, the client MUST assume the response is more recent.
+#. If the response's topologyVersion.processId is not equal to the
+   ServerDescription's, the client MUST assume the response is more recent.
+#. If the response's topologyVersion.processId is equal to the
+   ServerDescription's, the client MUST use the counter field to determine
+   which topologyVersion is more recent.
+
+See `Replacing the TopologyDescription`_ for an example implementation of
+topologyVersion comparison.
 
 Other ServerDescription fields
 ``````````````````````````````
@@ -1149,7 +1246,7 @@ we distinguish two phases of connecting to a server and using it for application
 
 If there is a network error or timeout on the connection before the handshake completes,
 the client MUST replace the server's description
-with a default ServerDescription of type Unknown,
+with a default ServerDescription of type Unknown, with null topologyVersion,
 and fill the ServerDescription's error field with useful information.
 
 If there is a network timeout on the connection after the handshake completes,
@@ -1272,26 +1369,31 @@ recovering" error::
     def parse_gle(response):
         if "err" in response:
             if is_notmaster_or_recovering(response["err"], response["code"]):
-                handle_notmaster_or_recovering(response["err"], response["code"])
+                handle_notmaster_or_recovering(response, response["err"], response["code"])
 
     # Parse response to any command besides getLastError.
     def parse_command_response(response):
         if not response["ok"]:
             if is_notmaster_or_recovering(response["errmsg"], response["code"]):
-                handle_notmaster_or_recovering(response["errmsg"], response["code"])
+                handle_notmaster_or_recovering(response, response["errmsg"], response["code"])
         else if response["writeConcernError"]:
             wce = response["writeConcernError"]
             if is_notmaster_or_recovering(wce["errmsg"], wce["code"]):
-                handle_notmaster_or_recovering(wce["errmsg"], wce["code"])
+                handle_notmaster_or_recovering(response, wce["errmsg"], wce["code"])
 
     def parse_query_response(response):
         if the "QueryFailure" bit is set in response flags:
             if is_notmaster_or_recovering(response["$err"], response["code"]):
-                handle_notmaster_or_recovering(response["$err"], response["code"])
+                handle_notmaster_or_recovering(response, response["$err"], response["code"])
 
-    def handle_notmaster_or_recovering(message, code):
-        replace server's description with
-        new ServerDescription(type=Unknown, error=message, code=code)
+    def handle_notmaster_or_recovering(response, message, code):
+        # Ignore stale errors based on generation and topologyVersion.
+        if not shouldHandleError(client.topologyDescription, response)
+            return
+
+        # Mark the server Unknown
+        unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
+        onServerDescriptionChanged(unknown)
 
         if multi-threaded:
             request immediate check
@@ -1304,6 +1406,20 @@ recovering" error::
 
         if is_shutdown(code) or (error was from <4.2):
             clear connection pool for server
+
+    def shouldHandleError(td, response):
+        currentServer = td.servers[server.address]
+        currentGeneration = currentServer.pool.generation
+        generation = get connection generation from response
+        if generation < currentGeneration:
+            # Stale generation number.
+            return False
+
+        currentTv = currentServer.topologyVersion
+        if currentTv is null or "topologyVersion" not in response:
+            return True
+        # True if the current server's topologyDescription is < error’s
+        return compareTopologyVersion(currentTv, response["topologyVersion"]) < 0
 
 See the test scenario called
 "parsing 'not master' and 'node is recovering' errors"
@@ -1348,6 +1464,26 @@ clear the server's connection pool if and only if the error is
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_ and `Why close connections when a node is shutting down?`_.)
+
+Reducing race conditions in error handling
+``````````````````````````````````````````
+
+Clients MUST NOT handle errors that have stale generation numbers. That is,
+when handling a network or command error, if the error's generation number
+is not equal to the current pool's generation number then the error MUST be
+ignored.
+
+Clients MUST NOT handle errors that have stale toplogyVersions. That is,
+a client MUST NOT handle a command error unless one or more of the following
+conditions are true:
+
+#. The current ServerDescription's topologyVersion is null.
+#. The command error does not contain a "topologyVersion" field.
+#. The current ServerDescription's topologyVersion is strictly less than the
+   command error's topologyVersion.
+
+(See `Why ignore errors based on CMAP's generation number?`_ and
+`What is the purpose of topologyVersion?`_)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -1490,6 +1626,12 @@ Once the client has taken the lock it must do no I/O::
 
         newTopologyDescription = client.topologyDescription.copy()
 
+        # Ignore this update if the current topologyVersion is greater than
+        # the new ServerDescription's.
+        if not shouldHandleServerDescription(td, server):
+            client.lock.release()
+            return
+
         # Replace server's previous description.
         address = server.address
         newTopologyDescription.servers[address] = server
@@ -1501,6 +1643,32 @@ Once the client has taken the lock it must do no I/O::
         client.topologyDescription = newTopologyDescription
         client.condition.notifyAll()
         client.lock.release()
+
+    def compareTopologyVersion(tv1, tv2):
+        """Return -1 if tv1<tv2, 0 if tv1==tv2, 1 if tv1>tv2"""
+        if tv1 is None or tv2 is None:
+            # Assume greater.
+            return -1
+        pid1 = tv1['processId']
+        pid2 = tv2['processId']
+        if pid1 == pid2:
+            counter1 = tv1['counter']
+            counter2 = tv2['counter']
+            if counter1 == counter2:
+                return 0
+            elif counter1 < counter2:
+                return -1
+            else:
+                return 1
+        else:
+            # Assume greater.
+            return -1
+
+    def shouldHandleServerDescription(td, server):
+        # True if the current server's topologyDescription is <= the new one.
+        currentServer = td.servers[server.address]
+        currentTv = currentServer.topologyVersion
+        return compareTopologyVersion(currentTv, server.topologyVersion) <= 0
 
 .. https://github.com/mongodb/mongo-java-driver/blob/5fb47a3bf86c56ed949ce49258a351773f716d07/src/main/com/mongodb/BaseCluster.java#L160
 
@@ -1921,6 +2089,73 @@ shard:
 When these are returned, the mongos should *not* be marked as "Unknown", since
 it is more likely an issue with the shard.
 
+Why ignore errors based on CMAP's generation number?
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Using CMAP's generation number solves the following race condition among
+application threads and the monitor during error handling:
+
+#. Two concurrent writes begin on application threads A and B.
+#. The server restarts.
+#. Thread A receives the first non-timeout network error, and the client
+   marks the server Unknown, and clears the server's pool.
+#. The client re-checks the server and marks it Primary.
+#. Thread B receives the second non-timeout network error and the client
+   marks the server Unknown again.
+
+The core issue is that the client processes errors in arbitrary order
+and may overwrite fresh information about the server's status with stale
+information. Using CMAP's generation number avoids the race condition because
+the duplicate (or stale) network error can be identified (changes in
+**bold**). This change applies to both the old protocol and new streaming
+protocol:
+
+#. Two concurrent writes begin on application threads A and B, **with
+   generation 1**.
+#. The server restarts.
+#. Thread A receives the first non-timeout network error, and the client
+   marks the server Unknown, and clears the server's pool. **The
+   pool's generation is now 2.**
+#. The client re-checks the server and marks it Primary.
+#. Thread B receives the second non-timeout network error, **and the
+   client ignores the error because the error originated from a
+   connection with generation 1.**
+
+What is the purpose of topologyVersion?
+'''''''''''''''''''''''''''''''''''''''
+
+topologyVersion solves the following race condition among application threads
+and the monitor when handling State Change Errors:
+
+#. Two concurrent writes begin on application threads A and B.
+#. The primary steps down.
+#. Thread A receives the first State Change Error, the client marks the
+   server Unknown.
+#. The client re-checks the server and marks it Secondary.
+#. Thread B receives a delayed State Change Error and the client marks
+   the server Unknown again.
+
+The core issue is that the client processes errors in arbitrary order
+and may overwrite fresh information about the server's status with stale
+information. Using topologyVersion avoids the race condition because the
+duplicate (or stale) State Change Errors can be identified (changes in
+**bold**). This change applies to both the old protocol and new streaming
+protocol:
+
+#. Two concurrent writes begin on application threads A and B.
+
+   a. **The primary's ServerDescription.topologyVersion == tv1**
+
+#. The primary steps down **and sets its topologyVersion to tv2**.
+#. Thread A receives the first State Change Error **containing tv2**,
+   the client marks the server Unknown (**with topologyVersion: tv2**).
+#. The client re-checks the server and marks it Secondary (**with
+   topologyVersion: tv2**).
+#. Thread B receives a delayed State Change Error (**with
+   topologyVersion: tv2**) **and the client ignores the error because
+   the error's topologyVersion (tv2) is not greater than the current
+   ServerDescription (tv2).**
+
 Clients use the hostnames listed in the replica set config, not the seed list
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -2137,6 +2372,9 @@ authentication.
 2020-02-13: Drivers must run SDAM flow even when server description is equal
 to the last one.
 
+2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring
+stale application errors.
+
 .. Section for links.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
@@ -2147,3 +2385,4 @@ to the last one.
 .. _scanning order: server-monitoring.rst#scanning-order
 .. _clients update the topology from each handshake: server-monitoring.rst#clients-update-the-topology-from-each-handshake
 .. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
+.. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
