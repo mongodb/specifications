@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.15
-:Last Modified: 2020-02-13
+:Version: 2.16
+:Last Modified: 2020-02-20
 
 .. contents::
 
@@ -166,9 +166,7 @@ a boolean indicating the success or failure of the attempt,
 a document containing the command response (or null if it failed),
 and the round trip time to execute the command (or null if it failed).
 
-.. _checks:
-.. _checking:
-.. _checked:
+.. _checks: #check
 
 check
 `````
@@ -176,8 +174,7 @@ check
 The client checks a server by attempting to call ismaster on it,
 and recording the outcome.
 
-.. _scans:
-.. _rescan:
+.. _scans: #scan
 
 scan
 ````
@@ -209,6 +206,13 @@ network timeout
 ```````````````
 
 A timeout that occurs while reading from or writing to a network socket.
+
+
+minHeartbeatFrequencyMS
+```````````````````````
+
+Defined in the `Server Monitoring spec`_. This value MUST be 500 ms, and
+it MUST NOT be configurable.
 
 Data structures
 '''''''''''''''
@@ -334,7 +338,7 @@ The client treats them precisely the same as other members.
 
 Fields marked (=) are used for `Server Description Equality`_ comparison.
 
-.. _configured:
+.. _configured: #configuration
 
 Configuration
 '''''''''''''
@@ -464,219 +468,12 @@ when the first operation is attempted.
 Monitoring
 ''''''''''
 
-The client monitors servers by `checking`_ them periodically,
-pausing `heartbeatFrequencyMS`_ between checks.
-Clients check servers sooner in response to certain events.
+See the `Server Monitoring spec`_ for how a driver monitors each server. In
+summary, the client monitors each server in the topology. The scope of server
+monitoring is to provide the topology with updated ServerDescriptions based on
+isMaster command responses.
 
-The socket used to check a server MUST use the same
-`connectTimeoutMS <http://docs.mongodb.org/manual/reference/connection-string/>`_
-as regular sockets.
-Multi-threaded clients SHOULD set monitoring sockets' socketTimeoutMS to the
-connectTimeoutMS.
-(See `socket timeout for monitoring is connectTimeoutMS`_.
-Drivers MAY let users configure the timeouts for monitoring sockets
-separately if necessary to preserve backwards compatibility.)
-
-The client begins monitoring a server when:
-
-* ... the client is initialized and begins monitoring each seed.
-  See `initial servers`_.
-* ... `updateRSWithoutPrimary`_ or `updateRSFromPrimary`_
-  discovers new replica set members.
-
-When checking a server, clients MUST NOT include SCRAM mechanism
-negotiation requests with the ``isMaster`` command, as doing so would
-make monitoring checks more expensive for the server.
-
-The following subsections specify how monitoring works,
-first in multi-threaded or asynchronous clients,
-and second in single-threaded clients.
-This spec provides detailed requirements for monitoring
-because it intends to make all drivers behave consistently.
-
-.. _mt-monitoring:
-
-Multi-threaded or asynchronous monitoring
-`````````````````````````````````````````
-
-(See also: `implementation notes for multi-threaded clients`_.)
-
-Servers are monitored in parallel
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-All servers' monitors run independently, in parallel:
-If some monitors block calling ismaster over slow connections,
-other monitors MUST proceed unimpeded.
-
-The natural implementation is a thread per server,
-but the decision is left to the implementer.
-(See `thread per server`_.)
-
-Servers are monitored with dedicated sockets
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`A monitor SHOULD NOT use the client's regular connection pool`_
-to acquire a socket;
-it uses a dedicated socket that does not count toward the pool's
-maximum size.
-
-Drivers MUST NOT authenticate on sockets used for monitoring.
-
-Servers are checked periodically
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Each monitor `checks`_ its server and notifies the client of the outcome
-so the client can update the TopologyDescription.
-
-After each check, the next check SHOULD be scheduled `heartbeatFrequencyMS`_ later;
-a check MUST NOT run while a previous check is still in progress.
-
-.. _request an immediate check:
-
-Requesting an immediate check
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-At any time, the client can request that a monitor check its server immediately.
-(For example, after a "not master" error. See `error handling`_.)
-If the monitor is sleeping when this request arrives,
-it MUST wake and check as soon as possible.
-If an ismaster call is already in progress,
-the request MUST be ignored.
-If the previous check ended less than `minHeartbeatFrequencyMS`_ ago,
-the monitor MUST sleep until the minimum delay has passed,
-then check the server.
-
-Application operations are unblocked when a server is found
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Each time a check completes, threads waiting for a `suitable`_ server
-are unblocked. Each unblocked thread MUST proceed if the new TopologyDescription
-now contains a suitable server.
-
-As an optimization, the client MAY leave threads blocked
-if a check completes without detecting any change besides
-`round trip time`_: no operation that was blocked will
-be able to proceed anyway.
-
-Clients update the topology from each handshake
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When a client successfully calls ismaster to handshake a new connection for application
-operations, it SHOULD use the ismaster reply to update the ServerDescription
-and TopologyDescription, the same as with an ismaster reply on a monitoring
-socket. If the ismaster call fails, the client SHOULD mark the server Unknown
-and update its TopologyDescription, the same as a failed server check on
-monitoring socket.
-
-.. _st-monitoring:
-
-Single-threaded monitoring
-``````````````````````````
-
-cooldownMS
-~~~~~~~~~~
-
-After a single-threaded client gets a network error trying to `check`_ a
-server, the client skips re-checking the server until cooldownMS has passed.
-
-This avoids spending connectTimeoutMS on each unavailable server
-during each scan.
-
-This value MUST be 5000 ms, and it MUST NOT be configurable.
-
-Scanning
-~~~~~~~~
-
-Single-threaded clients MUST `scan`_ all servers synchronously,
-inline with regular application operations.
-Before each operation, the client checks if `heartbeatFrequencyMS`_ has
-passed since the previous scan ended, or if the topology is marked "stale";
-if so it scans all the servers before
-selecting a server and performing the operation.
-
-Selection failure triggers an immediate scan, see
-`single-threaded server selection`_.
-
-Scanning order
-~~~~~~~~~~~~~~
-
-If the topology is a replica set,
-the client attempts to contact the primary as soon as possible
-to get an authoritative list of members.
-Otherwise, the client attempts to check all members it knows of,
-in order from the least-recently to the most-recently checked.
-
-When all servers have been checked the scan is complete.
-New servers discovered **during** the scan
-MUST be checked before the scan is complete.
-Sometimes servers are removed during a scan
-so they are not checked, depending on the order of events.
-
-The scanning order is expressed in this pseudocode::
-
-    scanStartTime = now()
-    # You'll likely need to convert units here.
-    beforeCoolDown = scanStartTime - cooldownMS
-
-    while true:
-        serversToCheck = all servers with lastUpdateTime before scanStartTime
-
-        remove from serversToCheck any Unknowns with lastUpdateTime > beforeCoolDown
-
-        if no serversToCheck:
-            # This scan has completed.
-            break
-
-        if a server in serversToCheck is RSPrimary:
-            check it
-        else if there is a PossiblePrimary:
-            check it
-        else if any servers are not of type Unknown or RSGhost:
-            check the one with the oldest lastUpdateTime
-            if several servers have the same lastUpdateTime, choose one at random
-        else:
-            check the Unknown or RSGhost server with the oldest lastUpdateTime
-            if several servers have the same lastUpdateTime, choose one at random
-
-This algorithm might be better understood with an example:
-
-#. The client is configured with one seed and TopologyType Unknown.
-   It begins a scan.
-#. When it checks the seed, it discovers a secondary.
-#. The secondary's ismaster response includes the "primary" field
-   with the address of the server that the secondary thinks is primary.
-#. The client creates a ServerDescription with that address,
-   type PossiblePrimary, and lastUpdateTime "infinity ago".
-   (See `updateRSWithoutPrimary`_.)
-#. On the next iteration, there is still no RSPrimary,
-   so the new PossiblePrimary is the top-priority server to check.
-#. The PossiblePrimary is checked and replaced with an RSPrimary.
-   The client has now acquired an authoritative host list.
-   Any new hosts in the list are added to the TopologyDescription
-   with lastUpdateTime "infinity ago".
-   (See `updateRSFromPrimary`_.)
-#. The client continues scanning until all known hosts have been checked.
-
-Another common case might be scanning a pool of mongoses.
-When the client first scans its seed list,
-they all have the default lastUpdateTime "infinity ago",
-so it scans them in random order.
-This randomness provides some load-balancing if many clients start at once.
-A client's subsequent scans of the mongoses
-are always in the same order,
-since their lastUpdateTimes are always in the same order
-by the time a scan ends.
-
-minHeartbeatFrequencyMS
-```````````````````````
-
-If a client frequently rechecks a server,
-it MUST wait at least minHeartbeatFrequencyMS milliseconds
-since the previous check ended, to avoid pointless effort.
-This value MUST be 500 ms, and it MUST NOT be configurable.
-(See `no knobs`_.)
-
-.. _parses them:
+.. _parses them: #parsing-an-ismaster-response
 
 Parsing an ismaster response
 ''''''''''''''''''''''''''''
@@ -730,7 +527,7 @@ A server can transition from any state to any other.
 For example, an administrator could shut down a secondary
 and bring up a mongos in its place.
 
-.. _RSGhost:
+.. _RSGhost: #RSGhost-and-RSOther
 
 RSGhost and RSOther
 ~~~~~~~~~~~~~~~~~~~
@@ -1222,9 +1019,8 @@ updateRSFromPrimary
   the client finds the previous primary (there should be none or one)
   and replaces its description
   with a default ServerDescription of type "Unknown."
-  A multi-threaded client MUST check that server as soon as possible.
-  (The Monitor provides a "request refresh" feature for this purpose,
-  see `multi-threaded or asynchronous monitoring`_.)
+  A multi-threaded client MUST `request an immediate check`_ for that server as
+  soon as possible.
 
   If the old primary server version is 4.0 or earlier,
   the client MUST clear its connection pool for the old primary, too:
@@ -1565,6 +1361,8 @@ This section intends to provide generous guidance to driver authors.
 It is complementary to the reference implementations.
 Words like "should", "may", and so on are used more casually here.
 
+See also, the implementation notes in the `Server Monitoring spec`_.
+
 .. _interaction between monitoring and server selection:
 
 Multi-threaded or asynchronous server selection
@@ -1641,37 +1439,6 @@ as a whole `is compatible`_ with the driver,
 and which servers are suitable for selection.
 The monitors' responses should not be used to determine how to format
 wire protocol messages to the servers.
-
-Monitor thread
-~~~~~~~~~~~~~~
-
-Most platforms can use an event object
-to control the monitor thread.
-The event API here is assumed to be like the standard `Python Event
-<https://docs.python.org/2/library/threading.html#event-objects>`_.
-`heartbeatFrequencyMS`_ is configurable,
-`minHeartbeatFrequencyMS`_ is always 500 milliseconds::
-
-    def run():
-        while this monitor is not stopped:
-            check server and create newServerDescription
-            onServerDescriptionChanged(newServerDescription)
-
-            start = gettime()
-
-            # Can be awakened by requestCheck().
-            event.wait(heartbeatFrequencyMS)
-            event.clear()
-
-            waitTime = gettime() - start
-            if waitTime < minHeartbeatFrequencyMS:
-                # Cannot be awakened.
-                sleep(minHeartbeatFrequencyMS - waitTime)
-
-`Requesting an immediate check`_::
-
-    def requestCheck():
-        event.set()
 
 Immutable data
 ~~~~~~~~~~~~~~
@@ -1925,62 +1692,6 @@ the TopologyType MUST be set to Single.
 
 See the "member brought up as standalone" test scenario.
 
-Thread per server
-'''''''''''''''''
-
-Mongos uses a monitor thread per replica set, rather than a thread per server.
-A thread per server is impractical if mongos is monitoring a large number of
-replica sets.
-But a driver only monitors one.
-
-In mongos, threads trying to do reads and writes join the effort to scan
-the replica set.
-Such threads are more likely to be abundant in mongos than in drivers,
-so mongos can rely on them to help with monitoring.
-
-In short: mongos has different scaling concerns than
-a multi-threaded or asynchronous driver,
-so it allocates threads differently.
-
-Socket timeout for monitoring is connectTimeoutMS
-'''''''''''''''''''''''''''''''''''''''''''''''''
-
-When a client waits for a server to respond to a connection,
-the client does not know if the server will respond eventually or if it is down.
-Users can help the client guess correctly
-by supplying a reasonable connectTimeoutMS for their network:
-on some networks a server is probably down if it hasn't responded in 10 ms,
-on others a server might still be up even if it hasn't responded in 10 seconds.
-
-The socketTimeoutMS, on the other hand, must account for both network latency
-and the operation's duration on the server.
-Applications should typically set a very long or infinite socketTimeoutMS
-so they can wait for long-running MongoDB operations.
-
-Multi-threaded clients use distinct sockets for monitoring and for application
-operations.
-A socket used for monitoring does two things: it connects and calls ismaster.
-Both operations are fast on the server, so only network latency matters.
-Thus both operations SHOULD use connectTimeoutMS, since that is the value
-users supply to help the client guess if a server is down,
-based on users' knowledge of expected latencies on their networks.
-
-A monitor SHOULD NOT use the client's regular connection pool
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-If a multi-threaded driver's connection pool enforces a maximum size
-and monitors use sockets from the pool,
-there are two bad options:
-either monitors compete with the application for sockets,
-or monitors have the exceptional ability
-to create sockets even when the pool has reached its maximum size.
-The former risks starving the monitor.
-The latter is more complex than it is worth.
-(A lesson learned from PyMongo 2.6's pool, which implemented this option.)
-
-Since this rule is justified for drivers that enforce a maximum pool size,
-this spec recommends that all drivers follow the same rule
-for the sake of consistency.
 
 Replica set monitoring with and without a primary
 '''''''''''''''''''''''''''''''''''''''''''''''''
@@ -2376,8 +2087,6 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6
 contributed as well.
 Bernie Hackett gently oversaw the specification process.
 
-.. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
-
 Changes
 -------
 
@@ -2434,3 +2143,14 @@ authentication.
 
 2020-02-13: Drivers must run SDAM flow even when server description is equal
 to the last one.
+
+.. Section for links.
+
+.. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
+.. _Server Monitoring spec: source/server-discovery-and-monitoring/server-monitoring.rst
+.. _requesting an immediate check: source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
+.. _request an immediate check: source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
+.. _scanning order: source/server-discovery-and-monitoring/server-monitoring.rst#scanning-order
+.. _clients update the topology from each handshake: source/server-discovery-and-monitoring/server-monitoring.rst#clients-update-the-topology-from-each-handshake
+.. _single-threaded monitoring: source/server-discovery-and-monitoring/server-monitoring.rst#single-threaded-monitoring
+.. _single-threaded monitoring: source/server-discovery-and-monitoring/server-monitoring.rst#single-threaded-monitoring
