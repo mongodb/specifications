@@ -1098,40 +1098,7 @@ Error handling
 Network error during server check
 `````````````````````````````````
 
-When a server `check`_ fails due to a network error (including a network timeout),
-the client MUST clear its connection pool for the server:
-if the monitor's socket is bad it is likely that all are.
-(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
-
-Once a server is connected, the client MUST change its type
-to Unknown
-only after it has retried the server once.
-(This rule applies to server checks during monitoring.
-It does *not* apply when multi-threaded
-`clients update the topology from each handshake`_.)
-
-In this pseudocode, "description" is the prior ServerDescription::
-
-    def checkServer(description):
-        try:
-            call ismaster
-            return new ServerDescription
-        except NetworkError as e0:
-            clear connection pool for the server
-
-            if description.type is Unknown or PossiblePrimary:
-                # Failed on first try to reach this server, give up.
-                return new ServerDescription with type=Unknown, error=e0
-            else:
-                # We've been connected to this server in the past, retry once.
-                try:
-                    reconnect and call ismaster
-                    return new ServerDescription
-                except NetworkError as e1:
-                    return new ServerDescription with type=Unknown, error=e1
-
-(See `retry ismaster calls once`_ and
-`JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
+See error handling in the `Server Monitoring spec`_.
 
 Network error when reading or writing
 `````````````````````````````````````
@@ -1884,21 +1851,6 @@ it would trust whichever config it received first.
 
 mongos 2.6 ignores setVersion and only trusts the primary.
 This spec requires all clients to ignore setVersion from non-primaries.
-
-Retry ismaster calls once
-'''''''''''''''''''''''''
-
-A monitor's connection to a server is long-lived
-and used only for ismaster calls.
-So if a server has responded in the past,
-a network error on the monitor's connection likely means there was
-a network glitch or a server restart since the last check,
-rather than that the server is down.
-Marking the server Unknown in this case costs unnecessary effort.
-
-However,
-if the server still doesn't respond when the monitor attempts to reconnect,
-then it is probably down.
 
 Use error messages to detect "not master" and "node is recovering"
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
