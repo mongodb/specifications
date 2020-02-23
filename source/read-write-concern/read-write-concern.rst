@@ -517,6 +517,30 @@ have been abbreviated:
 - ``{ok:1, writeConcernError: {code: 100, codeName: "UnsatisfiableWriteConcern", errmsg: "Not enough data-bearing nodes"}}``
 - ``{ok:1, writeConcernError: {code: 79, codeName: "UnknownReplWriteConcern"}}``
 
+A writeConcernError may include an "errInfo" field providing additional information (e.g. the source of the write concern associated with the error, which is useful when ). Here is an example:
+
+.. code:: javascript
+
+   {
+    "ok": 1,
+    "writeConcernError" : {
+        "code" : 64,
+        "codeName" : "WriteConcernFailed",
+        "errmsg" : "waiting for replication timed out",
+        "errInfo" : {
+            "wtimeout" : true,
+            "writeConcern" : {
+                "w" : 2,
+                "wtimeout" : 1000,
+                "provenance" : "clientSupplied"
+            }
+        }
+    }
+    /* ... */
+  }
+
+Drivers MUST not parse "errInfo" but MUST ensure that the "errInfo" object is propagated to the user in whatever way is idiomatic to the driver (exception, error object, etc.).
+
 Note also that it is possible for a writeConcernError to be attached to a
 command failure. For example:
 

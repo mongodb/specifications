@@ -70,6 +70,38 @@ The spec test format is an extension of `transactions spec tests <https://github
     If the driver has no way to explicitly set a default write concern on a database or collection, ignore the empty ``writeConcern`` document and continue with the test.
 - The operations ``createIndex``, ``dropIndex`` are introduced.
 
+Prose
+~~~~~
+
+The following tests have not yet been automated, but MUST still be tested.
+
+"errInfo" is propagated
+```````````````````````
+Test that a writeConcernError "errInfo" is propagated to the user in whatever way is idiomatic to the driver (exception, error object, etc.). Using a 4.0+ server, set the following failpoint:
+
+.. code:: javascript
+
+   {
+     "configureFailPoint": "failCommand",
+     "data": {
+       "failCommands": ["insert"],
+       "writeConcernError": {
+         "code": 100,
+         "codeName": "UnsatisfiableWriteConcern",
+         "errmsg": "Not enough data-bearing nodes",
+         "errInfo": {
+           "writeConcern": {
+             "w": 2,
+             "wtimeout": 0,
+             "provenance": "clientSupplied"
+           }
+         }
+       }
+     },
+     "mode": { "times": 1 }
+   }
+
+Then, perform an insert on the same database. Assert that an error occurs and that the "errInfo" is accessible and matches the one set in the failpoint.
 
 Use as unit tests
 =================
