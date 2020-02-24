@@ -4,11 +4,9 @@ Server Monitoring
 
 :Spec: 1580
 :Title: Server Monitoring
-:Author: Shane Harvey
-:Advisors: Matt broadstone
 :Status: Accepted
 :Type: Standards
-:Version: 2.15
+:Version: 2.16
 :Last Modified: 2020-02-20
 
 .. contents::
