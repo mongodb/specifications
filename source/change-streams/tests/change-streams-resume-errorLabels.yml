@@ -867,6 +867,7 @@ tests:
       data:
           errorCode: 13388
           closeConnection: false
+          errorExtraInfo: {}
     target: collection
     topology:
       - replicaset

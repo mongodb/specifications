@@ -1288,7 +1288,8 @@
         },
         "data": {
           "errorCode": 13388,
-          "closeConnection": false
+          "closeConnection": false,
+          "errorExtraInfo": {}
         }
       },
       "target": "collection",
