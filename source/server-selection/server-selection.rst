@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2020-02-12
+:Last Modified: 2020-02-24
 :Version: 1.11.0
 
 .. contents::
@@ -534,7 +534,6 @@ The read preference ``hedge`` parameter is a document that configures how the
 server will perform hedged reads. It consists of the following keys:
 
 - ``enabled`` (default true): This enables hedging
-- ``delay`` (default true): This enables staggered reads
 
 To explicitly enable hedging, an empty document must be sent to the server for
 the ``hedge`` option. This enables hedging with the default values specified
@@ -1765,7 +1764,7 @@ selection rules.
 
 2019-06-07: Clarify language for aggregate and mapReduce commands that write
 
-2020-02-12: Specify read preferences with support for server hedged reads
+2020-02-24: Specify read preferences with support for server hedged reads
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
