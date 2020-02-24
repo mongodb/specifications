@@ -214,16 +214,18 @@ When connected to a MongoDB instance that supports retryable writes (versions 3.
 the driver MUST treat all errors with the RetryableWriteError label as retryable.
 This label might be added to an error in a variety of ways:
 
+When the driver encounters a network error communicating with any server version
+that supports retryable writes, it MUST add a RetryableWriteError label to that
+error.
+
 For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
 errors or server responses that it considers retryable before returning them to the
 driver. As new server versions are released, the errors that are labeled with the
 RetryableWriteError label may change. When receiving a command result
 with an error from a 4.4+ server that supports retryable writes, the driver
-MUST NOT add a RetryableWriteError label to that error under any condition.
-
-When the driver encounters a network error communicating with any server version
-that supports retryable writes, it MUST add a RetryableWriteError label to that
-error.
+MUST NOT add a RetryableWriteError label to that error under any condition.   
+Note: With a WriteConcernError response the top level document or the 
+WriteConcernError document may contain the RetryableWriteError error label.
 
 When receiving a command result with an error from a pre-4.4 server that supports
 retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
