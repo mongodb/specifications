@@ -37,7 +37,7 @@ Terms
 See the terms in the `main SDAM spec`_.
 
 .. _checking: #check
-.. _checks: #checks
+.. _checks: #check
 
 check
 `````
