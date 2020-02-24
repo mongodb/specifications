@@ -2099,10 +2099,9 @@ to the last one.
 .. Section for links.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
-.. _Server Monitoring spec: source/server-discovery-and-monitoring/server-monitoring.rst
-.. _requesting an immediate check: source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
-.. _request an immediate check: source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
-.. _scanning order: source/server-discovery-and-monitoring/server-monitoring.rst#scanning-order
-.. _clients update the topology from each handshake: source/server-discovery-and-monitoring/server-monitoring.rst#clients-update-the-topology-from-each-handshake
-.. _single-threaded monitoring: source/server-discovery-and-monitoring/server-monitoring.rst#single-threaded-monitoring
-.. _single-threaded monitoring: source/server-discovery-and-monitoring/server-monitoring.rst#single-threaded-monitoring
+.. _Server Monitoring spec: /source/server-discovery-and-monitoring/server-monitoring.rst
+.. _requesting an immediate check: /source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
+.. _request an immediate check: /source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
+.. _scanning order: /source/server-discovery-and-monitoring/server-monitoring.rst#scanning-order
+.. _clients update the topology from each handshake: /source/server-discovery-and-monitoring/server-monitoring.rst#clients-update-the-topology-from-each-handshake
+.. _single-threaded monitoring: /source/server-discovery-and-monitoring/server-monitoring.rst#single-threaded-monitoring

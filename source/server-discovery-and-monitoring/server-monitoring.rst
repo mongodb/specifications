@@ -453,11 +453,10 @@ Changelog
 
 .. Section for links.
 
-.. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
-.. _Server Selection Spec: source/server-selection/server-selection.rst
-.. _main SDAM spec: source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst
-.. _heartbeatFrequencyMS in the main SDAM spec: source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatFrequencyMS
-.. _error handling: source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-.. _initial servers: source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#initial-servers
-.. _updateRSWithoutPrimary: source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#updateRSWithoutPrimary
-.. _updateRSFromPrimary: source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#updateRSFromPrimary
+.. _Server Selection Spec: /source/server-selection/server-selection.rst
+.. _main SDAM spec: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst
+.. _heartbeatFrequencyMS in the main SDAM spec: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatFrequencyMS
+.. _error handling: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
+.. _initial servers: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#initial-servers
+.. _updateRSWithoutPrimary: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#updateRSWithoutPrimary
+.. _updateRSFromPrimary: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#updateRSFromPrimary
