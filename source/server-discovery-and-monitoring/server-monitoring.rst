@@ -6,7 +6,7 @@ Server Monitoring
 :Title: Server Monitoring
 :Status: Accepted
 :Type: Standards
-:Version: 2.16
+:Version: 1.0
 :Last Modified: 2020-02-20
 
 .. contents::
