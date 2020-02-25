@@ -708,12 +708,14 @@ It was decided to remove this example from the specification for the following r
 - There is something to be said for an API that allows cooperation by default. The model in which a call to next only blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g. interaction with other event loops).
 
 ----------------------------------------
-What do the additional error codes mean?
+Why is a whitelist of error codes preferable to a blacklist?
 ----------------------------------------
 
-The additional codes were added to match the server changes made in
-https://github.com/mongodb/mongo/commit/3d821c25e2944668b7359a0bf6e586cc8625b9a2#diff-cf7105bb60d0308203e7ef6ec12e07c3R74
-to classify resumable change stream errors.
+Change streams originally used a blacklist of error codes to determine which errors were not resumable. However, this
+allowed for the possibility of infinite resume loops if an error was not correctly blacklisted. Due to the fact that
+all errors aside from transient issues such as failovers are not resumable, the resume behavior was changed to use a
+whitelist. Part of this change was to introduce the ``ResumableChangeStreamError`` label so the server can add new error
+codes to the whitelist without requiring changes to drivers.
 
 -------------------------------------------------------------------------------------------
 Why do we need to send a default ``startAtOperationTime`` when resuming a ``ChangeStream``?
