@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.5.1
+:Spec Version: 1.5.2
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2020-02-10
+:Last Modified: 2020-02-25
 
 .. contents::
 
@@ -808,6 +808,10 @@ to developers.
 
 Changes
 =======
+
+2020-02-25: State that the driver should only add the RetryableWriteError label
+when retryWrites is on, and make it clear that mongos will sometimes perform
+internal retries and not return the RetryableWriteError label.
 
 2020-02-10: Remove redundant content in Tests section.
 
