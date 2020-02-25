@@ -7,7 +7,7 @@ SDAM Monitoring Specification
 
 :Spec: 222
 :Title: SDAM Monitoring Specification
-:Spec Version: 1.1.1
+:Spec Version: Same as the `Server Discovery And Monitoring`_ spec
 :Author: Durran Jordan
 :Spec Lead: Durran Jordan
 :Advisory Group: Jeff Yemin, Craig Wilson, Jesse Davis
@@ -406,3 +406,7 @@ Changelog
 - 12 DEC 2018: Clarified table of rules for readable/writable servers
 - 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
 - 11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.
+
+.. Section for links.
+
+.. _Server Discovery And Monitoring: server-discovery-and-monitoring.rst
