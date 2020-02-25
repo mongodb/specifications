@@ -97,13 +97,6 @@ An error is considered resumable if it meets any of the following criteria:
 An error on an aggregate command is not a resumable error. Only errors on a
 getMore command may be considered resumable errors.
 
-The criteria for resumable errors is similar to the discussion in the SDAM
-spec's section on `Error Handling`_, but includes additional error codes. See
-`What do the additional error codes mean?`_ for the reasoning behind these
-additional errors.
-
-.. _Error Handling: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-
 --------
 Guidance
 --------
