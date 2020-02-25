@@ -1,8 +1,6 @@
 # Tests for resume behavior on server versions that do not support the ResumableChangeStreamError label
 collection_name: &collection_name "test"
 database_name: &database_name "change-stream-tests"
-collection2_name: &collection2_name "test2"
-database2_name: &database2_name "change-stream-tests-2"
 tests:
   -
     description: "change stream resumes after a network error"

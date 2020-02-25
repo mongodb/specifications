@@ -81,7 +81,7 @@ tests:
       mode: { times: 1 }
       data:
           failCommands: ["getMore"]
-          errorCode: 50 # An error code that's not on the blacklist or whitelist
+          errorCode: 50 # An error code that's not on the old blacklist or whitelist
           closeConnection: false
     target: collection
     topology:

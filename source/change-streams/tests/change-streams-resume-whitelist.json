@@ -1,8 +1,6 @@
 {
   "collection_name": "test",
   "database_name": "change-stream-tests",
-  "collection2_name": "test2",
-  "database2_name": "change-stream-tests-2",
   "tests": [
     {
       "description": "change stream resumes after a network error",
