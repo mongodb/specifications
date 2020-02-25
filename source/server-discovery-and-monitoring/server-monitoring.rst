@@ -6,7 +6,7 @@ Server Monitoring
 :Title: Server Monitoring
 :Status: Accepted
 :Type: Standards
-:Version: 1.0
+:Version: Same as the `Server Discovery And Monitoring`_ spec
 :Last Modified: 2020-02-20
 
 .. contents::
@@ -454,9 +454,10 @@ Changelog
 .. Section for links.
 
 .. _Server Selection Spec: /source/server-selection/server-selection.rst
-.. _main SDAM spec: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst
-.. _heartbeatFrequencyMS in the main SDAM spec: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatFrequencyMS
-.. _error handling: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling
-.. _initial servers: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#initial-servers
-.. _updateRSWithoutPrimary: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#updateRSWithoutPrimary
-.. _updateRSFromPrimary: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#updateRSFromPrimary
+.. _main SDAM spec: server-discovery-and-monitoring.rst
+.. _Server Discovery And Monitoring: server-discovery-and-monitoring.rst
+.. _heartbeatFrequencyMS in the main SDAM spec: server-discovery-and-monitoring.rst#heartbeatFrequencyMS
+.. _error handling: server-discovery-and-monitoring.rst#error-handling
+.. _initial servers: server-discovery-and-monitoring.rst#initial-servers
+.. _updateRSWithoutPrimary: server-discovery-and-monitoring.rst#updateRSWithoutPrimary
+.. _updateRSFromPrimary: server-discovery-and-monitoring.rst#updateRSFromPrimary

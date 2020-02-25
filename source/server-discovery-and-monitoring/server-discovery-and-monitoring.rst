@@ -1088,7 +1088,7 @@ Connection Pool Creation
 
 For drivers that support connection pools, after a server check is complete,
 if the server is determined to be `data-bearing
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_
+<https://github.com/mongodb/specifications/blob/masterserver-discovery-and-monitoring.rst#data-bearing-server-type>`_
 and does not already have a connection pool, the driver MUST create
 the connection pool for the server.
 
@@ -1319,7 +1319,7 @@ Monitoring SDAM events
 
 The required driver specification for providing lifecycle hooks into server
 discovery and monitoring for applications to consume can be found in the
-`SDAM Monitoring Specification <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring-monitoring.rst>`_.
+`SDAM Monitoring Specification`_.
 
 Implementation notes
 ''''''''''''''''''''
@@ -2099,9 +2099,10 @@ to the last one.
 .. Section for links.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
-.. _Server Monitoring spec: /source/server-discovery-and-monitoring/server-monitoring.rst
-.. _requesting an immediate check: /source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
-.. _request an immediate check: /source/server-discovery-and-monitoring/server-monitoring.rst#requesting-an-immediate-check
-.. _scanning order: /source/server-discovery-and-monitoring/server-monitoring.rst#scanning-order
-.. _clients update the topology from each handshake: /source/server-discovery-and-monitoring/server-monitoring.rst#clients-update-the-topology-from-each-handshake
-.. _single-threaded monitoring: /source/server-discovery-and-monitoring/server-monitoring.rst#single-threaded-monitoring
+.. _Server Monitoring spec: server-monitoring.rst
+.. _SDAM Monitoring Specification: server-discovery-and-monitoring-monitoring.rst
+.. _requesting an immediate check: server-monitoring.rst#requesting-an-immediate-check
+.. _request an immediate check: server-monitoring.rst#requesting-an-immediate-check
+.. _scanning order: server-monitoring.rst#scanning-order
+.. _clients update the topology from each handshake: server-monitoring.rst#clients-update-the-topology-from-each-handshake
+.. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
