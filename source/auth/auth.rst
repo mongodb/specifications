@@ -250,52 +250,6 @@ or "SCRAM-SHA-256").
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
 
-Speculative Authentication via Handshake
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-:since: 4.4
-
-The ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
-provided as a BSON object. Clients specifying this argument to ``isMaster`` will
-speculatively include the first command of an authentication handshake.
-This command may be provided to the server in parallel with any standard request for
-supported authentication mechanisms (i.e. ``saslSupportedMechs``). This would permit
-clients to merge their first message with their ``isMaster`` request, and
-receive the authentication reply with the ``isMaster`` reply.
-
-If the speculatively issued command succeeds, the client should proceed with the next
-step of the exchange. If the ``isMaster`` response does not include a
-``speculativeAuthenticate`` reply, either due to failure or the server's lack of support
-for speculative authentication, and the ``ok`` field in the ``isMaster`` response is
-set to 1, drivers MUST authenticate using the standard authentication handshake.
-
-If an authentication mechanism is not provided either via connection string or code, but
-a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
-authentication. If no authentication mechanism and no credential are provided, drivers
-MUST continue to authenticate using the standard authentication handshake.
-
-Older servers will ignore the ``speculativeAuthenticate`` argument. New servers will
-participate in the standard authentication conversation if this argument is missing.
-
-Drivers MUST set ``speculativeAuthenticate.saslStart`` if either of the authentication
-mechanisms SCRAM-SHA-1 or SCRAM-SHA-256 has been indicated, or if no mechanism has been
-provided. ``speculativeAuthenticate.saslStart`` MUST NOT be set for any other
-authentication mechanism. An example conversation using ``speculativeAuthenticate`` for
-a SASL mechanism is as follows:
-
-| C: :javascript:`{ isMaster: 1, speculativeAuthenticate: { saslStart: 1, mechanism: "SCRAM-SHA-256", db: "admin", payload: BinData(0, "biwsbj11c2VyLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdM"), options: { skipEmptyExchange: true }}, ... }`
-| S: :javascript:`{ isMaster: true, speculativeAuthenticate: { conversationId: 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRhd0xIbytWZ2s3cXZVT0tVd3VXTElXZzRsLzlTcmFHTUhFRSxzPXJROVpZM01udEJldVAzRTFURFZDNHc9PSxpPTEwMDAw"), done: false }, ... }`
-| C: :javascript:`{saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}`
-| S: :javascript:`{conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: true, ok: 1}`
-  
-
-Drivers MUST set ``speculativeAuthenticate.authenticate`` if the authentication mechanism
-MONGODB-X509 has been indicated. ``speculativeAuthenticate.authenticate`` MUST NOT be set
-for any other authentication mechanism. An example conversation using
-``speculativeAuthenticate`` for the ``MONGODB-X509`` mechanism is as follows:
-
-| C: :javascript:`{ isMaster: 1, speculativeAuthenticate: { authenticate: 1, mechanism: "MONGODB-X509", db: "$external" }, ... }`
-| S: :javascript:`{ ismaster: true, speculativeAuthenticate: { dbname: "$external", user : "CN=client,OU=KernelUser,O=MongoDB,L=New York City,ST=New York,C=US" }, ok: 1, ... }`
 
 --------------------------------
 Supported Authentication Methods
