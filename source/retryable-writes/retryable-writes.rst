@@ -212,7 +212,11 @@ Determining Retryable Errors
 
 When connected to a MongoDB instance that supports retryable writes (versions 3.6+),
 the driver MUST treat all errors with the RetryableWriteError label as retryable.
-This label might be added to an error in a variety of ways:
+This error label can be found in the top-level "errorLabels" field of the error.
+With a WriteConcernError response, the top level document or the
+WriteConcernError document may contain the RetryableWriteError error label.
+
+The RetryableWriteError label might be added to an error in a variety of ways:
 
 When the driver encounters a network error communicating with any server version
 that supports retryable writes, it MUST add a RetryableWriteError label to that
@@ -225,8 +229,12 @@ driver. As new server versions are released, the errors that are labeled with th
 RetryableWriteError label may change. When receiving a command result
 with an error from a 4.4+ server that supports retryable writes, the driver
 MUST NOT add a RetryableWriteError label to that error under any condition.
-Note: With a WriteConcernError response the top level document or the
-WriteConcernError document may contain the RetryableWriteError error label.
+
+During a retryable write operation on a sharded cluster, mongos may retry the
+operation internally, in which case it will not add a RetryableWriteError label to
+any error that occurs after those internal retries to prevent excessive retrying.
+The driver MUST NOT add a RetryableWriteError label to errors it receives from
+a version 4.4+ mongos.
 
 When receiving a command result with an error from a pre-4.4 server that supports
 retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
@@ -269,7 +277,8 @@ performing the relevant operation:
 
 To understand why the driver should only add the RetryableWriteError label
 to an error when the retryWrites option is true on the MongoClient performing
-the operation, see ***
+the operation, see `Why does the driver only add the RetryableWriteError label
+to errors that occur on a MongoClient with retryWrites set to true?`_
 
 The criteria for retryable errors is similar to the discussion in the SDAM
 spec's section on `Error Handling`_, but includes additional error codes. See
