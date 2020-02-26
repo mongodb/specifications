@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.11.0
+:Spec Version: 1.10.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -249,7 +249,6 @@ or "SCRAM-SHA-256").
 
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
 combination of the ``clientKey`` and ``serverKey`` parameters.
-
 
 --------------------------------
 Supported Authentication Methods
@@ -1193,9 +1192,6 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
-
-Version 1.11.0 Changes
-    * Support speculative authentication via handshake starting in version 4.4 of the server.
 
 Version 1.10.0 Changes
     * Support shorter SCRAM conversation starting in version 4.4 of the server.
