@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.4.0
+:Spec Version: 1.5.0
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2019-09-08
+:Last Modified: 2020-2-26
 
 
 **Abstract**
@@ -19,9 +19,9 @@ URI Options Specification
 
 Historically, URI options have been defined in individual specs, and
 drivers have defined any additional options independently of one another.
-Because of the frustration due to there not being a single place where 
+Because of the frustration due to there not being a single place where
 all of the URI options are defined, this spec aims to do just that—namely,
-provide a canonical list of URI options that each driver defines. 
+provide a canonical list of URI options that each driver defines.
 
 **THIS SPEC DOES NOT REQUIRE DRIVERS TO MAKE ANY BREAKING CHANGES.**
 
@@ -45,11 +45,15 @@ to the security implications of certain options, drivers MUST raise an
 error to the user during parsing if any of the following circumstances
 occur:
 
-1. Both ``tlsInsecure`` and ``tlsAllowInvalidCertificates`` appear in the 
+1. Both ``tlsInsecure`` and ``tlsAllowInvalidCertificates`` appear in the
    URI options.
-2. Both ``tlsInsecure`` and ``tlsAllowInvalidHostnames`` appear in the 
+2. Both ``tlsInsecure`` and ``tlsAllowInvalidHostnames`` appear in the
    URI options.
-3. All instances of ``tls`` and ``ssl`` in the URI options do not have the
+3. Both ``tlsInsecure`` and ``tlsDisableOCSPEndpointCheck`` appear in
+   the URI options.
+4. Both ``tlsAllowInvalidCertificates`` and
+   ``tlsDisableOCSPEndpointCheck`` appear in the URI options.
+5. All instances of ``tls`` and ``ssl`` in the URI options do not have the
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
@@ -64,7 +68,7 @@ implement the old and new names as aliases. All keys and values MUST be
 encoded in UTF-8. All integer options are 32-bit unless specified otherwise.
 Note that all requirements and recommendations described in the `Connection
 String spec
-<https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_ 
+<https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_
 pertaining to URI options apply here.
 
 
@@ -87,7 +91,7 @@ pertaining to URI options apply here.
        connection handshake
 
    * - authMechanism
-     - any string; valid values are defined in the `auth spec 
+     - any string; valid values are defined in the `auth spec
        <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
      - None; default values for authentication exist for constructing authentication credentials per the
        `auth spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_,
@@ -97,7 +101,7 @@ pertaining to URI options apply here.
        server
 
    * - authMechanismProperties
-     - comma separated key:value pairs, e.g. "opt1:val1,opt2:val2" 
+     - comma separated key:value pairs, e.g. "opt1:val1,opt2:val2"
      - no properties specified
      - no
      - Additional options provided for authentication (e.g. to enable hostname canonicalization for GSSAPI)
@@ -115,7 +119,7 @@ pertaining to URI options apply here.
      - defined in `compression spec <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst#compressors>`_
      - no
      - The list of allowed compression types for wire protocol messages
-       sent or received from the server 
+       sent or received from the server
 
    * - connectTimeoutMS
      - non-negative integer; 0 means "no timeout"
@@ -142,7 +146,7 @@ pertaining to URI options apply here.
        must be selected)
      - defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#localthresholdms>`_
      - no
-     - The amount of time beyond the fastest round trip time that a given 
+     - The amount of time beyond the fastest round trip time that a given
        server’s round trip time can take and still be eligible for server selection
 
    * - maxIdleTimeMS
@@ -182,7 +186,7 @@ pertaining to URI options apply here.
      - Default read preference for the client (excluding tags)
 
    * - readPreferenceTags
-     - comma-separated key:value pairs (e.g. "dc:ny,rack:1" and "dc:ny) 
+     - comma-separated key:value pairs (e.g. "dc:ny,rack:1" and "dc:ny)
 
        can be specified multiple times; each instance of this key is a
        separate tag set
@@ -232,7 +236,7 @@ pertaining to URI options apply here.
      - "true" or "false"
      - same as "tls"
      - no
-     - alias of "tls"; required to ensure that Atlas connection strings continue to work 
+     - alias of "tls"; required to ensure that Atlas connection strings continue to work
 
    * - tls
      - "true" or "false"
@@ -280,6 +284,15 @@ pertaining to URI options apply here.
      - no
      - Relax TLS constraints as much as possible (e.g. allowing invalid certificates or hostname mismatches); drivers must document the exact constraints which are relaxed by this option being true
 
+   * - tlsDisableOCSPEndpointCheck
+     - "true" or "false"
+     - false i.e. driver will reach out to OCSP endpoints :ref:`if
+       needed <Suggested OCSP Behavior>`.
+     - Yes
+     - Controls whether or not the driver will reach out to OCSP
+        endpoints if needed. See the `OCSP Support Spec
+        <../ocsp-support/ocsp-support#tlsDisableOCSPEndpointCheck>`__
+        for additional information..
 
    * - w
      - non-negative integer or string
@@ -304,8 +317,8 @@ pertaining to URI options apply here.
      - -1 (default compression level of the driver)
      - no
      - Specifies the level of compression when using zlib to compress wire
-       protocol messages; -1 signifies the default level, 0 signifies no 
-       compression, 1 signifies the fastest speed, and 9 signifies the 
+       protocol messages; -1 signifies the default level, 0 signifies no
+       compression, 1 signifies the fastest speed, and 9 signifies the
        best compression
 
 **Test Plan**
@@ -319,11 +332,11 @@ Tests are implemented and described in the `tests <tests>`_ directory
 Why allow drivers to provide the canonical names as aliases to existing options?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First and foremost, this spec aims not to introduce any breaking changes 
-to drivers. Forcing a driver to change the name of an option that it 
+First and foremost, this spec aims not to introduce any breaking changes
+to drivers. Forcing a driver to change the name of an option that it
 provides will break any applications that use the old option. Moreover, it
-is already possible to provide duplicate options in the URI by specifying 
-the same option more than once; drivers can use the same semantics to 
+is already possible to provide duplicate options in the URI by specifying
+the same option more than once; drivers can use the same semantics to
 resolve the conflicts as they did before, whether it’s raising an error,
 using the first option provided, using the last option provided, or simply
 telling users that the behavior is not defined.
@@ -331,8 +344,8 @@ telling users that the behavior is not defined.
 Why use "tls" as the prefix instead of "ssl" for related options?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Technically speaking, drivers already only support TLS, which supersedes 
-SSL. While SSL is commonly used in parlance to refer to TLS connections, 
+Technically speaking, drivers already only support TLS, which supersedes
+SSL. While SSL is commonly used in parlance to refer to TLS connections,
 the fact remains that SSL is a weaker cryptographic protocol than TLS, and
 we want to accurately reflect the strict requirements that drivers have in
 ensuring the security of a TLS connection.
@@ -365,7 +378,7 @@ present and "tls" is not present. However, with options such as
 distinguish between "false" being provided and the option not being specified.
 To keep the implicit enabling of TLS consistent between such options, we defer
 the decision to enable TLS based on the presence of "tls"-prefixed options
-(besides "tls" itself) to drivers. 
+(besides "tls" itself) to drivers.
 
 **Reference Implementations**
 -----------------------------
@@ -376,10 +389,10 @@ Ruby and Python
 ------------------------
 
 Each of the "insecure" TLS options (i.e. "tlsInsecure",
-"tlsAllowInvalidHostnames", and "tlsAllowInvalidCertificates") default to the
-more secure option when TLS is enabled. In order to be backwards compatible
-with existing driver behavior, neither TLS nor authentication is enabled by
-default.
+"tlsAllowInvalidHostnames", "tlsAllowInvalidCertificates", and
+"tlsDisableOCSPEndpointCheck") default to the more secure option when
+TLS is enabled. In order to be backwards compatible with existing
+driver behavior, neither TLS nor authentication is enabled by default.
 
 **Future Work**
 ---------------
@@ -393,6 +406,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2020-02-26 Add tlsDisableOCSPEndpointCheck option
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
 - 2019-04-26 authSource and authMechanism have no default value
