@@ -13,17 +13,17 @@
         "tlsCertificateKeyFile": "cert.pem"
       }
     },
-	{
-		"description": "Valid tlsCertificateKeyFilePassword is parsed correctly",
-        "uri": "mongodb://example.com/?tlsCertificateKeyFilePassword=hunter2",
-      	"valid": true,
-		"warning": false,
-		"hosts": null,
-		"auth": null,
-		"options": {
-		  "tlsCertificateKeyFilePassword": "hunter2"
-		}
-	},
+    {
+      "description": "Valid tlsCertificateKeyFilePassword is parsed correctly",
+      "uri": "mongodb://example.com/?tlsCertificateKeyFilePassword=hunter2",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "tlsCertificateKeyFilePassword": "hunter2"
+      }
+    },
     {
       "description": "Invalid tlsAllowInvalidCertificates causes a warning",
       "uri": "mongodb://example.com/?tlsAllowInvalidCertificates=invalid",
@@ -231,6 +231,102 @@
     {
       "description": "ssl=true and tls=false raises error",
       "uri": "mongodb://example.com/?ssl=true&tls=false",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsDisableOcspEndpointCheck defaults to false",
+      "uri": "mongodb://example.com/?tls=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "tls": true,
+        "tlsDisableOcspEndpointCheck": false
+      }
+    },
+    {
+      "description": "tlsDisableOcspEndpointCheck parses correctly",
+      "uri": "mongodb://example.com/?tls=true&tlsDisableOcspEndpointCheck=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "tls": true,
+        "tlsDisableOcspEndpointCheck": true
+      }
+    },
+    {
+      "description": "tlsInsecure and tlsDisableOcspEndpointCheck both present (and true) raises an error",
+      "uri": "mongodb://example.com/?tlsInsecure=true&tlsDisableOcspEndpointCheck=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsInsecure=true and tlsDisableOcspEndpointCheck=false raises an error",
+      "uri": "mongodb://example.com/?tlsInsecure=true&tlsDisableOcspEndpointCheck=false",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsInsecure=false and tlsDisableOcspEndpointCheck=true raises an error",
+      "uri": "mongodb://example.com/?tlsInsecure=false&tlsDisableOcspEndpointCheck=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsInsecure and tlsDisableOcspEndpointCheck both present (and false) raises an error",
+      "uri": "mongodb://example.com/?tlsInsecure=false&tlsDisableOcspEndpointCheck=false",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsDisableOcspEndpointCheck and tlsInsecure both present (and true) raises an error",
+      "uri": "mongodb://example.com/?tlsDisableOcspEndpointCheck=true&tlsInsecure=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsDisableOcspEndpointCheck=true and tlsInsecure=false raises an error",
+      "uri": "mongodb://example.com/?tlsDisableOcspEndpointCheck=true&tlsInsecure=false",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsDisableOcspEndpointCheck=false and tlsInsecure=true raises an error",
+      "uri": "mongodb://example.com/?tlsDisableOcspEndpointCheck=false&tlsInsecure=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "tlsDisableOcspEndpointCheck and tlsInsecure both present (and false) raises an error",
+      "uri": "mongodb://example.com/?tlsDisableOcspEndpointCheck=false&tlsInsecure=false",
       "valid": false,
       "warning": false,
       "hosts": null,

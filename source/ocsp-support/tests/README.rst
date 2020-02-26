@@ -13,6 +13,16 @@ The prose tests defined in this file are platform-independent tests that
 drivers can use to prove their conformance to the OCSP Support
 specification. These tests MUST BE implemented by all drivers.
 
+Additional YAML and JSON tests have also been added to the
+`URI Options Tests <../../uri-options/tests/README.rst>`__.
+Specifically, the `TLS Options Test
+<../../uri-options/test/tls-options.yml>`__ has been
+updated with additional tests for the new URI option
+``tlsDisableOCSPEndpointCheck``. These tests MUST BE implemented by
+drivers that are able to support the ``tlsDisableOCSPEndpointCheck``
+URI option (see `MongoClient Configuration
+<../ocsp-support#MongoClient-Configuration>`__).
+
 Testing Invalid Configurations
 ==============================
 
@@ -148,4 +158,6 @@ duration even after a driver encounters a TLS error early).
 
 Changelog
 ==========
+**2020-2-26**: Add additional URI Options Tests.
+
 **2020-1-16**: Initial commit.
