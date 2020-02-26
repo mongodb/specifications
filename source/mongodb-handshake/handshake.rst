@@ -236,26 +236,34 @@ speculatively include the first command of an authentication handshake.
 This command may be provided to the server in parallel with any standard request for
 supported authentication mechanisms (i.e. ``saslSupportedMechs``). This would permit
 clients to merge their first message with their ``isMaster`` request, and
-receive the authentication reply with the ``isMaster`` reply. This argument has the
-following structure::
+receive the authentication reply with the ``isMaster`` reply.
+
+When the mechanism is ``MONGODB-X509``, `speculativeAuthenticate` has the following
+structure::
 
     {
         isMaster: 1,
         speculativeAuthenticate: {
-            /* OPTIONAL */
-            authenticate: 1
-            /* OPTIONAL. If present, "payload" and "options" are required */
-            saslStart: 1
-            /* REQUIRED */
-            mechanism: "<string>"
-            /* REQUIRED */
-            db: "<string>"
-            payload: BinData(...)
-            options: {
-                skipEmptyExchange: true         /* REQUIRED */        
-            }
+            authenticate: 1,
+            mechanism: "MONGODB-X509"
         }
     }
+
+When the mechanism is ``SCRAM-SHA-1`` or ``SCRAM-SHA-256``, `speculativeAuthenticate`
+has the following structure::
+
+    {
+        isMaster: 1,
+        speculativeAuthenticate: {
+            saslStart: 1,
+            mechanism: "<string>",   /* "SCRAM-SHA-1" or "SCRAM-SHA-256" */
+            db: "<authentication database>",
+            payload: BinData(...),
+            options: {
+                skipEmptyExchange: true         /* REQUIRED */
+            }
+        }
+    }  
 
 
 speculativeAuthenticate.mechanism
