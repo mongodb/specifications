@@ -898,10 +898,18 @@ mechanism_properties
 
 Obtaining Credentials
 `````````````````````
-Drivers will need AWS IAM credentials (an access key and a secret access key) to complete the steps in the `Signature Version 4 Signing Process 
+Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete the steps in the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
-MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If a username is provided without a password (or vice-versa) drivers 
-MUST raise an error. An example URI for authentication with MONGODB-AWS using AWS IAM credentials is as follows:
+MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If, additionally, a session token is provided Drivers MUST use it as well. If a username is provided without a password (or vice-versa) or if *only* a session token is provided Drivers MUST raise an error. In other words, regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret access key or an access key ID, a secret access key and a session token.
+
+The order in which Drivers MUST search for credentials is:
+
+#. Credentials passed through the URI
+#. Environment variables
+#. ECS endpoint if and only if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set.
+#. EC2 endpoint
+
+An example URI for authentication with MONGODB-AWS using AWS IAM credentials passed through the URI is as follows:
 
 .. code:: javascript
 
@@ -914,7 +922,9 @@ request. If so, then in addition to a username and password, users MAY also prov
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
 |
-If a username and password are not provided, drivers MUST query a link-local AWS address for temporary credentials.
+AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
+
+If a username and password are not provided and the aforementioned enviornment variables are not set, drivers MUST query a link-local AWS address for temporary credentials.
 If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. Drivers SHOULD
 enforce a 10 second read timeout while waiting for incoming content from both the ECS and EC2 endpoints. If the
 environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set then drivers MUST assume that it was set by an
