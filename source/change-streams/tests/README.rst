@@ -93,7 +93,10 @@ Spec Test Runner
 
 Before running the tests
 
-- Create a MongoClient ``globalClient``, and connect to the server
+- Create a MongoClient ``globalClient``, and connect to the server.
+When executing tests against a sharded cluster, ``globalClient`` must only connect to one mongos. This is because tests
+that set failpoints will only work consistently if both the ``configureFailPoint`` and failing commands are sent to the
+same mongos.
 
 For each YAML file, for each element in ``tests``:
 
@@ -128,8 +131,8 @@ For each YAML file, for each element in ``tests``:
 - If there are any ``expectations``
 
   - For each (``expected``, ``idx``) in ``expectations``
-
-    - Assert that ``actual[idx]`` MATCHES ``expected``
+    - If ``actual[idx]`` is a ``killCursors`` event, skip it and move to ``actual[idx+1]``.
+    - Else assert that ``actual[idx]`` MATCHES ``expected``
 
 - Close the MongoClient ``client``
 
@@ -155,12 +158,12 @@ The following tests have not yet been automated, but MUST still be tested. All t
 #. ``ChangeStream`` will throw an exception if the server response is missing the resume token (if wire version is < 8, this is a driver-side error; for 8+, this is a server-side error)
 #. After receiving a ``resumeToken``, ``ChangeStream`` will automatically resume one time on a resumable error with the initial pipeline and options, except for the addition/update of a ``resumeToken``.
 #. ``ChangeStream`` will not attempt to resume on any error encountered while executing an ``aggregate`` command. Note that retryable reads may retry ``aggregate`` commands. Drivers should be careful to distinguish retries from resume attempts. Alternatively, drivers may specify `retryReads=false` or avoid using a [retryable error](../../retryable-reads/retryable-reads.rst#retryable-error) for this test.
-#. ``ChangeStream`` will not attempt to resume after encountering error code 11601 (Interrupted), 136 (CappedPositionLost), or 237 (CursorKilled) while executing a ``getMore`` command.
+#. **Removed**
 #. ``ChangeStream`` will perform server selection before attempting to resume, using initial ``readPreference``
 #. Ensure that a cursor returned from an aggregate command with a cursor id and an initial empty batch is not closed on the driver side.
 #. The ``killCursors`` command sent during the "Resume Process" must not be allowed to throw an exception.
 #. ``$changeStream`` stage for ``ChangeStream`` against a server ``>=4.0`` and ``<4.0.7`` that has not received any results yet MUST include a ``startAtOperationTime`` option when resuming a change stream.
-#. ``ChangeStream`` will resume after a ``killCursors`` command is issued for its child cursor.
+#. **Removed**
 #. For a ``ChangeStream`` under these conditions:
 
    - Running against a server ``>=4.0.7``.
