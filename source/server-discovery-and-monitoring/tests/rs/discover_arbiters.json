@@ -1,5 +1,5 @@
 {
-  "description": "Discover arbiters",
+  "description": "Discover arbiters with directConnection URI option",
   "uri": "mongodb://a/?directConnection=false",
   "phases": [
     {

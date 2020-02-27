@@ -1,5 +1,5 @@
 {
-  "description": "RSOther discovered",
+  "description": "Discover RSOther with directConnection URI option",
   "uri": "mongodb://b/?directConnection=false",
   "phases": [
     {
