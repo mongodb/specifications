@@ -367,15 +367,20 @@ Initial TopologyType
 
 If the ``directConnect`` URI option is specified when a MongoClient is
 constructed, the TopologyType must be initialized based on the value of
-the option according to the following table:
+the ``directConnect`` option and the presence of the ``replicaSet`` option
+according to the following table:
 
-+-------------------------------+-----------------------+
-| directConnect option value    | Initial TopologyType  |
-+===============================+=======================+
-| true                          | Single                |
-+-------------------------------+-----------------------+
-| false                         | Unknown               |
-+-------------------------------+-----------------------+
++---------------+-----------------------+-----------------------+
+| directConnect | replicaSet present    | Initial TopologyType  |
++===============+=======================+=======================+
+| true          | no                    | Single                |
++---------------+-----------------------+-----------------------+
+| true          | yes                   | Single                |
++---------------+-----------------------+-----------------------+
+| false         | no                    | Unknown               |
++---------------+-----------------------+-----------------------+
+| false         | yes                   | ReplicaSetNoPrimary   |
++---------------+-----------------------+-----------------------+
 
 If directConnect option is not specified, newly developed drivers MUST behave
 as if it was specified with the false value.
