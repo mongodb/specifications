@@ -51,7 +51,7 @@ basis and implement support for ``tlsAllowInvalidCertificates``.
 Integration Tests: Permutations to Be Tested
 ============================================
 
-For integration tests, we will test all permutations of URI options that
+For integration tests, we will test all combinations of URI options that
 influence a driver’s OCSP behavior with both validity states of the
 server’s certificate (configured with the mock OCSP responder). We will
 also test the case where an OCSP responder is unavailable and two
@@ -90,30 +90,88 @@ Mock OCSP Responder Testing Suite
 ==================================
 
 The certificates and scripts needed for testing OCSP are part of
-`driver-evergreen-tools <https://github.com/mongodb-labs/drivers-evergreen-tools>`__
-in ``.evergreen/ocsp``. Specifically
-`mock\_ocsp\_valid.sh <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/ocsp/mock_ocsp_valid.sh>`__
-will start up a mock OCSP responder that will report that every
-certificate is valid, and
-`mock\_ocsp\_revoked.sh <hhttps://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/ocsp/mock_ocsp_revoked.sh>`__
-will start up a mock OCSP responder that will report that every
-certificate is invalid.
+`driver-evergreen-tools
+<https://github.com/mongodb-labs/drivers-evergreen-tools>`__ in
+``.evergreen/ocsp``.  The ``rsa`` and ``ecdsa`` directories contain
+the certificates and scripts needed to test with RSA and ECDSA
+certificates, respectively.
+
+Both of the above directories contain four scripts: ``mock-valid.sh``,
+``mock-revoked.sh``, ``mock-delegate-valid.sh``, and
+``mock-delegate-revoked.sh``.
+
+``mock-valid.sh`` starts up a mock OCSP responder that uses the
+issuing CA's certificate. This responder will report that every
+certificate is valid.
+
+``mock-revoked.sh`` starts up a mock OCSP responder that uses the
+issuing CA's certificate. This responder will report that every
+certificate is revoked.
+
+``mock-delegate-valid-valid.sh`` starts up a mock OCSP responder that
+uses a delegate certificate. This responder will report that every
+certificate is valid.
+
+``mock-delegate-revoked.sh`` starts up a mock OCSP that uses a
+delegate certificate. This responder will report that every
+certificate is revoked.
+
+mongo-orchestration configurations
+----------------------------------
 
 The mongo-orchestration configurations needed for testing can be found
-at ``.evergreen/orchestration/configs/servers/``. Tests that specify that a
-server should staple MUST use ``basic-tls-ocsp-mustStaple.json``. Tests that
-specify that a server should not staple MUST use
-``basic-tls-ocsp-disableStapling.json``. The malicious server tests MUST use
-``basic-tls-ocsp-mustStaple-disableStapling.json``.
+at ``.evergreen/orchestration/configs/servers/``.
+
+RSA Tests
+^^^^^^^^^^
+
+Tests that specify that a server should staple MUST use
+``rsa-basic-tls-ocsp-mustStaple.json``. Tests that specify that a
+server should not staple MUST use
+``rsa-basic-tls-ocsp-disableStapling.json``. The malicious server
+tests MUST use ``rsa-basic-tls-ocsp-mustStaple-disableStapling.json``.
+
+ECDSA Tests
+^^^^^^^^^^^^
+
+Tests that specify that a server should staple MUST use
+``ecdsa-basic-tls-ocsp-mustStaple.json``. Tests that specify that a
+server should not staple MUST use
+``ecdsa-basic-tls-ocsp-disableStapling.json``. The malicious server
+tests MUST use
+``ecdsa-basic-tls-ocsp-mustStaple-disableStapling.json``.
 
 Test Procedure
 ==============
 
-Each test column MUST BE its own Evergreen task in order to minimize the
-impact of OCSP caching. OCSP caching can exist at the OS-level,
-user-level and/or application-level; having separate Evergreen tasks
-should help minimize the impact of user-level and application-level
-caching since Evergreen performs some cleanup between test runs.
+Each column that utilizes an OCSP responder represents four tests:
+
+1. A test with RSA certificates and an OCSP responder that uses the
+   issuing CA's certificate
+2. A test with RSA certificates and an OCSP responder that uses a
+   delegate certificate
+3. A test with ECDSA certificates and an OCSP responder that uses the
+   issuing CA's certificate
+4. A test with ECDSA certificates and an OCSP responder that uses a
+   delegate certificate
+
+Each column that does not utilize an OCSP responder (i.e. "Soft Fail
+Test" and "Malicious Server Test 2") represent two tests:
+
+  1. A test with RSA certificates
+  2. A test with ECDSA certificates
+
+Each test MUST BE its own Evergreen task in order to
+minimize the impact of OCSP caching. OCSP caching can exist at the
+OS-level, user-level and/or application-level; having separate
+Evergreen tasks should help minimize the impact of user-level and
+application-level caching since Evergreen performs some cleanup
+between test runs.
+
+Since each test column represents four tests, and each test is run as
+a separate Evergreen task, each Evergreen task SHOULD set a
+``batchtime`` of 14 days to reduce how often these tests run (this
+will not affect patch builds).
 
 Any OCSP caches that persist between test runs (e.g. the OS-level OCSP
 cache) MUST be cleared before configuring a certificate chain. This is
@@ -124,29 +182,15 @@ lead the driver or server to read stale data. See the
 `Appendix <../ocsp-support.rst#os-level-ocsp-cache-manipulation>`__
 for instructions on how to clear OS-level OCSP caches.
 
-Ensure that a mongod is running with the correct certificate chain (see
-`Mock OCSP Responder Testing
-Suite `<#mock-ocsp-responder-testing-suite>`__
-for configuration details) and that the mock OCSP responder is configured
-to report the expected revocation status for that certificate. Again, each
-test column MUST BE its own Evergreen task in order to minimize the impact
-of user-level and application-level OCSP caching
+For each test, ensure that a ``mongod`` is running with the correct
+certificate chain and that the mock OCSP responder is configured to
+use the correct certificate and to report the expected revocation
+status for that certificate (see `Mock OCSP Responder Testing Suite
+`<#mock-ocsp-responder-testing-suite>`__ for configuration
+details). Again, each test MUST BE its own Evergreen task in order to
+minimize the impact of user-level and application-level OCSP caching
 
-Extra configuration is required for the malicious server case when
-testing on server versions with stapling support: the following
-failpoint MUST be set (see `Required Server
-Versions <../ocsp-support.rst#required-server-versions>`__) to force
-the server to not staple an OCSP response despite having a Must-Staple
-certificate.
-
-.. code:: typescript
-
-  db.adminCommand({
-    configureFailPoint: “disableStapling”,
-    mode: "alwaysOn"
-  });
-
-To assert whether a test passes or fails, drivers should create a
+To assert whether a test passes or fails, drivers SHOULD create a
 MongoClient with the options specified under “URI options”, connect to a
 server and attempt to issue a ping command. The success or failure (due
 to a TLS error) of the ping command should correlate with the expected
@@ -158,6 +202,8 @@ duration even after a driver encounters a TLS error early).
 
 Changelog
 ==========
+**2020-2-27**: Add delegate responders and ECDSA certificate testing.
+
 **2020-2-26**: Add additional URI Options Tests.
 
 **2020-1-16**: Initial commit.
