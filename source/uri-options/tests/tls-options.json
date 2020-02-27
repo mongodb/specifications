@@ -250,7 +250,7 @@
       }
     },
     {
-      "description": "tlsDisableOCSPEndpointCheck parses correctly",
+      "description": "tlsDisableOCSPEndpointCheck can be set to true",
       "uri": "mongodb://example.com/?tls=true&tlsDisableOCSPEndpointCheck=true",
       "valid": true,
       "warning": false,
@@ -259,6 +259,18 @@
       "options": {
         "tls": true,
         "tlsDisableOCSPEndpointCheck": true
+      }
+    },
+    {
+      "description": "tlsDisableOCSPEndpointCheck can be set to false",
+      "uri": "mongodb://example.com/?tls=true&tlsDisableOCSPEndpointCheck=false",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "tls": true,
+        "tlsDisableOCSPEndpointCheck": false
       }
     },
     {

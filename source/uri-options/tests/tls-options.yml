@@ -217,7 +217,7 @@ tests:
             tls: true
             tlsDisableOCSPEndpointCheck: false
     -
-        description: "tlsDisableOCSPEndpointCheck parses correctly"
+        description: "tlsDisableOCSPEndpointCheck can be set to true"
         uri: "mongodb://example.com/?tls=true&tlsDisableOCSPEndpointCheck=true"
         valid: true
         warning: false
@@ -226,6 +226,16 @@ tests:
         options:
             tls: true
             tlsDisableOCSPEndpointCheck: true
+    -
+        description: "tlsDisableOCSPEndpointCheck can be set to false"
+        uri: "mongodb://example.com/?tls=true&tlsDisableOCSPEndpointCheck=false"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            tls: true
+            tlsDisableOCSPEndpointCheck: false
     -
         description: "tlsInsecure and tlsDisableOCSPEndpointCheck both present (and true) raises an error"
         uri: "mongodb://example.com/?tlsInsecure=true&tlsDisableOCSPEndpointCheck=true"
