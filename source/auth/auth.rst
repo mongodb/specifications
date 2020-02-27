@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.0
+:Spec Version: 1.10.1
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2020-01-24
+:Last Modified: 2020-02-27
 
 .. contents::
 
@@ -1101,6 +1101,12 @@ As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 - mongodb://%E2%85%A8:IV@mongodb.example.com/admin
 - mongodb://%E2%85%A8:I%C2%ADV@mongodb.example.com/admin
 
+--------------------------	
+Speculative Authentication	
+--------------------------
+
+See the speculative authentication section in the `MongoDB Handshake spec`_.
+
 -----------------------
 Minimum iteration count
 -----------------------
@@ -1192,6 +1198,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
 Version History
 ===============
+
+Version 1.10.1 Changes
+    * Add reference to the speculative authentication section of the handshake spec.
 
 Version 1.10.0 Changes
     * Support shorter SCRAM conversation starting in version 4.4 of the server.
