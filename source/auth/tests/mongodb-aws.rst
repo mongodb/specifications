@@ -38,7 +38,7 @@ Drivers MUST be able to authenticate from an EC2 instance via temporary credenti
   
   mongodb://localhost/?authMechanism=MONGODB-AWS
 |
-.. note:: no username, password or session token is passed into the URI. Drivers MUST query the EC2 instance endpoint to obtain these credentials. 
+.. note:: No username, password or session token is passed into the URI. Drivers MUST query the EC2 instance endpoint to obtain these credentials. 
 
 ECS instance
 ============
@@ -49,7 +49,7 @@ Drivers MUST be able to authenticate from an ECS container via temporary credent
 
   mongodb://localhost/?authMechanism=MONGODB-AWS
 |
-.. note:: no username, password or session token is passed into the URI. Drivers MUST query the ECS container endpoint to obtain these credentials. 
+.. note:: No username, password or session token is passed into the URI. Drivers MUST query the ECS container endpoint to obtain these credentials. 
 
 AssumeRole
 ==========
@@ -77,18 +77,18 @@ Sample URIs both with and without optional session tokens set are shown below. D
 .. code-block:: bash
 
   # without a session token
-  export AWS_ACCESS_KEY_ID=<AccessKeyId>
-  export AWS_SECRET_ACCESS_KEY=<SecretAccessKey>
+  export AWS_ACCESS_KEY_ID="<AccessKeyId>"
+  export AWS_SECRET_ACCESS_KEY="<SecretAccessKey>"
 
-  mongodb://localhost/?authMechanism=MONGODB-AWS
+  URI="mongodb://localhost/?authMechanism=MONGODB-AWS"
 |
 .. code-block:: bash
 
   # with a session token
-  export AWS_ACCESS_KEY_ID=<AccessKeyId>
-  export AWS_SECRET_ACCESS_KEY=<SecretAccessKey>
-  export AWS_SESSION_TOKEN=<Token>
+  export AWS_ACCESS_KEY_ID="<AccessKeyId>"
+  export AWS_SECRET_ACCESS_KEY="<SecretAccessKey>"
+  export AWS_SESSION_TOKEN="<Token>"
 
-  mongodb://localhost/?authMechanism=MONGODB-AWS
+  URI="mongodb://localhost/?authMechanism=MONGODB-AWS"
 |
-.. note:: no username, password or session token is passed into the URI. Drivers MUST check the environment variables listed above for these values. If the session token is set Drivers MUST use it.
+.. note:: No username, password or session token is passed into the URI. Drivers MUST check the environment variables listed above for these values. If the session token is set Drivers MUST use it.
