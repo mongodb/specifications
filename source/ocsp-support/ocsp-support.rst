@@ -105,7 +105,7 @@ invalid, the driver SHOULD end the connection.
 
 7.  If the server’s certificate remains unvalidated, that certificate
     has a list of OCSP responder endpoints, and
-    ``tlsDisableOcspEndpointCheck`` is true (`if the driver supports
+    ``tlsDisableOCSPEndpointCheck`` is false (`if the driver supports
     this option <MongoClient Configuration>`_), the driver SHOULD send
     HTTP requests to the responders in parallel. The first valid
     response that concretely marks the certificate status as good or
