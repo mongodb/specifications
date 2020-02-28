@@ -53,8 +53,8 @@ occur:
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
-SRV URI with directConnect URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SRV URI with directConnection URI option
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The driver MUST report an error if the ``directConnection=true`` URI option
 is specified with an SRV URI, because the URI may resolve to multiple
