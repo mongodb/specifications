@@ -1371,10 +1371,10 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 Error Handling
 ~~~~~~~~~~~~~~
 
-Below are defined the exceptions that should be thrown from the various write methods. Since exceptions across languages would be impossible to reconcile, the below definitions represent the fields and names for the information that should be present. Structure isn't important as long as the information is available.
+Defined below are error and exception types that should be reported from the various write methods. Since error types across languages would be impossible to reconcile, the below definitions represent the fields and names for the information that should be present. Structure isn't important as long as the information is available.
 
-.. note::
-    The actual implementation of correlating, merging, and interpreting write errors from the server is not defined here. This spec is solely about the API for users.
+Drivers SHOULD report errors however they report other server errors: by raising an exception, returning "false", or another idiom that is consistent with other server errors.
+
 
 .. code:: typescript
 
@@ -1402,6 +1402,15 @@ Below are defined the exceptions that should be thrown from the various write me
     message: String;
 
   }
+
+Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
+- set ``code`` to ``writeConcernError.code``.
+- set ``message`` to ``writeConcernError.errmsg`` if available.
+- set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
+
+See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#Errors>`_ for examples of how a server represents write concern errors in replies.
+
+.. code:: typescript
 
   class WriteError {
 
@@ -1490,6 +1499,8 @@ Below are defined the exceptions that should be thrown from the various write me
     writeErrors: Optional<Iterable<BulkWriteError>>;
 
   }
+
+See the `Bulk Write Specification </source/driver-bulk-update.rst#on-errors>`_ for more information on constructing errors from bulk writes.
 
 
 ~~~~~~~~~~~~~~~
@@ -1815,7 +1826,7 @@ Q: Where is read concern?
   However, it might be that a driver needs to expose read concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
 Q: Where is write concern?
-  Write concern is about indicating how writes are acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different write operations on the same collection would use a different write concern, potentially causing mismatched and out-of-sync data. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
+  Write concern is about indicating how writes are acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different write operations on the same collection would use a different write concern, potentially causing mismatched and out-of-sync data. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it. See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst>`_ for the API of constructing a read/write concern and associated API.
 
   However, it might be that a driver needs to expose write concern to a user per operation for various reasons. As noted before, it is permitted to specify this, along with other driver-specific options, in some alternative way.
 
