@@ -260,7 +260,9 @@ in the `Driver Authentication spec`_.
 
 If an authentication mechanism is not provided either via connection string or code, but
 a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
-authentication and drivers MUST send ``saslSupportedMechs``.
+authentication and drivers MUST send ``saslSupportedMechs``. If no authentication mechanism
+and no credential are provided, drivers MUST continue to authenticate using the standard
+authentication handshake.
 
 Older servers will ignore the ``speculativeAuthenticate`` argument. New servers will
 participate in the standard authentication conversation if this argument is missing.
