@@ -1500,8 +1500,6 @@ See the `Read/Write Concern specification </source/read-write-concern/read-write
 
   }
 
-See the `Bulk Write Specification </source/driver-bulk-update.rst#on-errors>`_ for more information on constructing errors from bulk writes.
-
 
 ~~~~~~~~~~~~~~~
 Find And Modify
