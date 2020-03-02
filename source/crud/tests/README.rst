@@ -313,6 +313,7 @@ The following tests have not yet been automated, but MUST still be tested.
 Test that a writeConcernError "errInfo" is propagated to the user in whatever way is idiomatic to the driver (exception, error object, etc.). Using a 4.0+ server, set the following failpoint:
 
 .. code:: javascript
+
    {
      "configureFailPoint": "failCommand",
      "data": {
