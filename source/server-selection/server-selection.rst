@@ -533,16 +533,22 @@ hedge
 The read preference ``hedge`` parameter is a document that configures how the
 server will perform hedged reads. It consists of the following keys:
 
-- ``enabled`` (default true): This enables hedging
+- ``enabled``: Enables or disables hedging
 
-To explicitly enable hedging, an empty document must be sent to the server for
-the ``hedge`` option. This enables hedging with the default values specified
-above. Hedging will be disabled if the ``hedge`` option is omitted.
+To enable hedging with server-side defaults, an empty ``hedge`` document must be
+sent to the server. If no ``hedge`` document is passed or if the ``enabled``
+key is ``false``, the server will not perform hedged reads.
 
-Drivers MUST NOT fill in default values for any keys in the ``hedge`` document
-if they are omitted. Drivers MUST NOT send a read preference where the hedge
-option is set to server version before 4.4 (i.e. maxWireVersion < 9) and MUST
-raise an error instead. This pertains to `Passing read preference to mongos`_.
+Drivers MAY allow users to specify an empty hedge document if they accept
+documents for read preference options. Any driver that exposes a builder API for
+read preference objects MUST NOT allow an empty ``hedge`` document to be
+constructed. In this case, the user MUST specify a value for ``enabled``, which
+MUST default to ``true``. If the user does not call a ``hedge`` API method,
+drivers MUST NOT send a ``hedge`` option to the server.
+
+Drivers MUST NOT send a read preference where the hedge option is set to server
+version before 4.4 (i.e. maxWireVersion < 9) and MUST raise an error instead.
+This pertains to `Passing read preference to mongos`_.
 
 
 Read preference configuration
