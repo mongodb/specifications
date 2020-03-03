@@ -51,6 +51,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -114,6 +116,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -177,6 +181,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -240,6 +246,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -303,6 +311,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -366,6 +376,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -429,6 +441,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -492,6 +506,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -555,6 +571,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -618,6 +636,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -681,6 +701,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -744,6 +766,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -807,6 +831,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -870,6 +896,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -933,6 +961,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -996,6 +1026,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -1059,6 +1091,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -
@@ -1122,6 +1156,8 @@ tests:
             pipeline:
               -
                 $changeStream: {}
+          command_name: aggregate
+          database_name: *database_name
     result:
       success:
         -

@@ -70,7 +70,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -161,7 +163,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -252,7 +256,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -343,7 +349,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -434,7 +442,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -525,7 +535,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -616,7 +628,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -707,7 +721,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -798,7 +814,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -889,7 +907,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -980,7 +1000,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1071,7 +1093,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1162,7 +1186,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1253,7 +1279,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1344,7 +1372,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1435,7 +1465,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1526,7 +1558,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
@@ -1623,7 +1657,9 @@
                   "$changeStream": {}
                 }
               ]
-            }
+            },
+            "command_name": "aggregate",
+            "database_name": "change-stream-tests"
           }
         }
       ],
