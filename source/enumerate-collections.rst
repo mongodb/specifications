@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: July 2, 2018
-:Version: 0.5
+:Last Modified: March 3, 2020
+:Version: 0.6.0
 
 .. contents::
 
@@ -302,6 +302,22 @@ result for ``system.namespaces``.
 The returned result for each variant MUST be equivalent, and each collection
 that is returned MUST use the field names ``name`` and ``options``.
 
+In MongoDB 4.4, the ``ns`` field was removed from the index specifications,
+including in the ``idIndex`` option returned from the ``listCollections``
+command.
+
+- For drivers that report those index specifications in the form of documents or
+  dictionaries, no special handling is necessary, but any documentation of the
+  contents of the documents/dictionaries MUST indicate that the ``ns`` field
+  will no longer be present in MongoDB 4.4+. If the contents of the
+  documents/dictionaries are undocumented, then no special mention of the ``ns``
+  field is necessary.
+- For drivers that report those index specifications in the form of statically
+  defined models, the driver MUST manually populate the ``ns`` field of the
+  models with the appropriate namespace if the server does not report it in the
+  ``listIndexes`` command response. The ``ns`` field is not required to be a
+  part of the models, however.
+
 Example return (a cursor which returns documents, not a simple array)::
 
     {
@@ -417,6 +433,10 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.6.0 Changes
+    - MongoDB 4.4 no longer includes ``ns`` field in ``idIndex`` options for
+      ``listCollections`` responses.
+
 Version 0.5.1 Changes
     - The method that returns a list of collection names should be named
       ``listCollectionNames``. The method that returns a list of collection
