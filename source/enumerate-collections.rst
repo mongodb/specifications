@@ -315,7 +315,7 @@ command.
 - For drivers that report those index specifications in the form of statically
   defined models, the driver MUST manually populate the ``ns`` field of the
   models with the appropriate namespace if the server does not report it in the
-  ``listIndexes`` command response. The ``ns`` field is not required to be a
+  ``listCollections`` command response. The ``ns`` field is not required to be a
   part of the models, however.
 
 Example return (a cursor which returns documents, not a simple array)::
