@@ -13,15 +13,15 @@ The prose tests defined in this file are platform-independent tests that
 drivers can use to prove their conformance to the OCSP Support
 specification. These tests MUST BE implemented by all drivers.
 
-Additional YAML and JSON tests have also been added to the
-`URI Options Tests <../../uri-options/tests/README.rst>`__.
-Specifically, the `TLS Options Test
-<../../uri-options/test/tls-options.yml>`__ has been
-updated with additional tests for the new URI option
-``tlsDisableOCSPEndpointCheck``. These tests MUST BE implemented by
-drivers that are able to support the ``tlsDisableOCSPEndpointCheck``
-URI option (see `MongoClient Configuration
-<../ocsp-support#MongoClient-Configuration>`__).
+Additional YAML and JSON tests have also been added to the `URI
+Options Tests <../../uri-options/tests/README.rst>`__.  Specifically,
+the `TLS Options Test <../../uri-options/test/tls-options.yml>`__ has
+been updated with additional tests for the new URI options
+``tlsDisableOCSPEndpointCheck`` and ``tlsDisableOCSPEndpointCheck.
+
+Tests involving the new URI options MUST BE implemented by drivers
+that are able to support those new URI options (see `MongoClient
+Configuration <../ocsp-support#MongoClient-Configuration>`__).
 
 Testing Invalid Configurations
 ==============================
@@ -32,7 +32,7 @@ basis.
 
 1. Create a MongoClient with ``tlsInsecure=true``.
 
-2. Enable certificate revocation checking on the MongoClient
+2. Enable certificate revocation checking on the MongoClient.
 
 3. Ensure that an error is thrown noting that revocation checking cannot
    be used in combination with ``tlsInsecure=true``.
@@ -158,8 +158,8 @@ Each column that utilizes an OCSP responder represents four tests:
 Each column that does not utilize an OCSP responder (i.e. "Soft Fail
 Test" and "Malicious Server Test 2") represent two tests:
 
-  1. A test with RSA certificates
-  2. A test with ECDSA certificates
+1. A test with RSA certificates
+2. A test with ECDSA certificates
 
 Each test MUST BE its own Evergreen task in order to
 minimize the impact of OCSP caching. OCSP caching can exist at the
@@ -202,8 +202,11 @@ duration even after a driver encounters a TLS error early).
 
 Changelog
 ==========
-**2020-2-27**: Add delegate responders and ECDSA certificate testing.
+**2020-03-05**: Add tests for tlsDisableCertificateRevocationCheck to
+URI Options tests. Move/add OCSP URI options default tests to separate file.
 
-**2020-2-26**: Add additional URI Options Tests.
+**2021-02-27**: Add delegate responders and ECDSA certificate testing.
 
-**2020-1-16**: Initial commit.
+**2020-02-26**: Add additional URI Options Tests.
+
+**2020-01-16**: Initial commit.
