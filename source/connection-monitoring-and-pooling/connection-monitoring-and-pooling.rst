@@ -219,7 +219,7 @@ A driver-defined entity that encapsulates all non-monitoring connections associa
 -  **Thread Safe:** All Pool behaviors MUST be thread safe.
 -  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update it's pid
 -  **Single Owner:** A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.
--  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <https://docs.google.com/document/d/1AT1vCSBXB-0MQUqkusIukMngSvlyNU93qe9tBxbcfiY/edit?disco=AAAACWk9Jo4&ts=5bec82a4#heading=h.75j6jnmktzyn>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
+-  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <#connection-pool-monitoring>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
 -  **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
 
    -  Checking in a Connection to the Pool automatically closes the connection
