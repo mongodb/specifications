@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.5.0
+:Spec Version: 1.6.0
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2020-2-26
+:Last Modified: 2020-3-3
 
 
 **Abstract**
@@ -51,9 +51,15 @@ occur:
    URI options.
 3. Both ``tlsInsecure`` and ``tlsDisableOCSPEndpointCheck`` appear in
    the URI options.
-4. Both ``tlsAllowInvalidCertificates`` and
+4. Both ``tlsInsecure`` and ``tlsDisableCertificateRevocationCheck``
+   appear in the URI options.
+5. Both ``tlsAllowInvalidCertificates`` and
    ``tlsDisableOCSPEndpointCheck`` appear in the URI options.
-5. All instances of ``tls`` and ``ssl`` in the URI options do not have the
+6. Both ``tlsAllowInvalidCertificates`` and
+   ``tlsDisableCertificateRevocationCheck`` appear in the URI options.
+7. Both ``tlsDisableOCSPEndpointCheck`` and
+   ``tlsDisableCertificateRevocationCheck`` appear in the URI options.
+8. All instances of ``tls`` and ``ssl`` in the URI options do not have the
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
@@ -278,21 +284,30 @@ pertaining to URI options apply here.
      - required if the driver's language/runtime allows non-global configuration
      - Password to decrypt the client private key to be used for TLS connections
 
+   * - tlsDisableCertificateRevocationCheck
+     - "true" or "false"
+     - false i.e. driver will reach check a certificate's revocation status
+     - Yes
+     - Controls whether or not the driver will check a certificate's
+       revocation status via CRLs or OCSP. See the `OCSP Support Spec
+       <../ocsp-support/ocsp-support.rst#tlsDisableCertificateRevocationCheck>`__
+       for additional information.
+
+   * - tlsDisableOCSPEndpointCheck
+     - "true" or "false"
+     - false i.e. driver will reach out to OCSP endpoints `if needed
+       <../ocsp-support/ocsp-support.rst#id1>`__.
+     - Yes
+     - Controls whether or not the driver will reach out to OCSP
+       endpoints if needed. See the `OCSP Support Spec
+       <../ocsp-support/ocsp-support.rst#tlsDisableOCSPEndpointCheck>`__
+       for additional information.
+
    * - tlsInsecure
      - "true" or "false"
      - No TLS constraints are relaxed
      - no
      - Relax TLS constraints as much as possible (e.g. allowing invalid certificates or hostname mismatches); drivers must document the exact constraints which are relaxed by this option being true
-
-   * - tlsDisableOCSPEndpointCheck
-     - "true" or "false"
-     - false i.e. driver will reach out to OCSP endpoints :ref:`if
-       needed <Suggested OCSP Behavior>`.
-     - Yes
-     - Controls whether or not the driver will reach out to OCSP
-        endpoints if needed. See the `OCSP Support Spec
-        <../ocsp-support/ocsp-support#tlsDisableOCSPEndpointCheck>`__
-        for additional information..
 
    * - w
      - non-negative integer or string
@@ -389,10 +404,12 @@ Ruby and Python
 ------------------------
 
 Each of the "insecure" TLS options (i.e. "tlsInsecure",
-"tlsAllowInvalidHostnames", "tlsAllowInvalidCertificates", and
-"tlsDisableOCSPEndpointCheck") default to the more secure option when
-TLS is enabled. In order to be backwards compatible with existing
-driver behavior, neither TLS nor authentication is enabled by default.
+"tlsAllowInvalidHostnames", "tlsAllowInvalidCertificates",
+"tlsDisableOCSPEndpointCheck", and
+"tlsDisableCertificateRevocationCheck") default to the more secure
+option when TLS is enabled. In order to be backwards compatible with
+existing driver behavior, neither TLS nor authentication is enabled by
+default.
 
 **Future Work**
 ---------------
@@ -406,6 +423,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2020-03-03 Add tlsDisableCertificateRevocationCheck option
 - 2020-02-26 Add tlsDisableOCSPEndpointCheck option
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
 - 2019-02-04 Specified errors for conflicting TLS-related URI options

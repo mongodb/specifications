@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.2.0
+:Spec Version: 1.3.0
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
-:Advisory Group: Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
+:Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2020-2-26
+:Last Modified: 2020-3-3
 
 .. contents::
 
@@ -105,13 +105,14 @@ invalid, the driver SHOULD end the connection.
 
 7.  If the server’s certificate remains unvalidated, that certificate
     has a list of OCSP responder endpoints, and
-    ``tlsDisableOCSPEndpointCheck`` is false (`if the driver supports
-    this option <MongoClient Configuration>`_), the driver SHOULD send
-    HTTP requests to the responders in parallel. The first valid
-    response that concretely marks the certificate status as good or
-    revoked should be used. A five-second timeout SHOULD be used for
-    the requests.  The status for a response should only be checked if
-    the response is valid per `RFC 6960 Section 3.2
+    ``tlsDisableOCSPEndpointCheck`` or
+    ``tlsDisableCertificateRevocationCheck`` is false (`if the driver
+    supports these options <MongoClient Configuration>`_), the driver
+    SHOULD send HTTP requests to the responders in parallel. The first
+    valid response that concretely marks the certificate status as
+    good or revoked should be used. A five-second timeout SHOULD be
+    used for the requests.  The status for a response should only be
+    checked if the response is valid per `RFC 6960 Section 3.2
     <https://tools.ietf.org/html/rfc6960#section-3.2>`_
 
 8.  If any unvalidated intermediate certificates remain and those
@@ -132,8 +133,7 @@ invalid, the driver SHOULD end the connection.
     even if the status of all the unvalidated certificates has not
     been confirmed yet (e.g. because an OCSP responder is down).
 
-\*: See :ref:`Design Rationale: Suggested OCSP
-Behavior <Design Rationale for Suggested OCSP Behavior>`
+\*: See `Design Rationale: Suggested OCSP Behavior <ocsp-support.rst#id7>`__
 
 Suggested OCSP Response Validation Behavior
 -------------------------------------------
@@ -181,32 +181,50 @@ response.
 MongoClient Configuration
 --------------------------
 
-This specification introduces the client-level configuration option
-defined below. Drivers that can, on a per MongoClient basis, disable
-non-stapled OCSP while keeping stapled OCSP enabled MUST implement
-this option.
+This specification introduces the client-level configuration options
+defined below.
 
 tlsDisableOCSPEndpointCheck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This boolean option determines whether MongoClient should refrain from
+Drivers that can, on a per MongoClient basis, disable non-stapled OCSP
+while keeping stapled OCSP enabled MUST implement this option.
+
+This boolean option determines whether a MongoClient should refrain from
 reaching out to an OCSP endpoint i.e.  whether non-stapled OCSP should
 be disabled.  When set to true, a driver MUST NOT reach out to OCSP
-endpoints. When set to false, a driver MUST reach out to xOCSP
+endpoints. When set to false, a driver MUST reach out to OCSP
 endpoints if needed (as described in :ref:`Suggested OCSP Behavior`).
 This option MUST default to false.
+
+tlsDisableCertificateRevocationCheck
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Drivers whose TLS libraries support an option to toggle general
+certificate revocation checking must implement this option if enabling
+general certificate revocation checking causes hard-fail behavior when
+no revocation mechanisms are available (i.e. no methods are defined
+or the CRL distribution points/OCSP endpoints are unreachable).
+
+This boolean option determines whether a MongoClient should refrain
+checking certificate revocation status. When set to true, a driver
+MUST NOT check certificate revocation status via CRLs or OCSP.  When
+set to false, a driver MUST check certificate revocation status, reach
+out to OCSP endpoints if needed (as described in :ref:`Suggested OCSP
+Behavior`).  This option MUST default to false.
+
 
 Naming Deviations
 ^^^^^^^^^^^^^^^^^^
 
-Drivers MUST use the defined name of ``tlsDisableOCSPEndpointCheck``
-for the connection string parameter to ensure portability of
-connection strings across applications and drivers. If drivers solicit
-MongoClient options through another mechanism (e.g. an options
-dictionary provided to the MongoClient constructor), drivers SHOULD
-use the defined name but MAY deviate to comply with their existing
-conventions. For example, a driver may use
-``tls_disable_ocsp_endpoint_check`` instead of
+Drivers MUST use the defined names of ``tlsDisableOCSPEndpointCheck``
+and ``tlsDisableCertificateRevocationCheck`` for the connection string
+parameters to ensure portability of connection strings across
+applications and drivers. If drivers solicit MongoClient options
+through another mechanism (e.g. an options dictionary provided to the
+MongoClient constructor), drivers SHOULD use the defined name but MAY
+deviate to comply with their existing conventions. For example, a
+driver may use ``tls_disable_ocsp_endpoint_check`` instead of
 ``tlsDisableOCSPEndpointCheck``.
 
 How OCSP interacts with existing configuration options
@@ -242,6 +260,20 @@ per MongoClient basis.
    ``tlsAllowInvalidCertificates=true`` or
    ``tlsDisableOCSPEndpointCheck=true`` is specified alongside the
    option to enable certificate revocation checking.
+
+3. If a connection string contains both ``tlsInsecure`` and
+   ``tlsDisableCertificateRevocationCheck`` then the driver MUST throw
+   an error.
+
+4. If a driver supports ``tlsAllowInvalidCertificates`` and a
+   connection string specifies both ``tlsAllowInvalidCertificates``
+   and ``tlsDisableCertificateRevocationCheck``, then the driver MUST
+   throw an error.
+
+5. If a driver supports ``tlsDisableOCSPEndpointCheck``, and a
+   connection string specifies ``tlsDisableCertificateRevocationCheck``,
+   then the driver MUST throw an error.
+
 
 TLS Requirements
 ----------------
@@ -302,10 +334,12 @@ test plan below MUST document that their chosen TLS library will connect
 in the case that a server with a Must-Staple certificate does not staple
 a response and the OCSP responder is down.
 
-Drivers that fail “Soft Fail Test” MUST document that their driver’s TLS
-library utilizes “hard fail” behavior in the case of an unavailable OCSP
-responder in contrast to the mongo shell and drivers that utilize
-“soft-fail” behavior.
+Drivers that fail “Soft Fail Test” MUST document that their driver’s
+TLS library utilizes “hard fail” behavior in the case of an
+unavailable OCSP responder in contrast to the mongo shell and drivers
+that utilize “soft-fail” behavior. Such drivers MUST also document the
+potential backwards compatibility issues as noted in the `Backwards
+Compatibility`_ section.
 
 Test Plan
 ==========
@@ -410,16 +444,35 @@ such that connections can continue even if the OCSP server is
 inaccessible, so this issue is much more likely in the case of a
 server with a certificate that only contains CRL distribution points.)
 In such a scenario, connectivity may be able to be restored by
-disabling non-stapled OCSP via ``tlsDisableOCSPEndpointCheck``.
+disabling non-stapled OCSP via ``tlsDisableOCSPEndpointCheck`` or by
+disabling certificate revocation checking altogether
+via``tlsDisableCertificateRevocationCheck``.
+
+An application that uses a driver that utilizes hard-fail behavior
+when there are no certificate revocation mechanisms available may also
+experience connectivity issue. Cases in which no certificate
+revocation mechanisms being available include:
+
+1. When a server's certificate defines neither OCSP endpoints nor CRL
+   distribution points
+2. When a certificate defines CRL distribution points and/or OCSP
+   endpoints but these points are unavailable (e.g. the points are
+   down or the application is deployed behind a restrictive firewall).
+
+In such a scenario, connectivity may be able to be restored by disabling
+non-stapled OCSP via ``tlsDisableOCSPEndpointCheck`` or by disabling
+certificate revocation checking via
+``tlsDisableCertificateRevocationCheck``.
 
 Reference Implementation
 =========================
 
-The .NET/C#, Python, and C drivers will provide the reference
+The .NET/C#, Python, C, and Go drivers will provide the reference
 implementations. See
 `CSHARP-2817 <https://jira.mongodb.org/browse/CSHARP-2817>`__,
-`PYTHON-2093 <https://jira.mongodb.org/browse/PYTHON-2093>`__, and
-`CDRIVER-3408 <https://jira.mongodb.org/browse/CDRIVER-3408>`__.
+`PYTHON-2093 <https://jira.mongodb.org/browse/PYTHON-2093>`__,
+`CDRIVER-3408 <https://jira.mongodb.org/browse/CDRIVER-3408>`__ and
+`GODRIVER-1467 <http://jira.mongodb.org/browse/GODRIVER-1467>`__.
 
 Security Implications
 =====================
@@ -699,18 +752,23 @@ of checking this are:
 
 Changelog
 ==========
-**2020-2-26**: 1.2.0: Add tlsDisableOCSPEndpointCheck URI option.
 
-**2020-2-19**: 1.1.1 Clarify behavior for reaching out to OCSP responders.
+**2020-03-03**: 1.3.0: Add tlsDisableCertificateRevocationCheck URI
+option. Add Go as a reference implementation. Add hard-fail backwards
+compatibility documentation requirements.
 
-**2020-2-10**: 1.1.0: Add cache requirement.
+**2020-02-26**: 1.2.0: Add tlsDisableOCSPEndpointCheck URI option.
 
-**2020-1-31**: 1.0.2: Add SNI requirement and clarify design rationale
+**2020-02-19**: 1.1.1 Clarify behavior for reaching out to OCSP responders.
+
+**2020-02-10**: 1.1.0: Add cache requirement.
+
+**2020-01-31**: 1.0.2: Add SNI requirement and clarify design rationale
 regarding minimizing round trips.
 
-**2020-1-28**: 1.0.1: Clarify behavior regarding nonces and tolerance periods.
+**2020-01-28**: 1.0.1: Clarify behavior regarding nonces and tolerance periods.
 
-**2020-1-16**: 1.0.0: Initial commit.
+**2020-01-16**: 1.0.0: Initial commit.
 
 Endnotes
 ========
