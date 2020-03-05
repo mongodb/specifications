@@ -382,8 +382,8 @@ according to the following table:
 | false            | yes                   | ReplicaSetNoPrimary   |
 +------------------+-----------------------+-----------------------+
 
-If directConnection option is not specified, newly developed drivers MUST behave
-as if it was specified with the false value.
+If the ``directConnection`` option is not specified, newly developed drivers
+MUST behave as if it was specified with the false value.
 
 Since changing the starting topology can reasonably be considered a
 backwards-breaking change, existing drivers SHOULD stage implementation
