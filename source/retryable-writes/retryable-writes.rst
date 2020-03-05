@@ -213,8 +213,8 @@ Determining Retryable Errors
 When connected to a MongoDB instance that supports retryable writes (versions 3.6+),
 the driver MUST treat all errors with the RetryableWriteError label as retryable.
 This error label can be found in the top-level "errorLabels" field of the error.
-With a WriteConcernError response, the top level document or the
-WriteConcernError document may contain the RetryableWriteError error label.
+In a server error response with a writeConcernError field the top level document
+or the writeConcernError document may contain the RetryableWriteError error label.
 
 The RetryableWriteError label might be added to an error in a variety of ways:
 
