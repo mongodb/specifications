@@ -393,7 +393,7 @@ In a subsequent major release, the default starting topology can be changed
 to Unknown. Drivers MUST document this in a prior minor release.
 
 Existing drivers MUST deprecate other URI options, if any, for controlling
-topology discovery or specifying the deployment topology. If such a egacy
+topology discovery or specifying the deployment topology. If such a legacy
 option is specified and the ``directConnection`` option is also
 specified, and the values of the two options are semantically different,
 the driver MUST report an error during URI option parsing.
