@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.5.1
+:Spec Version: 1.5.2
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2020-02-10
+:Last Modified: 2020-02-25
 
 .. contents::
 
@@ -212,24 +212,32 @@ Determining Retryable Errors
 
 When connected to a MongoDB instance that supports retryable writes (versions 3.6+),
 the driver MUST treat all errors with the RetryableWriteError label as retryable.
-This label might be added to an error in a variety of ways:
+This error label can be found in the top-level "errorLabels" field of the error.
+In a server error response with a writeConcernError field the top level document
+or the writeConcernError document may contain the RetryableWriteError error label.
+
+The RetryableWriteError label might be added to an error in a variety of ways:
 
 When the driver encounters a network error communicating with any server version
 that supports retryable writes, it MUST add a RetryableWriteError label to that
-error.
+error if the MongoClient performing the operation has the retryWrites
+configuration option set to true.
 
 For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
 errors or server responses that it considers retryable before returning them to the
 driver. As new server versions are released, the errors that are labeled with the
 RetryableWriteError label may change. When receiving a command result
 with an error from a 4.4+ server that supports retryable writes, the driver
-MUST NOT add a RetryableWriteError label to that error under any condition.   
-Note: With a WriteConcernError response the top level document or the 
-WriteConcernError document may contain the RetryableWriteError error label.
+MUST NOT add a RetryableWriteError label to that error under any condition.
+
+During a retryable write operation on a sharded cluster, mongos may retry the
+operation internally, in which case it will not add a RetryableWriteError label to
+any error that occurs after those internal retries to prevent excessive retrying.
 
 When receiving a command result with an error from a pre-4.4 server that supports
 retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
-the following criteria:
+the following criteria if the retryWrites option is set to true on the client
+performing the relevant operation:
 
 - a server error response with any the following codes:
 
@@ -264,6 +272,11 @@ the following criteria:
       - 262
 
 - a server response with a write concern error response containing any of the previously listed codes
+
+To understand why the driver should only add the RetryableWriteError label
+to an error when the retryWrites option is true on the MongoClient performing
+the operation, see `Why does the driver only add the RetryableWriteError label
+to errors that occur on a MongoClient with retryWrites set to true?`_
 
 The criteria for retryable errors is similar to the discussion in the SDAM
 spec's section on `Error Handling`_, but includes additional error codes. See
@@ -781,8 +794,22 @@ performing any error message parsing.
 
 .. _Use error messages to detect "not master" and "node is recovering": ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#use-error-messages-to-detect-not-master-and-node-is-recovering
 
+Why does the driver only add the RetryableWriteError label to errors that occur on a MongoClient with retryWrites set to true?
+------------------------------------------------------------------------------------------------------------------------------
+
+The driver does this to maintain consistency with the MongoDB server.
+Servers that support the RetryableWriteError label (MongoDB version 4.4 and newer)
+only the label to an error when the operation is a retryable write (when it has
+a txnNumber). For the driver to add the label even if the operation was not a
+retryable write would be inconsistent with the server and potentially confusing
+to developers.
+
 Changes
 =======
+
+2020-02-25: State that the driver should only add the RetryableWriteError label
+when retryWrites is on, and make it clear that mongos will sometimes perform
+internal retries and not return the RetryableWriteError label.
 
 2020-02-10: Remove redundant content in Tests section.
 
