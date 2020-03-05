@@ -32,6 +32,30 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
+        description: "InsertOne fails after connection failure when retryWrites option is false"
+        clientOptions:
+            retryWrites: false
+        failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+                failCommands: ["insert"]
+                closeConnection: true
+        operation:
+            name: "insertOne"
+            arguments:
+                document: { _id: 3, x: 33 }
+        outcome:
+            error: true
+            result:
+                # If retryWrites is false, the driver should not add the
+                # RetryableWriteError label to the error.
+                errorLabelsOmit: ["RetryableWriteError"]
+            collection:
+                data:
+                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 22 }
+    -
         description: "InsertOne succeeds after NotMaster"
         failPoint:
             configureFailPoint: failCommand
