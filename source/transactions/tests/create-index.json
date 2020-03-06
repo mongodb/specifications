@@ -32,7 +32,7 @@
           "arguments": {
             "session": "session0",
             "name": "t_1",
-            "key": {
+            "keys": {
               "x": 1
             }
           }
@@ -141,7 +141,7 @@
           "arguments": {
             "session": "session0",
             "name": "t_1",
-            "key": {
+            "keys": {
               "x": 1
             }
           }

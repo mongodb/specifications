@@ -23,7 +23,7 @@ tests:
         arguments:
           session: session0
           name: &index_name "t_1"
-          key:
+          keys:
             x: 1
       - name: assertIndexNotExists
         object: testRunner
@@ -93,7 +93,7 @@ tests:
         arguments:
           session: session0
           name: *index_name
-          key:
+          keys:
             x: 1
       - name: assertIndexNotExists
         object: testRunner
