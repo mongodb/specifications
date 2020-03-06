@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.1
+:Spec Version: 1.10.2
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -1209,12 +1209,11 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
 Version History
 ===============
 
-Version 1.10.1 Changes
-<<<<<<< HEAD
-    * Rename MONGODB-IAM to MONGODB-AWS
-=======
+Version 1.10.2 Changes
     * Add reference to the speculative authentication section of the handshake spec.
->>>>>>> SPEC-1552: support speculative authentication attempts in isMaster
+
+Version 1.10.1 Changes
+    * Rename MONGODB-IAM to MONGODB-AWS
 
 Version 1.10.0 Changes
     * Support shorter SCRAM conversation starting in version 4.4 of the server.
