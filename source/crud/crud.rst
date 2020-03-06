@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 24, 2020
+:Last Modified: March 6, 2020
 
 .. contents::
 
@@ -978,6 +978,18 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     collation: Optional<Document>;
+
+    /**
+     * The index to use.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    hint: Optional<(String | Document)>;
   }
 
 
@@ -1859,6 +1871,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2020-03-06: Added hint option for delete operation.
 * 2020-01-24: Added hint option for findAndModify update/replace operations.
 * 2020-01-17: Add allowDiskUse to FindOptions.
 * 2020-01-14: Deprecate oplogReplay option for find command
