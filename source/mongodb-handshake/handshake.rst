@@ -241,12 +241,12 @@ clients to merge the contents of their first authentication command with their
 
 When the mechanism is ``MONGODB-X509``, ``speculativeAuthenticate`` has the same
 structure as seen in the MONGODB-X509 conversation section in the
-`Driver Authentication spec`_.
+`Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_.
 
 When the mechanism is ``SCRAM-SHA-1`` or ``SCRAM-SHA-256``, ``speculativeAuthenticate``
 has the same fields as seen in the conversation subsection of the SCRAM-SHA-1 and
-SCRAM-SHA-256 sections in the `Driver Authentication spec`_ with an additional ``db``
-field to specify the name of the authentication database.
+SCRAM-SHA-256 sections in the `Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
+with an additional ``db`` field to specify the name of the authentication database.
 
 If the ``isMaster`` command with a ``speculativeAuthenticate`` argument succeeds,
 the client should proceed with the next step of the exchange. If the ``isMaster``
@@ -256,7 +256,7 @@ authentication handshake.
 
 The ``speculativeAuthenticate`` reply has the same fields, except for the ``ok`` field,
 as seen in the conversation sections for MONGODB-X509, SCRAM-SHA-1 and SCRAM-SHA-256
-in the `Driver Authentication spec`_.
+in the `Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_.
 
 If an authentication mechanism is not provided either via connection string or code, but
 a credential is provided, drivers MUST use the SCRAM-SHA-256 mechanism for speculative
