@@ -114,7 +114,6 @@ invalid, the driver SHOULD end the connection.
     the response is valid per `RFC 6960 Section 3.2
     <https://tools.ietf.org/html/rfc6960#section-3.2>`_
 
-
 8.  If any unvalidated intermediate certificates remain and those
     certificates have OCSP endpoints, for each certificate, the
     driver SHOULD NOT reach out to the OCSP endpoint specified and
@@ -142,6 +141,7 @@ Suggested OCSP Response Validation Behavior
 Drivers SHOULD validate OCSP Responses in the manner specified in `RFC
 6960: 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`__ to the
 extent that their TLS library allows.
+
 Suggested OCSP Caching Behavior
 -------------------------------
 Drivers with sufficient control over their TLS library's OCSP
