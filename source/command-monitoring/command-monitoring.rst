@@ -250,7 +250,7 @@ value MUST be replaced with an empty BSON document. The list is as follows:
    * - ``copydbgetnonce``
    * - ``copydbsaslstart``
    * - ``copydb``
-   * - ``isMaster`` when ``speculativeAuthenticate`` is present
+   * - ``isMaster`` or ``ismaster`` when ``speculativeAuthenticate`` is present
 
 ---
 API
