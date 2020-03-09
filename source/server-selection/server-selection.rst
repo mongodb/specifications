@@ -548,10 +548,6 @@ constructed. In this case, the user MUST specify a value for ``enabled``, which
 MUST default to ``true``. If the user does not call a ``hedge`` API method,
 drivers MUST NOT send a ``hedge`` option to the server.
 
-Drivers MUST NOT send a read preference where the hedge option is set to server
-version before 4.4 (i.e. maxWireVersion < 9) and MUST raise an error instead.
-This pertains to `Passing read preference to mongos`_.
-
 
 Read preference configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
