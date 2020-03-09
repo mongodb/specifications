@@ -38,7 +38,7 @@ tests:
     operations:
       -
         object: collection
-        name: deleteOne
+        name: deleteMany
         arguments:
           filter: *filter
           hint: { _id: 1 }
