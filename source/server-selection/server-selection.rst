@@ -535,9 +535,11 @@ server will perform hedged reads. It consists of the following keys:
 
 - ``enabled``: Enables or disables hedging
 
-To enable hedging with server-side defaults, an empty ``hedge`` document must be
-sent to the server. If no ``hedge`` document is passed or if the ``enabled``
-key is ``false``, the server will not perform hedged reads.
+Hedged reads are automatically enabled in MongoDB 4.4+ when using a ``nearest``
+read preference. To explicitly enable hedging, the ``hedge`` document must be
+passed. An empty document uses server defaults to control hedging, but the
+``enabled`` key may be set to ``true`` or ``false`` to explicitly enable or
+disable hedged reads.
 
 Drivers MAY allow users to specify an empty hedge document if they accept
 documents for read preference options. Any driver that exposes a builder API for
