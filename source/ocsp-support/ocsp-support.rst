@@ -604,7 +604,7 @@ On macOS 10.14, the OCSP cache can be cleared like so:
 .. code-block:: console
 
   find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
-  -exec sqlite3 "{}" 'DELETE * FROM responses ;' \;
+  -exec sqlite3 "{}" 'DELETE FROM responses ;' \;
 
 To delete only “Let’s Encrypt” related entries, the following command
   could be used:
