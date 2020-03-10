@@ -986,7 +986,7 @@ Basic
      * Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/update/
+     * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
   }
@@ -1566,10 +1566,10 @@ Find And Modify
      * The index to use.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     * Older servers >= 3.4 will report an error for using this option.
-     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
+     * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/update/
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     hint: Optional<(String | Document)>;
 
