@@ -18,7 +18,7 @@
       "x": 33
     }
   ],
-  "collection_name": "test_deletemany_hint",
+  "collection_name": "DeleteMany_hint",
   "tests": [
     {
       "description": "DeleteMany with hint string unsupported (client-side error)",

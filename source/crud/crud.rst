@@ -1881,7 +1881,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2020-03-06: Added hint option for delete operation.
+* 2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
 * 2020-01-24: Added hint option for findAndModify update/replace operations.
 * 2020-01-17: Add allowDiskUse to FindOptions.
 * 2020-01-14: Deprecate oplogReplay option for find command

@@ -10,7 +10,7 @@ data:
   - { _id: 2, x: 22 }
   - { _id: 3, x: 33 }
 
-collection_name: &collection_name 'test_deletemany_hint'
+collection_name: &collection_name 'DeleteMany_hint'
 
 tests:
   -
