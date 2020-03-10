@@ -1,5 +1,5 @@
 runOn:
-  - { maxServerVersion: "4.1.99" }
+  - { maxServerVersion: "3.3.99" }
 
 data:
   - { _id: 1, x: 11 }
@@ -10,7 +10,7 @@ collection_name: &collection_name 'test_deletemany_hint'
 
 tests:
   -
-    description: "DeleteMany with hint string unsupported (server-side error)"
+    description: "DeleteMany with hint string unsupported (client-side error)"
     operations:
       -
         object: collection
@@ -27,7 +27,7 @@ tests:
           - { _id: 2, x: 22 }
           - { _id: 3, x: 33 }
   -
-    description: "DeleteMany with hint document unsupported (server-side error)"
+    description: "DeleteMany with hint document unsupported (client-side error)"
     operations:
       -
         object: collection

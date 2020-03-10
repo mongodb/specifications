@@ -1,5 +1,5 @@
 runOn:
-  - { maxServerVersion: "4.1.99" }
+  - { maxServerVersion: "3.3.99" }
 
 data:
   - { _id: 1, x: 11 }
