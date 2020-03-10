@@ -1,7 +1,7 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.3.4"
+      "maxServerVersion": "3.3.99"
     }
   ],
   "data": [
@@ -17,7 +17,7 @@
   "collection_name": "DeleteOne_hint",
   "tests": [
     {
-      "description": "DeleteOne with hint string",
+      "description": "DeleteOne with hint string unsupported (client-side error)",
       "operations": [
         {
           "object": "collection",
@@ -28,31 +28,17 @@
             },
             "hint": "_id_"
           },
-          "result": {
-            "deletedCount": 1
-          }
+          "error": true
         }
       ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "DeleteOne_hint",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": 1
-                  },
-                  "hint": "_id_"
-                }
-              ]
-            }
-          }
-        }
-      ],
+      "expectations": [],
       "outcome": {
         "collection": {
           "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
             {
               "_id": 2,
               "x": 22
@@ -62,7 +48,7 @@
       }
     },
     {
-      "description": "deleteOne with hint document",
+      "description": "DeleteOne with hint document unsupported (client-side error)",
       "operations": [
         {
           "object": "collection",
@@ -75,33 +61,17 @@
               "_id": 1
             }
           },
-          "result": {
-            "deletedCount": 1
-          }
+          "error": true
         }
       ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "DeleteOne_hint",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": 1
-                  },
-                  "hint": {
-                    "_id": 1
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ],
+      "expectations": [],
       "outcome": {
         "collection": {
           "data": [
+            {
+              "_id": 1,
+              "x": 11
+            },
             {
               "_id": 2,
               "x": 22

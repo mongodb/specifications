@@ -1,7 +1,8 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.3.4"
+      "minServerVersion": "3.4.0",
+      "maxServerVersion": "4.3.3"
     }
   ],
   "data": [
@@ -12,48 +13,35 @@
     {
       "_id": 2,
       "x": 22
-    },
-    {
-      "_id": 3,
-      "x": 33
     }
   ],
-  "collection_name": "test_deletemany_hint",
+  "collection_name": "findOneAndDelete_hint",
   "tests": [
     {
-      "description": "DeleteMany with hint string",
+      "description": "FindOneAndDelete with hint string unsupported (server-side error)",
       "operations": [
         {
           "object": "collection",
-          "name": "deleteMany",
+          "name": "findOneAndDelete",
           "arguments": {
             "filter": {
-              "_id": {
-                "$gt": 1
-              }
+              "_id": 1
             },
             "hint": "_id_"
           },
-          "result": {
-            "deletedCount": 2
-          }
+          "error": true
         }
       ],
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "delete": "test_deletemany_hint",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  },
-                  "hint": "_id_"
-                }
-              ]
+              "findAndModify": "findOneAndDelete_hint",
+              "query": {
+                "_id": 1
+              },
+              "hint": "_id_",
+              "remove": true
             }
           }
         }
@@ -64,49 +52,44 @@
             {
               "_id": 1,
               "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
             }
           ]
         }
       }
     },
     {
-      "description": "deleteMany with hint document",
+      "description": "FindOneAndDelete with hint document",
       "operations": [
         {
           "object": "collection",
-          "name": "deleteMany",
+          "name": "findOneAndDelete",
           "arguments": {
             "filter": {
-              "_id": {
-                "$gt": 1
-              }
+              "_id": 1
             },
             "hint": {
               "_id": 1
             }
           },
-          "result": {
-            "deletedCount": 2
-          }
+          "error": true
         }
       ],
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "delete": "test_deletemany_hint",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  },
-                  "hint": {
-                    "_id": 1
-                  }
-                }
-              ]
+              "findAndModify": "findOneAndDelete_hint",
+              "query": {
+                "_id": 1
+              },
+              "hint": {
+                "_id": 1
+              },
+              "remove": true
             }
           }
         }
@@ -117,6 +100,10 @@
             {
               "_id": 1,
               "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
             }
           ]
         }

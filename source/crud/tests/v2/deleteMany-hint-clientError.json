@@ -1,7 +1,7 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.3.4"
+      "maxServerVersion": "3.3.99"
     }
   ],
   "data": [
@@ -21,7 +21,7 @@
   "collection_name": "test_deletemany_hint",
   "tests": [
     {
-      "description": "DeleteMany with hint string",
+      "description": "DeleteMany with hint string unsupported (client-side error)",
       "operations": [
         {
           "object": "collection",
@@ -34,43 +34,31 @@
             },
             "hint": "_id_"
           },
-          "result": {
-            "deletedCount": 2
-          }
+          "error": true
         }
       ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "test_deletemany_hint",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  },
-                  "hint": "_id_"
-                }
-              ]
-            }
-          }
-        }
-      ],
+      "expectations": [],
       "outcome": {
         "collection": {
           "data": [
             {
               "_id": 1,
               "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ]
         }
       }
     },
     {
-      "description": "deleteMany with hint document",
+      "description": "DeleteMany with hint document unsupported (client-side error)",
       "operations": [
         {
           "object": "collection",
@@ -85,38 +73,24 @@
               "_id": 1
             }
           },
-          "result": {
-            "deletedCount": 2
-          }
+          "error": true
         }
       ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "delete": "test_deletemany_hint",
-              "deletes": [
-                {
-                  "q": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  },
-                  "hint": {
-                    "_id": 1
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ],
+      "expectations": [],
       "outcome": {
         "collection": {
           "data": [
             {
               "_id": 1,
               "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ]
         }
