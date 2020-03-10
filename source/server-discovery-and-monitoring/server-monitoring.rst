@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2020-02-20
+:Last Modified: 2020-03-09
 
 .. contents::
 
@@ -85,10 +85,6 @@ The client begins monitoring a server when:
 * ... `updateRSWithoutPrimary`_ or `updateRSFromPrimary`_
   discovers new replica set members.
 
-When checking a server, clients MUST NOT include SCRAM mechanism
-negotiation requests with the ``isMaster`` command, as doing so would
-make monitoring checks more expensive for the server.
-
 The following subsections specify how monitoring works,
 first in multi-threaded or asynchronous clients,
 and second in single-threaded clients.
@@ -117,7 +113,9 @@ to acquire a socket;
 it uses a dedicated socket that does not count toward the pool's
 maximum size.
 
-Drivers MUST NOT authenticate on sockets used for monitoring.
+Drivers MUST NOT authenticate on sockets used for monitoring nor include
+SCRAM mechanism negotiation (i.e. ``saslSupportedMechs``), as doing so would
+make monitoring checks more expensive for the server.
 
 Servers are checked periodically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,6 +155,10 @@ be able to proceed anyway.
 
 Clients update the topology from each handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a monitor check creates a new connection, it MUST perform the
+`connection handshake`_ and MUST use the handshake's ismaster response to
+create the next ServerDescription and update the topology.
 
 When a client successfully calls ismaster to handshake a new connection for application
 operations, it SHOULD use the ismaster reply to update the ServerDescription
@@ -449,6 +451,9 @@ then it is probably down.
 Changelog
 ---------
 
+- 2020-03-09 A monitor check that creates a new connection MUST use the
+  connection's handshake to update the topology.
+
 - 2020-02-20 Extracted server monitoring from SDAM into this new spec.
 
 .. Section for links.
@@ -461,3 +466,4 @@ Changelog
 .. _initial servers: server-discovery-and-monitoring.rst#initial-servers
 .. _updateRSWithoutPrimary: server-discovery-and-monitoring.rst#updateRSWithoutPrimary
 .. _updateRSFromPrimary: server-discovery-and-monitoring.rst#updateRSFromPrimary
+.. _connection handshake: mongodb-handshake/handshake.rst
