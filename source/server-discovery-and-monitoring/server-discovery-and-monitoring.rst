@@ -399,20 +399,15 @@ specified, and the values of the two options are semantically different,
 the driver MUST report an error during URI option parsing.
 
 The API for initializing TopologyType using language-specific native options
-is not specified here.
-Drivers might already have a convention, e.g. a single seed means Single,
-a setName means ReplicaSetNoPrimary,
-and a list of seeds means Unknown.
-There are variations, however:
-In the Java driver a single seed means Single,
-but a **list** containing one seed means Unknown,
-so it can transition to replica-set monitoring if the seed is discovered
-to be a replica set member.
-In contrast, PyMongo requires a non-null setName
-in order to begin replica-set monitoring,
-regardless of the number of seeds.
-This spec does not imply existing driver APIs must change
-as long as all the required features are somehow supported.
+is not specified here. Drivers might already have a convention, e.g. a single
+seed means Single, a setName means ReplicaSetNoPrimary, and a list of seeds
+means Unknown. There are variations, however: In the Java driver a single seed
+means Single, but a **list** containing one seed means Unknown, so it can
+transition to replica-set monitoring if the seed is discovered to be a
+replica set member. In contrast, PyMongo requires a non-null setName in order
+to begin replica-set monitoring, regardless of the number of seeds.
+This spec does not cover language-specific native options that a driver may
+provide.
 
 Initial setName
 ~~~~~~~~~~~~~~~
