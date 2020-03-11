@@ -142,7 +142,23 @@
       "uri": "mongodb://example.com/?directConnection=false",
       "valid": true,
       "warning": false,
-      "hosts": null,
+      "hosts": [
+        "example.com"
+      ],
+      "auth": null,
+      "options": {
+        "directConnection": false
+      }
+    },
+    {
+      "description": "directConnection=false with multiple seeds",
+      "uri": "mongodb://example1.com,example2.com/?directConnection=false",
+      "valid": true,
+      "warning": false,
+      "hosts": [
+        "example1.com",
+        "example2.com"
+      ],
       "auth": null,
       "options": {
         "directConnection": false
