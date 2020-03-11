@@ -130,6 +130,14 @@
       }
     },
     {
+      "description": "directConnection=true with multiple seeds",
+      "uri": "mongodb://example1.com,example2.com/?directConnection=true",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null
+    },
+    {
       "description": "directConnection=false",
       "uri": "mongodb://example.com/?directConnection=false",
       "valid": true,
