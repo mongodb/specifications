@@ -3,5 +3,5 @@
   "seeds": [],
   "hosts": [],
   "error": true,
-  "comment": "Should fail because directConnection=false is incompatible with SRV URIs."
+  "comment": "Should fail because directConnection=true is incompatible with SRV URIs."
 }
