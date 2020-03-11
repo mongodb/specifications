@@ -61,6 +61,12 @@ is specified with an SRV URI, because the URI may resolve to multiple
 hosts. The driver MUST allow specifying ``directConnection=false`` URI
 option with an SRV URI.
 
+Multiple seeds with directConnection URI option
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The driver MUST report an error if the ``directConnection=true`` URI option
+is specified with multiple seeds.
+
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
