@@ -200,8 +200,21 @@ Drivers may wish to use a smaller value for ``serverSelectionTimeoutMS`` to
 speed up tests (otherwise server selection will spin for the entire
 duration even after a driver encounters a TLS error early).
 
+Testing on Windows and macOS
+-----------------------------
+
+Additionally, because the Windows and macOS ``mongod`` do not support
+stapling when a client connects, the following sets of tests will be
+identical even if a driver supports stapled OCSP: {Test 1, Test 3} and
+{Test 2, Test 4}. Therefore, when testing on Windows and macOS, a
+driver MAY skip Test 1 and Test 2 if desired. A driver MAY also simply
+choose to run all the tests in the table, irrespective of OS, in order
+to simplify the testing procedure.
+
 Changelog
 ==========
+**2020-03-11**: Reduce and clarify Windows testing requirements.
+
 **2020-03-05**: Add tests for tlsDisableCertificateRevocationCheck to
 URI Options tests. Move/add OCSP URI options default tests to separate file.
 
