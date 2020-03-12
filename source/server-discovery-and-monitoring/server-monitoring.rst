@@ -156,9 +156,8 @@ be able to proceed anyway.
 Clients update the topology from each handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When a monitor check creates a new connection, it MUST perform the
-`connection handshake`_ and MUST use the handshake's response to
-create the next ServerDescription and update the topology.
+When a monitor check creates a new connection, the `connection handshake`_
+response MUST be used to satisfy the check and update the topology.
 
 When a client successfully calls ismaster to handshake a new connection for application
 operations, it SHOULD use the ismaster reply to update the ServerDescription
