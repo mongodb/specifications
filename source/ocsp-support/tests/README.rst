@@ -203,6 +203,19 @@ duration even after a driver encounters a TLS error early).
 Testing on Windows and macOS
 -----------------------------
 
+Until `SPEC-1589 <http://jira.mongodb.org/browse/SPEC-1589>`__ and
+`SPEC-1645 <https://jira.mongodb.org/browse/SPEC-1645>`__ are
+resolved, drivers can only test with ECDSA certificates on Linux and
+thus, on Windows and macOS, drivers can only test with RSA
+certificates. Therefore, when testing on Windows and macOS, each
+column in the test matrix that utilizes an OCSP responder represents
+only two tests:
+
+1. A test with RSA certificates and an OCSP responder that uses the
+   issuing CA's certificate
+2. A test with RSA certificates and an OCSP responder that uses a
+   delegate certificate
+
 Additionally, because the Windows and macOS ``mongod`` do not support
 stapling when a client connects, the following sets of tests will be
 identical even if a driver supports stapled OCSP: {Test 1, Test 3} and
