@@ -298,6 +298,8 @@ Read
 
     /**
      * The index to use for the aggregation. The hint does not apply to $lookup and $graphLookup stages.
+     * Specify either the index name as a string or the index key pattern. If specified,
+     * then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -317,7 +319,8 @@ Read
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
@@ -472,7 +475,8 @@ Read
     cursorType: Optional<CursorType>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -901,7 +905,8 @@ Basic
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -945,7 +950,8 @@ Basic
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -980,7 +986,8 @@ Basic
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * Older servers >= 3.4 will report an error for using this option.
@@ -1081,7 +1088,8 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -1141,7 +1149,8 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -1201,7 +1210,8 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -1563,7 +1573,8 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
@@ -1624,7 +1635,8 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
@@ -1716,7 +1728,8 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
