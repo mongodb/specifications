@@ -179,6 +179,13 @@ required to retry failing ``isMaster`` calls.
 
 Perform a server scan manually or wait for the driver to scan the server.
 
+disable the fail point to avoid spurious failures in subsequent tests.
+The fail point may be disabled like so:
+
+.. code:: ruby
+
+    admin_client.command(configureFailPoint: 'failCommand', mode: 'off')
+
 **Outcome:**
 
 A TopologyDescriptionChangedEvent must have been published with the server's
