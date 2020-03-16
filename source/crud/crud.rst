@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 24, 2020
+:Last Modified: March 6, 2020
 
 .. contents::
 
@@ -298,6 +298,8 @@ Read
 
     /**
      * The index to use for the aggregation. The hint does not apply to $lookup and $graphLookup stages.
+     * Specify either the index name as a string or the index key pattern. If specified,
+     * then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -317,7 +319,8 @@ Read
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
@@ -472,7 +475,8 @@ Read
     cursorType: Optional<CursorType>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -901,7 +905,8 @@ Basic
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -945,7 +950,8 @@ Basic
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -978,6 +984,18 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/delete/
+     */
+    hint: Optional<(String | Document)>;
   }
 
 
@@ -1070,7 +1088,8 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -1130,7 +1149,8 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -1190,7 +1210,8 @@ Bulk Write Models
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
@@ -1552,6 +1573,18 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
+     * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    hint: Optional<(String | Document)>;
+
+    /**
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
@@ -1602,7 +1635,8 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
@@ -1694,7 +1728,8 @@ Find And Modify
     collation: Optional<Document>;
 
     /**
-     * The index to use.
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
@@ -1859,6 +1894,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
 * 2020-01-24: Added hint option for findAndModify update/replace operations.
 * 2020-01-17: Add allowDiskUse to FindOptions.
 * 2020-01-14: Deprecate oplogReplay option for find command
