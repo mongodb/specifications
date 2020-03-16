@@ -160,6 +160,8 @@ Set a `failCommand fail point`_ on ``isMaster`` command
 with ``closeConnection: true`` parameter. The following pseudocode illustrates
 setting the fail point:
 
+.. code:: ruby
+
     admin_client.command(
       configureFailPoint: 'failCommand',
       mode: {times: 2},
