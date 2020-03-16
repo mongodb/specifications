@@ -157,7 +157,23 @@ Subscribe to `TopologyDescriptionChanged SDAM event`_ on the MongoClient.
 Subsribe to `PoolCleared CMAP event`_ on the MongoClient.
 
 Set a `failCommand fail point`_ on ``isMaster`` command
-with ``closeConnection: true`` parameter.
+with ``closeConnection: true`` parameter. The following pseudocode illustrates
+setting the fail point:
+
+    admin_client.command(
+      configureFailPoint: 'failCommand',
+      mode: {times: 2},
+      data: {
+        failCommands: %w(isMaster),
+        closeConnection: true,
+      },
+    )
+
+Note that:
+
+- The fail point MUST be set to trigger twice because the server monitor is
+required to retry failing ``isMaster`` calls.
+- The "m" in ``isMaster`` MUST be capitalized.
 
 Perform a server scan manually or wait for the driver to scan the server.
 
