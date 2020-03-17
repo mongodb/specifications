@@ -8,7 +8,7 @@ Server Selection -- Test Plan
 :Advisors: David Golden
 :Status: Draft
 :Type: Standards
-:Last Modified: November 15, 2017
+:Last Modified: March 17, 2020
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -209,7 +209,7 @@ correctly passed to Mongos in the following scenarios:
 - SECONDARY_PREFERRED
 
   - the slaveOK wire protocol flag is set
-  - if tags are specified $readPreference is used, otherwise $readPreference is NOT used
+  - if ``tag_sets`` or ``hedge`` are specified $readPreference is used, otherwise $readPreference is NOT used
 
 - NEAREST
 
