@@ -12,7 +12,7 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: March 3, 2020
+:Last Modified: March 17, 2020
 :Version: 0.6.0
 
 .. contents::
@@ -302,9 +302,9 @@ result for ``system.namespaces``.
 The returned result for each variant MUST be equivalent, and each collection
 that is returned MUST use the field names ``name`` and ``options``.
 
-In MongoDB 4.4, the ``ns`` field was removed from the index specifications,
-including in the ``idIndex`` option returned from the ``listCollections``
-command.
+In MongoDB 4.4, the ``ns`` field was removed from the index specifications, so
+the index specification included in the ``idIndex`` field of the collection
+information will no longer contain an ``ns`` field.
 
 - For drivers that report those index specifications in the form of documents or
   dictionaries, no special handling is necessary, but any documentation of the
@@ -434,7 +434,7 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 Version 0.6.0 Changes
-    - MongoDB 4.4 no longer includes ``ns`` field in ``idIndex`` options for
+    - MongoDB 4.4 no longer includes ``ns`` field in ``idIndex`` field for
       ``listCollections`` responses.
 
 Version 0.5.1 Changes
