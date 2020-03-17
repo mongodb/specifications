@@ -464,22 +464,40 @@ These commands that write are:
 Errors
 ~~~~~~
 
-Server errors associated with ``WriteConcern`` return successful responses
+In general, server errors associated with ``WriteConcern`` return successful (``"ok": 1``) responses
 with a ``writeConcernError`` field indicating the issue. For example,
 
 .. code:: typescript
 
     rs0:PRIMARY> db.runCommand({insert: "foo", documents: [{x:1}], writeConcern: { w: "blah"}})
     {
-        "ok" : 1,
-        "n" : 1,
-        "lastOp" : Timestamp(1441992923, 1),
-        "electionId" : ObjectId("55f30e4cffffffffffffffff"),
-        "writeConcernError" : {
-            "code" : 79,
-            "codeName" : "UnknownReplWriteConcern",
-            "errmsg" : "No write concern mode named 'blah' found in replica set configuration"
+      n: 1,
+      opTime: {
+        ts: Timestamp(1583026145, 1),
+        t: NumberLong(5)
+      },
+      electionId: ObjectId("7fffffff0000000000000005"),
+      ok: 1,
+      writeConcernError: {
+        code: 79,
+        codeName: "UnknownReplWriteConcern",
+        errmsg: "No write concern mode named 'blah' found in replica set configuration",
+        errInfo: {
+          writeConcern: {
+            w: "blah",
+            wtimeout: 0,
+            provenance: "clientSupplied"
+          }
         }
+      },
+      $clusterTime: {
+        clusterTime: Timestamp(1583026145, 1),
+        signature: {
+          hash: BinData(0, "AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+          keyId: NumberLong(0)
+        }
+      },
+      operationTime: Timestamp(1583026145, 1)
     }
 
 Drivers SHOULD parse server replies for a "writeConcernError" field and report
@@ -489,7 +507,9 @@ from the list above. For example, helper methods for "findAndModify" or
 
 Drivers SHOULD report writeConcernErrors however they report other server
 errors: by raising an exception, returning "false", or another idiom that is
-consistent with other server errors.
+consistent with other server errors. Drivers SHOULD report writeConcernErrors
+with a ``WriteConcernError`` defined in the
+`CRUD specification </source/crud/crud.rst#error-handling>`_.
 
 Drivers SHOULD NOT parse server replies for "writeConcernError" in generic
 command methods.
