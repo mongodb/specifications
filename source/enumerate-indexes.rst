@@ -387,7 +387,7 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 0.5.0 - 2020-01-14
-    MongoDB 4.4 no longer inclues ``ns`` field in ``listIndexes`` responses.
+    MongoDB 4.4 no longer includes ``ns`` field in ``listIndexes`` responses.
 
 0.4.1 - 2018-04-05
     Fix typo.
