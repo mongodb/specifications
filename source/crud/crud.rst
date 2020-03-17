@@ -990,7 +990,7 @@ Basic
      * If specified, then the query system will only consider plans using the hinted index.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-     * Older servers >= 3.4 will report an error for using this option.
+     * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
@@ -1037,6 +1037,18 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     collation: Optional<Document>;
+
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/delete/
+     */
+    hint: Optional<(String | Document)>;
   }
 
   class DeleteManyModel implements WriteModel {
@@ -1058,6 +1070,18 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     collation: Optional<Document>;
+   
+    /**
+     * The index to use. Specify either the index name as a string or the index key pattern.
+     * If specified, then the query system will only consider plans using the hinted index.
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
+     * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/delete/
+     */
+    hint: Optional<(String | Document)>;
   }
 
   class ReplaceOneModel implements WriteModel {
