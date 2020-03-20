@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.3.0
+:Spec Version: 1.3.1
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2020-3-3
+:Last Modified: 2020-3-20
 
 .. contents::
 
@@ -319,8 +319,8 @@ allows the user to provide their own certificate revocation list (CRL),
 then that driver MUST document their TLS library’s preference between
 the user-provided CRL and OCSP.
 
-Drivers that cannot disable OCSP on a per MongoClient basis (e.g. Java)
-MUST document this limitation.
+Drivers that cannot enable OCSP by default on a per MongoClient basis
+(e.g. Java) MUST document this limitation.
 
 Drivers that fail either of the “Malicious Server Tests” (i.e. the
 driver connects to a test server without TLS constraints being relaxed)
@@ -752,6 +752,9 @@ of checking this are:
 
 Changelog
 ==========
+
+**2020-03-20**: 1.3.1: Clarify OCSP documentation requirements for
+ drivers unable to enable OCSP by default on a per MongoClient basis.
 
 **2020-03-03**: 1.3.0: Add tlsDisableCertificateRevocationCheck URI
 option. Add Go as a reference implementation. Add hard-fail backwards
