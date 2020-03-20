@@ -143,3 +143,38 @@ Command response on an arbiter, recovering member, ghost, or secondary
 when slaveOk is false:
 
     {ok: 0, errmsg: "not master"}
+
+
+Topology discovery and direct connection
+----------------------------------------
+
+Topology discovery
+''''''''''''''''''
+
+Scenario: given a replica set deployment with a secondary, where HOST
+is the address of the secondary, create a MongoClient using
+``mongodb://HOST/?directConnection=false`` as the URI.
+Attempt a write to a collection.
+
+Outcome: Verify that the write succeeded.
+
+Direct connection
+'''''''''''''''''
+
+Scenario: given a replica set deployment with a secondary, where HOST
+is the address of the secondary, create a MongoClient using
+``mongodb://HOST/?directConnection=true`` as the URI.
+Attempt a write to a collection.
+
+Outcome: Verify that the write failed with a NotMaster error.
+
+Existing behavior
+'''''''''''''''''
+
+Scenario: given a replica set deployment with a secondary, where HOST
+is the address of the secondary, create a MongoClient using
+``mongodb://HOST/`` as the URI.
+Attempt a write to a collection.
+
+Outcome: Verify that the write succeeded or failed depending on existing
+driver behavior with respect to the starting topology.
