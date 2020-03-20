@@ -182,12 +182,14 @@ lead the driver or server to read stale data. See the
 `Appendix <../ocsp-support.rst#os-level-ocsp-cache-manipulation>`__
 for instructions on how to clear OS-level OCSP caches.
 
-For each test, ensure that a ``mongod`` is running with the correct
-certificate chain and that the mock OCSP responder is configured to
+For each test, ensure that the mock OCSP responder is configured to
 use the correct certificate and to report the expected revocation
 status for that certificate (see `Mock OCSP Responder Testing Suite
-`<#mock-ocsp-responder-testing-suite>`__ for configuration
-details). Again, each test MUST BE its own Evergreen task in order to
+`<#mock-ocsp-responder-testing-suite>`__ for configuration details)
+and that a ``mongod`` is running with the correct certificate
+chain. The mock OCSP responder MUST BE started before the ``mongod``
+as the ``mongod`` expects that a responder will be available upon
+startup. Again, each test MUST BE its own Evergreen task in order to
 minimize the impact of user-level and application-level OCSP caching
 
 To assert whether a test passes or fails, drivers SHOULD create a
@@ -226,6 +228,9 @@ to simplify the testing procedure.
 
 Changelog
 ==========
+**2020-03-20**: Clarify that the mock OCSP responder must be started
+ before the mongod.
+
 **2020-03-11**: Reduce and clarify Windows testing requirements.
 
 **2020-03-05**: Add tests for tlsDisableCertificateRevocationCheck to
