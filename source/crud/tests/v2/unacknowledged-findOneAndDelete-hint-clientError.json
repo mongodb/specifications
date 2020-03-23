@@ -1,7 +1,6 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.2.0",
       "maxServerVersion": "4.3.3"
     }
   ],
@@ -18,10 +17,15 @@
   "collection_name": "findOneAndDelete_hint",
   "tests": [
     {
-      "description": "FindOneAndDelete with hint string unsupported (server-side error)",
+      "description": "Unacknowledged findOneAndDelete with hint string unsupported (client-side error)",
       "operations": [
         {
           "object": "collection",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": 0
+            }
+          },
           "name": "findOneAndDelete",
           "arguments": {
             "filter": {
@@ -32,20 +36,7 @@
           "error": true
         }
       ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "findAndModify": "findOneAndDelete_hint",
-              "query": {
-                "_id": 1
-              },
-              "hint": "_id_",
-              "remove": true
-            }
-          }
-        }
-      ],
+      "expectations": {},
       "outcome": {
         "collection": {
           "data": [
@@ -62,10 +53,15 @@
       }
     },
     {
-      "description": "FindOneAndDelete with hint document unsupported (server-side error)",
+      "description": "Unacknowledged findOneAndDelete with hint document unsupported (client-side error)",
       "operations": [
         {
           "object": "collection",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": 0
+            }
+          },
           "name": "findOneAndDelete",
           "arguments": {
             "filter": {
@@ -78,22 +74,7 @@
           "error": true
         }
       ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "findAndModify": "findOneAndDelete_hint",
-              "query": {
-                "_id": 1
-              },
-              "hint": {
-                "_id": 1
-              },
-              "remove": true
-            }
-          }
-        }
-      ],
+      "expectations": {},
       "outcome": {
         "collection": {
           "data": [

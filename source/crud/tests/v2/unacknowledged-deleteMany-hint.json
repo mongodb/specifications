@@ -1,0 +1,118 @@
+{
+  "runOn": [
+    {
+      "minServerVersion": "4.3.4"
+    }
+  ],
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    },
+    {
+      "_id": 2,
+      "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    }
+  ],
+  "collection_name": "DeleteMany_hint",
+  "tests": [
+    {
+      "description": "Unacknowledged deleteMany with hint string",
+      "operations": [
+        {
+          "object": "collection",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": 0
+            }
+          },
+          "name": "deleteMany",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            },
+            "hint": "_id_"
+          },
+          "result": {
+            "deletedCount": 0
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "delete": "DeleteMany_hint",
+              "deletes": [
+                {
+                  "q": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  },
+                  "hint": "_id_"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "outcome": {}
+    },
+    {
+      "description": "Unacknowledged deleteMany with hint document",
+      "operations": [
+        {
+          "object": "collection",
+          "collectionOptions": {
+            "writeConcern": {
+              "w": 0
+            }
+          },
+          "name": "deleteMany",
+          "arguments": {
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            },
+            "hint": {
+              "_id": 1
+            }
+          },
+          "result": {
+            "deletedCount": 0
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "delete": "DeleteMany_hint",
+              "deletes": [
+                {
+                  "q": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  },
+                  "hint": {
+                    "_id": 1
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "outcome": {}
+    }
+  ]
+}
