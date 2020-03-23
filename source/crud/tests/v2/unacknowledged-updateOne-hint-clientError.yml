@@ -13,11 +13,11 @@ collection_name: &collection_name 'Updateone_hint'
 tests:
   -
     description: "Unacknowledged updateOne with hint string unsupported (client-side error)"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         object: collection
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         name: updateOne
         arguments:
           filter: &filter { _id: { $gt: 1 } }
@@ -32,10 +32,10 @@ tests:
           - {_id: 2, x: 22}
   -
     description: "Unacknowledged updateOne with hint document unsupported (client-side error)"
-    clientOptions: *client_options
     operations:
       -
         object: collection
+        collectionOptions: *collection_options
         name: updateOne
         arguments:
           filter: *filter

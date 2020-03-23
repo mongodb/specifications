@@ -11,19 +11,19 @@ collection_name: &collection_name 'Updatemany_hint'
 tests:
   -
     description: "Unacknowledged updateMany with hint string"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         object: collection
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         name: updateMany
         arguments:
           filter: &filter { _id: { $gt: 1 } }
           update: &update { $inc: { x: 1 } }
           hint: "_id_"
         result: &result
-          matchedCount: 2
-          modifiedCount: 2
+          matchedCount: 0
+          modifiedCount: 0
           upsertedCount: 0
     expectations:
       -
@@ -40,10 +40,10 @@ tests:
     outcome: {}
   -
     description: "Unacknowledged updateMany with hint document"
-    clientOptions: *client_options
     operations:
       -
         object: collection
+        collectionOptions: *collection_options
         name: updateMany
         arguments: 
           filter: *filter

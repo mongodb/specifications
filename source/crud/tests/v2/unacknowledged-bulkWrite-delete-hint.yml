@@ -12,11 +12,11 @@ collection_name: &collection_name 'BulkWrite_delete_hint'
 tests:
   -
     description: "Unacknowledged bulkWrite deleteOne with hints"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         arguments:
           requests:
             -
@@ -57,10 +57,10 @@ tests:
     outcome: {}
   -
     description: "Unacknowledged bulkWrite deleteMany with hints"
-    clientOptions: *client_options
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: *collection_options
         arguments:
           requests:
             -

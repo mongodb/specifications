@@ -15,11 +15,11 @@ collection_name: &collection_name 'Bulkwrite_update_hint'
 tests:
   -
     description: "Unacknowledged bulkWrite updateOne with hints unsupported (client-side error)"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         arguments:
           requests:
             -
@@ -46,10 +46,10 @@ tests:
           - {_id: 4, x: 44 }
   -
     description: "Unacknowledged bulkWrite updateMany with hints unsupported (client-side error)"
-    clientOptions: *client_options
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: *collection_options
         arguments:
           requests:
             -
@@ -70,10 +70,10 @@ tests:
     outcome: *outcome
   -
     description: "Unacknowledged bulkWrite replaceOne with hints unsupported (client-side error)"
-    clientOptions: *client_options
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: *collection_options
         arguments:
           requests:
             -

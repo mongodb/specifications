@@ -12,11 +12,11 @@ collection_name: &collection_name 'BulkWrite_update_hint'
 tests:
   -
     description: "Unacknowledged bulkWrite updateOne with update hints"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         arguments:
           requests:
             -
@@ -59,10 +59,10 @@ tests:
     outcome: {}
   -
     description: "Unacknowledged bulkWrite updateMany with update hints"
-    clientOptions: *client_options
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: *collection_options
         arguments:
           requests:
             -
@@ -100,10 +100,10 @@ tests:
     outcome: {}
   -
     description: "Unacknowledged bulkWrite replaceOne with update hints"
-    clientOptions: *client_options
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: *collection_options
         arguments:
           requests:
             -

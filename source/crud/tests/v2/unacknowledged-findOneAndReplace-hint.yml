@@ -10,11 +10,11 @@ collection_name: &collection_name 'FindOneAndReplace_hint'
 tests:
   -
     description: "Unacknowledged findOneAndReplace with hint string"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         object: collection
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         name: findOneAndReplace
         arguments:
           filter: &filter { _id: 1 }
@@ -34,10 +34,10 @@ tests:
     outcome: {}
   -
     description: "Unacknowledged findOneAndReplace with hint document"
-    clientOptions: *client_options
     operations:
       -
         object: collection
+        collectionOptions: *collection_options
         name: findOneAndReplace
         arguments:
           filter: *filter

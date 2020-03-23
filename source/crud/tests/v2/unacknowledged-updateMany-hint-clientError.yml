@@ -14,11 +14,11 @@ collection_name: &collection_name 'Updatemany_hint'
 tests:
   -
     description: "Unacknowledged updateMany with hint string unsupported (client-side error)"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         object: collection
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         name: updateMany
         arguments:
           filter: &filter { _id: { $gt: 1 } }
@@ -34,10 +34,10 @@ tests:
           - {_id: 3, x: 33}
   -
     description: "Unacknowledged updateMany with hint document unsupported (client-side error)"
-    clientOptions: *clientOptions
     operations:
       -
         object: collection
+        collectionOptions: *collection_options
         name: updateMany
         arguments:
           filter: *filter

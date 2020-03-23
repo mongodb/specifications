@@ -15,11 +15,11 @@ collection_name: &collection_name 'BulkWrite_delete_hint'
 tests:
   -
     description: "Unacknowledged bulkWrite deleteOne with hints unsupported (client-side error)"
-    clientOptions: &client_options
-      writeConcern: { w: 0 }
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: &collection_options
+          writeConcern: { w: 0 }
         arguments:
           requests:
             -
@@ -44,10 +44,10 @@ tests:
           - {_id: 4, x: 44 }
   -
     description: "Unacknowledged bulkWrite deleteMany with hints unsupported (client-side error)"
-    clientOptions: *client_options
     operations:
       -
         name: "bulkWrite"
+        collectionOptions: *collection_options
         arguments:
           requests:
             -
