@@ -1615,7 +1615,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_QUERY or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_QUERY or OP_MSG for servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1678,7 +1678,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_QUERY or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1772,7 +1772,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_QUERY or OP_MSG for servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1933,7 +1933,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions
+* 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.
 * 2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
 * 2020-01-24: Added hint option for findAndModify update/replace operations.
 * 2020-01-17: Add allowDiskUse to FindOptions.
