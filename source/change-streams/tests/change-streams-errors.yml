@@ -72,7 +72,6 @@ tests:
     result:
       error:
         code: 280
-        errorLabels: [ "NonResumableChangeStreamError" ]
   -
     description: change stream errors on MaxTimeMSExpired
     minServerVersion: "4.2"

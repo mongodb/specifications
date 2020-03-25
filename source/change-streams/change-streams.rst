@@ -41,7 +41,10 @@ Terms
 Resumable Error
 ^^^^^^^^^^^^^^^
 
-An error is considered resumable if it meets any of the following criteria:
+An error is considered resumable if it meets any of the criteria listed below. For any criteria with wire version
+constraints, the driver MUST use the wire version of the connection used to do the initial ``aggregate`` or the
+``getMore`` that resulted in the error. Drivers MUST NOT check the wire version of the server after the command has been
+executed when checking these constraints.
 
 - Any error encountered which is not a server error (e.g. a timeout error or
   network error)
