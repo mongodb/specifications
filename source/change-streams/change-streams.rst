@@ -91,8 +91,6 @@ An error is considered resumable if it meets any of the following criteria:
       - 234
     * - FailedToSatisfyReadPreference
       - 133
-    * - ElectionInProgress
-      - 216
 
 An error on an aggregate command is not a resumable error. Only errors on a
 getMore command may be considered resumable errors.
