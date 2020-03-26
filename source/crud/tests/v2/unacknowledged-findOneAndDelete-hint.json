@@ -17,7 +17,7 @@
   "collection_name": "findOneAndDelete_hint",
   "tests": [
     {
-      "description": "Unacknowledged findOneAndDelete with hint string",
+      "description": "Unacknowledged findOneAndDelete with hint string succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",
@@ -56,7 +56,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged findOneAndDelete with hint document",
+      "description": "Unacknowledged findOneAndDelete with hint document succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",

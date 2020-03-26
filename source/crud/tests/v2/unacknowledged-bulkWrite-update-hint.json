@@ -25,7 +25,7 @@
   "collection_name": "BulkWrite_update_hint",
   "tests": [
     {
-      "description": "Unacknowledged bulkWrite updateOne with update hints",
+      "description": "Unacknowledged bulkWrite updateOne with update hint succeeds on server >= 4.2",
       "operations": [
         {
           "name": "bulkWrite",
@@ -70,15 +70,6 @@
             "options": {
               "ordered": true
             }
-          },
-          "result": {
-            "deletedCount": 0,
-            "insertedCount": 0,
-            "insertedIds": {},
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0,
-            "upsertedIds": {}
           }
         }
       ],
@@ -121,7 +112,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged bulkWrite updateMany with update hints",
+      "description": "Unacknowledged bulkWrite updateMany with update hint succeeds on server >= 4.2",
       "operations": [
         {
           "name": "bulkWrite",
@@ -170,15 +161,6 @@
             "options": {
               "ordered": true
             }
-          },
-          "result": {
-            "deletedCount": 0,
-            "insertedCount": 0,
-            "insertedIds": {},
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0,
-            "upsertedIds": {}
           }
         }
       ],
@@ -268,15 +250,6 @@
             "options": {
               "ordered": true
             }
-          },
-          "result": {
-            "deletedCount": 0,
-            "insertedCount": 0,
-            "insertedIds": {},
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0,
-            "upsertedIds": {}
           }
         }
       ],

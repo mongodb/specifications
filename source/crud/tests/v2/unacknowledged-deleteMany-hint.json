@@ -21,7 +21,7 @@
   "collection_name": "DeleteMany_hint",
   "tests": [
     {
-      "description": "Unacknowledged deleteMany with hint string",
+      "description": "Unacknowledged deleteMany with hint string succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",
@@ -56,7 +56,8 @@
                       "$gt": 1
                     }
                   },
-                  "hint": "_id_"
+                  "hint": "_id_",
+                  "limit": 0
                 }
               ]
             }
@@ -66,7 +67,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged deleteMany with hint document",
+      "description": "Unacknowledged deleteMany with hint document succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",
@@ -105,7 +106,8 @@
                   },
                   "hint": {
                     "_id": 1
-                  }
+                  },
+                  "limit": 0
                 }
               ]
             }

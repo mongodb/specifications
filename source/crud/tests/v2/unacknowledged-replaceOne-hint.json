@@ -17,7 +17,7 @@
   "collection_name": "Replaceone_hint",
   "tests": [
     {
-      "description": "Unacknowledged replaceOne with hint string",
+      "description": "Unacknowledged replaceOne with hint string succeeds on server >= 4.2",
       "operations": [
         {
           "object": "collection",
@@ -70,7 +70,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged replaceOne with hint document",
+      "description": "Unacknowledged replaceOne with hint document succeeds on server >= 4.2",
       "operations": [
         {
           "object": "collection",
