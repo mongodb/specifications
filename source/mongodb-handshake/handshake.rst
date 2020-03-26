@@ -386,7 +386,7 @@ functionality has therefore no backwards compatibility concerns.
 Reference Implementation
 ========================
 
-`C Driver <https://github.com/mongodb/mongo-c-driver/blob/master/src/mongoc/mongoc-handshake.c>`_.
+`C Driver <https://github.com/mongodb/mongo-c-driver/blob/master/src/libmongoc/src/mongoc/mongoc-handshake.c>`_.
 
 Q&A
 ===
