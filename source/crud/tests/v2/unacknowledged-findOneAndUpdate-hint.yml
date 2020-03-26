@@ -9,7 +9,7 @@ collection_name: &collection_name 'FindOneAndUpdate_hint'
 
 tests:
   -
-    description: "Unacknowledged findOneAndUpdate with hint string"
+    description: "Unacknowledged findOneAndUpdate with hint string succeeds on server >= 4.4"
     operations:
       -
         object: collection
@@ -33,7 +33,7 @@ tests:
     # Do not verify the contents of the collection to avoid race conditions
     outcome: {}
   -
-    description: "Unacknowledged findOneAndUpdate with hint document"
+    description: "Unacknowledged findOneAndUpdate with hint document succeeds on server >= 4.4"
     operations:
       -
         object: collection

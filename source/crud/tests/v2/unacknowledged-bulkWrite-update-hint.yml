@@ -11,7 +11,7 @@ collection_name: &collection_name 'BulkWrite_update_hint'
 
 tests:
   -
-    description: "Unacknowledged bulkWrite updateOne with update hints"
+    description: "Unacknowledged bulkWrite updateOne with update hint succeeds on server >= 4.2"
     operations:
       -
         name: "bulkWrite"
@@ -58,7 +58,7 @@ tests:
     # Do not verify the contents of the collection to avoid race conditions
     outcome: {}
   -
-    description: "Unacknowledged bulkWrite updateMany with update hints"
+    description: "Unacknowledged bulkWrite updateMany with update hint succeeds on server >= 4.2"
     operations:
       -
         name: "bulkWrite"

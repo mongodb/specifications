@@ -10,7 +10,7 @@ collection_name: &collection_name 'DeleteMany_hint'
 
 tests:
   -
-    description: "Unacknowledged deleteMany with hint string"
+    description: "Unacknowledged deleteMany with hint string succeeds on server >= 4.4"
     operations:
       -
         object: collection
@@ -34,7 +34,7 @@ tests:
     # Do not verify the contents of the collection to avoid race conditions
     outcome: {}
   -
-    description: "Unacknowledged deleteMany with hint document"
+    description: "Unacknowledged deleteMany with hint document succeeds on server >= 4.4"
     operations:
       -
         object: collection

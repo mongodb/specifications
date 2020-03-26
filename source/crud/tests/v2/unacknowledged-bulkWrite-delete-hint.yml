@@ -11,7 +11,7 @@ collection_name: &collection_name 'BulkWrite_delete_hint'
 
 tests:
   -
-    description: "Unacknowledged bulkWrite deleteOne with hints"
+    description: "Unacknowledged bulkWrite deleteOne with hints succeeds on server >= 4.4"
     operations:
       -
         name: "bulkWrite"
@@ -56,7 +56,7 @@ tests:
     # Do not verify the contents of the collection to avoid race conditions
     outcome: {}
   -
-    description: "Unacknowledged bulkWrite deleteMany with hints"
+    description: "Unacknowledged bulkWrite deleteMany with hints succeeds on server >= 4.4"
     operations:
       -
         name: "bulkWrite"
