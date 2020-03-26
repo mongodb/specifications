@@ -30,6 +30,7 @@ tests:
               -
                 q: *filter
                 hint: "_id_"
+                limit: 1
     # Do not verify the contents of the collection to avoid race conditions
     outcome: {}
   -
@@ -52,6 +53,7 @@ tests:
               -
                 q: *filter
                 hint: { _id: 1 }
+                limit: 1
     # Do not verify the contents of the collection to avoid race conditions
     outcome: {}
 
