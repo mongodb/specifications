@@ -17,7 +17,7 @@
   "collection_name": "updateone_hint",
   "tests": [
     {
-      "description": "Unacknowledged updateOne with hint string",
+      "description": "Unacknowledged updateOne with hint string succeeds on server >= 4.2",
       "operations": [
         {
           "object": "collection",
@@ -74,7 +74,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged updateOne with hint document",
+      "description": "Unacknowledged updateOne with hint document succeeds on server >= 4.2",
       "operations": [
         {
           "object": "collection",

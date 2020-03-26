@@ -25,7 +25,7 @@
   "collection_name": "BulkWrite_delete_hint",
   "tests": [
     {
-      "description": "Unacknowledged bulkWrite deleteOne with hints",
+      "description": "Unacknowledged bulkWrite deleteOne with hints succeeds on server >= 4.4",
       "operations": [
         {
           "name": "bulkWrite",
@@ -60,15 +60,6 @@
             "options": {
               "ordered": true
             }
-          },
-          "result": {
-            "deletedCount": 0,
-            "insertedCount": 0,
-            "insertedIds": {},
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0,
-            "upsertedIds": {}
           }
         }
       ],
@@ -103,7 +94,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged bulkWrite deleteMany with hints",
+      "description": "Unacknowledged bulkWrite deleteMany with hints succeeds on server >= 4.4",
       "operations": [
         {
           "name": "bulkWrite",
@@ -142,15 +133,6 @@
             "options": {
               "ordered": true
             }
-          },
-          "result": {
-            "deletedCount": 0,
-            "insertedCount": 0,
-            "insertedIds": {},
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0,
-            "upsertedIds": {}
           }
         }
       ],

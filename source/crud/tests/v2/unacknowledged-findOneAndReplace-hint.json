@@ -1,7 +1,7 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.3.1"
+      "minServerVersion": "4.3.4"
     }
   ],
   "data": [
@@ -17,7 +17,7 @@
   "collection_name": "FindOneAndReplace_hint",
   "tests": [
     {
-      "description": "Unacknowledged findOneAndReplace with hint string",
+      "description": "Unacknowledged findOneAndReplace with hint string succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",
@@ -61,7 +61,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged findOneAndReplace with hint document",
+      "description": "Unacknowledged findOneAndReplace with hint document succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",

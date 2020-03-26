@@ -17,7 +17,7 @@
   "collection_name": "DeleteOne_hint",
   "tests": [
     {
-      "description": "Unacknowledged deleteOne with hint string",
+      "description": "Unacknowledged deleteOne with hint string succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",
@@ -48,7 +48,8 @@
                   "q": {
                     "_id": 1
                   },
-                  "hint": "_id_"
+                  "hint": "_id_",
+                  "limit": 1
                 }
               ]
             }
@@ -58,7 +59,7 @@
       "outcome": {}
     },
     {
-      "description": "Unacknowledged deleteOne with hint document",
+      "description": "Unacknowledged deleteOne with hint document succeeds on server >= 4.4",
       "operations": [
         {
           "object": "collection",
@@ -93,7 +94,8 @@
                   },
                   "hint": {
                     "_id": 1
-                  }
+                  },
+                  "limit": 1
                 }
               ]
             }

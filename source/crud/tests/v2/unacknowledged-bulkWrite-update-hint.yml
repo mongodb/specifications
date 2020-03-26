@@ -112,7 +112,7 @@ tests:
                 replacement: { x: 444 }
                 hint: *hint_doc
           options: { ordered: true }
-        result: *result
+        # Don't check result because different drivers return different responses to unacknowledged bulk writes
     expectations:
       -
         command_started_event:
