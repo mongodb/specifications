@@ -30,14 +30,7 @@ tests:
                 filter: &deleteOne_filter2 { _id: 2 }
                 hint: &hint_doc { _id: 1 }
           options: { ordered: true }
-        result: &result
-          deletedCount: 0 # Deletes are unacknowledged
-          insertedCount: 0
-          insertedIds: {}
-          matchedCount: 0
-          modifiedCount: 0
-          upsertedCount: 0
-          upsertedIds: {}
+        # Don't check result because different drivers return different responses to unacknowledged bulk writes
     expectations:
       -
         command_started_event:
@@ -74,7 +67,7 @@ tests:
                 filter: &deleteMany_filter2 { _id: { $gte: 4 } }
                 hint: *hint_doc
           options: { ordered: true }
-        result: *result
+        # Don't check result because different drivers return different responses to unacknowledged bulk writes
     expectations:
       -
         command_started_event:

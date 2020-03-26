@@ -32,14 +32,7 @@ tests:
                 update: *updateOne_update
                 hint: &hint_doc { _id: 1 }
           options: { ordered: true }
-        result: &result
-          deletedCount: 0
-          insertedCount: 0
-          insertedIds: {}
-          matchedCount: 0
-          modifiedCount: 0 # Updates are unacknowledged
-          upsertedCount: 0
-          upsertedIds: {}
+        # Don't check result because different drivers return different responses to unacknowledged bulk writes
     expectations:
       -
         command_started_event:
@@ -78,7 +71,7 @@ tests:
                 update: *updateMany_update
                 hint: *hint_doc
           options: { ordered: true }
-        result: *result
+        # Don't check result because different drivers return different responses to unacknowledged bulk writes
     expectations:
       -
         command_started_event:
