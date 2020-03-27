@@ -104,7 +104,6 @@ tests:
         hosts: ~
         auth: ~
         options: {}
-
     -
       description: directConnection=true
       uri: "mongodb://example.com/?directConnection=true"
@@ -121,6 +120,7 @@ tests:
       warning: false
       hosts: ~
       auth: ~
+      options: {}
     -
       description: directConnection=false
       uri: "mongodb://example.com/?directConnection=false"
