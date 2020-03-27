@@ -43,11 +43,6 @@
               }
             },
             "hint": "_id_"
-          },
-          "result": {
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0
           }
         }
       ],
@@ -103,11 +98,6 @@
             "hint": {
               "_id": 1
             }
-          },
-          "result": {
-            "matchedCount": 0,
-            "modifiedCount": 0,
-            "upsertedCount": 0
           }
         }
       ],

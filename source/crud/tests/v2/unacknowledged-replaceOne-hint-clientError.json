@@ -67,7 +67,7 @@
               "w": 0
             }
           },
-          "name": "updateOne",
+          "name": "replaceOne",
           "arguments": {
             "filter": {
               "_id": {

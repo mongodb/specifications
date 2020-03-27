@@ -32,9 +32,6 @@
               "_id": 1
             },
             "hint": "_id_"
-          },
-          "result": {
-            "deletedCount": 0
           }
         }
       ],
@@ -76,9 +73,6 @@
             "hint": {
               "_id": 1
             }
-          },
-          "result": {
-            "deletedCount": 0
           }
         }
       ],
