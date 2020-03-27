@@ -135,7 +135,8 @@
       "valid": false,
       "warning": false,
       "hosts": null,
-      "auth": null
+      "auth": null,
+      "options": {}
     },
     {
       "description": "directConnection=false",
