@@ -197,7 +197,7 @@ Standard API
     /**
      * Drops all indexes in the collection.
      */
-    dropIndexes(): Result;
+    dropIndexes(options: Optional<DropIndexesOptions>): Result;
 
     /**
      * Gets index information for all indexes in the collection. This should be
@@ -249,6 +249,10 @@ Standard API
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
+  }
+
+  interface DropIndexesOptions {
+    // same as DropIndexOptions
   }
 
 Examples
@@ -489,7 +493,7 @@ Index View API
     /**
      * Drops all indexes in the collection.
      */
-    dropAll(): Result;
+    dropAll(options: Optional<DropAllIndexesOptions>): Result;
   }
 
   interface CreateOneIndexOptions {
@@ -502,6 +506,10 @@ Index View API
 
   interface DropOneIndexOptions {
     // same as DropIndexOptions in the Standard API
+  }
+
+  interface DropAllIndexesOptions {
+    // same as DropIndexesOptions in the Standard API
   }
 
 Examples
@@ -784,7 +792,10 @@ Q & A
 Q: Where is write concern?
   The ``createIndexes`` and ``dropIndexes`` commands take a write concern that indicates how the write is acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different index operations on the same collection would use a different write concern. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
 
-  However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but since writeConcern is a top-level command option, it MUST NOT be specified as part of an ``IndexModel`` passed into the helper. It SHOULD be specified via the options parameter of the helper, if there is one. For example, it would be ambiguous to specify write concern for one or more models passed to ``createIndexes()``, but it would not be to specify it via the ``CreateIndexesOptions``. If a helper does not have options defined for it in this specification, an appropriate options type SHOULD be defined for it, and write concern SHOULD be specified through those options. This allows for compatibility with any future options that may be required to be accepted by those helpers.
+  However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but since writeConcern is a top-level command option, it MUST NOT be specified as part of an ``IndexModel`` passed into the helper. It SHOULD be specified via the options parameter of the helper. For example, it would be ambiguous to specify write concern for one or more models passed to ``createIndexes()``, but it would not be to specify it via the ``CreateIndexesOptions``.
+
+Q: Where is ``ListIndexesOptions``?
+  There are no options required by the index enumeration spec for listing indexes, so there is currently no need to define an options type for it. A driver MAY accept options (e.g. ``maxTimeMS``) on the helpers that list indexes, and, if it does, it SHOULD accept them the same way it accepts options for other helpers (e.g. through a ``ListCollectionOptions`` object or acceptable deviation).
 
 Q: What does the commitQuorum option do?
   Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating all other operations while the index build took place. This would introduce replication lag correlated to however long the index build took.
