@@ -21,7 +21,7 @@ Index Management
 Specification
 =============
 
-The index management spec defines a set of behaviour in the drivers for creating, removing and viewing indexes in a collection. It defines implementation details when required but also provides flexibilty in the driver in that one or both of 2 unique APIs can be chosen to be implemented.
+The index management spec defines a set of behaviour in the drivers for creating, removing and viewing indexes in a collection. It defines implementation details when required but also provides flexibility in the driver in that one or both of 2 unique APIs can be chosen to be implemented.
 
 
 -----------
@@ -77,9 +77,12 @@ As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates 
 
 Deviations
 **********
+
 A non-exhaustive list of acceptable deviations are as follows:
-  - Using named paramaters in place of an options hash or class. For instance, ``collection.createIndex({x: 1}, commitQuorum: "all")``.
-  - When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``CreateIndexOptions`` as the options for ``createIndex`` and ``createIndexes``.
+
+* Using named parameters in place of an options hash or class. For instance, ``collection.createIndex({x: 1}, commitQuorum: "all")``.
+
+* When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``CreateIndexOptions`` as the options for ``createIndex`` and ``createIndexes``.
 
 Naming
 ------
@@ -207,7 +210,7 @@ Standard API
      * complete the index builds successfully before the primary marks the indexes as ready.
      *
      * This option accepts the same values for the "w" field in a write concern plus "all",
-     * which indicates all voting data-bearning nodes.
+     * which indicates all voting data-bearing nodes.
      *
      * @note This option is only available in MongoDB 4.4+.
      *
@@ -773,26 +776,26 @@ Q & A
 Q: Where is write concern?
   The ``createIndexes`` and ``dropIndexes`` commands take a write concern that indicates how the write is acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different index operations on the same collection would use a different write concern. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
 
-  However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but since the writeConcern is a top-level command option, it MUST NOT be specified as part of an ``IndexModel`` passed into the helper. It SHOULD be specified via the options parameter of the helper, if there is one. For example, it would be ambiguous to specify write concern for one or more models passed to ``createIndexes()``, but specifying it via the ``CreateIndexOptions`` passed to ``createIndexes()`` would not be. If a helper does not have options defined for it in this specification, an appropriate options type SHOULD be defined for it, and write concern SHOULD be specified through those options. This allows for compatibility with any future options that may be required to be accepted by those helpers.
+  However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but since writeConcern is a top-level command option, it MUST NOT be specified as part of an ``IndexModel`` passed into the helper. It SHOULD be specified via the options parameter of the helper, if there is one. For example, it would be ambiguous to specify write concern for one or more models passed to ``createIndexes()``, but it would not be to specify it via the ``CreateIndexesOptions`` passed to ``createIndexes()``. If a helper does not have options defined for it in this specification, an appropriate options type SHOULD be defined for it, and write concern SHOULD be specified through those options. This allows for compatibility with any future options that may be required to be accepted by those helpers.
 
 Q: What does the commitQuorum option do?
-  Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating all other operations while building the index, introducing replication lag equivalent to however long the index build took.
+  Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating all other operations while building the index. This would introduce replication lag equivalent to however long the index build took.
 
-  Starting in MongoDB 4.4, secondaries build indexes simultaneously with the primary, and after starting an index build, the primary will wait for a certain number of data-bearing nodes, including itself, to have completed the build before it commits the index. ``commitQuorum`` configures this node requirement. Once the index is committed, all the secondaries replicate the commit too. If a secondary has already completed the index build, the commit will be quick, and no new replication lag would be introduced. If a secondary had not finished building the index before the primary committed it (e.g. if ``commitQuorum: "all"`` was not used), then that secondary may lag behind the primary while it finishes building and committing the index. 
+  Starting in MongoDB 4.4, secondaries build indexes simultaneously with the primary, and after starting an index build, the primary will wait for a certain number of data-bearing nodes, including itself, to have completed the build before it commits the index. ``commitQuorum`` configures this node requirement. Once the index is committed, all the secondaries replicate the commit too. If a secondary had already completed the index build, the commit will be quick, and no new replication lag would be introduced. If a secondary had not finished building the index before the primary committed it (e.g. if ``commitQuorum: "all"`` was not used), then that secondary may lag behind the primary while it finishes building and committing the index.
 
   The server-default value for ``commitQuorum`` is "all", which means the primary will wait for all voting data-bearing nodes to complete building the index before it commits it.
 
 Q: Why would a user want to specify a non-default ``commitQuorum``?
-  Like ``w: "majority"``, ``commitQuorum: "all"`` doesn't include non-voting data-bearing nodes like analytics nodes. If a user wants to ensure these nodes also don't lag behind, then they would specify ``commitQuorum: <number of voting nodes + n>``.
+  Like ``w: "majority"``, ``commitQuorum: "all"`` doesn't include non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <number of voting nodes + n>``.
 
   Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind. 
 
 Q: What is the difference between write concern and ``commitQuorum``?
   While these two options share a lot in terms of how they are specified, they configure entirely different things. ``commitQuorum`` determines how much replication lag is tolerable in an index build, but it says nothing of durability. Write concern specifies the durability requirements of an index build, but it makes no guarantees about introducing replication lag.
 
-  For instance, an index built with ``writeConcern: { w: 1 }, commitQuorum: "all"`` could possibly be rolled back, but it will not introduce any new replication lag. Likewise, an index built with ``writeConcern: { w: "majority", j: true }, commitQuorum: 0`` will not be rolled back, but it may cause the secondaries to lag. To ensure the index is both durable and will not introduce replication lag on any data-bearing voting secondary, ``writeConcern: { w: "majority", j: true }m commitQuorum: "all"`` must be used.
+  For instance, an index built with ``writeConcern: { w: 1 }, commitQuorum: "all"`` could possibly be rolled back, but it will not introduce any new replication lag. Likewise, an index built with ``writeConcern: { w: "majority", j: true }, commitQuorum: 0`` will not be rolled back, but it may cause the secondaries to lag. To ensure the index is both durable and will not introduce replication lag on any data-bearing voting secondary, ``writeConcern: { w: "majority", j: true }, commitQuorum: "all"`` must be used.
 
-  Also note that, since indexes are built simultaneously, higher values of ``commitQuorum`` are not as expensive as higher values of ``writeConcern``. 
+  Also note that, since indexes are built simultaneously, higher values of ``commitQuorum`` are not as expensive as higher values of ``writeConcern``.
 
 Changelog
 ---------
