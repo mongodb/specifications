@@ -92,7 +92,15 @@ All drivers MUST name operations and parameters as defined in the following sect
 Deviations
 **********
 
-Acceptable naming deviations should fall within the basic style of the language. For example, ``createIndex`` would be a required name in Java, where camel-case method names are used, but in Ruby ``create_index`` would be acceptable.
+When deviating from a defined name, an author should consider if the altered name is recognizable and discoverable to the user of another driver.
+
+A non-exhaustive list of acceptable naming deviations are as follows:
+
+* Using "maxTimeMS" as an example, .NET would use "MaxTime" where it's type is a TimeSpan structure that includes units. However, calling it "MaximumTime" would not be acceptable.
+
+* Using "CreateIndexOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call it "CreateIndexArgs" or "CreateIndexParams".
+
+* Acceptable naming deviations should fall within the basic style of the language. For example, ``createIndex`` would be a required name in Java, where camel-case method names are used, but in Ruby ``create_index`` would be acceptable.
 
 
 Index Name Generation
