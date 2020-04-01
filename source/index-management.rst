@@ -80,7 +80,7 @@ Deviations
 
 A non-exhaustive list of acceptable deviations are as follows:
 
-* Using named parameters in place of an options hash or class. For instance, ``collection.createIndex({x: 1}, commitQuorum: "all")``.
+* Using named parameters in place of an options hash or class. For instance, ``collection.create_index({x: 1}, commit_quorum="all")``.
 
 * When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``CreateIndexOptions`` as the options for ``createIndex`` and ``createIndexes``.
 
