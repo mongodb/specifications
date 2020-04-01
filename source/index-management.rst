@@ -73,7 +73,7 @@ Operation Parameters
 
 All drivers MUST include the specified parameters in each operation. This does not preclude a driver from offering more. A driver SHOULD NOT require a user to specify the options parameter if they wish to use the server defaults.
 
-As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates options passed to the createIndexes command -- drivers should be aware when testing that passing arbitrary options when the driver does not validate them could fail on the server.
+As of 3.4 (see https://jira.mongodb.org/browse/SERVER-769) the server validates options passed to the ``createIndexes`` command -- drivers should be aware when testing that passing arbitrary options when the driver does not validate them could fail on the server.
 
 Deviations
 **********
