@@ -224,7 +224,7 @@ Standard API
      * an earlier version of the server. Instead, drivers MUST rely on the server for returning
      * an appropriate error.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
      * @since MongoDB 4.4
      */
@@ -233,7 +233,7 @@ Standard API
     /**
      * The maximum amount of time to allow the index build to take before returning an error.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
   }
@@ -246,7 +246,7 @@ Standard API
    /**
      * The maximum amount of time to allow the index drop to take before returning an error.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
   }
