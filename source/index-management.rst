@@ -220,13 +220,13 @@ Standard API
      * This option accepts the same values for the "w" field in a write concern plus "all",
      * which indicates all voting data-bearing nodes.
      *
-     * @note This option is only available in MongoDB 4.4+.
-     *
      * Drivers MUST NOT throw an error if this option is specified when creating an index on
      * an earlier version of the server. Instead, drivers MUST rely on the server for returning
      * an appropriate error.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * @since MongoDB 4.4
      */
     commitQuorum: Optional<Int32 | String>;
 
