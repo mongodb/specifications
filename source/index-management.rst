@@ -226,7 +226,7 @@ Standard API
      * for returning an appropriate error.
      *
      * @note There is a bug in server versions 4.2.0-4.2.5 where specifying this
-     * option does not result in an error (`SERVER-47193 <https://jira.mongodb.org/browse/SERVER-47193>`).
+     * option does not result in an error (SERVER-47193).
      *
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -809,7 +809,7 @@ Q: What does the commitQuorum option do?
   The server-default value for ``commitQuorum`` is "all", which means the primary will wait for all voting data-bearing nodes to complete building the index before it commits it.
 
 Q: Why would a user want to specify a non-default ``commitQuorum``?
-  Like ``w: "majority"``, ``commitQuorum: "all"`` doesn't include non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>` (e.g. ``commitQuorum: <custom write concern mode name>``).
+  Like ``w: "majority"``, ``commitQuorum: "all"`` doesn't include non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom write concern mode name>``).
 
   Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind. 
 
