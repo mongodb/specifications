@@ -64,7 +64,7 @@
           "error": true
         }
       ],
-      "expectations": {},
+      "expectations": [],
       "outcome": {
         "collection": {
           "data": [
@@ -132,7 +132,7 @@
           "error": true
         }
       ],
-      "expectations": {},
+      "expectations": [],
       "outcome": {
         "collection": {
           "data": [
