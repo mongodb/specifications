@@ -220,9 +220,13 @@ Standard API
      * This option accepts the same values for the "w" field in a write concern plus "all",
      * which indicates all voting data-bearing nodes.
      *
-     * Drivers MUST NOT throw an error if this option is specified when creating an index on
-     * an earlier version of the server. Instead, drivers MUST rely on the server for returning
-     * an appropriate error.
+     * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error
+     * for using this option. Drivers MUST NOT manually throw an error if this option is specified when
+     * creating an index on an earlier version of the server. Instead, drivers MUST rely on the server
+     * for returning an appropriate error.
+     *
+     * @note There is a bug in server versions 4.2.0-4.2.5 where specifying this
+     * option does not result in an error (`SERVER-47193 <https://jira.mongodb.org/browse/SERVER-47193>`).
      *
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
