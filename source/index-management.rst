@@ -80,7 +80,7 @@ Deviations
 
 A non-exhaustive list of acceptable deviations are as follows:
 
-* Using named parameters in place of an options hash or class. For instance, ``collection.create_index({x: 1}, commit_quorum="all")``.
+* Using named parameters in place of an options hash or class. For instance, ``collection.create_index({x: 1}, commit_quorum="majority")``.
 
 * When using an ``Options`` class, if multiple ``Options`` classes are structurally equatable, it is permissible to consolidate them into one with a clear name. For instance, it would be permissible to use the name ``CreateIndexOptions`` as the options for ``createIndex`` and ``createIndexes``.
 
@@ -217,7 +217,7 @@ Standard API
      * Specifies how many data-bearing members of a replica set, including the primary, must
      * complete the index builds successfully before the primary marks the indexes as ready.
      *
-     * This option accepts the same values for the "w" field in a write concern plus "all",
+     * This option accepts the same values for the "w" field in a write concern plus "votingMembers",
      * which indicates all voting data-bearing nodes.
      *
      * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error
@@ -804,19 +804,19 @@ Q: Where is ``ListIndexesOptions``?
 Q: What does the commitQuorum option do?
   Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating all other operations while the index build took place. This would introduce replication lag correlated to however long the index build took.
 
-  Starting in MongoDB 4.4, secondaries build indexes simultaneously with the primary, and after starting an index build, the primary will wait for a certain number of data-bearing nodes, including itself, to have completed the build before it commits the index. ``commitQuorum`` configures this node requirement. Once the index is committed, all the secondaries replicate the commit too. If a secondary had already completed the index build, the commit will be quick, and no new replication lag would be introduced. If a secondary had not finished building the index before the primary committed it (e.g. if ``commitQuorum: "all"`` was not used), then that secondary may lag behind the primary while it finishes building and committing the index.
+  Starting in MongoDB 4.4, secondaries build indexes simultaneously with the primary, and after starting an index build, the primary will wait for a certain number of data-bearing nodes, including itself, to have completed the build before it commits the index. ``commitQuorum`` configures this node requirement. Once the index is committed, all the secondaries replicate the commit too. If a secondary had already completed the index build, the commit will be quick, and no new replication lag would be introduced. If a secondary had not finished building the index before the primary committed it (e.g. if ``commitQuorum: 0`` was used), then that secondary may lag behind the primary while it finishes building and committing the index.
 
-  The server-default value for ``commitQuorum`` is "all", which means the primary will wait for all voting data-bearing nodes to complete building the index before it commits it.
+  The server-default value for ``commitQuorum`` is "votingMembers", which means the primary will wait for all voting data-bearing nodes to complete building the index before it commits it.
 
 Q: Why would a user want to specify a non-default ``commitQuorum``?
-  Like ``w: "majority"``, ``commitQuorum: "all"`` doesn't include non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom getLastErrorMode name>``).
+  Like ``w: "majority"``, ``commitQuorum: "votingMembers"`` doesn't consider non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom getLastErrorMode name>``).
 
   Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind. 
 
 Q: What is the difference between write concern and ``commitQuorum``?
   While these two options share a lot in terms of how they are specified, they configure entirely different things. ``commitQuorum`` determines how much new replication lag an index build can tolerably introduce, but it says nothing of durability. Write concern specifies the durability requirements of an index build, but it makes no guarantees about introducing replication lag.
 
-  For instance, an index built with ``writeConcern: { w: 1 }, commitQuorum: "all"`` could possibly be rolled back, but it will not introduce any new replication lag. Likewise, an index built with ``writeConcern: { w: "majority", j: true }, commitQuorum: 0`` will not be rolled back, but it may cause the secondaries to lag. To ensure the index is both durable and will not introduce replication lag on any data-bearing voting secondary, ``writeConcern: { w: "majority", j: true }, commitQuorum: "all"`` must be used.
+  For instance, an index built with ``writeConcern: { w: 1 }, commitQuorum: "votingMembers"`` could possibly be rolled back, but it will not introduce any new replication lag. Likewise, an index built with ``writeConcern: { w: "majority", j: true }, commitQuorum: 0`` will not be rolled back, but it may cause the secondaries to lag. To ensure the index is both durable and will not introduce replication lag on any data-bearing voting secondary, ``writeConcern: { w: "majority", j: true }, commitQuorum: "votingMembers"`` must be used.
 
   Also note that, since indexes are built simultaneously, higher values of ``commitQuorum`` are not as expensive as higher values of ``writeConcern``.
 
