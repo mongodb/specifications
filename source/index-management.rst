@@ -222,7 +222,7 @@ Standard API
      *
      * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error
      * for using this option. Drivers MUST NOT manually throw an error if this option is specified when
-     * creating an index on an earlier version of the server. Instead, drivers MUST rely on the server
+     * creating an index on a pre 4.4 server. Instead, drivers MUST rely on the server
      * for returning an appropriate error.
      *
      * @note There is a bug in server versions 4.2.0-4.2.5 where specifying this
