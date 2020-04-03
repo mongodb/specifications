@@ -1211,8 +1211,19 @@ Network error during server check
 
 See error handling in the `Server Monitoring spec`_.
 
+Application errors
+``````````````````
+
+When processing a network or command error, clients MUST first check the
+error's `generation number`_. If the error's generation number is equal to
+the pool's generation number then error handling MUST continue according to
+`Network error when reading or writing`_ or
+`"not master" and "node is recovering"`_. Otherwise, the error is considered
+stale and the client MUST NOT update any topology state.
+(See `Why ignore errors based on CMAP's generation number?`_)
+
 Network error when reading or writing
-`````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To describe how the client responds to network errors during application operations,
 we distinguish two phases of connecting to a server and using it for application operations:
@@ -1264,7 +1275,8 @@ if an application operation needs the server sooner than that,
 then a re-check will be triggered by the server selection algorithm.
 
 "not master" and "node is recovering"
-`````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 These errors are detected from a getLastError response,
 write command response, or query response. Clients MUST check if the server
 error is a "node is recovering" error or a "not master" error.
@@ -1402,11 +1414,15 @@ See the test scenario called
 "parsing 'not master' and 'node is recovering' errors"
 for example response documents.
 
-When the client sees a "not master" or "node is recovering" error
-it MUST replace the server's description
-with a default ServerDescription of type Unknown.
-It MUST store useful information in the new ServerDescription's error field,
-including the error message from the server.
+When the client sees a "not master" or "node is recovering" error and
+the error's `topologyVersion`_ is strictly greater than the current
+ServerDescription's topologyVersion it MUST replace the server's description
+with a ServerDescription of type Unknown.
+Clients MUST store useful information in the new ServerDescription's error
+field, including the error message from the server.
+Clients MUST store the error's `topologyVersion`_ field in the new
+ServerDescription if present.
+(See `What is the purpose of topologyVersion?`_)
 
 Multi-threaded and asynchronous clients MUST `request an immediate check`_
 of the server.
@@ -1441,22 +1457,6 @@ clear the server's connection pool if and only if the error is
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_ and `Why close connections when a node is shutting down?`_.)
-
-Reducing race conditions in error handling
-``````````````````````````````````````````
-
-Clients MUST NOT handle errors that have stale generation numbers. That is,
-when handling a network or command error, if the error's generation number
-is not equal to the current pool's generation number then the error MUST be
-ignored.
-
-Clients MUST NOT handle errors that have stale topologyVersions. That is,
-a client MUST NOT handle a command error unless the error's topologyVersion is
-strictly greater than the current ServerDescription's topologyVersion (see
-`topologyVersion Comparison`_).
-
-(See `Why ignore errors based on CMAP's generation number?`_ and
-`What is the purpose of topologyVersion?`_)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
