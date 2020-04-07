@@ -1357,7 +1357,7 @@ recovering" error::
     def isStateChangeError(message, code):
         return isRecovering(message, code) or isNotMaster(message, code)
 
-    def parse_gle(response):
+    def parseGle(response):
         if "err" in response:
             if isStateChangeError(response["err"], response["code"]):
                 handleStateChangeError(response, response["err"], response["code"])
@@ -1379,7 +1379,7 @@ recovering" error::
 
     def handleStateChangeError(response, message, code):
         # Ignore stale errors based on generation and topologyVersion.
-        if not shouldHandleError(client.topologyDescription, response)
+        if isStaleError(client.topologyDescription, response)
             return
 
         # Mark the server Unknown
@@ -1398,17 +1398,17 @@ recovering" error::
         if isShutdown(code) or (error was from <4.2):
             clear connection pool for server
 
-    def shouldHandleError(topologyDescription, response):
+    def isStaleError(topologyDescription, response):
         currentServer = topologyDescription.servers[server.address]
         currentGeneration = currentServer.pool.generation
         generation = get connection generation from response
         if generation < currentGeneration:
             # Stale generation number.
-            return False
+            return True
 
         currentTopologyVersion = currentServer.topologyVersion
         # True if the current error's topologyVersion is greater than the server's
-        return compareTopologyVersion(currentTopologyVersion, response.get("topologyVersion")) < 0
+        return compareTopologyVersion(currentTopologyVersion, response.get("topologyVersion")) >= 0
 
 See the test scenario called
 "parsing 'not master' and 'node is recovering' errors"
@@ -1601,7 +1601,7 @@ Once the client has taken the lock it must do no I/O::
 
         # Ignore this update if the current topologyVersion is greater than
         # the new ServerDescription's.
-        if not shouldHandleServerDescription(td, server):
+        if isStaleServerDescription(td, server):
             client.lock.release()
             return
 
@@ -1637,12 +1637,12 @@ Once the client has taken the lock it must do no I/O::
             # Assume greater.
             return -1
 
-    def shouldHandleServerDescription(topologyDescription, server):
+    def isStaleServerDescription(topologyDescription, server):
         # True if the new ServerDescription's topologyVersion is greater than
         # or equal to the current server's.
         currentServer = topologyDescription.servers[server.address]
         currentTopologyVersion = currentServer.topologyVersion
-        return compareTopologyVersion(currentTopologyVersion, server.topologyVersion) <= 0
+        return compareTopologyVersion(currentTopologyVersion, server.topologyVersion) > 0
 
 .. https://github.com/mongodb/mongo-java-driver/blob/5fb47a3bf86c56ed949ce49258a351773f716d07/src/main/com/mongodb/BaseCluster.java#L160
 
