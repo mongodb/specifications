@@ -220,13 +220,8 @@ Standard API
      * This option accepts the same values for the "w" field in a write concern plus "votingMembers",
      * which indicates all voting data-bearing nodes.
      *
-     * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error
-     * for using this option. Drivers MUST NOT manually throw an error if this option is specified when
-     * creating an index on a pre 4.4 server. Instead, drivers MUST rely on the server
-     * for returning an appropriate error.
-     *
-     * @note There is a bug in server versions 4.2.0-4.2.5 where specifying this
-     * option does not result in an error (SERVER-47193).
+     * This option is only supported by servers >= 4.4. Drivers MUST manually raise an error if this option
+     * is specified when creating an index on a pre 4.4 server.
      *
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
@@ -819,6 +814,9 @@ Q: What is the difference between write concern and ``commitQuorum``?
   For instance, an index built with ``writeConcern: { w: 1 }, commitQuorum: "votingMembers"`` could possibly be rolled back, but it will not introduce any new replication lag. Likewise, an index built with ``writeConcern: { w: "majority", j: true }, commitQuorum: 0`` will not be rolled back, but it may cause the secondaries to lag. To ensure the index is both durable and will not introduce replication lag on any data-bearing voting secondary, ``writeConcern: { w: "majority", j: true }, commitQuorum: "votingMembers"`` must be used.
 
   Also note that, since indexes are built simultaneously, higher values of ``commitQuorum`` are not as expensive as higher values of ``writeConcern``.
+
+Q: Why does the driver manually throw errors if the ``commitQuorum`` option is specified against a pre 4.4 server?
+  Starting in 3.4, the server validates all options passed to the ``createIndexes`` command, but due to a bug in versions 4.2.0-4.2.5 of the server (SERVER-47193), specifying ``commitQuorum`` does not result in an error. The option is used interally by the server on those versions, and its value could have adverse effects on index builds. To prevent users from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 Changelog
 ---------
