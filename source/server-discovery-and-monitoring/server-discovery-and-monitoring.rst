@@ -831,10 +831,10 @@ know which MongoDB versions will be compatible or incompatible in the future.
 Verifying setName with TopologyType Single
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A client MAY allow the user to supply a setName
-with an initial TopologyType of Single.
-In this case, if the ServerDescription's setName is null or wrong,
-the client MUST throw an error on every operation.
+A client MAY allow the user to supply a setName with an initial TopologyType
+of Single. In this case, if the ServerDescription's setName is null or wrong,
+the ServerDescription MUST be replaced with a default ServerDescription of
+type Unknown.
 
 Other TopologyTypes
 ```````````````````
