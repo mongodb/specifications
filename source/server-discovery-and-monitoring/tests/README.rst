@@ -60,8 +60,6 @@ so far. It has the following keys:
 - maxSetVersion: absent or an integer.
 - maxElectionId: absent or a BSON ObjectId.
 - compatible: absent or a bool.
-- pools: (optional) An object whose keys are addresses like "a:27017", and
-  whose values are "pool" objects.
 
 A "server" object represents a correct ServerDescription within the client's
 current TopologyDescription. It has the following keys:
@@ -74,11 +72,12 @@ current TopologyDescription. It has the following keys:
 - minWireVersion: absent or an integer.
 - maxWireVersion: absent or an integer.
 - topologyVersion: absent, null, or a topologyVersion document.
+- pool: (optional) A "pool" object.
 
 A "pool" object represents a correct connection pool for a given server.
 It has the following keys:
 
-- generation: The pool's generation number, like `0`.
+- generation: This server's expected pool generation, like `0`.
 
 In monitoring tests, an "outcome" contains a list of SDAM events that should
 have been published by the client as a result of processing ismaster responses
@@ -140,9 +139,7 @@ For each phase in the file:
 
 For non-monitoring tests,
 once all responses are processed, assert that the phase's "outcome" object
-is equivalent to the driver's current TopologyDescription. If the "outcome"
-object contains a "pools" object, assert that each "pool" object is
-equivalent to the current server's application pool.
+is equivalent to the driver's current TopologyDescription.
 
 For monitoring tests, once all responses are processed, assert that the
 events collected so far by the SDAM event listener are equivalent to the

@@ -27,11 +27,6 @@
         ]
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 0
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -43,6 +38,9 @@
               "counter": {
                 "$numberLong": "1"
               }
+            },
+            "pool": {
+              "generation": 0
             }
           }
         },
@@ -72,11 +70,6 @@
         }
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 0
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -88,6 +81,9 @@
               "counter": {
                 "$numberLong": "1"
               }
+            },
+            "pool": {
+              "generation": 0
             }
           }
         },
@@ -117,11 +113,6 @@
         }
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 0
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -133,6 +124,9 @@
               "counter": {
                 "$numberLong": "1"
               }
+            },
+            "pool": {
+              "generation": 0
             }
           }
         },
@@ -162,11 +156,6 @@
         }
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 1
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "Unknown",
@@ -177,6 +166,9 @@
               "counter": {
                 "$numberLong": "2"
               }
+            },
+            "pool": {
+              "generation": 1
             }
           }
         },
@@ -210,11 +202,6 @@
         ]
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 1
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -226,6 +213,9 @@
               "counter": {
                 "$numberLong": "2"
               }
+            },
+            "pool": {
+              "generation": 1
             }
           }
         },
@@ -255,11 +245,6 @@
         }
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 2
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "Unknown",
@@ -270,6 +255,9 @@
               "counter": {
                 "$numberLong": "1"
               }
+            },
+            "pool": {
+              "generation": 2
             }
           }
         },
@@ -303,11 +291,6 @@
         ]
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 2
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -319,6 +302,9 @@
               "counter": {
                 "$numberLong": "2"
               }
+            },
+            "pool": {
+              "generation": 2
             }
           }
         },
@@ -340,15 +326,13 @@
         }
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 3
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "Unknown",
-            "topologyVersion": null
+            "topologyVersion": null,
+            "pool": {
+              "generation": 3
+            }
           }
         },
         "topologyType": "ReplicaSetNoPrimary",
@@ -381,11 +365,6 @@
         ]
       ],
       "outcome": {
-        "pools": {
-          "a:27017": {
-            "generation": 3
-          }
-        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -397,6 +376,9 @@
               "counter": {
                 "$numberLong": "1"
               }
+            },
+            "pool": {
+              "generation": 3
             }
           }
         },
