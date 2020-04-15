@@ -23,11 +23,12 @@ Each YAML file has the following keys:
   A phase of the test optionally sends inputs to the client,
   then tests the client's resulting TopologyDescription.
 
-Each phase object has two keys:
+Each phase object has three keys:
 
 - responses: (optional) An array of "response" objects. If not provided,
   the test runner should construct the client and perform assertions specified
   in the outcome object without processing any responses.
+- applicationErrors: (optional) An array of "applicationError" objects.
 - outcome: An "outcome" object representing the TopologyDescription.
 
 A response is a pair of values:
@@ -39,6 +40,13 @@ A response is a pair of values:
   `{"$oid": "000000000000000000000002"}`.
   The empty response `{}` indicates a network error
   when attempting to call "ismaster".
+
+An "applicationError" object has the following keys:
+
+- address: The source address, for example "a:27017".
+- generation: The error's generation number, for example `1`.
+- error: An error response, for example `{ok: 0, errmsg: "not master"}`.
+  The empty error response `{}` indicates a network error.
 
 In non-monitoring tests, an "outcome" represents the correct
 TopologyDescription that results from processing the responses in the phases
@@ -52,6 +60,8 @@ so far. It has the following keys:
 - maxSetVersion: absent or an integer.
 - maxElectionId: absent or a BSON ObjectId.
 - compatible: absent or a bool.
+- pools: (optional) An object whose keys are addresses like "a:27017", and
+  whose values are "pool" objects.
 
 A "server" object represents a correct ServerDescription within the client's
 current TopologyDescription. It has the following keys:
@@ -64,6 +74,11 @@ current TopologyDescription. It has the following keys:
 - minWireVersion: absent or an integer.
 - maxWireVersion: absent or an integer.
 - topologyVersion: absent, null, or a topologyVersion document.
+
+A "pool" object represents a correct connection pool for a given server.
+It has the following keys:
+
+- generation: The pool's generation number, like `0`.
 
 In monitoring tests, an "outcome" contains a list of SDAM events that should
 have been published by the client as a result of processing ismaster responses
@@ -82,11 +97,11 @@ Mocking
 ~~~~~~~
 
 Drivers should be able to test their server discovery and monitoring logic
-without any network I/O, by parsing ismaster responses from the test file
-and passing them into the driver code. Parts of the client and monitoring
-code may need to be mocked or subclassed to achieve this. `A reference
-implementation for PyMongo 3.x is available here
-<https://github.com/mongodb/mongo-python-driver/blob/26d25cd74effc1e7a8d52224eac6c9a95769b371/test/test_discovery_and_monitoring.py>`_.
+without any network I/O, by parsing ismaster and application error from the
+test file and passing them into the driver code. Parts of the client and
+monitoring code may need to be mocked or subclassed to achieve this.
+`A reference implementation for PyMongo 3.10.1 is available here
+<https://github.com/mongodb/mongo-python-driver/blob/3.10.1/test/test_discovery_and_monitoring.py>`_.
 
 Initialization
 ~~~~~~~~~~~~~~
@@ -114,13 +129,20 @@ events published during client construction.
 Test Phases
 ~~~~~~~~~~~
 
-For each phase in the file, parse the "responses" array.
-Pass in the responses in order to the driver code.
-If a response is the empty object `{}`, simulate a network error.
+For each phase in the file:
+
+#. Parse the "responses" array. Pass in the responses in order to the driver
+   code. If a response is the empty object `{}`, simulate a network error.
+
+#. Parse the "applicationErrors" array. For each element, simulate the error
+   on an application connection. If a response is the empty object `{}`,
+   simulate a network error on an application connection.
 
 For non-monitoring tests,
 once all responses are processed, assert that the phase's "outcome" object
-is equivalent to the driver's current TopologyDescription.
+is equivalent to the driver's current TopologyDescription. If the "outcome"
+object contains a "pools" object, assert that each "pool" object is
+equivalent to the current server's application pool.
 
 For monitoring tests, once all responses are processed, assert that the
 events collected so far by the SDAM event listener are equivalent to the

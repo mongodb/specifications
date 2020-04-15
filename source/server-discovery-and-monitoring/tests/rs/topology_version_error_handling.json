@@ -27,6 +27,11 @@
         ]
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 0
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -48,12 +53,13 @@
     },
     {
       "applicationErrors": [
-        [
-          "a:27017",
-          {
+        {
+          "address": "a:27017",
+          "generation": 0,
+          "error": {
             "ok": 0,
-            "errmsg": "not master error",
-            "code": 10107,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
             "topologyVersion": {
               "processId": {
                 "$oid": "000000000000000000000001"
@@ -63,9 +69,14 @@
               }
             }
           }
-        ]
+        }
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 0
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -87,12 +98,13 @@
     },
     {
       "applicationErrors": [
-        [
-          "a:27017",
-          {
+        {
+          "address": "a:27017",
+          "generation": 0,
+          "error": {
             "ok": 0,
-            "errmsg": "not master error",
-            "code": 10107,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
             "topologyVersion": {
               "processId": {
                 "$oid": "000000000000000000000001"
@@ -102,9 +114,14 @@
               }
             }
           }
-        ]
+        }
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 0
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -126,12 +143,13 @@
     },
     {
       "applicationErrors": [
-        [
-          "a:27017",
-          {
+        {
+          "address": "a:27017",
+          "generation": 0,
+          "error": {
             "ok": 0,
-            "errmsg": "not master error",
-            "code": 10107,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
             "topologyVersion": {
               "processId": {
                 "$oid": "000000000000000000000001"
@@ -141,9 +159,14 @@
               }
             }
           }
-        ]
+        }
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 1
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "Unknown",
@@ -187,6 +210,11 @@
         ]
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 1
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -208,12 +236,13 @@
     },
     {
       "applicationErrors": [
-        [
-          "a:27017",
-          {
+        {
+          "address": "a:27017",
+          "generation": 1,
+          "error": {
             "ok": 0,
-            "errmsg": "not master error",
-            "code": 10107,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
             "topologyVersion": {
               "processId": {
                 "$oid": "000000000000000000000002"
@@ -223,9 +252,14 @@
               }
             }
           }
-        ]
+        }
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 2
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "Unknown",
@@ -269,6 +303,11 @@
         ]
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 2
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
@@ -290,16 +329,22 @@
     },
     {
       "applicationErrors": [
-        [
-          "a:27017",
-          {
+        {
+          "address": "a:27017",
+          "generation": 2,
+          "error": {
             "ok": 0,
-            "errmsg": "not master error",
-            "code": 10107
+            "errmsg": "ShutdownInProgress",
+            "code": 91
           }
-        ]
+        }
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 3
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "Unknown",
@@ -336,6 +381,11 @@
         ]
       ],
       "outcome": {
+        "pools": {
+          "a:27017": {
+            "generation": 3
+          }
+        },
         "servers": {
           "a:27017": {
             "type": "RSPrimary",
