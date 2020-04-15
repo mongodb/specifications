@@ -1,263 +1,262 @@
 description: Detect stale topologyVersion on application errors
 uri: mongodb://a/?replicaSet=rs
 phases:
-  # Primary A is discovered.
-  - responses:
-    - - a:27017
-      - ok: 1
-        ismaster: true
-        hosts:
-        - a:27017
+- responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000001'
+        counter:
+          "$numberLong": '1'
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
         setName: rs
-        minWireVersion: 0
-        maxWireVersion: 9
         topologyVersion:
           processId:
             "$oid": '000000000000000000000001'
           counter:
             "$numberLong": '1'
-    outcome:
-      servers:
-        a:27017:
-          type: RSPrimary
-          setName: rs
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000001'
-            counter:
-              "$numberLong": '1'
-          pool:
-            generation: 0
-      topologyType: ReplicaSetWithPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
+        pool:
+          generation: 0
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
 
-  # Stale application errors should not reset the primary to unknown.
-  - applicationErrors:
-    - address: a:27017
-      generation: 0
-      error:
-        ok: 0
-        errmsg: ShutdownInProgress
-        code: 91
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000001'
-          counter:
-            "$numberLong": '0'
-    outcome:
-      servers:
-        a:27017:
-          type: RSPrimary
-          setName: rs
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000001'
-            counter:
-              "$numberLong": '1'
-          pool:
-            generation: 0
-      topologyType: ReplicaSetWithPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
-  - applicationErrors:
-    - address: a:27017
-      generation: 0
-      error:
-        ok: 0
-        errmsg: ShutdownInProgress
-        code: 91
+# Stale application errors should not reset the primary to unknown.
+- applicationErrors:
+  - address: a:27017
+    generation: 0
+    error:
+      ok: 0
+      errmsg: ShutdownInProgress
+      code: 91
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000001'
+        counter:
+          "$numberLong": '0'
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
         topologyVersion:
           processId:
             "$oid": '000000000000000000000001'
           counter:
             "$numberLong": '1'
-    outcome:
-      servers:
-        a:27017:
-          type: RSPrimary
-          setName: rs
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000001'
-            counter:
-              "$numberLong": '1'
-          pool:
-            generation: 0
-      topologyType: ReplicaSetWithPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
-
-  # Application error with greater topologyVersion should reset the primary to
-  # unknown.
-  - applicationErrors:
-    - address: a:27017
-      generation: 0
-      error:
-        ok: 0
-        errmsg: ShutdownInProgress
-        code: 91
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000001'
-          counter:
-            "$numberLong": '2'
-    outcome:
-      servers:
-        a:27017:
-          type: Unknown
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000001'
-            counter:
-              "$numberLong": '2'
-          pool:
-            generation: 1
-      topologyType: ReplicaSetNoPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
-
-  # A responds with a greater topologyVersion counter, we should process the
-  # response.
-  - responses:
-    - - a:27017
-      - ok: 1
-        ismaster: true
-        hosts:
-        - a:27017
+        pool:
+          generation: 0
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+- applicationErrors:
+  - address: a:27017
+    generation: 0
+    error:
+      ok: 0
+      errmsg: ShutdownInProgress
+      code: 91
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000001'
+        counter:
+          "$numberLong": '1'
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
         setName: rs
-        minWireVersion: 0
-        maxWireVersion: 9
+        topologyVersion:
+          processId:
+            "$oid": '000000000000000000000001'
+          counter:
+            "$numberLong": '1'
+        pool:
+          generation: 0
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+# Application error with greater topologyVersion should reset the primary to
+# unknown.
+- applicationErrors:
+  - address: a:27017
+    generation: 0
+    error:
+      ok: 0
+      errmsg: ShutdownInProgress
+      code: 91
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000001'
+        counter:
+          "$numberLong": '2'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
         topologyVersion:
           processId:
             "$oid": '000000000000000000000001'
           counter:
             "$numberLong": '2'
-    outcome:
-      servers:
-        a:27017:
-          type: RSPrimary
-          setName: rs
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000001'
-            counter:
-              "$numberLong": '2'
-          pool:
-            generation: 1
-      topologyType: ReplicaSetWithPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
+        pool:
+          generation: 1
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
 
-  # Application error with different topologyVersion.processId should reset
-  # the primary to unknown.
-  - applicationErrors:
-    - address: a:27017
-      generation: 1
-      error:
-        ok: 0
-        errmsg: ShutdownInProgress
-        code: 91
+# A responds with a greater topologyVersion counter, we should process the
+# response.
+- responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000001'
+        counter:
+          "$numberLong": '2'
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion:
+          processId:
+            "$oid": '000000000000000000000001'
+          counter:
+            "$numberLong": '2'
+        pool:
+          generation: 1
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+# Application error with different topologyVersion.processId should reset
+# the primary to unknown.
+- applicationErrors:
+  - address: a:27017
+    generation: 1
+    error:
+      ok: 0
+      errmsg: ShutdownInProgress
+      code: 91
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000002'
+        counter:
+          "$numberLong": '1'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
         topologyVersion:
           processId:
             "$oid": '000000000000000000000002'
           counter:
             "$numberLong": '1'
-    outcome:
-      servers:
-        a:27017:
-          type: Unknown
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000002'
-            counter:
-              "$numberLong": '1'
-          pool:
-            generation: 2
-      topologyType: ReplicaSetNoPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
+        pool:
+          generation: 2
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
 
-  # A responds with a greater topologyVersion counter, we should process
-  # the response.
-  - responses:
-    - - a:27017
-      - ok: 1
-        ismaster: true
-        hosts:
-        - a:27017
+# A responds with a greater topologyVersion counter, we should process
+# the response.
+- responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000002'
+        counter:
+          "$numberLong": '2'
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
         setName: rs
-        minWireVersion: 0
-        maxWireVersion: 9
         topologyVersion:
           processId:
             "$oid": '000000000000000000000002'
           counter:
             "$numberLong": '2'
-    outcome:
-      servers:
-        a:27017:
-          type: RSPrimary
-          setName: rs
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000002'
-            counter:
-              "$numberLong": '2'
-          pool:
-            generation: 2
-      topologyType: ReplicaSetWithPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
+        pool:
+          generation: 2
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
 
-  # Application error with no topologyVersion should reset the primary
-  # to unknown.
-  - applicationErrors:
-    - address: a:27017
-      generation: 2
-      error:
-        ok: 0
-        errmsg: ShutdownInProgress
-        code: 91
-    outcome:
-      servers:
-        a:27017:
-          type: Unknown
-          topologyVersion: null
-          pool:
-            generation: 3
-      topologyType: ReplicaSetNoPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
+# Application error with no topologyVersion should reset the primary
+# to unknown.
+- applicationErrors:
+  - address: a:27017
+    generation: 2
+    error:
+      ok: 0
+      errmsg: ShutdownInProgress
+      code: 91
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: null
+        pool:
+          generation: 3
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
 
-  # A responds with a greater topologyVersion counter, we should process
-  # the response.
-  - responses:
-    - - a:27017
-      - ok: 1
-        ismaster: true
-        hosts:
-        - a:27017
+# A responds with a greater topologyVersion counter, we should process
+# the response.
+- responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion:
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '1'
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
         setName: rs
-        minWireVersion: 0
-        maxWireVersion: 9
         topologyVersion:
           processId:
             "$oid": '000000000000000000000003'
           counter:
             "$numberLong": '1'
-    outcome:
-      servers:
-        a:27017:
-          type: RSPrimary
-          setName: rs
-          topologyVersion:
-            processId:
-              "$oid": '000000000000000000000003'
-            counter:
-              "$numberLong": '1'
-          pool:
-            generation: 3
-      topologyType: ReplicaSetWithPrimary
-      logicalSessionTimeoutMinutes: null
-      setName: rs
+        pool:
+          generation: 3
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
