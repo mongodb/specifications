@@ -23,8 +23,9 @@ Each YAML file has the following keys:
   A phase of the test optionally sends inputs to the client,
   then tests the client's resulting TopologyDescription.
 
-Each phase object has three keys:
+Each phase object has the following keys:
 
+- description: (optional) A textual description of this phase.
 - responses: (optional) An array of "response" objects. If not provided,
   the test runner should construct the client and perform assertions specified
   in the outcome object without processing any responses.

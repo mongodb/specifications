@@ -3,6 +3,7 @@
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {
+      "description": "Primary A is discovered",
       "responses": [
         [
           "a:27017",
@@ -50,6 +51,7 @@
       }
     },
     {
+      "description": "Ignore stale application error (topologyVersion less)",
       "applicationErrors": [
         {
           "address": "a:27017",
@@ -93,6 +95,7 @@
       }
     },
     {
+      "description": "Ignore stale application error (topologyVersion equal)",
       "applicationErrors": [
         {
           "address": "a:27017",
@@ -136,6 +139,7 @@
       }
     },
     {
+      "description": "Non-stale application error (topologyVersion greater)",
       "applicationErrors": [
         {
           "address": "a:27017",
@@ -178,6 +182,7 @@
       }
     },
     {
+      "description": "Primary A is rediscovered (1)",
       "responses": [
         [
           "a:27017",
@@ -225,6 +230,7 @@
       }
     },
     {
+      "description": "Non-stale application error (topologyVersion.processId differs)",
       "applicationErrors": [
         {
           "address": "a:27017",
@@ -267,6 +273,7 @@
       }
     },
     {
+      "description": "Primary A is rediscovered (2)",
       "responses": [
         [
           "a:27017",
@@ -314,6 +321,7 @@
       }
     },
     {
+      "description": "Non-stale application error (topologyVersion missing)",
       "applicationErrors": [
         {
           "address": "a:27017",
@@ -341,6 +349,7 @@
       }
     },
     {
+      "description": "Primary A is rediscovered (3)",
       "responses": [
         [
           "a:27017",
@@ -379,6 +388,146 @@
             },
             "pool": {
               "generation": 3
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Stale application error (generation differs)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 2,
+          "error": {
+            "ok": 0,
+            "errmsg": "ShutdownInProgress",
+            "code": 91
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 3
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Stale application network error (generation differs)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 2,
+          "error": {}
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 3
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Non-stale application network error",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 3,
+          "error": {}
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "Unknown",
+            "topologyVersion": null,
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetNoPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Primary A is rediscovered (4)",
+      "responses": [
+        [
+          "a:27017",
+          {
+            "ok": 1,
+            "ismaster": true,
+            "hosts": [
+              "a:27017"
+            ],
+            "setName": "rs",
+            "minWireVersion": 0,
+            "maxWireVersion": 9,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            }
+          }
+        ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
             }
           }
         },
