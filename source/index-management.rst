@@ -221,7 +221,7 @@ Standard API
      * which indicates all voting data-bearing nodes.
      *
      * This option is only supported by servers >= 4.4. Drivers MUST manually raise an error if this option
-     * is specified when creating an index on a pre 4.4 server.
+     * is specified when creating an index on a pre 4.4 server. See the Q&A section for the rationale behind this.
      *
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
