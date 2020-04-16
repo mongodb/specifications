@@ -1,5 +1,5 @@
 {
-  "description": "Detect stale topologyVersion on application errors",
+  "description": "Detect stale application errors",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {
