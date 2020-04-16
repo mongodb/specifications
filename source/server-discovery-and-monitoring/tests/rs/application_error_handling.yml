@@ -32,11 +32,33 @@ phases:
     logicalSessionTimeoutMinutes: null
     setName: rs
 
+- description: Ignore network timeout application error
+  applicationErrors:
+  - address: a:27017
+    generation: 0
+    type: timeout
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion:
+          processId:
+            "$oid": '000000000000000000000001'
+          counter:
+            "$numberLong": '1'
+        pool:
+          generation: 0
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
 - description: Ignore stale application error (topologyVersion less)
   applicationErrors:
   - address: a:27017
     generation: 0
-    error:
+    type: command
+    response:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
@@ -65,7 +87,8 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 0
-    error:
+    type: command
+    response:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
@@ -94,7 +117,8 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 0
-    error:
+    type: command
+    response:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
@@ -153,7 +177,8 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 1
-    error:
+    type: command
+    response:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
@@ -212,7 +237,8 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 2
-    error:
+    type: command
+    response:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
@@ -262,7 +288,8 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 2
-    error:
+    type: command
+    response:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
@@ -286,7 +313,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 2
-    error: {}
+    type: network
   outcome:
     servers:
       a:27017:
@@ -307,7 +334,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 3
-    error: {}
+    type: network
   outcome:
     servers:
       a:27017:

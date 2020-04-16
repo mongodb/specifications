@@ -46,8 +46,14 @@ An "applicationError" object has the following keys:
 
 - address: The source address, for example "a:27017".
 - generation: The error's generation number, for example `1`.
-- error: An error response, for example `{ok: 0, errmsg: "not master"}`.
-  The empty error response `{}` indicates a network error.
+- type: The type of error to mock. Supported values are:
+
+  - "command": A command error. Always accompanied with a "response".
+  - "network": A non-timeout network error.
+  - "timeout": A network timeout error.
+
+- response: (optional) A command error response, for example
+  `{ok: 0, errmsg: "not master"}`. Present if and only if `type` is "command".
 
 In non-monitoring tests, an "outcome" represents the correct
 TopologyDescription that results from processing the responses in the phases
@@ -134,9 +140,8 @@ For each phase in the file:
 #. Parse the "responses" array. Pass in the responses in order to the driver
    code. If a response is the empty object `{}`, simulate a network error.
 
-#. Parse the "applicationErrors" array. For each element, simulate the error
-   on an application connection. If a response is the empty object `{}`,
-   simulate a network error on an application connection.
+#. Parse the "applicationErrors" array. For each element, simulate the given
+   error as if it occurred while running an application operation.
 
 For non-monitoring tests,
 once all responses are processed, assert that the phase's "outcome" object
