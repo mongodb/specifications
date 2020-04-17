@@ -56,6 +56,7 @@
         {
           "address": "a:27017",
           "generation": 0,
+          "when": "afterHandshakeCompletes",
           "type": "timeout"
         }
       ],
@@ -88,6 +89,7 @@
         {
           "address": "a:27017",
           "generation": 0,
+          "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
             "ok": 0,
@@ -133,6 +135,7 @@
         {
           "address": "a:27017",
           "generation": 0,
+          "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
             "ok": 0,
@@ -178,6 +181,7 @@
         {
           "address": "a:27017",
           "generation": 0,
+          "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
             "ok": 0,
@@ -270,6 +274,7 @@
         {
           "address": "a:27017",
           "generation": 1,
+          "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
             "ok": 0,
@@ -362,6 +367,7 @@
         {
           "address": "a:27017",
           "generation": 2,
+          "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
             "ok": 0,
@@ -439,6 +445,7 @@
         {
           "address": "a:27017",
           "generation": 2,
+          "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
             "ok": 0,
@@ -476,6 +483,7 @@
         {
           "address": "a:27017",
           "generation": 2,
+          "when": "afterHandshakeCompletes",
           "type": "network"
         }
       ],
@@ -508,6 +516,7 @@
         {
           "address": "a:27017",
           "generation": 3,
+          "when": "afterHandshakeCompletes",
           "type": "network"
         }
       ],

@@ -36,16 +36,25 @@ A response is a pair of values:
 
 - The source, for example "a:27017".
   This is the address the client sent the "ismaster" command to.
-- An ismaster response, for example `{ok: 1, ismaster: true}`.
+- An ismaster response, for example ``{ok: 1, ismaster: true}``.
   If the response includes an electionId it is shown in extended JSON like
-  `{"$oid": "000000000000000000000002"}`.
+  ``{"$oid": "000000000000000000000002"}``.
   The empty response `{}` indicates a network error
   when attempting to call "ismaster".
 
 An "applicationError" object has the following keys:
 
 - address: The source address, for example "a:27017".
-- generation: The error's generation number, for example `1`.
+- generation: The error's generation number, for example ``1``.
+- when: A string describing when this mock error should occur. Supported
+  values are:
+
+  - "beforeHandshakeCompletes": Simulate this mock error as if it occurred
+    during a new connection's handshake for an application operation.
+  - "afterHandshakeCompletes": Simulate this mock error as if it occurred
+    on an established connection for an application operation (i.e. after
+    the connection pool check out succeeds).
+
 - type: The type of error to mock. Supported values are:
 
   - "command": A command error. Always accompanied with a "response".
@@ -53,7 +62,8 @@ An "applicationError" object has the following keys:
   - "timeout": A network timeout error.
 
 - response: (optional) A command error response, for example
-  `{ok: 0, errmsg: "not master"}`. Present if and only if `type` is "command".
+  ``{ok: 0, errmsg: "not master"}``. Present if and only if ``type`` is
+  "command".
 
 In non-monitoring tests, an "outcome" represents the correct
 TopologyDescription that results from processing the responses in the phases
@@ -84,7 +94,7 @@ current TopologyDescription. It has the following keys:
 A "pool" object represents a correct connection pool for a given server.
 It has the following keys:
 
-- generation: This server's expected pool generation, like `0`.
+- generation: This server's expected pool generation, like ``0``.
 
 In monitoring tests, an "outcome" contains a list of SDAM events that should
 have been published by the client as a result of processing ismaster responses
@@ -138,7 +148,7 @@ Test Phases
 For each phase in the file:
 
 #. Parse the "responses" array. Pass in the responses in order to the driver
-   code. If a response is the empty object `{}`, simulate a network error.
+   code. If a response is the empty object ``{}``, simulate a network error.
 
 #. Parse the "applicationErrors" array. For each element, simulate the given
    error as if it occurred while running an application operation.
