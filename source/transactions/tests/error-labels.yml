@@ -86,7 +86,7 @@ tests:
         result:
           # Note, the server will return the errorLabel in this case.
           errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
       - name: abortTransaction
         object: session0
 
@@ -143,7 +143,7 @@ tests:
         result:
           # Note, the server will return the errorLabel in this case.
           errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
       - name: abortTransaction
         object: session0
 
@@ -200,7 +200,7 @@ tests:
         result:
           # Note, the server will return the errorLabel in this case.
           errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
       - name: abortTransaction
         object: session0
 
@@ -315,7 +315,7 @@ tests:
             _id: 1
         result: &transient_label_only
           errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["UnknownTransactionCommitResult"]
+          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
       - name: find
         object: collection
         arguments:
