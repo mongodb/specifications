@@ -11,7 +11,7 @@ phases:
       setName: rs
       minWireVersion: 0
       maxWireVersion: 9
-      topologyVersion:
+      topologyVersion: &topologyVersion_1_1
         processId:
           "$oid": '000000000000000000000001'
         counter:
@@ -21,11 +21,7 @@ phases:
       a:27017:
         type: RSPrimary
         setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000001'
-          counter:
-            "$numberLong": '1'
+        topologyVersion: *topologyVersion_1_1
         pool:
           generation: 0
     topologyType: ReplicaSetWithPrimary
@@ -42,7 +38,7 @@ phases:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
-      topologyVersion:
+      topologyVersion: &topologyVersion_1_2
         processId:
           "$oid": '000000000000000000000001'
         counter:
@@ -51,11 +47,7 @@ phases:
     servers:
       a:27017:
         type: Unknown
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000001'
-          counter:
-            "$numberLong": '2'
+        topologyVersion: *topologyVersion_1_2
         pool:
           generation: 1
     topologyType: ReplicaSetNoPrimary
@@ -72,21 +64,13 @@ phases:
       setName: rs
       minWireVersion: 0
       maxWireVersion: 9
-      topologyVersion:
-        processId:
-          "$oid": '000000000000000000000001'
-        counter:
-          "$numberLong": '2'
+      topologyVersion: *topologyVersion_1_2
   outcome:
     servers:
       a:27017:
         type: RSPrimary
         setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000001'
-          counter:
-            "$numberLong": '2'
+        topologyVersion: *topologyVersion_1_2
         pool:
           generation: 1
     topologyType: ReplicaSetWithPrimary
@@ -103,7 +87,7 @@ phases:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
-      topologyVersion:
+      topologyVersion: &topologyVersion_2_1
         processId:
           "$oid": '000000000000000000000002'
         counter:
@@ -112,11 +96,7 @@ phases:
     servers:
       a:27017:
         type: Unknown
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000002'
-          counter:
-            "$numberLong": '1'
+        topologyVersion: *topologyVersion_2_1
         pool:
           generation: 2
     topologyType: ReplicaSetNoPrimary
@@ -133,7 +113,7 @@ phases:
       setName: rs
       minWireVersion: 0
       maxWireVersion: 9
-      topologyVersion:
+      topologyVersion: &topologyVersion_2_2
         processId:
           "$oid": '000000000000000000000002'
         counter:
@@ -143,11 +123,7 @@ phases:
       a:27017:
         type: RSPrimary
         setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000002'
-          counter:
-            "$numberLong": '2'
+        topologyVersion: *topologyVersion_2_2
         pool:
           generation: 2
     topologyType: ReplicaSetWithPrimary
@@ -185,7 +161,7 @@ phases:
       setName: rs
       minWireVersion: 0
       maxWireVersion: 9
-      topologyVersion:
+      topologyVersion: &topologyVersion_3_1
         processId:
           "$oid": '000000000000000000000003'
         counter:
@@ -195,11 +171,7 @@ phases:
       a:27017:
         type: RSPrimary
         setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
+        topologyVersion: *topologyVersion_3_1
         pool:
           generation: 3
     topologyType: ReplicaSetWithPrimary
@@ -233,21 +205,13 @@ phases:
       setName: rs
       minWireVersion: 0
       maxWireVersion: 9
-      topologyVersion:
-        processId:
-          "$oid": '000000000000000000000003'
-        counter:
-          "$numberLong": '1'
-  outcome:
+      topologyVersion: *topologyVersion_3_1
+  outcome: &outcome_3_1
     servers:
       a:27017:
         type: RSPrimary
         setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
+        topologyVersion: *topologyVersion_3_1
         pool:
           generation: 4
     topologyType: ReplicaSetWithPrimary
@@ -260,21 +224,7 @@ phases:
     generation: 4
     when: afterHandshakeCompletes
     type: timeout
-  outcome:
-    servers:
-      a:27017:
-        type: RSPrimary
-        setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
-        pool:
-          generation: 4
-    topologyType: ReplicaSetWithPrimary
-    logicalSessionTimeoutMinutes: null
-    setName: rs
+  outcome: *outcome_3_1
 
 - description: Ignore stale application network error (generation differs)
   applicationErrors:
@@ -282,21 +232,7 @@ phases:
     generation: 3
     when: afterHandshakeCompletes
     type: network
-  outcome:
-    servers:
-      a:27017:
-        type: RSPrimary
-        setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
-        pool:
-          generation: 4
-    topologyType: ReplicaSetWithPrimary
-    logicalSessionTimeoutMinutes: null
-    setName: rs
+  outcome: *outcome_3_1
 
 - description: Ignore stale application command error (generation differs)
   applicationErrors:
@@ -308,21 +244,7 @@ phases:
       ok: 0
       errmsg: ShutdownInProgress
       code: 91
-  outcome:
-    servers:
-      a:27017:
-        type: RSPrimary
-        setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
-        pool:
-          generation: 4
-    topologyType: ReplicaSetWithPrimary
-    logicalSessionTimeoutMinutes: null
-    setName: rs
+  outcome: *outcome_3_1
 
 
 - description: Ignore stale application command error (topologyVersion less)
@@ -340,21 +262,7 @@ phases:
           "$oid": '000000000000000000000003'
         counter:
           "$numberLong": '0'
-  outcome:
-    servers:
-      a:27017:
-        type: RSPrimary
-        setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
-        pool:
-          generation: 4
-    topologyType: ReplicaSetWithPrimary
-    logicalSessionTimeoutMinutes: null
-    setName: rs
+  outcome: *outcome_3_1
 
 - description: Ignore stale application command error (topologyVersion equal)
   applicationErrors:
@@ -371,18 +279,4 @@ phases:
           "$oid": '000000000000000000000003'
         counter:
           "$numberLong": '1'
-  outcome:
-    servers:
-      a:27017:
-        type: RSPrimary
-        setName: rs
-        topologyVersion:
-          processId:
-            "$oid": '000000000000000000000003'
-          counter:
-            "$numberLong": '1'
-        pool:
-          generation: 4
-    topologyType: ReplicaSetWithPrimary
-    logicalSessionTimeoutMinutes: null
-    setName: rs
+  outcome: *outcome_3_1
