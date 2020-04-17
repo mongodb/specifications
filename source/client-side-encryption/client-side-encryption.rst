@@ -506,7 +506,7 @@ collection is unsupported (mongocryptd returns an error):
 .. code:: python
 
    opts = AutoEncryptionOpts (
-      key_vault_namespace="admin.keyvault",
+      key_vault_namespace="datakeys.keyvault",
       kms_providers=kms)
    client = MongoClient(auto_encryption_opts=opts)
    accounts = client.db.accounts
@@ -534,14 +534,14 @@ occurs).
 .. code:: python
 
    opts = AutoEncryptionOpts (
-      key_vault_namespace="admin.keyvault",
+      key_vault_namespace="datakeys.keyvault",
       kms_providers=kms,
       bypass_auto_encryption=True)
    client = MongoClient(auto_encryption_opts=opts)
 
    opts = ClientEncryptionOpts (
       key_vault_client=client,
-      key_vault_namespace="admin.keyvault",
+      key_vault_namespace="datakeys.keyvault",
       kms_providers=kms,
       bypass_auto_encryption=True)
    client_encryption = ClientEncryption(opts)

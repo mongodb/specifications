@@ -43,7 +43,7 @@ tests:
           command:
             find: datakeys
             filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
-            $db: admin
+            $db: keyvault
             readConcern: { level: "majority" }
           command_name: find
     outcome:
@@ -89,7 +89,7 @@ tests:
           command:
             find: datakeys
             filter: {"$or": [{"_id": {"$in": [ {{key()["_id"]}} ] }}, {"keyAltNames": {"$in": []}}]}
-            $db: admin
+            $db: keyvault
             readConcern: { level: "majority" }
           command_name: find
     outcome:
