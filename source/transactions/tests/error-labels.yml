@@ -295,7 +295,7 @@ tests:
       collection:
         data: []
 
-  - description: add TransientTransactionError label to connection errors
+  - description: add TransientTransactionError label to connection errors, but do not add RetryableWriteError label
 
     failPoint:
       configureFailPoint: failCommand
@@ -315,6 +315,9 @@ tests:
             _id: 1
         result: &transient_label_only
           errorLabelsContain: ["TransientTransactionError"]
+          # While a connection error would normally be retryable, these are not because
+          # they occur within a transaction; ensure the driver does not add the
+          # RetryableWriteError label to these errors.
           errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
       - name: find
         object: collection

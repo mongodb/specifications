@@ -465,7 +465,7 @@
       }
     },
     {
-      "description": "add TransientTransactionError label to connection errors",
+      "description": "add TransientTransactionError label to connection errors, but do not add RetryableWriteError label",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
