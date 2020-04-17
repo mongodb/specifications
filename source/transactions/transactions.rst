@@ -712,9 +712,13 @@ commands in a transaction.
 In MongoDB 4.0 the only supported retryable write commands within a
 transaction are commitTransaction and abortTransaction. Therefore
 drivers MUST NOT retry write commands within transactions even when
-retryWrites has been enabled on the MongoClient. Drivers MUST retry the
-commitTransaction and abortTransaction commands even when retryWrites
-has been disabled on the MongoClient. commitTransaction and
+retryWrites has been enabled on the MongoClient. In addition, drivers MUST NOT
+add the RetryableWriteError label to any error that occurs during a write
+command within a transaction (excepting commitTransation and abortTransaction),
+even when retryWrites has been enabled on the MongoClient.
+
+Drivers MUST retry the commitTransaction and abortTransaction commands even when
+retryWrites has been disabled on the MongoClient. commitTransaction and
 abortTransaction are retryable write commands and MUST be retried
 according to the `Retryable Writes Specification`_.
 
