@@ -388,11 +388,157 @@
       }
     },
     {
-      "description": "Ignore network timeout application error",
+      "description": "Non-stale application network error (beforeHandshakeCompletes)",
       "applicationErrors": [
         {
           "address": "a:27017",
           "generation": 4,
+          "when": "beforeHandshakeCompletes",
+          "type": "network"
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "Unknown",
+            "topologyVersion": null,
+            "pool": {
+              "generation": 5
+            }
+          }
+        },
+        "topologyType": "ReplicaSetNoPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Primary A is rediscovered (5)",
+      "responses": [
+        [
+          "a:27017",
+          {
+            "ok": 1,
+            "ismaster": true,
+            "hosts": [
+              "a:27017"
+            ],
+            "setName": "rs",
+            "minWireVersion": 0,
+            "maxWireVersion": 9,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            }
+          }
+        ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 5
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Non-stale application network timeout error (beforeHandshakeCompletes)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 5,
+          "when": "beforeHandshakeCompletes",
+          "type": "timeout"
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "Unknown",
+            "topologyVersion": null,
+            "pool": {
+              "generation": 6
+            }
+          }
+        },
+        "topologyType": "ReplicaSetNoPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Primary A is rediscovered (6)",
+      "responses": [
+        [
+          "a:27017",
+          {
+            "ok": 1,
+            "ismaster": true,
+            "hosts": [
+              "a:27017"
+            ],
+            "setName": "rs",
+            "minWireVersion": 0,
+            "maxWireVersion": 9,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            }
+          }
+        ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 6
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore network timeout application error",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 6,
           "when": "afterHandshakeCompletes",
           "type": "timeout"
         }
@@ -411,7 +557,7 @@
               }
             },
             "pool": {
-              "generation": 4
+              "generation": 6
             }
           }
         },
@@ -425,7 +571,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 3,
+          "generation": 5,
           "when": "afterHandshakeCompletes",
           "type": "network"
         }
@@ -444,7 +590,7 @@
               }
             },
             "pool": {
-              "generation": 4
+              "generation": 6
             }
           }
         },
@@ -458,7 +604,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 3,
+          "generation": 5,
           "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
@@ -482,7 +628,7 @@
               }
             },
             "pool": {
-              "generation": 4
+              "generation": 6
             }
           }
         },
@@ -496,7 +642,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 0,
+          "generation": 6,
           "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
@@ -528,7 +674,7 @@
               }
             },
             "pool": {
-              "generation": 4
+              "generation": 6
             }
           }
         },
@@ -542,7 +688,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 0,
+          "generation": 6,
           "when": "afterHandshakeCompletes",
           "type": "command",
           "response": {
@@ -574,7 +720,7 @@
               }
             },
             "pool": {
-              "generation": 4
+              "generation": 6
             }
           }
         },
