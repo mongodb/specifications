@@ -51,131 +51,6 @@
       }
     },
     {
-      "description": "Ignore network timeout application error",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 0,
-          "when": "afterHandshakeCompletes",
-          "type": "timeout"
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000001"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 0
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
-      "description": "Ignore stale application error (topologyVersion less)",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 0,
-          "when": "afterHandshakeCompletes",
-          "type": "command",
-          "response": {
-            "ok": 0,
-            "errmsg": "ShutdownInProgress",
-            "code": 91,
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000001"
-              },
-              "counter": {
-                "$numberLong": "0"
-              }
-            }
-          }
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000001"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 0
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
-      "description": "Ignore stale application error (topologyVersion equal)",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 0,
-          "when": "afterHandshakeCompletes",
-          "type": "command",
-          "response": {
-            "ok": 0,
-            "errmsg": "ShutdownInProgress",
-            "code": 91,
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000001"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            }
-          }
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000001"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 0
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
       "description": "Non-stale application error (topologyVersion greater)",
       "applicationErrors": [
         {
@@ -440,77 +315,6 @@
       }
     },
     {
-      "description": "Stale application error (generation differs)",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 2,
-          "when": "afterHandshakeCompletes",
-          "type": "command",
-          "response": {
-            "ok": 0,
-            "errmsg": "ShutdownInProgress",
-            "code": 91
-          }
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000003"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 3
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
-      "description": "Stale application network error (generation differs)",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 2,
-          "when": "afterHandshakeCompletes",
-          "type": "network"
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000003"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 3
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
       "description": "Non-stale application network error",
       "applicationErrors": [
         {
@@ -559,6 +363,202 @@
             }
           }
         ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore network timeout application error",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
+          "when": "afterHandshakeCompletes",
+          "type": "timeout"
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale application network error (generation differs)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 3,
+          "when": "afterHandshakeCompletes",
+          "type": "network"
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale application command error (generation differs)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 3,
+          "when": "afterHandshakeCompletes",
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "ShutdownInProgress",
+            "code": 91
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale application command error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 0,
+          "when": "afterHandshakeCompletes",
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "0"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale application command error (topologyVersion equal)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 0,
+          "when": "afterHandshakeCompletes",
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            }
+          }
+        }
       ],
       "outcome": {
         "servers": {
