@@ -1930,6 +1930,9 @@ Q: Where is ``singleBatch`` in FindOptions?
 Q: Why are client-side errors raised for some unsupported options?
   Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field with which to express these options so a client-side error is the only mechanism to inform the user that such options are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
 
+Q: Why are client-side errors raised when options are provided for unacknowledged write operations, even on server versions that support those options?
+  Even if the server supports an option, that option could be incorrectly formatted or contain outdated information (e.g. a "hint" option referencing an index that no longer exists). This is a problem during unacknowledged writes because the server cannot return an error response to alert the client of an incorrect option. By always raising a client-side error when options are specified for unacknowledged writes, users are prevented from performing operations with options that do not work.
+
 Changes
 =======
 
