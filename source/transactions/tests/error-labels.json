@@ -134,6 +134,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
@@ -223,6 +224,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
@@ -312,6 +314,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
@@ -497,6 +500,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
@@ -512,6 +516,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
@@ -534,6 +539,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
@@ -550,6 +556,7 @@
               "TransientTransactionError"
             ],
             "errorLabelsOmit": [
+              "RetryableWriteError",
               "UnknownTransactionCommitResult"
             ]
           }
