@@ -14,7 +14,7 @@ SDAM Monitoring Specification
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 12-Dec-2018
+:Last Modified: 20-April-2020
 
 .. contents::
 
@@ -120,6 +120,8 @@ Heartbeats
 ----------
 
 The driver MUST guarantee that every ServerHeartbeatStartedEvent has either a correlating ServerHeartbeatSucceededEvent or ServerHeartbeatFailedEvent.
+
+Drivers that use the streaming heartbeat protocol MUST publish a ServerHeartbeatStartedEvent before attempting to read the next isMaster exhaust response.
 
 Error Handling
 --------------
@@ -267,6 +269,11 @@ API
      */
     connectionId: ConnectionId;
 
+   /**
+     * Determines if this heartbeat event is for an awaitable isMaster.
+     */
+    awaited: Boolean;
+
   }
 
   /**
@@ -278,8 +285,11 @@ API
      * Returns the execution time of the event in the highest possible resolution for the platform.
      * The calculated value MUST be the time to send the message and receive the reply from the server,
      * including BSON serialization and deserialization. The name can imply the units in which the
-     * value is returned, i.e. durationMS, durationNanos. The time measurement used
-     * MUST be the same measurement used for the RTT calculation.
+     * value is returned, i.e. durationMS, durationNanos.
+     *
+     * When the awaited field is false, the time measurement used MUST be the
+     * same measurement used for the RTT calculation. When the awaited field is
+     * true, the time measurement is not used for RTT calculation.
      */
     duration: Int64;
 
@@ -294,6 +304,13 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+   /**
+     * Determines if this heartbeat event is for an awaitable isMaster. If
+     * true, then the duration field cannot be used for RTT calculation
+     * because the command blocks on the server.
+     */
+    awaited: Boolean;
 
   }
 
@@ -322,6 +339,13 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+   /**
+     * Determines if this heartbeat event is for an awaitable isMaster. If
+     * true, then the duration field cannot be used for RTT calculation
+     * because the command blocks on the server.
+     */
+    awaited: Boolean;
   }
 
   /**
@@ -403,6 +427,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
+- 20 APR 2020: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
 - 12 DEC 2018: Clarified table of rules for readable/writable servers
 - 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.
 - 11 OCT 2016: TopologyDescription objects MAY have additional methods and properties.

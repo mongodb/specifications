@@ -6,6 +6,9 @@ The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the
 Server Discovery And Monitoring Spec.
 
+Additional prose tests, that cannot represented as spec tests, are described
+and MUST be implemented.
+
 Version
 -------
 
@@ -134,3 +137,70 @@ the driver's current TopologyDescription or ServerDescription.
 For monitoring tests, clear the list of events collected so far.
 
 Continue until all phases have been executed.
+
+Prose Tests
+-----------
+
+The following prose tests cannot represented as spec tests and MUST be
+implemented.
+
+Streaming protocol Tests
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Drivers that implement the streaming protocol (multi-threaded or
+asynchronous drivers) must implement the following tests:
+
+Some of these cases should already be tested with the old protocol; in
+that case just verify the test cases succeed with the new protocol.
+
+1.  When the client sends an awaitable isMaster, cease all isMaster
+    replies while holding the connection open, using the waitInIsMaster
+    failpoint. Assert the client marks the server as Unknown after
+    approximately connectTimeoutMS+maxAwaitTimeMS.
+
+2.  Same as above, but make mongod send ok: 0 in subsequent isMaster
+    replies (with the failCommand fail point). Assert the client
+    marks the server Unknown and closes the monitoring connection.
+
+3.  When the client sends an awaitable isMaster, configure the server to
+    send ok: 1 but *without* the moreToCome bit set. Assert that the client
+    does not mark the server Unknown and immediately sends a new awaitable
+    isMaster on the next check.
+
+4.  Configure the client with heartbeatFrequencyMS set to 500,
+    overriding the default of 10000. Assert the client processes
+    isMaster replies more frequently without waiting
+    minHeartbeatFrequencyMS.
+
+5.  With a replica set. Configure the client to set heartbeatFrequencyMS
+    to 5 minutes, overriding the default of 10000. Run
+    replSetStepDown on the primary and assert the client discovers
+    the new primary quickly.
+
+6.  Configure the server to hang up on all "find" commands (using the
+    "failCommand" failpoint). Execute a find command and assert the
+    client marks the server Unknown. (See "Network error when reading
+    or writing" in the main design doc.)
+
+7.  Configure the server to hangup on all "ping" requests (with the
+    failCommand fail point). Then create a client and assert it
+    discovers the server and then marks the server Unknown when
+    "ping" fails.
+
+8.  Issue a write from 2 threads using two connections at the same time.
+    Cause the server to hangup on both operations (using the
+    failCommand failpoint). Assert that the server is only reset to
+    Unknown once and the application pool is only cleared once.
+
+9.  Issue a write from 2 threads using two connections at the same time.
+    Cause the server to fail both operations with a State Change
+    Error (using the failCommand failpoint). Assert that the server
+    is only reset to Unknown once and the application pool is not
+    cleared.
+
+RTT Tests
+~~~~~~~~~
+
+1.  Create a client and subscribe to server events. Run a find command to
+    wait for the server to be discovered. Assert that each
+    ``ServerDescriptionChangedEvent`` includes a non-zero RTT.

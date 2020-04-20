@@ -250,11 +250,13 @@ responses will have the ``moreToCome`` bit set.
 MongoDB server only handles the ``exhaustAllowed`` bit on the following
 operations. A driver MUST NOT set the ``exhaustAllowed`` bit on other operations.
 
-============== ============================================================ 
+============== ============================================================
 Operation      Minimum MongoDB Version
-============== ============================================================ 
+============== ============================================================
 getMore        4.2
-============== ============================================================ 
+-------------- ------------------------------------------------------------
+isMaster       4.4 (discoverable via topologyVersion)
+============== ============================================================
 
 
 .. This RST artwork improves the readability of the rendered document

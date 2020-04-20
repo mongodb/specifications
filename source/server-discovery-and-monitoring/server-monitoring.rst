@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2020-03-09
+:Last Modified: 2020-04-20
 
 .. contents::
 
@@ -45,6 +45,13 @@ check
 The client checks a server by attempting to call ismaster on it,
 and recording the outcome.
 
+client
+``````
+
+A process that initiates a connection to a MongoDB server. This includes
+mongod and mongos processes in a replica set or sharded cluster, as well as
+drivers, the shell, tools, etc.
+
 .. _scans: #scans
 
 scan
@@ -61,6 +68,46 @@ For example, a write requires a standalone
 (or the master of a master-slave set),
 primary, or mongos.
 Suitability is fully specified in the `Server Selection Spec`_.
+
+significant topology change
+```````````````````````````
+
+A change in the server's state that is relevant to the client's view of the
+server, e.g. a change in the server's replica set member state, or its replica
+set tags. In SDAM terms, a significant topology change on the server means the
+client's ServerDescription is out of date. Standalones and mongos do not
+currently experience significant topology changes but they may in the future.
+
+old isMaster protocol
+`````````````````````
+
+The original isMaster protocol used by SDAM. The client checks a server with
+a regular isMaster and then the client sleeps for heartbeatFrequencyMS before
+running another check.
+
+regular isMaster command
+````````````````````````
+
+A default ``{isMaster: 1}`` command where the server responds immediately.
+
+awaitable isMaster command
+``````````````````````````
+
+The isMaster command feature which allows a client to wait for a significant
+topology change or timeout before the server replies.
+
+streamable isMaster command
+```````````````````````````
+
+A variant of the awaitable isMaster command which allows the server
+to stream multiple replies back to the client.
+
+RTT
+```
+
+Round trip time. The client's measurement of the duration of one isMaster call.
+The RTT is used to support `localThresholdMS from the Server Selection spec`_.
+
 
 Monitoring
 ''''''''''
@@ -165,6 +212,12 @@ and TopologyDescription, the same as with an ismaster reply on a monitoring
 socket. If the ismaster call fails, the client SHOULD mark the server Unknown
 and update its TopologyDescription, the same as a failed server check on
 monitoring socket.
+
+Clients use the streaming protocol when supported
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a monitor discovers that the server supports the streamable isMaster
+command, it MUST use the `streaming protocol`_.
 
 Single-threaded monitoring
 ``````````````````````````
@@ -293,6 +346,250 @@ the driver MUST NOT permit users to configure it less than minHeartbeatFrequency
 
 (See `heartbeatFrequencyMS in the main SDAM spec`_.)
 
+Awaitable isMaster Server Specification
+'''''''''''''''''''''''''''''''''''''''
+
+As of MongoDB 4.4 the isMaster command can wait to reply until there is a
+topology change or a maximum time has elapsed. Clients opt in to this
+"awaitable isMaster" feature by passing new isMaster parameters
+"topologyVersion" and "maxAwaitTimeMS". Exhaust support has also been added,
+which clients can enable in the usual manner by setting the
+`OP_MSG exhaustAllowed flag`_.
+
+Clients use the awaitable isMaster feature as the basis of the streaming
+heartbeat protocol to learn much sooner about stepdowns, elections, reconfigs,
+and other events.
+
+topologyVersion
+```````````````
+
+A server that supports awaitable isMaster includes a "topologyVersion"
+field in all isMaster replies and State Change Error replies.
+The topologyVersion is a subdocument with two fields, "processId" and
+"counter":
+
+.. code:: typescript
+
+    {
+        topologyVersion: {processId: <ObjectId>, counter: <int64>},
+        ( ... other fields ...)
+    }
+
+processId
+~~~~~~~~~
+
+An ObjectId maintained in memory by the server. It is reinitialized by the
+server using the standard ObjectId logic each time this server process starts.
+
+counter
+~~~~~~~
+
+An int64 State change counter, maintained in memory by the server. It begins
+at 0 when the server starts, and it is incremented whenever there is a
+significant topology change.
+
+maxAwaitTimeMS
+``````````````
+
+To enable awaitable isMaster, the client includes a new int64 field
+"maxAwaitTimeMS" in the isMaster request. This field determines the maximum
+duration in milliseconds a server will wait for a significant topology change
+before replying.
+
+Feature Discovery
+`````````````````
+
+To discover if the connected server supports awaitable isMaster, a client
+checks the most recent isMaster command reply. If the reply includes
+"topologyVersion" then the server supports awaitable isMaster.
+
+Awaitable isMaster Protocol
+```````````````````````````
+
+To initiate an awatible isMaster command, the client includes both
+maxAwaitTimeMS and topologyVersion in the request, for example:
+
+.. code:: typescript
+
+    {
+        isMaster: 1,
+        maxAwaitTimeMS: 10000,
+        topologyVersion: {processId: <ObjectId>, counter: <int64>},
+        ( ... other fields ...)
+    }
+
+Clients MAY additionally set the `OP_MSG exhaustAllowed flag`_ to enable
+streaming isMaster. With streaming isMaster, the server MAY send multiple
+isMaster responds without waiting for further requests.
+
+A server that implements the new protocol follows these rules:
+
+- Always include the server's topologyVersion in isMaster and State Change
+  Error replies.
+- If the request includes topologyVersion without maxAwaitTimeMS or vice versa,
+  return an error.
+- If the request omits topologyVersion and maxAwaitTimeMS, reply immediately.
+- If the request includes topologyVersion and maxAwaitTimeMS, then reply
+  immediately if the server's topologyVersion.processId does not match the
+  request's, otherwise reply when the server's topologyVersion.counter is
+  greater than the request's, or maxAwaitTimeMS elapses, whichever comes first.
+- Following the `OP_MSG spec`_, if the request omits the exhaustAllowed flag,
+  the server MUST NOT set the moreToCome flag on the reply. If the request's
+  exhaustAllowed flag is set, the server MAY set the moreToCome flag on the
+  reply. If the server sets moreToCome, it MUST continue streaming replies
+  without awaiting further requests. Between replies it MUST wait until the
+  server's topologyVersion.counter is incremented or maxAwaitTimeMS elapses,
+  whichever comes first.
+- On a topology change that changes the horizon parameters, the server will
+  return a SplitHorizonChange error. This behavior will be the same for both
+  the exhaust and non-exhaust cases of streamable isMaster. In the exhaust
+  case, returning an error will close the exhaust stream between the server
+  and client.
+
+
+Example awaitable isMaster conversation:
+
++---------------------------------------+--------------------------------+
+| Client                                | Server                         |
++=======================================+================================+
+| isMaster handshake ->                 |                                |
++---------------------------------------+--------------------------------+
+|                                       | <- reply with topologyVersion  |
++---------------------------------------+--------------------------------+
+| isMaster as OP_MSG with               |                                |
+| maxAwaitTimeMS and topologyVersion -> |                                |
++---------------------------------------+--------------------------------+
+|                                       | wait for change or timeout     |
++---------------------------------------+--------------------------------+
+|                                       | <- OP_MSG with topologyVersion |
++---------------------------------------+--------------------------------+
+| ...                                   |                                |
++---------------------------------------+--------------------------------+
+
+Example streaming isMaster conversation (awaitable isMaster with exhaust):
+
++---------------------------------------+--------------------------------+
+| Client                                | Server                         |
++=======================================+================================+
+| isMaster handshake ->                 |                                |
++---------------------------------------+--------------------------------+
+|                                       | <- reply with topologyVersion  |
++---------------------------------------+--------------------------------+
+| isMaster as OP_MSG with               |                                |
+| exhaustAllowed, maxAwaitTimeMS,       |                                |
+| and topologyVersion ->                |                                |
++---------------------------------------+--------------------------------+
+|                                       | wait for change or timeout     |
++---------------------------------------+--------------------------------+
+|                                       | <- OP_MSG with moreToCome      |
+|                                       | and topologyVersion            |
++---------------------------------------+--------------------------------+
+|                                       | wait for change or timeout     |
++---------------------------------------+--------------------------------+
+|                                       | <- OP_MSG with moreToCome      |
+|                                       | and topologyVersion            |
++---------------------------------------+--------------------------------+
+|                                       | ...                            |
++---------------------------------------+--------------------------------+
+|                                       | <- OP_MSG without moreToCome   |
++---------------------------------------+--------------------------------+
+| ...                                   |                                |
++---------------------------------------+--------------------------------+
+
+
+Streaming Protocol
+''''''''''''''''''
+
+The MongoDB 4.4+ monitoring protocol in which the server streams state changes
+to the client. Multi-threaded or asynchronous drivers MUST use the streaming
+protocol when connected to a server that supports the streaming isMaster
+command. This protocol requires an extra thread and an extra socket for
+each monitor to perform RTT calculations.
+
+Streaming isMaster
+``````````````````
+
+The streaming isMaster protocol uses awaitable isMaster with the OP_MSG
+exhaustAllowed flag to continuously stream isMaster responses from the server.
+Drivers MUST set the OP_MSG exhaustAllowed flag with the awaitable isMaster
+command and MUST process each isMaster response. (I.e., they MUST process
+responses strictly in the order they were received.)
+
+A client follows these rules when processing the isMaster exhaust response:
+
+- If the response is successful (includes "ok:1") and includes the OP_MSG
+  moreToCome flag, then the client begins reading the next response.
+- If the response is successful (includes "ok:1") and does not include the
+  OP_MSG moreToCome flag, then the client initiates a new awaitable isMaster
+  with the topologyVersion field from the previous response.
+- If the response omits topologyVersion, the client MUST exit the streaming
+  process and run a regular isMaster on the next check.
+- If the response indicates a command error, or a network error or
+  timeout occurs, the client MUST close the connection and wait
+  heartbeatFrequencyMS (or minHeartbeatFrequencyMS according to SDAM rules)
+  before restarting the isMaster protocol on a new connection. (See
+  `Network error during server check`_ and
+  `Command error during server check`_.)
+
+Socket timeout
+``````````````
+
+Clients MUST use connectTimeoutMS + maxAwaitTimeMS as the timeout for
+awaitable isMaster replies. The timeout for the first isMaster exchange
+is still connectTimeoutMS.
+
+Measuring RTT
+`````````````
+
+When using the streaming protocol, clients MUST issue an isMaster command to
+each server to measure RTT every heartbeatFrequencyMS. The RTT command
+MUST be run on a dedicated connection to each server. For consistency,
+clients MAY use dedicated connections to measure RTT for all servers, even
+those that do not support awaitable isMaster. (See
+`Monitors MUST use a dedicated connection for RTT commands`_.)
+
+Clients MUST update the RTT from the isMaster duration of the initial
+connection handshake. Clients MUST NOT update RTT based on streaming isMaster
+responses.
+
+Errors encountered when running a "isMaster" command MUST be handled in
+the same manner as application errors when "reading or writing". (See
+`Network error when reading or writing`_ and
+`"not master" and "node is recovering"`_)
+
+When constructing a ServerDescription from a streaming isMaster response,
+clients MUST use the current roundTripTime from the RTT task.
+
+SDAM Monitoring
+```````````````
+
+Clients MUST publish a ServerHeartbeatStartedEvent before attempting to
+read the next isMaster exhaust response. (See
+`Why must streaming isMaster clients publish ServerHeartbeatStartedEvents?`_)
+
+Clients MUST NOT publish any events when running an RTT command. (See
+`Why don't streaming isMaster clients publish events for RTT commands?`_)
+
+Heartbeat frequency
+```````````````````
+
+In the old protocol, a client sleeps between each isMaster check (for at
+least minHeartbeatFrequencyMS and up to heartbeatFrequencyMS). In the
+new protocol, after processing an "ok:1" isMaster response, the client
+MUST NOT sleep and MUST begin the next check immediately.
+
+isMaster Cancellation
+`````````````````````
+
+When a client is closed, clients SHOULD cancel all isMaster checks; a
+monitor blocked waiting for the next streaming isMaster response should
+be interrupted so that threads may exit promptly without waiting
+maxAwaitTimeMS. When a client marks a server Unknown from "Network error
+when reading or writing", clients MUST cancel the in-progress streaming
+isMaster check and close the current monitoring connection. (See `
+Why cancel in-progress monitor checks when application operations fail with
+non-timeout network errors?`_)
+
 Error handling
 ''''''''''''''
 
@@ -334,6 +631,22 @@ In this pseudocode, "description" is the prior ServerDescription::
 (See `retry ismaster calls once`_ and
 `JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
 
+Command error during server check
+`````````````````````````````````
+
+When a server `check`_ fails due to a command error, the client MUST follow
+these steps:
+
+#. Close the current monitoring connection.
+#. Mark the server Unknown.
+#. Wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a check is
+   requested) before restarting the monitoring protocol on a new connection.
+
+   - Note that even in the streaming protocol, a monitor in this state will
+     wait for an application operation to `request an immediate check`_ or
+     for the heartbeatFrequencyMS timeout to expire before begining the next
+     check.
+
 Implementation notes
 ''''''''''''''''''''
 
@@ -354,23 +667,74 @@ The event API here is assumed to be like the standard `Python Event
         while this monitor is not stopped:
             check server and create newServerDescription
             onServerDescriptionChanged(newServerDescription)
+            wait()
 
-            start = gettime()
+    def wait():
+        start = gettime()
 
-            # Can be awakened by requestCheck().
-            event.wait(heartbeatFrequencyMS)
-            event.clear()
+        # Can be awakened by requestCheck().
+        event.wait(heartbeatFrequencyMS)
+        event.clear()
 
-            waitTime = gettime() - start
-            if waitTime < minHeartbeatFrequencyMS:
-                # Cannot be awakened.
-                sleep(minHeartbeatFrequencyMS - waitTime)
+        waitTime = gettime() - start
+        if waitTime < minHeartbeatFrequencyMS:
+            # Cannot be awakened.
+            sleep(minHeartbeatFrequencyMS - waitTime)
+
 
 `Requesting an immediate check`_::
 
     def requestCheck():
         event.set()
 
+
+Design Alternatives
+-------------------
+
+Alternating isMaster to check servers and RTT without adding an extra connection
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+The streaming isMaster protocol is optimal in terms of latency; clients
+are always blocked waiting for the server to stream updated isMaster
+information, they learn of server state changes as soon as possible.
+However, streaming isMaster has two downsides:
+
+1. Streaming isMaster requires a new connection to each server to
+   calculate the RTT.
+2. Streaming isMaster requires a new thread (or threads) to calculate
+   the RTT of each server.
+
+To address these concerns we designed the alternating isMaster protocol.
+This protocol would have alternate between awaitable isMaster and regular
+isMaster. The awaitable isMaster replaces the old isMaster protocol's
+client side sleep and allows the client to receive updated isMaster
+responses sooner. The regular isMaster allows the client to maintain
+accurate RTT calculations without requiring any extra threads or
+sockets.
+
+We reject this design because streaming isMaster is strictly better at
+reducing the client's time-to-recovery. We determined that one extra
+connection per server per MongoClient is reasonable for all drivers.
+Applications that upgrade may see a modest increase in connections and
+memory usage on the server. We don't expect this increase to be
+problematic; however, we have several projects planned for future
+MongoDB releases to make the streaming isMaster protocol cheaper
+server-side which should mitigate the cost of the extra monitoring
+connections.
+
+Use TCP smoothed round-trip time instead of measuring RTT explicitly
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+TCP sockets internally maintain a "smoothed round-trip time" or SRTT. Drivers
+could use this SRTT instead of measuring RTT explicitly via isMaster commands.
+The server could even include this value on all ismaster responses. We reject
+this idea for a few reasons:
+
+- Not all programming languages have an API to access the TCP socket's RTT.
+- On Windows, RTT access requires Admin privileges.
+- TCP's SRTT would likely differ substantially from RTT measurements in
+  the current protocol. For example, the SRTT can be reset on
+  `retransmission timeouts <https://tools.ietf.org/html/rfc2988#section-5>`_.
 
 Rationale
 ---------
@@ -432,6 +796,65 @@ Since this rule is justified for drivers that enforce a maximum pool size,
 this spec recommends that all drivers follow the same rule
 for the sake of consistency.
 
+Monitors MUST use a dedicated connection for RTT commands
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+When using the streaming protocol, a monitor needs to maintain an extra
+dedicated connection to periodically update its average round trip time in
+order to support `localThresholdMS from the Server Selection spec`_.
+
+It could pop a connection from its regular pool, but we rejected this option
+for few reasons:
+
+- Under contention the RTT task may block application operations from
+  completing in a timely manner.
+- Under contention the application may block the RTT task from completing in
+  a timely manner.
+- Under contention the RTT task may often result in an extra connection
+  anyway, the pool creates new connections under contention up to maxPoolSize.
+- This would be inconsistent with the rule that a monitor SHOULD NOT use the
+  client's regular connection pool.
+
+The client could open and close a new connection for each RTT check.
+We rejected this design, because if we ping every heartbeatFrequencyMS
+(default 10 seconds) then the cost to the client and the server of creating
+and destroying the connection might exceed the cost of keeping a dedicated
+connection open.
+
+Instead, the client must use a dedicated connection reserved for RTT commands.
+Despite the cost of the additional connection per server, we chose this option
+as the safest and least likely to result in surprising behavior under load.
+
+Monitors MUST use the isMaster command to measure RTT
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+In the streaming protocol, clients could use either the "ping" or "isMaster"
+command to measure RTT. This spec chooses "isMaster" for consistency with the
+old protocol as well as consistency with the initial RTT provided the
+connection handshake which also uses the isMaster command. Additionally,
+mongocryptd does not allow the ping command but does allow isMaster.
+
+Drivers cancel in-progress monitor checks
+'''''''''''''''''''''''''''''''''''''''''
+
+When an application operation fails with a non-timeout network error, drivers
+cancel that monitor's in-progress check.
+
+We assume that a non-timeout network error on one application connection
+implies that all other connections to that server are also bad. This means
+that it is redundant to continue reading on the current monitoring connection.
+Instead, we cancel the current monitor check, close the monitoring connection,
+and start a new check soon. Note that we rely on the connection/pool
+generation number checking to avoid races and ensure that the monitoring
+connection is only closed once.
+
+This approach also handles the rare case where the client sees a network error
+on an application connection but the monitoring connection is still healthy.
+If we did not cancel the monitor check in this scenario, then the server would
+remain in the Unknown state until the next isMaster response (up to
+maxAwaitTimeMS). A potential real world example of this behavior is when
+Azure closes an idle connection in the application pool.
+
 Retry ismaster calls once
 '''''''''''''''''''''''''
 
@@ -447,8 +870,39 @@ However,
 if the server still doesn't respond when the monitor attempts to reconnect,
 then it is probably down.
 
+Why must streaming isMaster clients publish ServerHeartbeatStartedEvents?
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+The `SDAM Monitoring spec`_ guarantees that every ServerHeartbeatStartedEvent
+has either a correlating ServerHeartbeatSucceededEvent or
+ServerHeartbeatFailedEvent. This is consistent with Command Monitoring on
+exhaust cursors where the driver publishes a fake CommandStartedEvent before
+reading the next getMore response.
+
+Why don't streaming isMaster clients publish events for RTT commands?
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+In the streaming protocol, clients MUST NOT publish any events
+(server, topology, command, CMAP, etc..) when running an RTT command. We
+considered introducing new RTT events (ServerRTTStartedEvent,
+ServerRTTSucceededEvent, ServerRTTFailedEvent) but it's not clear that
+there is a demand for this. Applications can still monitor changes to a
+server's RTT by listening to TopologyDescriptionChangedEvents.
+
+What is the purpose of the "awaited" field on server heartbeat events?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+ServerHeartbeatSucceededEvents published from awaitable isMaster
+responses will regularly have 10 second durations. The spec introduces
+the "awaited" field on server heartbeat events so that applications can
+differentiate a slow heartbeat in the old protocol from a normal
+awaitable isMaster heartbeat in the new protocol.
+
+
 Changelog
 ---------
+
+- 2020-04-20 Add streaming heartbeat protocol.
 
 - 2020-03-09 A monitor check that creates a new connection MUST use the
   connection's handshake to update the topology.
@@ -465,4 +919,10 @@ Changelog
 .. _initial servers: server-discovery-and-monitoring.rst#initial-servers
 .. _updateRSWithoutPrimary: server-discovery-and-monitoring.rst#updateRSWithoutPrimary
 .. _updateRSFromPrimary: server-discovery-and-monitoring.rst#updateRSFromPrimary
+.. _Network error when reading or writing: server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
+.. _"not master" and "node is recovering": server-discovery-and-monitoring.rst#not-master-and-node-is-recovering
 .. _connection handshake: mongodb-handshake/handshake.rst
+.. _localThresholdMS from the Server Selection spec: /source/server-selection/server-selection.rst#localThresholdMS
+.. _SDAM Monitoring spec: server-discovery-and-monitoring-monitoring.rst#heartbeats
+.. _OP_MSG Spec: /source/message/OP_MSG.rst
+.. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
