@@ -46,15 +46,6 @@ An "applicationError" object has the following keys:
 
 - address: The source address, for example "a:27017".
 - generation: The error's generation number, for example ``1``.
-- when: A string describing when this mock error should occur. Supported
-  values are:
-
-  - "beforeHandshakeCompletes": Simulate this mock error as if it occurred
-    during a new connection's handshake for an application operation.
-  - "afterHandshakeCompletes": Simulate this mock error as if it occurred
-    on an established connection for an application operation (i.e. after
-    the connection pool check out succeeds).
-
 - type: The type of error to mock. Supported values are:
 
   - "command": A command error. Always accompanied with a "response".
@@ -151,7 +142,10 @@ For each phase in the file:
    code. If a response is the empty object ``{}``, simulate a network error.
 
 #. Parse the "applicationErrors" array. For each element, simulate the given
-   error as if it occurred while running an application operation.
+   error as if it occurred while running an application operation. Note that
+   it is sufficient to construct a mock error and call the procedure which
+   updates the topology, e.g.
+   ``topology.handleApplicationError(address, generation, error)``.
 
 For non-monitoring tests,
 once all responses are processed, assert that the phase's "outcome" object

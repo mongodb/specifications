@@ -32,7 +32,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 0
-    when: afterHandshakeCompletes
     type: command
     response:
       ok: 0
@@ -81,7 +80,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 1
-    when: afterHandshakeCompletes
     type: command
     response:
       ok: 0
@@ -134,7 +132,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 2
-    when: afterHandshakeCompletes
     type: command
     response:
       ok: 0
@@ -182,7 +179,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 3
-    when: afterHandshakeCompletes
     type: network
   outcome:
     servers:
@@ -222,7 +218,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
-    when: beforeHandshakeCompletes
     type: network
   outcome:
     servers:
@@ -262,7 +257,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 5
-    when: beforeHandshakeCompletes
     type: timeout
   outcome:
     servers:
@@ -302,7 +296,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 6
-    when: afterHandshakeCompletes
     type: timeout
   outcome: *outcome_3_1
 
@@ -310,7 +303,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 5
-    when: afterHandshakeCompletes
     type: network
   outcome: *outcome_3_1
 
@@ -318,7 +310,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 5
-    when: afterHandshakeCompletes
     type: command
     response:
       ok: 0
@@ -331,7 +322,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 6
-    when: afterHandshakeCompletes
     type: command
     response:
       ok: 0
@@ -348,7 +338,6 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 6
-    when: afterHandshakeCompletes
     type: command
     response:
       ok: 0
