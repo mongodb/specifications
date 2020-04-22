@@ -17,7 +17,7 @@ Additional YAML and JSON tests have also been added to the `URI
 Options Tests <../../uri-options/tests/README.rst>`__.  Specifically,
 the `TLS Options Test <../../uri-options/test/tls-options.yml>`__ has
 been updated with additional tests for the new URI options
-``tlsDisableOCSPEndpointCheck`` and ``tlsDisableOCSPEndpointCheck.
+``tlsDisableOCSPEndpointCheck`` and ``tlsDisableCertificateRevocationCheck``.
 
 Tests involving the new URI options MUST BE implemented by drivers
 that are able to support those new URI options (see `MongoClient
@@ -184,8 +184,8 @@ for instructions on how to clear OS-level OCSP caches.
 
 For each test, ensure that the mock OCSP responder is configured to
 use the correct certificate and to report the expected revocation
-status for that certificate (see `Mock OCSP Responder Testing Suite
-`<#mock-ocsp-responder-testing-suite>`__ for configuration details)
+status for that certificate (see `Mock OCSP Responder Testing Suite`_
+for configuration details)
 and that a ``mongod`` is running with the correct certificate
 chain. The mock OCSP responder MUST BE started before the ``mongod``
 as the ``mongod`` expects that a responder will be available upon
@@ -228,8 +228,8 @@ to simplify the testing procedure.
 
 Changelog
 ==========
-**2020-03-20**: Clarify that the mock OCSP responder must be started
- before the mongod.
+**2020-03-20**: Clarify that the mock OCSP responder must be started 
+before the mongod.
 
 **2020-03-11**: Reduce and clarify Windows testing requirements.
 
