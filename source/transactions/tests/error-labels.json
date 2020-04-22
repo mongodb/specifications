@@ -1174,8 +1174,7 @@
                 "$numberLong": "1"
               },
               "startTransaction": true,
-              "autocommit": false,
-              "writeConcern": null
+              "autocommit": false
             },
             "command_name": "insert",
             "database_name": "transaction-tests"
@@ -1190,11 +1189,10 @@
                 "$numberLong": "1"
               },
               "startTransaction": null,
-              "autocommit": false,
-              "writeConcern": null
+              "autocommit": false
             },
             "command_name": "abortTransaction",
-            "database_name": "transaction-tests"
+            "database_name": "admin"
           }
         }
       ],
