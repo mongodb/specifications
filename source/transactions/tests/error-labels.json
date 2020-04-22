@@ -1144,11 +1144,10 @@
             }
           },
           "result": {
-            "errorLabelsContain": [
-              "TransientTransactionError"
-            ],
+            "errorLabelsContain": [],
             "errorLabelsOmit": [
               "RetryableWriteError",
+              "TransientTransactionError",
               "UnknownTransactionCommitResult"
             ]
           }

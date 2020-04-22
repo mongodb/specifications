@@ -698,8 +698,8 @@ tests:
           document:
             _id: 1
         result:
-          errorLabelsContain: ["TransientTransactionError"]
-          errorLabelsOmit: ["RetryableWriteError", "UnknownTransactionCommitResult"]
+          errorLabelsContain: []
+          errorLabelsOmit: ["RetryableWriteError", "TransientTransactionError", "UnknownTransactionCommitResult"]
       - name: abortTransaction
         object: session0
 
