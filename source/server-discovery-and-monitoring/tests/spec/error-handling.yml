@@ -1,0 +1,141 @@
+# Test SDAM error handling.
+runOn:
+    # failCommand requirements
+    - minServerVersion: "4.0"
+      topology: ["replicaset", "single"]
+    - minServerVersion: "4.1.8"
+      topology: ["sharded"]
+
+database_name: &database_name "sdam-tests"
+collection_name: &collection_name "error-handling"
+
+data: &data
+  - {_id: 1}
+  - {_id: 2}
+
+tests:
+  - description: Reset server and pool once after network error (Option 1)
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 1 }
+      data:
+          failCommands: ["insert"]
+          closeConnection: true
+    clientOptions:
+      retryWrites: false
+    subscribe:
+      - PoolClearedEvent
+      - CommandStartedEvent
+    operations:
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id: 3
+            - _id: 4
+        error: true
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 3
+              - _id: 4
+          command_name: insert
+          database_name: *database_name
+      - PoolClearedEvent: {}  # A single PoolClearedEvent
+
+    outcome:
+      collection:
+        data:
+          - {_id: 1}
+          - {_id: 2}
+          - {_id: 3}
+          - {_id: 4}
+
+  - description: Reset server and pool once after network error (Option 2)
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 1 }
+      data:
+          failCommands: ["insert"]
+          closeConnection: true
+    clientOptions:
+      retryWrites: false
+    subscribe:
+      - PoolClearedEvent
+      - ConnectionCreatedEvent
+      - CommandStartedEvent
+    operations:
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id: 3
+            - _id: 4
+        error: true
+      - name: insertMany  # Perform another operation to indirectly ensure the pool was cleared
+        object: collection
+        arguments:
+          documents:
+            - _id: 3
+            - _id: 4
+
+    expectations:
+      - ConnectionCreatedEvent: {}
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 3
+              - _id: 4
+          command_name: insert
+          database_name: *database_name
+      - PoolClearedEvent: {}  # A single PoolClearedEvent
+
+    outcome:
+      collection:
+        data:
+          - {_id: 1}
+          - {_id: 2}
+          - {_id: 3}
+          - {_id: 4}
+
+  - description: Reset server and pool once after network error (Option 3)
+    failPoint:
+      configureFailPoint: failCommand
+      mode: { times: 1 }
+      data:
+          failCommands: ["insert"]
+          closeConnection: true
+    clientOptions:
+      retryWrites: false
+    operations:
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id: 3
+            - _id: 4
+        error: true
+      - name: assertPoolCleared
+        object: testRunner
+
+    expectations:
+      - command_started_event:
+          command:
+            insert: *collection_name
+            documents:
+              - _id: 3
+              - _id: 4
+          command_name: insert
+          database_name: *database_name
+
+    outcome:
+      collection:
+        data:
+          - {_id: 1}
+          - {_id: 2}
+          - {_id: 3}
+          - {_id: 4}

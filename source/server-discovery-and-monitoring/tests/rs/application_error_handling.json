@@ -55,7 +55,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 0,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -148,7 +148,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 1,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -241,7 +241,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 2,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -319,7 +319,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 3,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "network"
         }
@@ -392,7 +392,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "timeout"
         }
@@ -425,7 +425,42 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 3,
+          "generation": 1,
+          "when": "afterHandshakeCompletes",
+          "maxWireVersion": 9,
+          "type": "network"
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale application network timeout error (generation differs)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 1,
+          "when": "beforeHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "network"
         }
@@ -458,7 +493,8 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 3,
+          "generation": 1,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -496,7 +532,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -542,7 +578,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -588,7 +624,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -634,7 +670,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -680,7 +716,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -726,7 +762,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -772,7 +808,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -818,7 +854,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -864,7 +900,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -910,7 +946,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 4,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -1003,7 +1039,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -1096,7 +1132,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -1189,7 +1225,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -1282,7 +1318,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {
@@ -1375,7 +1411,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "when": "afterHandshakeCompletes",
           "maxWireVersion": 9,
           "type": "command",
           "response": {

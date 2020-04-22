@@ -31,7 +31,7 @@ phases:
 - description: Non-stale application error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 0
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -80,7 +80,7 @@ phases:
 - description: Non-stale application error (topologyVersion.processId differs)
   applicationErrors:
   - address: a:27017
-    generation: 1
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -133,7 +133,7 @@ phases:
 - description: Non-stale application error (topologyVersion missing)
   applicationErrors:
   - address: a:27017
-    generation: 2
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -181,7 +181,7 @@ phases:
 - description: Non-stale application network error
   applicationErrors:
   - address: a:27017
-    generation: 3
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: network
   outcome:
@@ -221,7 +221,7 @@ phases:
 - description: Ignore network timeout application error
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: timeout
   outcome: *outcome_3_1
@@ -229,7 +229,17 @@ phases:
 - description: Ignore stale application network error (generation differs)
   applicationErrors:
   - address: a:27017
-    generation: 3
+    generation: 1
+    when: afterHandshakeCompletes
+    maxWireVersion: 9
+    type: network
+  outcome: *outcome_3_1
+
+- description: Ignore stale application network timeout error (generation differs)
+  applicationErrors:
+  - address: a:27017
+    generation: 1
+    when: beforeHandshakeCompletes
     maxWireVersion: 9
     type: network
   outcome: *outcome_3_1
@@ -237,7 +247,8 @@ phases:
 - description: Ignore stale ShutdownInProgress error (generation differs)
   applicationErrors:
   - address: a:27017
-    generation: 3
+    generation: 1
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -249,7 +260,7 @@ phases:
 - description: Ignore stale application command error (topologyVersion equal)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -266,7 +277,7 @@ phases:
 - description: Ignore stale ShutdownInProgress error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -283,7 +294,7 @@ phases:
 - description: Ignore stale InterruptedAtShutdown error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -296,7 +307,7 @@ phases:
 - description: Ignore stale InterruptedDueToReplStateChange error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -309,7 +320,7 @@ phases:
 - description: Ignore stale NotMasterOrSecondary error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -322,7 +333,7 @@ phases:
 - description: Ignore stale PrimarySteppedDown error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -335,7 +346,7 @@ phases:
 - description: Ignore stale NotMaster error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -348,7 +359,7 @@ phases:
 - description: Ignore stale NotMasterNoSlaveOk error (topologyVersion less)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -361,7 +372,7 @@ phases:
 - description: Ignore non state change error Interrupted
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -374,7 +385,7 @@ phases:
 - description: Non-stale InterruptedAtShutdown error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 4
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -423,7 +434,7 @@ phases:
 - description: Non-stale InterruptedDueToReplStateChange error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 5
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -472,7 +483,7 @@ phases:
 - description: Non-stale NotMasterOrSecondary error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 5
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -521,7 +532,7 @@ phases:
 - description: Non-stale PrimarySteppedDown error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 5
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -570,7 +581,7 @@ phases:
 - description: Non-stale NotMaster error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 5
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:
@@ -619,7 +630,7 @@ phases:
 - description: Non-stale NotMasterNoSlaveOk error (topologyVersion greater)
   applicationErrors:
   - address: a:27017
-    generation: 5
+    when: afterHandshakeCompletes
     maxWireVersion: 9
     type: command
     response:

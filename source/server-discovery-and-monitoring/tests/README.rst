@@ -45,10 +45,20 @@ A response is a pair of values:
 An "applicationError" object has the following keys:
 
 - address: The source address, for example "a:27017".
-- generation: The error's generation number, for example ``1``.
+- generation: (optional) The error's generation number, for example ``1``.
+  When absent this value defaults to the pool's current generation number.
 - maxWireVersion: The ``maxWireVersion`` of the connection the error occurs
   on, for example ``9``. Added to support testing the behavior of "not master"
   errors on <4.2 and >=4.2 servers.
+- when: A string describing when this mock error should occur. Supported
+  values are:
+
+  - "beforeHandshakeCompletes": Simulate this mock error as if it occurred
+    during a new connection's handshake for an application operation.
+  - "afterHandshakeCompletes": Simulate this mock error as if it occurred
+    on an established connection for an application operation (i.e. after
+    the connection pool check out succeeds).
+
 - type: The type of error to mock. Supported values are:
 
   - "command": A command error. Always accompanied with a "response".
