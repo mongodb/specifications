@@ -384,155 +384,11 @@
       }
     },
     {
-      "description": "Non-stale application network error (beforeHandshakeCompletes)",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 4,
-          "type": "network"
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "Unknown",
-            "topologyVersion": null,
-            "pool": {
-              "generation": 5
-            }
-          }
-        },
-        "topologyType": "ReplicaSetNoPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
-      "description": "Primary A is rediscovered (5)",
-      "responses": [
-        [
-          "a:27017",
-          {
-            "ok": 1,
-            "ismaster": true,
-            "hosts": [
-              "a:27017"
-            ],
-            "setName": "rs",
-            "minWireVersion": 0,
-            "maxWireVersion": 9,
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000003"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            }
-          }
-        ]
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000003"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 5
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
-      "description": "Non-stale application network timeout error (beforeHandshakeCompletes)",
-      "applicationErrors": [
-        {
-          "address": "a:27017",
-          "generation": 5,
-          "type": "timeout"
-        }
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "Unknown",
-            "topologyVersion": null,
-            "pool": {
-              "generation": 6
-            }
-          }
-        },
-        "topologyType": "ReplicaSetNoPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
-      "description": "Primary A is rediscovered (6)",
-      "responses": [
-        [
-          "a:27017",
-          {
-            "ok": 1,
-            "ismaster": true,
-            "hosts": [
-              "a:27017"
-            ],
-            "setName": "rs",
-            "minWireVersion": 0,
-            "maxWireVersion": 9,
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000003"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            }
-          }
-        ]
-      ],
-      "outcome": {
-        "servers": {
-          "a:27017": {
-            "type": "RSPrimary",
-            "setName": "rs",
-            "topologyVersion": {
-              "processId": {
-                "$oid": "000000000000000000000003"
-              },
-              "counter": {
-                "$numberLong": "1"
-              }
-            },
-            "pool": {
-              "generation": 6
-            }
-          }
-        },
-        "topologyType": "ReplicaSetWithPrimary",
-        "logicalSessionTimeoutMinutes": null,
-        "setName": "rs"
-      }
-    },
-    {
       "description": "Ignore network timeout application error",
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 6,
+          "generation": 4,
           "type": "timeout"
         }
       ],
@@ -550,7 +406,7 @@
               }
             },
             "pool": {
-              "generation": 6
+              "generation": 4
             }
           }
         },
@@ -564,7 +420,7 @@
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "generation": 3,
           "type": "network"
         }
       ],
@@ -582,7 +438,7 @@
               }
             },
             "pool": {
-              "generation": 6
+              "generation": 4
             }
           }
         },
@@ -592,11 +448,11 @@
       }
     },
     {
-      "description": "Ignore stale application command error (generation differs)",
+      "description": "Ignore stale ShutdownInProgress error (generation differs)",
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 5,
+          "generation": 3,
           "type": "command",
           "response": {
             "ok": 0,
@@ -619,7 +475,7 @@
               }
             },
             "pool": {
-              "generation": 6
+              "generation": 4
             }
           }
         },
@@ -629,11 +485,56 @@
       }
     },
     {
-      "description": "Ignore stale application command error (topologyVersion less)",
+      "description": "Ignore stale application command error (topologyVersion equal)",
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 6,
+          "generation": 4,
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "ShutdownInProgress",
+            "code": 91,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale ShutdownInProgress error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
           "type": "command",
           "response": {
             "ok": 0,
@@ -664,7 +565,7 @@
               }
             },
             "pool": {
-              "generation": 6
+              "generation": 4
             }
           }
         },
@@ -674,22 +575,22 @@
       }
     },
     {
-      "description": "Ignore stale application command error (topologyVersion equal)",
+      "description": "Ignore stale InterruptedAtShutdown error (topologyVersion less)",
       "applicationErrors": [
         {
           "address": "a:27017",
-          "generation": 6,
+          "generation": 4,
           "type": "command",
           "response": {
             "ok": 0,
-            "errmsg": "ShutdownInProgress",
-            "code": 91,
+            "errmsg": "InterruptedAtShutdown",
+            "code": 11600,
             "topologyVersion": {
               "processId": {
                 "$oid": "000000000000000000000003"
               },
               "counter": {
-                "$numberLong": "1"
+                "$numberLong": "0"
               }
             }
           }
@@ -709,7 +610,232 @@
               }
             },
             "pool": {
-              "generation": 6
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale InterruptedDueToReplStateChange error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "InterruptedDueToReplStateChange",
+            "code": 11602,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "0"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale NotMasterOrSecondary error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "NotMasterOrSecondary",
+            "code": 13436,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "0"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale PrimarySteppedDown error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "PrimarySteppedDown",
+            "code": 189,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "0"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale NotMaster error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "NotMaster",
+            "code": 10107,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "0"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
+            }
+          }
+        },
+        "topologyType": "ReplicaSetWithPrimary",
+        "logicalSessionTimeoutMinutes": null,
+        "setName": "rs"
+      }
+    },
+    {
+      "description": "Ignore stale NotMasterNoSlaveOk error (topologyVersion less)",
+      "applicationErrors": [
+        {
+          "address": "a:27017",
+          "generation": 4,
+          "type": "command",
+          "response": {
+            "ok": 0,
+            "errmsg": "NotMaster",
+            "code": 13435,
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "0"
+              }
+            }
+          }
+        }
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "RSPrimary",
+            "setName": "rs",
+            "topologyVersion": {
+              "processId": {
+                "$oid": "000000000000000000000003"
+              },
+              "counter": {
+                "$numberLong": "1"
+              }
+            },
+            "pool": {
+              "generation": 4
             }
           }
         },
