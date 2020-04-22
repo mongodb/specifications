@@ -46,6 +46,9 @@ An "applicationError" object has the following keys:
 
 - address: The source address, for example "a:27017".
 - generation: The error's generation number, for example ``1``.
+- maxWireVersion: The ``maxWireVersion`` of the connection the error occurs
+  on, for example ``9``. Added to support testing the behavior of "not master"
+  errors on <4.2 and >=4.2 servers.
 - type: The type of error to mock. Supported values are:
 
   - "command": A command error. Always accompanied with a "response".
@@ -145,7 +148,7 @@ For each phase in the file:
    error as if it occurred while running an application operation. Note that
    it is sufficient to construct a mock error and call the procedure which
    updates the topology, e.g.
-   ``topology.handleApplicationError(address, generation, error)``.
+   ``topology.handleApplicationError(address, generation, maxWireVersion, error)``.
 
 For non-monitoring tests,
 once all responses are processed, assert that the phase's "outcome" object

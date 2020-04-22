@@ -32,6 +32,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 0
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -80,6 +81,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 1
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -132,6 +134,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 2
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -179,6 +182,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 3
+    maxWireVersion: 9
     type: network
   outcome:
     servers:
@@ -218,6 +222,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: timeout
   outcome: *outcome_3_1
 
@@ -225,6 +230,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 3
+    maxWireVersion: 9
     type: network
   outcome: *outcome_3_1
 
@@ -232,6 +238,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 3
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -243,6 +250,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -259,6 +267,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -275,6 +284,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -287,6 +297,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -299,6 +310,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -311,6 +323,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -323,6 +336,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -335,6 +349,7 @@ phases:
   applicationErrors:
   - address: a:27017
     generation: 4
+    maxWireVersion: 9
     type: command
     response:
       ok: 0
@@ -342,3 +357,310 @@ phases:
       code: 13435
       topologyVersion: *topologyVersion_3_0
   outcome: *outcome_3_1
+
+- description: Ignore non state change error Interrupted
+  applicationErrors:
+  - address: a:27017
+    generation: 4
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: Interrupted
+      code: 11601
+      topologyVersion: *topologyVersion_3_0
+  outcome: *outcome_3_1
+
+- description: Non-stale InterruptedAtShutdown error (topologyVersion greater)
+  applicationErrors:
+  - address: a:27017
+    generation: 4
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: InterruptedAtShutdown
+      code: 11600
+      topologyVersion: &topologyVersion_3_2
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '2'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: *topologyVersion_3_2
+        pool:
+          generation: 5
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Primary A is rediscovered (5)
+  responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion: *topologyVersion_3_2
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion: *topologyVersion_3_2
+        pool:
+          generation: 5
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Non-stale InterruptedDueToReplStateChange error (topologyVersion greater)
+  applicationErrors:
+  - address: a:27017
+    generation: 5
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: InterruptedDueToReplStateChange
+      code: 11602
+      topologyVersion: &topologyVersion_3_3
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '3'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: *topologyVersion_3_3
+        pool:
+          generation: 5
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Primary A is rediscovered (6)
+  responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion: *topologyVersion_3_3
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion: *topologyVersion_3_3
+        pool:
+          generation: 5
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Non-stale NotMasterOrSecondary error (topologyVersion greater)
+  applicationErrors:
+  - address: a:27017
+    generation: 5
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: NotMasterOrSecondary
+      code: 13436
+      topologyVersion: &topologyVersion_3_4
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '4'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: *topologyVersion_3_4
+        pool:
+          generation: 5
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Primary A is rediscovered (7)
+  responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion: *topologyVersion_3_4
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion: *topologyVersion_3_4
+        pool:
+          generation: 5
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Non-stale PrimarySteppedDown error (topologyVersion greater)
+  applicationErrors:
+  - address: a:27017
+    generation: 5
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: PrimarySteppedDown
+      code: 189
+      topologyVersion: &topologyVersion_3_5
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '5'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: *topologyVersion_3_5
+        pool:
+          generation: 5
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Primary A is rediscovered (8)
+  responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion: *topologyVersion_3_5
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion: *topologyVersion_3_5
+        pool:
+          generation: 5
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Non-stale NotMaster error (topologyVersion greater)
+  applicationErrors:
+  - address: a:27017
+    generation: 5
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: NotMaster
+      code: 10107
+      topologyVersion: &topologyVersion_3_6
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '6'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: *topologyVersion_3_6
+        pool:
+          generation: 5
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Primary A is rediscovered (8)
+  responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion: *topologyVersion_3_6
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion: *topologyVersion_3_6
+        pool:
+          generation: 5
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Non-stale NotMasterNoSlaveOk error (topologyVersion greater)
+  applicationErrors:
+  - address: a:27017
+    generation: 5
+    maxWireVersion: 9
+    type: command
+    response:
+      ok: 0
+      errmsg: NotMasterNoSlaveOk
+      code: 13435
+      topologyVersion: &topologyVersion_3_7
+        processId:
+          "$oid": '000000000000000000000003'
+        counter:
+          "$numberLong": '7'
+  outcome:
+    servers:
+      a:27017:
+        type: Unknown
+        topologyVersion: *topologyVersion_3_7
+        pool:
+          generation: 5
+    topologyType: ReplicaSetNoPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
+
+- description: Primary A is rediscovered (8)
+  responses:
+  - - a:27017
+    - ok: 1
+      ismaster: true
+      hosts:
+      - a:27017
+      setName: rs
+      minWireVersion: 0
+      maxWireVersion: 9
+      topologyVersion: *topologyVersion_3_7
+  outcome:
+    servers:
+      a:27017:
+        type: RSPrimary
+        setName: rs
+        topologyVersion: *topologyVersion_3_7
+        pool:
+          generation: 5
+    topologyType: ReplicaSetWithPrimary
+    logicalSessionTimeoutMinutes: null
+    setName: rs
