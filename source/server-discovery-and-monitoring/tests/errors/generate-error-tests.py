@@ -90,7 +90,7 @@ def create_non_stale_tests():
         test_name = f'non-stale-{description.replace(" ", "-")}-{error_name}'
         error_code, = ERR_CODES[error_name]
         error_topology_version, final_topology_version = NON_STALE_CASES[description]
-        # On 4.4+, only ShutdownInProgress and InterruptedAtShutdown will
+        # On 4.2+, only ShutdownInProgress and InterruptedAtShutdown will
         # clear the pool.
         if error_name in ("ShutdownInProgress", "InterruptedAtShutdown"):
             final_pool_generation = 1
@@ -135,9 +135,36 @@ def create_stale_generation_tests():
         write_test(test_name, data)
 
 
+def create_pre_42_tests():
+    tmp = template('pre-42.yml.template')
+    # All "not master"/"node is recovering" clear the pool on <4.2
+    for error_name in ERR_CODES:
+        test_name = f'pre-42-{error_name}'
+        error_code, = ERR_CODES[error_name]
+        data = tmp.format(**locals())
+        write_test(test_name, data)
+
+
+def create_post_42_tests():
+    tmp = template('post-42.yml.template')
+    for error_name in ERR_CODES:
+        test_name = f'pre-42-{error_name}'
+        error_code, = ERR_CODES[error_name]
+        # On 4.2+, only ShutdownInProgress and InterruptedAtShutdown will
+        # clear the pool.
+        if error_name in ("ShutdownInProgress", "InterruptedAtShutdown"):
+            final_pool_generation = 1
+        else:
+            final_pool_generation = 0
+        data = tmp.format(**locals())
+        write_test(test_name, data)
+
+
 create_stale_tests()
 create_non_stale_tests()
 create_stale_generation_tests()
+create_pre_42_tests()
+create_post_42_tests()
 
 print('Running make')
 subprocess.run(f'cd {SOURCE} && make', shell=True, check=True)
