@@ -1,5 +1,5 @@
 {
-  "description": "Stale generation NotMasterNoSlaveOk error",
+  "description": "Stale generation NotMasterNoSlaveOk error afterHandshakeCompletes",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {

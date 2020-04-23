@@ -1,5 +1,5 @@
 {
-  "description": "Stale generation InterruptedDueToReplStateChange error",
+  "description": "Stale generation InterruptedDueToReplStateChange error afterHandshakeCompletes",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {

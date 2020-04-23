@@ -1,5 +1,5 @@
 {
-  "description": "Stale generation NotMasterOrSecondary error",
+  "description": "Stale generation NotMasterOrSecondary error beforeHandshakeCompletes",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {

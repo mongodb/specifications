@@ -1,5 +1,5 @@
 {
-  "description": "Stale generation PrimarySteppedDown error",
+  "description": "Stale generation PrimarySteppedDown error beforeHandshakeCompletes",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {

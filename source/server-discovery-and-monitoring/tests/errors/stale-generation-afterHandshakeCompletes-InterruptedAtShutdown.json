@@ -1,5 +1,5 @@
 {
-  "description": "Stale generation InterruptedAtShutdown error",
+  "description": "Stale generation InterruptedAtShutdown error afterHandshakeCompletes",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {

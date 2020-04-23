@@ -1,5 +1,5 @@
 {
-  "description": "Stale generation ShutdownInProgress error",
+  "description": "Stale generation ShutdownInProgress error afterHandshakeCompletes",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {
