@@ -11,11 +11,12 @@ matrix:
         - rstcheck -r source/ --ignore-language c,python,java --report error
 
     - name: "JSON regeneration check"
-      dist: trusty
-      language: node_js
-      node_js:
-        - 12
+      dist: xenial
+      language: python
+      python:
+        - 3.7
       install:
         - npm install -g js-yaml
       script:
+        - python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
         - cd source && make && git diff --exit-code
