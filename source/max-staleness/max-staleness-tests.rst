@@ -89,8 +89,8 @@ while still testing that the driver parses lastWriteDate
 and converts it to an appropriate unit.)
 
 .. [1] This ensures the next insert occurs at least one second after server
-selection (another write may have occurred from the noop writer just before
-server selection if mongod was configured with periodicNoopIntervalSecs=1).
+   selection (another write may have occurred from the noop writer just before
+   server selection if mongod was configured with periodicNoopIntervalSecs=1).
 
 Absent lastWriteDate
 --------------------
