@@ -787,8 +787,7 @@ Common API Components
      * Optionally specifies that the index should exist on the target collection but should not be used by the query
      * planner when executing operations.
      *
-     * This option is only supported by servers >= 4.4. For servers < 3.4, drivers MUST raise an error if the caller
-     * explicitly provides a value.
+     * This option is only supported by servers >= 4.4.
      */
     hidden: Boolean;
   }
