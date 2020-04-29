@@ -799,10 +799,10 @@ Why does the driver only add the RetryableWriteError label to errors that occur 
 
 The driver does this to maintain consistency with the MongoDB server.
 Servers that support the RetryableWriteError label (MongoDB version 4.4 and newer)
-only the label to an error when the operation is a retryable write (when it has
-a txnNumber). For the driver to add the label even if the operation was not a
-retryable write would be inconsistent with the server and potentially confusing
-to developers.
+only add the label to an error when the client has added a txnNumber to the 
+command, which only happens when the retryWrites option is true on the client.
+For the driver to add the label even if retryWrites is not true would be
+inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
