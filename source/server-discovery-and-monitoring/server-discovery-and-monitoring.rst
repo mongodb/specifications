@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.16
-:Last Modified: 2020-03-31
+:Version: 2.17
+:Last Modified: 2020-05-07
 
 .. contents::
 
@@ -333,7 +333,7 @@ Fields:
   Note that this is **not** the server's ismaster.me field,
   in the case that the server reports an address different
   from the address the client uses.
-* error: information about the last error related to this server. Default null.
+* (=) error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the ismaster call. Default null.
 * lastWriteDate: a 64-bit BSON datetime or null.
   The "lastWriteDate" from the server's most recent ismaster response.
@@ -2346,6 +2346,8 @@ to the last one.
 
 2020-03-31: Add topologyVersion to ServerDescription. Add rules for ignoring
 stale application errors.
+
+2020-05-07: Include error field in ServerDescription equality comparison.
 
 .. Section for links.
 
