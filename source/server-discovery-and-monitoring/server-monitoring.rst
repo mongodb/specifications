@@ -78,29 +78,17 @@ set tags. In SDAM terms, a significant topology change on the server means the
 client's ServerDescription is out of date. Standalones and mongos do not
 currently experience significant topology changes but they may in the future.
 
-old isMaster protocol
-`````````````````````
-
-The original isMaster protocol used by SDAM. The client checks a server with
-a regular isMaster and then the client sleeps for heartbeatFrequencyMS before
-running another check.
-
 regular isMaster command
 ````````````````````````
 
 A default ``{isMaster: 1}`` command where the server responds immediately.
 
-awaitable isMaster command
-``````````````````````````
-
-The isMaster command feature which allows a client to wait for a significant
-topology change or timeout before the server replies.
 
 streamable isMaster command
 ```````````````````````````
 
-A variant of the awaitable isMaster command which allows the server
-to stream multiple replies back to the client.
+The isMaster command feature which allows the server to stream multiple
+replies back to the client.
 
 RTT
 ```
@@ -112,8 +100,10 @@ The RTT is used to support `localThresholdMS from the Server Selection spec`_.
 Monitoring
 ''''''''''
 
-The client monitors servers by `checking`_ them periodically,
-pausing heartbeatFrequencyMS between checks.
+The client monitors servers using the isMaster command. In MongoDB 4.4+, a
+monitor uses the `Streaming Protocol`_ to continuously stream isMaster
+responses from the server. In MongoDB <= 4.2, a monitor uses the
+`Polling Protocol`_ pausing heartbeatFrequencyMS between `checks`_.
 Clients check servers sooner in response to certain events.
 
 The socket used to check a server MUST use the same
@@ -571,9 +561,9 @@ Clients MUST NOT publish any events when running an RTT command. (See
 Heartbeat frequency
 ```````````````````
 
-In the old protocol, a client sleeps between each isMaster check (for at
+In the polling protocol, a client sleeps between each isMaster check (for at
 least minHeartbeatFrequencyMS and up to heartbeatFrequencyMS). In the
-new protocol, after processing an "ok:1" isMaster response, the client
+streaming protocol, after processing an "ok:1" isMaster response, the client
 MUST NOT sleep and MUST begin the next check immediately.
 
 isMaster Cancellation
@@ -587,6 +577,13 @@ When a client marks a server Unknown from "Network error when reading or
 writing", clients MUST cancel the isMaster check on that server and close the
 current monitoring connection. (See
 `Drivers cancel in-progress monitor checks`_.)
+
+Polling Protocol
+''''''''''''''''
+
+The polling protocol is used to monitor MongoDB <= 4.4 servers. The client
+`checks`_ a server with an isMaster command and then sleeps for
+heartbeatFrequencyMS before running another check.
 
 Error handling
 ''''''''''''''
@@ -704,7 +701,7 @@ However, streaming isMaster has two downsides:
 
 To address these concerns we designed the alternating isMaster protocol.
 This protocol would have alternated between awaitable isMaster and regular
-isMaster. The awaitable isMaster replaces the old isMaster protocol's
+isMaster. The awaitable isMaster replaces the polling protocol's
 client side sleep and allows the client to receive updated isMaster
 responses sooner. The regular isMaster allows the client to maintain
 accurate RTT calculations without requiring any extra threads or
@@ -828,7 +825,7 @@ Monitors MUST use the isMaster command to measure RTT
 
 In the streaming protocol, clients could use either the "ping" or "isMaster"
 command to measure RTT. This spec chooses "isMaster" for consistency with the
-old protocol as well as consistency with the initial RTT provided the
+polling protocol as well as consistency with the initial RTT provided the
 connection handshake which also uses the isMaster command. Additionally,
 mongocryptd does not allow the ping command but does allow isMaster.
 
@@ -908,7 +905,7 @@ What is the purpose of the "awaited" field on server heartbeat events?
 ServerHeartbeatSucceededEvents published from awaitable isMaster
 responses will regularly have 10 second durations. The spec introduces
 the "awaited" field on server heartbeat events so that applications can
-differentiate a slow heartbeat in the old protocol from a normal
+differentiate a slow heartbeat in the polling protocol from a normal
 awaitable isMaster heartbeat in the new protocol.
 
 
