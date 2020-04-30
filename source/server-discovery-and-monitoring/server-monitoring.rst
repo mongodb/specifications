@@ -406,7 +406,7 @@ checks the most recent isMaster command reply. If the reply includes
 Awaitable isMaster Protocol
 ```````````````````````````
 
-To initiate an awatible isMaster command, the client includes both
+To initiate an awaitable isMaster command, the client includes both
 maxAwaitTimeMS and topologyVersion in the request, for example:
 
 .. code:: typescript
@@ -439,12 +439,10 @@ A server that implements the new protocol follows these rules:
   reply. If the server sets moreToCome, it MUST continue streaming replies
   without awaiting further requests. Between replies it MUST wait until the
   server's topologyVersion.counter is incremented or maxAwaitTimeMS elapses,
-  whichever comes first.
+  whichever comes first. If the reply includes ``ok: 0`` the server MUST NOT
+  set the moreToCome flag.
 - On a topology change that changes the horizon parameters, the server will
-  return a SplitHorizonChange error. This behavior will be the same for both
-  the exhaust and non-exhaust cases of streamable isMaster. In the exhaust
-  case, returning an error will close the exhaust stream between the server
-  and client.
+  close all application connections.
 
 
 Example awaitable isMaster conversation:
@@ -500,10 +498,11 @@ Example streaming isMaster conversation (awaitable isMaster with exhaust):
 Streaming Protocol
 ''''''''''''''''''
 
-The MongoDB 4.4+ monitoring protocol in which the server streams state changes
-to the client. Multi-threaded or asynchronous drivers MUST use the streaming
-protocol when connected to a server that supports the streaming isMaster
-command. This protocol requires an extra thread and an extra socket for
+The streaming protocol is used to monitor MongoDB 4.4+ servers and optimally
+reduces the time it takes for a client to discover server state changes.
+Multi-threaded or asynchronous drivers MUST use the streaming protocol when
+connected to a server that supports the awaitable isMaster command. This
+protocol requires an extra thread and an extra socket for
 each monitor to perform RTT calculations.
 
 Streaming isMaster
@@ -552,10 +551,9 @@ Clients MUST update the RTT from the isMaster duration of the initial
 connection handshake. Clients MUST NOT update RTT based on streaming isMaster
 responses.
 
-Errors encountered when running a "isMaster" command MUST be handled in
-the same manner as application errors when "reading or writing". (See
-`Network error when reading or writing`_ and
-`"not master" and "node is recovering"`_)
+Errors encountered when running a "isMaster" command MUST NOT update the
+topology.
+(See `Why don't clients mark a server unknown when an RTT command fails?`_)
 
 When constructing a ServerDescription from a streaming isMaster response,
 clients MUST use the current roundTripTime from the RTT task.
@@ -581,14 +579,14 @@ MUST NOT sleep and MUST begin the next check immediately.
 isMaster Cancellation
 `````````````````````
 
-When a client is closed, clients SHOULD cancel all isMaster checks; a
-monitor blocked waiting for the next streaming isMaster response should
-be interrupted so that threads may exit promptly without waiting
-maxAwaitTimeMS. When a client marks a server Unknown from "Network error
-when reading or writing", clients MUST cancel the in-progress streaming
-isMaster check and close the current monitoring connection. (See `
-Why cancel in-progress monitor checks when application operations fail with
-non-timeout network errors?`_)
+When a client is closed, clients MUST cancel all isMaster checks; a monitor
+blocked waiting for the next streaming isMaster response MUST be interrupted
+such that threads may exit promptly without waiting maxAwaitTimeMS.
+
+When a client marks a server Unknown from "Network error when reading or
+writing", clients MUST cancel the isMaster check on that server and close the
+current monitoring connection. (See
+`Drivers cancel in-progress monitor checks`_.)
 
 Error handling
 ''''''''''''''
@@ -705,7 +703,7 @@ However, streaming isMaster has two downsides:
    the RTT of each server.
 
 To address these concerns we designed the alternating isMaster protocol.
-This protocol would have alternate between awaitable isMaster and regular
+This protocol would have alternated between awaitable isMaster and regular
 isMaster. The awaitable isMaster replaces the old isMaster protocol's
 client side sleep and allows the client to receive updated isMaster
 responses sooner. The regular isMaster allows the client to maintain
@@ -804,14 +802,14 @@ dedicated connection to periodically update its average round trip time in
 order to support `localThresholdMS from the Server Selection spec`_.
 
 It could pop a connection from its regular pool, but we rejected this option
-for few reasons:
+for a few reasons:
 
 - Under contention the RTT task may block application operations from
   completing in a timely manner.
 - Under contention the application may block the RTT task from completing in
   a timely manner.
 - Under contention the RTT task may often result in an extra connection
-  anyway, the pool creates new connections under contention up to maxPoolSize.
+  anyway because the pool creates new connections under contention up to maxPoolSize.
 - This would be inconsistent with the rule that a monitor SHOULD NOT use the
   client's regular connection pool.
 
@@ -833,6 +831,21 @@ command to measure RTT. This spec chooses "isMaster" for consistency with the
 old protocol as well as consistency with the initial RTT provided the
 connection handshake which also uses the isMaster command. Additionally,
 mongocryptd does not allow the ping command but does allow isMaster.
+
+Why don't clients mark a server unknown when an RTT command fails?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+In the streaming protocol, clients use the isMaster command on a dedicated
+connection to measure a server's RTT. However, errors encountered when running
+the RTT command MUST NOT mark a server Unknown. We reached this decision
+because the dedicate RTT connection does not come from a connection pool and
+thus does not have a generation number associated with it. Without a generation
+number we cannot handle errors from the RTT command without introducing race
+conditions. Introducing such a generation number would add complexity to this
+design without much benefit. It is safe to ignore these errors because the
+Monitor will soon discover the server's state regardless (either through an
+updated streaming response, an error on the streaming connection, or by
+handling an error on an application connection).
 
 Drivers cancel in-progress monitor checks
 '''''''''''''''''''''''''''''''''''''''''

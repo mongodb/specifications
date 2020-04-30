@@ -6,8 +6,8 @@ The YAML and JSON files in this directory tree are platform-independent tests
 that drivers can use to prove their conformance to the
 Server Discovery And Monitoring Spec.
 
-Additional prose tests, that cannot represented as spec tests, are described
-and MUST be implemented.
+Additional prose tests, that cannot be represented as spec tests, are
+described and MUST be implemented.
 
 Version
 -------
@@ -141,7 +141,7 @@ Continue until all phases have been executed.
 Prose Tests
 -----------
 
-The following prose tests cannot represented as spec tests and MUST be
+The following prose tests cannot be represented as spec tests and MUST be
 implemented.
 
 Streaming protocol Tests
