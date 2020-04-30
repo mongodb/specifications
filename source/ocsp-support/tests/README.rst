@@ -15,7 +15,7 @@ specification. These tests MUST BE implemented by all drivers.
 
 Additional YAML and JSON tests have also been added to the `URI
 Options Tests <../../uri-options/tests/README.rst>`__.  Specifically,
-the `TLS Options Test <../../uri-options/test/tls-options.yml>`__ has
+the `TLS Options Test <../../uri-options/tests/tls-options.yml>`__ has
 been updated with additional tests for the new URI options
 ``tlsDisableOCSPEndpointCheck`` and ``tlsDisableCertificateRevocationCheck``.
 
