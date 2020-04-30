@@ -194,7 +194,8 @@ This boolean option determines whether a MongoClient should refrain from
 reaching out to an OCSP endpoint i.e.  whether non-stapled OCSP should
 be disabled.  When set to true, a driver MUST NOT reach out to OCSP
 endpoints. When set to false, a driver MUST reach out to OCSP
-endpoints if needed (as described in :ref:`Suggested OCSP Behavior`).
+endpoints if needed (as described in 
+`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).
 This option MUST default to false.
 
 tlsDisableCertificateRevocationCheck
@@ -210,8 +211,9 @@ This boolean option determines whether a MongoClient should refrain
 checking certificate revocation status. When set to true, a driver
 MUST NOT check certificate revocation status via CRLs or OCSP.  When
 set to false, a driver MUST check certificate revocation status, reach
-out to OCSP endpoints if needed (as described in :ref:`Suggested OCSP
-Behavior`).  This option MUST default to false.
+out to OCSP endpoints if needed (as described in 
+`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).  
+This option MUST default to false.
 
 
 Naming Deviations
@@ -424,7 +426,8 @@ Suggested OCSP Behavior
 For drivers with finer-grain control over their OCSP behavior, the
 suggested OCSP behavior was chosen as a balance between security and
 availability, erring on availability while minimizing network round
-trips. Therefore, in the :ref:`Suggested OCSP Behavior` section,
+trips. Therefore, in the 
+`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__ section,
 in order to minimize network round trips, drivers are advised not to
 reach out to OCSP endpoints and CRL distribution points in order to
 verify the revocation status of intermediate certificates.
@@ -446,7 +449,7 @@ server with a certificate that only contains CRL distribution points.)
 In such a scenario, connectivity may be able to be restored by
 disabling non-stapled OCSP via ``tlsDisableOCSPEndpointCheck`` or by
 disabling certificate revocation checking altogether
-via``tlsDisableCertificateRevocationCheck``.
+via ``tlsDisableCertificateRevocationCheck``.
 
 An application that uses a driver that utilizes hard-fail behavior
 when there are no certificate revocation mechanisms available may also
