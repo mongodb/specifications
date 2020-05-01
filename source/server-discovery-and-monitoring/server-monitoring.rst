@@ -506,19 +506,18 @@ responses strictly in the order they were received.)
 
 A client follows these rules when processing the isMaster exhaust response:
 
+- If the response indicates a command error, or a network error or timeout
+  occurs, the client MUST close the connection and restart the monitoring
+  protocol on a new connection. (See `Network error during server check`_ and
+  `Command error during server check`_.)
+- If the response omits topologyVersion, the client MUST close the connection
+  and restart the monitoring protocol on a new connection. This is an
+  unexpected state as 4.4+ servers always include topologyVersion.
 - If the response is successful (includes "ok:1") and includes the OP_MSG
   moreToCome flag, then the client begins reading the next response.
 - If the response is successful (includes "ok:1") and does not include the
   OP_MSG moreToCome flag, then the client initiates a new awaitable isMaster
   with the topologyVersion field from the previous response.
-- If the response omits topologyVersion, the client MUST exit the streaming
-  process and run a regular isMaster on the next check.
-- If the response indicates a command error, or a network error or
-  timeout occurs, the client MUST close the connection and wait
-  heartbeatFrequencyMS (or minHeartbeatFrequencyMS according to SDAM rules)
-  before restarting the isMaster protocol on a new connection. (See
-  `Network error during server check`_ and
-  `Command error during server check`_.)
 
 Socket timeout
 ``````````````
