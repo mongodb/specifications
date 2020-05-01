@@ -658,11 +658,64 @@ The event API here is assumed to be like the standard `Python Event
 `heartbeatFrequencyMS`_ is configurable,
 `minHeartbeatFrequencyMS`_ is always 500 milliseconds::
 
+  class Monitor(Thread):
+
+    def __init__():
+        # Monitor options:
+        serverAddress = serverAddress
+        connectTimeoutMS = connectTimeoutMS
+        heartbeatFrequencyMS = heartbeatFrequencyMS
+        minHeartbeatFrequencyMS = 500
+
+        # Internal Monitor state:
+        connection = None
+        description = default ServerDescription
+
     def run():
         while this monitor is not stopped:
-            check server and create newServerDescription
-            onServerDescriptionChanged(newServerDescription)
+            previousDescription = description
+            try:
+                description = checkServer(previousDescription)
+            except CheckCancelledError:
+                continue
+            topology.onServerDescriptionChanged(description)
+
+            # Immediatly proceed to the next check if the previous response
+            # included the moreToCome flag or the server has just transitioned
+            # to Unknown from a network or command error.
+            if connection.moreToCome or (description.error and previousDescription.type != Unknown):
+                continue
+
             wait()
+
+    def setUpConnection():
+        connection = new Connection(serverAddress)
+        set connection timeout to connectTimeoutMS
+        perform connection handshake
+
+    def checkServer(previousDescription):
+        try:
+            if not connection:
+                setUpConnection()
+                return new ServerDescription from handshake response
+
+            if connection.moreToCome:
+                read next isMaster exhaust response
+                return new ServerDescription
+
+            if previousDescription.topologyVersion:
+                # Initiate streaming isMaster
+                set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
+                call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
+                return new ServerDescription
+
+            set connection timeout to connectTimeoutMS
+            call {isMaster: 1}
+            return new ServerDescription
+        except (NetworkError, CommandError) as e0:
+            close connection
+            clear connection pool for the server
+            return new ServerDescription with type=Unknown, error=e0
 
     def wait():
         start = gettime()
@@ -681,6 +734,14 @@ The event API here is assumed to be like the standard `Python Event
 
     def requestCheck():
         event.set()
+
+
+`isMaster Cancellation`_::
+
+    def cancelCheck():
+        if connection:
+            interrupt connection read
+            close connection
 
 
 Design Alternatives
