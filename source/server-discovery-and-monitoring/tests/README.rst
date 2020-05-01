@@ -148,49 +148,145 @@ Streaming protocol Tests
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Drivers that implement the streaming protocol (multi-threaded or
-asynchronous drivers) must implement the following tests:
+asynchronous drivers) must implement the following tests. Each test should be
+run against a standalone, replica set, and sharded cluster unless otherwise
+noted.
 
 Some of these cases should already be tested with the old protocol; in
 that case just verify the test cases succeed with the new protocol.
 
-1.  When the client sends an awaitable isMaster, cease all isMaster
-    replies while holding the connection open, using the waitInIsMaster
-    failpoint. Assert the client marks the server as Unknown after
-    approximately connectTimeoutMS+maxAwaitTimeMS.
+1.  Test that the Monitor does not time out sooner than
+    connectTimeoutMS+heartbeatFrequencyMS:
 
-2.  Same as above, but make mongod send ok: 0 in subsequent isMaster
+    #. Create a MongoClient with ``appName=monitorTimeoutTest``,
+       ``connectTimeoutMS=100``, and ``heartbeatFrequencyMS=500``.
+
+    #. Run an insert operation to prove the client has discovered the server.
+
+    #. Sleep for 2 seconds. This must be long enough for multiple heartbeats
+       to succeed.
+
+    #. Assert the client never marked the server Unknown and never cleared
+       the connection pool. If the Monitor had mistakenly neglected to set
+       the connection timeout to connectTimeoutMS+heartbeatFrequencyMS the
+       connection would have seen a timeout error after 100ms.
+
+    #. Run an insert operation to prove the server is still selectable.
+
+2.  Test that the Monitor times out after connectTimeoutMS+heartbeatFrequencyMS:
+
+    #. Create a MongoClient with ``appName=monitorTimeoutTest``,
+       ``connectTimeoutMS=100``, and ``heartbeatFrequencyMS=500``.
+
+    #. Run an insert operation to prove the client has discovered the server.
+
+    #. Configure the following failpoint to block isMaster replies longer
+       than connectTimeoutMS+heartbeatFrequencyMS::
+
+         db.adminCommand({
+             configureFailPoint: "failCommand",
+             mode: {times: 2},
+             data: {
+               failCommands: ["isMaster"],
+               blockConnection: true,
+               blockTimeMS: 700,
+             },
+         });
+
+    #. Assert the client marks the server as Unknown after
+       approximately connectTimeoutMS+maxAwaitTimeMS. For example, wait for
+       a ServerDescriptionChangedEvent that marks the server Unknown or wait
+       for a PoolClearEvent.
+
+    #. Assert the client rediscovers the server in the next second. For
+       example, wait for a ServerDescriptionChangedEvent where the server
+       changes from Unknown to Known.
+
+    #. Run an insert operation to prove the client has rediscovered the server.
+
+3.  Same as above, but make mongod send ok: 0 in subsequent isMaster
     replies (with the failCommand fail point). Assert the client
-    marks the server Unknown and closes the monitoring connection.
+    marks the server Unknown. If possible, assert that the Monitor closes the
+    monitoring connection.
 
-3.  When the client sends an awaitable isMaster, configure the server to
-    send ok: 1 but *without* the moreToCome bit set. Assert that the client
-    does not mark the server Unknown and immediately sends a new awaitable
-    isMaster on the next check.
+4.  Test that the Monitor handles ok: 1 but *without* the moreToCome flag set:
 
-4.  Configure the client with heartbeatFrequencyMS set to 500,
+    #. Create a MongoClient with ``connectTimeoutMS=100`` and
+       ``heartbeatFrequencyMS=500``.
+
+    #. Run an insert operation to prove the client has discovered the server.
+
+    #. Configure the server to not add the moreToCome flag via the
+       ``doNotSetMoreToCome`` failpoint::
+
+         db.adminCommand({
+             configureFailPoint: "doNotSetMoreToCome",
+             mode: {times: 1000},
+         });
+
+    #. Sleep for 2 seconds. This must be long enough for multiple heartbeats
+       to succeed.
+
+    #. Assert the client never marked the server Unknown and never cleared
+       the connection pool. If the Monitor had mistakenly neglected to handle
+       the missing moreToCome flag, then it would have timed out attempting
+       to read the the next response after
+       connectTimeoutMS+heartbeatFrequencyMS.
+
+    #. Run an insert operation to prove the server is still selectable.
+
+    #. Finally disable the doNotSetMoreToCome failpoint::
+
+         db.adminCommand({
+             configureFailPoint: "doNotSetMoreToCome",
+             mode: {times: 'off'},
+         });
+
+
+5.  Configure the client with heartbeatFrequencyMS set to 500,
     overriding the default of 10000. Assert the client processes
-    isMaster replies more frequently without waiting
-    minHeartbeatFrequencyMS.
+    isMaster replies more frequently (approximately every 500ms).
 
-5.  With a replica set. Configure the client to set heartbeatFrequencyMS
+6.  With a replica set. Configure the client to set heartbeatFrequencyMS
     to 5 minutes, overriding the default of 10000. Run
     replSetStepDown on the primary and assert the client discovers
     the new primary quickly.
 
-6.  Configure the server to hang up on all "find" commands (using the
+7.  Configure the server to hang up on all "find" commands (using the
     "failCommand" failpoint). Execute a find command and assert the
     client marks the server Unknown. (See "Network error when reading
     or writing" in the main design doc.)
 
-7.  Configure the server to hangup on all "ping" requests (with the
-    failCommand fail point). Then create a client and assert it
-    discovers the server and then marks the server Unknown when
-    "ping" fails.
+8.  Test that a MongoClient ignores errors from previous generations.
 
-8.  Issue a write from 2 threads using two connections at the same time.
-    Cause the server to hangup on both operations (using the
-    failCommand failpoint). Assert that the server is only reset to
-    Unknown once and the application pool is only cleared once.
+    #. Create a MongoClient with ``retryWrites=false``.
+
+    #. Run an insert operation to prove the client has discovered the server.
+
+    #. Configure the following failpoint to block insert command for 500ms
+       and then close the connection. Blocking the insert commands allows
+       both commands to be executed on connections from the same pool
+       generation::
+
+         db.adminCommand({
+             configureFailPoint: "failCommand",
+             mode: {times: 2},
+             data: {
+               failCommands: ["insert"],
+               closeConnection: true,
+               blockConnection: true,
+               blockTimeMS: 500,
+             },
+         });
+
+    #. Run 2 insertOne operations concurrently and assert that both operations
+       fail with network errors.
+
+    #. Assert that the server is reset to Unknown exactly once and the
+       application pool is cleared exactly once. For example, assert that
+       there was a single single ServerDescriptionChangedEvent that marks the server Unknown and a single PoolClearEvent.
+
+    #. Run an insert operation to prove the server is rediscovered.
 
 9.  Issue a write from 2 threads using two connections at the same time.
     Cause the server to fail both operations with a State Change
