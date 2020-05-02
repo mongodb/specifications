@@ -76,7 +76,9 @@ Clamping:
 
 Binary Integer Decimal (BID):
    MongoDB uses this binary encoding for the coefficient as specified in ``IEEE
-   754-2008``. The byte order is little-endian, like the rest of the BSON types.
+   754-2008`` section 3.5.2 using method 2 "binary encoding" rather than method 1
+   "decimal encoding". The byte order is little-endian, like the rest of the BSON
+   types.
 
 
 Value Object:
@@ -95,9 +97,12 @@ BSON Decimal128 implementation details
 
 The ``BSON Decimal128`` data type implements the `Decimal Arithmetic Encodings
 <http://speleotrove.com/decimal/decbits.html>`_ specification, with certain
-exceptions around value integrity.  When a value cannot be represented exactly,
-the value will be rejected.
+exceptions around value integrity and the coefficient encoding.  When a value
+cannot be represented exactly, the value will be rejected.
 
+The coefficient MUST be stored as an unsigned binary integer (BID) rather than
+the densely-packed decimal (DPD) shown in the specification. See either the 
+`IEEE Std 754-2008` spec or the driver examples for further detail.
 
 The specification defines several statuses which are meant to signal
 exceptional `circumstances <http://speleotrove.com/decimal/daexcep.html>`_,
