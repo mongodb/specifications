@@ -782,6 +782,14 @@ Common API Components
      * Optionally specifies the wildcard projection of a wildcard index.
      */
     wildcardProjection: Document;
+
+    /**
+     * Optionally specifies that the index should exist on the target collection but should not be used by the query
+     * planner when executing operations.
+     *
+     * This option is only supported by servers >= 4.4.
+     */
+    hidden: Boolean;
   }
 
 ---------
