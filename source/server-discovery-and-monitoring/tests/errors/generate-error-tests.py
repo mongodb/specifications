@@ -148,7 +148,7 @@ def create_pre_42_tests():
 def create_post_42_tests():
     tmp = template('post-42.yml.template')
     for error_name in ERR_CODES:
-        test_name = f'pre-42-{error_name}'
+        test_name = f'post-42-{error_name}'
         error_code, = ERR_CODES[error_name]
         # On 4.2+, only ShutdownInProgress and InterruptedAtShutdown will
         # clear the pool.
