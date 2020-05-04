@@ -297,6 +297,37 @@ that case just verify the test cases succeed with the new protocol.
 RTT Tests
 ~~~~~~~~~
 
-1.  Create a client and subscribe to server events. Run a find command to
-    wait for the server to be discovered. Assert that each
-    ``ServerDescriptionChangedEvent`` includes a non-zero RTT.
+1.  Test that RTT is continuously updated.
+
+    #. Create a client with  ``heartbeatFrequencyMS=500`` and subscribe to
+       server events.
+
+    #. Run a find command to wait for the server to be discovered.
+
+    #. Sleep for 2 seconds. This must be long enough for multiple heartbeats
+       to succeed.
+
+    #. Assert that each ``ServerDescriptionChangedEvent`` includes a non-zero
+       RTT.
+
+    #. Configure the following failpoint to block isMaster commands for 250ms
+       which should add extra latency to each RTT check::
+
+         db.adminCommand({
+             configureFailPoint: "failCommand",
+             mode: {times: 1000},
+             data: {
+               failCommands: ["isMaster"],
+               blockConnection: true,
+               blockTimeMS: 250,
+             },
+         });
+
+    #. Wait for the server's RTT to exceed 250ms.
+
+    #. Disable the failpoint::
+
+         db.adminCommand({
+             configureFailPoint: "failCommand",
+             mode: "off",
+         });
