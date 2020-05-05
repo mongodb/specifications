@@ -415,8 +415,10 @@ Read
      * can write temporary data to disk while executing the find operation.
      *
      * This option is sent only if the caller explicitly provides a value. The default
-     * is to not send a value. For servers < 3.2, this option is ignored and not sent
-     * as allowDiskUse does not exist in the OP_QUERY wire protocol.
+     * is to not send a value.
+     *
+     * This option is only supported by servers >= 4.4. Older servers >= 3.2 will report an error for using this option.
+     * For servers < 3.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
