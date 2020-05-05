@@ -719,10 +719,8 @@ MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secr
 `Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, 
 or temporary AWS IAM credentials assigned to an `EC2 instance <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html>`_ or ECS task. Temporary credentials, in addition to an access key ID and a secret access key, includes a security (or session) token.
 
-IAM credentials (the access key ID, secret access key, and optional session token) MUST be reacted in error messages.
-
 MONGODB-AWS requires that a client create a randomly generated nonce. It is 
-imperative, for security sake, that this be as secure and truly random as possible. 
+imperative, for security sake, that this be as secure and truly random as possible. Additionally, the secret access key and only the secret access key is sensitive. Drivers MUST take proper precautions to ensure we do not leak this info. 
 
 All messages between MongoDB clients and servers are sent as BSON V1.1 Objects in the payload field of saslStart and saslContinue.
 All fields in these messages have a "short name" which is used in the serialized 
