@@ -591,8 +591,8 @@ Network error during server check
 `````````````````````````````````
 
 When a server `check`_ fails due to a network error (including a network
-timeout), the client MUST clear its connection pool for the server:
-if the monitor's socket is bad it is likely that all are.
+timeout), the client MUST mark the server Unknown and clear the connection
+pool for the server. If the monitor's socket is bad it is likely that all are.
 (See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
 
 If the server was in a known state before the error, the client MUST NOT sleep
@@ -662,8 +662,8 @@ The event API here is assumed to be like the standard `Python Event
 
             # Immediatly proceed to the next check if the previous response
             # included the moreToCome flag or the server has just transitioned
-            # to Unknown from a network or command error.
-            if connection.moreToCome or (description.error and previousDescription.type != Unknown):
+            # to Unknown from a network error.
+            if connection.moreToCome or (isNetworkError(description.error) and previousDescription.type != Unknown):
                 continue
 
             wait()
@@ -692,10 +692,13 @@ The event API here is assumed to be like the standard `Python Event
             set connection timeout to connectTimeoutMS
             call {isMaster: 1}
             return new ServerDescription
-        except (NetworkError, CommandError) as e0:
+        except CommandError as exc:
+            close connection
+            return new ServerDescription with type=Unknown, error=exc
+        except NetworkError as exc:
             close connection
             clear connection pool for the server
-            return new ServerDescription with type=Unknown, error=e0
+            return new ServerDescription with type=Unknown, error=exc
 
     def wait():
         start = gettime()
