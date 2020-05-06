@@ -297,10 +297,12 @@ that case just verify the test cases succeed with the new protocol.
 RTT Tests
 ~~~~~~~~~
 
+Run the following test(s) on MongoDB 4.4+.
+
 1.  Test that RTT is continuously updated.
 
-    #. Create a client with  ``heartbeatFrequencyMS=500`` and subscribe to
-       server events.
+    #. Create a client with  ``heartbeatFrequencyMS=500``,
+       ``appName=streamingRttTest``, and subscribe to server events.
 
     #. Run a find command to wait for the server to be discovered.
 
@@ -319,11 +321,13 @@ RTT Tests
              data: {
                failCommands: ["isMaster"],
                blockConnection: true,
-               blockTimeMS: 250,
+               blockTimeMS: 500,
+               appName: "streamingRttTest",
              },
          });
 
-    #. Wait for the server's RTT to exceed 250ms.
+    #. Wait for the server's RTT to exceed 250ms. Eventually the average RTT
+       should also exceed 500ms but we use 250ms to speed up the test.
 
     #. Disable the failpoint::
 
