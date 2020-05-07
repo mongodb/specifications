@@ -187,7 +187,7 @@ Continue until all phases have been executed.
 Integration Tests
 -----------------
 
-Integration tests are provided in the "spec" directory.
+Integration tests are provided in the "integration" directory.
 
 Test Format
 ~~~~~~~~~~~
