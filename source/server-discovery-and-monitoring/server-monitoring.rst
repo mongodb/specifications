@@ -508,8 +508,8 @@ A client follows these rules when processing the isMaster exhaust response:
 
 - If the response indicates a command error, or a network error or timeout
   occurs, the client MUST close the connection and restart the monitoring
-  protocol on a new connection. (See `Network error during server check`_ and
-  `Command error during server check`_.)
+  protocol on a new connection. (See
+  `Network or command error during server check`_.)
 - If the response omits topologyVersion, the client MUST close the connection
   and restart the monitoring protocol on a new connection. This is an
   unexpected state as 4.4+ servers always include topologyVersion.
@@ -587,40 +587,34 @@ heartbeatFrequencyMS before running another check.
 Error handling
 ''''''''''''''
 
-Network error during server check
-`````````````````````````````````
+Network or command error during server check
+````````````````````````````````````````````
 
 When a server `check`_ fails due to a network error (including a network
-timeout), the client MUST mark the server Unknown and clear the connection
-pool for the server. If the monitor's socket is bad it is likely that all are.
-(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
-
-If the server was in a known state before the error, the client MUST NOT sleep
-and MUST begin the next check immediately.
-(This rule applies to server checks during monitoring.
-It does *not* apply when multi-threaded
-`clients update the topology from each handshake`_.)
-
-See the pseudocode in the `Monitor thread` section.
-
-(See `retry ismaster calls once`_ and
-`JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
-
-Command error during server check
-`````````````````````````````````
-
-When a server `check`_ fails due to a command error, the client MUST follow
-these steps:
+timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 
 #. Close the current monitoring connection.
 #. Mark the server Unknown.
-#. Wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a check is
-   requested) before restarting the monitoring protocol on a new connection.
+#. Clear the connection pool for the server. (See
+   `Clear the connection pool on both network and command errors`_.)
+#. If this was a network error and the server was in a known state before the
+   error, the client MUST NOT sleep and MUST begin the next check immediately.
+   (See `retry ismaster calls once`_ and
+   `JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
+#. Otherwise, wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a
+   check is requested) before restarting the monitoring protocol on a new
+   connection.
 
    - Note that even in the streaming protocol, a monitor in this state will
      wait for an application operation to `request an immediate check`_ or
      for the heartbeatFrequencyMS timeout to expire before begining the next
      check.
+
+See the pseudocode in the `Monitor thread` section.
+
+Note that this rule applies only to server checks during monitoring.
+It does *not* apply when multi-threaded
+`clients update the topology from each handshake`_.
 
 Implementation notes
 ''''''''''''''''''''
@@ -692,10 +686,7 @@ The event API here is assumed to be like the standard `Python Event
             set connection timeout to connectTimeoutMS
             call {isMaster: 1}
             return new ServerDescription
-        except CommandError as exc:
-            close connection
-            return new ServerDescription with type=Unknown, error=exc
-        except NetworkError as exc:
+        except (NetworkError, CommandError) as exc:
             close connection
             clear connection pool for the server
             return new ServerDescription with type=Unknown, error=exc
@@ -918,7 +909,21 @@ monitor's connection means that there was a network glitch, or a server restart
 since the last check, or that the server is truly down. To handle the case
 that the server is truly down, the monitor makes the server unselectable by
 marking it Unknown. To handle the case of a transient network glitch or
-restart, the Monitor immediately runs the next check without waiting.
+restart, the monitor immediately runs the next check without waiting.
+
+Clear the connection pool on both network and command errors
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+A monitor clears the connection pool when a server check fails with a network
+or command error (`Network or command error during server check`_).
+When the check fails with a network error it is likely that all connections
+to that server are also closed.
+(See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
+
+When the server is shutting down, it may respond to isMaster commands with
+ShutdownInProgress errors before closing connections. In this case, the
+monitor clears the connection pool because all connections will be closed soon.
+Other command errors are unexpected but are handled identically.
 
 Why must streaming isMaster clients publish ServerHeartbeatStartedEvents?
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
