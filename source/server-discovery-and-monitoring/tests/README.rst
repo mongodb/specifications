@@ -327,7 +327,10 @@ Run the following test(s) on MongoDB 4.4+.
          });
 
     #. Wait for the server's RTT to exceed 250ms. Eventually the average RTT
-       should also exceed 500ms but we use 250ms to speed up the test.
+       should also exceed 500ms but we use 250ms to speed up the test. Note
+       that the `Server Description Equality`_ means that
+       ServerDescriptionChangedEvents will not be published. This test may
+       need to use a driver specific helper to obtain the latest RTT instead.
 
     #. Disable the failpoint::
 
@@ -335,3 +338,7 @@ Run the following test(s) on MongoDB 4.4+.
              configureFailPoint: "failCommand",
              mode: "off",
          });
+
+.. Section for links.
+
+.. _Server Description Equality: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server-description-equality
