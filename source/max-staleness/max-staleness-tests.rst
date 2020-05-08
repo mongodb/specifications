@@ -76,6 +76,7 @@ Insert a document and wait one second.
 
 Get the client's ServerDescription for the server.
 It must have a non-zero lastWriteDate.
+Wait another second. [1]
 
 Insert a document and wait one second.
 
@@ -86,6 +87,10 @@ but less than 10 seconds greater.
 (This test is as lenient as possible,
 while still testing that the driver parses lastWriteDate
 and converts it to an appropriate unit.)
+
+.. [1] This ensures the next insert occurs at least one second after server
+   selection (another write may have occurred from the noop writer just before
+   server selection if mongod was configured with periodicNoopIntervalSecs=1).
 
 Absent lastWriteDate
 --------------------
