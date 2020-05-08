@@ -181,7 +181,7 @@ Each YAML file has the following keys:
     - ``collection``:
 
       - ``data``: The data that should exist in the collection after the
-        operations have run.
+        operations have run, sorted by "_id".
 
 Use as Integration Tests
 ========================
@@ -305,6 +305,8 @@ Then for each element in ``tests``:
      latest data by using **primary read preference** with
      **local read concern** even when the MongoClient is configured with
      another read preference or read concern.
+     Note the server does not guarantee that documents returned by a find
+     command will be in inserted order. This find MUST sort by ``{_id:1}``.
 
 .. _SERVER-38335: https://jira.mongodb.org/browse/SERVER-38335
 
