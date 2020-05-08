@@ -654,10 +654,13 @@ The event API here is assumed to be like the standard `Python Event
                 continue
             topology.onServerDescriptionChanged(description)
 
-            # Immediatly proceed to the next check if the previous response
-            # included the moreToCome flag or the server has just transitioned
-            # to Unknown from a network error.
-            if connection.moreToCome or (isNetworkError(description.error) and previousDescription.type != Unknown):
+            # Immediately proceed to the next check if the previous response
+            # was successful and included the topologyVersion field, or the
+            # previous response included the moreToCome flag, or the server
+            # has just transitioned to Unknown from a network error.
+            if (description.type != Unknown and description.topologyVersion != Null or
+                    connection.moreToCome or
+                    (isNetworkError(description.error) and previousDescription.type != Unknown)):
                 continue
 
             wait()
