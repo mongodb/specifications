@@ -37,12 +37,13 @@ tests:
         command_name: replSetStepDown
         arguments:
           command:
-            replSetStepDown: 20
+            replSetStepDown: 1
+            secondaryCatchUpPeriodSecs: 1
             force: false
       - name: waitForPrimaryChange
         object: testRunner
         arguments:
-          timeoutMS: 15000
+          timeoutMS: 5000
       # Rediscover the new primary.
       - name: insertMany
         object: collection
