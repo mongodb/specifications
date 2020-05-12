@@ -572,8 +572,8 @@ When a client is closed, clients MUST cancel all isMaster checks; a monitor
 blocked waiting for the next streaming isMaster response MUST be interrupted
 such that threads may exit promptly without waiting maxAwaitTimeMS.
 
-When a client marks a server Unknown from "Network error when reading or
-writing", clients MUST cancel the isMaster check on that server and close the
+When a client marks a server Unknown from `Network error when reading or
+writing`_, clients MUST cancel the isMaster check on that server and close the
 current monitoring connection. (See
 `Drivers cancel in-progress monitor checks`_.)
 
@@ -651,6 +651,13 @@ The event API here is assumed to be like the standard `Python Event
             try:
                 description = checkServer(previousDescription)
             except CheckCancelledError:
+                if this monitor is stopped:
+                    # The client was closed.
+                    return
+                # The client marked this server Unknown and cancelled this
+                # check during "Network error when reading or writing".
+                # Wait before running the next check.
+                wait()
                 continue
             topology.onServerDescriptionChanged(description)
 
@@ -686,6 +693,7 @@ The event API here is assumed to be like the standard `Python Event
                 call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
                 return new ServerDescription
 
+            # The server does not support topologyVersion.
             set connection timeout to connectTimeoutMS
             call {isMaster: 1}
             return new ServerDescription
