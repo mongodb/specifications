@@ -305,7 +305,7 @@ Implicit Decoding
    a. Assert that the value of the "standard" field is of the native UUID type and is equal to the given UUID
    b. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
 
-3. Set the uuidRepresentation of the client to "unspecified". Insert a document containing two fields. The "standard" field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD UuidRepresentation.  The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the PYTHON_LEGACY UuidRepresentation. Find the document.
+3. Set the uuidRepresentation of the client to "unspecified". Insert a document containing two fields. The "standard" field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the STANDARD UuidRepresentation.  The "legacy" field should contain a BSON Binary created by creating a BsonBinary instance with the given UUID and the JAVA_LEGACY UuidRepresentation. Find the document.
 
    a. Assert that the value of the "standard" field is of type BsonBinary and is equal to the inserted value
    b. Assert that the value of the "legacy" field is of type BsonBinary and is equal to the inserted value.
