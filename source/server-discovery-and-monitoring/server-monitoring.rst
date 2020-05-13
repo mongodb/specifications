@@ -665,9 +665,12 @@ The event API here is assumed to be like the standard `Python Event
             # was successful and included the topologyVersion field, or the
             # previous response included the moreToCome flag, or the server
             # has just transitioned to Unknown from a network error.
-            if (description.type != Unknown and description.topologyVersion != Null) or
-                    (connection != Null && connection.moreToCome) or
-                    (isNetworkError(description.error) and previousDescription.type != Unknown)):
+
+            serverSupportsStreaming = description.type != Unknown and description.topologyVersion != Null
+            connectionIsStreaming = connection != Null and connection.moreToCome
+            trasitionedWithNetworkError = isNetworkError(description.error) and previousDescription.type != Unknown
+
+            if serverSupportsStreaming or connectionIsStreaming or trasitionedWithNetworkError:
                 continue
 
             wait()
