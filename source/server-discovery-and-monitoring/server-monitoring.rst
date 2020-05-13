@@ -665,8 +665,8 @@ The event API here is assumed to be like the standard `Python Event
             # was successful and included the topologyVersion field, or the
             # previous response included the moreToCome flag, or the server
             # has just transitioned to Unknown from a network error.
-            if (description.type != Unknown and description.topologyVersion != Null or
-                    connection.moreToCome or
+            if (description.type != Unknown and description.topologyVersion != Null) or
+                    (conn is not None && connection.moreToCome) or
                     (isNetworkError(description.error) and previousDescription.type != Unknown)):
                 continue
 
@@ -699,6 +699,7 @@ The event API here is assumed to be like the standard `Python Event
             return new ServerDescription
         except (NetworkError, CommandError) as exc:
             close connection
+            conn = None
             clear connection pool for the server
             return new ServerDescription with type=Unknown, error=exc
 
