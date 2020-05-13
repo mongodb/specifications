@@ -642,7 +642,7 @@ The event API here is assumed to be like the standard `Python Event
         minHeartbeatFrequencyMS = 500
 
         # Internal Monitor state:
-        connection = None
+        connection = Null
         description = default ServerDescription
 
     def run():
@@ -666,7 +666,7 @@ The event API here is assumed to be like the standard `Python Event
             # previous response included the moreToCome flag, or the server
             # has just transitioned to Unknown from a network error.
             if (description.type != Unknown and description.topologyVersion != Null) or
-                    (conn is not None && connection.moreToCome) or
+                    (connection != Null && connection.moreToCome) or
                     (isNetworkError(description.error) and previousDescription.type != Unknown)):
                 continue
 
@@ -699,7 +699,7 @@ The event API here is assumed to be like the standard `Python Event
             return new ServerDescription
         except (NetworkError, CommandError) as exc:
             close connection
-            conn = None
+            connection = Null
             clear connection pool for the server
             return new ServerDescription with type=Unknown, error=exc
 
