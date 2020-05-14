@@ -29,34 +29,12 @@ subsequent tests. The fail point may be disabled like so::
         mode: "off"
     });
 
-How to verify connection count
-``````````````````````````````
-
-If the driver implements the CMAP specification, verify that a
-ConnectionCreatedEvent event has been published. Otherwise, verify that
-`connections.totalCreated <https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated>`_
-in ``serverStatus`` has increased by 1.
-
-How to verify the connection pool has been cleared
-``````````````````````````````````````````````````
-
-If the driver implements the CMAP specification, verify that a PoolCleared event
-has been published. Otherwise, verify that ``connections.totalCreated`` in
-``serverStatus`` has increased by 1.
-
-How to verify the connection pool has not been cleared
-``````````````````````````````````````````````````````
-
-If the driver implements the CMAP specification, verify that no new PoolCleared
-CMAP event has been published. Otherwise verify that
-``connections.totalCreated`` in ``serverStatus`` has not changed.
-
 Consideration when using serverStatus
 `````````````````````````````````````
 
-Drivers executing ``serverStatus`` for connection assertions MUST take its own
+Drivers executing `serverStatus`_ for connection assertions MUST take its own
 connection into account when making their calculations. Those drivers SHOULD
-execute ``serverStatus`` using a separate client not under test.
+execute `serverStatus`_ using a separate client not under test.
 
 
 Tests
@@ -90,7 +68,11 @@ Perform the following operations:
   the command succeeded.
 - Retrieve the next batch of results from the cursor obtained in the find
   operation, and verify that this operation succeeded.
-- Verify that no new connections have been created following the instructions in section `How to verify the connection pool has not been cleared`_
+- If the driver implements the `CMAP`_ specification, verify that no new `PoolClearedEvent`_ has been
+  published. Otherwise verify that `connections.totalCreated`_ in `serverStatus`_ has not changed.
+
+
+
 
 Not Master - Keep Connection Pool
 `````````````````````````````````
@@ -104,8 +86,8 @@ This test requires a replica set with server version 4.2 or higher.
 - Verify that the insert failed with an operation failure with 10107 code.
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
-- Verify that the connection pool has not been cleared,
-  following the instructions in section `How to verify the connection pool has not been cleared`_
+- If the driver implements the `CMAP`_ specification, verify that no new `PoolClearedEvent`_ has been
+  published. Otherwise verify that `connections.totalCreated`_ in `serverStatus`_ has not changed.
 
 
 
@@ -120,9 +102,12 @@ This test requires a replica set with server version 4.0.
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 10107 code.
-- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
+- If the driver implements the `CMAP`_ specification, verify that a `PoolClearedEvent`_
+  has been published
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
+- If the driver does NOT implement the `CMAP`_ specification, use the `serverStatus`_
+  command to verify `connections.totalCreated`_ has increased by 1.
 
 
 Shutdown in progress - Reset Connection Pool
@@ -137,9 +122,12 @@ Perform the following operations on a client configured to NOT retry writes:
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 91 code.
-- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
+- If the driver implements the `CMAP`_ specification, verify that a `PoolClearedEvent`_
+  has been published
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
+- If the driver does NOT implement the `CMAP`_ specification, use the `serverStatus`_
+  command to verify `connections.totalCreated`_ has increased by 1.
 
 
 Interrupted at shutdown - Reset Connection Pool
@@ -154,9 +142,12 @@ Perform the following operations on a client configured to NOT retry writes:
 - Execute an insert into the test collection of a ``{test: 1}``
   document.
 - Verify that the insert failed with an operation failure with 11600 code.
-- Verify that the pool has been cleared following the instructions in section `How to verify the connection pool has been cleared`_
+- If the driver implements the `CMAP`_ specification, verify that a `PoolClearedEvent`_
+  has been published
 - Execute an insert into the test collection of a ``{test: 1}``
   document and verify that it succeeds.
+- If the driver does NOT implement the `CMAP`_ specification, use the `serverStatus`_
+  command to verify `connections.totalCreated`_ has increased by 1.
 
 
 
@@ -178,3 +169,9 @@ a successful insert operation does not directly test functionality introduced in
 straightforward way to test driver resiliency against a live replica set undergoing an election. This testing
 methodology is in contrast to the one adopted by the SDAM spec tests that rely entirely on mocking with no actual
 server communication.
+
+
+.. _CMAP: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _PoolClearedEvent: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events
+.. _serverStatus: https://docs.mongodb.com/manual/reference/command/serverStatus
+.. _connections.totalCreated: https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated
