@@ -23,10 +23,10 @@ tests:
                 update: { $set: { "y.0.b": 2 } }
                 arrayFilters: [ { "i.b": 1 } ]
           options: { ordered: true }
-          error: true
+        error: true
     expectations: []
   -
-    description: "BulkWrite on server (that doesn't support arrayFilters) with arrayFilters on second op"
+    description: "BulkWrite on server that doesn't support arrayFilters with arrayFilters on second op"
     operations:
       -
         name: "bulkWrite"
@@ -46,5 +46,5 @@ tests:
                 update: { $set: { "y.$[i].b": 2 } }
                 arrayFilters: [ { "i.b": 1 } ]
           options: { ordered: true }
-          error: true
+        error: true
     expectations: []

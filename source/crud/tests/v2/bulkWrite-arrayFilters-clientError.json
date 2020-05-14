@@ -55,15 +55,15 @@
             ],
             "options": {
               "ordered": true
-            },
-            "error": true
-          }
+            }
+          },
+          "error": true
         }
       ],
       "expectations": []
     },
     {
-      "description": "BulkWrite on server (that doesn't support arrayFilters) with arrayFilters on second op",
+      "description": "BulkWrite on server that doesn't support arrayFilters with arrayFilters on second op",
       "operations": [
         {
           "name": "bulkWrite",
@@ -99,9 +99,9 @@
             ],
             "options": {
               "ordered": true
-            },
-            "error": true
-          }
+            }
+          },
+          "error": true
         }
       ],
       "expectations": []
