@@ -68,7 +68,8 @@
             ],
             "options": {
               "ordered": true
-            }
+            },
+            "error": true
           }
         }
       ]

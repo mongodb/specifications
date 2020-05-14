@@ -32,3 +32,4 @@ tests:
                 update: { $set: { "y.$[i].b": 2 } }
                 arrayFilters: [ { "i.b": 1 } ]
           options: { ordered: true }
+          error: true
