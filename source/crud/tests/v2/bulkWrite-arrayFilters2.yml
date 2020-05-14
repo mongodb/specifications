@@ -32,6 +32,3 @@ tests:
                 update: { $set: { "y.$[i].b": 2 } }
                 arrayFilters: [ { "i.b": 1 } ]
           options: { ordered: true }
-        result:
-          # Client-side error.
-          errorContains: The selected server does not support array filters
