@@ -14,7 +14,7 @@ tests:
           filter: { }
           allowDiskUse: true
         error: true
-    expctations: []
+    expectations: []
   -
     description: "Find fails when allowDiskUse false is specified against pre 3.2 server"
     operations:
