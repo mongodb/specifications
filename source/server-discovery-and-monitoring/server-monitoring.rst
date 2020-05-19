@@ -547,6 +547,8 @@ Errors encountered when running a isMaster command MUST NOT update the topology.
 When constructing a ServerDescription from a streaming isMaster response,
 clients MUST use the current roundTripTime from the RTT task.
 
+See the pseudocode in the `RTT thread`_ section for an example implementation.
+
 SDAM Monitoring
 ```````````````
 
@@ -630,10 +632,11 @@ Most platforms can use an event object to control the monitor thread.
 The event API here is assumed to be like the standard `Python Event
 <https://docs.python.org/2/library/threading.html#event-objects>`_.
 `heartbeatFrequencyMS`_ is configurable,
-`minHeartbeatFrequencyMS`_ is always 500 milliseconds::
+`minHeartbeatFrequencyMS`_ is always 500 milliseconds:
+
+.. code-block:: python
 
   class Monitor(Thread):
-
     def __init__():
         # Monitor options:
         serverAddress = serverAddress
@@ -645,6 +648,7 @@ The event API here is assumed to be like the standard `Python Event
         connection = Null
         description = default ServerDescription
         lock = Mutex()
+        rttMonitor = RttMonitor(serverAddress)
 
     def run():
         while this monitor is not stopped:
@@ -690,26 +694,28 @@ The event API here is assumed to be like the standard `Python Event
             # check or the previous check was cancelled.
             if not connection or connection.isClosed():
                 setUpConnection()
-                return new ServerDescription from handshake response
-
-            if connection.moreToCome:
-                read next isMaster exhaust response
-                return new ServerDescription
-
-            if previousDescription.topologyVersion:
+                rttMonitor.addSample(connection.handshakeDuration)
+                response = connection.handshakeResponse
+            elif connection.moreToCome:
+                response = read next isMaster exhaust response
+            elif previousDescription.topologyVersion:
                 # Initiate streaming isMaster
+                rttMonitor.start()
                 set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
-                call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
-                return new ServerDescription
+                response = call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
+            else:
+                # The server does not support topologyVersion.
+                set connection timeout to connectTimeoutMS
+                start = time()
+                response = call {isMaster: 1}
+                rttMonitor.addSample(time()-start)
 
-            # The server does not support topologyVersion.
-            set connection timeout to connectTimeoutMS
-            call {isMaster: 1}
-            return new ServerDescription
+            return ServerDescription(response, rtt=rttMonitor.average())
         except (NetworkError, CommandError) as exc:
             close connection
+            rttMonitor.reset()
             clear connection pool for the server
-            return new ServerDescription with type=Unknown, error=exc
+            return ServerDescription(type=Unknown, error=exc)
 
     def wait():
         start = gettime()
@@ -724,13 +730,17 @@ The event API here is assumed to be like the standard `Python Event
             sleep(minHeartbeatFrequencyMS - waitTime)
 
 
-`Requesting an immediate check`_::
+`Requesting an immediate check`_:
+
+.. code-block:: python
 
     def requestCheck():
         event.set()
 
 
-`isMaster Cancellation`_::
+`isMaster Cancellation`_:
+
+.. code-block:: python
 
     def cancelCheck():
         # Take the mutex to avoid reading the connection value while setUpConnection is writing to it.
@@ -741,6 +751,66 @@ The event API here is assumed to be like the standard `Python Event
         if tempConnection:
           interrupt connection read
           close tempConnection
+
+RTT thread
+``````````
+
+The requirements in the `Measuring RTT`_ section can be statisfied with an
+addtional thread that periodically runs the isMaster command on a dedicated
+connection, for example:
+
+.. code-block:: python
+
+  class RttMonitor(Thread):
+    def __init__():
+        # Options:
+        serverAddress = serverAddress
+        connectTimeoutMS = connectTimeoutMS
+        heartbeatFrequencyMS = heartbeatFrequencyMS
+        # Internal state:
+        connection = Null
+        lock = Mutex()
+        movingAverage = MovingAverage()
+
+    def reset():
+        with lock:
+            movingAverage.reset()
+
+    def addSample(rtt):
+        with lock:
+            movingAverage.update(rtt)
+
+    def average():
+        with lock:
+            return movingAverage.get()
+
+    def run():
+        while this monitor is not stopped:
+            try:
+                rtt = pingServer()
+                addSample(rtt)
+            except (NetworkError, CommandError) as exc:
+                close connection
+                connection = Null
+
+            # Can be awakened when the client is closed.
+            event.wait(heartbeatFrequencyMS)
+            event.clear()
+
+    def setUpConnection():
+        connection = new Connection(serverAddress)
+        set connection timeout to connectTimeoutMS
+        perform connection handshake
+
+    def pingServer():
+        if not connection:
+            setUpConnection()
+            return RTT of the connection handshake
+
+        start = time()
+        call {isMaster: 1}
+        rtt = time() - start
+        return rtt
 
 
 Design Alternatives
