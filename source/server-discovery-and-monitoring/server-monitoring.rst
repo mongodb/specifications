@@ -700,7 +700,7 @@ The event API here is assumed to be like the standard `Python Event
                 response = read next isMaster exhaust response
             elif previousDescription.topologyVersion:
                 # Initiate streaming isMaster
-                rttMonitor.start()
+                rttMonitor.run()
                 set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
                 response = call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
             else:
