@@ -644,7 +644,7 @@ The event API here is assumed to be like the standard `Python Event
         # Internal Monitor state:
         connection = Null
         description = default ServerDescription
-        mutex = new Mutex()
+        lock = Mutex()
 
     def run():
         while this monitor is not stopped:
@@ -677,10 +677,9 @@ The event API here is assumed to be like the standard `Python Event
     def setUpConnection():
         # Take the mutex to avoid a data race becauase this code writes to the connection field and a concurrent
         # cancelCheck call could be reading from it.
-        mutex.lock()
-        connection = new Connection(serverAddress)
-        set connection timeout to connectTimeoutMS
-        mutex.unlock()
+        with lock:
+            connection = new Connection(serverAddress)
+            set connection timeout to connectTimeoutMS
 
         # Do any potentially blocking operations after releasing the mutex.
         create the socket and perform connection handshake
@@ -736,9 +735,8 @@ The event API here is assumed to be like the standard `Python Event
     def cancelCheck():
         # Take the mutex to avoid reading the connection value while setUpConnection is writing to it.
         # Copy the connection value in the lock but do the actual cancellation outside.
-        mutex.lock()
-        tempConnection = connection
-        mutex.unlock()
+        with lock:
+            tempConnection = connection
 
         if tempConnection:
           interrupt connection read
