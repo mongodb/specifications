@@ -644,6 +644,7 @@ The event API here is assumed to be like the standard `Python Event
         # Internal Monitor state:
         connection = Null
         description = default ServerDescription
+        mutex = new Mutex()
 
     def run():
         while this monitor is not stopped:
@@ -674,13 +675,21 @@ The event API here is assumed to be like the standard `Python Event
             wait()
 
     def setUpConnection():
+        # Take the mutex to avoid a data race becauase this code writes to the connection field and a concurrent
+        # cancelCheck call could be reading from it.
+        mutex.lock()
         connection = new Connection(serverAddress)
         set connection timeout to connectTimeoutMS
-        perform connection handshake
+        mutex.unlock()
+
+        # Do any potentially blocking operations after releasing the mutex.
+        create the socket and perform connection handshake
 
     def checkServer(previousDescription):
         try:
-            if not connection:
+            # The connection is null if this is the first check. It's closed if there was an error during the previous
+            # check or the previous check was cancelled.
+            if not connection or connection.isClosed():
                 setUpConnection()
                 return new ServerDescription from handshake response
 
@@ -700,7 +709,6 @@ The event API here is assumed to be like the standard `Python Event
             return new ServerDescription
         except (NetworkError, CommandError) as exc:
             close connection
-            connection = Null
             clear connection pool for the server
             return new ServerDescription with type=Unknown, error=exc
 
@@ -726,9 +734,15 @@ The event API here is assumed to be like the standard `Python Event
 `isMaster Cancellation`_::
 
     def cancelCheck():
-        if connection:
-            interrupt connection read
-            close connection
+        # Take the mutex to avoid reading the connection value while setUpConnection is writing to it.
+        # Copy the connection value in the lock but do the actual cancellation outside.
+        mutex.lock()
+        tempConnection = connection
+        mutex.unlock()
+
+        if tempConnection:
+          interrupt connection read
+          close tempConnection
 
 
 Design Alternatives
