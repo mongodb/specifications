@@ -272,7 +272,7 @@ MongoClient has published a specific event a given number of times. For
 example, the following instructs the test runner to assert that a single
 PoolClearedEvent was published::
 
-      - name: waitForEvent
+      - name: assertEventCount
         object: testRunner
         arguments:
           event: PoolClearedEvent
