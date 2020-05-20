@@ -540,8 +540,8 @@ Clients MUST update the RTT from the isMaster duration of the initial
 connection handshake. Clients MUST NOT update RTT based on streaming isMaster
 responses.
 
-Errors encountered when running a "isMaster" command MUST NOT update the
-topology.
+Clients MUST ignore the response to the isMaster command when measuring RTT.
+Errors encountered when running a isMaster command MUST NOT update the topology.
 (See `Why don't clients mark a server unknown when an RTT command fails?`_)
 
 When constructing a ServerDescription from a streaming isMaster response,
