@@ -94,7 +94,7 @@ RTT
 ```
 
 Round trip time. The client's measurement of the duration of one isMaster call.
-The RTT is used to support `localThresholdMS from the Server Selection spec`_.
+The RTT is used to support `localThresholdMS`_ from the Server Selection spec.
 
 
 Monitoring
@@ -844,7 +844,7 @@ Monitors MUST use a dedicated connection for RTT commands
 
 When using the streaming protocol, a monitor needs to maintain an extra
 dedicated connection to periodically update its average round trip time in
-order to support `localThresholdMS from the Server Selection spec`_.
+order to support `localThresholdMS`_ from the Server Selection spec.
 
 It could pop a connection from its regular pool, but we rejected this option
 for a few reasons:
@@ -876,6 +876,33 @@ command to measure RTT. This spec chooses "isMaster" for consistency with the
 polling protocol as well as consistency with the initial RTT provided the
 connection handshake which also uses the isMaster command. Additionally,
 mongocryptd does not allow the ping command but does allow isMaster.
+
+Why not use `awaitedTimeMS` in the server response to calculate RTT in the streaming protocol?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+One approach to calculating RTT in the streaming protocol would be to have the server
+return an ``awaitedTimeMS`` in its ``isMaster`` response. A driver could then determine the
+RTT by calculating the difference between the initial request, or last response, and the
+``awaitedTimeMS``.
+
+We rejected this design because of a number of issue with the unreliability of clocks in
+distributed sytems. Clocks skew between local and remote system clocks. This approach mixes
+two notions of time: the local clock times the whole operation while the remote clock times
+the wait. This means that if these clocks tick at different rates, or there are anomalies
+like clock changes, you will get bad results. To make matters worse, you will be comparing
+times from multiple servers that could each have clocks ticking at different rates. This
+approach will bias toward servers with the fastest ticking clock, since it will seem like it
+spends the least time on the wire.
+
+Additionally, systems using NTP will experience clock "slew". ntpd "slews" time by up to 500
+parts-per-million to have the local time gradually approach the "true" time without big
+jumps - over a 10 second window that means a 5ms difference. If both sides are slewing in
+opposite directions, that can result in an effective difference of 10ms. Both of these times
+are close enough to `localThresholdMS`_ to significantly affect which servers are viable
+in NEAREST calculations.
+
+Ensuring that all measurements use the same clock obviates the need for a more complicated
+solution, and mitigates the above mentioned concerns.
 
 Why don't clients mark a server unknown when an RTT command fails?
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -970,6 +997,8 @@ awaitable isMaster heartbeat in the new protocol.
 Changelog
 ---------
 
+- 2020-05-20 Include rationale for why we don't use `awaitedTimeMS`
+
 - 2020-04-20 Add streaming heartbeat protocol.
 
 - 2020-03-09 A monitor check that creates a new connection MUST use the
@@ -990,7 +1019,7 @@ Changelog
 .. _Network error when reading or writing: server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
 .. _"not master" and "node is recovering": server-discovery-and-monitoring.rst#not-master-and-node-is-recovering
 .. _connection handshake: mongodb-handshake/handshake.rst
-.. _localThresholdMS from the Server Selection spec: /source/server-selection/server-selection.rst#localThresholdMS
+.. _localThresholdMS: /source/server-selection/server-selection.rst#localThresholdMS
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-monitoring.rst#heartbeats
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
