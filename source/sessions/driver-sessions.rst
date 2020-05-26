@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.7.0
+:Spec Version: 1.7.1
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -59,7 +59,7 @@ Deployment
     word "cluster" because some people interpret "cluster" to mean "sharded cluster".
 
 Explicit session
-    A session that was started explicitly by the application by calling ``startSession`` 
+    A session that was started explicitly by the application by calling ``startSession``
     and passed as an argument to an operation.
 
 MongoClient
@@ -95,7 +95,7 @@ Session
     but examples include causally consistent reads and retryable writes.
 
 Topology
-    The current configuration and state of a deployment. 
+    The current configuration and state of a deployment.
 
 Unacknowledged writes
     Unacknowledged writes are write operations that are sent to the server
@@ -295,7 +295,7 @@ operations have been executed using this session this value will be null unless
 ``advanceClusterTime`` has been called. This value will also be null when a
 cluster does not report cluster times.
 
-When a driver is gossiping the cluster time it should send the more recent 
+When a driver is gossiping the cluster time it should send the more recent
 ``clusterTime`` of the ``ClientSession`` and the ``MongoClient``.
 
 options
@@ -500,8 +500,6 @@ include a session ID in a ``KILLCURSORS`` command.
 
 How to Check Whether a Deployment Supports Sessions
 ===================================================
-
-Standalone servers do not support sessions.
 
 A driver can determine whether a replica set or sharded cluster deployment
 supports sessions by checking whether the ``logicalSessionTimeoutMinutes``
@@ -979,19 +977,19 @@ Test Plan
 =========
 
 The test plan SHOULD be run against both replica set and sharded cluster
-topologies.  It MUST NOT be run against a standalone server.
+topologies.
 
 1. Pool is LIFO.
-    * This test applies to drivers with session pools. 
-    * Call ``MongoClient.startSession`` twice to create two sessions, let us call them ``A`` and ``B``. 
-    * Call ``A.endSession``, then ``B.endSession``. 
-    * Call ``MongoClient.startSession``: the resulting session must have the same session ID as ``B``. 
+    * This test applies to drivers with session pools.
+    * Call ``MongoClient.startSession`` twice to create two sessions, let us call them ``A`` and ``B``.
+    * Call ``A.endSession``, then ``B.endSession``.
+    * Call ``MongoClient.startSession``: the resulting session must have the same session ID as ``B``.
     * Call ``MongoClient.startSession`` again: the resulting session must have the same session ID  as ``A``.
 
 2. ``$clusterTime`` in commands
     * Turn ``heartbeatFrequencyMS`` up to a very large number.
     * Register a command-started and a command-succeeded APM listener.  If the driver has no APM support, inspect commands/replies in another idiomatic way, such as monkey-patching or a mock server.
-    * Send a ``ping`` command to the server with the generic ``runCommand`` method. 
+    * Send a ``ping`` command to the server with the generic ``runCommand`` method.
     * Assert that the command passed to the command-started listener includes ``$clusterTime`` if and only if ``maxWireVersion`` >= 6.
     * Record the ``$clusterTime``, if any, in the reply passed to the command-succeeded APM listener.
     * Send another ``ping`` command.
@@ -1122,7 +1120,7 @@ Tests that only apply to drivers that allow authentication to be changed on the 
     * Call ``findOne`` using the session as an explicit session
     * Assert that the driver returned an error because the session is owned by a different user
 
-Motivation 
+Motivation
 ==========
 
 Drivers currently have no concept of a session. The driver API needs to be
@@ -1269,3 +1267,4 @@ Change log
 :2019-05-15: A ServerSession that is involved in a network error MUST be discarded
 :2019-10-22: Drivers may defer checking if a deployment supports sessions until the first
 operation performed with a session
+:2020-05-26: Simplify logic for determining sessions support
