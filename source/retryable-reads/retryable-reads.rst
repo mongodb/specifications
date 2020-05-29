@@ -626,7 +626,7 @@ specifically `the rule that a driver must send the highest seen $clusterTime
 <https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-highest-seen-cluster-time>`__.
 
 Additionally, there would be a behavioral difference between a driver resending
-the same wire protocol message and one that does not. For example, a driver
+the same wire protocol message and one that does not. For example, a driver that
 creates a new wire protocol message could exhibit the following characteristics:
 
 1. The second attempt to send the read command could have a higher ``$clusterTime``.
@@ -635,7 +635,7 @@ creates a new wire protocol message could exhibit the following characteristics:
    ``operationTime`` would be advanced and the next read would include a larger
    ``readConcern.afterClusterTime``.
 
-A driver resends the same wire protocol message would not exhibit the above
+A driver that resends the same wire protocol message would not exhibit the above
 characteristics. Thus, in order to avoid this behavioral difference and not
 violate the rules about gossiping ``$clusterTime``, drivers MUST not resend the same
 wire protocol message.
