@@ -336,7 +336,7 @@ Read Preference Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Applications may set mode and/or tag sets on a per-operation basis similar to
-how ``addSpecial``, ``hint``, or ``batchSize`` are set. E.g., in Python::
+how ``hint`` or ``batchSize`` are set. E.g., in Python::
 
     db.collection.find({}).read_preference(ReadPreference.SECONDARY)
     db.collection.find({}).read_preference(ReadPreference.NEAREST, [ {'dc': 'ny'} ])

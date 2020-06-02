@@ -565,8 +565,7 @@ specific object takes precedence.  I.e. ``Collection`` is preferred over
 ``Database``, which is preferred over ``MongoClient``.
 
 Drivers MAY allow users to set a read preference on queries on a per-operation
-basis similar to how ``addSpecial``, ``hint``, or ``batchSize`` are set. E.g.,
-in Python::
+basis similar to how ``hint`` or ``batchSize`` are set. E.g., in Python::
 
     db.collection.find({}, read_preference=ReadPreference.SECONDARY)
     db.collection.find(
