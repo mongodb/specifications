@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.17
+:Version: 2.18
 :Last Modified: 2020-05-07
 
 .. contents::
@@ -1296,7 +1296,7 @@ unusable. These are called "node is recovering" errors:
     - Error Code
   * - InterruptedAtShutdown
     - 11600
-  * - InterruptedDueToReplStateChange 
+  * - InterruptedDueToReplStateChange
     - 11602
   * - NotMasterOrSecondary
     - 13436
