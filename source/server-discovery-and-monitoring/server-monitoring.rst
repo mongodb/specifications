@@ -510,9 +510,6 @@ A client follows these rules when processing the isMaster exhaust response:
   occurs, the client MUST close the connection and restart the monitoring
   protocol on a new connection. (See
   `Network or command error during server check`_.)
-- If the response omits topologyVersion, the client MUST close the connection
-  and restart the monitoring protocol on a new connection. This is an
-  unexpected state as 4.4+ servers always include topologyVersion.
 - If the response is successful (includes "ok:1") and includes the OP_MSG
   moreToCome flag, then the client begins reading the next response.
 - If the response is successful (includes "ok:1") and does not include the
@@ -651,6 +648,8 @@ The event API here is assumed to be like the standard `Python Event
         rttMonitor = RttMonitor(serverAddress)
 
     def run():
+        # Start the RttMonitor.
+        rttMonitor.run()
         while this monitor is not stopped:
             previousDescription = description
             try:
@@ -700,15 +699,11 @@ The event API here is assumed to be like the standard `Python Event
                 response = read next isMaster exhaust response
             elif previousDescription.topologyVersion:
                 # Initiate streaming isMaster
-                rttMonitor.run()
                 set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
                 response = call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
             else:
                 # The server does not support topologyVersion.
-                set connection timeout to connectTimeoutMS
-                start = time()
                 response = call {isMaster: 1}
-                rttMonitor.addSample(time()-start)
 
             return ServerDescription(response, rtt=rttMonitor.average())
         except (NetworkError, CommandError) as exc:
