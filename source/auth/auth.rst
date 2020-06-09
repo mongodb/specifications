@@ -863,18 +863,15 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15\\n
         ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
 .. note::
-        Region is not a header, but simply part of the authorization header. Region by default is ‘us-east-1’ since this is the 
-        implicit region for ‘sts.amazonaws.com’. Drivers will need to derive the region to use from the endpoint. The region 
-        is the second piece of a FQDN name. While all official AWS STS endpoints start with “sts.”, there are non-AWS hosted 
-        endpoints and test endpoints that will not follow this rule.
+        Region is not a header, but simply part of the authorization header. The default region for the host ``sts.amazonaws.com`` and all other hosts without a full stop "``.``" character (*dot* or *period*) as a seperator between labels is ``us-east-1``. Drivers MUST derive the region for all other hosts by using the second label as the region as in the example below.
 
-================= =========
-Host              Region
-================= =========
-sts.amazonaws.com us-east-1
-first.second      second
-first             us-east-1
-================= ========= 
+=========================== =========
+Host                        Region
+=========================== =========
+sts.amazonaws.com           us-east-1
+sts.us-west-2.amazonaws.com us-west-2
+no-period-present           us-east-1
+=========================== ========= 
 
 `MongoCredential`_ Properties
 `````````````````````````````
