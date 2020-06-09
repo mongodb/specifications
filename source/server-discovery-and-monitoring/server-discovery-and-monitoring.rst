@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.18
-:Last Modified: 2020-05-07
+:Version: 2.19
+:Last Modified: 2020-06-08
 
 .. contents::
 
@@ -1408,6 +1408,7 @@ recovering" error::
 
         currentTopologyVersion = currentServer.topologyVersion
         # True if the current error's topologyVersion is greater than the server's
+        # We use >= instead of > because any state change should result in a new topologyVersion
         return compareTopologyVersion(currentTopologyVersion, response.get("topologyVersion")) >= 0
 
 See the test scenario called
@@ -2348,6 +2349,8 @@ to the last one.
 stale application errors.
 
 2020-05-07: Include error field in ServerDescription equality comparison.
+
+2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
 
 .. Section for links.
 
