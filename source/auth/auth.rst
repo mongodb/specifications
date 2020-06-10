@@ -871,6 +871,12 @@ Host                        Region
 sts.amazonaws.com           us-east-1
 sts.us-west-2.amazonaws.com us-west-2
 no-period-present           us-east-1
+one-period.present          present
+invalid..host               <Error>
+.invalid.host               <Error>
+invalid.host.               <Error>
+"<empty string>"            <Error>
+"string longer than 255"    <Error>
 =========================== ========= 
 
 `MongoCredential`_ Properties
