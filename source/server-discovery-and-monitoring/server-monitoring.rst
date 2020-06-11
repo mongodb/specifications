@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2020-04-20
+:Last Modified: 2020-06-11
 
 .. contents::
 
@@ -519,9 +519,11 @@ A client follows these rules when processing the isMaster exhaust response:
 Socket timeout
 ``````````````
 
-Clients MUST use connectTimeoutMS + maxAwaitTimeMS as the timeout for
-awaitable isMaster replies. The timeout for the first isMaster exchange
-is still connectTimeoutMS.
+Clients MUST use connectTimeoutMS as the timeout for the connection handshake.
+When connectTimeoutMS=0, the timeout is unlimited and MUST remain unlimited
+for awaitable isMaster replies. Otherwise, connectTimeoutMS is non-zero and
+clients MUST use connectTimeoutMS + heartbeatFrequencyMS as the timeout for
+awaitable isMaster replies.
 
 Measuring RTT
 `````````````
@@ -563,6 +565,8 @@ In the polling protocol, a client sleeps between each isMaster check (for at
 least minHeartbeatFrequencyMS and up to heartbeatFrequencyMS). In the
 streaming protocol, after processing an "ok:1" isMaster response, the client
 MUST NOT sleep and MUST begin the next check immediately.
+
+Clients MUST set `maxAwaitTimeMS`_ to heartbeatFrequencyMS.
 
 isMaster Cancellation
 `````````````````````
@@ -699,7 +703,8 @@ The event API here is assumed to be like the standard `Python Event
                 response = read next isMaster exhaust response
             elif previousDescription.topologyVersion:
                 # Initiate streaming isMaster
-                set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
+                if connectTimeoutMS != 0:
+                    set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
                 response = call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
             else:
                 # The server does not support topologyVersion.
@@ -1075,6 +1080,8 @@ awaitable isMaster heartbeat in the new protocol.
 
 Changelog
 ---------
+
+- 2020-06-11 Support connectTimeoutMS=0 in streaming heartbeat protocol.
 
 - 2020-05-20 Include rationale for why we don't use `awaitedTimeMS`
 
