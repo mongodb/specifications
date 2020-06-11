@@ -785,6 +785,8 @@ connection, for example:
                 rtt = pingServer()
                 addSample(rtt)
             except (NetworkError, CommandError) as exc:
+                # Don't call reset() here. The Monitor thread is responsible
+                # for resetting the average RTT.
                 close connection
                 connection = Null
 
