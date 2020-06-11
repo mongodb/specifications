@@ -847,7 +847,7 @@ URI                      /
 Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
 Host*                    Host field from Server First Message
-Region                   Derived from Host - see below
+Region                   Derived from Host - see `Region Calculation`_ below
 X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`_
 X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
@@ -859,14 +859,16 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15\\n
 .. note::
         ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
-.. note::
+Region Calculation
+~~~~~~~~~~~~~~~~~~
         Region is not a header, but simply part of the authorization header. The general syntax of a regional endpoint (or host) is as follows.
 
 .. code:: javascript
 
 	service-code.region-code.amazonaws.com
 |
-Drivers MUST derive the region (the ``region-code`` above) from the second label of the host. If a region is not present, or does not contain a full stop "``.``" character (*dot* or *period*) as a seperator, then the default region, ``us-east-1`` MUST be used. Drivers MUST error on any empty labels or if the host itself is empty or longer than 255 bytes. Examples are provided below. 
+Drivers MUST derive the region (the ``region-code`` above) from the second label of the host. If a region is not present, or does not contain a full stop "``.``" character (*dot* or *period*) as a seperator, then the default region, ``us-east-1`` MUST be used. Drivers MUST error on any empty labels or if the host itself is empty or longer than 255 bytes per 	
+`RFC 1035 <https://tools.ietf.org/html/rfc1035>`_. Examples are provided below. 
 
 ==============================  =========  ======================================================
 Host                            Region     Notes                                                 
