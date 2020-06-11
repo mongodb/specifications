@@ -160,7 +160,7 @@ Drivers MUST support retryability for the following operations:
 
 Drivers SHOULD support retryability for the following operations:
 
-- Any driver that provides generic command runners for read commands(with logic
+- Any driver that provides generic command runners for read commands (with logic
   to inherit a client-level read concerns) SHOULD implement retryability for the
   read-only command runner.
 
