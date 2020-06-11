@@ -750,7 +750,7 @@ The event API here is assumed to be like the standard `Python Event
 RTT thread
 ``````````
 
-The requirements in the `Measuring RTT`_ section can be statisfied with an
+The requirements in the `Measuring RTT`_ section can be satisfied with an
 addtional thread that periodically runs the isMaster command on a dedicated
 connection, for example:
 
