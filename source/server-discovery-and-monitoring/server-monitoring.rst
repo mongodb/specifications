@@ -706,7 +706,7 @@ The event API here is assumed to be like the standard `Python Event
                 response = call {isMaster: 1}
 
             return ServerDescription(response, rtt=rttMonitor.average())
-        except (NetworkError, CommandError) as exc:
+        except Exception as exc:
             close connection
             rttMonitor.reset()
             clear connection pool for the server
@@ -784,7 +784,7 @@ connection, for example:
             try:
                 rtt = pingServer()
                 addSample(rtt)
-            except (NetworkError, CommandError) as exc:
+            except Exception as exc:
                 # Don't call reset() here. The Monitor thread is responsible
                 # for resetting the average RTT.
                 close connection
