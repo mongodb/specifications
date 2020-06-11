@@ -747,10 +747,7 @@ Conversation
 ````````````
 
 The first message sent by drivers MUST contain a ``client nonce`` and ``gs2-cb-flag``. In response, the server will send a ``server nonce``
-and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. 
-Drivers must also validate that the host is greater than 0 and less than or equal to 255 bytes per 
-`RFC 1035 <https://tools.ietf.org/html/rfc1035>`_.  Drivers MUST reject FQDN names with empty labels, e.g., "abc..def", and error on any 
-additional fields. Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
+and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
 
 As an example, given a client nonce value of "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI=", a MONGODB-AWS conversation decoded from
 BSON to JSON would appear as follows:
@@ -863,21 +860,27 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15\\n
         ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
 .. note::
-        Region is not a header, but simply part of the authorization header. The default region for the host ``sts.amazonaws.com`` and all other hosts without a full stop "``.``" character (*dot* or *period*) as a seperator between labels is ``us-east-1``. Drivers MUST derive the region for all other hosts by using the second label as the region as in the example below.
+        Region is not a header, but simply part of the authorization header. The general syntax of a regional endpoint (or host) is as follows.
 
-=========================== =========
-Host                        Region
-=========================== =========
-sts.amazonaws.com           us-east-1
-sts.us-west-2.amazonaws.com us-west-2
-no-period-present           us-east-1
-one-period.present          present
-invalid..host               <Error>
-.invalid.host               <Error>
-invalid.host.               <Error>
-"<empty string>"            <Error>
-"string longer than 255"    <Error>
-=========================== ========= 
+.. code:: javascript
+
+	service-code.region-code.amazonaws.com
+|
+Drivers MUST derive the region (the ``region-code`` above) from the second label of the host. If a region is not present, or does not contain a full stop "``.``" character (*dot* or *period*) as a seperator, then the default region, ``us-east-1`` MUST be used. Drivers MUST error on any empty labels or if the host itself is empty or longer than 255 bytes. Examples are provided below. 
+
+==============================  =========  ======================================================
+Host                            Region     Notes                                                 
+==============================  =========  ======================================================
+sts.amazonaws.com               us-east-1  no region-code; use the default region                
+sts.us-west-2.amazonaws.com     us-west-2  use the region-code (second label)                    
+sts.us-west-2.amazonaws.com.ch  us-west-2                                                        
+localhost                       us-east-1  no full stop "``.``" character; use the default region
+sts..com                        <Error>    second label is empty                                 
+.amazonaws.com                  <Error>    first label is empty                                  
+sts.amazonaws.                  <Error>    last label is empty                                   
+""                              <Error>    empty string                                          
+"string longer than 255"        <Error>    string longer than 255 bytes                          
+==============================  =========  ======================================================
 
 `MongoCredential`_ Properties
 `````````````````````````````
