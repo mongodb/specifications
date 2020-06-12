@@ -91,6 +91,11 @@ disabled like so::
         mode: "off"
     });
 
+Speeding Up Tests
+-----------------
+
+Drivers should set the default heartbeatFrequencyMS to 5ms in order to take into account the latest changes regarding streaming protocol. If a test has an explicit heartbeatFrequencyMS value, drivers should use the explicit value.
+
 Use as Integration Tests
 ========================
 
@@ -337,3 +342,5 @@ Changelog
              which are now expressed within ``runOn`` elements.
 
              Add test-level ``useMultipleMongoses`` field.
+
+:2020-06-12: Add the default value for heartbeatFrequencyMS.
