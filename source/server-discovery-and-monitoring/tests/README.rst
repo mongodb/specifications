@@ -302,6 +302,20 @@ MongoClient from the one used for test operations. For example::
             replSetStepDown: 20
             force: false
 
+**Note:** The "replSetStepDown" command often fails with the following
+transient error (see `SERVER-48154`_)::
+
+  {
+    "ok" : 0,
+    "errmsg" : "Unable to acquire X lock on '{4611686018427387905: ReplicationStateTransition, 1}' within 1000ms. opId: 922, op: conn30, connId: 30.",
+    "code" : 24,
+    "codeName" : "LockTimeout",
+  }
+
+When running the "replSetStepDown" command, drivers MUST retry until the
+command succeeds. The number of retries should be limited to avoid an infinite
+failure loop.
+
 waitForPrimaryChange
 ''''''''''''''''''''
 
@@ -431,3 +445,4 @@ Run the following test(s) on MongoDB 4.4+.
 .. Section for links.
 
 .. _Server Description Equality: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#server-description-equality
+.. _SERVER-48154: https://jira.mongodb.org/browse/SERVER-48154
