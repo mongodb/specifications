@@ -314,7 +314,7 @@ transient error (see `SERVER-48154`_)::
 
 When running the "replSetStepDown" command, drivers MUST retry until the
 command succeeds. The number of retries should be limited to avoid an infinite
-failure loop.
+failure loop. For example, the Python driver uses a 10 second retry period.
 
 waitForPrimaryChange
 ''''''''''''''''''''
