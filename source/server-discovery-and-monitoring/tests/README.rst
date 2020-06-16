@@ -299,7 +299,8 @@ MongoClient from the one used for test operations. For example::
         command_name: replSetStepDown
         arguments:
           command:
-            replSetStepDown: 20
+            replSetStepDown: 1
+            secondaryCatchUpPeriodSecs: 1
             force: false
 
 **Note:** The "replSetStepDown" command often fails with the following
