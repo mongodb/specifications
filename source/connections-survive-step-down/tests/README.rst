@@ -71,8 +71,19 @@ Perform the following operations:
 - If the driver implements the `CMAP`_ specification, verify that no new `PoolClearedEvent`_ has been
   published. Otherwise verify that `connections.totalCreated`_ in `serverStatus`_ has not changed.
 
+**Note:** The "replSetStepDown" command often fails with the following
+transient error (see `SERVER-48154`_)::
 
+  {
+    "ok" : 0,
+    "errmsg" : "Unable to acquire X lock on '{4611686018427387905: ReplicationStateTransition, 1}' within 1000ms. opId: 922, op: conn30, connId: 30.",
+    "code" : 24,
+    "codeName" : "LockTimeout",
+  }
 
+When running the "replSetStepDown" command, drivers MUST retry until the
+command succeeds. The number of retries should be limited to avoid an infinite
+failure loop. For example, the Python driver uses a 10 second retry period.
 
 Not Master - Keep Connection Pool
 `````````````````````````````````
@@ -175,3 +186,4 @@ server communication.
 .. _PoolClearedEvent: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events
 .. _serverStatus: https://docs.mongodb.com/manual/reference/command/serverStatus
 .. _connections.totalCreated: https://docs.mongodb.com/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated
+.. _SERVER-48154: https://jira.mongodb.org/browse/SERVER-48154
