@@ -668,6 +668,9 @@ The event API here is assumed to be like the standard `Python Event
                 wait()
                 continue
             topology.onServerDescriptionChanged(description)
+            if description.error != Null:
+                # Clear the connection pool only after the server description is set to Unknown.
+                clear connection pool for server
 
             # Immediately proceed to the next check if the previous response
             # was successful and included the topologyVersion field, or the
@@ -714,7 +717,6 @@ The event API here is assumed to be like the standard `Python Event
         except Exception as exc:
             close connection
             rttMonitor.reset()
-            clear connection pool for the server
             return ServerDescription(type=Unknown, error=exc)
 
     def wait():
