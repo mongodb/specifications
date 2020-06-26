@@ -52,7 +52,9 @@ tests:
       - name: waitForPrimaryChange
         object: testRunner
         arguments:
-          timeoutMS: 5000
+          # We use a relatively large timeout here to workaround slow
+          # elections on Windows, possibly caused by SERVER-48154.
+          timeoutMS: 15000
       # Rediscover the new primary.
       - name: insertMany
         object: collection
