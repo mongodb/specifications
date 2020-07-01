@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.3.1
+:Spec Version: 2.0.0
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2020-3-20
+:Last Modified: 2020-07-01
 
 .. contents::
 
@@ -128,7 +128,7 @@ invalid, the driver SHOULD end the connection.
 10. Finally, the driver SHOULD continue the connection, even if the
     status of all the unvalidated certificates has not been
     confirmed yet. This means that the driver SHOULD default to
-    “soft fail” behavior, connecting as long as there are no
+    "soft fail" behavior, connecting as long as there are no
     explicitly invalid certificates—i.e. the driver will connect
     even if the status of all the unvalidated certificates has not
     been confirmed yet (e.g. because an OCSP responder is down).
@@ -194,9 +194,20 @@ This boolean option determines whether a MongoClient should refrain from
 reaching out to an OCSP endpoint i.e.  whether non-stapled OCSP should
 be disabled.  When set to true, a driver MUST NOT reach out to OCSP
 endpoints. When set to false, a driver MUST reach out to OCSP
-endpoints if needed (as described in 
+endpoints if needed (as described in
 `Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).
-This option MUST default to false.
+
+For drivers that pass the `"Soft Fail Test"
+<tests/README.rst#integration-tests-permutations-to-be-tested>`__, this
+option MUST default to false.
+
+For drivers that fail the "Soft Fail Test" because their TLS library
+exhibits hard-fail behavior when a responder is unreachable, this option
+MUST default to true, and a driver MUST document this behavior. If this
+hard-failure behavior is specific to a particular platform (e.g. the TLS
+library hard-fails only on Windows) then this option MUST default to
+true only on the platform where the driver exhibits hard-fail behavior,
+and a driver MUST document this behavior.
 
 tlsDisableCertificateRevocationCheck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -211,10 +222,22 @@ This boolean option determines whether a MongoClient should refrain
 checking certificate revocation status. When set to true, a driver
 MUST NOT check certificate revocation status via CRLs or OCSP.  When
 set to false, a driver MUST check certificate revocation status, reach
-out to OCSP endpoints if needed (as described in 
-`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).  
-This option MUST default to false.
+out to OCSP endpoints if needed (as described in
+`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).
 
+For drivers that pass the `"Soft Fail Test"
+<tests/README.rst#integration-tests-permutations-to-be-tested>`__ , this
+option MUST default to false.
+
+If a driver has not already defaulted `tlsDisableOCSPEndpointCheck` to
+true, and if that driver fails the "Soft Fail Test" because their TLS
+library exhibits hard-fail behavior when a responder is unreachable,
+then that driver must default `tlsDisableCertificateRevocationCheck` to
+true. Such a driver also MUST document this behavior. If this
+hard-failure behavior is specific to a particular platform (e.g. the
+TLS library hard-fails only on Windows) then this option MUST default
+to true only on the platform where the driver exhibits hard-fail
+behavior, and a driver MUST document this behavior.
 
 Naming Deviations
 ^^^^^^^^^^^^^^^^^^
@@ -256,7 +279,11 @@ expose an option to enable/disable certificate revocation checking on a
 per MongoClient basis.
 
 1. Driver MUST enable OCSP support (with stapling if possible) when
-   certificate revocation checking is enabled.
+   certificate revocation checking is enabled **unless** their driver
+   exhibits hard-fail behavior (see
+   `tlsDisableCertificateRevocationCheck`_). In such a case, a driver
+   MUST disable OCSP support on the platforms where its TLS library
+   exhibits hard-fail behavior.
 
 2. Drivers SHOULD throw an error if any of ``tlsInsecure=true`` or
    ``tlsAllowInvalidCertificates=true`` or
@@ -306,13 +333,13 @@ support for stapling. They also MUST document their behavior when an
 OCSP responder is unavailable and a server has a Must-Staple
 certificate. If a driver is able to connect in such a scenario due to
 the prevalence of
-“\ `soft-fail <https://www.imperialviolet.org/2014/04/19/revchecking.html>`__\ ”
+"\ `soft-fail <https://www.imperialviolet.org/2014/04/19/revchecking.html>`__\ "
 behavior in TLS libraries (where a certificate is accepted when an
 answer from an OCSP responder cannot be obtained), they additionally
 MUST document that this ability to connect to a server with a
 Must-Staple certificate when an OCSP responder is unavailable differs
 from the mongo shell or a driver that does support OCSP-stapling, both
-of which will fail to connect (i.e. “hard-fail”) in such a scenario.
+of which will fail to connect (i.e. "hard-fail") in such a scenario.
 
 If a driver (e.g.
 `Python <https://api.mongodb.com/python/current/examples/tls.html>`__,
@@ -324,24 +351,29 @@ the user-provided CRL and OCSP.
 Drivers that cannot enable OCSP by default on a per MongoClient basis
 (e.g. Java) MUST document this limitation.
 
-Drivers that fail either of the “Malicious Server Tests” (i.e. the
+Drivers that fail either of the "Malicious Server Tests" (i.e. the
 driver connects to a test server without TLS constraints being relaxed)
 as defined in the test plan below MUST document that their chosen TLS
 library will connect in the case that a server with a Must-Staple
 certificate does not staple a response.
 
-Drivers that fail “Malicious Server Test 2” (i.e. the driver connects to
+Drivers that fail "Malicious Server Test 2" (i.e. the driver connects to
 the test server without TLS constraints being relaxed) as defined in the
 test plan below MUST document that their chosen TLS library will connect
 in the case that a server with a Must-Staple certificate does not staple
 a response and the OCSP responder is down.
 
-Drivers that fail “Soft Fail Test” MUST document that their driver’s
-TLS library utilizes “hard fail” behavior in the case of an
+Drivers that fail "Soft Fail Test" MUST document that their driver’s
+TLS library utilizes "hard fail" behavior in the case of an
 unavailable OCSP responder in contrast to the mongo shell and drivers
-that utilize “soft-fail” behavior. Such drivers MUST also document the
-potential backwards compatibility issues as noted in the `Backwards
-Compatibility`_ section.
+that utilize "soft fail" behavior. They also MUST document the change
+in defaults for the applicable options (see `MongoClient
+Configuration`_).
+
+If any changes related to defaults for OCSP behavior are made after a
+driver version that supports OCSP has been released, the driver MUST
+document potential backwards compatibility issues as noted in the
+`Backwards Compatibility`_ section.
 
 Test Plan
 ==========
@@ -381,17 +413,17 @@ Design Rationale
 =================
 
 We have chosen not to force drivers whose TLS libraries do not support
-OCSP/stapling “out of the box” to implement OCSP support due to the
+OCSP/stapling "out of the box" to implement OCSP support due to the
 extra work and research that this might require. Similarly, this
-specification uses “SHOULD” more commonly (when other specs would
-prefer “MUST”) to account for the fact that some drivers may not be
+specification uses "SHOULD" more commonly (when other specs would
+prefer "MUST") to account for the fact that some drivers may not be
 able to fully customize OCSP behavior in their TLS library.
 
 We are requiring drivers to support both stapled OCSP and non-stapled
 OCSP in order to support revocation checking for server versions in
 Atlas that do not support stapling, especially after Atlas switches to
 Let’s Encrypt certificates (which do not have CRLs). Additionally, even
-when servers do support stapling, in the case of a non-“Must Staple”
+when servers do support stapling, in the case of a non-"Must Staple"
 certificate (which is the type that Atlas is planning to use), if the
 server is unable to contact the OCSP responder (e.g. due to a network
 error) and staple a certificate, the driver being able to query the
@@ -401,14 +433,14 @@ verify the certificate’s validity.
 Malicious Server Tests
 ----------------------
 
-“Malicious Server Test 2” is designed to reveal the behavior of TLS
+"Malicious Server Test 2" is designed to reveal the behavior of TLS
 libraries of drivers in one of the worst case scenarios. Since a
 majority of the drivers will not have fine-grained control over their
 OCSP behavior, this test case provides signal about the soft/hard fail
 behavior in a driver’s TLS library so that we can document this.
 
 A driver with control over its OCSP behavior will react the same in
-“Malicious Server Test 1” and “Malicious Server Test 2”, terminating the
+"Malicious Server Test 1" and "Malicious Server Test 2", terminating the
 connection as long as TLS constraints have not been relaxed.
 
 Atlas Connectivity Tests
@@ -426,7 +458,7 @@ Suggested OCSP Behavior
 For drivers with finer-grain control over their OCSP behavior, the
 suggested OCSP behavior was chosen as a balance between security and
 availability, erring on availability while minimizing network round
-trips. Therefore, in the 
+trips. Therefore, in the
 `Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__ section,
 in order to minimize network round trips, drivers are advised not to
 reach out to OCSP endpoints and CRL distribution points in order to
@@ -437,11 +469,11 @@ Backwards Compatibility
 
 An application behind a firewall with an outbound whitelist that
 upgrades to a driver implementing this specification may experience
-connectivity issues. This is because the driver may need to contact
+connectivity issues when OCSP is enabled. This is because the driver may need to contact
 OCSP endpoints or CRL distribution points [1]_ specified in the
 server’s certificate and if these OCSP endpoints and/or CRL
 distribution points are not accessible, then the connection to the
-server may fail. (N.B.: TLS libraries `typically implement “soft fail”
+server may fail. (N.B.: TLS libraries `typically implement "soft fail"
 <https://blog.hboeck.de/archives/886-The-Problem-with-OCSP-Stapling-and-Must-Staple-and-why-Certificate-Revocation-is-still-broken.html>`__
 such that connections can continue even if the OCSP server is
 inaccessible, so this issue is much more likely in the case of a
@@ -491,11 +523,11 @@ supports OCSP stapling will not be able to connect while a driver that
 supports OCSP but not stapling will be able to connect.
 
 TLS libraries may implement
-“\ `soft-fail <https://www.imperialviolet.org/2014/04/19/revchecking.html>`__\ ”
+"\ `soft-fail <https://www.imperialviolet.org/2014/04/19/revchecking.html>`__\ "
 in the case of non-stapled OCSP which may be undesirable in highly
 secure contexts.
 
-Drivers that fail the “Malicious Server” tests as defined in Test Plan
+Drivers that fail the "Malicious Server" tests as defined in Test Plan
 will connect in the case that server with a Must-Staple certificate does
 not staple a response.
 
@@ -519,8 +551,8 @@ team’s certificate generation tool to generate V3 certificates.
 Another example comes from `.NET on
 Linux <https://github.com/dotnet/corefx/issues/41475>`__, which
 currently enforces the CA/Browser forum requirement that while a leaf
-certificate can be covered solely by OCSP, “public CAs have to have
-CRL[s] covering their issuing CAs”. This requirement is not enforced
+certificate can be covered solely by OCSP, "public CAs have to have
+CRL[s] covering their issuing CAs". This requirement is not enforced
 with Java’s default TLS libraries. See also: `Future Work: CA/Browser
 Forum Requirements
 Complications <#cabrowser-forum-requirements-complications>`__.
@@ -553,7 +585,7 @@ library strictly implements CA/Browser forum requirements (e.g. `.NET
 on Linux <https://github.com/dotnet/corefx/issues/41475>`__). This is
 because our current chain of certificates does not fulfill the following
 requirement: while a leaf certificate can be covered solely by OCSP,
-“public CAs have to have CRL[s] covering their issuing CAs.” This rework
+"public CAs have to have CRL[s] covering their issuing CAs." This rework
 of the test plan may happen during the initial implementation of OCSP
 support or happen later if a driver’s TLS library implements the
 relevant CA/Browser forum requirement.
@@ -593,7 +625,7 @@ Why was the decision made to allow OCSP endpoint checking to be enabled/disabled
 ---------------------------------------------------------------------------------------------------
 We initially hoped that we would be able to not expose any options
 specifically related to OCSP to the user, in accordance with the
-“\`No Knobs” drivers mantra
+"\`No Knobs" drivers mantra
 <https://github.com/mongodb/specifications#no-knobs>`__. However, we
 later decided that users may benefit from having the ability to
 disable OCSP endpoint checking when applications are deployed behind
@@ -615,7 +647,7 @@ On Windows, the OCSP cache can be viewed like so:
 
   certutil -urlcache
 
-To search the cache for “Lets Encrypt” OCSP cache entries, the following
+To search the cache for "Lets Encrypt" OCSP cache entries, the following
 command could be used:
 
 .. code-block:: console
@@ -628,7 +660,7 @@ On Windows, the OCSP cache can be cleared like so:
 
   certutil -urlcache * delete
 
-To delete only “Let’s Encrypt” related entries, the following command
+To delete only "Let’s Encrypt" related entries, the following command
 could be used:
 
 .. code-block:: console
@@ -645,7 +677,7 @@ On macOS 10.14, the OCSP cache can be viewed like so:
   find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
   -exec sqlite3 "{}" 'SELECT responderURI FROM responses;' \;
 
-To search the cache for “Let’s Encrypt” OCSP cache entries, the
+To search the cache for "Let’s Encrypt" OCSP cache entries, the
 following command could be used:
 
 .. code-block:: console
@@ -662,7 +694,7 @@ On macOS 10.14, the OCSP cache can be cleared like so:
   find ~/profile/Library/Keychains -name 'ocspcache.sqlite3' \
   -exec sqlite3 "{}" 'DELETE FROM responses ;' \;
 
-To delete only “Let’s Encrypt” related entries, the following command
+To delete only "Let’s Encrypt" related entries, the following command
   could be used:
 
 .. code-block:: console
@@ -709,8 +741,8 @@ useful in this endeavor.
 OCSP Caching and the optional test to ensure that the driver’s TLS library supports non-stapled OCSP
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The “Optional test to ensure that the driver’s TLS library supports
-non-stapled OCSP” is complicated by the fact that OCSP allows the client
+The "Optional test to ensure that the driver’s TLS library supports
+non-stapled OCSP" is complicated by the fact that OCSP allows the client
 to `cache the OCSP
 responses <https://tools.ietf.org/html/rfc5019#section-6.1>`__, so
 clearing an OCSP cache may be needed in order to force the TLS library
@@ -732,8 +764,8 @@ may follow.
 Alternatively, if it’s known that a driver’s TLS library does not
 support stapling or if stapling support can be toggled off, then any
 **non-mongod server** that has a valid an OCSP-only certificate will
-work, including the example shown in the “Optional test to ensure that
-the driver’s TLS library supports OCSP stapling.”
+work, including the example shown in the "Optional test to ensure that
+the driver’s TLS library supports OCSP stapling."
 
 Clear the OS/user/application OCSP cache, if one exists and the TLS
 library makes use of it.
@@ -756,8 +788,13 @@ of checking this are:
 Changelog
 ==========
 
+**2020-07-01**: 2.0.0: Default tlsDisableOCSPEndpointCheck or
+tlsDisableCertificateRevocationCheck to true in the case that a driver's
+TLS library exhibits hard-fail behavior and add provision for
+platform-specific defaults.
+
 **2020-03-20**: 1.3.1: Clarify OCSP documentation requirements for
- drivers unable to enable OCSP by default on a per MongoClient basis.
+drivers unable to enable OCSP by default on a per MongoClient basis.
 
 **2020-03-03**: 1.3.0: Add tlsDisableCertificateRevocationCheck URI
 option. Add Go as a reference implementation. Add hard-fail backwards
