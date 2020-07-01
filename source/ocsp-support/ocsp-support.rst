@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 1.3.1
+:Spec Version: 2.0.0
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2020-3-20
+:Last Modified: 2020-07-01
 
 .. contents::
 
@@ -194,9 +194,21 @@ This boolean option determines whether a MongoClient should refrain from
 reaching out to an OCSP endpoint i.e.  whether non-stapled OCSP should
 be disabled.  When set to true, a driver MUST NOT reach out to OCSP
 endpoints. When set to false, a driver MUST reach out to OCSP
-endpoints if needed (as described in 
+endpoints if needed (as described in
 `Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).
-This option MUST default to false.
+This option MUST default to false except in the case that a driver' TLS
+library exhibits hard-fail behavior (i.e. the driver fails the
+`"Soft Fail Test
+"<https://github.com/mongodb/specifications/tree/master/source/ocsp-support/tests#integration-tests-permutations-to-be-tested>`__
+).
+
+In the case of a driver whose TLS library exhibits hard-fail behavior,
+this value MUST default to true. If this hard-failure behavior is
+specific to a particular platform (e.g. the TLS library hard-fails
+only on Windows) then this boolean MUST default to true only on the
+platform where the exhibits hard-fail behavior, and a driver MUST
+document this behavior.
+
 
 tlsDisableCertificateRevocationCheck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -211,10 +223,19 @@ This boolean option determines whether a MongoClient should refrain
 checking certificate revocation status. When set to true, a driver
 MUST NOT check certificate revocation status via CRLs or OCSP.  When
 set to false, a driver MUST check certificate revocation status, reach
-out to OCSP endpoints if needed (as described in 
-`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).  
-This option MUST default to false.
+out to OCSP endpoints if needed (as described in
+`Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).
+This option MUST default to false except in the case that a driver's TLS
+library exhibits hard-fail behavior (i.e. the driver fails the
+`"Soft Fail Test
+"<https://github.com/mongodb/specifications/tree/master/source/ocsp-support/tests#integration-tests-permutations-to-be-tested>`__
 
+In the case of a driver whose TLS library exhibits hard-fail behavior,
+this value MUST default to true. If this hard-failure behavior is
+specific to a particular platform (e.g. the TLS library hard-fails
+only on Windows) then this boolean MUST default to true only on the
+platform where the exhibits hard-fail behavior, and a driver MUST
+document this behavior.
 
 Naming Deviations
 ^^^^^^^^^^^^^^^^^^
@@ -256,7 +277,11 @@ expose an option to enable/disable certificate revocation checking on a
 per MongoClient basis.
 
 1. Driver MUST enable OCSP support (with stapling if possible) when
-   certificate revocation checking is enabled.
+   certificate revocation checking is enabled UNLESS their driver
+   exhibits hard-fail behavior (see
+   `tlsDisableCertificateRevocationCheck`_). In such a case, a driver
+   MUST disable OCSP support on the platforms where its TLS library
+   exhibits hard-fail behavior.
 
 2. Drivers SHOULD throw an error if any of ``tlsInsecure=true`` or
    ``tlsAllowInvalidCertificates=true`` or
@@ -339,8 +364,10 @@ a response and the OCSP responder is down.
 Drivers that fail “Soft Fail Test” MUST document that their driver’s
 TLS library utilizes “hard fail” behavior in the case of an
 unavailable OCSP responder in contrast to the mongo shell and drivers
-that utilize “soft-fail” behavior. Such drivers MUST also document the
-potential backwards compatibility issues as noted in the `Backwards
+that utilize “soft fail” behavior. They also MUST document the change
+in defaults for the applicable options (see `MongoClient
+Configuration`_). Such drivers MUST also document the potential
+backwards compatibility issues as noted in the `Backwards
 Compatibility`_ section.
 
 Test Plan
@@ -426,7 +453,7 @@ Suggested OCSP Behavior
 For drivers with finer-grain control over their OCSP behavior, the
 suggested OCSP behavior was chosen as a balance between security and
 availability, erring on availability while minimizing network round
-trips. Therefore, in the 
+trips. Therefore, in the
 `Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__ section,
 in order to minimize network round trips, drivers are advised not to
 reach out to OCSP endpoints and CRL distribution points in order to
@@ -451,7 +478,7 @@ disabling non-stapled OCSP via ``tlsDisableOCSPEndpointCheck`` or by
 disabling certificate revocation checking altogether
 via ``tlsDisableCertificateRevocationCheck``.
 
-An application that uses a driver that utilizes hard-fail behavior
+An application that uses a driver that utilizes hard fail behavior
 when there are no certificate revocation mechanisms available may also
 experience connectivity issue. Cases in which no certificate
 revocation mechanisms being available include:
@@ -756,8 +783,13 @@ of checking this are:
 Changelog
 ==========
 
+**2020-07-01**: 2.0.0: Default tlsDisableCertificateRevocationCheck
+and tlsDisableOCSPEndpointCheck to false in the case that a driver's
+TLS library exhibits hard-fail behavior and add provision for
+platform-specific defaults.
+
 **2020-03-20**: 1.3.1: Clarify OCSP documentation requirements for
- drivers unable to enable OCSP by default on a per MongoClient basis.
+drivers unable to enable OCSP by default on a per MongoClient basis.
 
 **2020-03-03**: 1.3.0: Add tlsDisableCertificateRevocationCheck URI
 option. Add Go as a reference implementation. Add hard-fail backwards
