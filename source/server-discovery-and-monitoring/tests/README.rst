@@ -229,6 +229,11 @@ ensure that ``configureFailPoint`` commands do not appear in the list of logged
 commands, either by manually filtering it from the list of observed commands or
 by using a different MongoClient to execute ``configureFailPoint``.
 
+Note, similar to the ``tests.failPoint`` field described in the `Transactions
+Spec Test format </source/transactions/tests/README.rst#test-format>`_ tests
+with ``useMultipleMongoses: true`` will not contain a ``configureFailPoint``
+operation.
+
 wait
 ''''
 
