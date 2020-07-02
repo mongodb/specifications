@@ -229,13 +229,15 @@ For drivers that pass the `"Soft Fail Test"
 <tests/README.rst#integration-tests-permutations-to-be-tested>`__ , this
 option MUST default to false.
 
-For drivers that fail the "Soft Fail Test" because their TLS library
-exhibits hard-fail behavior when a responder is unreachable, this option
-MUST default to true, and a driver MUST document this behavior. If this
-hard-failure behavior is specific to a particular platform (e.g. the TLS
-library hard-fails only on Windows) then this option MUST default to
-true only on the platform where the driver exhibits hard-fail behavior,
-and a driver MUST document this behavior.
+If a driver has not already defaulted `tlsDisableOCSPEndpointCheck` to
+true, and if that driver fails the "Soft Fail Test" because their TLS
+library exhibits hard-fail behavior when a responder is unreachable,
+then that driver must default `tlsDisableCertificateRevocationCheck` to
+true. Such a driver also MUST document this behavior. If this
+hard-failure behavior is specific to a particular platform (e.g. the
+TLS library hard-fails only on Windows) then this option MUST default
+to true only on the platform where the driver exhibits hard-fail
+behavior, and a driver MUST document this behavior.
 
 Naming Deviations
 ^^^^^^^^^^^^^^^^^^
@@ -786,8 +788,8 @@ of checking this are:
 Changelog
 ==========
 
-**2020-07-01**: 2.0.0: Default tlsDisableCertificateRevocationCheck
-and tlsDisableOCSPEndpointCheck to true in the case that a driver's
+**2020-07-01**: 2.0.0: Default tlsDisableOCSPEndpointCheck or
+tlsDisableCertificateRevocationCheck to true in the case that a driver's
 TLS library exhibits hard-fail behavior and add provision for
 platform-specific defaults.
 
