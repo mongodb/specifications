@@ -435,6 +435,8 @@ Run the following test(s) on MongoDB 4.4+.
        that the `Server Description Equality`_ rule means that
        ServerDescriptionChangedEvents will not be published. This test may
        need to use a driver specific helper to obtain the latest RTT instead.
+       If the RTT does not exceed 250ms after one minute, consider the test
+       failed.
 
     #. Disable the failpoint::
 
