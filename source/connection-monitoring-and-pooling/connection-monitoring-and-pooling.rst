@@ -217,7 +217,7 @@ Connection Pool
 A driver-defined entity that encapsulates all non-monitoring connections associated with a single Endpoint. The pool has the following properties:
 
 -  **Thread Safe:** All Pool behaviors MUST be thread safe.
--  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update it's pid
+-  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update its pid
 -  **Single Owner:** A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.
 -  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <#connection-pool-monitoring>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
 -  **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
@@ -225,7 +225,7 @@ A driver-defined entity that encapsulates all non-monitoring connections associa
    -  Checking in a Connection to the Pool automatically closes the connection
    -  Attempting to check out a Connection from the Pool results in an Error
 
--  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then it's total number of connections (including available and in use) MUST NOT exceed **maxPoolSize**
+-  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of connections (including available and in use) MUST NOT exceed **maxPoolSize**
 
 .. code:: typescript
 
