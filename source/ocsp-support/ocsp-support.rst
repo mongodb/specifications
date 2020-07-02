@@ -203,11 +203,11 @@ library exhibits hard-fail behavior (i.e. the driver fails the
 ).
 
 In the case of a driver whose TLS library exhibits hard-fail behavior,
-this value MUST default to true and a driver MUST document this
+this value MUST default to true, and a driver MUST document this
 behavior.  If this hard-failure behavior is specific to a particular
 platform (e.g. the TLS library hard-fails only on Windows) then this
-boolean MUST default to true only on the platform where the exhibits
-hard-fail behavior, and a driver MUST document this behavior.
+boolean MUST default to true only on the platform where the driver
+exhibits hard-fail behavior, and a driver MUST document this behavior.
 
 
 tlsDisableCertificateRevocationCheck
@@ -231,11 +231,11 @@ library exhibits hard-fail behavior (i.e. the driver fails the
 "<https://github.com/mongodb/specifications/tree/master/source/ocsp-support/tests#integration-tests-permutations-to-be-tested>`__
 
 In the case of a driver whose TLS library exhibits hard-fail behavior,
-this value MUST default to true and a driver MUST document this
+this value MUST default to true, and a driver MUST document this
 behavior.  If this hard-failure behavior is specific to a particular
 platform (e.g. the TLS library hard-fails only on Windows) then this
-boolean MUST default to true only on the platform where the exhibits
-hard-fail behavior, and a driver MUST document this behavior.
+boolean MUST default to true only on the platform where the driver
+exhibits hard-fail behavior, and a driver MUST document this behavior.
 
 Naming Deviations
 ^^^^^^^^^^^^^^^^^^
@@ -784,7 +784,7 @@ Changelog
 ==========
 
 **2020-07-01**: 2.0.0: Default tlsDisableCertificateRevocationCheck
-and tlsDisableOCSPEndpointCheck to false in the case that a driver's
+and tlsDisableOCSPEndpointCheck to true in the case that a driver's
 TLS library exhibits hard-fail behavior and add provision for
 platform-specific defaults.
 
