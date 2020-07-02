@@ -57,8 +57,8 @@ server’s certificate (configured with the mock OCSP responder). We will
 also test the case where an OCSP responder is unavailable and two
 malicious server cases.
 
-Drivers that do not default to enabling by OCSP default MUST enable
-OCSP for these tests.
+Drivers that do not default to enabling OCSP MUST enable OCSP for
+these tests.
 
 +----------------------------------------+-----------------------------------------+-------------------------------------------+-------------------------------------------------+---------------------------------------------------+-----------------------------------------------------+-----------------------------------------------------------------------+--------------------------------------------------------------------+
 | **URI options**                        | **Test 1\:**                            | **Test 2\:**                              | **Test 3\:**                                    | **Test 4\:**                                      | **Soft Fail Test\:**                                | **Malicious Server Test 1\:**                                         | **Malicious Server Test 2\: No OCSP Responder + server w/ Must-**  |
