@@ -84,13 +84,13 @@ Malicious Server Test 2}. For drivers with full control over their OCSP behavior
 server tests are identical as well. However, it does no harm to test these
 extra cases and may help reveal unexpected behavior.
 
-\*: Drivers that cannot pass these tests due to limitations in their TLS
-library’s implementation of OCSP will need to document these failures as
-described under `Documentation
-Requirements <../ocsp-support.rst#documentation-requirements>`__
-Additionally, drivers that fail the "Soft Fail" will need to change any applicable defaults as described under
-`MongoClient
-Configuration <../ocsp-support.rst#mongoclient-configuration>`__
+\*: Drivers that cannot pass these tests due to limitations in their
+TLS library’s implementation of OCSP will need to document these
+failures as described under `Documentation Requirements
+<../ocsp-support.rst#documentation-requirements>`__. Additionally,
+drivers that fail the "Soft Fail Test" will need to change any
+applicable defaults as described under `MongoClient Configuration
+<../ocsp-support.rst#mongoclient-configuration>`__
 
 Mock OCSP Responder Testing Suite
 ==================================
