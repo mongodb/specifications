@@ -198,7 +198,7 @@ endpoints if needed (as described in
 `Specification: Suggested OCSP Behavior <ocsp-support.rst#id1>`__).
 
 For drivers that pass the `"Soft Fail Test"
-<tests/README.rst#integration-tests-permutations-to-be-tested>`__ , this
+<tests/README.rst#integration-tests-permutations-to-be-tested>`__, this
 option MUST default to false.
 
 For drivers that fail the "Soft Fail Test" because their TLS library
