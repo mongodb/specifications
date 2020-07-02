@@ -467,7 +467,7 @@ Backwards Compatibility
 
 An application behind a firewall with an outbound whitelist that
 upgrades to a driver implementing this specification may experience
-connectivity issues. This is because the driver may need to contact
+connectivity issues when OCSP is enabled. This is because the driver may need to contact
 OCSP endpoints or CRL distribution points [1]_ specified in the
 server’s certificate and if these OCSP endpoints and/or CRL
 distribution points are not accessible, then the connection to the
