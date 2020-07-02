@@ -257,6 +257,9 @@ PoolClearedEvent to be published::
 Note that "count" includes events that were published while running previous
 operations.
 
+If the "waitForEvent" operation is not satisfied after 10 seconds, the
+operation is considered an error.
+
 ServerMarkedUnknownEvent
 ````````````````````````
 
