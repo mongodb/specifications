@@ -67,7 +67,7 @@ Perform the following operations:
 - Send a ``{replSetFreeze: 0}`` command to any secondary and verify that the
   command succeeded. This command will unfreeze the secondary and ensure that
   it will be eligible to be elected immediately.
-- Send a ``{replSetStepDown: 20, force: true}`` command to the current primary and verify that
+- Send a ``{replSetStepDown: 30, force: true}`` command to the current primary and verify that
   the command succeeded.
 - Retrieve the next batch of results from the cursor obtained in the find
   operation, and verify that this operation succeeded.

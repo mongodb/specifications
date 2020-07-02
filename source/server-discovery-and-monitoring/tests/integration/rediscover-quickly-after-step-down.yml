@@ -46,8 +46,8 @@ tests:
         command_name: replSetStepDown
         arguments:
           command:
-            replSetStepDown: 20
-            secondaryCatchUpPeriodSecs: 20
+            replSetStepDown: 30
+            secondaryCatchUpPeriodSecs: 30
             force: false
       - name: waitForPrimaryChange
         object: testRunner
