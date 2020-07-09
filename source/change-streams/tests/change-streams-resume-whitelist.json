@@ -1652,7 +1652,6 @@
     {
       "description": "change stream resumes after CursorNotFound",
       "minServerVersion": "4.2",
-      "maxServerVersion": "4.2.99",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {

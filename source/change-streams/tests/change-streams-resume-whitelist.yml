@@ -1106,12 +1106,10 @@ tests:
             x:
               $numberInt: "1"
   -
-    # CursorNotFound is always considered resumable by drivers even though it does not have the
-    # ResumableChangeStreamError label. This test asserts that drivers correctly implement this special-casing for
-    # <=4.2 servers.
+    # CursorNotFound is special-cased to be resumable regardless of server versions or error labels, so this test has
+    # no maxWireVersion.
     description: "change stream resumes after CursorNotFound"
     minServerVersion: "4.2"
-    maxServerVersion: "4.2.99"
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 1 }
