@@ -49,6 +49,8 @@ executed when checking these constraints.
 - Any error encountered which is not a server error (e.g. a timeout error or
   network error)
 
+- A server error with code 43 (``CursorNotFound``)
+
 - For servers with wire version 9 or higher (server version 4.4 or higher), any
   server error with the `ResumableChangeStreamError` error label.
 
@@ -710,6 +712,18 @@ allowed for the possibility of infinite resume loops if an error was not correct
 all errors aside from transient issues such as failovers are not resumable, the resume behavior was changed to use a
 whitelist. Part of this change was to introduce the ``ResumableChangeStreamError`` label so the server can add new error
 codes to the whitelist without requiring changes to drivers.
+
+----------------------------------------------------------------------
+Why is ``CursorNotFound`` special-cased when determining resumability?
+----------------------------------------------------------------------
+
+With the exception of ``CursorNotFound``, a server error on version 4.4 or higher is considered resumable if and only
+if it contains the ``ResumableChangeStreamError`` label. However, this label is only added by the server if the
+cursor being created or iterated is a change stream. ``CursorNotFound`` is returned when a ``getMore`` is done with a
+cursor ID that the server isn't aware of and therefore can't determine if the cursor is a change stream. Marking all
+``CursorNotFound`` errors resumable in the server regardless of cursor type could be confusing as a user could see
+the ``ResumableChangeStreamError`` label when iterating a non-change stream cursor. To workaround this, drivers
+always treat this error as resumable despite it not having the proper error label.
 
 -------------------------------------------------------------------------------------------
 Why do we need to send a default ``startAtOperationTime`` when resuming a ``ChangeStream``?
