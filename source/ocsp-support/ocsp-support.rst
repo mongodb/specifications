@@ -229,8 +229,8 @@ For drivers that pass the `"Soft Fail Test"
 <tests/README.rst#integration-tests-permutations-to-be-tested>`__ , this
 option MUST default to false.
 
-If a driver has not already defaulted `tlsDisableOCSPEndpointCheck` to
-true, and if that driver fails the "Soft Fail Test" because their TLS
+If a driver does not support ``tlsDisableOCSPEndpointCheck`` and
+that driver fails the "Soft Fail Test" because their TLS
 library exhibits hard-fail behavior when a responder is unreachable,
 then that driver must default `tlsDisableCertificateRevocationCheck` to
 true. Such a driver also MUST document this behavior. If this
