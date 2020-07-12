@@ -1,6 +1,6 @@
 runOn:
   - minServerVersion: "4.0"
-    topology: ["replicaset", "single"]
+    topology: ["replicaset"]
   - minServerVersion: "4.1.8"
     topology: ["sharded"]
 

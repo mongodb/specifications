@@ -3,8 +3,7 @@
     {
       "minServerVersion": "4.0",
       "topology": [
-        "replicaset",
-        "single"
+        "replicaset"
       ]
     },
     {
