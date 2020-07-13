@@ -57,6 +57,9 @@ server’s certificate (configured with the mock OCSP responder). We will
 also test the case where an OCSP responder is unavailable and two
 malicious server cases.
 
+Drivers that do not default to enabling OCSP MUST enable OCSP for
+these tests.
+
 +----------------------------------------+-----------------------------------------+-------------------------------------------+-------------------------------------------------+---------------------------------------------------+-----------------------------------------------------+-----------------------------------------------------------------------+--------------------------------------------------------------------+
 | **URI options**                        | **Test 1\:**                            | **Test 2\:**                              | **Test 3\:**                                    | **Test 4\:**                                      | **Soft Fail Test\:**                                | **Malicious Server Test 1\:**                                         | **Malicious Server Test 2\: No OCSP Responder + server w/ Must-**  |
 |                                        | **Valid cert + server that staples**    | **Invalid cert + server that staples**    | **Valid cert + server that does not staple**    | **Invalid cert + server that does not staple**    | **No OCSP Responder + server that does not staple** | **Invalid cert + server w/ Must- Staple cert that does not staple**   | **Staple cert that does not staple**                               |
@@ -81,10 +84,13 @@ Malicious Server Test 2}. For drivers with full control over their OCSP behavior
 server tests are identical as well. However, it does no harm to test these
 extra cases and may help reveal unexpected behavior.
 
-\*: Drivers that cannot pass these tests due to limitations in their TLS
-library’s implementation of OCSP will need to document these failures as
-described under `Documentation
-Requirements <../ocsp-support.rst#documentation-requirements>`__
+\*: Drivers that cannot pass these tests due to limitations in their
+TLS library’s implementation of OCSP will need to document these
+failures as described under `Documentation Requirements
+<../ocsp-support.rst#documentation-requirements>`__. Additionally,
+drivers that fail the "Soft Fail Test" will need to change any
+applicable defaults as described under `MongoClient Configuration
+<../ocsp-support.rst#mongoclient-configuration>`__
 
 Mock OCSP Responder Testing Suite
 ==================================
@@ -228,7 +234,11 @@ to simplify the testing procedure.
 
 Changelog
 ==========
-**2020-03-20**: Clarify that the mock OCSP responder must be started 
+
+**2020-07-01**: Clarify that drivers that do not enable OCSP by
+default MUST enable OCSP for the tests.
+
+**2020-03-20**: Clarify that the mock OCSP responder must be started
 before the mongod.
 
 **2020-03-11**: Reduce and clarify Windows testing requirements.
