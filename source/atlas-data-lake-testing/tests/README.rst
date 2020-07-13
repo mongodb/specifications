@@ -32,13 +32,28 @@ Prose Tests
 The following tests MUST be implemented to fully test compatibility with
 Atlas Data Lake.
 
-#. Test that the ``killCursors`` command works with Atlas Data Lake.
-   For this test, start a query but do not fully iterate over the results
-   (e.g. specify batchSize=2 for a query that would match 3+ documents).
-   Execute a ``killCursors`` command before executing a ``getMore`` command.
-   Continue iterating the cursor to trigger a getMore command and assert
-   that ADL raises an error.
-   
+#. Test that the driver properly constructs and issues a
+   `killCursors <https://docs.mongodb.com/manual/reference/command/killCursors/>`_
+   command to Atlas Data Lake. For this test, configure an APM listener on a
+   client and execute a query that will leave a cursor open on the server (e.g.
+   specify ``batchSize=2`` for a query that would match 3+ documents). Drivers
+   MAY iterate the cursor if necessary to execute the initial ``find`` command
+   but MUST NOT iterate further to avoid executing a ``getMore``.
+
+   Observe the CommandSucceededEvent event for the ``find`` command and extract
+   the cursor's ID and namespace from the response document's ``cursor.id`` and
+   ``cursor.ns`` fields, respectively. Destroy the cursor object and observe
+   a CommandStartedEvent and CommandSucceededEvent for the ``killCursors``
+   command. Assert that the cursor ID and target namespace in the outgoing
+   command match the values from the ``find`` command's CommandSucceededEvent.
+   Assert that the ``killCursors`` CommandSucceededEvent indicates that the
+   expected cursor was killed in the ``cursorsKilled`` field.
+
+   Note: this test assumes that drivers only issue a ``killCursors`` command
+   internally when destroying a cursor that may still exist on the server. If
+   a driver constructs and issues ``killCursors`` commands in other ways (e.g.
+   public API), this test MUST be adapted to test all such code paths.
+
 #. Test that the driver can establish a connection with Atlas Data Lake
    without authentication. For these tests, create a MongoClient using a
    valid connection string without auth credentials and execute a ping
