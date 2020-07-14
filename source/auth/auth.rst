@@ -747,7 +747,7 @@ Conversation
 ````````````
 
 The first message sent by drivers MUST contain a ``client nonce`` and ``gs2-cb-flag``. In response, the server will send a ``server nonce``
-and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
+and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. Drivers MUST also validate that the length of the host is greater than 0 and less than or equal to 255 bytes per `RFC 1035 <https://tools.ietf.org/html/rfc1035>`_. Drivers MUST reject FQDN names with empty lables (e.g., "abc..def"), names that start with a period (e.g., ".abc.def") and names that end with a period (e.g., "abc.def.").  Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
 
 As an example, given a client nonce value of "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI=", a MONGODB-AWS conversation decoded from
 BSON to JSON would appear as follows:
@@ -861,25 +861,31 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15\\n
 
 Region Calculation
 ~~~~~~~~~~~~~~~~~~
-        Region is not a header, but simply part of the authorization header. The general syntax of a regional endpoint (or host) is as follows.
 
-.. code:: javascript
+To get the region from the host, the driver MUST follow the algorithm expressed in psuedocode below. :: 
 
-	service-code.region-code.amazonaws.com
-|
-Drivers MUST derive the region (the ``region-code`` above) from the second label of the host. If a region is not present, or does not contain a full stop "``.``" character (*dot* or *period*) as a seperator, then the default region, ``us-east-1`` MUST be used. Drivers MUST error on any empty labels or if the host itself is empty or longer than 255 bytes per 	
-`RFC 1035 <https://tools.ietf.org/html/rfc1035>`_. Examples are provided below. 
+	if the host is invalid according to the rules described earlier
+		the region is undefined and the driver must raise an error.
+	else if the host is "aws.amazonaws.com"
+		the region is "us-east-1"
+	else if the host contains the character '.' (a period)
+    		split the host by its periods. The region is the second label.
+	else // the valid host string contains no periods and is not "aws.amazonaws.com"
+		the region is "us-east-1"
+
+Examples are provided below. 
 
 ==============================  =========  ======================================================
 Host                            Region     Notes                                                 
 ==============================  =========  ======================================================
-sts.amazonaws.com               us-east-1  no region-code; use the default region                
-sts.us-west-2.amazonaws.com     us-west-2  use the region-code (second label)                    
-sts.us-west-2.amazonaws.com.ch  us-west-2                                                        
-localhost                       us-east-1  no full stop "``.``" character; use the default region
+sts.amazonaws.com               us-east-1  the host is "sts.amazonaws.com"; use `us-east-1`                
+sts.us-west-2.amazonaws.com     us-west-2  use the second label                    
+sts.us-west-2.amazonaws.com.ch  us-west-2  use the second label
+example.com                     com        use the second label                                                
+localhost                       us-east-1  no "``.``" character; use the default region
 sts..com                        <Error>    second label is empty                                 
-.amazonaws.com                  <Error>    first label is empty                                  
-sts.amazonaws.                  <Error>    last label is empty                                   
+.amazonaws.com                  <Error>    starts with a period                                  
+sts.amazonaws.                  <Error>    ends with a period                                   
 ""                              <Error>    empty string                                          
 "string longer than 255"        <Error>    string longer than 255 bytes                          
 ==============================  =========  ======================================================
