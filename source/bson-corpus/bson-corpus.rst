@@ -178,10 +178,14 @@ this means that the corpus JSON will appear to have double-escaped characters
 printable ASCII without embedded null characters to ensure maximum portability
 to different language JSON or extended JSON decoders.
 
-Drivers MUST ensure that Extended JSON in
-``canonical_extjson``, ``relaxed_extjson``, and ``degenerate_extjson``
-are valid JSON strings. A driver shouldn't have to skip a test case because
-it cannot decode the JSON in the test.
+Drivers MUST parse the extended JSON input using a regular JSON parser
+(not an extended JSON one) and verify the input is parsed successfully.
+This serves to verify that the parse error test cases test extended
+JSON-specific error conditions and that they do not have,
+for example, unintended spelling errors.
+
+Drivers SHOULD parse the extended JSON input using the extended JSON parser
+and verify the parsing produces an extended JSON parse error.
 
 There are legal differences in JSON representation that may complicate
 testing for particular codecs.  The JSON in the corpus may not resemble
