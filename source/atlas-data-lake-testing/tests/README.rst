@@ -46,8 +46,11 @@ Atlas Data Lake.
    a CommandStartedEvent and CommandSucceededEvent for the ``killCursors``
    command. Assert that the cursor ID and target namespace in the outgoing
    command match the values from the ``find`` command's CommandSucceededEvent.
-   Assert that the ``killCursors`` CommandSucceededEvent indicates that the
-   expected cursor was killed in the ``cursorsKilled`` field.
+   When matching the namespace, note that the ``killCursors`` field will contain
+   the collection name and the database may be inferred from either the ``$db``
+   field or accessed via the CommandStartedEvent directly. Finally, assert that
+   the ``killCursors`` CommandSucceededEvent indicates that the expected cursor
+   was killed in the ``cursorsKilled`` field.
 
    Note: this test assumes that drivers only issue a ``killCursors`` command
    internally when destroying a cursor that may still exist on the server. If
