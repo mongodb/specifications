@@ -26,6 +26,15 @@ Test Format
 
 The same as the `CRUD Spec Test format <../../crud/tests/README.rst#Test-Format>`_.
 
+Test Runner Implementation
+==========================
+
+The same as the `CRUD Spec Test Runner Implementation <../../crud/tests#test-runner-implementation>`_,
+with one notable differences: the test runner for Atlas Data Lake Testing
+MUST NOT drop the collection and/or database under test. In contrast to other
+CRUD tests, which insert their own data fixtures into an empty collection, data
+for these tests is specified in the ``mongohoused`` configuration file.
+
 Prose Tests
 ===========
 
@@ -67,3 +76,9 @@ Atlas Data Lake.
    valid connection string with SCRAM-SHA-1 and credentials from the
    drivers-evergreen-tools ADL configuration and execute a ping command.
    Repeat this test using SCRAM-SHA-256.
+
+Changelog
+=========
+
+:2020-07-15: Link to CRUD test runner implementation and note that the collection
+             under test must not be dropped before each test.
