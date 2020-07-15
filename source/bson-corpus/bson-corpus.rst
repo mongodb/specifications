@@ -167,6 +167,15 @@ be encoded to the ``bson_type`` under test.  For each case, keys include:
 * ``string``: a text or numeric representation of an input that can't be
   parsed to a valid value of the given type.
 
+Drivers MUST parse the extended JSON input using a regular JSON parser
+(not an extended JSON one) and verify the input is parsed successfully.
+This serves to verify that the parse error test cases test extended
+JSON-specific error conditions and that they do not have,
+for example, unintended spelling errors.
+
+Drivers SHOULD parse the extended JSON input using the extended JSON parser
+and verify the parsing produces an extended JSON parse error.
+
 Extended JSON encoding, escaping and ordering
 ---------------------------------------------
 
@@ -177,15 +186,6 @@ this means that the corpus JSON will appear to have double-escaped characters
 ``\\uXXXX``.  This is by design to ensure that the Extended JSON fields remain
 printable ASCII without embedded null characters to ensure maximum portability
 to different language JSON or extended JSON decoders.
-
-Drivers MUST parse the extended JSON input using a regular JSON parser
-(not an extended JSON one) and verify the input is parsed successfully.
-This serves to verify that the parse error test cases test extended
-JSON-specific error conditions and that they do not have,
-for example, unintended spelling errors.
-
-Drivers SHOULD parse the extended JSON input using the extended JSON parser
-and verify the parsing produces an extended JSON parse error.
 
 There are legal differences in JSON representation that may complicate
 testing for particular codecs.  The JSON in the corpus may not resemble
