@@ -44,10 +44,11 @@ Atlas Data Lake.
 #. Test that the driver properly constructs and issues a
    `killCursors <https://docs.mongodb.com/manual/reference/command/killCursors/>`_
    command to Atlas Data Lake. For this test, configure an APM listener on a
-   client and execute a query that will leave a cursor open on the server (e.g.
-   specify ``batchSize=2`` for a query that would match 3+ documents). Drivers
-   MAY iterate the cursor if necessary to execute the initial ``find`` command
-   but MUST NOT iterate further to avoid executing a ``getMore``.
+   client and execute a query on the ``test.driverdata`` collection that will
+   leave a cursor open on the server (e.g. specify ``batchSize=2`` for a query
+   that would match 3+ documents). Drivers MAY iterate the cursor if necessary
+   to execute the initial ``find`` command but MUST NOT iterate further to avoid
+   executing a ``getMore``.
 
    Observe the CommandSucceededEvent event for the ``find`` command and extract
    the cursor's ID and namespace from the response document's ``cursor.id`` and
