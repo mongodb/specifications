@@ -13,15 +13,15 @@ tests:
           projection: { _id: 0 }
           sort: { a: 1 }
           limit: 5
+        result:
+          - {"a": 5, "b": 6, "c": 7}
+          - {"a": 6, "b": 7, "c": 8}
+          - {"a": 7, "b": 8, "c": 9}
+          - {"a": 8, "b": 9, "c": 10}
+          - {"a": 9, "b": 10, "c": 11}
     expectations:
       -
         command_started_event:
           command:
             find: *collection_name
-    outcome:
-      result:
-        - {"a": 5, "b": 6, "c": 7}
-        - {"a": 6, "b": 7, "c": 8}
-        - {"a": 7, "b": 8, "c": 9}
-        - {"a": 8, "b": 9, "c": 10}
-        - {"a": 9, "b": 10, "c": 11}
+
