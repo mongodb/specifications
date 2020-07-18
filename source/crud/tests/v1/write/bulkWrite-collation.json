@@ -138,8 +138,10 @@
                   "x": "ping"
                 },
                 "replacement": {
-                  "_id": 6,
-                  "x": "ping"
+                  "$set": {
+                    "_id": 6,
+                    "x": "ping"
+                  }
                 },
                 "upsert": true,
                 "collation": {

@@ -71,7 +71,7 @@ tests:
                         name: "replaceOne"
                         arguments:
                             filter: { x: "ping" }
-                            replacement: { _id: 6, x: "ping" }
+                            replacement: { $set: { _id: 6, x: "ping" } }
                             upsert: true
                             collation: { locale: "en_US", strength: 3 }
                     -
