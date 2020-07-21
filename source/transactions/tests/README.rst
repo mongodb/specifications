@@ -78,7 +78,7 @@ control the fail point's behavior. ``failCommand`` supports the following
   `New in mongod 4.3.4 <https://jira.mongodb.org/browse/SERVER-41070>`_.
 
 Speeding Up Tests
------------------
+=================
 
 Drivers should set the default heartbeatFrequencyMS to 5ms in order to take into account the latest changes regarding streaming protocol. If a test has an explicit heartbeatFrequencyMS value, drivers should use the explicit value.
 
