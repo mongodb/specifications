@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: June 2, 2021
+:Last Modified: August 26, 2021
 
 .. contents::
 
@@ -946,7 +946,8 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -991,7 +992,8 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1027,7 +1029,8 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_DELETE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -1081,7 +1084,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_DELETE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -1156,7 +1160,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1217,7 +1222,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1278,7 +1284,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1699,7 +1706,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1762,7 +1769,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1856,7 +1863,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -2014,12 +2021,10 @@ Q: Where is ``singleBatch`` in FindOptions?
 Q: Why are client-side errors raised for some unsupported options?
   Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field with which to express these options so a client-side error is the only mechanism to inform the user that such options are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
 
-Q: Why are client-side errors raised when options are provided for unacknowledged write operations, even on server versions that support those options?
-  Even if the server supports an option, that option could be incorrectly formatted or contain outdated information (e.g. a "hint" option referencing an index that no longer exists). This is a problem during unacknowledged writes because the server cannot return an error response to alert the client of an incorrect option. By always raising a client-side error when options are specified for unacknowledged writes, users are prevented from performing operations with options that do not work.
-
 Changes
 =======
 
+* 2020-08-26: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
