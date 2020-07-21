@@ -94,7 +94,7 @@ disabled like so::
 Speeding Up Tests
 -----------------
 
-Drivers should set the default heartbeatFrequencyMS to 5ms in order to take into account the latest changes regarding streaming protocol. If a test has an explicit heartbeatFrequencyMS value, drivers should use the explicit value.
+See `Speeding Up Tests </source/transactions/tests/README.rst#speeding-up-tests>`_ in the Transactions spec tests.
 
 Use as Integration Tests
 ========================
