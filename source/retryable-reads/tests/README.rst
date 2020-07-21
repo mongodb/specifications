@@ -148,7 +148,7 @@ data.
 .. _GridFSBucket spec: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class
     
 Speeding Up Tests
------------------
+===================
 
 Drivers may benefit reducing `minHeartbeatFrequencyMS`_ in order to speed up
 tests. Python was able to decrease the run time of the tests greatly by lowering

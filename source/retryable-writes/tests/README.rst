@@ -92,7 +92,7 @@ disabled like so::
     });
 
 Speeding Up Tests
------------------
+=================
 
 See `Speeding Up Tests </source/transactions/tests/README.rst#speeding-up-tests>`_ in the Transactions spec tests.
 
