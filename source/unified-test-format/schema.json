@@ -1,0 +1,285 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+
+  "type": "object",
+  "title": "Unified Test Format",
+  "description": "Schema definition for unified test format.",
+  "additionalProperties": false,
+  "required": ["tests"],
+  "properties": {
+    "runOn": {
+      "type": "array",
+      "description": "List of server version and/or topology requirements for which the tests can be run. If the test environment satisfies one or more of these requirements, the tests may be executed; otherwise, this file should be skipped. If this field is omitted, the tests can be assumed to have no particular requirements and should be executed.",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/runOnRequirement" }
+    },
+
+    "databaseName": {
+      "type": "string",
+      "description": "Name of database under test. This is primarily useful when the database name must be referenced in an assertion."
+    },
+
+    "collectionName": {
+      "type": "string",
+      "description": "Name of collection under test. This is primarily useful when the collection name must be referenced in an assertion."
+    },
+
+    "initialData": {
+      "type": "array",
+      "description": "Data that should exist in collections before each test case is executed.",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/collectionData" }
+    },
+
+    "tests": {
+      "type": "array",
+      "description": "Test cases.",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/test" }
+    }
+  },
+
+  "definitions": {
+    "runOnRequirement": {
+      "type": "object",
+      "description": "A combination of server version and/or topology requirements for running the tests.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "maxServerVersion": {
+          "type": "string",
+          "description": "The maximum server version (inclusive) against which the tests can be run successfully. If this field is omitted, it should be assumed that there is no upper bound on the required server version.",
+          "pattern": "^[0-9]+(\\.[0-9]+){1,2}$",
+          "examples": ["4.0", "4.2.0"]
+        },
+        "minServerVersion": {
+          "type": "string",
+          "description": "The minimum server version (inclusive) required to successfully run the tests. If this field is omitted, it should be assumed that there is no lower bound on the required server version.",
+          "pattern": "^[0-9]+(\\.[0-9]+){1,2}$",
+          "examples": ["4.0", "4.2.0"]
+        },
+        "topology": {
+          "type": "array",
+          "description": "List of server topologies against which the tests can be run successfully. Valid topologies are \"single\", \"replicaset\", and \"sharded\". If this field is omitted, the default is all topologies.",
+          "default": ["single", "replicaset", "sharded"],
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": ["single", "replicaset", "sharded"]
+          }
+        }
+      }
+    },
+
+    "collectionData": {
+      "type": "object",
+      "description": "List of documents that should correspond to the contents of a collection.",
+      "additionalProperties": false,
+      "required": ["documents"],
+      "properties": {
+        "collection": {
+          "type": "string",
+          "description": "Collection name. If omitted, this defaults to the collection under test."
+        },
+        "database": {
+          "type": "string",
+          "description": "Database name. If omitted, this defaults to the database under test."
+        },
+        "documents": {
+          "type": "array",
+          "description": "List of documents corresponding to the contents of the collection. This list may be empty.",
+          "items": { "type": "object" }
+        }
+      }
+    },
+
+    "event": {
+      "type": "object",
+      "description": "An event (e.g. APM, SDAM) to be observed while running the test operations.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "commandStartedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "command": { "type": "object" },
+            "commandName": { "type": "string" },
+            "databaseName": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "collectionOrDatabaseOptions": {
+      "type": "object",
+      "description": "Map of parameters to pass when creating a collection or database.",
+      "additionalProperties": false,
+      "properties": {
+        "readConcern": { "type": "object" },
+        "readPreference": { "type": "object" },
+        "writeConcern": { "type": "object" }
+      }
+    },
+
+    "operation": {
+      "type": "object",
+      "description": "An operation to be executed as part of the test.",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the operation (e.g. method) to perform on the object."
+        },
+        "object": {
+          "type": "string",
+          "description": "Name of the object on which to perform the operation.",
+          "default": "collection",
+          "enum": ["collection", "database", "session0", "session1", "testRunner"]
+        },
+        "collectionOptions": { "$ref": "#/definitions/collectionOrDatabaseOptions" },
+        "databaseOptions": { "$ref": "#/definitions/collectionOrDatabaseOptions" },
+        "command_name": {
+          "type": "string",
+          "description": "Required only when name is \"runCommand\". The name of the command to run. This may be used by languages that are unable preserve the order of keys in the command argument when parsing YAML or JSON."
+        },
+        "arguments": {
+          "type": "object",
+          "description": "Map of parameter names and values for the operation."
+        },
+        "error": {
+          "type": "boolean",
+          "description": "If true, the test should expect the operation to raise an error/exception. This could be either a server-generated or a driver-generated error.",
+          "default": false
+        },
+        "result": {
+          "description": "The return value from the operation, if any. This field may be a scalar value, a single document, or an array of documents in the case of a multi-document read. If the operation is expected to return an error, the result is a single document containing several \"error\" fields defined in a conditional schema."
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "Require command_name for runCommand operations",
+          "oneOf": [
+            {
+              "properties": { "name": { "const": "runCommand" }},
+              "required": ["command_name"]
+            },
+            {
+              "properties": { "name": { "not": { "const": "runCommand" }}}
+            }
+          ]
+        },
+        {
+          "$comment": "Conditional result schema when error is true",
+          "anyOf": [
+            { "properties": { "error": false }},
+            { "properties": { "error": { "const": false }}},
+            {
+              "properties": {
+                "error": { "const": true },
+                "result": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 1,
+                  "properties": {
+                    "errorContains": {
+                      "type": "string",
+                      "description": "A substring of the expected error message."
+                    },
+                    "errorCodeName": {
+                      "type": "string",
+                      "description": "The expected \"codeName\" field in the server error response."
+                    },
+                    "errorLabelsContain": {
+                      "type": "array",
+                      "description": "A list of error label strings that the error is expected to have.",
+                      "items": { "type": "string" }
+                    },
+                    "errorLabelsOmit": {
+                      "type": "array",
+                      "description": "A list of error label strings that the error is expected not to have.",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    "test": {
+      "type": "object",
+      "description": "Test case consisting of a sequence of operations to be executed. The test may optionally include configuration directives and event/outcome assertions.",
+      "required": ["description", "operations"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The name of the test."
+        },
+        "skipReason": {
+          "type": "string",
+          "description": "If set, the test will be skipped. The string should explain the reason for skipping the test (e.g. JIRA ticket)."
+        },
+        "useMultipleMongoses": {
+          "type": "boolean",
+          "description": "If true, the MongoClient for this test should be initialized with multiple mongos seed addresses. If false or omitted, only a single mongos address should be specified. This field has no effect for non-sharded topologies."
+        },
+        "clientOptions": {
+          "$comment": "TODO: this schema is not sufficient for expressing multiple readPreferenceTags, since keys would repeat",
+          "type": "object",
+          "description": "Additional connection string options to pass to the MongoClient constructor.",
+          "additionalProperties": {
+            "type": ["number", "string"]
+          }
+        },
+        "failPoint": {
+          "type": "object",
+          "description": "A server failpoint to enable expressed as a complete configureFailPoint command to run on the admin database. This option and useMultipleMongoses:true are mutually exclusive.",
+          "additionalProperties": false,
+          "required": ["configureFailPoint", "mode"],
+          "properties": {
+            "configureFailPoint": { "type": "string" },
+            "mode": { "type": ["object", "string"] },
+            "data": { "type": "object" }
+          }
+        },
+        "sessionOptions": {
+          "type": "object",
+          "description": " Map of session names (e.g. \"session0\") to documents, each of which denotes parameters to pass to MongoClient.startSession() when creating that session.",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^session[0-1]$": { "type": "object" }
+          }
+        },
+        "operations": {
+          "type": "array",
+          "description": "List of operations to be executed for the test case.",
+          "items": { "$ref": "#/definitions/operation" }
+        },
+        "expectedEvents": {
+          "type": "array",
+          "description": "List of events, which are expected to be observed in this order by running the operations.",
+          "items": { "$ref": "#/definitions/event" }
+        },
+        "outcome": {
+          "type": "array",
+          "description": "Data that should exist in collections after all operations have been executed. The list of documents should be sorted ascendingly by the \"_id\" field to allow for deterministic comparisons.",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/collectionData" }
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "useMultipleMongoses:true and failPoint are mutually exclusive",
+          "if": { "properties": { "useMultipleMongoses": { "const": true }}},
+          "then": { "properties": { "failPoint": { "not": { "type": "object" }}}}
+        }
+      ]
+    }
+  }
+}
