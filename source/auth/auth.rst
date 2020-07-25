@@ -747,10 +747,7 @@ Conversation
 ````````````
 
 The first message sent by drivers MUST contain a ``client nonce`` and ``gs2-cb-flag``. In response, the server will send a ``server nonce``
-and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. 
-Drivers must also validate that the host is greater than 0 and less than or equal to 255 bytes per 
-`RFC 1035 <https://tools.ietf.org/html/rfc1035>`_.  Drivers MUST reject FQDN names with empty labels, e.g., "abc..def", and error on any 
-additional fields. Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
+and ``sts host``. Drivers MUST validate that the server nonce is exactly 64 bytes and the first 32 bytes are the same as the client nonce. Drivers MUST also validate that the length of the host is greater than 0 and less than or equal to 255 bytes per `RFC 1035 <https://tools.ietf.org/html/rfc1035>`_. Drivers MUST reject FQDN names with empty lables (e.g., "abc..def"), names that start with a period (e.g., ".abc.def") and names that end with a period (e.g., "abc.def.").  Drivers MUST respond to the server's message with an ``authorization header`` and a ``date``.
 
 As an example, given a client nonce value of "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI=", a MONGODB-AWS conversation decoded from
 BSON to JSON would appear as follows:
@@ -850,7 +847,7 @@ URI                      /
 Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
 Host*                    Host field from Server First Message
-Region                   Derived from Host - see below
+Region                   Derived from Host - see `Region Calculation`_ below
 X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`_
 X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
@@ -862,19 +859,36 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15
 .. note::
         ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
-.. note::
-        Region is not a header, but simply part of the authorization header. Region by default is ‘us-east-1’ since this is the 
-        implicit region for ‘sts.amazonaws.com’. Drivers will need to derive the region to use from the endpoint. The region 
-        is the second piece of a FQDN name. While all official AWS STS endpoints start with “sts.”, there are non-AWS hosted 
-        endpoints and test endpoints that will not follow this rule.
+Region Calculation
+~~~~~~~~~~~~~~~~~~
 
-================= =========
-Host              Region
-================= =========
-sts.amazonaws.com us-east-1
-first.second      second
-first             us-east-1
-================= ========= 
+To get the region from the host, the driver MUST follow the algorithm expressed in psuedocode below. :: 
+
+	if the host is invalid according to the rules described earlier
+		the region is undefined and the driver must raise an error.
+	else if the host is "aws.amazonaws.com"
+		the region is "us-east-1"
+	else if the host contains the character '.' (a period)
+    		split the host by its periods. The region is the second label.
+	else // the valid host string contains no periods and is not "aws.amazonaws.com"
+		the region is "us-east-1"
+
+Examples are provided below. 
+
+==============================  =========  ======================================================
+Host                            Region     Notes                                                 
+==============================  =========  ======================================================
+sts.amazonaws.com               us-east-1  the host is "sts.amazonaws.com"; use `us-east-1`                
+sts.us-west-2.amazonaws.com     us-west-2  use the second label                    
+sts.us-west-2.amazonaws.com.ch  us-west-2  use the second label
+example.com                     com        use the second label                                                
+localhost                       us-east-1  no "``.``" character; use the default region
+sts..com                        <Error>    second label is empty                                 
+.amazonaws.com                  <Error>    starts with a period                                  
+sts.amazonaws.                  <Error>    ends with a period                                   
+""                              <Error>    empty string                                          
+"string longer than 255"        <Error>    string longer than 255 bytes                          
+==============================  =========  ======================================================
 
 `MongoCredential`_ Properties
 `````````````````````````````
