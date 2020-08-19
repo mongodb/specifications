@@ -35,6 +35,43 @@ Specification
 =============
 
 
+Entity Map
+----------
+
+The entity map indexes arbitrary objects and values by unique names, so that
+they can be referenced from test constructs (e.g.
+`operation.object <operation_object_>`_). To ensure each test is executed in
+isolation, test runners MUST NOT share entity maps between tests. Most entities
+will be driver objects created by the `createEntities`_ directive during test
+setup, but the entity map may also be modified during test execution via the
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ directive.
+
+Test runners may choose to implement the entity map in a fashion most suited to
+their language, but implementations MUST enforce both uniqueness of entity names
+and referential integrity when fetching an entity. Test runners MUST raise an
+error if an attempt is made to store an entity with a name that already exists
+in the map and MUST raise an error if an entity is not found for a name or is
+found but has an unexpected type.
+
+Consider the following examples::
+
+    # Error due to a duplicate name (client0 was already defined)
+    createEntities:
+      - client: { id: client0 }
+      - client: { id: client0 }
+
+    # Error due to a missing entity (client1 is undefined)
+    createEntities:
+      - client: { id: client0 }
+      - session: { id: session0, client: client1 }
+
+    # Error due to an unexpected entity type (session instead of client)
+    createEntities:
+      - client: { id: client0 }
+      - session: { id: session0, client: client0 }
+      - session: { id: session1, client: session0 }
+
+
 Test Format
 -----------
 
@@ -50,26 +87,33 @@ a tool such as `Ajv <https://ajv.js.org/>`_.
 
 The top-level fields of a test file are as follows:
 
+.. _runOn:
+
 - ``runOn``: Optional array of documents. List of server version and/or topology
-  requirements for which the tests can be run. If the test environment satisfies
-  one or more of these requirements, the tests may be executed; otherwise, this
-  file should be skipped. If this field is omitted, the tests can be assumed to
-  have no particular requirements and should be executed.
+  requirements for which the tests in this file can be run. These requirements
+  may be overridden on a per-test basis by `test.runOn <test_runOn_>`_. Test
+  runners MUST skip a test if its requirements are not met.
 
   If set, the array should contain at least one document. The structure of each
   document is defined in `runOnRequirement`_.
+
+.. _createEntities:
 
 - ``createEntities``: Optional array of documents. List of entities (e.g.
   client, collection, session objects) that should be created before each test
   case is executed. The structure of each document is defined in `entity`_.
 
+.. _collectionName:
+
 - ``collectionName``: Optional string. Name of collection under test. This is
   primarily useful when the collection name must be referenced in an assertion.
-  If unset, drivers may use whatever value they prefer.
+  If unset, test runners may use whatever value they prefer.
+
+.. _databaseName:
 
 - ``databaseName``: Optional string. Name of database under test. This is
   primarily useful when the database name must be referenced in an assertion.
-  If unset, drivers may use whatever value they prefer.
+  If unset, test runners may use whatever value they prefer.
 
 .. _initialData:
 
@@ -100,23 +144,22 @@ test(s). The structure of this document is as follows:
   against which the tests can be run successfully. If this field is omitted, it
   should be assumed that there is no upper bound on the required server version. 
 
-- ``topology``: Optional array of strings. List of server topologies against
-  which the tests can be run successfully. Valid topologies are "single",
-  "replicaset", and "sharded". If this field is omitted, the default is all
-  topologies (i.e. ``["single", "replicaset", "sharded"]``).
-
-  **TODO**: Consider a sharded-replicaset topology.
+- ``topology``: Optional string or array of strings. One or more of server
+  topologies against which the tests can be run successfully. Valid topologies
+  are "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
+  cluster backed by replica sets). If this field is omitted, it should be
+  assumed that there is no topology requirement for the test.
 
 
 entity
 ~~~~~~
 
-An entity (e.g. client, collection, session object) that will be created
-before each test is executed. This document must contain exactly one top-level
-key that identifies the entity type and maps to a nested document, which
-specifies a unique name for the entity (``id`` key) and any other parameters
-necessary for its construction. Tests SHOULD use sequential names based on the
-entity type (e.g. "session0", "session1").
+An entity (e.g. client, collection, session object) that will be created in the
+`Entity Map`_ before each test is executed. This document must contain exactly
+one top-level key that identifies the entity type and maps to a nested document,
+which specifies a unique name for the entity (``id`` key) and any other
+parameters necessary for its construction. Tests SHOULD use sequential names
+based on the entity type (e.g. "session0", "session1").
 
 When defining an entity document in YAML, a
 `node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_ SHOULD be created
@@ -144,7 +187,12 @@ The structure of this document is as follows:
     will map to an array of strings, each representing a tag set, since it is
     not feasible to define multiple ``readPreferenceTags`` keys in the document.
 
-    **TODO**: Consider moving the ``useMultipleMongoses`` `test`_ option here.
+  .. _client_allowMultipleMongoses:
+
+  - ``allowMultipleMongoses``: Optional boolean. If false, the MongoClient
+    MUST be initialized with only a single mongos host. If true or omitted, or
+    if the topology is non-sharded, this option has no effect. This option is
+    primarily used in conjunction with tests that set non-targeted fail points.
 
 - ``database``: Optional document. Corresponds with a Database object. The
   structure of this document is as follows:
@@ -159,7 +207,7 @@ The structure of this document is as follows:
     entity's ``id`` field (e.g. ``client: *client0``).
 
   - ``databaseName``: Optional string. Database name. If omitted, this defaults
-    to the name of the database under test.
+    to the name of the database under test (see: `databaseName`_).
 
   - ``databaseOptions``: Optional document. See `collectionOrDatabaseOptions`_.
 
@@ -176,9 +224,11 @@ The structure of this document is as follows:
     entity's ``id`` field (e.g. ``database: *database0``).
 
   - ``collectionName``: Optional string. Collection name. If omitted, this
-    defaults to the name of the collection under test.
+    defaults to the name of the collection under test (see: `collectionName`_).
 
   - ``collectionOptions``: Optional document. See `collectionOrDatabaseOptions`_.
+
+.. _entity_session:
 
 - ``session``: Optional document. Corresponds with an explicit ClientSession
   object. The structure of this document is as follows:
@@ -224,16 +274,16 @@ collectionData
 
 List of documents that should correspond to the contents of a collection. This
 structure is used by both `initialData`_ and `test.outcome <test_outcome_>`_,
-which insert and read documents, respectively. Both of those directives 
-directives may operate on the collection under test, they do not share the
-same Collection object(s) as test `operations <operation_>`_. The structure of
+which insert and read documents, respectively. Both of those directives may
+operate on the collection(s) under test, they do not share the same Collection
+and MongoClient object(s) as test `operations <operation_>`_. The structure of
 this document is as follows:
 
 - ``collectionName``: Optional string. Collection name (not an `entity`_).
-  Defaults to the name of the collection under test.
+  Defaults to the name of the collection under test (see: `collectionName`_).
 
 - ``databaseName``: Optional string. Database name (not an `entity`_). Defaults
-  to the name of the database under test.
+  to the name of the database under test (see: `databaseName`_).
 
 - ``documents``: Required array of documents. List of documents corresponding to
   the contents of the collection. This list may be empty.
@@ -248,34 +298,18 @@ structure of each document is as follows:
 
 - ``description``: Required string. The name of the test.
 
+.. _test_runOn:
+
+- ``runOn``: Optional array of documents. List of server version and/or topology
+  requirements for which the tests in this file can be run. If specified, these
+  requirements override any top-level requirements in `runOn`_. Test runners
+  MUST skip a test if its requirements are not met.
+
+  If set, the array should contain at least one document. The structure of each
+  document is defined in `runOnRequirement`_.
+
 - ``skipReason``: Optional string. If set, the test will be skipped. The string
   should explain the reason for skipping the test (e.g. JIRA ticket).
-
-- ``useMultipleMongoses``. Optional boolean. If true, the MongoClient for this
-  test should be initialized with multiple mongos seed addresses. If false or
-  omitted, only a single mongos address should be specified. This field has no
-  effect for non-sharded topologies.
-
-    Note: ``useMultipleMongoses:true`` is mutually exclusive with ``failPoint``.
-
-- ``clientOptions``: Optional document. Additional connection string options
-  to pass to the MongoClient constructor.
-
-    Note: this option does not support expressing multiple read preference tags,
-    tags, since keys would repeat.
-
-.. _test_failPoint:
-
-- ``failPoint``: Optional document. A server failpoint to enable expressed as
-  a complete ``configureFailPoint`` command to run on the admin database.
-
-    Note: This option is mutually exclusive with ``useMultipleMongoses:true``.
-
-- ``sessionOptions``: Optional document. Map of session names (e.g. "session0")
-  to documents, each of which denotes parameters to pass to
-  ``MongoClient.startSession()`` when creating that session.
-
-  **TODO**: remove this in favor of the session `entity`_
 
 .. _test_operations:
 
@@ -290,6 +324,11 @@ structure of each document is as follows:
 
   The array should contain at least one document. The structure of each
   document is defined in `expectedEvent`_.
+
+  **TODO**: Determine if an empty array should test that no events are observed.
+  Decide if event types (e.g. APM, SDAM) should be mixed in the same array and
+  whether tests should be able to filter out certain types (assuming the test
+  runner observes any supported type).
 
 .. _test_outcome:
 
@@ -315,42 +354,42 @@ is as follows:
 
 .. _operation_object:
 
-- ``object``: Optional string. Name of the object on which to perform the
-  operation. Can be "collection", "database", "session0", "session1", or
-  "testRunner". Defaults to "collection".
-
-  **TODO**: link to special operations section
-
-  **TODO**: update this to refer to an entity identifier
-
-- ``collectionOptions``: Optional document. See `collectionOrDatabaseOptions`_.
-
-- ``databaseOptions``: Optional document. See `collectionOrDatabaseOptions`_.
-
-.. _operation_commandName:
-
-- ``commandName``: Optional string. Required only when ``name`` is "runCommand".
-  The name of the command to run. This may be used by languages that are unable
-  preserve the order of keys in the ``command`` argument when parsing YAML/JSON.
+- ``object``: Required string. Name of the object on which to perform the
+  operation. This should correspond to either an `entity`_ name (for
+  `Entity Test Operations`_) or "testRunner" (for `Special Test Operations`_).
+  If the object is an entity, The YAML file SHOULD use an
+  `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for its ``id``
+  field (e.g. ``object: *collection0``).
 
 .. _operation_arguments:
 
 - ``arguments``: Optional document. Map of parameter names and values for the
   operation. The structure of this document will vary based on the operation.
+  See `Entity Test Operations`_ and `Special Test Operations`_.
 
-  **TODO**: link to operation section
+.. _operation_expectedError:
 
-- ``error``: Optional boolean. If true, the test should expect the operation to
-  raise an error/exception. This could be either a server-generated or a
-  driver-generated error. Defaults to false.
-
-- ``result``: Optional mixed type. The return value from the operation, if any.
-  This field may be a scalar value, a single document, or an array of documents
-  in the case of a multi-document read. If the operation is expected to raise an
-  error/exception (i.e. ``error:true``), the structure of this document is
+- ``expectedError``: Optional document. One or more assertions for an expected
+  error raised by the operation. The structure of this document is
   defined in `expectedError`_.
 
-  **TODO**: link to section on matching logic
+.. _operation_expectedResult:
+
+- ``expectedResult``: Optional mixed type. A value corresponding to the expected
+  result of the operation. This field may be a scalar value, a single document,
+  or an array of documents in the case of a multi-document read.  Test runners
+  MUST follow the rules in `Evaluating Matches`_ when processing this assertion.
+  This field is mutually exclusive with
+  `expectedError <operation_expectedError_>`_.
+
+.. _operation_saveResultAsEntity:
+
+- ``saveResultAsEntity``: Optional string. If specified, the actual result
+  returned by the operation (if any) will be saved with this name in the
+  `Entity Map`_. The test runner MUST raise an error if the name is already in
+  use.
+
+  This is primarily used for change streams.
 
 
 expectedError
@@ -359,6 +398,16 @@ expectedError
 One or more assertions for an error/exception, which is expected to be raised by
 an executed operation. At least one key is required in this document. The
 structure of this document is as follows:
+
+- ``type``: Optional string or array of strings. One or more classifications of
+  errors, at least one of which should apply to the expected error. Valid types
+  are as follows:
+
+  - ``client``: client-generated error (e.g. parameter validation error before
+    a command is sent to the server).
+
+  - ``server``: server-generated error (e.g. error derived from a server
+    response).
 
 - ``errorContains``: Optional string. A substring of the expected error message.
 
@@ -370,6 +419,12 @@ structure of this document is as follows:
 
 - ``errorLabelsOmit``: Optional array of strings. A list of error label strings
   that the error is expected not to have.
+
+.. _expectedError_expectedResult:
+
+- ``expectedResult``: Optional mixed type. This field follows the same rules as
+  `operation.expectedResult <operation_expectedResult_>`_ and is only used in
+  cases where the error includes a result (e.g. `bulkWrite`_).
 
 
 expectedEvent
@@ -387,9 +442,8 @@ follows:
   `CommandStartedEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields. The structure of this document is as follows:
 
-  - ``command``: Optional document.
-
-    **TODO**: link to section on matching logic
+  - ``command``: Optional document. Test runners MUST follow the rules in
+    `Evaluating Matches`_ when processing this assertion.
 
   - ``commandName``: Optional string.
 
@@ -501,11 +555,11 @@ specifications:
 
 Other database operations not documented by an existing specification follow.
 
+
 runCommand
 ``````````
 
-Generic command runner. This operation requires that
-`operation.commandName <operation_commandName_>`_ also be specified.
+Generic command runner.
 
 This method does not inherit a read concern or write concern (per the
 `Read and Write Concern <../read-write-concern/read-write-concern.rst#generic-command-method>`__
@@ -516,6 +570,10 @@ spec); however, they may be specified as arguments.
 The following arguments are supported:
 
 - ``command``: Required document. The command to be executed.
+
+- ``commandName``: Required string. The name of the command to run. This is used
+  by languages that are unable preserve the order of keys in the ``command``
+  argument when parsing YAML/JSON.
 
 - ``readConcern``: Optional document. See `commonOptions_readConcern`_.
 
@@ -538,6 +596,17 @@ specifications:
 - `Index Management <../index-management.rst>`__
 
 
+bulkWrite
+`````````
+
+While operations typically raise an error *or* return a result, the
+``bulkWrite`` operation is unique in that it may report both via the
+``writeResult`` property of a BulkWriteException. In this case, the intermediary
+write result may be matched with `expectedError_expectedResult`_. Because
+``writeResult`` is optional for drivers to implement, such assertions should
+utilize the `$$unsetOrMatches`` operator.
+
+
 session
 ~~~~~~~
 
@@ -547,14 +616,15 @@ specifications:
 - `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
 - `Driver Sessions <../sessions/driver-sessions.rst>`__
 
+
 withTransaction
 ```````````````
 
 The ``withTransaction`` operation is unique in that its ``callback`` parameter
 is a function and not easily expressed in YAML/JSON. For ease of testing, this
 parameter is defined as an array of `operation`_ documents (analogous to
-`test.operations <test_operations>`_). Drivers MUST evaluate error and result
-assertions when executing these operations.
+`test.operations <test_operations>`_). Test runners MUST evaluate error and
+result assertions when executing these operations.
 
 
 bucket
@@ -576,28 +646,48 @@ special test operations (e.g. assertions). These operations are distinguished by
 defined below.
 
 
+failPoint
+~~~~~~~~~
+
+The ``failPoint`` operation instructs the test runner to configure a fail point.
+The ``failPoint`` argument is the ``configureFailPoint`` command to run. Tests
+using this operation SHOULD also specify
+`allowMultipleMongoses <client_allowMultipleMongoses_>`_ for any client
+entity(ies) used in the test, as failure to do so could cause unpredictable
+behavior when running the test on sharded topologies.
+
+An example of this operation follows::
+
+    # Enable the fail point only on the mongos to which session0 is pinned
+    - name: failPoint
+      object: testRunner
+      arguments:
+        failPoint:
+          configureFailPoint: failCommand
+          mode: { times: 1 }
+          data:
+            failCommands: ["insert"]
+            closeConnection: true
+
+See also:
+
+- `Clearing Fail Points After Tests`_
+- `Ignoring APM Events for configureFailPoint`_
+
+
 targetedFailPoint
 ~~~~~~~~~~~~~~~~~
 
 The ``targetedFailPoint`` operation instructs the test runner to configure a
 fail point on a specific mongos. The mongos on which to run the
-``configureFailPoint`` command is determined by the ``session`` argument. The
-session must already be pinned to a mongos server. The "failPoint" argument is
-the ``configureFailPoint`` command to run.
-
-If a test uses ``targetedFailPoint``, drivers SHOULD disable the fail point
-after running all `test.operations <test_operations>`_ to avoid spurious
-failures in subsequent tests. The fail point may be disabled like so::
-
-    db.adminCommand({
-        configureFailPoint: <fail point name>,
-        mode: "off"
-    });
+``configureFailPoint`` command is determined by the ``session`` argument. Test
+runners MUST error if the session is not pinned to a mongos server at the time
+this operation is executed. The ``failPoint`` argument is the
+``configureFailPoint`` command to run.
 
 An example instructing the test runner to enable the `failCommand`_ fail point
 on the mongos server to which "session0" is pinned follows::
 
-    # Enable the fail point only on the mongos to which session0 is pinned
     - name: targetedFailPoint
       object: testRunner
       arguments:
@@ -609,11 +699,10 @@ on the mongos server to which "session0" is pinned follows::
             failCommands: ["commitTransaction"]
             closeConnection: true
 
-Tests that use the ``targetedFailPoint`` operation do not include
-``configureFailPoint`` commands in their command expectations. Drivers MUST
-ensure that ``configureFailPoint`` commands do not appear in the list of logged
-commands, either by manually filtering it from the list of observed commands or
-by using a different MongoClient to execute ``configureFailPoint``.
+See also:
+
+- `Clearing Fail Points After Tests`_
+- `Ignoring APM Events for configureFailPoint`_
 
 
 assertSessionTransactionState
@@ -752,6 +841,225 @@ Otherwise, consider renaming the arguments to databaseName and collectionName as
 was done in `collectionData`_.
 
 
+Evaluating Matches
+------------------
+
+Expected values in tests (e.g.
+`operation.expectedResult <operation_expectedResult_>`_) are expressed as
+`Extended JSON <../extended-json.rst>`__.
+
+The algorithm for matching expected and actual values is specified with the
+following pseudo-code::
+
+    function match (expected, actual):
+      if expected is a document:
+        if first key of expected starts with "$$":          
+          assert that the special operator (identified by key) matches
+          return
+
+        assert that actual is a document
+
+        for every key/value in expected:
+          assert that actual[key] exists
+          assert that actual[key] matches value
+
+        return
+
+      if expected is an array:
+        assert that actual is an array
+        assert that actual and expected have the same number of elements
+
+        for every index/value in expected:
+          assert that actual[index] matches value
+
+        return
+
+      // expected is neither a document nor array
+      assert that actual and expected are the same type
+      assert that actual and expected are equal
+
+The rules for comparing documents and arrays are discussed in more detail in
+subsequent sections. When comparing types *other* than documents and arrays,
+test runners MAY adopt any of the following approaches to compare expected and
+actual values, as long as they are consistent:
+
+- Convert both values to Extended JSON and compare strings
+- Convert both values to BSON, and compare bytes
+- Convert both values to native representations, and compare accordingly
+
+When comparing types that may contain documents (e.g. CodeWScope), test runners
+MUST follow standard document matching rules when comparing those properties.
+
+
+Extra Fields in Actual Documents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When matching expected and actual *documents*, test runners MUST permit the
+actual documents to contain additional fields not present in the expected
+document. For example, the following documents match::
+
+    expected: { x: 1 }
+    actual: { x: 1, y: 1 }
+
+The inverse is not true. For example, the following documents would not match::
+
+    expected: { x: 1, y: 1 }
+    actual: { x: 1 }
+
+It may be helpful to think of expected documents as a form of query criteria.
+The intention behind this rule is that it is not always feasible or relevant for
+a test to exhaustively specify all fields in an expected document (e.g. cluster
+time in a `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_ command).
+
+Note that this rule for allowing extra fields in actual values only applies when
+matching *documents* documents. When comparing arrays, expected and actual
+values must contain the same number of elements. For example, the following
+arrays corresponding to a ``distinct`` operation result would not match::
+
+    expected: [ 1, 2, 3 ]
+    actual: [ 1, 2, 3, 4 ]
+
+That said, any individual documents *within* an array or list (e.g. result of a
+``find`` operation) may be matched according to the rules in this section. For
+example, the following arrays would match::
+
+    expected: [ { x: 1 }, { x: 2 } ]
+    actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
+
+
+Special Operators for Matching Assertions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When matching expected and actual values, an equality comparison is not always
+sufficient. For instance, a test file cannot anticipate what a session ID will
+be at runtime, but may still want to analyze the contents of an ``lsid`` field
+in a command document. To address this need, special operators can be used.
+
+These operators are documents with a single key identifying the operator. Such
+keys are prefixed with ``$$`` to ease in detecting an operator (test runners
+need only inspect the first key of each document) and differentiate the document
+from MongoDB query operators, which use a single `$` prefix. The key will map to
+some value that influences the operator's behavior (if applicable).
+
+When examining the structure of an expected value during a comparison, test
+runners MUST examine the first key of any document for a ``$$`` prefix and, if
+present, defer to the special logic defined in this section.
+
+
+$$exists
+````````
+
+Syntax::
+
+    { field: { $$exists: <boolean> } }
+
+This operator can be used anywhere the value for a key might be specified in an
+expected dcoument. If true, the test runner MUST assert that the key exists in
+the actual document, irrespective of its value (e.g. a key with a ``null`` value
+would match). If false, the test runner MUST assert that the key does not exist
+in the actual document. This operator is modeled after the
+`$exists <https://docs.mongodb.com/manual/reference/operator/query/exists/>`__
+query operator.
+
+An example of this operator checking for a field's presence follows::
+
+    command:
+      getMore: { $$exists: true }
+      collection: *collectionName,
+      batchSize: 5
+
+An example of this operator checking for a field's absence follows::
+
+    command:
+      update: *collectionName
+      updates: [ { q: {}, u: { $set: { x: 1 } } } ]
+      ordered: true
+      writeConcern: { $$exists: false }
+
+
+$$type
+``````
+
+Syntax, where ``bsonType`` is a string or integer::
+
+    { $$type: <bsonType> }
+    { $$type: [ <bsonType>, <bsonType>, ... ] }
+
+This operator can be used anywhere a matched value is expected (including an
+`expectedResult <operation_expectedResult_>`_). The test runner MUST assert that
+the actual value exists and matches one of the expected types, which correspond
+to the documented types for the
+`$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
+query operator.
+
+An example of this operator follows::
+
+    command:
+      getMore: { $$type: [ int, long ] }
+      collection: { $$type: 2 } # string
+
+When the actual value is an array, test runners MUST NOT examine types of the
+array's elements. Only the type of actual field should be checked. This is
+admittedly inconsistent with the behavior of the
+`$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
+query operator, but there is presently no need for this behavior in tests.
+
+
+$$unsetOrMatches
+````````````````
+
+Syntax::
+
+    { $$unsetOrMatches: <anything> }
+
+This operator can be used anywhere a matched value is expected (including an
+`expectedResult <operation_expectedResult_>`_). The test runner MUST assert that
+actual value either does not exist or and matches the expected value. Matching
+the expected value should use the standard rules in `Evaluating Matches`_, which
+means that it may contain special operators.
+
+This operator is primarily used to assert driver-optional fields from the CRUD
+spec (e.g. ``insertedId`` for InsertOneResult, ``writeResult`` for
+BulkWriteException).
+
+An example of this operator used for a result's field follows::
+
+    expectedResult:
+      insertedId: { $$unsetOrMatches: 2 }
+
+An example of this operator used for an entire result follows::
+
+    expectedError:
+      expectedResult:
+        $$unsetOrMatches:
+          deletedCount: 0
+          insertedCount: 2
+          matchedCount: 0
+          modifiedCount: 0
+          upsertedCount: 0
+          upsertedIds: { }
+
+
+$$sessionLsid
+`````````````
+
+Syntax::
+
+    { $$sessionLsid: <string> }
+
+This operation is used for matching any value with the logical session ID of a
+`session entity <entity_session_>`_. The value will refer to a unique name of a
+session entity. The YAML file SHOULD use an
+`alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a session
+entity's ``id`` field (e.g. ``session: *session0``).
+
+An example of this operator follows::
+
+    command:
+      ping: 1
+      lsid: { $$sessionLsid: *session0 }
+
+
 TBD: Command Started Events
 ---------------------------
 
@@ -760,68 +1068,8 @@ in the `Command Monitoring <../command-monitoring/command-monitoring.rst#securit
 spec.
 
 
-Logical Session Id
-~~~~~~~~~~~~~~~~~~
-
-Each `expectedEvent_commandStartedEvent`_ that includes an ``lsid`` with the
-value "session0" or "session1". Tests MUST assert that the command's actual
-``lsid`` matches the id of the correct ClientSession named ``session0`` or
-``session1``.
-
-**TODO**: Define a custom matcher for comparing with a session entity's LSID
-(e.g. ``lsid: { $$sessionLsid: *session0 }``).
-
-
-Null Values
-~~~~~~~~~~~
-
-Some command-started events in ``expectations`` include ``null`` values for
-fields such as ``txnNumber``, ``autocommit``, and ``writeConcern``.
-Tests MUST assert that the actual command **omits** any field that has a
-``null`` value in the expected command.
-
-**TODO**: Define a custom matcher for checking whether a field exists or not
-(e.g. ``txnNumber: { $$exists: false }``).
-
-
-Cursor Id
-~~~~~~~~~
-
-A ``getMore`` value of ``"42"`` in a command-started event is a fake cursorId
-that MUST be ignored. (In the Command Monitoring Spec tests, fake cursorIds are
-correlated with real ones, but that is not necessary for Transactions Spec
-tests.)
-
-**TODO**: Define a custom matcher for checking whether a field exists or not
-(e.g. ``getMore: { $$exists: true }``) or matches a particular BSON type (e.g.
-``getMore: { $$type: "int" }``, ``getMore: { $$type: ["int", "long"] }``).
-
-
-afterClusterTime
-~~~~~~~~~~~~~~~~
-
-A ``readConcern.afterClusterTime`` value of ``42`` in a command-started event
-is a fake cluster time. Drivers MUST assert that the actual command includes an
-afterClusterTime.
-
-**TODO**: Define a custom matcher for checking whether a field exists or not
-(e.g. ``afterClusterTime: { $$exists: true }``).
-
-
-recoveryToken
-~~~~~~~~~~~~~
-
-A ``recoveryToken`` value of ``42`` in a command-started event is a
-placeholder for an arbitrary recovery token. Drivers MUST assert that the
-actual command includes a "recoveryToken" field and SHOULD assert that field
-is a BSON document.
-
-**TODO**: Define a custom matcher for checking whether a field matches a
-particular BSON type (e.g. ``recoveryToken: { $$type: "object" }``).
-
-
-TBD: Use as Integration Tests
------------------------------
+Running Tests
+-------------
 
 Run a MongoDB replica set with a primary, a secondary, and an arbiter,
 **server version 4.0.0 or later**. (Including a secondary ensures that
@@ -876,7 +1124,7 @@ Then for each element in ``tests``:
 #. Call ``client.startSession`` twice to create ClientSession objects
    ``session0`` and ``session1``, using the test's "sessionOptions" if they
    are present. Save their lsids so they are available after calling
-   ``endSession``, see `Logical Session Id`_.
+   ``endSession``, see `Logical Session Id`.
 #. For each element in ``operations``:
 
    - If the operation ``name`` is a special test operation type, execute it and
@@ -953,8 +1201,7 @@ Server Fail Points
 
 Many tests utilize the ``configureFailPoint`` command to trigger server-side
 errors such as dropped connections or command errors. Tests refer to this by the
-`test.failPoint <test_failPoint_>`_  field or the the special ``targetedFailPoint`` operation
-type on the ``testRunner`` object (in ``tests[].operations[]``).
+special `failPoint`_ or `targetedFailPoint`_ opertions.
 
 This internal command is not documented in the MongoDB manual (pending
 `DOCS-10784`_); however, there is scattered documentation available on the
@@ -963,11 +1210,15 @@ and employee blogs (e.g. `Intro to Fail Points <https://kchodorow.com/2013/01/15
 `Testing Network Errors with MongoDB <https://emptysqua.re/blog/mongodb-testing-network-errors/>`__).
 Documentation can also be gleaned from JIRA tickets (e.g. `SERVER-35004`_,
 `SERVER-35083`_). This specification does not aim to provide comprehensive
-documentation for all fail points available for driver testing.
+documentation for all fail points available for driver testing, but some fail
+points are documented in `Fail Points Commonly Used in Tests`_.
 
 .. _DOCS-10784: https://jira.mongodb.org/browse/DOCS-10784
 .. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
 .. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
+
+Configuring Fail Points
+-----------------------
 
 The ``configureFailPoint`` command should be executed on the ``admin`` database
 and has the following structure::
@@ -1002,9 +1253,39 @@ the `setParameter <https://docs.mongodb.com/manual/reference/command/setParamete
 command). This parameter should already be enabled for most configuration files
 in `mongo-orchestration <https://github.com/10gen/mongo-orchestration>`_.
 
+Clearing Fail Points After Tests
+--------------------------------
+
+If a test configures one or more fail points, test runners MUST disable those
+fail points after running all `test.operations <test_operations>`_ to avoid
+spurious failures in subsequent tests. For tests using `targetedFailPoint`_, the
+test runner MUST disable the fail point on the same mongos node on which it was
+originally configured.
+
+A fail point may be disabled like so::
+
+    db.adminCommand({
+        configureFailPoint: <string>,
+        mode: "off"
+    });
+
+Ignoring APM Events for configureFailPoint
+------------------------------------------
+
+Tests that use `failPoint`_ and `targetedFailPoint`_ operations SHOULD not
+include ``configureFailPoint`` commands in their command expectations. Test
+runners MUST ensure that ``configureFailPoint`` commands executed for
+`failPoint`_ and `targetedFailPoint`_ operations do not appear in the list of
+logged commands, either by manually filtering it from the list of observed
+commands or by using a different MongoClient to execute ``configureFailPoint``.
+
+
+Fail Points Commonly Used in Tests
+----------------------------------
+
 
 failCommand
------------
+~~~~~~~~~~~
 
 The ``failCommand`` fail point allows the client to force the server to return
 an error for commands listed in the ``data.failCommands`` field. Additionally,
@@ -1058,3 +1339,49 @@ This specification was primarily derived from the test formats used by the
 
 Change Log
 ==========
+
+Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-19:
+
+* added test.runOn and clarified that it can override top-level runOn requirements
+
+* runOn.topology can be a single string in addition to array of strings
+
+* added "sharded-replicaset" topology type, which will be relevant for change
+  streams, transactions, retryable writes.
+
+* removed top-level collectionName and databaseName fields, since they can be
+  specified when creating collection and database entities.
+
+* removed test.clientOptions, since client entities can specify their own options
+
+* moved operation.failPoint to failPoint special operation
+
+* operation.object is now required and takes either an entity name (e.g.
+  "collection0") or "testRunner"
+
+* operation.commandName moved to an argument of the runCommand database
+  operation. Since that method is documented entirely in this spec, I didn't
+  see an issue with consolidating.
+
+* renamed operation.result to expectedResult and noted that it may co-exist with
+  error assertions in special cases (e.g. BulkWriteException).
+
+* remove error assertions from operation.result. These are now specified under
+  operation.expectedError, which replaces the error boolean and requires at
+  least one assertion. Added a type assertion (e.g. client, server), which
+  should be useful for discerning client-side and server-side errors (currently
+  achieved with APM assertions).
+
+* added operation.saveResultAsEntity to capture a result in the entity map
+  (primarily for use with change streams)
+
+* consolidated documentation for ignoring configureFailPoint commands in APM and
+  also disabling fail points after a test, which is now referenced from the
+  failPoint and targetedFailPoint operations
+
+* removed $$assert nesting in favor of $$<operator>, since test runners can
+  easily check the first document key for a ``$$`` prefix.
+
+* completed section on evaluating matches and added pseudo-code
