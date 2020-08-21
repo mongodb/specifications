@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.0
+:Spec Version: 1.0.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital
 :Status: Draft
@@ -29,10 +29,36 @@ META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
+interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`__.
 
 Specification
 =============
+
+
+Schema Version
+--------------
+
+Each test file notes a `schemaVersion`_, which test runners will use to
+determine compatibility (i.e. whether and how the test file will be
+interpreted). Test runners are free to determine how to handle incompatible test
+files (e.g. skip and log a notice, fail and raise an error).
+
+Each major version of this specification will have a corresponding JSON schema
+(e.g. `schema-1.json <schema-1.json>`__), which may be used to programmatically
+validate YAML and JSON files using a tool such as `Ajv <https://ajv.js.org/>`__.
+
+This specification and the `Test Format`_ follow
+`semantic versioning <https://semver.org/>`__. Backwards breaking changes (e.g.
+removing a field, introducing a required field) will warrant a new major
+version. Backwards compatible changes (e.g. introducing an optional field) will
+warrant a new minor version. Small bug fixes and internal changes (e.g. grammar)
+will warrant a new patch version.
+
+The latest JSON schema MUST remain consistent with the `Test Format`_ section.
+If and when a new major version is introduced, the `Breaking Changes`_ section
+must be updated and JSON schema(s) for any previous major version(s) MUST remain
+available so that older test files can still be validated. New tests files
+SHOULD always be written using the latest version of this specification.
 
 
 Entity Map
@@ -81,11 +107,22 @@ are parsed as a document by the test runner. This section defines the top-level
 keys for that document and links to various sub-sections for definitions of
 nested structures (e.g. individual `test`_, `operation`_).
 
-The test format is also defined in the accompanying `schema.json <schema.json>`_
-file, which may be used to programmatically validate YAML and JSON files using
-a tool such as `Ajv <https://ajv.js.org/>`_.
+Although test runners are free to process YAML or JSON files, YAML is the
+canonical format for writing tests. YAML files may be converted to JSON using a
+tool such as `js-yaml <https://github.com/nodeca/js-yaml>`__ .
+
+
+Top-level Fields
+~~~~~~~~~~~~~~~~
 
 The top-level fields of a test file are as follows:
+
+.. _schemaVersion:
+
+- ``schemaVersion``: Required string. Version of this specification to which the
+  test file complies. Test runners will use this to determine compatibility
+  (i.e. whether and how the test file will be interpreted). The format of this
+  string is defined in `Version String`_.
 
 .. _runOn:
 
@@ -138,11 +175,13 @@ test(s). The structure of this document is as follows:
 
 - ``minServerVersion``: Optional string. The minimum server version (inclusive)
   required to successfully run the tests. If this field is omitted, it should be
-  assumed that there is no lower bound on the required server version.
+  assumed that there is no lower bound on the required server version. The
+  format of this string is defined in `Version String`_.
 
 - ``maxServerVersion``: Optional string. The maximum server version (inclusive)
   against which the tests can be run successfully. If this field is omitted, it
-  should be assumed that there is no upper bound on the required server version. 
+  should be assumed that there is no upper bound on the required server version.
+  The format of this string is defined in `Version String`_.
 
 - ``topology``: Optional string or array of strings. One or more of server
   topologies against which the tests can be run successfully. Valid topologies
@@ -161,12 +200,13 @@ which specifies a unique name for the entity (``id`` key) and any other
 parameters necessary for its construction. Tests SHOULD use sequential names
 based on the entity type (e.g. "session0", "session1").
 
-When defining an entity document in YAML, a
-`node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_ SHOULD be created
-on the entity's ``id`` key. This anchor will allow the unique name to be
-referenced with an `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_
-later in the file (e.g. from another entity or `operation`_ document) and also
-leverage YAML's parser for reference validation.
+When defining an entity document in YAML, a `node anchor`_ SHOULD be created on
+the entity's ``id`` key. This anchor will allow the unique name to be referenced
+with an `alias node`_ later in the file (e.g. from another entity or
+`operation`_ document) and also leverage YAML's parser for reference validation.
+
+.. _node anchor: https://yaml.org/spec/1.2/spec.html#id2785586
+.. _alias node: https://yaml.org/spec/1.2/spec.html#id2786196
 
 The structure of this document is as follows:
 
@@ -174,8 +214,7 @@ The structure of this document is as follows:
   structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
-    define a `node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_
-    for this field (e.g. ``id: &client0 client0``).
+    define a `node anchor`_ for this field (e.g. ``id: &client0 client0``).
 
   - ``uriOptions``: Optional document. Additional URI options to apply to the
     test suite's connection string that is used to create this client. Any keys
@@ -198,13 +237,11 @@ The structure of this document is as follows:
   structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
-    define a `node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_
-    for this field (e.g. ``id: &database0 database0``).
+    define a `node anchor`_ for this field (e.g. ``id: &database0 database0``).
 
   - ``client``: Required string. Client entity from which this database will be
-    created. The YAML file SHOULD use an
-    `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a client
-    entity's ``id`` field (e.g. ``client: *client0``).
+    created. The YAML file SHOULD use an `alias node`_ for a client entity's
+    ``id`` field (e.g. ``client: *client0``).
 
   - ``databaseName``: Optional string. Database name. If omitted, this defaults
     to the name of the database under test (see: `databaseName`_).
@@ -215,12 +252,11 @@ The structure of this document is as follows:
   structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
-    define a `node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_
-    for this field (e.g. ``id: &collection0 collection0``).
+    define a `node anchor`_ for this field (e.g.
+    ``id: &collection0 collection0``).
 
   - ``database``: Required string. Database entity from which this collection
-    will be created. The YAML file SHOULD use an
-    `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a database
+    will be created. The YAML file SHOULD use an `alias node`_ for a database
     entity's ``id`` field (e.g. ``database: *database0``).
 
   - ``collectionName``: Optional string. Collection name. If omitted, this
@@ -234,13 +270,11 @@ The structure of this document is as follows:
   object. The structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
-    define a `node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_
-    for this field (e.g. ``id: &session0 session0``).
+    define a `node anchor`_ for this field (e.g. ``id: &session0 session0``).
 
   - ``client``: Required string. Client entity from which this session will be
-    created. The YAML file SHOULD use an
-    `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a client
-    entity's ``id`` field (e.g. ``client: *client0``).
+    created. The YAML file SHOULD use an `alias node`_ for a client entity's
+    ``id`` field (e.g. ``client: *client0``).
 
   - ``sessionOptions``: Optional document. Map of parameters to pass to
     `MongoClient.startSession <../source/sessions/driver-sessions.rst#startsession>`__
@@ -254,12 +288,10 @@ The structure of this document is as follows:
   structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
-    define a `node anchor <https://yaml.org/spec/1.2/spec.html#id2785586>`_
-    for this field (e.g. ``id: &bucket0 bucket0``).
+    define a `node anchor`_ for this field (e.g. ``id: &bucket0 bucket0``).
 
   - ``database``: Required string. Database entity from which this bucket will
-    be created. The YAML file SHOULD use an
-    `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a database
+    be created. The YAML file SHOULD use an `alias node`_ for a database
     entity's ``id`` field (e.g. ``database: *database0``).
 
   - ``bucketOptions``: Optional document. Additional options used to construct
@@ -319,6 +351,8 @@ structure of each document is as follows:
   The array should contain at least one document. The structure of each
   document is defined in `operation`_.
 
+.. _test_expectedEvents:
+
 - ``expectedEvents``: Optional array of documents. List of events, which are
   expected to be observed in this order by running the operations.
 
@@ -357,9 +391,8 @@ is as follows:
 - ``object``: Required string. Name of the object on which to perform the
   operation. This should correspond to either an `entity`_ name (for
   `Entity Test Operations`_) or "testRunner" (for `Special Test Operations`_).
-  If the object is an entity, The YAML file SHOULD use an
-  `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for its ``id``
-  field (e.g. ``object: *collection0``).
+  If the object is an entity, The YAML file SHOULD use an `alias node`_ for its
+  ``id`` field (e.g. ``object: *collection0``).
 
 .. _operation_arguments:
 
@@ -410,9 +443,11 @@ structure of this document is as follows:
     response).
 
 - ``errorContains``: Optional string. A substring of the expected error message.
+  See `bulkWrite`_ for special considerations for BulkWriteExceptions.
 
 - ``errorCodeName``: Optional string. The expected "codeName" field in the
-  server-generated error response.
+  server-generated error response. See `bulkWrite`_ for special considerations
+  for BulkWriteExceptions.
 
 - ``errorLabelsContain``: Optional array of strings. A list of error label
   strings that the error is expected to have.
@@ -498,8 +533,7 @@ The structure of these common options is as follows:
 .. _commonOptions_session:
 
 - ``session``: Optional string. Session entity which will be resolved to a
-  ClientSession object. The YAML file SHOULD use an
-  `alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a session
+  ClientSession object. The YAML file SHOULD use an `alias node`_ for a session
   entity's ``id`` field (e.g. ``session: *session0``).
 
 .. _commonOptions_writeConcern:
@@ -512,6 +546,17 @@ The structure of these common options is as follows:
   - ``w``: Optional integer or string.
 
   - ``wtimeoutMS``: Optional integer.
+
+
+Version String
+--------------
+
+Version strings, which are used for `schemaVersion`_ and `runOn`_, MUST conform
+to one of the following formats, where each component is an integer:
+
+- ``<major>.<minor>.<patch>``
+- ``<major>.<minor>`` (``<patch>>`` is assumed to be zero)
+- ``<major>`` (``<minor>`` and ``<patch>>`` are assumed to be zero)
 
 
 Entity Test Operations
@@ -606,6 +651,14 @@ write result may be matched with `expectedError_expectedResult`_. Because
 ``writeResult`` is optional for drivers to implement, such assertions should
 utilize the `$$unsetOrMatches`` operator.
 
+Additionally, BulkWriteException is unique in that it aggregates one or more
+server errors in its ``writeConcernError`` and ``writeErrors`` properties.
+When test runners evaluate `expectedError`_ assertions for ``errorContains`` and
+``errorCodeName``, they MUST examine the aggregated errors and consider any
+match therein to satisfy the assertion(s). Drivers that concatenate all write
+and write concern error messages into the BulkWriteException message MAY
+optimize the check for ``errorContains`` by examining the concatenated message.
+
 
 session
 ~~~~~~~
@@ -672,7 +725,7 @@ An example of this operation follows::
 See also:
 
 - `Clearing Fail Points After Tests`_
-- `Ignoring APM Events for configureFailPoint`_
+- `Excluding configureFailPoint from APM`_
 
 
 targetedFailPoint
@@ -702,7 +755,7 @@ on the mongos server to which "session0" is pinned follows::
 See also:
 
 - `Clearing Fail Points After Tests`_
-- `Ignoring APM Events for configureFailPoint`_
+- `Excluding configureFailPoint from APM`_
 
 
 assertSessionTransactionState
@@ -1049,9 +1102,8 @@ Syntax::
 
 This operation is used for matching any value with the logical session ID of a
 `session entity <entity_session_>`_. The value will refer to a unique name of a
-session entity. The YAML file SHOULD use an
-`alias node <https://yaml.org/spec/1.2/spec.html#id2786196>`_ for a session
-entity's ``id`` field (e.g. ``session: *session0``).
+session entity. The YAML file SHOULD use an `alias node`_ for a session entity's
+``id`` field (e.g. ``session: *session0``).
 
 An example of this operator follows::
 
@@ -1200,19 +1252,22 @@ Server Fail Points
 ==================
 
 Many tests utilize the ``configureFailPoint`` command to trigger server-side
-errors such as dropped connections or command errors. Tests refer to this by the
-special `failPoint`_ or `targetedFailPoint`_ opertions.
+errors such as dropped connections or command errors. Tests can configure fail
+points using the special `failPoint`_ or `targetedFailPoint`_ opertions.
 
 This internal command is not documented in the MongoDB manual (pending
 `DOCS-10784`_); however, there is scattered documentation available on the
-server wiki (`The failCommand Fail Point <https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point>`__)
-and employee blogs (e.g. `Intro to Fail Points <https://kchodorow.com/2013/01/15/intro-to-fail-points/>`__,
-`Testing Network Errors with MongoDB <https://emptysqua.re/blog/mongodb-testing-network-errors/>`__).
-Documentation can also be gleaned from JIRA tickets (e.g. `SERVER-35004`_,
-`SERVER-35083`_). This specification does not aim to provide comprehensive
-documentation for all fail points available for driver testing, but some fail
-points are documented in `Fail Points Commonly Used in Tests`_.
+server wiki (`The "failCommand" Fail Point <failpoint-wiki_>`_) and employee blogs
+(e.g. `Intro to Fail Points <failpoint-blog1_>`_,
+`Testing Network Errors with MongoDB <failpoint-blog2_>`_). Documentation can
+also be gleaned from JIRA tickets (e.g. `SERVER-35004`_, `SERVER-35083`_). This
+specification does not aim to provide comprehensive documentation for all fail
+points available for driver testing, but some fail points are documented in
+`Fail Points Commonly Used in Tests`_.
 
+.. _failpoint-wiki: https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point
+.. _failpoint-blog1: https://kchodorow.com/2013/01/15/intro-to-fail-points/
+.. _failpoint-blog2: https://emptysqua.re/blog/mongodb-testing-network-errors/
 .. _DOCS-10784: https://jira.mongodb.org/browse/DOCS-10784
 .. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
 .. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
@@ -1269,15 +1324,14 @@ A fail point may be disabled like so::
         mode: "off"
     });
 
-Ignoring APM Events for configureFailPoint
-------------------------------------------
+Excluding configureFailPoint from APM
+-------------------------------------
 
-Tests that use `failPoint`_ and `targetedFailPoint`_ operations SHOULD not
-include ``configureFailPoint`` commands in their command expectations. Test
-runners MUST ensure that ``configureFailPoint`` commands executed for
+Test runners MUST ensure that ``configureFailPoint`` commands executed for
 `failPoint`_ and `targetedFailPoint`_ operations do not appear in the list of
-logged commands, either by manually filtering it from the list of observed
-commands or by using a different MongoClient to execute ``configureFailPoint``.
+logged commands used to assert `test.expectedEvents <test_expectedEvents_>`_,
+either by manually filtering it from the list of observed commands or by using a
+different MongoClient to execute ``configureFailPoint``.
 
 
 Fail Points Commonly Used in Tests
@@ -1290,7 +1344,7 @@ failCommand
 The ``failCommand`` fail point allows the client to force the server to return
 an error for commands listed in the ``data.failCommands`` field. Additionally,
 this fail point is documented in server wiki:
-`The failCommand Fail Point <https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point>`_.
+`The failCommand Fail Point <https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point>`__.
 
 The ``failCommand`` fail point may be configured like so::
 
@@ -1337,10 +1391,30 @@ This specification was primarily derived from the test formats used by the
 `CRUD <../crud/crud.rst>`__ specs, which have served models or other specs.
 
 
+Breaking Changes
+================
+
+This section is reserved for future use. Any breaking changes to the test format
+should be described here in detail for historical reference, in addition to any
+shorter description that may be added to the `Change Log`_.
+
+
 Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-21:
+
+* clarify error assertions for BulkWriteException
+
+* note that YAML is the canonical format and discuss js-yaml
+
+* note that configureFailPoint must be excluded from APM
+
+* reformat external links to YAML spec and fail point docs
+
+* add schemaVersion field and document how the spec will handle versions
 
 2020-08-19:
 
