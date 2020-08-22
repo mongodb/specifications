@@ -5,11 +5,11 @@ Unified Test Format
 :Spec Title: Unified Test Format
 :Spec Version: 1.0.0
 :Author: Jeremy Mikola
-:Advisors: Prashant Mital
+:Advisors: Prashant Mital, Isabel Atkinson
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-08-15
+:Last Modified: 2020-08-21
 
 .. contents::
 
@@ -38,21 +38,23 @@ Specification
 Schema Version
 --------------
 
-Each test file notes a `schemaVersion`_, which test runners will use to
-determine compatibility (i.e. whether and how the test file will be
-interpreted). Test runners are free to determine how to handle incompatible test
-files (e.g. skip and log a notice, fail and raise an error).
-
-Each major version of this specification will have a corresponding JSON schema
-(e.g. `schema-1.json <schema-1.json>`__), which may be used to programmatically
-validate YAML and JSON files using a tool such as `Ajv <https://ajv.js.org/>`__.
-
 This specification and the `Test Format`_ follow
 `semantic versioning <https://semver.org/>`__. Backwards breaking changes (e.g.
 removing a field, introducing a required field) will warrant a new major
 version. Backwards compatible changes (e.g. introducing an optional field) will
 warrant a new minor version. Small bug fixes and internal changes (e.g. grammar)
 will warrant a new patch version.
+
+Each test file defines a `schemaVersion`_, which test runners will use to
+determine compatibility (i.e. whether and how the test file will be
+interpreted). Test runners MAY support multiple versions of the test format.
+Test runners MUST NOT process incompatible files but are otherwise free to
+determine how to handle such files (e.g. skip and log a notice, fail and raise
+an error).
+
+Each major version of this specification will have a corresponding JSON schema
+(e.g. `schema-1.json <schema-1.json>`__), which may be used to programmatically
+validate YAML and JSON files using a tool such as `Ajv <https://ajv.js.org/>`__.
 
 The latest JSON schema MUST remain consistent with the `Test Format`_ section.
 If and when a new major version is introduced, the `Breaking Changes`_ section
@@ -134,6 +136,16 @@ The top-level fields of a test file are as follows:
   If set, the array should contain at least one document. The structure of each
   document is defined in `runOnRequirement`_.
 
+.. _allowMultipleMongoses:
+
+- ``allowMultipleMongoses``: Optional boolean. If false, all MongoClients
+  created for this test file (both internal and `entities <entity_client_>`_)
+  that could connect to a sharded cluster MUST be initialized with only a single
+  mongos host. Defaults to true. If true or the topology is non-sharded, this
+  option has no effect. Test files that include tests with a `failPoint`_
+  operation that may run on sharded topologies MUST specify false for this
+  option.
+
 .. _createEntities:
 
 - ``createEntities``: Optional array of documents. List of entities (e.g.
@@ -159,6 +171,8 @@ The top-level fields of a test file are as follows:
 
   If set, the array should contain at least one document. The structure of each
   document is defined in `collectionData`_.
+
+.. _tests:
 
 - ``tests``: Required array of documents. List of test cases to be executed
   independently of each other.
@@ -210,6 +224,8 @@ with an `alias node`_ later in the file (e.g. from another entity or
 
 The structure of this document is as follows:
 
+.. _entity_client:
+
 - ``client``: Optional document. Corresponds with a MongoClient object. The
   structure of this document is as follows:
 
@@ -226,12 +242,7 @@ The structure of this document is as follows:
     will map to an array of strings, each representing a tag set, since it is
     not feasible to define multiple ``readPreferenceTags`` keys in the document.
 
-  .. _client_allowMultipleMongoses:
-
-  - ``allowMultipleMongoses``: Optional boolean. If false, the MongoClient
-    MUST be initialized with only a single mongos host. If true or omitted, or
-    if the topology is non-sharded, this option has no effect. This option is
-    primarily used in conjunction with tests that set non-targeted fail points.
+.. _entity_database:
 
 - ``database``: Optional document. Corresponds with a Database object. The
   structure of this document is as follows:
@@ -247,6 +258,8 @@ The structure of this document is as follows:
     to the name of the database under test (see: `databaseName`_).
 
   - ``databaseOptions``: Optional document. See `collectionOrDatabaseOptions`_.
+
+.. _entity_collection:
 
 - ``collection``: Optional document. Corresponds with a Collection object. The
   structure of this document is as follows:
@@ -698,20 +711,26 @@ special test operations (e.g. assertions). These operations are distinguished by
 `operation.name <operation_name_>`_ field will correspond to an operation
 defined below.
 
+These operations MUST use an internal MongoClient
+
 
 failPoint
 ~~~~~~~~~
 
-The ``failPoint`` operation instructs the test runner to configure a fail point.
-The ``failPoint`` argument is the ``configureFailPoint`` command to run. Tests
-using this operation SHOULD also specify
-`allowMultipleMongoses <client_allowMultipleMongoses_>`_ for any client
-entity(ies) used in the test, as failure to do so could cause unpredictable
-behavior when running the test on sharded topologies.
+The ``failPoint`` operation instructs the test runner to configure a fail point
+on the server selected with a ``primary`` read preference. The ``failPoint``
+argument is the ``configureFailPoint`` command to run.
+
+Test files using this operation MUST also specify false for
+`allowMultipleMongoses`_ if they could be executed on sharded topologies
+(according to `runOn`_ or `test.runOn <test_runOn_>`_). This is necessary
+because server selection rules for mongos could lead to unpredictable behavior
+if different servers were selected for configuring the fail point and executing
+subsequent operations.
 
 An example of this operation follows::
 
-    # Enable the fail point only on the mongos to which session0 is pinned
+    # Enable the fail point on the server selected with a primary read preference
     - name: failPoint
       object: testRunner
       arguments:
@@ -727,6 +746,9 @@ See also:
 - `Clearing Fail Points After Tests`_
 - `Excluding configureFailPoint from APM`_
 
+**TODO**: Consider supporting a readPreference argument to target nodes other
+than the primary.
+
 
 targetedFailPoint
 ~~~~~~~~~~~~~~~~~
@@ -738,9 +760,15 @@ runners MUST error if the session is not pinned to a mongos server at the time
 this operation is executed. The ``failPoint`` argument is the
 ``configureFailPoint`` command to run.
 
-An example instructing the test runner to enable the `failCommand`_ fail point
-on the mongos server to which "session0" is pinned follows::
+This operation SHOULD NOT be used in test files that specify false for
+`allowMultipleMongoses`_ because session pinning cannot be meaningfully tested
+without connecting to multiple mongos servers. In practice, this means that
+`failPoint`_ and `targetedFailPoint`_ SHOULD NOT be utilized in the same test
+file.
 
+An example of this operation follows::
+
+    # Enable the fail point on the mongos to which session0 is pinned
     - name: targetedFailPoint
       object: testRunner
       arguments:
@@ -871,6 +899,7 @@ currently not possible to run ``listIndexes`` from within a transaction.
 Otherwise, consider renaming the arguments to databaseName and collectionName as
 was done in `collectionData`_.
 
+
 assertIndexNotExists
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -898,8 +927,8 @@ Evaluating Matches
 ------------------
 
 Expected values in tests (e.g.
-`operation.expectedResult <operation_expectedResult_>`_) are expressed as
-`Extended JSON <../extended-json.rst>`__.
+`operation.expectedResult <operation_expectedResult_>`_) are expressed as either
+relaxed or canonical `Extended JSON <../extended-json.rst>`_.
 
 The algorithm for matching expected and actual values is specified with the
 following pseudo-code::
@@ -936,7 +965,8 @@ subsequent sections. When comparing types *other* than documents and arrays,
 test runners MAY adopt any of the following approaches to compare expected and
 actual values, as long as they are consistent:
 
-- Convert both values to Extended JSON and compare strings
+- Convert both values to relaxed or canonical `Extended JSON`_ and compare
+  strings
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
@@ -1415,6 +1445,12 @@ Note: this will be cleared when publishing version 1.0 of the spec
 * reformat external links to YAML spec and fail point docs
 
 * add schemaVersion field and document how the spec will handle versions
+
+* move client.allowMultipleMongoses to top-level option, since it should apply
+  to all clients (internal and entities). also note that targetedFailPoint and
+  failPoint should not be used in the same test file, since the latter requires
+  allowMultipleMongoses:false and would not provide meaningful test coverage of
+  mongos pinning for sessions.
 
 2020-08-19:
 
