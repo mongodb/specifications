@@ -35,6 +35,22 @@ Specification
 =============
 
 
+Terms
+-----
+
+Entity
+  Any object or value that is indexed by a unique name and stored in the
+  `Entity Map`_. This will typically be a driver object (e.g. client, session)
+  defined in `createEntities`_ but may also be a
+  `saved operation result <operation_saveResultAsEntity_>`_. Entities are
+  referenced throughout the test file (e.g. `Entity Test Operations`_).
+
+Internal MongoClient
+  A MongoClient created specifically for use with internal test operations, such
+  as inserting collection data before a test, configuring fail points during a
+  test, or asserting collection data after a test.
+
+
 Schema Version
 --------------
 
@@ -139,7 +155,7 @@ The top-level fields of a test file are as follows:
 .. _allowMultipleMongoses:
 
 - ``allowMultipleMongoses``: Optional boolean. If false, all MongoClients
-  created for this test file (both internal and `entities <entity_client_>`_)
+  created for this test file (internal and any ` entities <entity_client_>`_)
   that could connect to a sharded cluster MUST be initialized with only a single
   mongos host. Defaults to true. If true or the topology is non-sharded, this
   option has no effect. Test files that include tests with a `failPoint`_
@@ -319,10 +335,8 @@ collectionData
 
 List of documents that should correspond to the contents of a collection. This
 structure is used by both `initialData`_ and `test.outcome <test_outcome_>`_,
-which insert and read documents, respectively. Both of those directives may
-operate on the collection(s) under test, they do not share the same Collection
-and MongoClient object(s) as test `operations <operation_>`_. The structure of
-this document is as follows:
+which insert and read documents, respectively. The structure of this document is
+as follows:
 
 - ``collectionName``: Optional string. Collection name (not an `entity`_).
   Defaults to the name of the collection under test (see: `collectionName`_).
@@ -711,15 +725,13 @@ special test operations (e.g. assertions). These operations are distinguished by
 `operation.name <operation_name_>`_ field will correspond to an operation
 defined below.
 
-These operations MUST use an internal MongoClient
-
 
 failPoint
 ~~~~~~~~~
 
 The ``failPoint`` operation instructs the test runner to configure a fail point
-on the server selected with a ``primary`` read preference. The ``failPoint``
-argument is the ``configureFailPoint`` command to run.
+using a ``primary`` read preference and the internal MongoClient. The
+``failPoint`` argument is the ``configureFailPoint`` command to run.
 
 Test files using this operation MUST also specify false for
 `allowMultipleMongoses`_ if they could be executed on sharded topologies
@@ -754,7 +766,7 @@ targetedFailPoint
 ~~~~~~~~~~~~~~~~~
 
 The ``targetedFailPoint`` operation instructs the test runner to configure a
-fail point on a specific mongos. The mongos on which to run the
+fail point on a specific mongos. The MongoClient and mongos on which to run the
 ``configureFailPoint`` command is determined by the ``session`` argument. Test
 runners MUST error if the session is not pinned to a mongos server at the time
 this operation is executed. The ``failPoint`` argument is the
@@ -1150,25 +1162,48 @@ in the `Command Monitoring <../command-monitoring/command-monitoring.rst#securit
 spec.
 
 
-Running Tests
--------------
+Test Runner Implementation
+--------------------------
 
-Run a MongoDB replica set with a primary, a secondary, and an arbiter,
-**server version 4.0.0 or later**. (Including a secondary ensures that
-server selection in a transaction works properly. Including an arbiter helps
-ensure that no new bugs have been introduced related to arbiters.)
 
-A driver that implements support for sharded transactions MUST also run these
-tests against a MongoDB sharded cluster with multiple mongoses and
-**server version 4.2 or later**. Some tests require
-initializing the MongoClient with multiple mongos seeds to ensures that mongos
-transaction pinning and the recoveryToken works properly.
+Configuring the Test Runner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Load each YAML (or JSON) file using a Canonical Extended JSON parser.
+The test runner MUST be provided with a connection string (or equivalent
+configuration), which will be used to initialize the internal MongoClient and
+any `client entities <entity_client_>`_ (in combination with other options).
+This specification is not prescriptive about how this information is provided.
+For example, it may be read from an environment variable or configuration file.
 
-Then for each element in ``tests``:
 
-#. If the ``skipReason`` field is present, skip this test completely.
+Loading a Test File
+~~~~~~~~~~~~~~~~~~~
+
+Test files, which may be YAML or JSON files, MUST be interpreted using an
+`Extended JSON`_ parser. The parser MUST accept relaxed and canonical Extended
+JSON, as test files may use either.
+
+Upon loading a file, the test runner MUST read the `schemaVersion`_ field and
+determine if the test file can be processed further. Test runners MAY support
+multiple versions and MUST NOT process incompatible files (as discussed in
+`Schema Version`_).
+
+If the test file is compatible, the test runner shall proceed with determining
+default names for the database and collection under test, which may be used by
+`database <entity_database_>`_ and `collection <entity_collection_>`_ entities
+and `collectionData`_. The test runner MUST use the values from `databaseName`_
+and `collectionName`_ fields if set. If a field is omitted, the test runner MUST
+generate a name. This spec is not prescriptive about the logic for doing so.
+
+Create a MongoClient, which will be used for internal operations (e.g.
+`failPoint`_, processing `initialData`_ and `test.outcome <test_outcome_>`_).
+This is referred to elsewhere in the specification as the internal MongoClient.
+
+For each element in ``tests``:
+
+#. If the ``skipReason`` field is present, the test runner MUST skip this test
+   and MAY use the string value to log a message.
+
 #. Create a MongoClient and call
    ``client.admin.runCommand({killAllSessions: []})`` to clean up any open
    transactions from previous test failures. Ignore a command failure with
@@ -1359,9 +1394,10 @@ Excluding configureFailPoint from APM
 
 Test runners MUST ensure that ``configureFailPoint`` commands executed for
 `failPoint`_ and `targetedFailPoint`_ operations do not appear in the list of
-logged commands used to assert `test.expectedEvents <test_expectedEvents_>`_,
-either by manually filtering it from the list of observed commands or by using a
-different MongoClient to execute ``configureFailPoint``.
+logged commands used to assert `test.expectedEvents <test_expectedEvents_>`_.
+This may require manually filtering ``configureFailPoint`` from the list of
+observed commands (particularly in the case of `targetedFailPoint`_, which uses
+a `client entity <entity_client>`_).
 
 
 Fail Points Commonly Used in Tests
@@ -1451,6 +1487,13 @@ Note: this will be cleared when publishing version 1.0 of the spec
   failPoint should not be used in the same test file, since the latter requires
   allowMultipleMongoses:false and would not provide meaningful test coverage of
   mongos pinning for sessions.
+
+* add terms and define Entity and Internal MongoClient
+
+* note that failPoint always uses internal MongoClient and targetedFailPoint
+  uses the client of its session argument
+
+* start writing steps for test execution
 
 2020-08-19:
 
