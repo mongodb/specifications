@@ -155,7 +155,7 @@ The top-level fields of a test file are as follows:
 .. _allowMultipleMongoses:
 
 - ``allowMultipleMongoses``: Optional boolean. If false, all MongoClients
-  created for this test file (internal and any ` entities <entity_client_>`_)
+  created for this test file (internal and any `entities <entity_client_>`_)
   that could connect to a sharded cluster MUST be initialized with only a single
   mongos host. Defaults to true. If true or the topology is non-sharded, this
   option has no effect. Test files that include tests with a `failPoint`_
@@ -626,8 +626,8 @@ Version strings, which are used for `schemaVersion`_ and `runOn`_, MUST conform
 to one of the following formats, where each component is an integer:
 
 - ``<major>.<minor>.<patch>``
-- ``<major>.<minor>`` (``<patch>>`` is assumed to be zero)
-- ``<major>`` (``<minor>`` and ``<patch>>`` are assumed to be zero)
+- ``<major>.<minor>`` (``<patch>`` is assumed to be zero)
+- ``<major>`` (``<minor>`` and ``<patch>`` are assumed to be zero)
 
 
 Entity Test Operations
