@@ -225,6 +225,10 @@ The structure of this document is as follows:
   cluster backed by replica sets). If this field is omitted, it should be
   assumed that there is no topology requirement for the test.
 
+  When matching a "sharded-replicaset" topology, test runners MUST ensure that
+  all shards are backed by a replica set. The process for doing so is described
+  in `Determining if a Sharded Cluster Uses Replica Sets`_.
+
 
 entity
 ~~~~~~
@@ -1358,7 +1362,7 @@ For each element in ``tests``:
 
 
 Server Fail Points
-==================
+------------------
 
 Many tests utilize the ``configureFailPoint`` command to trigger server-side
 errors such as dropped connections or command errors. Tests can configure fail
@@ -1381,8 +1385,9 @@ points available for driver testing, but some fail points are documented in
 .. _SERVER-35004: https://jira.mongodb.org/browse/SERVER-35004
 .. _SERVER-35083: https://jira.mongodb.org/browse/SERVER-35083
 
+
 Configuring Fail Points
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``configureFailPoint`` command should be executed on the ``admin`` database
 and has the following structure::
@@ -1417,8 +1422,9 @@ the `setParameter <https://docs.mongodb.com/manual/reference/command/setParamete
 command). This parameter should already be enabled for most configuration files
 in `mongo-orchestration <https://github.com/10gen/mongo-orchestration>`_.
 
+
 Clearing Fail Points After Tests
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a test configures one or more fail points, test runners MUST disable those
 fail points after running all `test.operations <test_operations>`_ to avoid
@@ -1433,8 +1439,9 @@ A fail point may be disabled like so::
         mode: "off"
     });
 
+
 Excluding configureFailPoint from APM
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test runners MUST ensure that ``configureFailPoint`` commands executed for
 `failPoint`_ and `targetedFailPoint`_ operations do not appear in the list of
@@ -1445,11 +1452,11 @@ a `client entity <entity_client>`_).
 
 
 Fail Points Commonly Used in Tests
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 failCommand
-~~~~~~~~~~~
+```````````
 
 The ``failCommand`` fail point allows the client to force the server to return
 an error for commands listed in the ``data.failCommands`` field. Additionally,
@@ -1493,6 +1500,18 @@ if desired:
   blocked. New in server 4.3.4 (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
 
 
+Determining if a Sharded Cluster Uses Replica Sets
+--------------------------------------------------
+
+When connected to a mongos server, the test runner can query the
+`config.shards <https://docs.mongodb.com/manual/reference/config-database/#config.shards>`__
+collection. Each shard in the cluster is represented by a document in this
+collection. If the shard is backed by a single servers, the ``host`` field will
+contain a single host. If the shard is backed by a replica set, the ``host``For
+field contain the name of the replica followed by a forward slash and a
+comma-delimited list of hosts.
+
+
 Design Rationale
 ================
 
@@ -1513,6 +1532,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-22:
+
+* describe how to determine if sharded clusters use replica sets
 
 2020-08-21:
 
