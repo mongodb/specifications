@@ -172,13 +172,17 @@ The top-level fields of a test file are as follows:
 
 - ``collectionName``: Optional string. Name of collection under test. This is
   primarily useful when the collection name must be referenced in an assertion.
-  If unset, test runners may use whatever value they prefer.
+  The YAML file SHOULD define a `node anchor`_ for this field (e.g.
+  ``collectionName: &collectionName foo``). If unset, test runners may use
+  whatever value they prefer.
 
 .. _databaseName:
 
 - ``databaseName``: Optional string. Name of database under test. This is
   primarily useful when the database name must be referenced in an assertion.
-  If unset, test runners may use whatever value they prefer.
+  The YAML file SHOULD define a `node anchor`_ for this field (e.g.
+  ``databaseName: &databaseName foo``). If unset, test runners may use whatever
+  value they prefer.
 
 .. _initialData:
 
@@ -276,8 +280,10 @@ The structure of this document is as follows:
     created. The YAML file SHOULD use an `alias node`_ for a client entity's
     ``id`` field (e.g. ``client: *client0``).
 
-  - ``databaseName``: Optional string. Database name. If omitted, this defaults
-    to the name of the database under test (see: `databaseName`_).
+  - ``databaseName``: Optional string. Database name. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g.
+    ``databaseName: &database0Name foo``). If omitted, this defaults to the name
+    of the database under test (see: `databaseName`_).
 
   - ``databaseOptions``: Optional document. See `collectionOrDatabaseOptions`_.
 
@@ -295,8 +301,10 @@ The structure of this document is as follows:
     will be created. The YAML file SHOULD use an `alias node`_ for a database
     entity's ``id`` field (e.g. ``database: *database0``).
 
-  - ``collectionName``: Optional string. Collection name. If omitted, this
-    defaults to the name of the collection under test (see: `collectionName`_).
+  - ``collectionName``: Optional string. Collection name. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g.
+    ``collectionName: &collection0Name foo``). If omitted, this defaults to the
+    name of the collection under test (see: `collectionName`_).
 
   - ``collectionOptions``: Optional document. See `collectionOrDatabaseOptions`_.
 
@@ -349,11 +357,15 @@ which insert and read documents, respectively.
 
 The structure of this document is as follows:
 
-- ``collectionName``: Optional string. Collection name (not an `entity`_).
-  Defaults to the name of the collection under test (see: `collectionName`_).
+- ``collectionName``: Optional string. Collection name (not an `entity`_). The
+  YAML file SHOULD use an `alias node`_ for this value (e.g.
+  ``collectionName: *collection0Name``). Defaults to the name of the collection
+  under test (see: `collectionName`_).
 
-- ``databaseName``: Optional string. Database name (not an `entity`_). Defaults
-  to the name of the database under test (see: `databaseName`_).
+- ``databaseName``: Optional string. Database name (not an `entity`_). The
+  YAML file SHOULD use an `alias node`_ for this value (e.g.
+  ``databaseName: *database0Name``). Defaults to the name of the database under
+  test (see: `databaseName`_).
 
 - ``documents``: Required array of documents. List of documents corresponding to
   the contents of the collection. This list may be empty.
