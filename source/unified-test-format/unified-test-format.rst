@@ -201,7 +201,9 @@ runOnRequirement
 ~~~~~~~~~~~~~~~~
 
 A combination of server version and/or topology requirements for running the
-test(s). The structure of this document is as follows:
+test(s).
+
+The structure of this document is as follows:
 
 - ``minServerVersion``: Optional string. The minimum server version (inclusive)
   required to successfully run the tests. If this field is omitted, it should be
@@ -224,11 +226,13 @@ entity
 ~~~~~~
 
 An entity (e.g. client, collection, session object) that will be created in the
-`Entity Map`_ before each test is executed. This document must contain exactly
-one top-level key that identifies the entity type and maps to a nested document,
-which specifies a unique name for the entity (``id`` key) and any other
-parameters necessary for its construction. Tests SHOULD use sequential names
-based on the entity type (e.g. "session0", "session1").
+`Entity Map`_ before each test is executed.
+
+This document MUST contain *exactly one* top-level key that identifies the
+entity type and maps to a nested document, which specifies a unique name for the
+entity (``id`` key) and any other parameters necessary for its construction.
+Tests SHOULD use sequential names based on the entity type (e.g. "session0",
+"session1").
 
 When defining an entity document in YAML, a `node anchor`_ SHOULD be created on
 the entity's ``id`` key. This anchor will allow the unique name to be referenced
@@ -242,8 +246,9 @@ The structure of this document is as follows:
 
 .. _entity_client:
 
-- ``client``: Optional document. Corresponds with a MongoClient object. The
-  structure of this document is as follows:
+- ``client``: Optional document. Corresponds with a MongoClient object.
+
+  The structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &client0 client0``).
@@ -260,8 +265,9 @@ The structure of this document is as follows:
 
 .. _entity_database:
 
-- ``database``: Optional document. Corresponds with a Database object. The
-  structure of this document is as follows:
+- ``database``: Optional document. Corresponds with a Database object.
+
+  The structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &database0 database0``).
@@ -277,8 +283,9 @@ The structure of this document is as follows:
 
 .. _entity_collection:
 
-- ``collection``: Optional document. Corresponds with a Collection object. The
-  structure of this document is as follows:
+- ``collection``: Optional document. Corresponds with a Collection object.
+
+  The structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g.
@@ -296,7 +303,9 @@ The structure of this document is as follows:
 .. _entity_session:
 
 - ``session``: Optional document. Corresponds with an explicit ClientSession
-  object. The structure of this document is as follows:
+  object.
+
+  The structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &session0 session0``).
@@ -313,8 +322,9 @@ The structure of this document is as follows:
     - `Causal Consistency <../causal-consistency/causal-consistency.rst#sessionoptions-changes>`__
     - `Transactions <../transactions/transactions.rst#sessionoptions-changes>`__
 
-- ``bucket``: Optional document. Corresponds with a GridFS Bucket object. The
-  structure of this document is as follows:
+- ``bucket``: Optional document. Corresponds with a GridFS Bucket object.
+
+  The structure of this document is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &bucket0 bucket0``).
@@ -335,8 +345,9 @@ collectionData
 
 List of documents that should correspond to the contents of a collection. This
 structure is used by both `initialData`_ and `test.outcome <test_outcome_>`_,
-which insert and read documents, respectively. The structure of this document is
-as follows:
+which insert and read documents, respectively.
+
+The structure of this document is as follows:
 
 - ``collectionName``: Optional string. Collection name (not an `entity`_).
   Defaults to the name of the collection under test (see: `collectionName`_).
@@ -352,8 +363,9 @@ test
 ~~~~
 
 Test case consisting of a sequence of operations to be executed. The test may
-optionally include configuration directives and event/outcome assertions. The
-structure of each document is as follows:
+optionally include configuration directives and event/outcome assertions.
+
+The structure of each document is as follows:
 
 - ``description``: Required string. The name of the test.
 
@@ -368,7 +380,7 @@ structure of each document is as follows:
   document is defined in `runOnRequirement`_.
 
 - ``skipReason``: Optional string. If set, the test will be skipped. The string
-  should explain the reason for skipping the test (e.g. JIRA ticket).
+  SHOULD explain the reason for skipping the test (e.g. JIRA ticket).
 
 .. _test_operations:
 
@@ -391,6 +403,9 @@ structure of each document is as follows:
   whether tests should be able to filter out certain types (assuming the test
   runner observes any supported type).
 
+  **TODO**: Since event logging is configured per client, each sequence of event
+  expectations will need to target a specific client entity.
+
 .. _test_outcome:
 
 - ``outcome``: Optional array of documents. Data that should exist in
@@ -405,8 +420,9 @@ structure of each document is as follows:
 operation
 ~~~~~~~~~
 
-An operation to be executed as part of the test. The structure of this document
-is as follows:
+An operation to be executed as part of the test.
+
+The structure of this document is as follows:
 
 .. _operation_name:
 
@@ -449,19 +465,23 @@ is as follows:
   `Entity Map`_. The test runner MUST raise an error if the name is already in
   use.
 
-  This is primarily used for change streams.
+  **TODO**: This is primarily used for change streams. Once an operation for
+  iterating a change stream is added, it should link to ``saveResultAsEntity``
+  as this will be the only way to add a change stream object to the entity map.
 
 
 expectedError
 ~~~~~~~~~~~~~
 
 One or more assertions for an error/exception, which is expected to be raised by
-an executed operation. At least one key is required in this document. The
-structure of this document is as follows:
+an executed operation. At least one key is required in this document.
+
+The structure of this document is as follows:
 
 - ``type``: Optional string or array of strings. One or more classifications of
-  errors, at least one of which should apply to the expected error. Valid types
-  are as follows:
+  errors, at least one of which should apply to the expected error.
+
+  Valid types are as follows:
 
   - ``client``: client-generated error (e.g. parameter validation error before
     a command is sent to the server).
@@ -493,16 +513,21 @@ expectedEvent
 ~~~~~~~~~~~~~
 
 An event (e.g. APM, SDAM), which is expected to be observed while executing
-operations. This document must contain exactly one top-level key that identifies
-the event type and maps to a nested document, which contains one or more
-assertions for the event's properties. The structure of this document is as
-follows:
+operations.
+
+This document MUST contain *exactly one* top-level key that identifies the event
+type and maps to a nested document, which contains one or more assertions for
+the event's properties.
+
+The structure of this document is as follows:
 
 .. _expectedEvent_commandStartedEvent:
 
 - ``commandStartedEvent``: Optional document. Assertions for a one or more
   `CommandStartedEvent <../command-monitoring/command-monitoring.rst#api>`__
-  fields. The structure of this document is as follows:
+  fields.
+
+  The structure of this document is as follows:
 
   - ``command``: Optional document. Test runners MUST follow the rules in
     `Evaluating Matches`_ when processing this assertion.
@@ -515,8 +540,9 @@ follows:
 collectionOrDatabaseOptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Map of parameters used to construct a collection or database object. The
-structure of this document is as follows:
+Map of parameters used to construct a collection or database object.
+
+The structure of this document is as follows:
 
   - ``readConcern``: Optional document. See `commonOptions_readConcern`_.
 
@@ -540,14 +566,18 @@ The structure of these common options is as follows:
 .. _commonOptions_readConcern:
 
 - ``readConcern``: Optional document. Map of parameters to construct a read
-  concern. The structure of this document is as follows:
+  concern.
+
+  The structure of this document is as follows:
 
   - ``level``: Required string.
 
 .. _commonOptions_readPreference:
 
 - ``readPreference``: Optional document. Map of parameters to construct a read
-  preference. The structure of this document is as follows:
+  preference.
+
+  The structure of this document is as follows:
 
   - ``mode``: Required string.
 
@@ -566,7 +596,9 @@ The structure of these common options is as follows:
 .. _commonOptions_writeConcern:
 
 - ``writeConcern``: Optional document. Map of parameters to construct a write
-  concern. The structure of this document is as follows:
+  concern.
+
+  The structure of this document is as follows:
 
   - ``journal``: Optional boolean.
 
@@ -704,7 +736,7 @@ The ``withTransaction`` operation is unique in that its ``callback`` parameter
 is a function and not easily expressed in YAML/JSON. For ease of testing, this
 parameter is defined as an array of `operation`_ documents (analogous to
 `test.operations <test_operations>`_). Test runners MUST evaluate error and
-result assertions when executing these operations.
+result assertions when executing these operations in the callback.
 
 
 bucket
@@ -730,15 +762,14 @@ failPoint
 ~~~~~~~~~
 
 The ``failPoint`` operation instructs the test runner to configure a fail point
-using a ``primary`` read preference and the internal MongoClient. The
-``failPoint`` argument is the ``configureFailPoint`` command to run.
+using a ``primary`` read preference and the internal MongoClient.
 
-Test files using this operation MUST also specify false for
-`allowMultipleMongoses`_ if they could be executed on sharded topologies
-(according to `runOn`_ or `test.runOn <test_runOn_>`_). This is necessary
-because server selection rules for mongos could lead to unpredictable behavior
-if different servers were selected for configuring the fail point and executing
-subsequent operations.
+The ``failPoint`` argument is the ``configureFailPoint`` command to run. Test
+files using this operation MUST also specify false for `allowMultipleMongoses`_
+if they could be executed on sharded topologies (according to `runOn`_ or
+`test.runOn <test_runOn_>`_). This is necessary because server selection rules
+for mongos could lead to unpredictable behavior if different servers were
+selected for configuring the fail point and executing subsequent operations.
 
 An example of this operation follows::
 
@@ -766,11 +797,12 @@ targetedFailPoint
 ~~~~~~~~~~~~~~~~~
 
 The ``targetedFailPoint`` operation instructs the test runner to configure a
-fail point on a specific mongos. The MongoClient and mongos on which to run the
-``configureFailPoint`` command is determined by the ``session`` argument. Test
-runners MUST error if the session is not pinned to a mongos server at the time
-this operation is executed. The ``failPoint`` argument is the
-``configureFailPoint`` command to run.
+fail point on a specific mongos.
+
+The MongoClient and mongos on which to run the ``configureFailPoint`` command is
+determined by the ``session`` argument. Test runners MUST error if the session
+is not pinned to a mongos server at the time this operation is executed. The
+``failPoint`` argument is the ``configureFailPoint`` command to run.
 
 This operation SHOULD NOT be used in test files that specify false for
 `allowMultipleMongoses`_ because session pinning cannot be meaningfully tested
