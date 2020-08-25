@@ -27,6 +27,20 @@ The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL N
 Definitions
 ===========
 
+``Connection``
+~~~~~~~~~~~~~~
+
+A ``Connection`` (when code-formatted) refers to the ``Connection``
+type define in this specification. It does not refer to an actual
+TCP/IP connection to an Endpoint. A ``Connection`` will attempt to
+create and wrap such a connection over the course of its existence,
+but it is not equivalent to one nor does it wrap an active one at all
+times.
+
+For the purposes of testing, a mocked ``Connection`` type could be
+used with the pool that never actually creates a TCP/IP connection or
+performs any I/O.
+
 Endpoint
 ~~~~~~~~
 
@@ -321,8 +335,8 @@ or asynchronous I/O.
     set generation to 0
     emit PoolCreatedEvent
     if minPoolSize is set:
-      # this may be performed on a background thread
-      # if not performed on a background thread, this MUST
+      # this MAY be performed on a background thread
+      # if it is not performed on a background thread, this MUST
       # utilize non-blocking I/O.
       while totalConnectionCount < minPoolSize:
         populate pool with a connection
@@ -330,9 +344,9 @@ or asynchronous I/O.
 Closing a Connection Pool
 -------------------------
 
-When a pool is closed, it MUST first close all available Connections in that pool. This results in the following behavior changes:
+When a pool is closed, it MUST first close all available ``Connections`` in that pool. This results in the following behavior changes:
 
--  In use Connections MUST be closed when they are checked in to the closed pool.
+-  In use ``Connections`` MUST be closed when they are checked in to the closed pool.
 -  Attempting to check out a ``Connection`` MUST result in an error.
 
 .. code::
@@ -345,8 +359,8 @@ When a pool is closed, it MUST first close all available Connections in that poo
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
 
-When creating a Connection, the initial ``Connection`` is in an
-“unestablished” state. This only creates a “virtual” Connection, and
+When creating a ``Connection``, the initial ``Connection`` is in an
+“unestablished” state. This only creates a “virtual” ``Connection``, and
 performs no I/O. 
 
 .. code::
@@ -406,7 +420,7 @@ Marking a Connection as Available (Internal Implementation)
 A ``Connection`` is "available" if it is able to be checked out. A
 ``Connection`` MUST NOT be marked as "available" until it has been
 established. The pool MUST keep track of the number of currently
-available Connections.
+available ``Connections``.
 
 .. code::
    add connection to availableConnections
@@ -417,7 +431,7 @@ Populating the Pool with a Connection (Internal Implementation)
 ---------------------------------------------------------------
 
 If minPoolSize > 0, then the pool MUST ensure that it always has at
-least minPoolSize total Connections. In order to achieve this, it needs to
+least minPoolSize total ``Connections``. In order to achieve this, it needs to
 be able to create Connections that are immediately checked in instead of
 out (i.e. "populate the pool"). Performing this process MUST NOT
 block any application threads. For example, it could be performed on a
@@ -433,22 +447,29 @@ background thread or perform the I/O in a non-blocking manner.
 Checking Out a Connection
 -------------------------
 
-A Pool MUST have a method of allowing the driver to check out a Connection. Checking out a ``Connection`` involves entering the WaitQueue, and waiting for a ``Connection`` to become available. If the thread times out in the WaitQueue, an error is thrown.
+A Pool MUST have a method of allowing the driver to check out a ``Connection``. Checking out a ``Connection`` involves entering the WaitQueue, and waiting for a ``Connection`` to become available. If the thread times out in the WaitQueue, an error is thrown.
 
-If, in the process of iterating available Connections in the pool by the checkOut method, a perished ``Connection`` is encountered, such a ``Connection`` MUST be closed and the iteration of available Connections MUST continue until either a non-perished available ``Connection`` is found or the list of available Connections is exhausted. If no Connections are available and the total number of Connections is less than maxPoolSize, the pool MUST create and return a new Connection.
+If, in the process of iterating available ``Connections`` in the pool
+by the checkOut method, a perished ``Connection`` is encountered, such
+a ``Connection`` MUST be closed and the iteration of available
+``Connections`` MUST continue until either a non-perished available
+``Connection`` is found or the list of available ``Connections`` is
+exhausted. If no ``Connections`` are available and the total number of
+``Connections`` is less than maxPoolSize, the pool MUST create and
+return a new ``Connection``.
 
 If the pool is closed, any attempt to check out a ``Connection`` MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
-If minPoolSize is set, the ``Connection`` Pool MUST always have at least
-minPoolSize total Connections. If the pool does not implement a
-background thread, the checkOut method is responsible for ensuring
-this requirement.
+If minPoolSize is set, the ``Connection`` Pool MUST always have at
+least minPoolSize total ``Connections``. If the pool does not
+implement a background thread, the checkOut method is responsible for
+ensuring this requirement.
 
 A ``Connection`` MUST NOT be checked out until it is "established". In
 addition, the Pool MUST NOT block other threads from checking out
-Connections while establishing a Connection.
+``Connections`` while establishing a ``Connection``.
 
-Before returning a Connection, it must be marked as "in use". This
+Before returning a ``Connection``, it must be marked as "in use". This
 MUST decrement the pool's available ``Connection`` count.
 
 .. code::
@@ -504,7 +525,10 @@ MUST decrement the pool's available ``Connection`` count.
 Checking In a Connection
 ------------------------
 
-A Pool MUST have a method of allowing the driver to check in a Connection. The driver MUST NOT be allowed to check in a ``Connection`` to a Pool that did not create that Connection, and MUST throw an Error if this is attempted.
+A Pool MUST have a method of allowing the driver to check in a
+``Connection``. The driver MUST NOT be allowed to check in a
+``Connection`` to a Pool that did not create that ``Connection``, and
+MUST throw an Error if this is attempted.
 
 When the ``Connection`` is checked in, it is closed if any of the following are true:
 
@@ -524,7 +548,7 @@ Otherwise, the ``Connection`` is marked as available.
 Clearing a Connection Pool
 --------------------------
 
-A Pool MUST have a method of clearing all Connections when instructed. Rather than iterating through every Connection, this method should simply increment the generation of the Pool, implicitly marking all current Connections as stale. The checkOut and checkIn algorithms will handle clearing out stale Connections. If a user is subscribed to ``Connection`` Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
+A Pool MUST have a method of clearing all Connections when instructed. Rather than iterating through every ``Connection``, this method should simply increment the generation of the Pool, implicitly marking all current ``Connections`` as stale. The checkOut and checkIn algorithms will handle clearing out stale ``Connections``. If a user is subscribed to ``Connection`` Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
 
 Forking
 -------
@@ -532,9 +556,9 @@ Forking
 A ``Connection`` is explicitly not fork-safe. The proper behavior in the case of a fork is to ResetAfterFork by:
 
 -  clear all Connection Pools in the child process
--  closing all Connections in the child-process.
+-  closing all ``Connections`` in the child-process.
 
-Drivers that support forking MUST document that Connections to an Endpoint are not fork-safe, and document the proper way to ResetAfterFork in the driver.
+Drivers that support forking MUST document that ``Connections`` to an Endpoint are not fork-safe, and document the proper way to ResetAfterFork in the driver.
 
 Drivers MAY aggressively ResetAfterFork if the driver detects it has been forked.
 
@@ -547,11 +571,11 @@ Background Thread
 ^^^^^^^^^^^^^^^^^
 
 A Pool SHOULD have a background Thread that is responsible for
-monitoring the state of all available Connections. This background
+monitoring the state of all available ``Connections``. This background
 thread SHOULD
 
--  Create and connect Connections to ensure that the pool always satisfies **minPoolSize**
--  Remove and close perished available Connections.
+-  Create and connect ``Connections`` to ensure that the pool always satisfies **minPoolSize**
+-  Remove and close perished available ``Connections``.
 
 withConnection
 ^^^^^^^^^^^^^^
@@ -563,7 +587,7 @@ A Pool SHOULD implement a scoped resource management mechanism idiomatic to thei
 Connection Pool Monitoring
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All drivers that implement a Connection pool MUST provide an API that allows users to subscribe to events emitted from the pool. If a user subscribes to Connection Monitoring events, these events MUST be emitted when specified in “Connection Pool Behaviors”. Events SHOULD be created and subscribed to in a manner idiomatic to their language and driver.
+All drivers that implement a connection pool MUST provide an API that allows users to subscribe to events emitted from the pool. If a user subscribes to Connection Monitoring events, these events MUST be emitted when specified in “Connection Pool Behaviors”. Events SHOULD be created and subscribed to in a manner idiomatic to their language and driver.
 
 Events
 ------
