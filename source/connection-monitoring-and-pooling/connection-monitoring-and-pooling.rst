@@ -31,7 +31,7 @@ Definitions
 ~~~~~~~~~~~~~~
 
 A ``Connection`` (when code-formatted) refers to the ``Connection``
-type define in this specification. It does not refer to an actual
+type defined in this specification. It does not refer to an actual
 TCP/IP connection to an Endpoint. A ``Connection`` will attempt to
 create and wrap such a connection over the course of its existence,
 but it is not equivalent to one nor does it wrap an active one at all
@@ -374,9 +374,9 @@ performs no I/O.
 Establishing a Connection (Internal Implementation)
 ---------------------------------------------------
 
-Before a ``Connection`` can be marked as "available", it must be
-“established”. This process involves performing the initial handshake,
-handling OP_COMPRESSED, and performing authentication.
+Before a ``Connection`` can be marked as "available" or "in use", it
+must be established. This process involves performing the initial
+handshake, handling OP_COMPRESSED, and performing authentication.
 
 .. code::
 
@@ -397,10 +397,10 @@ Closing a Connection (Internal Implementation)
 
 When a ``Connection`` is closed, it MUST first be marked as "closed",
 removing it from being counted as "available" or "in use". One that is
-complete, the ``Connection`` can perform whatever teardown is necessary to
-close the socket. The Driver MUST perform this teardown in a
-non-blocking manner, such as via the use of a background thread or
-async I/O.
+complete, the ``Connection`` can perform whatever teardown is
+necessary to close its underlying socket. The Driver MUST perform this
+teardown in a non-blocking manner, such as via the use of a background
+thread or async I/O.
 
 .. code::
 
@@ -423,19 +423,21 @@ established. The pool MUST keep track of the number of currently
 available ``Connections``.
 
 .. code::
+
    add connection to availableConnections
    increment available connection count
    set connection state to "available"
 
+
 Populating the Pool with a Connection (Internal Implementation)
 ---------------------------------------------------------------
 
-If minPoolSize > 0, then the pool MUST ensure that it always has at
+If minPoolSize is set, the pool MUST ensure that it always has at
 least minPoolSize total ``Connections``. In order to achieve this, it needs to
-be able to create Connections that are immediately checked in instead of
+be able to create ``Connections`` that begin as checked in instead of checked
 out (i.e. "populate the pool"). Performing this process MUST NOT
 block any application threads. For example, it could be performed on a
-background thread or perform the I/O in a non-blocking manner.
+background thread or via the use of non-blocking I/O.
 
 .. code::
 
@@ -447,7 +449,7 @@ background thread or perform the I/O in a non-blocking manner.
 Checking Out a Connection
 -------------------------
 
-A Pool MUST have a method of allowing the driver to check out a ``Connection``. Checking out a ``Connection`` involves entering the WaitQueue, and waiting for a ``Connection`` to become available. If the thread times out in the WaitQueue, an error is thrown.
+A Pool MUST have a method of allowing the driver to check out a ``Connection``. Checking out a ``Connection`` involves entering the WaitQueue and waiting for a ``Connection`` to become available. If the thread times out in the WaitQueue, an error is thrown.
 
 If, in the process of iterating available ``Connections`` in the pool
 by the checkOut method, a perished ``Connection`` is encountered, such
@@ -465,7 +467,7 @@ least minPoolSize total ``Connections``. If the pool does not
 implement a background thread, the checkOut method is responsible for
 ensuring this requirement.
 
-A ``Connection`` MUST NOT be checked out until it is "established". In
+A ``Connection`` MUST NOT be checked out until it is established. In
 addition, the Pool MUST NOT block other threads from checking out
 ``Connections`` while establishing a ``Connection``.
 
@@ -548,7 +550,7 @@ Otherwise, the ``Connection`` is marked as available.
 Clearing a Connection Pool
 --------------------------
 
-A Pool MUST have a method of clearing all Connections when instructed. Rather than iterating through every ``Connection``, this method should simply increment the generation of the Pool, implicitly marking all current ``Connections`` as stale. The checkOut and checkIn algorithms will handle clearing out stale ``Connections``. If a user is subscribed to ``Connection`` Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
+A Pool MUST have a method of clearing all ``Connections`` when instructed. Rather than iterating through every ``Connection``, this method should simply increment the generation of the Pool, implicitly marking all current ``Connections`` as stale. The checkOut and checkIn algorithms will handle clearing out stale ``Connections``. If a user is subscribed to Connection Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
 
 Forking
 -------
@@ -574,13 +576,13 @@ A Pool SHOULD have a background Thread that is responsible for
 monitoring the state of all available ``Connections``. This background
 thread SHOULD
 
--  Create and connect ``Connections`` to ensure that the pool always satisfies **minPoolSize**
+-  Populate ``Connections`` to ensure that the pool always satisfies **minPoolSize**
 -  Remove and close perished available ``Connections``.
 
 withConnection
 ^^^^^^^^^^^^^^
 
-A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent Connections from not being checked in. Examples include `Python's "with" statement <https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement>`__ and `C#'s "using" statement <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement>`__. If implemented, drivers SHOULD use this method as the default method of checking out and checking in Connections.
+A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent ``Connections`` from not being checked in. Examples include `Python's "with" statement <https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement>`__ and `C#'s "using" statement <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement>`__. If implemented, drivers SHOULD use this method as the default method of checking out and checking in ``Connections``.
 
 .. _connection-pool-monitoring-1:
 
@@ -793,7 +795,7 @@ Why do we have separate ConnectionCreated and ConnectionReady events, but only o
 
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
--  ConnectionCreated adds a new “unestablished” Connection, meaning the totalConnectionCount increases by one
+-  ConnectionCreated adds a new “unestablished” ``Connection``, meaning the totalConnectionCount increases by one
 -  ConnectionReady establishes that the ``Connection`` is ready for use, meaning the availableConnectionCount increases by one
 
 ConnectionClosed indicates that the ``Connection`` is no longer a member of the pool, decrementing totalConnectionCount and potentially availableConnectionCount. After this point, the ``Connection`` is no longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are not specified here.
