@@ -401,8 +401,7 @@ The structure of this document is as follows:
 test
 ~~~~
 
-Test case consisting of a sequence of operations to be executed. The test may
-optionally include configuration directives and event/outcome assertions.
+Test case consisting of a sequence of operations to be executed.
 
 The structure of each document is as follows:
 
@@ -1323,8 +1322,8 @@ Syntax::
 
 This operator can be used anywhere a matched value is expected (including an
 `expectedResult <operation_expectedResult_>`_). The test runner MUST assert that
-actual value either does not exist or and matches the expected value. Matching
-the expected value should use the standard rules in `Evaluating Matches`_, which
+actual value either does not exist or matches the expected value. Matching the
+expected value should use the standard rules in `Evaluating Matches`_, which
 means that it may contain special operators.
 
 This operator is primarily used to assert driver-optional fields from the CRUD
@@ -1377,10 +1376,8 @@ SHOULD NOT share state created by processing a test file with the processing of
 subsequent test files, and likewise for tests within a test file.
 
 
-Configuring the Test Runner
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The instructions in this section apply once for the test runner.
+Initializing the Test Runner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The test runner MUST be configurable with a connection string (or equivalent
 configuration), which will be used to initialize the internal MongoClient and
@@ -1446,7 +1443,7 @@ Executing a Test
 
 The instructions in this section apply for each `test`_ occuring in a test file
 loaded by the test runner. After processing a test, test runners SHOULD reset
-any internal state that resulted from doing so. For example, the entity map
+any internal state that resulted from doing so. For example, the `Entity Map`_
 created for one test SHOULD NOT be shared with another.
 
 If at any point while executing this test an unexpected error is encountered or
@@ -1568,9 +1565,6 @@ Proceed with preparing the operation's arguments. If ``session`` is specified in
 `operation.arguments <operation_arguments_>`_, the test runner MUST resolve it
 to a session entity and MUST raise an error if the name is undefined or maps to
 an unexpected type. 
-
-Proceed with executing the operation such that its return value (if any) potential error can be caught
-(e.g. using a ``try`` block). 
 
 Before executing the operation, the test runner MUST be prepared to catch a
 potential error from the operation (e.g. enter a ``try`` block). Proceed with
