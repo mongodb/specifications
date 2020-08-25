@@ -325,8 +325,8 @@ The SDAM specification defines `when
 the driver should create connection pools.
 
 Once a pool is created, if minPoolSize is set, the pool MUST
-immediately begin populating enough Connections such that
-totalConnections >= minPoolSize. These Connections MUST be populated
+immediately begin populating enough ``Connections`` such that
+totalConnections >= minPoolSize. These ``Connections`` MUST be populated
 in a non-blocking manner, such as via the use of a background thread
 or asynchronous I/O.
 
@@ -374,7 +374,7 @@ performs no I/O.
 Establishing a Connection (Internal Implementation)
 ---------------------------------------------------
 
-Before a ``Connection`` can be marked as "available" or "in use", it
+Before a ``Connection`` can be marked as either "available" or "in use", it
 must be established. This process involves performing the initial
 handshake, handling OP_COMPRESSED, and performing authentication.
 
@@ -424,9 +424,9 @@ available ``Connections``.
 
 .. code::
 
-   add connection to availableConnections
    increment available connection count
    set connection state to "available"
+   add connection to availableConnections
 
 
 Populating the Pool with a Connection (Internal Implementation)
@@ -508,15 +508,15 @@ MUST decrement the pool's available ``Connection`` count.
       # This must be done in all drivers
       leave wait queue
 
-    # If the connection has not been connected yet, the connection
-    # (TCP, TLS, handshake, compression, and auth) must be performed
-    # before the connection is returned. This MUST NOT block other threads
-    # from acquiring connections.
+    # If the Connection has not been established yet (TCP, TLS,
+    # handshake, compression, and auth), it must be before it is returned.
+    # This MUST NOT block other threads from acquiring connections.
     if connection state is "unestablished":
       try:
         establish connection
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="error")
+        decrement total connection count
         throw
 
     decrement available connection count
@@ -827,6 +827,17 @@ after a clearing of the pool would experience unacceptably high
 latency, especially for larger values of minPoolSize. Thus,
 minPoolSize either needs to be ensured via a background thread (which
 is acceptable to block) or via the usage of non-blocking (async) I/O.
+
+Why must closing a connection be non-blocking?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Because idle and perished ``Connections`` are cleaned up as part of
+checkOut, closing such ``Connections`` would block application threads
+if it involved blocking I/O, which would introduce unnecessary
+latency. Once a ``Connection`` is marked as "closed", it will not be
+checked out again, so ensuring the socket is torn down does not need
+to happen immediately and can happen at a later time, either via async
+I/O or the background thread. 
 
 Backwards Compatibility
 =======================
