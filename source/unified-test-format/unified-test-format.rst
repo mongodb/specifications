@@ -1922,6 +1922,42 @@ To date, no spec needs this behavior and this change could easily be deferred to
 a future minor version of the test format.
 
 
+Representing options in operation.arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Existing spec tests are inconsistent in how they represent optional
+parameters for operations. In some cases, optional parameters appear directly
+in `operation.arguments`_ alongside required parameters (e.g. CRUD). In other
+cases, they are nested under an ``options`` key (e.g. Sessions).
+
+Most specs *are* consistent about how API methods are defined in spec documents.
+The CRUD spec was on the first documents to define API methods and can be
+credited with introducing the ``options`` parameter (e.g.
+``options: Optional<UpdateOptions>``); however, this was likely done for
+readability of the spec (avoiding very long method declarations and/or embedding
+``Optional`` syntax therein). Additionally, documenting options in a separate
+type (e.g. UpdateOptions) allows the declarations to be shared and reused across
+multiple methods.
+
+That said, this syntax is in no way prescriptive for language implementations.
+While some drivers to model options as a struct/object, others solicit them
+alongside required parameters (e.g. Python's keyword/named arguments).
+
+Should this spec require that optional parameters be nested under an ``options``
+key or solicit them directly in `operation.arguments`_? Both are technically
+possible, since test runners handle both forms today.
+
+Note: the CRUD spec WriteModels (e.g. UpdateOneModel) for ``bulkWrite`` to not
+use ``options`` keys in either the spec document or test files. As such, the
+resolution of this question would not impact how WriteModels are expressed in
+test files (see: `bulkWrite`_).
+
+Note: this question does not pertain to TransactionOptions in SessionOptions,
+which is always nested under ``defaultTransactionOptions``. This is a special
+case where all drivers represent TransactionOptions as a separate struct/object,
+even if they do not do so for ``startTransaction``.
+
+
 GridFS Tests
 ------------
 
