@@ -326,9 +326,10 @@ the driver should create connection pools.
 
 Once a pool is created, if minPoolSize is set, the pool MUST
 immediately begin populating enough ``Connections`` such that
-totalConnections >= minPoolSize. These ``Connections`` MUST be populated
-in a non-blocking manner, such as via the use of a background thread
-or asynchronous I/O.
+totalConnections >= minPoolSize. These ``Connections`` MUST be
+populated in a non-blocking manner, such as via the use of a
+background thread or asynchronous I/O. See `Populating the Pool with a
+Connection <#deprecated-options>`_ for more details.
 
 .. code::
 
@@ -433,11 +434,12 @@ Populating the Pool with a Connection (Internal Implementation)
 ---------------------------------------------------------------
 
 If minPoolSize is set, the pool MUST ensure that it always has at
-least minPoolSize total ``Connections``. In order to achieve this, it needs to
-be able to create ``Connections`` that begin as checked in instead of checked
-out (i.e. "populate the pool"). Performing this process MUST NOT
-block any application threads. For example, it could be performed on a
-background thread or via the use of non-blocking I/O.
+least minPoolSize total ``Connections``. In order to achieve this, it
+needs to be able to create ``Connections`` that begin as "available"
+instead of "in use" (i.e. "populate the pool"). Performing this
+process MUST NOT block any application threads. For example, it could
+be performed on a background thread or via the use of non-blocking
+I/O.
 
 .. code::
 
@@ -471,8 +473,8 @@ A ``Connection`` MUST NOT be checked out until it is established. In
 addition, the Pool MUST NOT block other threads from checking out
 ``Connections`` while establishing a ``Connection``.
 
-Before returning a ``Connection``, it must be marked as "in use". This
-MUST decrement the pool's available ``Connection`` count.
+Before a given ``Connection`` is returned from checkOut, it must be marked as
+"in use", and the pool's availableConnectionCount MUST be decremented.
 
 .. code::
 
@@ -821,23 +823,24 @@ Why must ensuring minPoolSize require the use of a background thread or async I/
 
 Without the use of a background thread, minPoolSize is ensured during
 checkOut. ``Connections`` may not be checked into the pool before
-being established however, so establishment also happens during
-checkOut. If it were done in a blocking fashion, the first operations
-after a clearing of the pool would experience unacceptably high
-latency, especially for larger values of minPoolSize. Thus,
-minPoolSize either needs to be ensured via a background thread (which
-is acceptable to block) or via the usage of non-blocking (async) I/O.
+being established, however, so establishment also happens during
+checkOut. If ``Connection`` establishment were done in a blocking
+fashion, the first operations after a clearing of the pool would
+experience unacceptably high latency, especially for larger values of
+minPoolSize. Thus, minPoolSize either needs to be ensured via a
+background thread (which is acceptable to block) or via the usage of
+non-blocking (async) I/O.
 
 Why must closing a connection be non-blocking?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because idle and perished ``Connections`` are cleaned up as part of
-checkOut, closing such ``Connections`` would block application threads
-if it involved blocking I/O, which would introduce unnecessary
-latency. Once a ``Connection`` is marked as "closed", it will not be
-checked out again, so ensuring the socket is torn down does not need
-to happen immediately and can happen at a later time, either via async
-I/O or the background thread. 
+checkOut, performing blocking I/O while closing such ``Connections``
+would block application threads, introducing unnecessary latency. Once
+a ``Connection`` is marked as "closed", it will not be checked out
+again, so ensuring the socket is torn down does not need to happen
+immediately and can happen at a later time, either via async I/O or a
+background thread. 
 
 Backwards Compatibility
 =======================
