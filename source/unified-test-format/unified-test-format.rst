@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-08-21
+:Last Modified: 2020-08-25
 
 .. contents::
 
@@ -155,16 +155,6 @@ The top-level fields of a test file are as follows:
   **TODO**: Consider whether these requirements should allow an entire test file
   to be skipped up front, instead of allowing per-test requirements to override.
 
-.. _allowMultipleMongoses:
-
-- ``allowMultipleMongoses``: Optional boolean. If false, all MongoClients
-  created for this test file (internal and any `entities <entity_client_>`_)
-  that could connect to a sharded cluster MUST be initialized with only a single
-  mongos host. Defaults to true. If true or the topology is non-sharded, this
-  option has no effect. Test files that include tests with a `failPoint`_
-  operation that may run on sharded topologies MUST specify false for this
-  option.
-
 .. _createEntities:
 
 - ``createEntities``: Optional array of documents. List of entities (e.g.
@@ -231,7 +221,7 @@ entity
 An entity (e.g. client, collection, session object) that will be created in the
 `Entity Map`_ before each test is executed.
 
-This document MUST contain *exactly one* top-level key that identifies the
+This document MUST contain **exactly one** top-level key that identifies the
 entity type and maps to a nested document, which specifies a unique name for the
 entity (``id`` key) and any other parameters necessary for its construction.
 Tests SHOULD use sequential names based on the entity type (e.g. "session0",
@@ -265,6 +255,30 @@ The structure of this document is as follows:
     exception: if ``readPreferenceTags`` is specified in this document, the key
     will map to an array of strings, each representing a tag set, since it is
     not feasible to define multiple ``readPreferenceTags`` keys in the document.
+
+  .. _entity_client_useMultipleMongoses:
+
+  - ``useMultipleMongoses``: Optional boolean. If true and the topology is a
+    sharded cluster, the test runner MUST assert that this MongoClient connects
+    to multiple mongos hosts (e.g. by inspecting the connection string). If
+    false and the topology is a sharded cluster, the test runner MUST ensure
+    that this MongoClient connects to only a single mongos host (e.g. by
+    modifying the connection string). This option has no effect for non-sharded
+    topologies.
+
+  .. _entity_client_observeEvents:
+
+  - ``observeEvents``: Optional string or array of strings. One or more types of
+    events that can be observed for this client. Unspecified event types MUST
+    be ignored by this client's event listeners and SHOULD NOT be included in
+    `test.expectedEvents <test_expectedEvents_>`_ for this client. Supported
+    types correspond to those documented in `expectedEvent`_ and are as follows:
+
+    - `commandStartedEvent <expectedEvent_commandStartedEvent_>`_
+
+    - `commandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
+
+    - `commandFailedEvent <expectedEvent_commandFailedEvent_>`_
 
 .. _entity_database:
 
@@ -562,9 +576,9 @@ expectedEvent
 An event (e.g. APM), which is expected to be observed while executing the test's
 operations.
 
-This document MUST contain *exactly one* top-level key that identifies the event
-type and maps to a nested document, which contains one or more assertions for
-the event's properties.
+This document MUST contain **exactly one** top-level key that identifies the
+event type and maps to a nested document, which contains one or more assertions
+for the event's properties.
 
 The structure of this document is as follows:
 
@@ -898,22 +912,28 @@ failPoint
 ~~~~~~~~~
 
 The ``failPoint`` operation instructs the test runner to configure a fail point
-using a ``primary`` read preference and the internal MongoClient.
+using a ``primary`` read preference using the specified client.
 
 The following arguments are supported:
 
 - ``failPoint``: Required document. The ``configureFailPoint`` command to be
   executed.
 
-Test files using this operation MUST also specify false for
-`allowMultipleMongoses`_ if they could be executed on sharded topologies
-(according to `runOn`_ or `test.runOn <test_runOn_>`_). This is necessary
-because server selection rules for mongos could lead to unpredictable behavior
-if different servers were selected for configuring the fail point and executing
-subsequent operations.
+- ``client``: Required string. Client entity used to configure the fail point.
+  The YAML file SHOULD use an `alias node`_ for a client entity's ``id`` field
+  (e.g. ``client: *client0``).
+
+  The client entity SHOULD specify false for
+  `useMultipleMongoses <entity_client_useMultipleMongoses_>`_ if this operation
+  could be executed on a sharded topology (according to `runOn`_ or
+  `test.runOn <test_runOn_>`_). This is advised because server selection rules
+  for mongos could lead to unpredictable behavior if different servers were
+  selected for configuring the fail point and executing subsequent operations.
 
 When executing this operation, the test runner MUST keep a record of the fail
-point so that it can be disabled after the test.
+point so that it can be disabled after the test. The test runner MUST also
+ensure that the ``configureFailPoint`` command is excluded from the list of
+observed command monitoring events for this client (if applicable).
 
 An example of this operation follows::
 
@@ -921,6 +941,7 @@ An example of this operation follows::
     - name: failPoint
       object: testRunner
       arguments:
+        client: *client0
         failPoint:
           configureFailPoint: failCommand
           mode: { times: 1 }
@@ -946,22 +967,20 @@ The following arguments are supported:
 
 - ``session``: Required string. See `commonOptions_session`_.
 
+  The client entity associated with this session SHOULD specify true for
+  `useMultipleMongoses <entity_client_useMultipleMongoses_>`_. This is advised
+  because multiple mongos connections are necessary to test session pinning.
+
 The MongoClient and mongos on which to run the ``configureFailPoint`` command is
 determined by the ``session`` argument (after resolution to a session entity).
 Test runners MUST error if the session is not pinned to a mongos server at the
 time this operation is executed.
 
-This operation SHOULD NOT be used in test files that specify false for
-`allowMultipleMongoses`_ because session pinning cannot be meaningfully tested
-without connecting to multiple mongos servers. In practice, this means that
-`failPoint`_ and `targetedFailPoint`_ SHOULD NOT be utilized in the same test
-file.
-
 When executing this operation, the test runner MUST keep a record of both the
-fail point and session so that the fail point can be disabled after the test.
-The test runner MUST also ensure that the ``configureFailPoint`` command is
-omitted (or otherwise filtered out) from the list of observed command monitoring
-events for this client.
+fail point and session (or pinned mongos server) so that the fail point can be
+disabled on the same mongos server after the test. The test runner MUST also
+ensure that the ``configureFailPoint`` command is excluded from the list of
+observed command monitoring events for this client (if applicable).
 
 An example of this operation follows::
 
@@ -976,16 +995,6 @@ An example of this operation follows::
           data:
             failCommands: ["commitTransaction"]
             closeConnection: true
-
-**TODO**: `allowMultipleMongoses`_ only affects the test runner if it is false
-(i.e. a connection string to a sharded cluster is reduce to one mongos). The
-transaction spec hinted that ``useMultipleMongoses: true`` would force a
-connection string to contain multiple mongos servers, but that seems untenable
-since single-mongos and standalone connection strings are indistinguishable from
-one another. Should we change `allowMultipleMongoses`_ to actively require
-multiple mongos servers if true (omitted would still be a no-op)? That may be
-possible if we defer enforcement until after the topology is determined at
-runtime.
 
 
 assertSessionTransactionState
@@ -1231,15 +1240,15 @@ a test to exhaustively specify all fields in an expected document (e.g. cluster
 time in a `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_ command).
 
 Note that this rule for allowing extra fields in actual values only applies when
-matching *documents* documents. When comparing arrays, expected and actual
-values must contain the same number of elements. For example, the following
-arrays corresponding to a ``distinct`` operation result would not match::
+matching documents. When comparing arrays, expected and actual values MUST
+contain the same number of elements. For example, the following arrays
+corresponding to a ``distinct`` operation result would not match::
 
     expected: [ 1, 2, 3 ]
     actual: [ 1, 2, 3, 4 ]
 
 That said, any individual documents *within* an array or list (e.g. result of a
-``find`` operation) may be matched according to the rules in this section. For
+``find`` operation) MAY be matched according to the rules in this section. For
 example, the following arrays would match::
 
     expected: [ { x: 1 }, { x: 2 } ]
@@ -1396,11 +1405,16 @@ any `client entities <entity_client_>`_ (in combination with other URI options).
 This specification is not prescriptive about how this information is provided.
 For example, it may be read from an environment variable or configuration file.
 
-The test runner MAY determine the server version and topology type in advance to
-optimize any future `runOnRequirement`_ checks.
+Create a new MongoClient, which will be used for internal operations (e.g.
+processing `initialData`_ and `test.outcome <test_outcome_>`_). This is referred
+to elsewhere in the specification as the internal MongoClient.
+
+Determine the server version and topology type using the internal MongoClient.
+This information will be used to evaluate any future `runOnRequirement`_ checks.
 
 The test runner SHOULD terminate any open transactions (see:
-`Terminating Open Transactions`_) before executing any tests.
+`Terminating Open Transactions`_) using the internal MongoClient before
+executing any tests.
 
 
 Executing a Test File
@@ -1413,24 +1427,13 @@ for one test file SHOULD NOT be shared with another.
 
 Test files, which may be YAML or JSON files, MUST be interpreted using an
 `Extended JSON`_ parser. The parser MUST accept relaxed and canonical Extended
-JSON, as test files may use either.
+JSON (per `Extended JSON: Parsers <../extended-json.rst#parsers>`__), as test
+files may use either.
 
 Upon loading a file, the test runner MUST read the `schemaVersion`_ field and
 determine if the test file can be processed further. Test runners MAY support
 multiple versions and MUST NOT process incompatible files (as discussed in
 `Schema Version`_).
-
-If the test file specifies false for `allowMultipleMongoses`_ and the test
-runner was configured with a connection string (or equivalent configuration)
-that references multiple mongos servers in its host list, the test runner MUST
-modify the host list used by this test file to only refer to a single mongos
-server.
-
-Create a new MongoClient, which will be used for internal operations in this
-test file (e.g. `failPoint`_, processing `initialData`_ and
-`test.outcome <test_outcome_>`_). This is referred to elsewhere in the
-specification as the internal MongoClient. Internal MongoClients SHOULD NOT be
-shared across test files.
 
 If `runOn`_ is specified, the test runner MUST skip the test file unless one or
 more `runOnRequirement`_ documents are satisfied.
@@ -1470,26 +1473,26 @@ MUST use the internal MongoClient for these operations.
 
 Create a new `Entity Map`_ that will be used for this test. If `createEntities`_
 is specified, the test runner MUST create each `entity`_ accordingly and add it
-to the map.
+to the map. If the topology is a sharded cluster, the test runner MUST handle
+`useMultipleMongoses`_ accordingly if it is specified for any client entities.
 
-If the test might execute a ``distinct`` command within a transaction on a
-sharded cluster, for each collection entity the test runner SHOULD execute a
-non-transactional ``distinct`` command on each mongos server. See
+If the test might execute a ``distinct`` command within a sharded transaction,
+for each target collection the test runner SHOULD execute a non-transactional
+``distinct`` command on each mongos server using the internal MongoClient. See
 `StaleDbVersion Errors on Sharded Clusters`_ for more information.
 
-If `test.expectedEvents <test_expectedEvents_>`_ is specified, the test runner
-MUST enable command monitoring for any client entities so that events can be
-observed while running operations and later used to assert expected events. Test
-runners MAY leave command monitoring disabled for tests that do not assert
-expected events.
+If `test.expectedEvents <test_expectedEvents_>`_ is specified, for each client
+entity the test runner MUST enable all event listeners necessary to collect the
+event types specified in `observeEvents <entity_client_observeEvents_>`_. Test
+runners MAY leave event listeners disabled for tests and/or clients that do not
+assert expected events.
 
 Test runners MUST ensure that ``configureFailPoint`` commands executed for
 `failPoint`_ and `targetedFailPoint`_ operations are excluded from the list of
-observed events. This may require manually filtering out ``configureFailPoint``
-from the list of observed commands (particularly in the case of
-`targetedFailPoint`_, which uses a `client entity <entity_client>`_). Test
-runners MUST also ensure that any commands containing sensitive information are
-excluded (per the
+observed command monitoring events (if applicable). This may require manually
+filtering out ``configureFailPoint`` command monitoring events from the list of
+observed events. Test runners MUST also ensure that any commands containing
+sensitive information are excluded (per the
 `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
 spec).
 
@@ -1497,23 +1500,22 @@ For each element in `test.operations <test_operations_>`_, follow the process
 in `Executing an Operation`_. If an unexpected error is encountered or an
 assertion fails, the test runner MUST consider this test to have failed.
 
-If command monitoring was enabled on any client entities, the test runner MUST
-now disable command monitoring on those clients and, for each client, collect
-any events observed thus far.
+If any event listeners were enabled on any client entities, the test runner MUST
+now disable those event listeners and, for each client, collect the ordered list
+of events observed thus far.
 
-If the fail points were configured, the test runner MUST now disable those fail
-points to avoid spurious failures in subsequent tests. For any fail points
-configured using `targetedFailPoint`_, the test runner MUST disable the fail
-point on the same mongos server on which it was originally configured. See
-`Disabling Fail Points`_ for more information.
+If any fail points were configured, the test runner MUST now disable those fail
+points (on the same server) to avoid spurious failures in subsequent tests. For
+any fail points configured using `targetedFailPoint`_, the test runner MUST
+disable the fail point on the same mongos server on which it was originally
+configured. See `Disabling Fail Points`_ for more information.
 
 If `test.expectedEvents <test_expectedEvents_>`_ is specified, for each document
 therein the test runner MUST assert that the number and sequence of expected
 events match the number and sequence of actual events observed on the specified
 client. If the list of expected events is empty, the test runner MUST assert
 that no events were observed on the client. The process for matching events is
-described in `expectedEvent`_. The test runner MUST NOT consider any
-``configureFailPoint``
+described in `expectedEvent`_.
 
 If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
 therein the test runner MUST assert that the collection contains exactly the
@@ -1797,8 +1799,6 @@ Note: this will be cleared when publishing version 1.0 of the spec
 * note that drivers with global event listeners will need to associate events
   with clients for executing assertions (copied from change streams spec).
 
-* note special consideration for drivers with global event listeners
-
 * require databaseName and collectionName when creating database and collection
   entities, respectively. also require those options in initialData, outcome,
   and special operations (YAML aliases may be used). remove top-level
@@ -1812,6 +1812,24 @@ Note: this will be cleared when publishing version 1.0 of the spec
   entity operations.
 
 * document arguments for all special operations
+
+* define observeEvents option for client entities to filter observed events
+
+* revise docs for configuring event listeners and remove wording that assumed
+  a test runner might only collect command monitoring events.
+
+* failPoint now takes a client entity and no longer uses internal MongoClient.
+  this is related to moving the option for multi-mongos and single-mongos to the
+  client entity.
+
+* replace top-level allowMultipleMongoses option, which previously applied to
+  all clients, with a useMultipleMongoses client entity option. This option can
+  be used to require multiple mongos hosts (desirable for targetedFailPoint) or
+  modify a connection string to a single host (desirable for failPoint).
+
+* construct internal MongoClient when initializing the test runner and allow it
+  to be shared throughout. This is possible because it no longer cares about the
+  number of mongos hosts (formerly allowMultipleMongoses).
 
 2020-08-23:
 
