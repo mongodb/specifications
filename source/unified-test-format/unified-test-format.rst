@@ -145,15 +145,11 @@ The top-level fields of a test file are as follows:
 .. _runOn:
 
 - ``runOn``: Optional array of documents. List of server version and/or topology
-  requirements for which the tests in this file can be run. These requirements
-  may be overridden on a per-test basis by `test.runOn <test_runOn_>`_. Test
-  runners MUST skip a test if its requirements are not met.
+  requirements for which the tests in this file can be run. If no requirements
+  are met, the test runner MUST skip this test file.
 
   If set, the array should contain at least one document. The structure of each
   document is defined in `runOnRequirement`_.
-
-  **TODO**: Consider whether these requirements should allow an entire test file
-  to be skipped up front, instead of allowing per-test requirements to override.
 
 .. _createEntities:
 
@@ -394,8 +390,15 @@ The structure of each document is as follows:
 
 - ``runOn``: Optional array of documents. List of server version and/or topology
   requirements for which the tests in this file can be run. If specified, these
-  requirements override any top-level requirements in `runOn`_. Test runners
-  MUST skip a test if its requirements are not met.
+  requirements are evaluated independently and in addition to any top-level
+  `runOn`_ requirements. If no requirements in this array are met, the test
+  runner MUST skip this test.
+
+  These requirements SHOULD be more restrictive than those specified in the
+  top-level `runOn`_ requirements (if any). They SHOULD NOT be more permissive.
+  This is advised because both sets of requirements MUST be satisified in order
+  for a test to be executed and more permissive requirements at the test-level
+  could be taken out of context on their own.
 
   If set, the array should contain at least one document. The structure of each
   document is defined in `runOnRequirement`_.
@@ -435,12 +438,6 @@ The structure of each document is as follows:
     events were observed on the client.
 
     The structure of each document is defined in `expectedEvent`_.
-
-  **TODO**: Decide if event types (e.g. APM, SDAM) should be mixed in the same
-  array and whether tests should be able to filter out certain types (assuming
-  the test runner observes any supported type). This will not become relevant
-  until SDAM integration tests are implemented (not in initial project scope),
-  but we should anticipate the syntax now to avoid potential BC breaks.
 
 .. _test_outcome:
 
@@ -951,10 +948,6 @@ An example of this operation follows::
           data:
             failCommands: ["insert"]
             closeConnection: true
-
-**TODO**: Consider supporting a readPreference argument to target nodes other
-than the primary. If this is not needed it could be deferred to a future spec
-version.
 
 
 targetedFailPoint
@@ -1523,10 +1516,6 @@ multiple versions and MUST NOT process incompatible files (as discussed in
 If `runOn`_ is specified, the test runner MUST skip the test file unless one or
 more `runOnRequirement`_ documents are satisfied.
 
-**TODO**: Confirm whether top-level `runOn`_ can be used to skip an entire file
-without considering test-level requirements. If so, test-level requirements can
-only be more restrictive.
-
 For each element in `tests`_, follow the process in `Executing a Test`_.
 
 
@@ -1874,6 +1863,100 @@ should be described here in detail for historical reference, in addition to any
 shorter description that may be added to the `Change Log`_.
 
 
+Open Questions
+==============
+
+Note: these questions should be resolved and this section removed before
+publishing version 1.0 of the spec.
+
+
+General
+-------
+
+
+Interaction between top-level and test-level runOn
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are at least two ways to handle runOn requirements defined at both the
+test and file level:
+
+* If `test.runOn`_ is specified, those requirements are checked in addition to
+  any top-level `runOn`_. This behavior is the most straightforward as test
+  runners will not have to consider inheritance or overriding anything (similar
+  to reasons top-level ``databaseName`` and ``collectionName`` fields were
+  ultimately removed). If the top-level `runOn`_ fails, the test runner can skip
+  the entire file outright (i.e. short-circuit the logical-and of both checks).
+
+* If `test.runOn`_ is specified, those requirements are checked *instead* of any
+  top-level `runOn`_. This would mean that a test runner cannot immediately skip
+  an entire file based on evaluation of the top-level `runOn`_; however, it also
+  means that humans editing a test file can no longer trust that the top-level
+  `runOn`_ applies to all tests in the file.
+
+During review, it was asked if a test runner could enforce that `test.runOn`_ is
+only more restrictive (and never more permissive) than the top-level `runOn`_.
+While this is technically feasible, it would add considerable complexity to a
+test runner to make such comparisons.
+
+
+Mixing event types in expectedEvent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Can different event types (e.g. command monitoring, SDAM) appear within the
+``events`` array within `test.expectedEvents`_? To date, no specs (including
+SDAM) expect events multiple types of events in the same test. `observeEvents`_
+does allow tests to filter events per client, so a test could conceivably expect
+mixed types (e.g. CommandStartedEvent and ServerDescriptionChangedEvent).
+
+Perhaps the underlying question is: when collecting observed events on a client,
+should the test runner keep them in one ordered list or group them into separate
+lists (e.g. one list for command monitoring events and another for SDAM events)?
+
+
+Should failPoint support a read preference?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `failPoint`_ operation currently uses a primary read preference. Should it
+solicit a ``readPreference`` argument to target nodes other than the primary?
+To date, no spec needs this behavior and this change could easily be deferred to
+a future minor version of the test format.
+
+
+GridFS Tests
+------------
+
+
+Error Assertions
+~~~~~~~~~~~~~~~~
+
+The GridFS tests assert for the following error types: "FileNotFound",
+"ChunkIsMissing", "ChunkIsWrongSize", and "RevisionNotFound". These types are
+not explicitly defined in the spec and only appear in test files. The spec also
+does not specify how messages for these errors should be constructed, so it may
+not be feasible to use ``errorContains`` assertions.
+
+Do we care about differentiating these types of errors? If so, we may need to
+add them to ``expectedError.type``.
+
+
+Outcome Assertions
+~~~~~~~~~~~~~~~~~~
+
+In the GridFS tests, ``assert.data`` is similar to `test.outcome`_ but it
+uses ``*result`` and ``*actual`` to match document data with a saved result
+(e.g. returned file ID) or an arbitrary value (e.g. date). Presently,
+`test.outcome`_ uses an exact match and does **not** follow the rules in
+`Evaluating Matches`_ (e.g. allow extra fields in actual documents, process
+special operators). Should we change `test.outcome`_ to follow the same
+comparison rules as we use for `expectedResult`_?
+
+If so, `test.outcome`_ and `initialData`_ would no longer share the same
+`collectionData`_ structure. This is not problematic, but worth noting.
+
+Alternatively, we could leave `test.outcome`_ as-is and create a new special
+operation that *matches* data within a collection.
+
+
 Change Log
 ==========
 
@@ -1882,6 +1965,12 @@ Note: this will be cleared when publishing version 1.0 of the spec
 2020-08-26:
 
 * special operations from sessions spec tests
+
+* clarify interaction between runOn and test.runOn, which are evaluated
+  independently and must both be met for a test to be executed. Also add a note
+  that test.runOn requirements should only be more restrictive for readability.
+
+* create open questions from GridFS spec and internal TODO items
 
 2020-08-25:
 
