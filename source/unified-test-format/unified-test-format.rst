@@ -427,8 +427,7 @@ The structure of each document is as follows:
   is as follows:
 
   - ``client``: Required string. Client entity on which the events are expected
-    to be observed. The YAML file SHOULD use an `alias node`_ for a client
-    entity's ``id`` field (e.g. ``client: *client0``).
+    to be observed. See `commonOptions_client`_.
 
   - ``events``: Required array of documents. List of events, which are expected
     to be observed (in this order) on the corresponding client while executing
@@ -688,6 +687,12 @@ The structure of these common options is as follows:
 
   - ``hedge``: Optional document.
 
+.. _commonOptions_client:
+
+- ``client``: String. Client entity name, which the test runner MUST resolve
+  to a MongoClient object. The YAML file SHOULD use an `alias node`_ for a
+  client entity's ``id`` field (e.g. ``client: *client0``).
+
 .. _commonOptions_session:
 
 - ``session``: String. Session entity name, which the test runner MUST resolve
@@ -919,9 +924,7 @@ The following arguments are supported:
 - ``failPoint``: Required document. The ``configureFailPoint`` command to be
   executed.
 
-- ``client``: Required string. Client entity used to configure the fail point.
-  The YAML file SHOULD use an `alias node`_ for a client entity's ``id`` field
-  (e.g. ``client: *client0``).
+- ``client``: Required string. See `commonOptions_client`_.
 
   The client entity SHOULD specify false for
   `useMultipleMongoses <entity_client_useMultipleMongoses_>`_ if this operation
@@ -1051,6 +1054,88 @@ The following arguments are supported:
 An example of this operation follows::
 
     - name: assertSessionUnpinned
+      object: testRunner
+      arguments:
+        session: *session0
+
+
+assertDifferentLsidOnLastTwoCommands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``assertDifferentLsidOnLastTwoCommands`` operation instructs the test runner
+to assert that the last two CommandStartedEvents observed on the client have
+different ``lsid`` fields. This assertion is primarily used to test that dirty
+server sessions are discarded from the pool.
+
+The following arguments are supported:
+
+- ``client``: Required string. See `commonOptions_client`_.
+
+  The client entity SHOULD include "commandStartedEvent" in
+  `observeEvents <entity_client_observeEvents_>`_.
+
+An example of this operation follows::
+
+    - name: assertDifferentLsidOnLastTwoCommands
+      object: testRunner
+      arguments:
+        client: *client0
+
+
+assertSameLsidOnLastTwoCommands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``assertSameLsidOnLastTwoCommands`` operation instructs the test runner to
+assert that the last two CommandStartedEvents observed on the client have
+identical ``lsid`` fields. This assertion is primarily used to test that
+non-dirty server sessions are not discarded from the pool.
+
+The following arguments are supported:
+
+- ``client``: Required string. See `commonOptions_client`_.
+
+  The client entity SHOULD include "commandStartedEvent" in
+  `observeEvents <entity_client_observeEvents_>`_.
+
+An example of this operation follows::
+
+    - name: assertSameLsidOnLastTwoCommands
+      object: testRunner
+      arguments:
+        client: *client0
+
+
+assertSessionDirty
+~~~~~~~~~~~~~~~~~~
+
+The ``assertSessionDirty`` operation instructs the test runner to assert that
+the given session is marked dirty.
+
+The following arguments are supported:
+
+- ``session``: Required string. See `commonOptions_session`_.
+
+An example of this operation follows::
+
+    - name: assertSessionDirty
+      object: testRunner
+      arguments:
+        session: *session0
+
+
+assertSessionNotDirty
+~~~~~~~~~~~~~~~~~~~~~
+
+The ``assertSessionNotDirty`` operation instructs the test runner to assert that
+the given session is not marked dirty.
+
+The following arguments are supported:
+
+- ``session``: Required string. See `commonOptions_session`_.
+
+An example of this operation follows::
+
+    - name: assertSessionNotDirty
       object: testRunner
       arguments:
         session: *session0
@@ -1793,6 +1878,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-26:
+
+* special operations from sessions spec tests
 
 2020-08-25:
 
