@@ -171,22 +171,6 @@ The top-level fields of a test file are as follows:
   client, collection, session objects) that should be created before each test
   case is executed. The structure of each document is defined in `entity`_.
 
-.. _collectionName:
-
-- ``collectionName``: Optional string. Name of collection under test. This is
-  primarily useful when the collection name must be referenced in an assertion.
-  The YAML file SHOULD define a `node anchor`_ for this field (e.g.
-  ``collectionName: &collectionName foo``). If unset, test runners may use
-  whatever value they prefer.
-
-.. _databaseName:
-
-- ``databaseName``: Optional string. Name of database under test. This is
-  primarily useful when the database name must be referenced in an assertion.
-  The YAML file SHOULD define a `node anchor`_ for this field (e.g.
-  ``databaseName: &databaseName foo``). If unset, test runners may use whatever
-  value they prefer.
-
 .. _initialData:
 
 - ``initialData``: Optional array of documents. Data that should exist in
@@ -194,8 +178,14 @@ The top-level fields of a test file are as follows:
 
   If set, the array should contain at least one document. The structure of each
   document is defined in `collectionData`_. Before each test and for each
-  `collectionData`_, the test runner MUST drop the collection and insert the
-  specified documents (if any) using a "majority" write concern.
+  `collectionData`_, the test runner MUST drop and the collection and insert the
+  specified documents (if any) using a "majority" write concern. If no documents
+  are specified, the test runner MUST create the collection with a "majority"
+  write concern.
+
+  The behavior to explicitly create a collection when no documents are specified
+  is primarily used for testing transactions, since collections cannot be
+  created within transactions.
 
 .. _tests:
 
@@ -289,10 +279,9 @@ The structure of this document is as follows:
     created. The YAML file SHOULD use an `alias node`_ for a client entity's
     ``id`` field (e.g. ``client: *client0``).
 
-  - ``databaseName``: Optional string. Database name. The YAML file SHOULD
+  - ``databaseName``: Required string. Database name. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g.
-    ``databaseName: &database0Name foo``). If omitted, this defaults to the name
-    of the database under test (see: `databaseName`_).
+    ``databaseName: &database0Name foo``).
 
   - ``databaseOptions``: Optional document. See `collectionOrDatabaseOptions`_.
 
@@ -310,26 +299,12 @@ The structure of this document is as follows:
     will be created. The YAML file SHOULD use an `alias node`_ for a database
     entity's ``id`` field (e.g. ``database: *database0``).
 
-  - ``collectionName``: Optional string. Collection name. The YAML file SHOULD
+  - ``collectionName``: Required string. Collection name. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g.
-    ``collectionName: &collection0Name foo``). If omitted, this defaults to the
-    name of the collection under test (see: `collectionName`_).
+    ``collectionName: &collection0Name foo``).
 
-  - ``collectionOptions``: Optional document. See `collectionOrDatabaseOptions`_.
-
-  .. _entity_collection_createOnServer:
-
-  - ``createOnServer``: Optional boolean. If true, when creating this entity the
-    test runner MUST also create the collection on the server using a "majority"
-    write concern. Defaults to false.
-
-    This is primarily used when testing transactions, since collections cannot
-    be created within transactions.
-
-    **TODO**: This may be redundant if we require initialData to ensure a
-    collection exists (i.e. create it explicitly if the list of documents would
-    be empty); however, if that is too obtuse to expect it to be used by
-    transaction tests then we can keep this as-is.
+  - ``collectionOptions``: Optional document. See
+    `collectionOrDatabaseOptions`_.
 
 .. _entity_session:
 
@@ -384,15 +359,9 @@ which insert and read documents, respectively.
 
 The structure of this document is as follows:
 
-- ``collectionName``: Optional string. Collection name (not an `entity`_). The
-  YAML file SHOULD use an `alias node`_ for this value (e.g.
-  ``collectionName: *collection0Name``). Defaults to the name of the collection
-  under test (see: `collectionName`_).
+- ``collectionName``: Required string. See `commonOptions_collectionName`_.
 
-- ``databaseName``: Optional string. Database name (not an `entity`_). The
-  YAML file SHOULD use an `alias node`_ for this value (e.g.
-  ``databaseName: *database0Name``). Defaults to the name of the database under
-  test (see: `databaseName`_).
+- ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
 - ``documents``: Required array of documents. List of documents corresponding to
   the contents of the collection. This list may be empty.
@@ -435,6 +404,10 @@ The structure of each document is as follows:
 - ``expectedEvents``: Optional array of documents. Each document will specify a
   client entity and a list of events that are expected to be observed (in that
   order) on that client while executing `operations <test_operations_>`_.
+
+  If a driver only supports configuring event listeners globally (for all
+  clients), the test runner SHOULD associate each observed event with a client
+  in order to perform these assertions.
 
   The array should contain at least one document. The structure of each document
   is as follows:
@@ -655,7 +628,7 @@ The structure of this document is as follows:
 
 
 Common Options
-~~~~~~~~~~~~~~
+--------------
 
 This section defines the structure of common options that are referenced from
 various contexts in the test format. Comprehensive documentation for some of
@@ -666,10 +639,21 @@ these types and their parameters may be found in the following specifications:
 
 The structure of these common options is as follows:
 
+.. _commonOptions_collectionName:
+
+- ``collectionName``: String. Collection name. The YAML file SHOULD use an
+  `alias node`_ for a collection entity's ``collectionName`` field (e.g.
+  ``collectionName: *collection0Name``).
+
+.. _commonOptions_databaseName:
+
+- ``databaseName``: String. Database name. The YAML file SHOULD use an
+  `alias node`_ for a database entity's ``databaseName`` field (e.g.
+  ``databaseName: *database0Name``).
+
 .. _commonOptions_readConcern:
 
-- ``readConcern``: Optional document. Map of parameters to construct a read
-  concern.
+- ``readConcern``: Document. Map of parameters to construct a read concern.
 
   The structure of this document is as follows:
 
@@ -677,7 +661,7 @@ The structure of these common options is as follows:
 
 .. _commonOptions_readPreference:
 
-- ``readPreference``: Optional document. Map of parameters to construct a read
+- ``readPreference``: Document. Map of parameters to construct a read
   preference.
 
   The structure of this document is as follows:
@@ -692,14 +676,13 @@ The structure of these common options is as follows:
 
 .. _commonOptions_session:
 
-- ``session``: Optional string. Session entity which will be resolved to a
-  ClientSession object. The YAML file SHOULD use an `alias node`_ for a session
-  entity's ``id`` field (e.g. ``session: *session0``).
+- ``session``: String. Session entity name, which the test runner MUST resolve
+  to a ClientSession object. The YAML file SHOULD use an `alias node`_ for a
+  session entity's ``id`` field (e.g. ``session: *session0``).
 
 .. _commonOptions_writeConcern:
 
-- ``writeConcern``: Optional document. Map of parameters to construct a write
-  concern.
+- ``writeConcern``: Document. Map of parameters to construct a write concern.
 
   The structure of this document is as follows:
 
@@ -738,19 +721,19 @@ optional parameters for an API method directly within
 `operation.arguments <operation_arguments_>`_ (e.g. ``upsert`` for ``updateOne``
 is *not* nested under an ``options`` key), unless otherwise stated below.
 
-If ``session`` is specified in ``operation.arguments`_, it is defined according
+If ``session`` is specified in `operation.arguments`_, it is defined according
 to `commonOptions_session`_. Test runners MUST resolve the ``session`` argument
 to session entity *before* passing it as a parameter to any API method.
+
+If ``readConcern``, ``readPreference``, or ``writeConcern`` are specified in
+`operation.arguments`_, test runners MUST interpret them according to the
+corresponding definition in `Common Options`_ and MUST convert the value into
+the appropriate object *before* passing it as a parameter to any API method.
 
 This spec does not provide exhaustive documentation for all possible API methods
 that may appear in a test; however, the following sections discuss all supported
 entities and their operations in some level of detail. Special handling for
 certain operations is also discussed below.
-
-**TODO**: While CRUD methods tend to flatten options into ``arguments``
-(possibly for consistency with bulk write models, which omit ``options`` keys),
-session methods often leave those options nested within an ``options`` key. We
-should pick one of these conventions for consistency.
 
 
 client
@@ -854,7 +837,7 @@ While operations typically raise an error *or* return a result, the
 ``writeResult`` property of a BulkWriteException. In this case, the intermediary
 write result may be matched with `expectedError_expectedResult`_. Because
 ``writeResult`` is optional for drivers to implement, such assertions should
-utilize the `$$unsetOrMatches`` operator.
+utilize the `$$unsetOrMatches`_ operator.
 
 Additionally, BulkWriteException is unique in that it aggregates one or more
 server errors in its ``writeConcernError`` and ``writeErrors`` properties.
@@ -1009,9 +992,15 @@ assertSessionTransactionState
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``assertSessionTransactionState`` operation instructs the test runner to
-assert that the transaction state of the given session is equal to the specified
-value. The possible values are as follows: ``none``, ``starting``,
-``in_progress``, ``committed``, ``aborted``.
+assert that the given session has a particular transaction state.
+
+The following arguments are supported:
+
+- ``session``: Required string. See `commonOptions_session`_.
+
+- ``state``: Required string. Expected transaction state for the session.
+  Possible values are as follows: ``none``, ``starting``, ``in_progress``,
+  ``committed``, and ``aborted``.
 
 An example of this operation follows::
 
@@ -1026,7 +1015,11 @@ assertSessionPinned
 ~~~~~~~~~~~~~~~~~~~
 
 The ``assertSessionPinned`` operation instructs the test runner to assert that
-the given session is pinned to a mongos.
+the given session is pinned to a mongos server.
+
+The following arguments are supported:
+
+- ``session``: Required string. See `commonOptions_session`_.
 
 An example of this operation follows::
 
@@ -1040,11 +1033,15 @@ assertSessionUnpinned
 ~~~~~~~~~~~~~~~~~~~~~
 
 The ``assertSessionUnpinned`` operation instructs the test runner to assert that
-the given session is not pinned to a mongos.
+the given session is not pinned to a mongos server.
+
+The following arguments are supported:
+
+- ``session``: Required string. See `commonOptions_session`_.
 
 An example of this operation follows::
 
-    - name: assertSessionPinned
+    - name: assertSessionUnpinned
       object: testRunner
       arguments:
         session: *session0
@@ -1054,92 +1051,106 @@ assertCollectionExists
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The ``assertCollectionExists`` operation instructs the test runner to assert
-that the given collection exists in the database.
+that the given collection exists in the database. The test runner MUST use the
+internal MongoClient for this operation.
+
+The following arguments are supported:
+
+- ``collectionName``: Required string. See `commonOptions_collectionName`_.
+
+- ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
 An example of this operation follows::
 
     - name: assertCollectionExists
       object: testRunner
       arguments:
-        database: db
-        collection: test
+        collectionName: *collection0Name
+        databaseName:  *database0Name
 
 Use a ``listCollections`` command to check whether the collection exists. Note
 that it is currently not possible to run ``listCollections`` from within a
 transaction.
-
-**TODO**: If this will refer to a collection entity, database is redundant.
-Otherwise, consider renaming the arguments to databaseName and collectionName as
-was done in `collectionData`_.
 
 
 assertCollectionNotExists
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``assertCollectionNotExists`` operation instructs the test runner to assert
-that the given collection does not exist in the database.
+that the given collection does not exist in the database. The test runner MUST
+use the internal MongoClient for this operation.
+
+The following arguments are supported:
+
+- ``collectionName``: Required string. See `commonOptions_collectionName`_.
+
+- ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
 An example of this operation follows::
 
     - name: assertCollectionNotExists
       object: testRunner
       arguments:
-        database: db
-        collection: test
+        collectionName: *collection0Name
+        databaseName:  *database0Name
 
 Use a ``listCollections`` command to check whether the collection exists. Note
 that it is currently not possible to run ``listCollections`` from within a
 transaction.
 
-**TODO**: If this will refer to a collection entity, database is redundant.
-Otherwise, consider renaming the arguments to databaseName and collectionName as
-was done in `collectionData`_.
-
 
 assertIndexExists
 ~~~~~~~~~~~~~~~~~
 
-The ``assertIndexExists`` operation instructs the test runner to assert that the
-index with the given name exists on the collection.
+The ``assertIndexExists`` operation instructs the test runner to assert that an
+index with the given name exists on the collection. The test runner MUST use the
+internal MongoClient for this operation.
+
+The following arguments are supported:
+
+- ``collectionName``: Required string. See `commonOptions_collectionName`_.
+
+- ``databaseName``: Required string. See `commonOptions_databaseName`_.
+
+- ``indexName``: Required string. Index name.
 
 An example of this operation follows::
 
     - name: assertIndexExists
       object: testRunner
       arguments:
-        database: db
-        collection: test
-        index: t_1
+        collectionName: *collection0Name
+        databaseName:  *database0Name
+        indexName: t_1
 
 Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
-
-**TODO**: If this will refer to a collection entity, database is redundant.
-Otherwise, consider renaming the arguments to databaseName and collectionName as
-was done in `collectionData`_.
 
 
 assertIndexNotExists
 ~~~~~~~~~~~~~~~~~~~~
 
 The ``assertIndexNotExists`` operation instructs the test runner to assert that
-the index with the given name does not exist on the collection.
+an index with the given name does not exist on the collection. The test runner
+MUST use the internal MongoClient for this operation.
+
+- ``collectionName``: Required string. See `commonOptions_collectionName`_.
+
+- ``databaseName``: Required string. See `commonOptions_databaseName`_.
+
+- ``indexName``: Required string. Index name.
 
 An example of this operation follows::
 
     - name: assertIndexNotExists
       object: testRunner
       arguments:
-        database: db
-        collection: test
-        index: t_1
+        collectionName: *collection0Name
+        databaseName:  *database0Name
+        indexName: t_1
 
 Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
-
-**TODO**: If this will refer to a collection entity, database is redundant.
-Otherwise, consider renaming the arguments to databaseName and collectionName as
-was done in `collectionData`_.
 
 
 Evaluating Matches
@@ -1154,7 +1165,7 @@ following pseudo-code::
 
     function match (expected, actual):
       if expected is a document:
-        if first key of expected starts with "$$":          
+        if first key of expected starts with "$$":
           assert that the special operator (identified by key) matches
           return
 
@@ -1409,13 +1420,6 @@ determine if the test file can be processed further. Test runners MAY support
 multiple versions and MUST NOT process incompatible files (as discussed in
 `Schema Version`_).
 
-If the test file is compatible, the test runner SHALL proceed with determining
-default names for the database and collection under test, which may be used by
-`database <entity_database_>`_ and `collection <entity_collection_>`_ entities
-and `collectionData`_. The test runner MUST use the values from `databaseName`_
-and `collectionName`_ fields if set. If a field is omitted, the test runner MUST
-generate a name. This spec is not prescriptive about the logic for doing so.
-
 If the test file specifies false for `allowMultipleMongoses`_ and the test
 runner was configured with a connection string (or equivalent configuration)
 that references multiple mongos servers in its host list, the test runner MUST
@@ -1459,27 +1463,19 @@ If `test.runOn <test_runOn_>`_ is specified, the test runner MUST skip the test
 unless one or more `runOnRequirement`_ documents are satisfied.
 
 If `initialData`_ is specified, for each `collectionData`_ therein the test
-runner MUST drop the collection using a "majority" write concern and then insert
-the specified documents, also using a "majority" write concern. The test runner
+runner MUST drop the collection and insert the specified documents (if any)
+using a "majority" write concern. If no documents are specified, the test runner
+MUST create the collection with a "majority" write concern. The test runner
 MUST use the internal MongoClient for these operations.
 
 Create a new `Entity Map`_ that will be used for this test. If `createEntities`_
 is specified, the test runner MUST create each `entity`_ accordingly and add it
 to the map.
 
-For any collection entities that specify true for
-`createOnServer <entity_collection_createOnServer_>`_, the test runner MUST
-create those collections on the server using a "majority" write concern. Test
-runners SHOULD ignore any NamespaceExists (code 28) errors when doing so. As an
-optimization, test runners MAY skip this step for any collections that were
-created as a result of inserting documents during processing of `initialData`_.
-
 If the test might execute a ``distinct`` command within a transaction on a
-sharded cluster, the test runner SHOULD execute a non-transactional ``distinct``
-command on each collection entity created. See
-`StaleDbVersion Errors on Sharded Clusters`_ for more information. Test runners
-MAY combine this step with handling for `createOnServer`_, since both are
-primarily relevant to transactions.
+sharded cluster, for each collection entity the test runner SHOULD execute a
+non-transactional ``distinct`` command on each mongos server. See
+`StaleDbVersion Errors on Sharded Clusters`_ for more information.
 
 If `test.expectedEvents <test_expectedEvents_>`_ is specified, the test runner
 MUST enable command monitoring for any client entities so that events can be
@@ -1795,6 +1791,27 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-25:
+
+* note that drivers with global event listeners will need to associate events
+  with clients for executing assertions (copied from change streams spec).
+
+* note special consideration for drivers with global event listeners
+
+* require databaseName and collectionName when creating database and collection
+  entities, respectively. also require those options in initialData, outcome,
+  and special operations (YAML aliases may be used). remove top-level
+  databaseName and collectionName fields (again) and any language for test
+  runners generate their own names.
+
+* remove createOnServer option for collection entities. initialData will now
+  explicitly create a collection if the list of documents is empty.
+
+* note handling of read concern, read preference, and write concern options for
+  entity operations.
+
+* document arguments for all special operations
 
 2020-08-23:
 
