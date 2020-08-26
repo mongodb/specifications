@@ -235,10 +235,10 @@ A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A ``C
 WaitQueue
 ---------
 
-A concept that represents pending requests for Connections. When a thread requests a ``Connection`` from a Pool, the thread enters the Pool's WaitQueue. A thread stays in the WaitQueue until it either receives a ``Connection`` or times out. A WaitQueue has the following traits:
+A concept that represents pending requests for ``Connections``. When a thread requests a ``Connection`` from a Pool, the thread enters the Pool's WaitQueue. A thread stays in the WaitQueue until it either receives a ``Connection`` or times out. A WaitQueue has the following traits:
 
 -  **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
--  **Ordered/Fair**: When connections are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
+-  **Ordered/Fair**: When ``Connections`` are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
 -  **Timeout aggressively:** If **waitQueueTimeoutMS** is set, members of a WaitQueue MUST timeout if they are enqueued for longer than waitQueueTimeoutMS. Members of a WaitQueue MUST timeout aggressively, and MUST leave the WaitQueue immediately upon timeout.
 
 The implementation details of a WaitQueue are left to the driver.
@@ -258,10 +258,10 @@ A driver-defined entity that encapsulates all non-monitoring Connections associa
 -  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <#connection-pool-monitoring>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
 -  **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
 
-   -  Checking in a ``Connection`` to the Pool automatically closes the Connection
+   -  Checking in a ``Connection`` to the Pool automatically closes the ``Connection``
    -  Attempting to check out a ``Connection`` from the Pool results in an Error
 
--  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of Connections (including available and in use) MUST NOT exceed **maxPoolSize**
+-  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of ``Connections`` (including available and in use) MUST NOT exceed **maxPoolSize**
 
 .. code:: typescript
 
@@ -329,7 +329,7 @@ immediately begin populating enough ``Connections`` such that
 totalConnections >= minPoolSize. These ``Connections`` MUST be
 populated in a non-blocking manner, such as via the use of a
 background thread or asynchronous I/O. See `Populating the Pool with a
-Connection <#deprecated-options>`_ for more details.
+Connection <##populating-the-pool-with-a-connection-internal-implementation>`_ for more details.
 
 .. code::
 
