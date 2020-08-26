@@ -37,7 +37,8 @@
         {
             "description": "subtype 0x04",
             "canonical_bson": "1D000000057800100000000473FFD26444B34C6990E8E7D1DFC035D400",
-            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"04\"}}}"
+            "canonical_extjson": "{\"x\" : { \"$binary\" : {\"base64\" : \"c//SZESzTGmQ6OfR38A11A==\", \"subType\" : \"04\"}}}",
+            "degenerate_extjson": "{\"x\" : { \"$uuid\" : \"73ffd264-44b3-4c69-90e8-e7d1dfc035d4\"}}"
         },
         {
             "description": "subtype 0x05",

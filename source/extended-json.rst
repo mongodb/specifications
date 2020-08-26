@@ -11,7 +11,7 @@ Extended JSON
 :Status: Proposed
 :Type: Standards
 :Last Modified: July 20, 2017
-:Version: 2.0.0
+:Version: 2.1.0
 
 .. contents::
 
@@ -337,6 +337,48 @@ to parsing JSON numbers:
   number on a 32-bit platform), it MUST interpret it as a BSON Double even if
   this results in a loss of precision.  The parser MUST NOT interpret it as a
   BSON String containing a decimal representation of the number.
+
+Special rules for parsing ``$uuid`` fields
+..........................................
+
+As per the `UUID specification`_, Binary subtypes 3 and 4 are used to
+represent UUIDs in BSON. Normally, UUIDs are represented in extended JSON
+as defined in the `Conversion table`_, e.g. the following document written
+in Groovy with the MongoDB Java Driver::
+
+  {"Binary": UUID.fromString("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
+
+is transformed into the following (newlines and spaces added for readability)::
+
+  {"Binary": {
+      "$binary": {
+          "base64": "o0w498Or7cijeBSpkquNtg==",
+          "subType": "03"}
+      }
+  }
+
+While this transformation preserves BSON subtype information (since
+UUIDs can be represented as BSON subtype 3 *and* 4), it is not very
+human readable. Since extended JSON representations of UUIDs feature
+prominently in server logs where human readability is desirable, we
+also allow UUIDs to be represented in extended JSON as::
+
+  {"$uuid": <canonical textual representation of a UUID>}
+
+The rules for generating the canonical string representation of a
+UUID are defined in `
+RFC 4122 Section 3 <https://tools.ietf.org/html/rfc4122#section-3>`_.
+Use of this format result in a more readable extended JSON
+representation of the UUID from the previous example::
+
+  {"Binary": {
+      "$uuid": "c8edabc3-f738-4ca3-b68d-ab92a91478a3"
+      }
+  }
+
+Parsers MUST interpret the ``$uuid`` key as BSON Binary subtype 4.
+
+.. _UUID specification: https://github.com/mongodb/specifications/blob/master/source/uuid.rst
 
 Generators
 ----------
@@ -895,6 +937,12 @@ a MongoDB query filter containing the ``$type`` operator?
 
 Changes
 =======
+
+v2.1.0
+------
+
+* Added support for parsing ``$uuid`` fields as BSON Binary subtype 4.
+
 
 v2.0.0
 ------
