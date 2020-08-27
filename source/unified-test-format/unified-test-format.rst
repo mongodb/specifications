@@ -218,7 +218,7 @@ The structure of this document is as follows:
   should be assumed that there is no upper bound on the required server version.
   The format of this string is defined in `Version String`_.
 
-- ``topology``: Optional string or array of strings. One or more of server
+- ``topologies``: Optional string or array of strings. One or more of server
   topologies against which the tests can be run successfully. Valid topologies
   are "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
   cluster backed by replica sets). If this field is omitted, it should be
@@ -1972,6 +1972,11 @@ Should this spec require that optional parameters be nested under an ``options``
 key or solicit them directly in `operation.arguments`_? Both are technically
 possible, since test runners handle both forms today.
 
+With regard to CRUD, this issue dates back to
+`SPEC-1158 <https://jira.mongodb.org/browse/SPEC-1158>`__. Therein, Jeremy
+originally argued in favor of nesting under an ``options`` key because it was
+most consistent the text in existing spec documents.
+
 Note: the CRUD spec WriteModels (e.g. UpdateOneModel) for ``bulkWrite`` to not
 use ``options`` keys in either the spec document or test files. As such, the
 resolution of this question would not impact how WriteModels are expressed in
@@ -2018,12 +2023,92 @@ Alternatively, we could leave `test.outcome`_ as-is and create a new special
 operation that *matches* data within a collection.
 
 
+Human-readable binary data
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In `SPEC-1216 <https://jira.mongodb.org/browse/SPEC-1216>`__, Robert recommended
+against changing the GridFS tests' ``$hex`` syntax to ``$binary`` Extended JSON,
+as the base64-encoded strings in the latter format would not be human-readable.
+This spec could introduce a custom operator in
+`Special Operators for Matching Assertions`_ to compare an expected hexidecimal
+string with an actual binary value, but we would still need to use ``$binary``
+syntax in `collectionData`_ for both `initialData`_ and `test.outcome`_.
+
+Another possible work-around is for this spec to discuss or link to a utility
+that can easily convert between hex and base64. For example, we can include a
+Javascript or Python script in the spec repository that can convert between the
+two and assist those editing GridFS test files.
+
+
+Related Issues
+==============
+
+Note: this section should be removed before publishing version 1.0 of the spec.
+
+The following SPEC tickets are associated with
+`DRIVERS-709 <https://jira.mongodb.org/browse/DRIVERS-709>`__. This section will
+record whether or not each issue is addressed by this spec.
+
+The following tickets are addressed by the test format:
+
+* `SPEC-1158 <https://jira.mongodb.org/browse/SPEC-1158>`__: Spec tests should use a consistent format for CRUD options
+
+  Open question: `Representing options in operation.arguments`_
+
+* `SPEC-1215 <https://jira.mongodb.org/browse/SPEC-1215>`__: Introduce spec test syntax for meta assertions (e.g. any value, not exists)
+
+  See: `Special Operators for Matching Assertions`_
+
+* `SPEC-1216 <https://jira.mongodb.org/browse/SPEC-1216>`__: Update GridFS YAML tests to use newer format
+
+  Open question: `Human-readable binary data`_
+
+* `SPEC-1229 <https://jira.mongodb.org/browse/SPEC-1229>`__: Standardize spec-test syntax for topology assertions
+
+  See `runOnRequirement`_, which is used by both `runOn`_ and `test.runOn`_.
+
+* `SPEC-1254 <https://jira.mongodb.org/browse/SPEC-1254>`__: Rename topology field in spec tests to topologies
+
+  See `runOnRequirement`_.
+
+* `SPEC-1439 <https://jira.mongodb.org/browse/SPEC-1439>`__: Inconsistent error checking in spec tests
+
+  This may still require test format syntax to assert that an error occurred
+  without caring about any assertions on the error itself.
+
+* `SPEC-1713 <https://jira.mongodb.org/browse/SPEC-1713>`__: Allow runOn to be defined per-test in addition to per-file
+
+  See `runOn`_ and `test.runOn`_ and related open question:
+  `Interaction between top-level and test-level runOn`_
+
+* `SPEC-1723 <https://jira.mongodb.org/browse/SPEC-1723>`__: Introduce test file syntax to disable dropping of collection under test
+
+  Only collections in `initialData`_ are dropped, so this can be achieved by
+  omitting the collection from `initialData`_. Additionally, the format supports
+  creating an empty collection without inserting any documents (needed by
+  transaction tests).
+
+The following tickets can be resolved after the unified test format is approved
+and/or other specs begin porting their tests to the format:
+
+* `SPEC-1102 <https://jira.mongodb.org/browse/SPEC-1102>`__: Add "object: collection" to command monitoring tests
+* `SPEC-1133 <https://jira.mongodb.org/browse/SPEC-1133>`__: Use APM to assert outgoing commands in CRUD spec tests
+* `SPEC-1144 <https://jira.mongodb.org/browse/SPEC-1144>`__: CRUD tests improvements
+* `SPEC-1193 <https://jira.mongodb.org/browse/SPEC-1193>`__: Convert change stream spec tests to runOn format
+* `SPEC-1230 <https://jira.mongodb.org/browse/SPEC-1230>`__: Rewrite APM spec tests to use common test format
+* `SPEC-1238 <https://jira.mongodb.org/browse/SPEC-1238>`__: Convert retryable write spec tests to multi-operation format
+* `SPEC-1261 <https://jira.mongodb.org/browse/SPEC-1261>`__: Use runOn syntax to specify APM test requirements
+* `SPEC-1375 <https://jira.mongodb.org/browse/SPEC-1375>`__: changeStream spec tests should be run on sharded clusters
+
+
 Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-08-27:
+
+* rename runOn.topology to topologies (SPEC-1254)
 
 * clarify rules for comparing schema versions and note that test files should
   not need to refer to patch versions.
@@ -2032,6 +2117,14 @@ Note: this will be cleared when publishing version 1.0 of the spec
   fields to compare. also remove note about "collecting observed events" after
   executing operations, since events will already need to be accessible while
   running operations in order to evaluate some assertions.
+
+* open question about human-readable binary data for GridFS
+
+* rename runOn.topology to topologies
+
+* create section for related SPEC tickets and explain which are addressed by
+  this spec or suitable to be completed after the format is approved (e.g. those
+  that pertain to porting over other spec tests to the new format).
 
 2020-08-26:
 
