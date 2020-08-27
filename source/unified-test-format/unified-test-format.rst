@@ -1085,6 +1085,10 @@ The following arguments are supported:
   The client entity SHOULD include "commandStartedEvent" in
   `observeEvents <entity_client_observeEvents_>`_.
 
+The test runner MUST fail this assertion if fewer than two CommandStartedEvents
+have been observed on the client or if either command does not include an
+``lsid`` field.
+
 An example of this operation follows::
 
     - name: assertDifferentLsidOnLastTwoCommands
@@ -1107,6 +1111,10 @@ The following arguments are supported:
 
   The client entity SHOULD include "commandStartedEvent" in
   `observeEvents <entity_client_observeEvents_>`_.
+
+The test runner MUST fail this assertion if fewer than two CommandStartedEvents
+have been observed on the client or if either command does not include an
+``lsid`` field.
 
 An example of this operation follows::
 
@@ -1593,8 +1601,7 @@ in `Executing an Operation`_. If an unexpected error is encountered or an
 assertion fails, the test runner MUST consider this test to have failed.
 
 If any event listeners were enabled on any client entities, the test runner MUST
-now disable those event listeners and, for each client, collect the ordered list
-of events observed thus far.
+now disable those event listeners.
 
 If any fail points were configured, the test runner MUST now disable those fail
 points (on the same server) to avoid spurious failures in subsequent tests. For
@@ -2020,6 +2027,11 @@ Note: this will be cleared when publishing version 1.0 of the spec
 
 * clarify rules for comparing schema versions and note that test files should
   not need to refer to patch versions.
+
+* note that lsid assertions require actually having observed events and lsid
+  fields to compare. also remove note about "collecting observed events" after
+  executing operations, since events will already need to be accessible while
+  running operations in order to evaluate some assertions.
 
 2020-08-26:
 
