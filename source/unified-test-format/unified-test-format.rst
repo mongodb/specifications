@@ -151,6 +151,11 @@ Top-level Fields
 
 The top-level fields of a test file are as follows:
 
+- ``description``: Required string. The name of the test file.
+
+  This SHOULD describe the common purpose of tests in this file and MAY refer to
+  the filename (e.g. "updateOne-hint").
+
 .. _schemaVersion:
 
 - ``schemaVersion``: Required string. Version of this specification to which the
@@ -403,6 +408,8 @@ Test case consisting of a sequence of operations to be executed.
 The structure of each document is as follows:
 
 - ``description``: Required string. The name of the test.
+
+  This SHOULD describe the purpose of this test (e.g. "insertOne is retried").
 
 .. _test_runOn:
 
@@ -2125,6 +2132,9 @@ Note: this will be cleared when publishing version 1.0 of the spec
 * create section for related SPEC tickets and explain which are addressed by
   this spec or suitable to be completed after the format is approved (e.g. those
   that pertain to porting over other spec tests to the new format).
+
+* add required top-level description field, which test runners may use for
+  debugging or log messages
 
 2020-08-26:
 
