@@ -58,15 +58,31 @@ This specification and the `Test Format`_ follow
 `semantic versioning <https://semver.org/>`__. Backwards breaking changes (e.g.
 removing a field, introducing a required field) will warrant a new major
 version. Backwards compatible changes (e.g. introducing an optional field) will
-warrant a new minor version. Small bug fixes and internal changes (e.g. grammar)
-will warrant a new patch version.
+warrant a new minor version. Small fixes and internal changes (e.g. grammar,
+adding clarifying text to the spec) will warrant a new patch version; however,
+patch versions SHOULD NOT alter the structure of the test format and thus SHOULD
+NOT be relevant to test files.
 
 Each test file defines a `schemaVersion`_, which test runners will use to
 determine compatibility (i.e. whether and how the test file will be
-interpreted). Test runners MAY support multiple versions of the test format.
-Test runners MUST NOT process incompatible files but are otherwise free to
-determine how to handle such files (e.g. skip and log a notice, fail and raise
-an error).
+interpreted). Test files are considered compatible with a test runner if their
+`schemaVersion`_ is less than or equal to a supported version in the test
+runner, given the same major version component. For example:
+
+- A test runner supporting version 1.5.1 could execute test files with versions
+  1.0 and 1.5 but *not* 1.6 and 2.0.
+- A test runner supporting version 2.1 it could execute test files with versions
+  2.0 and 2.1 but *not* 1.0 and 1.5.
+- A test runner supporting *both* versions 1.5.1 and 2.0 could execute test
+  files with versions 1.4, 1.5, and 2.0, but *not* 1.6, 2.1, or 3.0.
+- A test runner supporting version 2.0.1 could execute test files with versions
+  2.0 and 2.0.1 but *not* 2.0.2 or 2.1. This example is provided for
+  completeness, but test files SHOULD NOT need to refer to patch versions (as
+  previously mentioned).
+
+Test runners MUST NOT process incompatible files but MAY determine how to handle
+such files (e.g. skip and log a notice, fail and raise an error). Test runners
+MAY support multiple schema versions (as demonstrated in the example above).
 
 Each major version of this specification will have a corresponding JSON schema
 (e.g. `schema-1.json <schema-1.json>`__), which may be used to programmatically
@@ -140,7 +156,9 @@ The top-level fields of a test file are as follows:
 - ``schemaVersion``: Required string. Version of this specification to which the
   test file complies. Test runners will use this to determine compatibility
   (i.e. whether and how the test file will be interpreted). The format of this
-  string is defined in `Version String`_.
+  string is defined in `Version String`_; however, test files SHOULD NOT need to
+  refer to specific patch versions since patch-level changes SHOULD NOT alter
+  the structure of the test format (as previously noted in `Schema Version`_).
 
 .. _runOn:
 
@@ -1997,6 +2015,11 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-27:
+
+* clarify rules for comparing schema versions and note that test files should
+  not need to refer to patch versions.
 
 2020-08-26:
 
