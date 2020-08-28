@@ -535,9 +535,8 @@ The structure of this document is as follows:
   This field is mutually exclusive with
   `expectedError <operation_expectedError_>`_.
 
-  **TODO**: This is primarily used for change streams. Once an operation for
-  iterating a change stream is added, it should link to ``saveResultAsEntity``
-  as this will be the only way to add a change stream object to the entity map.
+  This is primarily used for creating a `changeStream`_ entity from the result
+  of a ``watch`` operation.
 
 
 expectedError
@@ -559,11 +558,20 @@ The structure of this document is as follows:
   - ``server``: server-generated error (e.g. error derived from a server
     response).
 
-- ``errorContains``: Optional string. A substring of the expected error message.
-  The test runner MUST assert that the error message contains this string using
-  a case-insensitive match.
+- ``errorContains``: Optional string. A substring of the expected error message
+  (e.g. "errmsg" field in a server error document). The test runner MUST assert
+  that the error message contains this string using a case-insensitive match.
 
   See `bulkWrite`_ for special considerations for BulkWriteExceptions.
+
+- ``errorCode``: Optional integer. The expected "code" field in the
+  server-generated error response. The test runner MUST assert that the error
+  includes a server-generated response whose "code" field equals this value.
+  In the interest of readability, YAML files SHOULD use a comment to note the
+  corresponding code name (e.g. ``errorCode: 26 # NamespaceNotFound``).
+
+  Server error codes are defined in
+  `error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`__.
 
 - ``errorCodeName``: Optional string. The expected "codeName" field in the
   server-generated error response. The test runner MUST assert that the error
@@ -571,6 +579,9 @@ The structure of this document is as follows:
   using a case-insensitive comparison.
 
   See `bulkWrite`_ for special considerations for BulkWriteExceptions.
+
+  Server error codes are defined in
+  `error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`__.
 
 - ``errorLabelsContain``: Optional array of strings. A list of error label
   strings that the error is expected to have. The test runner MUST assert that
@@ -889,7 +900,7 @@ and write concern error messages into the BulkWriteException message MAY
 optimize the check for ``errorContains`` by examining the concatenated message.
 Drivers that expose ``code`` but not ``codeName`` through BulkWriteException MAY
 translate the expected code name to a number (see:
-`error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`_)
+`error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`__)
 and compare with ``code`` instead, but MUST raise an error if the comparison
 cannot be attempted (e.g. ``code`` is also not available, translation fails).
 
@@ -923,6 +934,38 @@ These operations and their arguments may be documented in the following
 specifications:
 
 - `GridFS <../gridfs/gridfs-spec.rst>`__
+
+
+changeStream
+~~~~~~~~~~~~
+
+Change streams entities are special in that they are not defined in
+`createEntities`_ but are instead created by using
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ for a ``watch``
+operation on a client, database, or collection entity.
+
+The `Change Streams <../change-streams/change-streams.rst>`__ spec does not
+define a consistent API for the ChangeStream class, since the mechanisms for
+iteration and capturing a resume token may differ between synchronous and
+asynchronous drivers. To account for this, this section explicitly defines the
+supported operations for change stream entities.
+
+
+iterateUntilDocumentOrError
+```````````````````````````
+
+Iterates the change stream until either a single document is returned or an
+error is raised.
+
+If `expectedResult <operation_expectedResult_>`_ is specified, it SHOULD be a
+single document.
+
+`Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
+in the change stream spec cautions drivers that implement a blocking mode of
+iteration (e.g. asynchronous drivers) not to iterate the change stream
+unnecessarily, as doing so could cause the test runner to block indefinitely.
+This should not be a concern for ``iterateUntilDocumentOrError`` as iteration
+only continues until either a document or error is encountered.
 
 
 Special Test Operations
@@ -1836,13 +1879,13 @@ The ``failCommand`` fail point may be configured like so::
         configureFailPoint: "failCommand",
         mode: <string|document>,
         data: {
-          failCommands: ["commandName", "commandName2"],
-          closeConnection: <true|false>,
-          errorCode: <Number>,
+          failCommands: [<string>, ...],
+          closeConnection: <boolean>,
+          errorCode: <integer>,
           writeConcernError: <document>,
           appName: <string>,
-          blockConnection: <true|false>,
-          blockTimeMS: <Number>,
+          blockConnection: <boolean>,
+          blockTimeMS: <integer>,
         }
     });
 
@@ -1858,13 +1901,16 @@ if desired:
   returned as a command error.
 * ``appName``: Optional string, which is unset by default. If set, the fail
   point will only apply to connections for MongoClients created with this
-  ``appname``. New in server 4.4.0-rc2 (`SERVER-47195 <https://jira.mongodb.org/browse/SERVER-47195>`_).
+  ``appname``. New in server 4.4.0-rc2
+  (`SERVER-47195 <https://jira.mongodb.org/browse/SERVER-47195>`_).
 * ``blockConnection``: Optional boolean, which defaults to ``false``. If
   ``true``, the server should block the affected commands for ``blockTimeMS``.
-  New in server 4.3.4 (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
-* ``blockTimeMS``: Integer, which is required when ``blockConnection`` is
-  ``true``. The number of milliseconds for which the affected commands should be
-  blocked. New in server 4.3.4 (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
+  New in server 4.3.4
+  (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
+* ``blockTimeMS``: Optional integer, which is required when ``blockConnection``
+  is ``true``. The number of milliseconds for which the affected commands should
+  be blocked. New in server 4.3.4
+  (`SERVER-41070 <https://jira.mongodb.org/browse/SERVER-41070>`_).
 
 
 Determining if a Sharded Cluster Uses Replica Sets
@@ -1995,6 +2041,72 @@ case where all drivers represent TransactionOptions as a separate struct/object,
 even if they do not do so for ``startTransaction``.
 
 
+Change Stream Tests
+-------------------
+
+
+Error Assertions
+~~~~~~~~~~~~~~~~
+
+`Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
+in the change stream spec test documentation states:
+
+  If the test expects an error and one was not thrown by either creating the
+  change stream or executing the test's operations, iterating the change stream
+  once allows for an error to be thrown by a getMore command.
+
+It's not clear if this is necessary because the existing change stream spec test
+format does not differentiate between errors raised by creating or iterating the
+change stream. For instance, an invalid pipeline operator (error code 40324)
+should be raised by the initial ``aggregate`` command.
+
+Since the unified format would allow tests to differentiate between the initial
+``watch`` operation and `iterateUntilDocumentOrError`_ operation, and each
+can expect its own error, this may not be a concern; however, if the purpose of
+the quoted text above to to account for drivers that may not even execute the
+``aggregate`` command at the time ``watch`` is called (instead deferring it to
+the first iteration of ChangeStream), we may still need to account for that in
+the unified test format.
+
+If so, one possible solution may be to document that ``watch`` operations
+expecting an error must also iterate the returned change stream once if the
+operation itself did not initially raise an error. Of course, we should confirm
+that this (or any) solution is sufficient for all drivers.
+
+
+Command Monitoring Assertions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The change stream spec is also unique among other specs in that its event
+assertions only consider as many events as were expected and ignore both extra,
+observed events (e.g. getMore) and an optional killCursors (which SHOULD be
+issued when resuming). The issue of extra getMore events may pertain to either
+sharding or have something to do with variation among drivers in how ``watch``
+is implemented (e.g. eagerly calling ``aggregate`` vs. deferring until the first
+iteration).
+
+A possible solution to address this need may be to extend
+`test.expectedEvents <test_expectedEvents_>`_ to allow a list of command names
+to be specified, for which any command monitoring events will be ignored (as we
+currently do for security events and ``configureFailPoint``). If that addresses
+*both* needs, we may not need anything more; however, there are some change
+stream tests that *do* expect getMore, so in such a case we may still need a
+separate `test.expectedEvents <test_expectedEvents_>`_ option to instruct the
+test runner to only assert as many observed events are expected and ignore any
+additional events.
+
+
+getResumeToken
+~~~~~~~~~~~~~~
+
+Change stream spec tests do not interact with the resume token so we have not
+introduced a ``getResumeToken`` operation for change stream entities. Existing
+spec tests do not even check for ``startAfter`` and ``resumeAfter`` fields in
+outgoing commands, which is something we could start doing with `$$type`_
+assertions. That decision could be done at any time after existing spec tests
+are ported and would not require any change to the unified format.
+
+
 GridFS Tests
 ------------
 
@@ -2112,6 +2224,14 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-08-28:
+
+* iterateUntilDocumentOrError operation for change stream entities
+
+* open questions for change streams
+
+* errorCode assertion for expectedError
 
 2020-08-27:
 
