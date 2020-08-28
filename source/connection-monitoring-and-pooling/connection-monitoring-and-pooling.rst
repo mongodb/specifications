@@ -27,18 +27,17 @@ The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL N
 Definitions
 ===========
 
-``Connection``
+Connection
 ~~~~~~~~~~~~~~
 
-A ``Connection`` (when code-formatted) refers to the ``Connection``
-type defined in this specification. It does not refer to an actual
-TCP/IP connection to an Endpoint. A ``Connection`` will attempt to
-create and wrap such a connection over the course of its existence,
-but it is not equivalent to one nor does it wrap an active one at all
-times.
+A Connection (when linked) refers to the ``Connection`` type defined
+in this specification. It does not refer to an actual TCP/IP
+connection to an Endpoint. A ``Connection`` will attempt to create and
+wrap such a connection over the course of its existence, but it is not
+equivalent to one nor does it wrap an active one at all times.
 
-For the purposes of testing, a mocked ``Connection`` type could be
-used with the pool that never actually creates a TCP/IP connection or
+For the purposes of testing, a mocked ``Connection`` type could be used
+with the pool that never actually creates a TCP/IP connection or
 performs any I/O.
 
 Endpoint
@@ -170,13 +169,13 @@ Connection Pool Members
 Connection
 ----------
 
-A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A ``Connection`` has the following properties:
+A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A `Connection <#connection>`_ has the following properties:
 
--  **Single Endpoint:** A ``Connection`` MUST be associated with a single Endpoint. A ``Connection`` MUST NOT be associated with multiple Endpoints.
--  **Single Lifetime:** A ``Connection`` MUST NOT be used after it is closed.
--  **Single Owner:** A ``Connection`` MUST belong to exactly one Pool, and MUST NOT be shared across multiple pools
--  **Single Track:** A ``Connection`` MUST limit itself to one request / response at a time. A ``Connection`` MUST NOT multiplex/pipeline requests to an Endpoint.
--  **Monotonically Increasing ID:** A ``Connection`` MUST have an ID number associated with it. ``Connection`` IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
+-  **Single Endpoint:** A `Connection <#connection>`_ MUST be associated with a single Endpoint. A `Connection <#connection>`_ MUST NOT be associated with multiple Endpoints.
+-  **Single Lifetime:** A `Connection <#connection>`_ MUST NOT be used after it is closed.
+-  **Single Owner:** A `Connection <#connection>`_ MUST belong to exactly one Pool, and MUST NOT be shared across multiple pools
+-  **Single Track:** A `Connection <#connection>`_ MUST limit itself to one request / response at a time. A `Connection <#connection>`_ MUST NOT multiplex/pipeline requests to an Endpoint.
+-  **Monotonically Increasing ID:** A `Connection <#connection>`_ MUST have an ID number associated with it. `Connection <#connection>`_ IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
 -  **Perishable**: it is possible for a connection to become **Perished**. A connection is considered perished if any of the following are true:
 
@@ -235,10 +234,10 @@ A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A ``C
 WaitQueue
 ---------
 
-A concept that represents pending requests for ``Connections``. When a thread requests a ``Connection`` from a Pool, the thread enters the Pool's WaitQueue. A thread stays in the WaitQueue until it either receives a ``Connection`` or times out. A WaitQueue has the following traits:
+A concept that represents pending requests for `Connections <#connection>`_. When a thread requests a `Connection <#connection>`_ from a Pool, the thread enters the Pool's WaitQueue. A thread stays in the WaitQueue until it either receives a `Connection <#connection>`_ or times out. A WaitQueue has the following traits:
 
 -  **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
--  **Ordered/Fair**: When ``Connections`` are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
+-  **Ordered/Fair**: When `Connections <#connection>`_ are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
 -  **Timeout aggressively:** If **waitQueueTimeoutMS** is set, members of a WaitQueue MUST timeout if they are enqueued for longer than waitQueueTimeoutMS. Members of a WaitQueue MUST timeout aggressively, and MUST leave the WaitQueue immediately upon timeout.
 
 The implementation details of a WaitQueue are left to the driver.
@@ -258,10 +257,10 @@ A driver-defined entity that encapsulates all non-monitoring Connections associa
 -  **Emit Events:** A Pool MUST emit pool events when dictated by this spec (see `Connection Pool Monitoring <#connection-pool-monitoring>`__). Users MUST be able to subscribe to emitted events in a manner idiomatic to their language and driver.
 -  **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
 
-   -  Checking in a ``Connection`` to the Pool automatically closes the ``Connection``
-   -  Attempting to check out a ``Connection`` from the Pool results in an Error
+   -  Checking in a `Connection <#connection>`_ to the Pool automatically closes the `Connection <#connection>`_
+   -  Attempting to check out a `Connection <#connection>`_ from the Pool results in an Error
 
--  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of ``Connections`` (including available and in use) MUST NOT exceed **maxPoolSize**
+-  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
 
 .. code:: typescript
 
@@ -325,11 +324,11 @@ The SDAM specification defines `when
 the driver should create connection pools.
 
 Once a pool is created, if minPoolSize is set, the pool MUST
-immediately begin populating enough ``Connections`` such that
-totalConnections >= minPoolSize. These ``Connections`` MUST be
+immediately begin populating enough `Connections <#connection>`_ such that
+totalConnections >= minPoolSize. These `Connections <#connection>`_ MUST be
 populated in a non-blocking manner, such as via the use of a
 background thread or asynchronous I/O. See `Populating the Pool with a
-Connection <##populating-the-pool-with-a-connection-internal-implementation>`_ for more details.
+Connection <#populating-the-pool-with-a-connection-internal-implementation>`_ for more details.
 
 .. code::
 
@@ -345,10 +344,10 @@ Connection <##populating-the-pool-with-a-connection-internal-implementation>`_ f
 Closing a Connection Pool
 -------------------------
 
-When a pool is closed, it MUST first close all available ``Connections`` in that pool. This results in the following behavior changes:
+When a pool is closed, it MUST first close all available `Connections <#connection>`_ in that pool. This results in the following behavior changes:
 
--  In use ``Connections`` MUST be closed when they are checked in to the closed pool.
--  Attempting to check out a ``Connection`` MUST result in an error.
+-  In use `Connections <#connection>`_ MUST be closed when they are checked in to the closed pool.
+-  Attempting to check out a `Connection <#connection>`_ MUST result in an error.
 
 .. code::
 
@@ -360,8 +359,8 @@ When a pool is closed, it MUST first close all available ``Connections`` in that
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
 
-When creating a ``Connection``, the initial ``Connection`` is in an
-“unestablished” state. This only creates a “virtual” ``Connection``, and
+When creating a `Connection <#connection>`_, the initial `Connection <#connection>`_ is in an
+“unestablished” state. This only creates a “virtual” `Connection <#connection>`_, and
 performs no I/O. 
 
 .. code::
@@ -375,7 +374,7 @@ performs no I/O.
 Establishing a Connection (Internal Implementation)
 ---------------------------------------------------
 
-Before a ``Connection`` can be marked as either "available" or "in use", it
+Before a `Connection <#connection>`_ can be marked as either "available" or "in use", it
 must be established. This process involves performing the initial
 handshake, handling OP_COMPRESSED, and performing authentication.
 
@@ -396,9 +395,9 @@ handshake, handling OP_COMPRESSED, and performing authentication.
 Closing a Connection (Internal Implementation)
 ----------------------------------------------
 
-When a ``Connection`` is closed, it MUST first be marked as "closed",
+When a `Connection <#connection>`_ is closed, it MUST first be marked as "closed",
 removing it from being counted as "available" or "in use". One that is
-complete, the ``Connection`` can perform whatever teardown is
+complete, the `Connection <#connection>`_ can perform whatever teardown is
 necessary to close its underlying socket. The Driver MUST perform this
 teardown in a non-blocking manner, such as via the use of a background
 thread or async I/O.
@@ -418,10 +417,10 @@ thread or async I/O.
 Marking a Connection as Available (Internal Implementation)
 -----------------------------------------------------------
 
-A ``Connection`` is "available" if it is able to be checked out. A
-``Connection`` MUST NOT be marked as "available" until it has been
+A `Connection <#connection>`_ is "available" if it is able to be checked out. A
+`Connection <#connection>`_ MUST NOT be marked as "available" until it has been
 established. The pool MUST keep track of the number of currently
-available ``Connections``.
+available `Connections <#connection>`_.
 
 .. code::
 
@@ -434,8 +433,8 @@ Populating the Pool with a Connection (Internal Implementation)
 ---------------------------------------------------------------
 
 If minPoolSize is set, the pool MUST ensure that it always has at
-least minPoolSize total ``Connections``. In order to achieve this, it
-needs to be able to create ``Connections`` that begin as "available"
+least minPoolSize total `Connections <#connection>`_. In order to achieve this, it
+needs to be able to create `Connections <#connection>`_ that begin as "available"
 instead of "in use" (i.e. "populate the pool"). Performing this
 process MUST NOT block any application threads. For example, it could
 be performed on a background thread or via the use of non-blocking
@@ -451,29 +450,29 @@ I/O.
 Checking Out a Connection
 -------------------------
 
-A Pool MUST have a method of allowing the driver to check out a ``Connection``. Checking out a ``Connection`` involves entering the WaitQueue and waiting for a ``Connection`` to become available. If the thread times out in the WaitQueue, an error is thrown.
+A Pool MUST have a method of allowing the driver to check out a `Connection <#connection>`_. Checking out a `Connection <#connection>`_ involves entering the WaitQueue and waiting for a `Connection <#connection>`_ to become available. If the thread times out in the WaitQueue, an error is thrown.
 
-If, in the process of iterating available ``Connections`` in the pool
-by the checkOut method, a perished ``Connection`` is encountered, such
-a ``Connection`` MUST be closed and the iteration of available
-``Connections`` MUST continue until either a non-perished available
-``Connection`` is found or the list of available ``Connections`` is
-exhausted. If no ``Connections`` are available and the total number of
-``Connections`` is less than maxPoolSize, the pool MUST create and
-return a new ``Connection``.
+If, in the process of iterating available `Connections <#connection>`_ in the pool
+by the checkOut method, a perished `Connection <#connection>`_ is encountered, such
+a `Connection <#connection>`_ MUST be closed and the iteration of available
+`Connections <#connection>`_ MUST continue until either a non-perished available
+`Connection <#connection>`_ is found or the list of available `Connections <#connection>`_ is
+exhausted. If no `Connections <#connection>`_ are available and the total number of
+`Connections <#connection>`_ is less than maxPoolSize, the pool MUST create and
+return a new `Connection <#connection>`_.
 
-If the pool is closed, any attempt to check out a ``Connection`` MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
+If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
-If minPoolSize is set, the ``Connection`` Pool MUST always have at
-least minPoolSize total ``Connections``. If the pool does not
+If minPoolSize is set, the `Connection <#connection>`_ Pool MUST always have at
+least minPoolSize total `Connections <#connection>`_. If the pool does not
 implement a background thread, the checkOut method is responsible for
 ensuring this requirement.
 
-A ``Connection`` MUST NOT be checked out until it is established. In
+A `Connection <#connection>`_ MUST NOT be checked out until it is established. In
 addition, the Pool MUST NOT block other threads from checking out
-``Connections`` while establishing a ``Connection``.
+`Connections <#connection>`_ while establishing a `Connection <#connection>`_.
 
-Before a given ``Connection`` is returned from checkOut, it must be marked as
+Before a given `Connection <#connection>`_ is returned from checkOut, it must be marked as
 "in use", and the pool's availableConnectionCount MUST be decremented.
 
 .. code::
@@ -530,16 +529,16 @@ Checking In a Connection
 ------------------------
 
 A Pool MUST have a method of allowing the driver to check in a
-``Connection``. The driver MUST NOT be allowed to check in a
-``Connection`` to a Pool that did not create that ``Connection``, and
+`Connection <#connection>`_. The driver MUST NOT be allowed to check in a
+`Connection <#connection>`_ to a Pool that did not create that `Connection <#connection>`_, and
 MUST throw an Error if this is attempted.
 
-When the ``Connection`` is checked in, it is closed if any of the following are true:
+When the `Connection <#connection>`_ is checked in, it is closed if any of the following are true:
 
--  The ``Connection`` is perished.
+-  The `Connection <#connection>`_ is perished.
 -  The pool has been closed.
 
-Otherwise, the ``Connection`` is marked as available.
+Otherwise, the `Connection <#connection>`_ is marked as available.
 
 .. code::
 
@@ -552,17 +551,17 @@ Otherwise, the ``Connection`` is marked as available.
 Clearing a Connection Pool
 --------------------------
 
-A Pool MUST have a method of clearing all ``Connections`` when instructed. Rather than iterating through every ``Connection``, this method should simply increment the generation of the Pool, implicitly marking all current ``Connections`` as stale. The checkOut and checkIn algorithms will handle clearing out stale ``Connections``. If a user is subscribed to Connection Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
+A Pool MUST have a method of clearing all `Connections <#connection>`_ when instructed. Rather than iterating through every `Connection <#connection>`_, this method should simply increment the generation of the Pool, implicitly marking all current `Connections <#connection>`_ as stale. The checkOut and checkIn algorithms will handle clearing out stale `Connections <#connection>`_. If a user is subscribed to Connection Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
 
 Forking
 -------
 
-A ``Connection`` is explicitly not fork-safe. The proper behavior in the case of a fork is to ResetAfterFork by:
+A `Connection <#connection>`_ is explicitly not fork-safe. The proper behavior in the case of a fork is to ResetAfterFork by:
 
 -  clear all Connection Pools in the child process
--  closing all ``Connections`` in the child-process.
+-  closing all `Connections <#connection>`_ in the child-process.
 
-Drivers that support forking MUST document that ``Connections`` to an Endpoint are not fork-safe, and document the proper way to ResetAfterFork in the driver.
+Drivers that support forking MUST document that `Connections <#connection>`_ to an Endpoint are not fork-safe, and document the proper way to ResetAfterFork in the driver.
 
 Drivers MAY aggressively ResetAfterFork if the driver detects it has been forked.
 
@@ -575,16 +574,16 @@ Background Thread
 ^^^^^^^^^^^^^^^^^
 
 A Pool SHOULD have a background Thread that is responsible for
-monitoring the state of all available ``Connections``. This background
+monitoring the state of all available `Connections <#connection>`_. This background
 thread SHOULD
 
--  Populate ``Connections`` to ensure that the pool always satisfies **minPoolSize**
--  Remove and close perished available ``Connections``.
+-  Populate `Connections <#connection>`_ to ensure that the pool always satisfies **minPoolSize**
+-  Remove and close perished available `Connections <#connection>`_.
 
 withConnection
 ^^^^^^^^^^^^^^
 
-A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent ``Connections`` from not being checked in. Examples include `Python's "with" statement <https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement>`__ and `C#'s "using" statement <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement>`__. If implemented, drivers SHOULD use this method as the default method of checking out and checking in ``Connections``.
+A Pool SHOULD implement a scoped resource management mechanism idiomatic to their language to prevent `Connections <#connection>`_ from not being checked in. Examples include `Python's "with" statement <https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement>`__ and `C#'s "using" statement <https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/using-statement>`__. If implemented, drivers SHOULD use this method as the default method of checking out and checking in `Connections <#connection>`_.
 
 .. _connection-pool-monitoring-1:
 
@@ -797,17 +796,17 @@ Why do we have separate ConnectionCreated and ConnectionReady events, but only o
 
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
--  ConnectionCreated adds a new “unestablished” ``Connection``, meaning the totalConnectionCount increases by one
--  ConnectionReady establishes that the ``Connection`` is ready for use, meaning the availableConnectionCount increases by one
+-  ConnectionCreated adds a new “unestablished” `Connection <#connection>`_, meaning the totalConnectionCount increases by one
+-  ConnectionReady establishes that the `Connection <#connection>`_ is ready for use, meaning the availableConnectionCount increases by one
 
-ConnectionClosed indicates that the ``Connection`` is no longer a member of the pool, decrementing totalConnectionCount and potentially availableConnectionCount. After this point, the ``Connection`` is no longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are not specified here.
+ConnectionClosed indicates that the `Connection <#connection>`_ is no longer a member of the pool, decrementing totalConnectionCount and potentially availableConnectionCount. After this point, the `Connection <#connection>`_ is no longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are not specified here.
 
 Why are waitQueueSize and waitQueueMultiple deprecated?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These options were originally only implemented in three drivers (Java, C#, and Python), and provided little value. While these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error from occurring. 
 
-Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily the behavior that users want. They can also result in cases where queue access oscillates back and forth between full and not full. If a driver has a full waitQueue, then all requests for ``Connections`` will be rejected. If the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness guarantee that the waitQueue normally provides. 
+Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily the behavior that users want. They can also result in cases where queue access oscillates back and forth between full and not full. If a driver has a full waitQueue, then all requests for `Connections <#connection>`_ will be rejected. If the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness guarantee that the waitQueue normally provides. 
 
 Because of these issues, it does not make sense to `go against driver mantras and provide an additional knob <../../README.rst#>`__. We may eventually pursue an alternative configurations to address wait queue size in `Advanced Pooling Behaviors <#advanced-pooling-behaviors>`__.
 
@@ -822,9 +821,9 @@ Why must ensuring minPoolSize require the use of a background thread or async I/
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Without the use of a background thread, minPoolSize is ensured during
-checkOut. ``Connections`` may not be checked into the pool before
+checkOut. `Connections <#connection>`_ may not be checked into the pool before
 being established, however, so establishment also happens during
-checkOut. If ``Connection`` establishment were done in a blocking
+checkOut. If `Connection <#connection>`_ establishment were done in a blocking
 fashion, the first operations after a clearing of the pool would
 experience unacceptably high latency, especially for larger values of
 minPoolSize. Thus, minPoolSize either needs to be ensured via a
@@ -834,10 +833,10 @@ non-blocking (async) I/O.
 Why must closing a connection be non-blocking?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Because idle and perished ``Connections`` are cleaned up as part of
-checkOut, performing blocking I/O while closing such ``Connections``
+Because idle and perished `Connections <#connection>`_ are cleaned up as part of
+checkOut, performing blocking I/O while closing such `Connections <#connection>`_
 would block application threads, introducing unnecessary latency. Once
-a ``Connection`` is marked as "closed", it will not be checked out
+a `Connection <#connection>`_ is marked as "closed", it will not be checked out
 again, so ensuring the socket is torn down does not need to happen
 immediately and can happen at a later time, either via async I/O or a
 background thread. 
@@ -862,19 +861,19 @@ SDAM
 
 This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that “A monitor SHOULD NOT use the client's regular Connection pool”. Some possible solutions for this include:
 
--  Having each Endpoint representation in the driver create and manage a separate dedicated ``Connection`` for monitoring purposes
+-  Having each Endpoint representation in the driver create and manage a separate dedicated `Connection <#connection>`_ for monitoring purposes
 -  Having each Endpoint representation in the driver maintain a separate pool of maxPoolSize 1 for monitoring purposes.
--  Having each Pool maintain a dedicated ``Connection`` for monitoring purposes, with an API to expose that Connection.
+-  Having each Pool maintain a dedicated `Connection <#connection>`_ for monitoring purposes, with an API to expose that Connection.
 
 Advanced Pooling Behaviors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This spec does not address any advanced pooling behaviors like predictive pooling, aggressive ``Connection`` creation, or handling high request volume. Future work may address this.
+This spec does not address any advanced pooling behaviors like predictive pooling, aggressive `Connection <#connection>`_ creation, or handling high request volume. Future work may address this.
 
 Add support for OP_MSG exhaustAllowed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Exhaust Cursors may require changes to how we close ``Connections`` in the future, specifically to add a way to close and remove from its pool a ``Connection`` which has unread exhaust messages.
+Exhaust Cursors may require changes to how we close `Connections <#connection>`_ in the future, specifically to add a way to close and remove from its pool a `Connection <#connection>`_ which has unread exhaust messages.
 
 
 Change log
