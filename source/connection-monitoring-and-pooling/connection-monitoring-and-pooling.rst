@@ -249,7 +249,9 @@ Example implementations include:
 Connection Pool
 ---------------
 
-A driver-defined entity that encapsulates all non-monitoring Connections associated with a single Endpoint. The pool has the following properties:
+A driver-defined entity that encapsulates all non-monitoring
+`Connections <#connection>`_ associated with a single Endpoint. The pool
+has the following properties:
 
 -  **Thread Safe:** All Pool behaviors MUST be thread safe.
 -  **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it MUST immediately clear itself and update its pid
