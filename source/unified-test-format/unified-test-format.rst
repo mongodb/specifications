@@ -180,6 +180,10 @@ The top-level fields of a test file are as follows:
   client, collection, session objects) that should be created before each test
   case is executed. The structure of each document is defined in `entity`_.
 
+  Test files SHOULD define entities in dependency order, such that all
+  referenced entities (e.g. client) are defined before any of their dependent
+  entities (e.g. database, session).
+
 .. _initialData:
 
 - ``initialData``: Optional array of documents. Data that should exist in
@@ -187,14 +191,10 @@ The top-level fields of a test file are as follows:
 
   If set, the array should contain at least one document. The structure of each
   document is defined in `collectionData`_. Before each test and for each
-  `collectionData`_, the test runner MUST drop and the collection and insert the
+  `collectionData`_, the test runner MUST drop the collection and insert the
   specified documents (if any) using a "majority" write concern. If no documents
   are specified, the test runner MUST create the collection with a "majority"
   write concern.
-
-  The behavior to explicitly create a collection when no documents are specified
-  is primarily used for testing transactions, since collections cannot be
-  created within transactions.
 
 .. _tests:
 
@@ -290,8 +290,16 @@ The structure of this document is as follows:
   - ``observeEvents``: Optional string or array of strings. One or more types of
     events that can be observed for this client. Unspecified event types MUST
     be ignored by this client's event listeners and SHOULD NOT be included in
-    `test.expectedEvents <test_expectedEvents_>`_ for this client. Supported
-    types correspond to those documented in `expectedEvent`_ and are as follows:
+    `test.expectedEvents <test_expectedEvents_>`_ for this client.
+
+    Test files SHOULD NOT observe multiple event types (e.g. command monitoring
+    *and* SDAM events) for a single client, as this spec presently does not
+    define a process for collating and asserting mixed events. See
+    `Mixing event types in observeEvents and expectedEvents`_ for more
+    information.
+
+    Supported types correspond to those documented in `expectedEvent`_ and are
+    as follows:
 
     - `commandStartedEvent <expectedEvent_commandStartedEvent_>`_
 
@@ -451,6 +459,12 @@ The structure of each document is as follows:
   clients), the test runner SHOULD associate each observed event with a client
   in order to perform these assertions.
 
+  Test files SHOULD NOT expect multiple event types (e.g. command monitoring
+  *and* SDAM events) for a single client, as this spec presently does not define
+  a process for collating and asserting mixed events. See
+  `Mixing event types in observeEvents and expectedEvents`_ for more
+  information.
+
   The array should contain at least one document. The structure of each document
   is as follows:
 
@@ -529,14 +543,15 @@ The structure of this document is as follows:
   returned by the operation (if any) will be saved with this name in the
   `Entity Map`_.  The test runner MUST raise an error if the name is already in
   use. If the operation does not return a value (e.g. void method), the test
-  runner MAY choose to store an empty value (e.g. ``null``) or do nothing and
-  leave the entity name undefined.
+  runner MUST store an empty value (e.g. ``null``) for the entity such that the
+  name will still be defined in the entity map.
 
   This field is mutually exclusive with
   `expectedError <operation_expectedError_>`_.
 
   This is primarily used for creating a `changeStream`_ entity from the result
-  of a ``watch`` operation.
+  of a `client_createChangeStream`_, `database_createChangeStream`_, or
+  `collection_createChangeStream`_ operation.
 
 
 expectedError
@@ -797,6 +812,25 @@ specifications:
 - `Change Streams <../change-streams/change-streams.rst>`__
 - `Enumerating Databases <../enumerate-databases.rst>`__
 
+Client operations that require special handling or are not documented by an
+existing specification are described below.
+
+
+.. _client_createChangeStream:
+
+createChangeStream
+``````````````````
+
+Creates a cluster-level change stream and ensures that the server-side cursor
+has been created.
+
+This operation proxies the client's ``watch`` method and supports the same
+arguments and options. Test files SHOULD NOT use the client's ``watch``
+operation directly for reasons discussed in `changeStream`_. Test runners MUST
+ensure that the server-side cursor is created (i.e. ``aggregate`` is executed)
+as part of this operation and before the resulting change stream might be saved
+with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+
 
 database
 ~~~~~~~~
@@ -808,7 +842,24 @@ specifications:
 - `CRUD <../crud/crud.rst>`__
 - `Enumerating Collections <../enumerate-collections.rst>`__
 
-Other database operations not documented by an existing specification follow.
+Database operations that require special handling or are not documented by an
+existing specification are described below.
+
+
+.. _database_createChangeStream:
+
+createChangeStream
+``````````````````
+
+Creates a database-level change stream and ensures that the server-side cursor
+has been created.
+
+This operation proxies the database's ``watch`` method and supports the same
+arguments and options. Test files SHOULD NOT use the database's ``watch``
+operation directly for reasons discussed in `changeStream`_. Test runners MUST
+ensure that the server-side cursor is created (i.e. ``aggregate`` is executed)
+as part of this operation and before the resulting change stream might be saved
+with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 
 runCommand
@@ -850,7 +901,24 @@ specifications:
 - `Enumerating Indexes <../enumerate-indexes.rst>`__
 - `Index Management <../index-management.rst>`__
 
-Collection operations that require special handling are described below.
+Collection operations that require special handling or are not documented by an
+existing specification are described below.
+
+
+.. _collection_createChangeStream:
+
+createChangeStream
+``````````````````
+
+Creates a collection-level change stream and ensures that the server-side cursor
+has been created.
+
+This operation proxies the collection's ``watch`` method and supports the same
+arguments and options. Test files SHOULD NOT use the collection's ``watch``
+operation directly for reasons discussed in `changeStream`_. Test runners MUST
+ensure that the server-side cursor is created (i.e. ``aggregate`` is executed)
+as part of this operation and before the resulting change stream might be saved
+with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 
 bulkWrite
@@ -941,8 +1009,15 @@ changeStream
 
 Change streams entities are special in that they are not defined in
 `createEntities`_ but are instead created by using
-`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ for a ``watch``
-operation on a client, database, or collection entity.
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
+`client_createChangeStream`_, `database_createChangeStream`_, or
+`collection_createChangeStream`_ operation.
+
+Test files SHOULD NOT use a ``watch`` operation to create a change stream, as
+the implementation of that method may vary among drivers. For example, some
+implementations of ``watch`` immediately execute ``aggregate`` and construct the
+server-side cursor, while others may defer ``aggregate`` until the change stream
+object is iterated.
 
 The `Change Streams <../change-streams/change-streams.rst>`__ spec does not
 define a consistent API for the ChangeStream class, since the mechanisms for
@@ -1436,7 +1511,7 @@ Syntax::
     { field: { $$exists: <boolean> } }
 
 This operator can be used anywhere the value for a key might be specified in an
-expected dcoument. If true, the test runner MUST assert that the key exists in
+expected document. If true, the test runner MUST assert that the key exists in
 the actual document, irrespective of its value (e.g. a key with a ``null`` value
 would match). If false, the test runner MUST assert that the key does not exist
 in the actual document. This operator is modeled after the
@@ -1977,29 +2052,6 @@ While this is technically feasible, it would add considerable complexity to a
 test runner to make such comparisons.
 
 
-Mixing event types in expectedEvent
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Can different event types (e.g. command monitoring, SDAM) appear within the
-``events`` array within `test.expectedEvents`_? To date, no specs (including
-SDAM) expect events multiple types of events in the same test. `observeEvents`_
-does allow tests to filter events per client, so a test could conceivably expect
-mixed types (e.g. CommandStartedEvent and ServerDescriptionChangedEvent).
-
-Perhaps the underlying question is: when collecting observed events on a client,
-should the test runner keep them in one ordered list or group them into separate
-lists (e.g. one list for command monitoring events and another for SDAM events)?
-
-
-Should failPoint support a read preference?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The `failPoint`_ operation currently uses a primary read preference. Should it
-solicit a ``readPreference`` argument to target nodes other than the primary?
-To date, no spec needs this behavior and this change could easily be deferred to
-a future minor version of the test format.
-
-
 Representing options in operation.arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2220,10 +2272,49 @@ and/or other specs begin porting their tests to the format:
 * `SPEC-1375 <https://jira.mongodb.org/browse/SPEC-1375>`__: changeStream spec tests should be run on sharded clusters
 
 
+Future Work
+===========
+
+
+Mixing event types in observeEvents and expectedEvents
+------------------------------------------------------
+
+The test format advises against mixing multiple types of events (e.g. command
+monitoring *and* SDAM) in `observeEvents`_ and `test.expectedEvents`_. While
+registering event listeners is trivial, determining how to collate events of
+multiple types can be a challenge, particularly when some events may not be
+predictable (e.g. ServerHeartbeatStartedEvent, CommandStartedEvent for
+``getMore`` issued during change stream iteration). If the need arises to expect
+multiple types of events in the same test, a future version of this spec can
+define an approach for doing so.
+
+
+Target failPoint by read preference
+-----------------------------------
+
+The `failPoint`_ operation currently uses a primary read preference. To date, no
+spec has needed behavior to configure a fail point on a non-primary node. If the
+need does arise, `failPoint`_ can be enhanced to support a ``readPreference``
+argument.
+
+
 Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-01:
+
+* clarify that saveResultAsEntity should always define the name in the map, even
+  if the result is empty.
+
+* test files should order createEntities
+
+* createChangeStream operation to proxy watch and enforce consistency among
+  drivers
+
+* Future Work section to note failPoint readPreference support and mixing
+  different event types 
 
 2020-08-28:
 
