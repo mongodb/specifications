@@ -344,9 +344,9 @@ Special rules for parsing ``$uuid`` fields
 As per the `UUID specification`_, Binary subtypes 3 and 4 are used to
 represent UUIDs in BSON. Normally, UUIDs are represented in extended JSON
 as defined in the `Conversion table`_, e.g. the following document written
-in Groovy with the MongoDB Java Driver::
+with the MongoDB Python Driver::
 
-  {"Binary": UUID.fromString("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
+  {"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
 
 is transformed into the following (newlines and spaces added for readability)::
 
@@ -358,10 +358,11 @@ is transformed into the following (newlines and spaces added for readability)::
   }
 
 While this transformation preserves BSON subtype information (since
-UUIDs can be represented as BSON subtype 3 *and* 4), it is not very
-human readable. Since extended JSON representations of UUIDs feature
-prominently in server logs where human readability is desirable, we
-also allow UUIDs to be represented in extended JSON as::
+UUIDs can be represented as BSON subtype 3 *and* 4), base64-encoding
+is not the standard way of representing UUIDs and using it makes comparing
+these values against textual representations coming from platform libraries
+difficult. Consequently, we also allow UUIDs to be represented in extended
+JSON as::
 
   {"$uuid": <canonical textual representation of a UUID>}
 
@@ -377,6 +378,10 @@ representation of the UUID from the previous example::
   }
 
 Parsers MUST interpret the ``$uuid`` key as BSON Binary subtype 4.
+Parsers MUST accept textual representations of UUIDs that omit the
+URN prefix (usually ``urn:uuid:``). Parsers MAY also accept textual
+representations of UUIDs that omit the hyphens between hex character
+groups (e.g. ``c8edabc3f7384ca3b68dab92a91478a3``).
 
 .. _UUID specification: https://github.com/mongodb/specifications/blob/master/source/uuid.rst
 
@@ -473,40 +478,35 @@ Examples
 Canonical Extended JSON Example
 -------------------------------
 
-Consider the following document, written in Groovy with the MongoDB Java Driver::
+Consider the following document, written with the MongoDB Python Driver::
 
   {
-    "_id": new ObjectId("57e193d7a9cc81b4027498b5"),
-    "Symbol": new BsonSymbol("symbol"),
+    "_id": bson.ObjectId("57e193d7a9cc81b4027498b5"),
     "String": "string",
     "Int32": 42,
-    "Int64": 42L,
+    "Int64": bson.Int64(42),
     "Double": 42.42,
-    "SpecialFloat": Float.NaN,
-    "Decimal": new Decimal128(1234),
-    "Binary": UUID.fromString("c8edabc3-f738-4ca3-b68d-ab92a91478a3"),
-    "BinaryUserDefined": new Binary((byte) 0x80, new byte[]{1, 2, 3, 4, 5}),
-    "Code": new Code("function() {}"),
-    "CodeWithScope": new CodeWithScope("function() {}", new Document()),
-    "Subdocument": new Document("foo", "bar"),
-    "Array": Arrays.asList(1, 2, 3, 4, 5),
-    "Timestamp": new BSONTimestamp(42, 1),
-    "RegularExpression": new BsonRegularExpression("foo*", "xi"),
-    "DatetimeEpoch": new Date(0),
-    "DatetimePositive": new Date(Long.MAX_VALUE),
-    "DatetimeNegative": new Date(Long.MIN_VALUE),
-    "True": true,
-    "False": false,
-    "DBPointer": new BsonDbPointer(
-        "db.collection", new ObjectId("57e193d7a9cc81b4027498b1")),
-    "DBRef": new DBRef(
-        "database", "collection", new ObjectId("57fd71e96e32ab4225b723fb")),
-    "DBRefNoDB": new DBRef(
-        "collection", new ObjectId("57fd71e96e32ab4225b723fb")),
-    "Minkey": new MinKey(),
-    "Maxkey": new MaxKey(),
-    "Null": null,
-    "Undefined": new BsonUndefined()
+    "Decimal": bson.Decimal128("1234.5"),
+    "Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3"),
+    "BinaryUserDefined": bson.Binary(b'123', 80),
+    "Code": bson.Code("function() {}"),
+    "CodeWithScope": bson.Code("function() {}", scope={}),
+    "Subdocument": {"foo": "bar"},
+    "Array": [1, 2, 3, 4, 5],
+    "Timestamp": bson.Timestamp(42, 1),
+    "RegularExpression": bson.Regex("foo*", "xi"),
+    "DatetimeEpoch": datetime.datetime.utcfromtimestamp(0),
+    "DatetimePositive": datetime.datetime.max,
+    "DatetimeNegative": datetime.datetime.min,
+    "True": True,
+    "False": False,
+    "DBRef": bson.DBRef(
+        "collection", bson.ObjectId("57e193d7a9cc81b4027498b1"), database="database"),
+    "DBRefNoDB": bson.DBRef(
+        "collection", bson.ObjectId("57fd71e96e32ab4225b723fb")),
+    "Minkey": bson.MinKey(),
+    "Maxkey": bson.MaxKey(),
+    "Null": None
   }
 
 The above document is transformed into the following (newlines and spaces added
@@ -515,9 +515,6 @@ for readability)::
   {
      "_id": {
          "$oid": "57e193d7a9cc81b4027498b5"
-     },
-     "Symbol": {
-         "$symbol": "symbol"
      },
      "String": "string",
      "Int32": {
@@ -533,17 +530,17 @@ for readability)::
          "$numberDouble": "NaN"
      },
      "Decimal": {
-         "$numberDecimal": "1234"
+         "$numberDecimal": "1234.5"
      },
      "Binary": {
          "$binary": {
-             "base64": "o0w498Or7cijeBSpkquNtg==",
-             "subType": "03"
+             "base64": "yO2rw/c4TKO2jauSqRR4ow==",
+             "subType": "04"
          }
      },
      "BinaryUserDefined": {
          "$binary": {
-             "base64": "AQIDBAU=",
+             "base64": "MTIz",
              "subType": "80"
          }
      },
@@ -580,28 +577,21 @@ for readability)::
      },
      "DatetimePositive": {
          "$date": {
-             "$numberLong": "9223372036854775807"
+             "$numberLong": "253402300799999"
          }
      },
      "DatetimeNegative": {
          "$date": {
-             "$numberLong": "-9223372036854775808"
+             "$numberLong": "-62135596800000"
          }
      },
      "True": true,
      "False": false,
-     "DBPointer": {
-         "$dbPointer": {
-             "$ref": "db.collection",
-             "$id": {
-                 "$oid": "57e193d7a9cc81b4027498b1"
-             }
-         }
-     },
+
      "DBRef": {
          "$ref": "collection",
          "$id": {
-             "$oid": "57fd71e96e32ab4225b723fb"
+             "$oid": "57e193d7a9cc81b4027498b1"
          },
          "$db": "database"
      },
@@ -617,10 +607,7 @@ for readability)::
      "Maxkey": {
          "$maxKey": 1
      },
-     "Null": null,
-     "Undefined": {
-         "$undefined": true
-     }
+     "Null": null
   }
 
 Relaxed Extended JSON Example
