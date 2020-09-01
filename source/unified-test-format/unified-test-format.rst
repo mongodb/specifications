@@ -5,11 +5,11 @@ Unified Test Format
 :Spec Title: Unified Test Format
 :Spec Version: 1.0.0
 :Author: Jeremy Mikola
-:Advisors: Prashant Mital, Isabel Atkinson
+:Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-08-25
+:Last Modified: 2020-09-01
 
 .. contents::
 
