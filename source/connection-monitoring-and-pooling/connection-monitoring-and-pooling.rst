@@ -475,7 +475,7 @@ non-perished available `Connection <#connection>`_ is found or the list of
 available `Connections <#connection>`_ is exhausted. If no `Connections
 <#connection>`_ are available and the total number of `Connections
 <#connection>`_ is less than maxPoolSize, the pool MUST create and return a new
-`Connection <#connection>`_.
+established `Connection <#connection>`_.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
