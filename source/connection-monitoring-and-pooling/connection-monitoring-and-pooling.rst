@@ -552,7 +552,9 @@ A Pool MUST have a method of allowing the driver to check in a
 `Connection <#connection>`_ to a Pool that did not create that `Connection <#connection>`_, and
 MUST throw an Error if this is attempted.
 
-When the `Connection <#connection>`_ is checked in, it is closed if any of the following are true:
+When the `Connection <#connection>`_ is checked in, it MUST be `closed
+<#closing-a-connection-internal-implementation>`_ if any of the following are
+true:
 
 -  The `Connection <#connection>`_ is perished.
 -  The pool has been closed.
