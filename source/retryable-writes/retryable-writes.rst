@@ -226,9 +226,9 @@ configuration option set to true.
 For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
 errors or server responses that it considers retryable before returning them to the
 driver. As new server versions are released, the errors that are labeled with the
-RetryableWriteError label may change. When receiving any result with an error other
-than a network error from a 4.4+ server that supports retryable writes, the driver
-MUST NOT add a RetryableWriteError label to that error under any condition.
+RetryableWriteError label may change. Drivers MUST NOT add a RetryableWriteError
+label to any error derived from a 4.4+ server response (i.e. any error that is not
+a network error).
 
 During a retryable write operation on a sharded cluster, mongos may retry the
 operation internally, in which case it will not add a RetryableWriteError label to
