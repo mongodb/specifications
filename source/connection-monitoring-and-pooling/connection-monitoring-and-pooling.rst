@@ -413,10 +413,11 @@ thread or async I/O.
 
 .. code::
 
-    decrement total connection count
-    if connection state is "available":
-      decrement available connection count
+    original state = connection state
     set connection state to "closed"
+    decrement total connection count
+    if original state is "available":
+      decrement available connection count
     emit ConnectionClosedEvent
 
     # The following can happen at a later time (i.e. in background
