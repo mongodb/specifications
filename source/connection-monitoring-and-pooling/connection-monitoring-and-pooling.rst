@@ -467,14 +467,16 @@ Checking Out a Connection
 
 A Pool MUST have a method of allowing the driver to check out a `Connection <#connection>`_. Checking out a `Connection <#connection>`_ involves entering the WaitQueue and waiting for a `Connection <#connection>`_ to become available. If the thread times out in the WaitQueue, an error is thrown.
 
-If, in the process of iterating available `Connections <#connection>`_ in the pool
-by the checkOut method, a perished `Connection <#connection>`_ is encountered, such
-a `Connection <#connection>`_ MUST be closed and the iteration of available
-`Connections <#connection>`_ MUST continue until either a non-perished available
-`Connection <#connection>`_ is found or the list of available `Connections <#connection>`_ is
-exhausted. If no `Connections <#connection>`_ are available and the total number of
-`Connections <#connection>`_ is less than maxPoolSize, the pool MUST create and
-return a new `Connection <#connection>`_.
+If, in the process of iterating available `Connections <#connection>`_ in the
+pool by the checkOut method, a perished `Connection <#connection>`_ is
+encountered, such a `Connection <#connection>`_ MUST be closed (as described in
+`Closing a Connection <#closing-a-connection-internal-implementation>`_) and the
+iteration of available `Connections <#connection>`_ MUST continue until either a
+non-perished available `Connection <#connection>`_ is found or the list of
+available `Connections <#connection>`_ is exhausted. If no `Connections
+<#connection>`_ are available and the total number of `Connections
+<#connection>`_ is less than maxPoolSize, the pool MUST create and return a new
+`Connection <#connection>`_.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
