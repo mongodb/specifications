@@ -838,21 +838,19 @@ Why is waitQueueTimeoutMS optional for some drivers?
 
 We are anticipating eventually introducing a single client-side timeout mechanism, making us hesitant to introduce another granular timeout control. Therefore, if a driver/language already has an idiomatic way to implement their timeouts, they should leverage that mechanism over implementing waitQueueTimeoutMS.
 
-Why must ensuring minPoolSize require the use of a background thread or async I/O?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Why must populating the pool require the use of a background thread or async I/O?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Without the use of a background thread, minPoolSize is ensured during
-checkOut. `Connections <#connection>`_ may not be checked into the pool before
-being established, however, so establishment also happens during
-checkOut. If `Connection <#connection>`_ establishment were done in a blocking
-fashion, the first operations after a clearing of the pool would
-experience unacceptably high latency, especially for larger values of
-minPoolSize. Thus, minPoolSize either needs to be ensured via a
-background thread (which is acceptable to block) or via the usage of
-non-blocking (async) I/O.
+Without the use of a background thread, the pool is `populated
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
+connections to satisfy minPoolSize during checkOut. `Connections <#connection>`_
+are established as part of populating the pool though, so if `Connection
+<#connection>`_ establishment were done in a blocking fashion, the first
+operations after a clearing of the pool would experience unacceptably high
+latency, especially for larger values of minPoolSize. Thus, populating the pool
+must occur on a background thread (which is acceptable to block) or via the
+usage of non-blocking (async) I/O.
 
-Why must closing a connection be non-blocking?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because idle and perished `Connections <#connection>`_ are cleaned up as part of
 checkOut, performing blocking I/O while closing such `Connections <#connection>`_
