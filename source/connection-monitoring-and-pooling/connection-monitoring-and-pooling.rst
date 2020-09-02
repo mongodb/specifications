@@ -528,7 +528,8 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       leave wait queue
 
     # If the Connection has not been established yet (TCP, TLS,
-    # handshake, compression, and auth), it must be before it is returned.
+    # handshake, compression, and auth), it must be established
+    # before it is returned.
     # This MUST NOT block other threads from acquiring connections.
     if connection state is "pending":
       try:
