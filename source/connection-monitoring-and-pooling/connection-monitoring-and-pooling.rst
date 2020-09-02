@@ -445,9 +445,8 @@ Populating the Pool with a Connection (Internal Implementation)
 marked as "available" and kept in the pool. This type of `Connection
 <#connection>`_ is created to ensure minPoolSize and is distinct from from the
 type that is created, established, and immediately checked out in checkOut. See
-`Checking Out a Connection
-<#populating-the-pool-with-a-connection-internal-implementation>`_ for more
-information on that type of `Connection <#connection>`_ creation.
+`Checking Out a Connection <#checking-out-a-connection>`_ for more information on
+that type of `Connection <#connection>`_ creation.
 
 Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking I/O.
