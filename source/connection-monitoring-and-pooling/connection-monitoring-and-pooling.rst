@@ -851,6 +851,8 @@ latency, especially for larger values of minPoolSize. Thus, populating the pool
 must occur on a background thread (which is acceptable to block) or via the
 usage of non-blocking (async) I/O.
 
+Why should closing a connection be non-blocking?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because idle and perished `Connections <#connection>`_ are cleaned up as part of
 checkOut, performing blocking I/O while closing such `Connections <#connection>`_
