@@ -331,11 +331,13 @@ The SDAM specification defines `when
 the driver should create connection pools.
 
 Once a pool is created, if minPoolSize is set, the pool MUST
-immediately begin populating enough `Connections <#connection>`_ such that
-totalConnections >= minPoolSize. These `Connections <#connection>`_ MUST be
-populated in a non-blocking manner, such as via the use of a
+immediately begin being "populated" with enough `Connections
+<#connection>`_ such that totalConnections >= minPoolSize. The Pool
+MUST be "populated" in a non-blocking manner, such as via the use of a
 background thread or asynchronous I/O. See `Populating the Pool with a
-Connection <#populating-the-pool-with-a-connection-internal-implementation>`_ for more details.
+Connection
+<#populating-the-pool-with-a-connection-internal-implementation>`_ for
+more details.
 
 .. code::
 
@@ -439,13 +441,18 @@ available `Connections <#connection>`_.
 Populating the Pool with a Connection (Internal Implementation)
 ---------------------------------------------------------------
 
-If minPoolSize is set, the pool MUST ensure that it always has at
-least minPoolSize total `Connections <#connection>`_. In order to achieve this, it
-needs to be able to create `Connections <#connection>`_ that begin as "available"
-instead of "in use" (i.e. "populate the pool"). Performing this
-process MUST NOT block any application threads. For example, it could
-be performed on a background thread or via the use of non-blocking
-I/O.
+"Populating" the pool involves creating and establishing a `Connection
+<#connection>`_ that will not immediately be checked out and will
+instead be marked as "available" and kept in the pool. This type of
+`Connection <#connection>`_ is created to ensure minPoolSize and is
+distinct from from the type that is created, established, and
+immediately checked out in checkOut. See `Checking Out a Connection
+<#populating-the-pool-with-a-connection-internal-implementation>`_ for
+more information on that type of `Connection <#connection>`_ creation.
+
+Populating the pool MUST NOT block any application threads. For
+example, it could be performed on a background thread or via the use
+of non-blocking I/O.
 
 .. code::
 
