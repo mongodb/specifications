@@ -482,7 +482,9 @@ If the pool is closed, any attempt to check out a `Connection <#connection>`_ MU
 If minPoolSize is set, the `Connection <#connection>`_ Pool MUST always have at
 least minPoolSize total `Connections <#connection>`_. If the pool does not
 implement a background thread, the checkOut method is responsible for
-ensuring this requirement.
+`populating the pool
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
+`Connections <#connection>`_ such that this requirement is met.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is established. In
 addition, the Pool MUST NOT block other threads from checking out
