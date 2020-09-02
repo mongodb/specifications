@@ -407,7 +407,7 @@ Closing a Connection (Internal Implementation)
 When a `Connection <#connection>`_ is closed, it MUST first be marked as "closed",
 removing it from being counted as "available" or "in use". One that is
 complete, the `Connection <#connection>`_ can perform whatever teardown is
-necessary to close its underlying socket. The Driver MUST perform this
+necessary to close its underlying socket. The Driver SHOULD perform this
 teardown in a non-blocking manner, such as via the use of a background
 thread or async I/O.
 
