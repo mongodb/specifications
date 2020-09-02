@@ -474,8 +474,8 @@ iteration of available `Connections <#connection>`_ MUST continue until either a
 non-perished available `Connection <#connection>`_ is found or the list of
 available `Connections <#connection>`_ is exhausted. If no `Connections
 <#connection>`_ are available and the total number of `Connections
-<#connection>`_ is less than maxPoolSize, the pool MUST create and return a new
-established `Connection <#connection>`_.
+<#connection>`_ is less than maxPoolSize, the pool MUST create a `Connection
+<#connection>`_, establish it, mark it as "in use" and return it.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
@@ -537,8 +537,8 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
         emit ConnectionCheckOutFailedEvent(reason="error")
         decrement total connection count
         throw
-
-    decrement available connection count
+    else:
+        decrement available connection count
     set connection state to "in use"
     emit ConnectionCheckedOutEvent
     return connection
