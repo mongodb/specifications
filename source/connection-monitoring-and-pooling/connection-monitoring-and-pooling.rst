@@ -217,8 +217,8 @@ Endpoint. A `Connection <#connection>`_ has the following properties:
        * The current state of the Connection.
        *
        * Possible values are the following:
-       *   - "unestablished": The Connection is empty. It has been created but has not opened a socket or
-       *                      performed any I/O. Contributes to totalConnectionCount.
+       *   - "pending":       The Connection has been created but has not yet been established. Contributes to
+       *                      totalConnectionCount.
        *
        *   - "available":     The Connection has been established and is waiting in the pool to be checked
        *                      out. Contributes to both totalConnectionCount and availableConnectionCount.
@@ -233,7 +233,7 @@ Endpoint. A `Connection <#connection>`_ has the following properties:
        * in this specification. It is not required that drivers
        * actually include this field in their implementations of Connection.
        */
-      state: "unestablished" | "available" | "in use" | "closed";
+      state: "pending" | "available" | "in use" | "closed";
     }
 
 WaitQueue
@@ -284,7 +284,7 @@ has the following properties:
     
       /**
        *  An integer expressing how many total Connections
-       *  (active + in use) the pool currently has
+       *  ("pending" + "available" + "in use") the pool currently has
        */
       totalConnectionCount: number;
     
@@ -366,15 +366,15 @@ When a pool is closed, it MUST first close all available `Connections <#connecti
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
 
-When creating a `Connection <#connection>`_, the initial `Connection <#connection>`_ is in an
-“unestablished” state. This only creates a “virtual” `Connection <#connection>`_, and
+When creating a `Connection <#connection>`_, the initial `Connection <#connection>`_ is in a
+“pending” state. This only creates a “virtual” `Connection <#connection>`_, and
 performs no I/O. 
 
 .. code::
 
     connection = new Connection()
     increment total connection count
-    set connection state to "unestablished"
+    set connection state to "pending"
     emit ConnectionCreatedEvent
     return connection
 
@@ -519,7 +519,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     # If the Connection has not been established yet (TCP, TLS,
     # handshake, compression, and auth), it must be before it is returned.
     # This MUST NOT block other threads from acquiring connections.
-    if connection state is "unestablished":
+    if connection state is "pending":
       try:
         establish connection
       except connection establishment error:
@@ -803,7 +803,7 @@ Why do we have separate ConnectionCreated and ConnectionReady events, but only o
 
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
--  ConnectionCreated adds a new “unestablished” `Connection <#connection>`_, meaning the totalConnectionCount increases by one
+-  ConnectionCreated adds a new “pending” `Connection <#connection>`_, meaning the totalConnectionCount increases by one
 -  ConnectionReady establishes that the `Connection <#connection>`_ is ready for use, meaning the availableConnectionCount increases by one
 
 ConnectionClosed indicates that the `Connection <#connection>`_ is no longer a member of the pool, decrementing totalConnectionCount and potentially availableConnectionCount. After this point, the `Connection <#connection>`_ is no longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are not specified here.
