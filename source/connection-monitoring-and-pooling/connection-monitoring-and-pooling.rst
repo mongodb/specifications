@@ -31,13 +31,13 @@ Connection
 ~~~~~~~~~~~~~~
 
 A Connection (when linked) refers to the ``Connection`` type defined
-in this specification. It does not refer to an actual TCP/IP
-connection to an Endpoint. A ``Connection`` will attempt to create and
-wrap such a connection over the course of its existence, but it is not
+in this specification. It does not refer to an actual TCP connection
+to an Endpoint. A ``Connection`` will attempt to create and wrap such
+a TCP connection over the course of its existence, but it is not
 equivalent to one nor does it wrap an active one at all times.
 
 For the purposes of testing, a mocked ``Connection`` type could be used
-with the pool that never actually creates a TCP/IP connection or
+with the pool that never actually creates a TCP connection or
 performs any I/O.
 
 Endpoint
@@ -91,7 +91,7 @@ Drivers that implement a Connection Pool MUST support the following ConnectionPo
 
     interface ConnectionPoolOptions {
       /**
-       *  The maximum number of connections that may be associated
+       *  The maximum number of Connections that may be associated
        *  with a pool at a given time. This includes in use and
        *  available connections.
        *  If specified, MUST be an integer >= 0.
@@ -101,7 +101,7 @@ Drivers that implement a Connection Pool MUST support the following ConnectionPo
       maxPoolSize?: number;
 
       /**
-       *  The minimum number of connections that MUST exist at any moment
+       *  The minimum number of Connections that MUST exist at any moment
        *  in a single connection pool.
        *  If specified, MUST be an integer >= 0. If maxPoolSize is > 0
        *  then minPoolSize must be <= maxPoolSize
@@ -110,7 +110,7 @@ Drivers that implement a Connection Pool MUST support the following ConnectionPo
       minPoolSize?: number;
 
       /**
-       *  The maximum amount of time a connection should remain idle
+       *  The maximum amount of time a Connection should remain idle
        *  in the connection pool before being marked idle.
        *  If specified, MUST be a number >= 0.
        *  A value of 0 means there is no limit.
@@ -151,7 +151,7 @@ The following ConnectionPoolOptions are considered deprecated. They MUST NOT be 
     interface ConnectionPoolOptions {
       /**
        *  The maximum number of threads that can simultaneously wait
-       *  for a connection to become available.
+       *  for a Connection to become available.
        */
       waitQueueSize?: number;
 
@@ -169,7 +169,8 @@ Connection Pool Members
 Connection
 ----------
 
-A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A `Connection <#connection>`_ has the following properties:
+A driver-defined wrapper around a single TCP connection to an
+Endpoint. A `Connection <#connection>`_ has the following properties:
 
 -  **Single Endpoint:** A `Connection <#connection>`_ MUST be associated with a single Endpoint. A `Connection <#connection>`_ MUST NOT be associated with multiple Endpoints.
 -  **Single Lifetime:** A `Connection <#connection>`_ MUST NOT be used after it is closed.
@@ -177,11 +178,15 @@ A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A `Co
 -  **Single Track:** A `Connection <#connection>`_ MUST limit itself to one request / response at a time. A `Connection <#connection>`_ MUST NOT multiplex/pipeline requests to an Endpoint.
 -  **Monotonically Increasing ID:** A `Connection <#connection>`_ MUST have an ID number associated with it. `Connection <#connection>`_ IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
--  **Perishable**: it is possible for a connection to become **Perished**. A connection is considered perished if any of the following are true:
+-  **Perishable**: it is possible for a `Connection <#connection>`_ to become **Perished**. A `Connection <#connection>`_ is considered perished if any of the following are true:
 
-   -  **Stale:** The connection's generation does not match the generation of the parent pool
-   -  **Idle:** The connection is currently "available" and has been for longer than **maxIdleTimeMS**.
-   -  **Errored:** The connection has experienced an error that indicates the connection is no longer recommended for use. Examples include, but are not limited to:
+   - **Stale:** The `Connection <#connection>`_ 's generation does not
+      match the generation of the parent pool
+   - **Idle:** The `Connection <#connection>`_ is currently
+      "available" and has been for longer than **maxIdleTimeMS**.
+   - **Errored:** The `Connection <#connection>`_ has experienced an
+      error that indicates it is no longer recommended for
+      use. Examples include, but are not limited to:
 
       -  Network Error
       -  Network Timeout
@@ -193,18 +198,18 @@ A driver-defined wrapper around a single TCP/IP connection to an Endpoint. A `Co
 
     interface Connection {
       /**
-       *  An id number associated with the connection
+       *  An id number associated with the Connection
        */
       id: number;
 
       /**
-       *  The address of the pool that owns this connection
+       *  The address of the pool that owns this Connection
        */
       address: string;
 
       /**
        *  An integer representing the “generation” of the pool
-       *  when this connection was created
+       *  when this Connection was created
        */
       generation: number;
 
