@@ -30,15 +30,14 @@ Definitions
 Connection
 ~~~~~~~~~~~~~~
 
-A Connection (when linked) refers to the ``Connection`` type defined
-in this specification. It does not refer to an actual TCP connection
-to an Endpoint. A ``Connection`` will attempt to create and wrap such
-a TCP connection over the course of its existence, but it is not
-equivalent to one nor does it wrap an active one at all times.
+A Connection (when linked) refers to the ``Connection`` type defined in this
+specification. It does not refer to an actual TCP connection to an Endpoint. A
+``Connection`` will attempt to create and wrap such a TCP connection over the
+course of its existence, but it is not equivalent to one nor does it wrap an
+active one at all times.
 
-For the purposes of testing, a mocked ``Connection`` type could be used
-with the pool that never actually creates a TCP connection or
-performs any I/O.
+For the purposes of testing, a mocked ``Connection`` type could be used with the
+pool that never actually creates a TCP connection or performs any I/O.
 
 Endpoint
 ~~~~~~~~
