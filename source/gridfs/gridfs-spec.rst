@@ -498,7 +498,7 @@ File Upload
      * it creates a files collection document for @filename in the files collection.
      *
      * Note: there is no need to return the id of the uploaded file because the application
-     * already supplied it as a a parameter.
+     * already supplied it as a parameter.
      */
     void upload_from_stream_with_id(TFileId id, string filename, Stream source, GridFSUploadOptions options=null);
   }
