@@ -526,9 +526,6 @@ for readability)::
      "Double": {
          "$numberDouble": "42.42"
      },
-     "SpecialFloat": {
-         "$numberDouble": "NaN"
-     },
      "Decimal": {
          "$numberDecimal": "1234.5"
      },
@@ -587,7 +584,6 @@ for readability)::
      },
      "True": true,
      "False": false,
-
      "DBRef": {
          "$ref": "collection",
          "$id": {
@@ -609,6 +605,7 @@ for readability)::
      },
      "Null": null
   }
+
 
 Relaxed Extended JSON Example
 -----------------------------
@@ -930,6 +927,11 @@ v2.1.0
 
 * Added support for parsing ``$uuid`` fields as BSON Binary subtype 4.
 
+* Changed the example to using the MongoDB Python Driver. It previously
+  used the MongoDB Java Driver. The new example excludes the following
+  BSON types that are unsupported in Python - ``Symbol``, ``SpecialFloat``,
+  ``DBPointer`` and ``Undefined``. Transformations for these types are
+  now only documented in the `Conversion table`_.
 
 v2.0.0
 ------
