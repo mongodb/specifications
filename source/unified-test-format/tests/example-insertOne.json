@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "runOn": [
+  "runOnRequirements": [
     {
       "minServerVersion": "2.6"
     }

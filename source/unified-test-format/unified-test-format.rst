@@ -137,8 +137,8 @@ Test Format
 
 Each specification test file can define one or more tests, which inherit some
 top-level configuration (e.g. namespace, initial data). YAML and JSON test files
-are parsed as a document by the test runner. This section defines the top-level
-keys for that document and links to various sub-sections for definitions of
+are parsed as an object by the test runner. This section defines the top-level
+keys for that object and links to various sub-sections for definitions of
 nested structures (e.g. individual `test`_, `operation`_).
 
 Although test runners are free to process YAML or JSON files, YAML is the
@@ -165,20 +165,18 @@ The top-level fields of a test file are as follows:
   refer to specific patch versions since patch-level changes SHOULD NOT alter
   the structure of the test format (as previously noted in `Schema Version`_).
 
-.. _runOn:
+.. _runOnRequirements:
 
-- ``runOn``: Optional array of documents. List of server version and/or topology
-  requirements for which the tests in this file can be run. If no requirements
-  are met, the test runner MUST skip this test file.
-
-  If set, the array should contain at least one document. The structure of each
-  document is defined in `runOnRequirement`_.
+- ``runOnRequirements``: Optional array of one or more `runOnRequirement`_
+  objects. List of server version and/or topology requirements for which the
+  tests in this file can be run. If no requirements are met, the test runner
+  MUST skip this test file.
 
 .. _createEntities:
 
-- ``createEntities``: Optional array of documents. List of entities (e.g.
-  client, collection, session objects) that should be created before each test
-  case is executed. The structure of each document is defined in `entity`_.
+- ``createEntities``: Optional array of `entity`_ objects. List of entities
+  (e.g. client, collection, session objects) that should be created before each
+  test case is executed.
 
   Test files SHOULD define entities in dependency order, such that all
   referenced entities (e.g. client) are defined before any of their dependent
@@ -186,23 +184,18 @@ The top-level fields of a test file are as follows:
 
 .. _initialData:
 
-- ``initialData``: Optional array of documents. Data that should exist in
-  collections before each test case is executed.
+- ``initialData``: Optional array of one or more `collectionData`_ objects. Data
+  that should exist in collections before each test case is executed.
 
-  If set, the array should contain at least one document. The structure of each
-  document is defined in `collectionData`_. Before each test and for each
-  `collectionData`_, the test runner MUST drop the collection and insert the
-  specified documents (if any) using a "majority" write concern. If no documents
-  are specified, the test runner MUST create the collection with a "majority"
-  write concern.
+  Before each test and for each `collectionData`_, the test runner MUST drop the
+  collection and insert the specified documents (if any) using a "majority"
+  write concern. If no documents are specified, the test runner MUST create the
+  collection with a "majority" write concern.
 
 .. _tests:
 
-- ``tests``: Required array of documents. List of test cases to be executed
-  independently of each other.
-
-  The array should contain at least one document. The structure of each
-  document is defined in `test`_.
+- ``tests``: Required array of one or more `test`_ objects. List of test cases
+  to be executed independently of each other.
 
 
 runOnRequirement
@@ -211,7 +204,7 @@ runOnRequirement
 A combination of server version and/or topology requirements for running the
 test(s).
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
 - ``minServerVersion``: Optional string. The minimum server version (inclusive)
   required to successfully run the tests. If this field is omitted, it should be
@@ -240,13 +233,13 @@ entity
 An entity (e.g. client, collection, session object) that will be created in the
 `Entity Map`_ before each test is executed.
 
-This document MUST contain **exactly one** top-level key that identifies the
-entity type and maps to a nested document, which specifies a unique name for the
+This object MUST contain **exactly one** top-level key that identifies the
+entity type and maps to a nested object, which specifies a unique name for the
 entity (``id`` key) and any other parameters necessary for its construction.
 Tests SHOULD use sequential names based on the entity type (e.g. "session0",
 "session1").
 
-When defining an entity document in YAML, a `node anchor`_ SHOULD be created on
+When defining an entity object in YAML, a `node anchor`_ SHOULD be created on
 the entity's ``id`` key. This anchor will allow the unique name to be referenced
 with an `alias node`_ later in the file (e.g. from another entity or
 `operation`_ document) and also leverage YAML's parser for reference validation.
@@ -254,26 +247,26 @@ with an `alias node`_ later in the file (e.g. from another entity or
 .. _node anchor: https://yaml.org/spec/1.2/spec.html#id2785586
 .. _alias node: https://yaml.org/spec/1.2/spec.html#id2786196
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
 .. _entity_client:
 
-- ``client``: Optional document. Corresponds with a MongoClient object.
+- ``client``: Optional object. Defines a MongoClient object.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &client0 client0``).
 
-  - ``uriOptions``: Optional document. Additional URI options to apply to the
+  - ``uriOptions``: Optional object. Additional URI options to apply to the
     test suite's connection string that is used to create this client. Any keys
-    in this document MUST override conflicting keys in the connection string.
+    in this object MUST override conflicting keys in the connection string.
 
     Documentation for supported options may be found in the
     `URI Options <../uri-options/uri-options.rst>`__ spec, with one notable
-    exception: if ``readPreferenceTags`` is specified in this document, the key
+    exception: if ``readPreferenceTags`` is specified in this object, the key
     will map to an array of strings, each representing a tag set, since it is
-    not feasible to define multiple ``readPreferenceTags`` keys in the document.
+    not feasible to define multiple ``readPreferenceTags`` keys in the object.
 
   .. _entity_client_useMultipleMongoses:
 
@@ -321,9 +314,9 @@ The structure of this document is as follows:
 
 .. _entity_database:
 
-- ``database``: Optional document. Corresponds with a Database object.
+- ``database``: Optional object. Defines a Database object.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &database0 database0``).
@@ -336,13 +329,13 @@ The structure of this document is as follows:
     define a `node anchor`_ for this field (e.g.
     ``databaseName: &database0Name foo``).
 
-  - ``databaseOptions``: Optional document. See `collectionOrDatabaseOptions`_.
+  - ``databaseOptions``: Optional `collectionOrDatabaseOptions`_ object.
 
 .. _entity_collection:
 
-- ``collection``: Optional document. Corresponds with a Collection object.
+- ``collection``: Optional object. Defines a Collection object.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g.
@@ -356,15 +349,13 @@ The structure of this document is as follows:
     define a `node anchor`_ for this field (e.g.
     ``collectionName: &collection0Name foo``).
 
-  - ``collectionOptions``: Optional document. See
-    `collectionOrDatabaseOptions`_.
+  - ``collectionOptions``: Optional `collectionOrDatabaseOptions`_ object.
 
 .. _entity_session:
 
-- ``session``: Optional document. Corresponds with an explicit ClientSession
-  object.
+- ``session``: Optional object. Defines an explicit ClientSession object.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &session0 session0``).
@@ -373,7 +364,7 @@ The structure of this document is as follows:
     created. The YAML file SHOULD use an `alias node`_ for a client entity's
     ``id`` field (e.g. ``client: *client0``).
 
-  - ``sessionOptions``: Optional document. Map of parameters to pass to
+  - ``sessionOptions``: Optional object. Map of parameters to pass to
     `MongoClient.startSession <../source/sessions/driver-sessions.rst#startsession>`__
     when creating the session. Supported options are defined in the following
     specifications:
@@ -385,10 +376,10 @@ The structure of this document is as follows:
     transaction options MUST remain nested under ``defaultTransactionOptions``
     and MUST NOT be flattened into ``sessionOptions``.
 
-- ``bucket``: Optional document. Corresponds with a Bucket object, as defined in
-  the `GridFS <../gridfs/gridfs-spec.rst>`__ spec.
+- ``bucket``: Optional object. Defines a Bucket object, as defined in the
+  `GridFS <../gridfs/gridfs-spec.rst>`__ spec.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &bucket0 bucket0``).
@@ -397,7 +388,7 @@ The structure of this document is as follows:
     be created. The YAML file SHOULD use an `alias node`_ for a database
     entity's ``id`` field (e.g. ``database: *database0``).
 
-  - ``bucketOptions``: Optional document. Additional options used to construct
+  - ``bucketOptions``: Optional object. Additional options used to construct
     the bucket object. Supported options are defined in the
     `GridFS <../source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
@@ -405,14 +396,14 @@ The structure of this document is as follows:
 
 .. _entity_stream:
 
-- ``stream``: Optional document. Corresponds with a stream as defined in the
+- ``stream``: Optional object. Defines a stream, as defined in the
   `GridFS <../gridfs/gridfs-spec.rst>`__ spec. Test runners MUST ensure that
   stream is both readable *and* writable.
 
   This entity is primarily used with `uploadFromStream`_ and
   `uploadFromStreamWithId`_ operations for `bucket`_ entities.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
     define a `node anchor`_ for this field (e.g. ``id: &stream0 stream0``).
@@ -431,13 +422,13 @@ List of documents that should correspond to the contents of a collection. This
 structure is used by both `initialData`_ and `test.outcome <test_outcome_>`_,
 which insert and read documents, respectively.
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
 - ``collectionName``: Required string. See `commonOptions_collectionName`_.
 
 - ``databaseName``: Required string. See `commonOptions_databaseName`_.
 
-- ``documents``: Required array of documents. List of documents corresponding to
+- ``documents``: Required array of objects. List of documents corresponding to
   the contents of the collection. This list may be empty.
 
 
@@ -446,28 +437,25 @@ test
 
 Test case consisting of a sequence of operations to be executed.
 
-The structure of each document is as follows:
+The structure of this object is as follows:
 
 - ``description``: Required string. The name of the test.
 
   This SHOULD describe the purpose of this test (e.g. "insertOne is retried").
 
-.. _test_runOn:
+.. _test_runOnRequirements:
 
-- ``runOn``: Optional array of documents. List of server version and/or topology
-  requirements for which the tests in this file can be run. If specified, these
-  requirements are evaluated independently and in addition to any top-level
-  `runOn`_ requirements. If no requirements in this array are met, the test
-  runner MUST skip this test.
+- ``runOnRequirements``: Optional array of on or more `runOnRequirement`_
+  objects. List of server version and/or topology requirements for which this
+  test can be run. If specified, these requirements are evaluated independently
+  and in addition to any top-level `runOnRequirements`_. If no requirements in
+  this array are met, the test runner MUST skip this test.
 
   These requirements SHOULD be more restrictive than those specified in the
-  top-level `runOn`_ requirements (if any). They SHOULD NOT be more permissive.
+  top-level `runOnRequirements`_ (if any). They SHOULD NOT be more permissive.
   This is advised because both sets of requirements MUST be satisified in order
   for a test to be executed and more permissive requirements at the test-level
   could be taken out of context on their own.
-
-  If set, the array should contain at least one document. The structure of each
-  document is defined in `runOnRequirement`_.
 
 .. _test_skipReason:
 
@@ -476,39 +464,23 @@ The structure of each document is as follows:
 
 .. _test_operations:
 
-- ``operations``: Required array of documents. List of operations to be executed
-  for the test case.
-
-  The array should contain at least one document. The structure of each
-  document is defined in `operation`_.
+- ``operations``: Required array of one or more `operation`_ objects. List of
+  operations to be executed for the test case.
 
 .. _test_expectedEvents:
 
-- ``expectedEvents``: Optional array of documents. Each document will specify a
-  client entity and a list of events that are expected to be observed (in that
-  order) on that client while executing `operations <test_operations_>`_.
+- ``expectedEvents``: Optional array of one or more `expectedEventsForClient`_
+  objects. For one or more clients, a list of events that are expected to be
+  observed in a particular order.
 
   If a driver only supports configuring event listeners globally (for all
-  clients), the test runner SHOULD associate each observed event with a client
+  clients), the test runner SHOULD associate each observed event with a client in
   in order to perform these assertions.
 
   Test files SHOULD NOT expect events from multiple specs (e.g. command
   monitoring *and* SDAM events) for a single client. See
   `Mixing event types in observeEvents and expectedEvents`_ for more
   information.
-
-  The array should contain at least one document. The structure of each document
-  is as follows:
-
-  - ``client``: Required string. Client entity on which the events are expected
-    to be observed. See `commonOptions_client`_.
-
-  - ``events``: Required array of documents. List of events, which are expected
-    to be observed (in this order) on the corresponding client while executing
-    `operations`_. If the array is empty, the test runner MUST assert that no
-    events were observed on the client (excluding ignored events).
-
-    The structure of each document is defined in `expectedEvent`_.
 
 .. _test_outcome:
 
@@ -526,7 +498,7 @@ operation
 
 An operation to be executed as part of the test.
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
 .. _operation_name:
 
@@ -543,17 +515,16 @@ The structure of this document is as follows:
 
 .. _operation_arguments:
 
-- ``arguments``: Optional document. Map of parameter names and values for the
-  operation. The structure of this document will vary based on the operation.
+- ``arguments``: Optional object. Map of parameter names and values for the
+  operation. The structure of this object will vary based on the operation.
   See `Entity Test Operations`_ and `Special Test Operations`_.
 
   The ``session`` parameter is handled specially (see `commonOptions_session`_).
 
 .. _operation_expectedError:
 
-- ``expectedError``: Optional document. One or more assertions for an expected
-  error raised by the operation. The structure of this document is
-  defined in `expectedError`_.
+- ``expectedError``: Optional `expectedError`_ object. One or more assertions
+  for an expected error raised by the operation.
 
   This field is mutually exclusive with
   `expectedResult <operation_expectedResult_>`_ and
@@ -590,9 +561,9 @@ expectedError
 ~~~~~~~~~~~~~
 
 One or more assertions for an error/exception, which is expected to be raised by
-an executed operation. At least one key is required in this document.
+an executed operation. At least one key is required in this object.
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
 - ``isError``: Optional boolean. If true, the test runner MUST assert that an
   error was raised. This is primarily used when no other error assertions apply
@@ -658,25 +629,42 @@ The structure of this document is as follows:
   this value.
 
 
+expectedEventsForClient
+~~~~~~~~~~~~~~~~~~~~~~~
+
+A list of events that are expected to be observed (in that order) for a client
+while executing `operations <test_operations_>`_.
+
+The structure of each object is as follows:
+
+- ``client``: Required string. Client entity on which the events are expected
+  to be observed. See `commonOptions_client`_.
+
+- ``events``: Required array of `expectedEvent`_ objects. List of events, which
+  are expected to be observed (in this order) on the corresponding client while
+  executing `operations`_. If the array is empty, the test runner MUST assert
+  that no events were observed on the client (excluding ignored events).
+
+
 expectedEvent
 ~~~~~~~~~~~~~
 
 An event (e.g. APM), which is expected to be observed while executing the test's
 operations.
 
-This document MUST contain **exactly one** top-level key that identifies the
-event type and maps to a nested document, which contains one or more assertions
+This object MUST contain **exactly one** top-level key that identifies the
+event type and maps to a nested object, which contains one or more assertions
 for the event's properties.
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
 .. _expectedEvent_commandStartedEvent:
 
-- ``commandStartedEvent``: Optional document. Assertions for a one or more
+- ``commandStartedEvent``: Optional object. Assertions for a one or more
   `CommandStartedEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``command``: Optional document. Test runners MUST follow the rules in
     `Evaluating Matches`_ when processing this assertion.
@@ -691,11 +679,11 @@ The structure of this document is as follows:
 
 .. _expectedEvent_commandSucceededEvent:
 
-- ``commandSucceededEvent``: Optional document. Assertions for a one or more
+- ``commandSucceededEvent``: Optional object. Assertions for a one or more
   `CommandSucceededEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``reply``: Optional document. Test runners MUST follow the rules in
     `Evaluating Matches`_ when processing this assertion.
@@ -705,11 +693,11 @@ The structure of this document is as follows:
 
 .. _expectedEvent_commandFailedEvent:
 
-- ``commandFailedEvent``: Optional document. Assertions for a one or more
+- ``commandFailedEvent``: Optional object. Assertions for a one or more
   `CommandFailedEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``commandName``: Optional string. Test runners MUST assert that the actual
     command name matches this value using a case-insensitive comparison.
@@ -720,13 +708,13 @@ collectionOrDatabaseOptions
 
 Map of parameters used to construct a collection or database object.
 
-The structure of this document is as follows:
+The structure of this object is as follows:
 
-  - ``readConcern``: Optional document. See `commonOptions_readConcern`_.
+  - ``readConcern``: Optional object. See `commonOptions_readConcern`_.
 
-  - ``readPreference``: Optional document. See `commonOptions_readPreference`_.
+  - ``readPreference``: Optional object. See `commonOptions_readPreference`_.
 
-  - ``writeConcern``: Optional document. See `commonOptions_writeConcern`_.
+  - ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
 
 
 Common Options
@@ -755,26 +743,26 @@ The structure of these common options is as follows:
 
 .. _commonOptions_readConcern:
 
-- ``readConcern``: Document. Map of parameters to construct a read concern.
+- ``readConcern``: Object. Map of parameters to construct a read concern.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``level``: Required string.
 
 .. _commonOptions_readPreference:
 
-- ``readPreference``: Document. Map of parameters to construct a read
+- ``readPreference``: Object. Map of parameters to construct a read
   preference.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``mode``: Required string.
 
-  - ``tagSets``: Optional array of documents.
+  - ``tagSets``: Optional array of objects.
 
   - ``maxStalenessSeconds``: Optional integer.
 
-  - ``hedge``: Optional document.
+  - ``hedge``: Optional object.
 
 .. _commonOptions_client:
 
@@ -790,9 +778,9 @@ The structure of these common options is as follows:
 
 .. _commonOptions_writeConcern:
 
-- ``writeConcern``: Document. Map of parameters to construct a write concern.
+- ``writeConcern``: Object. Map of parameters to construct a write concern.
 
-  The structure of this document is as follows:
+  The structure of this object is as follows:
 
   - ``journal``: Optional boolean.
 
@@ -804,8 +792,9 @@ The structure of these common options is as follows:
 Version String
 --------------
 
-Version strings, which are used for `schemaVersion`_ and `runOn`_, MUST conform
-to one of the following formats, where each component is an integer:
+Version strings, which are used for `schemaVersion`_ and `runOnRequirement`_,
+MUST conform to one of the following formats, where each component is an
+integer:
 
 - ``<major>.<minor>.<patch>``
 - ``<major>.<minor>`` (``<patch>`` is assumed to be zero)
@@ -926,13 +915,13 @@ The following arguments are supported:
   by languages that are unable preserve the order of keys in the ``command``
   argument when parsing YAML/JSON.
 
-- ``readConcern``: Optional document. See `commonOptions_readConcern`_.
+- ``readConcern``: Optional object. See `commonOptions_readConcern`_.
 
-- ``readPreference``: Optional document. See `commonOptions_readPreference`_.
+- ``readPreference``: Optional object. See `commonOptions_readPreference`_.
 
 - ``session``: Optional string. See `commonOptions_session`_.
 
-- ``writeConcern``: Optional document. See `commonOptions_writeConcern`_.
+- ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
 
 
 collection
@@ -973,7 +962,7 @@ The ``requests`` parameter for ``bulkWrite`` is documented as a list of
 WriteModel interfaces. Each WriteModel implementation (e.g. InsertOneModel)
 provides important context to the method, but that type information is not
 easily expressed in YAML and JSON. To account for this, test files MUST nest
-each WriteModel document in a single-key document, where the key identifies the
+each WriteModel object in a single-key object, where the key identifies the
 request type (e.g. "insertOne"), as in the following example::
 
     arguments:
@@ -1036,7 +1025,7 @@ withTransaction
 
 The ``withTransaction`` operation's ``callback`` parameter is a function and not
 easily expressed in YAML/JSON. For ease of testing, this parameter is expressed
-as an array of `operation`_ documents (analogous to
+as an array of `operation`_ objects (analogous to
 `test.operations <test_operations>`_). Test runners MUST evaluate error and
 result assertions when executing these operations in the callback.
 
@@ -1165,10 +1154,11 @@ The following arguments are supported:
 
   The client entity SHOULD specify false for
   `useMultipleMongoses <entity_client_useMultipleMongoses_>`_ if this operation
-  could be executed on a sharded topology (according to `runOn`_ or
-  `test.runOn <test_runOn_>`_). This is advised because server selection rules
-  for mongos could lead to unpredictable behavior if different servers were
-  selected for configuring the fail point and executing subsequent operations.
+  could be executed on a sharded topology (according to `runOnRequirements`_ or
+  `test.runOnRequirements <test_runOnRequirements_>`_). This is advised because
+  server selection rules for mongos could lead to unpredictable behavior if
+  different servers were selected for configuring the fail point and executing
+  subsequent operations.
 
 When executing this operation, the test runner MUST keep a record of the fail
 point so that it can be disabled after the test. The test runner MUST also
@@ -1589,14 +1579,14 @@ sufficient. For instance, a test file cannot anticipate what a session ID will
 be at runtime, but may still want to analyze the contents of an ``lsid`` field
 in a command document. To address this need, special operators can be used.
 
-These operators are documents with a single key identifying the operator. Such
+These operators are objects with a single key identifying the operator. Such
 keys are prefixed with ``$$`` to ease in detecting an operator (test runners
-need only inspect the first key of each document) and differentiate the document
+need only inspect the first key of each object) and differentiate the object
 from MongoDB query operators, which use a single `$` prefix. The key will map to
 some value that influences the operator's behavior (if applicable).
 
 When examining the structure of an expected value during a comparison, test
-runners MUST examine the first key of any document for a ``$$`` prefix and, if
+runners MUST examine the first key of any object for a ``$$`` prefix and, if
 present, defer to the special logic defined in this section.
 
 
@@ -1814,8 +1804,8 @@ determine if the test file can be processed further. Test runners MAY support
 multiple versions and MUST NOT process incompatible files (as discussed in
 `Schema Version`_).
 
-If `runOn`_ is specified, the test runner MUST skip the test file unless one or
-more `runOnRequirement`_ documents are satisfied.
+If `runOnRequirements`_ is specified, the test runner MUST skip the test file
+unless one or more `runOnRequirement`_ objects are satisfied.
 
 For each element in `tests`_, follow the process in `Executing a Test`_.
 
@@ -1837,8 +1827,9 @@ forgoing any additional assertions.
 If `test.skipReason <test_skipReason_>`_ is specified, the test runner MUST skip
 this test and MAY use the string value to log a message.
 
-If `test.runOn <test_runOn_>`_ is specified, the test runner MUST skip the test
-unless one or more `runOnRequirement`_ documents are satisfied.
+If `test.runOnRequirementss <test_runOnRequirements_>`_ is specified, the test
+runner MUST skip the test unless one or more `runOnRequirement`_ objects are
+satisfied.
 
 If `initialData`_ is specified, for each `collectionData`_ therein the test
 runner MUST drop the collection and insert the specified documents (if any)
@@ -1888,7 +1879,7 @@ any fail points configured using `targetedFailPoint`_, the test runner MUST
 disable the fail point on the same mongos server on which it was originally
 configured. See `Disabling Fail Points`_ for more information.
 
-If `test.expectedEvents <test_expectedEvents_>`_ is specified, for each document
+If `test.expectedEvents <test_expectedEvents_>`_ is specified, for each object
 therein the test runner MUST assert that the number and sequence of expected
 events match the number and sequence of actual events observed on the specified
 client. If the list of expected events is empty, the test runner MUST assert
@@ -2052,24 +2043,24 @@ and has the following structure::
 
     db.adminCommand({
         configureFailPoint: <string>,
-        mode: <string|document>,
-        data: <document>
+        mode: <string|object>,
+        data: <object>
     });
 
 The value of ``configureFailPoint`` is a string denoting the fail point to be
 configured (e.g. "failCommand").
 
 The ``mode`` option is a generic fail point option and may be assigned a string
-or document value. The string values "alwaysOn" and "off" may be used to
-enable or disable the fail point, respectively. A document may be used to
-specify either ``times`` or ``skip``, which are mutually exclusive:
+or object value. The string values "alwaysOn" and "off" may be used to enable or
+disable the fail point, respectively. An object may be used to specify either
+``times`` or ``skip``, which are mutually exclusive:
 
 - ``{ times: <integer> }`` may be used to limit the number of times the fail
   point may trigger before transitioning to "off".
 - ``{ skip: <integer> }`` may be used to defer the first trigger of a fail
   point, after which it will transition to "alwaysOn".
 
-The ``data`` option is a document that may be used to specify any options that
+The ``data`` option is an object that may be used to specify any options that
 control the particular fail point's behavior.
 
 In order to use ``configureFailPoint``, the undocumented ``enableTestCommands``
@@ -2108,12 +2099,12 @@ The ``failCommand`` fail point may be configured like so::
 
     db.adminCommand({
         configureFailPoint: "failCommand",
-        mode: <string|document>,
+        mode: <string|object>,
         data: {
           failCommands: [<string>, ...],
           closeConnection: <boolean>,
           errorCode: <integer>,
-          writeConcernError: <document>,
+          writeConcernError: <object>,
           appName: <string>,
           blockConnection: <boolean>,
           blockTimeMS: <integer>,
@@ -2198,7 +2189,8 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1229 <https://jira.mongodb.org/browse/SPEC-1229>`__: Standardize spec-test syntax for topology assertions
 
-  See `runOnRequirement`_, which is used by both `runOn`_ and `test.runOn`_.
+  See `runOnRequirement`_, which is used by both `runOnRequirements`_ and
+  `test.runOnRequirements`_.
 
 * `SPEC-1254 <https://jira.mongodb.org/browse/SPEC-1254>`__: Rename topology field in spec tests to topologies
 
@@ -2211,7 +2203,7 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1713 <https://jira.mongodb.org/browse/SPEC-1713>`__: Allow runOn to be defined per-test in addition to per-file
 
-  See `runOn`_ and `test.runOn`_.
+  See `runOnRequirements`_ and `test.runOnRequirements`_.
 
 * `SPEC-1723 <https://jira.mongodb.org/browse/SPEC-1723>`__: Introduce test file syntax to disable dropping of collection under test
 
@@ -2303,6 +2295,14 @@ Change Log
 
 Note: this will be cleared when publishing version 1.0 of the spec
 
+2020-09-03:
+
+* Rename top-level and test-level runOn to runOnRequirements
+
+* Define expectedEventsForClient, between expectedEvents and expectedEvent
+
+* Replace "document" with "object" unless referring to a MongoDB document
+
 2020-09-02:
 
 * Future Work for supporting event types beyond command monitoring (e.g. SDAM)
@@ -2329,6 +2329,8 @@ Note: this will be cleared when publishing version 1.0 of the spec
 
 * Test runners may skip tests with intentionally unimplemented methods (e.g.
   listCollectionNames)
+
+* use camelCase instead of snake_case for API methods and parameters
 
 2020-09-01:
 
