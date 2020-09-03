@@ -5,7 +5,7 @@ schemaVersion: "1.0"
 runOn:
   - minServerVersion: "2.6"
 
-createEntites:
+createEntities:
   - client:
       id: &client0 client0
       observeEvents:
