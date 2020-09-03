@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.5.2
+:Spec Version: 1.5.3
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2020-02-25
+:Last Modified: 2020-09-01
 
 .. contents::
 
@@ -226,9 +226,9 @@ configuration option set to true.
 For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
 errors or server responses that it considers retryable before returning them to the
 driver. As new server versions are released, the errors that are labeled with the
-RetryableWriteError label may change. When receiving a command result
-with an error from a 4.4+ server that supports retryable writes, the driver
-MUST NOT add a RetryableWriteError label to that error under any condition.
+RetryableWriteError label may change. Drivers MUST NOT add a RetryableWriteError
+label to any error derived from a 4.4+ server response (i.e. any error that is not
+a network error).
 
 During a retryable write operation on a sharded cluster, mongos may retry the
 operation internally, in which case it will not add a RetryableWriteError label to
@@ -806,6 +806,9 @@ inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
+
+2020-09-01: State the the driver should only add the RetryableWriteError label
+to network errors when connected to a 4.4+ server.
 
 2020-02-25: State that the driver should only add the RetryableWriteError label
 when retryWrites is on, and make it clear that mongos will sometimes perform
