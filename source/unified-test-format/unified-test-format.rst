@@ -292,9 +292,8 @@ The structure of this document is as follows:
     be ignored by this client's event listeners and SHOULD NOT be included in
     `test.expectedEvents <test_expectedEvents_>`_ for this client.
 
-    Test files SHOULD NOT observe multiple event types (e.g. command monitoring
-    *and* SDAM events) for a single client, as this spec presently does not
-    define a process for collating and asserting mixed events. See
+    Test files SHOULD NOT observe events from multiple specs (e.g. command
+    monitoring *and* SDAM events) for a single client. See
     `Mixing event types in observeEvents and expectedEvents`_ for more
     information.
 
@@ -306,6 +305,19 @@ The structure of this document is as follows:
     - `commandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 
     - `commandFailedEvent <expectedEvent_commandFailedEvent_>`_
+
+  .. _entity_client_ignoreCommandMonitoringEvents:
+
+  - ``ignoreCommandMonitoringEvents``: Optional string or array of strings. One
+    or more command names for which the test runner MUST ignore any observed
+    command monitoring events. The command(s) will be ignored in addition to
+    ``configureFailPoint`` and any commands containing sensitive information
+    (per the
+    `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+    spec).
+
+    Test files SHOULD NOT use this option unless one or more command monitoring
+    events are specified in `observeEvents <entity_client_observeEvents_>`_.
 
 .. _entity_database:
 
@@ -373,7 +385,8 @@ The structure of this document is as follows:
     transaction options MUST remain nested under ``defaultTransactionOptions``
     and MUST NOT be flattened into ``sessionOptions``.
 
-- ``bucket``: Optional document. Corresponds with a GridFS Bucket object.
+- ``bucket``: Optional document. Corresponds with a Bucket object, as defined in
+  the `GridFS <../gridfs/gridfs-spec.rst>`__ spec.
 
   The structure of this document is as follows:
 
@@ -389,6 +402,26 @@ The structure of this document is as follows:
     `GridFS <../source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
+
+.. _entity_stream:
+
+- ``stream``: Optional document. Corresponds with a stream as defined in the
+  `GridFS <../gridfs/gridfs-spec.rst>`__ spec. Test runners MUST ensure that
+  stream is both readable *and* writable.
+
+  This entity is primarily used with `uploadFromStream`_ and
+  `uploadFromStreamWithId`_ operations for `bucket`_ entities.
+
+  The structure of this document is as follows:
+
+  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
+    define a `node anchor`_ for this field (e.g. ``id: &stream0 stream0``).
+
+  - ``hexBytes``: Required string. The string MUST contain an even number of
+    hexademical characters (case-insensitive) and MAY be empty. The test runner
+    MUST raise an error if the string is malformed. The test runner MUST convert
+    the string to a byte sequence denoting the stream's readable data (if any).
+    For example, "12ab" would denote a stream with two bytes: "0x12" and "0xab".
 
 
 collectionData
@@ -459,9 +492,8 @@ The structure of each document is as follows:
   clients), the test runner SHOULD associate each observed event with a client
   in order to perform these assertions.
 
-  Test files SHOULD NOT expect multiple event types (e.g. command monitoring
-  *and* SDAM events) for a single client, as this spec presently does not define
-  a process for collating and asserting mixed events. See
+  Test files SHOULD NOT expect events from multiple specs (e.g. command
+  monitoring *and* SDAM events) for a single client. See
   `Mixing event types in observeEvents and expectedEvents`_ for more
   information.
 
@@ -474,7 +506,7 @@ The structure of each document is as follows:
   - ``events``: Required array of documents. List of events, which are expected
     to be observed (in this order) on the corresponding client while executing
     `operations`_. If the array is empty, the test runner MUST assert that no
-    events were observed on the client.
+    events were observed on the client (excluding ignored events).
 
     The structure of each document is defined in `expectedEvent`_.
 
@@ -562,16 +594,19 @@ an executed operation. At least one key is required in this document.
 
 The structure of this document is as follows:
 
-- ``type``: Optional string or array of strings. One or more classifications of
-  errors, at least one of which should apply to the expected error.
+- ``isError``: Optional boolean. If true, the test runner MUST assert that an
+  error was raised. This is primarily used when no other error assertions apply
+  but the test still needs to assert an expected error. Test files MUST NOT
+  specify false, as `expectedError`_ is only applicable when an operation is
+  expected to raise an error.
 
-  Valid types are as follows:
+- ``isClientError``: Optional boolean. If true, the test runner MUST assert that
+  the error originates from the client (i.e. it is not derived from a server
+  response). If false, the test runner MUST assert that the error does not
+  originate from the client.
 
-  - ``client``: client-generated error (e.g. parameter validation error before
-    a command is sent to the server).
-
-  - ``server``: server-generated error (e.g. error derived from a server
-    response).
+  Client errors include, but are not limited to: parameter validation errors
+  before a command is sent to the server; network errors.
 
 - ``errorContains``: Optional string. A substring of the expected error message
   (e.g. "errmsg" field in a server error document). The test runner MUST assert
@@ -588,6 +623,9 @@ The structure of this document is as follows:
   Server error codes are defined in
   `error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`__.
 
+  Test files SHOULD NOT assert error codes for client errors, as specifications
+  do not define standardized codes for client errors.
+
 - ``errorCodeName``: Optional string. The expected "codeName" field in the
   server-generated error response. The test runner MUST assert that the error
   includes a server-generated response whose "codeName" field equals this value
@@ -597,6 +635,9 @@ The structure of this document is as follows:
 
   Server error codes are defined in
   `error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`__.
+
+  Test files SHOULD NOT assert error codes for client errors, as specifications
+  do not define standardized codes for client errors.
 
 - ``errorLabelsContain``: Optional array of strings. A list of error label
   strings that the error is expected to have. The test runner MUST assert that
@@ -781,16 +822,17 @@ an API method on that class.
 
 Some specifications group optional parameters for API methods under an
 ``options`` parameter (e.g. ``options: Optional<UpdateOptions>`` in the CRUD
-spec). While this improves readability of the spec document(s) by allowing
-option documentation to be expanded and reused, it would add unnecessary
-verbosity to test files. Therefore, test files SHALL declare all required and
-optional parameters for an API method directly within
-`operation.arguments <operation_arguments_>`_ (e.g. ``upsert`` for ``updateOne``
-is *not* nested under an ``options`` key), unless otherwise stated below.
+spec); however, driver APIs vary in how they accept options (e.g. Python's
+keyword/named arguments, ``session`` as either an option or required parameter
+depending on whether a language supports method overloading). Therefore, test
+files SHALL declare all required and optional parameters for an API method
+directly within `operation.arguments <operation_arguments_>`_ (e.g. ``upsert``
+for ``updateOne`` is *not* nested under an ``options`` key).
 
 If ``session`` is specified in `operation.arguments`_, it is defined according
 to `commonOptions_session`_. Test runners MUST resolve the ``session`` argument
-to session entity *before* passing it as a parameter to any API method.
+to `session <entity_session_>`_ entity *before* passing it as a parameter to any
+API method.
 
 If ``readConcern``, ``readPreference``, or ``writeConcern`` are specified in
 `operation.arguments`_, test runners MUST interpret them according to the
@@ -801,6 +843,9 @@ This spec does not provide exhaustive documentation for all possible API methods
 that may appear in a test; however, the following sections discuss all supported
 entities and their operations in some level of detail. Special handling for
 certain operations is also discussed below.
+
+Test files SHALL use camelCase when referring to API methods and parameters,
+even if the defining specifications use other forms (e.g. snake_case in GridFS).
 
 
 client
@@ -982,15 +1027,16 @@ specifications:
 - `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
 - `Driver Sessions <../sessions/driver-sessions.rst>`__
 
-Session operations that require special handling are described below.
+Session operations that require special handling or are not documented by an
+existing specification are described below.
 
 
 withTransaction
 ```````````````
 
-The ``withTransaction`` operation is unique in that its ``callback`` parameter
-is a function and not easily expressed in YAML/JSON. For ease of testing, this
-parameter is defined as an array of `operation`_ documents (analogous to
+The ``withTransaction`` operation's ``callback`` parameter is a function and not
+easily expressed in YAML/JSON. For ease of testing, this parameter is expressed
+as an array of `operation`_ documents (analogous to
 `test.operations <test_operations>`_). Test runners MUST evaluate error and
 result assertions when executing these operations in the callback.
 
@@ -1003,11 +1049,62 @@ specifications:
 
 - `GridFS <../gridfs/gridfs-spec.rst>`__
 
+Bucket operations that require special handling or are not documented by an
+existing specification are described below.
+
+
+.. _downloadToStream:
+.. _downloadToStreamByName:
+
+downloadToStream and downloadToStreamByName
+```````````````````````````````````````````
+
+These operations SHOULD NOT be used in test files. See
+`IO operations for GridFS streams`_ in `Future Work`_.
+
+
+.. _openDownloadStream:
+.. _openDownloadStreamByName:
+
+openDownloadStream and openDownloadStreamByName
+```````````````````````````````````````````````
+
+The ``openDownloadStream`` and ``openDownloadStreamByName`` operations SHOULD
+use `$$matchesHexBytes`_ in `expectedResult <operation_expectedResult_>`_ to
+match the contents of the returned stream. These operations MAY use
+`saveResultAsEntity <operation_saveResultAsEntity_>`_ to save the stream for use
+with a subsequent operation (e.g. `uploadFromStream`_ ).
+
+
+.. _openUploadStream:
+.. _openUploadStreamWithId:
+
+openUploadStream and openUploadStreamWithId
+```````````````````````````````````````````
+
+These operations SHOULD NOT be used in test files. See
+`IO operations for GridFS streams`_ in `Future Work`_. 
+
+
+.. _uploadFromStream:
+.. _uploadFromStreamWithId:
+
+uploadFromStream and uploadFromStreamWithId
+```````````````````````````````````````````
+
+The ``uploadFromStream`` and ``uploadFromStreamWithId`` operations' ``stream``
+parameter is a stream as defined in the `GridFS <../gridfs/gridfs-spec.rst>`__
+spec and not easily expressed in YAML/JSON. This parameter is expressed as an
+entity name, which the test runner MUST resolve to a `stream <entity_stream_>`_
+entity *before* passing it as a parameter to the method. The YAML file SHOULD
+use an `alias node`_ for a stream entity's ``id`` field
+(e.g. ``stream: *stream0``).
+
 
 changeStream
 ~~~~~~~~~~~~
 
-Change streams entities are special in that they are not defined in
+Change stream entities are special in that they are not defined in
 `createEntities`_ but are instead created by using
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
 `client_createChangeStream`_, `database_createChangeStream`_, or
@@ -1562,6 +1659,59 @@ admittedly inconsistent with the behavior of the
 query operator, but there is presently no need for this behavior in tests.
 
 
+$$matchesEntity
+```````````````
+
+Syntax, where ``entityName`` is a string::
+
+    { $$matchesEntity: <entityName> }
+
+This operator can be used anywhere a matched value is expected (including an
+`expectedResult <operation_expectedResult_>`_). If the entity name is defined in
+the current test's `Entity Map`_, the test runner MUST fetch that entity and
+assert that the actual value matches the entity using the standard rules in
+`Evaluating Matches`_; otherwise, the test runner MUST raise an error for an
+undefined entity. The YAML file SHOULD use an `alias node`_ for the entity name.
+
+This operator is primarily used to assert identifiers for uploaded GridFS files.
+
+An example of this operator follows::
+
+    operations:
+      -
+        object: *bucket0
+        name: uploadFromStream
+        arguments:
+          filename: "filename"
+          source: *stream0
+        expectedResult: { $$type: "objectId" }
+        saveResultAsEntity: &objectid0 "objectid0"
+      - object: *filesCollection
+        name: findOne
+        arguments:
+          sort: { uploadDate: -1 }
+        expectedResult:
+          _id: { $$matchesEntity: *objectid0 }
+
+
+$$matchesHexBytes
+`````````````````
+
+Syntax, where ``hexBytes`` is an even number of hexademical characters
+(case-insensitive)::
+
+    { $$matchesHexBytes: <hexBytes> }
+
+This operator can be used anywhere a matched value is expected (including an
+`expectedResult <operation_expectedResult_>`_) and the actual value is a stream
+as defined in the `GridFS <../gridfs/gridfs-spec.rst>`__ spec. The test runner
+MUST convert the string to a byte sequence and compare it with the full contents
+of the stream. The test runner MUST raise an error if the string is malformed.
+
+This operator is primarily used to assert the contents of stream returned by
+`openDownloadStream`_ and `openDownloadStreamByName`_.
+
+
 $$unsetOrMatches
 ````````````````
 
@@ -1712,14 +1862,18 @@ event types specified in `observeEvents <entity_client_observeEvents_>`_. Test
 runners MAY leave event listeners disabled for tests and/or clients that do not
 assert expected events.
 
-Test runners MUST ensure that ``configureFailPoint`` commands executed for
-`failPoint`_ and `targetedFailPoint`_ operations are excluded from the list of
-observed command monitoring events (if applicable). This may require manually
-filtering out ``configureFailPoint`` command monitoring events from the list of
-observed events. Test runners MUST also ensure that any commands containing
-sensitive information are excluded (per the
-`Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
-spec).
+For each client with command monitoring enabled, the test runner MUST ignore
+events for the following:
+
+- Any command(s) specified in
+  `ignoreCommandMonitoringEvents <entity_client_ignoreCommandMonitoringEvents_>`_.
+
+- Any ``configureFailPoint`` commands executed for `failPoint`_ and
+  `targetedFailPoint`_ operations.
+
+- Any commands containing sensitive information (per the
+  `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+  spec).
 
 For each element in `test.operations <test_operations_>`_, follow the process
 in `Executing an Operation`_. If an unexpected error is encountered or an
@@ -1781,7 +1935,9 @@ If `operation.object`_ is not "testRunner", this is an entity operation. If
 runner MUST fetch that entity and note its type; otherwise, the test runner
 MUST raise an error for an undefined entity. If `operation.name`_ does not
 correspond to an operation for the entity type (per `Entity Test Operations`_),
-the test runner MUST raise an error for an undefined operation.
+the test runner MUST raise an error for an undefined operation. Test runners MAY
+skip tests that include operations that are intentionally unimplemented (e.g.
+``listCollectionNames``).
 
 Proceed with preparing the operation's arguments. If ``session`` is specified in
 `operation.arguments <operation_arguments_>`_, the test runner MUST resolve it
@@ -1872,8 +2028,8 @@ points using the special `failPoint`_ or `targetedFailPoint`_ opertions.
 
 This internal command is not documented in the MongoDB manual (pending
 `DOCS-10784`_); however, there is scattered documentation available on the
-server wiki (`The "failCommand" Fail Point <failpoint-wiki_>`_) and employee blogs
-(e.g. `Intro to Fail Points <failpoint-blog1_>`_,
+server wiki (`The "failCommand" Fail Point <failpoint-wiki_>`_) and employee
+blogs (e.g. `Intro to Fail Points <failpoint-blog1_>`_,
 `Testing Network Errors with MongoDB <failpoint-blog2_>`_). Documentation can
 also be gleaned from JIRA tickets (e.g. `SERVER-35004`_, `SERVER-35083`_). This
 specification does not aim to provide comprehensive documentation for all fail
@@ -2016,201 +2172,6 @@ should be described here in detail for historical reference, in addition to any
 shorter description that may be added to the `Change Log`_.
 
 
-Open Questions
-==============
-
-Note: these questions should be resolved and this section removed before
-publishing version 1.0 of the spec.
-
-
-General
--------
-
-
-Interaction between top-level and test-level runOn
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-There are at least two ways to handle runOn requirements defined at both the
-test and file level:
-
-* If `test.runOn`_ is specified, those requirements are checked in addition to
-  any top-level `runOn`_. This behavior is the most straightforward as test
-  runners will not have to consider inheritance or overriding anything (similar
-  to reasons top-level ``databaseName`` and ``collectionName`` fields were
-  ultimately removed). If the top-level `runOn`_ fails, the test runner can skip
-  the entire file outright (i.e. short-circuit the logical-and of both checks).
-
-* If `test.runOn`_ is specified, those requirements are checked *instead* of any
-  top-level `runOn`_. This would mean that a test runner cannot immediately skip
-  an entire file based on evaluation of the top-level `runOn`_; however, it also
-  means that humans editing a test file can no longer trust that the top-level
-  `runOn`_ applies to all tests in the file.
-
-During review, it was asked if a test runner could enforce that `test.runOn`_ is
-only more restrictive (and never more permissive) than the top-level `runOn`_.
-While this is technically feasible, it would add considerable complexity to a
-test runner to make such comparisons.
-
-
-Representing options in operation.arguments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Existing spec tests are inconsistent in how they represent optional
-parameters for operations. In some cases, optional parameters appear directly
-in `operation.arguments`_ alongside required parameters (e.g. CRUD). In other
-cases, they are nested under an ``options`` key (e.g. Sessions).
-
-Most specs *are* consistent about how API methods are defined in spec documents.
-The CRUD spec was on the first documents to define API methods and can be
-credited with introducing the ``options`` parameter (e.g.
-``options: Optional<UpdateOptions>``); however, this was likely done for
-readability of the spec (avoiding very long method declarations and/or embedding
-``Optional`` syntax therein). Additionally, documenting options in a separate
-type (e.g. UpdateOptions) allows the declarations to be shared and reused across
-multiple methods.
-
-That said, this syntax is in no way prescriptive for language implementations.
-While some drivers to model options as a struct/object, others solicit them
-alongside required parameters (e.g. Python's keyword/named arguments).
-
-Should this spec require that optional parameters be nested under an ``options``
-key or solicit them directly in `operation.arguments`_? Both are technically
-possible, since test runners handle both forms today.
-
-With regard to CRUD, this issue dates back to
-`SPEC-1158 <https://jira.mongodb.org/browse/SPEC-1158>`__. Therein, Jeremy
-originally argued in favor of nesting under an ``options`` key because it was
-most consistent the text in existing spec documents.
-
-Note: the CRUD spec WriteModels (e.g. UpdateOneModel) for ``bulkWrite`` to not
-use ``options`` keys in either the spec document or test files. As such, the
-resolution of this question would not impact how WriteModels are expressed in
-test files (see: `bulkWrite`_).
-
-Note: this question does not pertain to TransactionOptions in SessionOptions,
-which is always nested under ``defaultTransactionOptions``. This is a special
-case where all drivers represent TransactionOptions as a separate struct/object,
-even if they do not do so for ``startTransaction``.
-
-
-Change Stream Tests
--------------------
-
-
-Error Assertions
-~~~~~~~~~~~~~~~~
-
-`Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
-in the change stream spec test documentation states:
-
-  If the test expects an error and one was not thrown by either creating the
-  change stream or executing the test's operations, iterating the change stream
-  once allows for an error to be thrown by a getMore command.
-
-It's not clear if this is necessary because the existing change stream spec test
-format does not differentiate between errors raised by creating or iterating the
-change stream. For instance, an invalid pipeline operator (error code 40324)
-should be raised by the initial ``aggregate`` command.
-
-Since the unified format would allow tests to differentiate between the initial
-``watch`` operation and `iterateUntilDocumentOrError`_ operation, and each
-can expect its own error, this may not be a concern; however, if the purpose of
-the quoted text above to to account for drivers that may not even execute the
-``aggregate`` command at the time ``watch`` is called (instead deferring it to
-the first iteration of ChangeStream), we may still need to account for that in
-the unified test format.
-
-If so, one possible solution may be to document that ``watch`` operations
-expecting an error must also iterate the returned change stream once if the
-operation itself did not initially raise an error. Of course, we should confirm
-that this (or any) solution is sufficient for all drivers.
-
-
-Command Monitoring Assertions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The change stream spec is also unique among other specs in that its event
-assertions only consider as many events as were expected and ignore both extra,
-observed events (e.g. getMore) and an optional killCursors (which SHOULD be
-issued when resuming). The issue of extra getMore events may pertain to either
-sharding or have something to do with variation among drivers in how ``watch``
-is implemented (e.g. eagerly calling ``aggregate`` vs. deferring until the first
-iteration).
-
-A possible solution to address this need may be to extend
-`test.expectedEvents <test_expectedEvents_>`_ to allow a list of command names
-to be specified, for which any command monitoring events will be ignored (as we
-currently do for security events and ``configureFailPoint``). If that addresses
-*both* needs, we may not need anything more; however, there are some change
-stream tests that *do* expect getMore, so in such a case we may still need a
-separate `test.expectedEvents <test_expectedEvents_>`_ option to instruct the
-test runner to only assert as many observed events are expected and ignore any
-additional events.
-
-
-getResumeToken
-~~~~~~~~~~~~~~
-
-Change stream spec tests do not interact with the resume token so we have not
-introduced a ``getResumeToken`` operation for change stream entities. Existing
-spec tests do not even check for ``startAfter`` and ``resumeAfter`` fields in
-outgoing commands, which is something we could start doing with `$$type`_
-assertions. That decision could be done at any time after existing spec tests
-are ported and would not require any change to the unified format.
-
-
-GridFS Tests
-------------
-
-
-Error Assertions
-~~~~~~~~~~~~~~~~
-
-The GridFS tests assert for the following error types: "FileNotFound",
-"ChunkIsMissing", "ChunkIsWrongSize", and "RevisionNotFound". These types are
-not explicitly defined in the spec and only appear in test files. The spec also
-does not specify how messages for these errors should be constructed, so it may
-not be feasible to use ``errorContains`` assertions.
-
-Do we care about differentiating these types of errors? If so, we may need to
-add them to ``expectedError.type``.
-
-
-Outcome Assertions
-~~~~~~~~~~~~~~~~~~
-
-In the GridFS tests, ``assert.data`` is similar to `test.outcome`_ but it
-uses ``*result`` and ``*actual`` to match document data with a saved result
-(e.g. returned file ID) or an arbitrary value (e.g. date). Presently,
-`test.outcome`_ uses an exact match and does **not** follow the rules in
-`Evaluating Matches`_ (e.g. allow extra fields in actual documents, process
-special operators). Should we change `test.outcome`_ to follow the same
-comparison rules as we use for `expectedResult`_?
-
-If so, `test.outcome`_ and `initialData`_ would no longer share the same
-`collectionData`_ structure. This is not problematic, but worth noting.
-
-Alternatively, we could leave `test.outcome`_ as-is and create a new special
-operation that *matches* data within a collection.
-
-
-Human-readable binary data
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In `SPEC-1216 <https://jira.mongodb.org/browse/SPEC-1216>`__, Robert recommended
-against changing the GridFS tests' ``$hex`` syntax to ``$binary`` Extended JSON,
-as the base64-encoded strings in the latter format would not be human-readable.
-This spec could introduce a custom operator in
-`Special Operators for Matching Assertions`_ to compare an expected hexidecimal
-string with an actual binary value, but we would still need to use ``$binary``
-syntax in `collectionData`_ for both `initialData`_ and `test.outcome`_.
-
-Another possible work-around is for this spec to discuss or link to a utility
-that can easily convert between hex and base64. For example, we can include a
-Javascript or Python script in the spec repository that can convert between the
-two and assist those editing GridFS test files.
-
-
 Related Issues
 ==============
 
@@ -2224,7 +2185,8 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1158 <https://jira.mongodb.org/browse/SPEC-1158>`__: Spec tests should use a consistent format for CRUD options
 
-  Open question: `Representing options in operation.arguments`_
+  ``options`` structs are now flattened into `operation.arguments`_. See:
+  `Entity Test Operations`_.
 
 * `SPEC-1215 <https://jira.mongodb.org/browse/SPEC-1215>`__: Introduce spec test syntax for meta assertions (e.g. any value, not exists)
 
@@ -2232,7 +2194,7 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1216 <https://jira.mongodb.org/browse/SPEC-1216>`__: Update GridFS YAML tests to use newer format
 
-  Open question: `Human-readable binary data`_
+  See: `stream <entity_stream_>`_ entity and `bucket`_ operations
 
 * `SPEC-1229 <https://jira.mongodb.org/browse/SPEC-1229>`__: Standardize spec-test syntax for topology assertions
 
@@ -2249,8 +2211,7 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1713 <https://jira.mongodb.org/browse/SPEC-1713>`__: Allow runOn to be defined per-test in addition to per-file
 
-  See `runOn`_ and `test.runOn`_ and related open question:
-  `Interaction between top-level and test-level runOn`_
+  See `runOn`_ and `test.runOn`_.
 
 * `SPEC-1723 <https://jira.mongodb.org/browse/SPEC-1723>`__: Introduce test file syntax to disable dropping of collection under test
 
@@ -2279,7 +2240,7 @@ Future Work
 Mixing event types in observeEvents and expectedEvents
 ------------------------------------------------------
 
-The test format advises against mixing multiple types of events (e.g. command
+The test format advises against mixing events from different specs (e.g. command
 monitoring *and* SDAM) in `observeEvents`_ and `test.expectedEvents`_. While
 registering event listeners is trivial, determining how to collate events of
 multiple types can be a challenge, particularly when some events may not be
@@ -2287,6 +2248,29 @@ predictable (e.g. ServerHeartbeatStartedEvent, CommandStartedEvent for
 ``getMore`` issued during change stream iteration). If the need arises to expect
 multiple types of events in the same test, a future version of this spec can
 define an approach for doing so.
+
+
+Support events types beyond command monitoring
+----------------------------------------------
+
+The spec currently only supports command monitoring events in `observeEvents`_
+and `test.expectedEvents`_, as those are the only kind of events used in tests
+for specifications that will initially adopt the unified test format. New event
+types (e.g. SDAM) can be added in future versions of the spec as needed, which
+will also require `Mixing event types in observeEvents and expectedEvents`_ to
+be addressed.
+
+
+Allow extra observed events to be ignored
+-----------------------------------------
+
+While command monitoring events for specific commands can be ignored (e.g.
+killCursors for change streams), the sequence of observed events must otherwise
+match the sequence of expected events (including length). The present design
+would not support expecting an event for a command while also ignoring extra
+events for the same command (e.g. change stream iteration on a sharded cluster
+where multiple getMore commands may be issued). No spec tests currently require
+this functionality, but that may change in the future.
 
 
 Target failPoint by read preference
@@ -2298,10 +2282,53 @@ need does arise, `failPoint`_ can be enhanced to support a ``readPreference``
 argument.
 
 
+IO operations for GridFS streams
+--------------------------------
+
+Existing GridFS spec tests refer to "upload", "download", and "download_by_name"
+methods, which allow the tests to abstract stream IO and either upload a byte
+sequence or assert a downloaded byte sequence. In order to support methods such
+as ``downloadToStream``, ``openUploadStream``, and ``openUploadStreamWithId``,
+test runners would need to support IO operations to directly read from and write
+to a stream entity.
+
+Currently, `uploadFromStream`_ and `uploadFromStreamWithId`_ are sufficient to
+test uploads using a defined `stream <entity_stream_>`_ entity and
+`openDownloadStream`_ and `openDownloadStreamByName`_ are sufficient to test
+downloads using `$$matchesHexBytes`_.
+
+
 Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-02:
+
+* Future Work for supporting event types beyond command monitoring (e.g. SDAM)
+
+* ignoreCommandMonitoringEvents option for client entities, which is needed to
+  to ignore killCursors for change stream tests.
+
+* Future Work for ignoring extra, but not all, events for a command (e.g.
+  multiple getMores for change stream iteration on a sharded cluster)
+
+* stream entity in createEntities, which is created from a hexadecimal string
+  and used as an argument for the uploadFromStream bucket operation
+
+* $$matchesEntity and $$matchesHexBytes match operators, for GridFS tests
+
+* describe GridFS bucket operations and note unsupported operations, which link
+  to Future Work for IO operations on GridFS streams
+
+* isError and isClientError assertions for expectedError
+
+* note that errorCode and errorCodeName should not be used for client errors
+
+* Remove Open Questions, which should all be resolved
+
+* Test runners may skip tests with intentionally unimplemented methods (e.g.
+  listCollectionNames)
 
 2020-09-01:
 
