@@ -180,12 +180,12 @@ Endpoint. A `Connection <#connection>`_ has the following properties:
 -  **Perishable**: it is possible for a `Connection <#connection>`_ to become **Perished**. A `Connection <#connection>`_ is considered perished if any of the following are true:
 
    - **Stale:** The `Connection <#connection>`_ 's generation does not
-      match the generation of the parent pool
+     match the generation of the parent pool
    - **Idle:** The `Connection <#connection>`_ is currently
-      "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
+     "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
    - **Errored:** The `Connection <#connection>`_ has experienced an
-      error that indicates it is no longer recommended for
-      use. Examples include, but are not limited to:
+     error that indicates it is no longer recommended for
+     use. Examples include, but are not limited to:
 
       -  Network Error
       -  Network Timeout
