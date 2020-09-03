@@ -179,13 +179,9 @@ Endpoint. A `Connection <#connection>`_ has the following properties:
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
 -  **Perishable**: it is possible for a `Connection <#connection>`_ to become **Perished**. A `Connection <#connection>`_ is considered perished if any of the following are true:
 
-   - **Stale:** The `Connection <#connection>`_ 's generation does not
-     match the generation of the parent pool
-   - **Idle:** The `Connection <#connection>`_ is currently
-     "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
-   - **Errored:** The `Connection <#connection>`_ has experienced an
-     error that indicates it is no longer recommended for
-     use. Examples include, but are not limited to:
+   - **Stale:** The `Connection <#connection>`_ 's generation does not match the generation of the parent pool
+   - **Idle:** The `Connection <#connection>`_ is currently "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
+   - **Errored:** The `Connection <#connection>`_ has experienced an error that indicates it is no longer recommended for use. Examples include, but are not limited to:
 
       -  Network Error
       -  Network Timeout
