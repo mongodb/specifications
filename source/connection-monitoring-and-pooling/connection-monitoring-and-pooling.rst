@@ -30,11 +30,11 @@ Definitions
 Connection
 ~~~~~~~~~~~~~~
 
-A Connection (when linked) refers to the ``Connection`` type defined in this
-specification. It does not refer to an actual TCP connection to an Endpoint. A
-``Connection`` will attempt to create and wrap such a TCP connection over the
-course of its existence, but it is not equivalent to one nor does it wrap an
-active one at all times.
+A Connection (when linked) refers to the ``Connection`` type defined in the
+`Connection Pool Members`_ section of this specification. It does not refer to an actual TCP
+connection to an Endpoint. A ``Connection`` will attempt to create and wrap such
+a TCP connection over the course of its existence, but it is not equivalent to
+one nor does it wrap an active one at all times.
 
 For the purposes of testing, a mocked ``Connection`` type could be used with the
 pool that never actually creates a TCP connection or performs any I/O.
@@ -168,20 +168,19 @@ Connection Pool Members
 Connection
 ----------
 
-A driver-defined wrapper around a single TCP connection to an
-Endpoint. A `Connection <#connection>`_ has the following properties:
+A driver-defined wrapper around a single TCP connection to an Endpoint. A `Connection`_ has the following properties:
 
--  **Single Endpoint:** A `Connection <#connection>`_ MUST be associated with a single Endpoint. A `Connection <#connection>`_ MUST NOT be associated with multiple Endpoints.
--  **Single Lifetime:** A `Connection <#connection>`_ MUST NOT be used after it is closed.
--  **Single Owner:** A `Connection <#connection>`_ MUST belong to exactly one Pool, and MUST NOT be shared across multiple pools
--  **Single Track:** A `Connection <#connection>`_ MUST limit itself to one request / response at a time. A `Connection <#connection>`_ MUST NOT multiplex/pipeline requests to an Endpoint.
--  **Monotonically Increasing ID:** A `Connection <#connection>`_ MUST have an ID number associated with it. `Connection <#connection>`_ IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
+-  **Single Endpoint:** A `Connection`_ MUST be associated with a single Endpoint. A `Connection`_ MUST NOT be associated with multiple Endpoints.
+-  **Single Lifetime:** A `Connection`_ MUST NOT be used after it is closed.
+-  **Single Owner:** A `Connection`_ MUST belong to exactly one Pool, and MUST NOT be shared across multiple pools
+-  **Single Track:** A `Connection`_ MUST limit itself to one request / response at a time. A `Connection`_ MUST NOT multiplex/pipeline requests to an Endpoint.
+-  **Monotonically Increasing ID:** A `Connection`_ MUST have an ID number associated with it. `Connection`_ IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
--  **Perishable**: it is possible for a `Connection <#connection>`_ to become **Perished**. A `Connection <#connection>`_ is considered perished if any of the following are true:
+-  **Perishable**: it is possible for a `Connection`_ to become **Perished**. A `Connection`_ is considered perished if any of the following are true:
 
-   - **Stale:** The `Connection <#connection>`_ 's generation does not match the generation of the parent pool
-   - **Idle:** The `Connection <#connection>`_ is currently "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
-   - **Errored:** The `Connection <#connection>`_ has experienced an error that indicates it is no longer recommended for use. Examples include, but are not limited to:
+   -  **Stale:** The `Connection`_ 's generation does not match the generation of the parent pool
+   -  **Idle:** The `Connection`_ is currently "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
+   -  **Errored:** The `Connection`_ has experienced an error that indicates it is no longer recommended for use. Examples include, but are not limited to:
 
       -  Network Error
       -  Network Timeout
