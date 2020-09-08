@@ -216,15 +216,17 @@ The structure of this object is as follows:
   should be assumed that there is no upper bound on the required server version.
   The format of this string is defined in `Version String`_.
 
-- ``topologies``: Optional string or array of strings. One or more of server
-  topologies against which the tests can be run successfully. Valid topologies
-  are "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
+- ``topologies``: Optional array of strings. One or more of server topologies
+  against which the tests can be run successfully. Valid topologies are
+  "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
   cluster backed by replica sets). If this field is omitted, it should be
   assumed that there is no topology requirement for the test.
 
   When matching a "sharded-replicaset" topology, test runners MUST ensure that
   all shards are backed by a replica set. The process for doing so is described
-  in `Determining if a Sharded Cluster Uses Replica Sets`_.
+  in `Determining if a Sharded Cluster Uses Replica Sets`_. When matching a
+  "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
+  "sharded" implies "sharded-replicaset", but not vice versa).
 
 
 entity
@@ -280,14 +282,14 @@ The structure of this object is as follows:
 
   .. _entity_client_observeEvents:
 
-  - ``observeEvents``: Optional string or array of strings. One or more types of
-    events that can be observed for this client. Unspecified event types MUST
-    be ignored by this client's event listeners and SHOULD NOT be included in
-    `test.expectedEvents <test_expectedEvents_>`_ for this client.
+  - ``observeEvents``: Optional array of strings. One or more types of events
+    that can be observed for this client. Unspecified event types MUST be
+    ignored by this client's event listeners and SHOULD NOT be included in
+    `test.expectEvents <test_expectEvents_>`_ for this client.
 
     Test files SHOULD NOT observe events from multiple specs (e.g. command
     monitoring *and* SDAM events) for a single client. See
-    `Mixing event types in observeEvents and expectedEvents`_ for more
+    `Mixing event types in observeEvents and expectEvents`_ for more
     information.
 
     Supported types correspond to those documented in `expectedEvent`_ and are
@@ -301,9 +303,9 @@ The structure of this object is as follows:
 
   .. _entity_client_ignoreCommandMonitoringEvents:
 
-  - ``ignoreCommandMonitoringEvents``: Optional string or array of strings. One
-    or more command names for which the test runner MUST ignore any observed
-    command monitoring events. The command(s) will be ignored in addition to
+  - ``ignoreCommandMonitoringEvents``: Optional array of strings. One or more
+    command names for which the test runner MUST ignore any observed command
+    monitoring events. The command(s) will be ignored in addition to
     ``configureFailPoint`` and any commands containing sensitive information
     (per the
     `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
@@ -467,9 +469,9 @@ The structure of this object is as follows:
 - ``operations``: Required array of one or more `operation`_ objects. List of
   operations to be executed for the test case.
 
-.. _test_expectedEvents:
+.. _test_expectEvents:
 
-- ``expectedEvents``: Optional array of one or more `expectedEventsForClient`_
+- ``expectEvents``: Optional array of one or more `expectedEventsForClient`_
   objects. For one or more clients, a list of events that are expected to be
   observed in a particular order.
 
@@ -479,7 +481,7 @@ The structure of this object is as follows:
 
   Test files SHOULD NOT expect events from multiple specs (e.g. command
   monitoring *and* SDAM events) for a single client. See
-  `Mixing event types in observeEvents and expectedEvents`_ for more
+  `Mixing event types in observeEvents and expectEvents`_ for more
   information.
 
 .. _test_outcome:
@@ -521,24 +523,23 @@ The structure of this object is as follows:
 
   The ``session`` parameter is handled specially (see `commonOptions_session`_).
 
-.. _operation_expectedError:
+.. _operation_expectError:
 
-- ``expectedError``: Optional `expectedError`_ object. One or more assertions
-  for an expected error raised by the operation.
+- ``expectError``: Optional `expectedError`_ object. One or more assertions for
+  an error expected to be raised by the operation.
 
   This field is mutually exclusive with
-  `expectedResult <operation_expectedResult_>`_ and
+  `expectResult <operation_expectResult_>`_ and
   `saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
-.. _operation_expectedResult:
+.. _operation_expectResult:
 
-- ``expectedResult``: Optional mixed type. A value corresponding to the expected
+- ``expectResult``: Optional mixed type. A value corresponding to the expected
   result of the operation. This field may be a scalar value, a single document,
   or an array of documents in the case of a multi-document read.  Test runners
   MUST follow the rules in `Evaluating Matches`_ when processing this assertion.
 
-  This field is mutually exclusive with
-  `expectedError <operation_expectedError_>`_.
+  This field is mutually exclusive with `expectError <operation_expectError_>`_.
 
 .. _operation_saveResultAsEntity:
 
@@ -549,8 +550,7 @@ The structure of this object is as follows:
   runner MUST store an empty value (e.g. ``null``) for the entity such that the
   name will still be defined in the entity map.
 
-  This field is mutually exclusive with
-  `expectedError <operation_expectedError_>`_.
+  This field is mutually exclusive with `expectError <operation_expectError_>`_.
 
   This is primarily used for creating a `changeStream`_ entity from the result
   of a `client_createChangeStream`_, `database_createChangeStream`_, or
@@ -620,13 +620,13 @@ The structure of this object is as follows:
   the error does not contain any of the specified labels (e.g. using the
   ``hasErrorLabel`` method).
 
-.. _expectedError_expectedResult:
+.. _expectedError_expectResult:
 
-- ``expectedResult``: Optional mixed type. This field follows the same rules as
-  `operation.expectedResult <operation_expectedResult_>`_ and is only used in
-  cases where the error includes a result (e.g. `bulkWrite`_). If specified, the
-  test runner MUST assert that the error includes a result and that it matches
-  this value.
+- ``expectResult``: Optional mixed type. This field follows the same rules as
+  `operation.expectResult <operation_expectResult_>`_ and is only used in cases
+  where the error includes a result (e.g. `bulkWrite`_). If specified, the test
+  runner MUST assert that the error includes a result and that it matches this
+  value.
 
 
 expectedEventsForClient
@@ -989,7 +989,7 @@ request type (e.g. "insertOne"), as in the following example::
 While operations typically raise an error *or* return a result, the
 ``bulkWrite`` operation is unique in that it may report both via the
 ``writeResult`` property of a BulkWriteException. In this case, the intermediary
-write result may be matched with `expectedError_expectedResult`_. Because
+write result may be matched with `expectedError_expectResult`_. Because
 ``writeResult`` is optional for drivers to implement, such assertions should
 utilize the `$$unsetOrMatches`_ operator.
 
@@ -1059,8 +1059,8 @@ openDownloadStream and openDownloadStreamByName
 ```````````````````````````````````````````````
 
 The ``openDownloadStream`` and ``openDownloadStreamByName`` operations SHOULD
-use `$$matchesHexBytes`_ in `expectedResult <operation_expectedResult_>`_ to
-match the contents of the returned stream. These operations MAY use
+use `$$matchesHexBytes`_ in `expectResult <operation_expectResult_>`_ to match
+the contents of the returned stream. These operations MAY use
 `saveResultAsEntity <operation_saveResultAsEntity_>`_ to save the stream for use
 with a subsequent operation (e.g. `uploadFromStream`_ ).
 
@@ -1118,8 +1118,8 @@ iterateUntilDocumentOrError
 Iterates the change stream until either a single document is returned or an
 error is raised.
 
-If `expectedResult <operation_expectedResult_>`_ is specified, it SHOULD be a
-single document.
+If `expectResult <operation_expectResult_>`_ is specified, it SHOULD be a single
+document.
 
 `Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
 in the change stream spec cautions drivers that implement a blocking mode of
@@ -1482,7 +1482,7 @@ Evaluating Matches
 ------------------
 
 Expected values in tests (e.g.
-`operation.expectedResult <operation_expectedResult_>`_) are expressed as either
+`operation.expectResult <operation_expectResult_>`_) are expressed as either
 relaxed or canonical `Extended JSON <../extended-json.rst>`_.
 
 The algorithm for matching expected and actual values is specified with the
@@ -1629,10 +1629,10 @@ Syntax, where ``bsonType`` is a string or integer::
     { $$type: <bsonType> }
     { $$type: [ <bsonType>, <bsonType>, ... ] }
 
-This operator can be used anywhere a matched value is expected (including an
-`expectedResult <operation_expectedResult_>`_). The test runner MUST assert that
-the actual value exists and matches one of the expected types, which correspond
-to the documented types for the
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_). The test runner MUST assert that the
+actual value exists and matches one of the expected types, which correspond to
+the documented types for the
 `$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
 query operator.
 
@@ -1656,10 +1656,10 @@ Syntax, where ``entityName`` is a string::
 
     { $$matchesEntity: <entityName> }
 
-This operator can be used anywhere a matched value is expected (including an
-`expectedResult <operation_expectedResult_>`_). If the entity name is defined in
-the current test's `Entity Map`_, the test runner MUST fetch that entity and
-assert that the actual value matches the entity using the standard rules in
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_). If the entity name is defined in the
+current test's `Entity Map`_, the test runner MUST fetch that entity and assert
+that the actual value matches the entity using the standard rules in
 `Evaluating Matches`_; otherwise, the test runner MUST raise an error for an
 undefined entity. The YAML file SHOULD use an `alias node`_ for the entity name.
 
@@ -1674,13 +1674,13 @@ An example of this operator follows::
         arguments:
           filename: "filename"
           source: *stream0
-        expectedResult: { $$type: "objectId" }
+        expectResult: { $$type: "objectId" }
         saveResultAsEntity: &objectid0 "objectid0"
       - object: *filesCollection
         name: findOne
         arguments:
           sort: { uploadDate: -1 }
-        expectedResult:
+        expectResult:
           _id: { $$matchesEntity: *objectid0 }
 
 
@@ -1692,11 +1692,11 @@ Syntax, where ``hexBytes`` is an even number of hexademical characters
 
     { $$matchesHexBytes: <hexBytes> }
 
-This operator can be used anywhere a matched value is expected (including an
-`expectedResult <operation_expectedResult_>`_) and the actual value is a stream
-as defined in the `GridFS <../gridfs/gridfs-spec.rst>`__ spec. The test runner
-MUST convert the string to a byte sequence and compare it with the full contents
-of the stream. The test runner MUST raise an error if the string is malformed.
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_) and the actual value is a stream as
+defined in the `GridFS <../gridfs/gridfs-spec.rst>`__ spec. The test runner MUST
+convert the string to a byte sequence and compare it with the full contents of
+the stream. The test runner MUST raise an error if the string is malformed.
 
 This operator is primarily used to assert the contents of stream returned by
 `openDownloadStream`_ and `openDownloadStreamByName`_.
@@ -1709,8 +1709,8 @@ Syntax::
 
     { $$unsetOrMatches: <anything> }
 
-This operator can be used anywhere a matched value is expected (including an
-`expectedResult <operation_expectedResult_>`_). The test runner MUST assert that
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_). The test runner MUST assert that
 actual value either does not exist or matches the expected value. Matching the
 expected value should use the standard rules in `Evaluating Matches`_, which
 means that it may contain special operators.
@@ -1721,13 +1721,13 @@ BulkWriteException).
 
 An example of this operator used for a result's field follows::
 
-    expectedResult:
+    expectResult:
       insertedId: { $$unsetOrMatches: 2 }
 
 An example of this operator used for an entire result follows::
 
-    expectedError:
-      expectedResult:
+    expectError:
+      expectResult:
         $$unsetOrMatches:
           deletedCount: 0
           insertedCount: 2
@@ -1847,7 +1847,7 @@ for each target collection the test runner SHOULD execute a non-transactional
 ``distinct`` command on each mongos server using the internal MongoClient. See
 `StaleDbVersion Errors on Sharded Clusters`_ for more information.
 
-If `test.expectedEvents <test_expectedEvents_>`_ is specified, for each client
+If `test.expectEvents <test_expectEvents_>`_ is specified, for each client
 entity the test runner MUST enable all event listeners necessary to collect the
 event types specified in `observeEvents <entity_client_observeEvents_>`_. Test
 runners MAY leave event listeners disabled for tests and/or clients that do not
@@ -1879,7 +1879,7 @@ any fail points configured using `targetedFailPoint`_, the test runner MUST
 disable the fail point on the same mongos server on which it was originally
 configured. See `Disabling Fail Points`_ for more information.
 
-If `test.expectedEvents <test_expectedEvents_>`_ is specified, for each object
+If `test.expectEvents <test_expectEvents_>`_ is specified, for each object
 therein the test runner MUST assert that the number and sequence of expected
 events match the number and sequence of actual events observed on the specified
 client. If the list of expected events is empty, the test runner MUST assert
@@ -1939,13 +1939,13 @@ Before executing the operation, the test runner MUST be prepared to catch a
 potential error from the operation (e.g. enter a ``try`` block). Proceed with
 executing the operation and capture its result or error.
 
-If `operation.expectedError <operation_expectedError_>`_ is specified, the test
+If `operation.expectError <operation_expectError_>`_ is specified, the test
 runner MUST assert that the operation yielded an error; otherwise, the test
 runner MUST assert that the operation did not yield an error. If an error was
 expected, the test runner MUST evaluate any assertions in `expectedError`_
 accordingly.
 
-If `operation.expectedResult <operation_expectedError_>`_ is specified, the test
+If `operation.expectResult <operation_expectResult_>`_ is specified, the test
 MUST assert that it matches the actual result of the operation according to the
 rules outlined in `Evaluating Matches`_.
 
@@ -2229,11 +2229,11 @@ Future Work
 ===========
 
 
-Mixing event types in observeEvents and expectedEvents
-------------------------------------------------------
+Mixing event types in observeEvents and expectEvents
+----------------------------------------------------
 
 The test format advises against mixing events from different specs (e.g. command
-monitoring *and* SDAM) in `observeEvents`_ and `test.expectedEvents`_. While
+monitoring *and* SDAM) in `observeEvents`_ and `test.expectEvents`_. While
 registering event listeners is trivial, determining how to collate events of
 multiple types can be a challenge, particularly when some events may not be
 predictable (e.g. ServerHeartbeatStartedEvent, CommandStartedEvent for
@@ -2246,11 +2246,11 @@ Support events types beyond command monitoring
 ----------------------------------------------
 
 The spec currently only supports command monitoring events in `observeEvents`_
-and `test.expectedEvents`_, as those are the only kind of events used in tests
-for specifications that will initially adopt the unified test format. New event
+and `test.expectEvents`_, as those are the only kind of events used in tests for
+specifications that will initially adopt the unified test format. New event
 types (e.g. SDAM) can be added in future versions of the spec as needed, which
-will also require `Mixing event types in observeEvents and expectedEvents`_ to
-be addressed.
+will also require `Mixing event types in observeEvents and expectEvents`_ to be
+addressed.
 
 
 Allow extra observed events to be ignored
@@ -2294,6 +2294,17 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-08:
+
+* Replace "<type> or array of <types>" with "array of <types>" for
+  ``topologies``, ``observeEvents``, and ``ignoreCommandMonitoringEvents``.
+
+* Rename ``expected`` prefix to ``expect`` in test field names. Applies to
+  ``expectEvents``, ``expectedError``, and ``expectResult``. Structures such as
+ ` `expectedEvent`` were not renamed.
+
+* Clarify that "sharded" implies "sharded-replicaset".
 
 2020-09-03:
 
