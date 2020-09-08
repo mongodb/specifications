@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-01
+:Last Modified: 2020-09-08
 
 .. contents::
 
@@ -1790,9 +1790,7 @@ Executing a Test File
 ~~~~~~~~~~~~~~~~~~~~~
 
 The instructions in this section apply for each test file loaded by the test
-runner. After processing a test file, test runners SHOULD reset any internal
-state that resulted from doing so. For example, an internal MongoClient created
-for one test file SHOULD NOT be shared with another.
+runner.
 
 Test files, which may be YAML or JSON files, MUST be interpreted using an
 `Extended JSON`_ parser. The parser MUST accept relaxed and canonical Extended
@@ -2305,6 +2303,9 @@ Note: this will be cleared when publishing version 1.0 of the spec
  ` `expectedEvent`` were not renamed.
 
 * Clarify that "sharded" implies "sharded-replicaset".
+
+* Remove note about clearing state between test files. Clearing state is mainly
+  relevant for tests, and is already discussed.
 
 2020-09-03:
 
