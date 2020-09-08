@@ -1828,7 +1828,7 @@ forgoing any additional assertions.
 If `test.skipReason <test_skipReason_>`_ is specified, the test runner MUST skip
 this test and MAY use the string value to log a message.
 
-If `test.runOnRequirementss <test_runOnRequirements_>`_ is specified, the test
+If `test.runOnRequirements <test_runOnRequirements_>`_ is specified, the test
 runner MUST skip the test unless one or more `runOnRequirement`_ objects are
 satisfied.
 
