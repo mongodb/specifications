@@ -71,7 +71,7 @@ runner, given the same major version component. For example:
 
 - A test runner supporting version 1.5.1 could execute test files with versions
   1.0 and 1.5 but *not* 1.6 and 2.0.
-- A test runner supporting version 2.1 it could execute test files with versions
+- A test runner supporting version 2.1 could execute test files with versions
   2.0 and 2.1 but *not* 1.0 and 1.5.
 - A test runner supporting *both* versions 1.5.1 and 2.0 could execute test
   files with versions 1.4, 1.5, and 2.0, but *not* 1.6, 2.1, or 3.0.
@@ -203,6 +203,9 @@ runOnRequirement
 
 A combination of server version and/or topology requirements for running the
 test(s).
+
+Server versions SHALL be compared numerically and do not follow the comparison
+rules discussed in `Schema Version`_.
 
 The structure of this object is as follows:
 
@@ -2306,6 +2309,8 @@ Note: this will be cleared when publishing version 1.0 of the spec
 
 * Remove note about clearing state between test files. Clearing state is mainly
   relevant for tests, and is already discussed.
+
+* Note that server versions are compared numerically.
 
 2020-09-03:
 
