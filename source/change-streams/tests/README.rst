@@ -133,6 +133,11 @@ For each YAML file, for each element in ``tests``:
   - For each (``expected``, ``idx``) in ``expectations``
     - If ``actual[idx]`` is a ``killCursors`` event, skip it and move to ``actual[idx+1]``.
     - Else assert that ``actual[idx]`` MATCHES ``expected``
+  - Note: the change stream test command event expectations cover a
+    prefix subset of all command events published by the driver.
+    The test runner MUST verify that, if there are N expectations, that the
+    first N events published by the driver match the expectations, and
+    MUST NOT inspect any subsequent events published by the driver.
 
 - Close the MongoClient ``client``
 
