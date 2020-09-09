@@ -295,8 +295,8 @@ The structure of this object is as follows:
     `Mixing event types in observeEvents and expectEvents`_ for more
     information.
 
-    Supported types correspond to those documented in `expectedEvent`_ and are
-    as follows:
+    Supported types correspond to the top-level keys (strings) documented in
+    `expectedEvent`_ and are as follows:
 
     - `commandStartedEvent <expectedEvent_commandStartedEvent_>`_
 
