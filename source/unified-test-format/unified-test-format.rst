@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-08
+:Last Modified: 2020-09-11
 
 .. contents::
 
@@ -1627,23 +1627,23 @@ An example of this operator checking for a field's absence follows::
 $$type
 ``````
 
-Syntax, where ``bsonType`` is a string or integer::
+Syntax::
 
-    { $$type: <bsonType> }
-    { $$type: [ <bsonType>, <bsonType>, ... ] }
+    { $$type: <string> }
+    { $$type: [ <string>, <string>, ... ] }
 
 This operator can be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_). The test runner MUST assert that the
 actual value exists and matches one of the expected types, which correspond to
-the documented types for the
+the documented string types for the
 `$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
 query operator.
 
 An example of this operator follows::
 
     command:
-      getMore: { $$type: [ int, long ] }
-      collection: { $$type: 2 } # string
+      getMore: { $$type: [ "int", "long" ] }
+      collection: { $$type: "string" }
 
 When the actual value is an array, test runners MUST NOT examine types of the
 array's elements. Only the type of actual field should be checked. This is
@@ -2295,6 +2295,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-11:
+
+* Require BSON types be expressed as strings for $$type operator
 
 2020-09-08:
 
