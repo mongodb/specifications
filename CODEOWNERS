@@ -1,0 +1,38 @@
+# SDAM: Shane Harvey, Neal Beeken
+/source/server-discovery-and-monitoring/ @ShaneHarvey @nbbeeken
+
+# CRUD: Jeremy Mikola, Emily Giurleo
+/source/crud/ @jmikola @egiurleo
+/source/driver-bulk-update.rst @jmikola @egiurleo
+
+# Transactions: Durran Jordan, Isabel Atkinson
+/source/transactions/ @durran @isabelatkinson
+/source/transactions-convenient-api/ @durran @isabelatkinson
+
+# Client Side Encryption: Kevin Albertson, Sam Rossi
+/source/client-side-encryption/ @kevinAlbs @saghm
+
+# Server Selection: Oleg Pudeyev, Patrick Freed
+/source/server-selection/ @p-mongo @patrickfreed
+
+# Change Streams: Divjot Arora, Prashant Mital
+/source/change-streams/ @divjotarora @prashantmital
+
+# Sessions: Robert Stam, Kaitlin Mahar
+/source/sessions/ @rstam @kmahar
+
+# APM: Durran Jordan, Kaitlin Mahar
+/source/command-monitoring/ @durran @kmahar
+
+# Authentication: Clyde Bazile, Eric Adum
+/source/auth/ @bazile-clyde @emadum
+
+# CMAP: Patrick Freed, Divjot Arora
+/source/connection-monitoring-and-pooling/ @patrickfreed @divjotarora
+
+# URI Options: Sam Rossi, Andreas Braun
+/source/uri-options/ @saghm @alcaeus
+
+# Retryability: Jeremy Mikola, Isabel Atkinson
+/source/retryable-reads/ @jmikola @isabelatkinson
+/source/retryable-writes/ @jmikola @isabelatkinson
