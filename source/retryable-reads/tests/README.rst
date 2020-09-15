@@ -150,15 +150,13 @@ data.
 Speeding Up Tests
 -----------------
 
-Drivers may benefit reducing `minHeartbeatFrequencyMS`_ in order to speed up
-tests. Python was able to decrease the run time of the tests greatly by lowering
-the SDAM's ``minHeartbeatFrequencyMS`` from 500ms to 50ms, thus decreasing the
-waiting time after a "not master" error:
+Drivers can greatly reduce the execution time of tests by setting `heartbeatFrequencyMS`_
+and `minHeartbeatFrequencyMS`_ (internally) to a small value (e.g. 5ms), below what
+is normally permitted in the SDAM spec. If a test specifies an explicit value for
+heartbeatFrequencyMS (e.g. client or URI options), drivers SHOULD use that value.
 
-Also, similar improvement can be added for `heartbeatFrequencyMS`_ by setting the default heartbeatFrequencyMS to 5ms in order to take into account the latest changes regarding streaming protocol. If a test has an explicit heartbeatFrequencyMS value, drivers should use the explicit value.
-
-.. _minHeartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms	
-.. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
+.. _minHeartbeatFrequencyMS: ../../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms
+.. _heartbeatFrequencyMS: ../../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
 
 Optional Enumeration Commands
 =============================
