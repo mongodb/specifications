@@ -1145,7 +1145,7 @@ failPoint
 ~~~~~~~~~
 
 The ``failPoint`` operation instructs the test runner to configure a fail point
-using a ``primary`` read preference using the specified client.
+using a "primary" read preference using the specified client.
 
 The following arguments are supported:
 
@@ -2272,10 +2272,10 @@ this functionality, but that may change in the future.
 Target failPoint by read preference
 -----------------------------------
 
-The `failPoint`_ operation currently uses a primary read preference. To date, no
-spec has needed behavior to configure a fail point on a non-primary node. If the
-need does arise, `failPoint`_ can be enhanced to support a ``readPreference``
-argument.
+The `failPoint`_ operation currently uses a "primary" read preference. To date,
+no spec has needed behavior to configure a fail point on a non-primary node. If
+the need does arise, `failPoint`_ can be enhanced to support a
+``readPreference`` argument.
 
 
 IO operations for GridFS streams
