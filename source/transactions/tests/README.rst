@@ -80,7 +80,7 @@ control the fail point's behavior. ``failCommand`` supports the following
 Speeding Up Tests
 =================
 
-Drivers should set the default heartbeatFrequencyMS to 5ms in order to take into account the latest changes regarding streaming protocol. If a test has an explicit heartbeatFrequencyMS value, drivers should use the explicit value.
+See `Speeding Up Tests <../../retryable-reads/tests/README.rst#speeding-up-tests>`_ in the retryable reads spec tests.
 
 Test Format
 ===========
@@ -645,4 +645,3 @@ Changelog
 :2019-02-13: Modify test format for 4.2 sharded transactions, including
              "useMultipleMongoses", ``object: testRunner``, the
              ``targetedFailPoint`` operation, and recoveryToken assertions.
-:2020-06-12: Add the default value for heartbeatFrequencyMS.
