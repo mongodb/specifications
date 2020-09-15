@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-11
+:Last Modified: 2020-09-15
 
 .. contents::
 
@@ -489,13 +489,12 @@ The structure of this object is as follows:
 
 .. _test_outcome:
 
-- ``outcome``: Optional array of documents. Each document will specify expected
-  contents of a collection after all operations have been executed. The list of
-  documents therein SHOULD be sorted ascendingly by the ``_id`` field to allow
-  for deterministic comparisons.
+- ``outcome``: Optional array of one or more `collectionData`_ objects. Data
+  that should exist in collections after each test case is executed.
 
-  If set, the array should contain at least one document. The structure of each
-  document is defined in `collectionData`_.
+  The list of documents herein SHOULD be sorted ascendingly by the ``_id`` field
+  to allow for deterministic comparisons. The procedure for asserting collection
+  contents is discussed in `Executing a Test`_.
 
 
 operation
@@ -1889,10 +1888,14 @@ described in `expectedEvent`_.
 
 If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
 therein the test runner MUST assert that the collection contains exactly the
-expected data. The test runner MUST query each collection using an ascending
-sort order on the ``_id`` field (i.e. ``{ _id: 1 }``), a ``primary`` read
-preference, a ``local`` read concern, and the internal MongoClient. If the list
-of documents is empty, the test runner MUST assert that the collection is empty.
+expected data. The test runner MUST query each collection using the internal
+MongoClient, an ascending sort order on the ``_id`` field (i.e. ``{ _id: 1 }``),
+a "primary" read preference, a "local" read concern. The documents must match
+expected data exactly (`Evaluating Matches`_ does not apply); however, languages
+that are unable to preserve the order of keys in documents MAY permit variations
+in field order or otherwise normalize actual and expected documents before
+comparison. If the list of documents is empty, the test runner MUST assert that
+the collection is empty.
 
 Clear the entity map for this test. For each ClientSession in the entity map,
 the test runner MUST end the session (e.g. call
@@ -2295,6 +2298,11 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-15:
+
+* Revise definition for test.outcome, clarify comparison rules for outcome
+  documents, and permit flexibility for field order during comparisons.
 
 2020-09-11:
 
