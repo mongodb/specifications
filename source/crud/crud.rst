@@ -1454,6 +1454,7 @@ Drivers SHOULD report errors however they report other server errors: by raising
   }
 
 Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
+
 - set ``code`` to ``writeConcernError.code``.
 - set ``message`` to ``writeConcernError.errmsg`` if available.
 - set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
