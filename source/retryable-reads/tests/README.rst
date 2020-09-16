@@ -153,7 +153,7 @@ Speeding Up Tests
 Drivers can greatly reduce the execution time of tests by setting `heartbeatFrequencyMS`_
 and `minHeartbeatFrequencyMS`_ (internally) to a small value (e.g. 5ms), below what
 is normally permitted in the SDAM spec. If a test specifies an explicit value for
-heartbeatFrequencyMS (e.g. client or URI options), drivers SHOULD use that value.
+heartbeatFrequencyMS (e.g. client or URI options), drivers MUST use that value.
 
 .. _minHeartbeatFrequencyMS: ../../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms
 .. _heartbeatFrequencyMS: ../../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
