@@ -96,8 +96,6 @@ Each YAML file has the following keys:
 
     - ``collectionOptions``: |txn|
 
-    - ``command_name``: |txn|
-
     - ``arguments``: |txn|
 
     - ``result``: |txn|
