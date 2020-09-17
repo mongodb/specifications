@@ -76,13 +76,39 @@ Schema Version
 --------------
 
 This specification and the `Test Format`_ follow
-`semantic versioning <https://semver.org/>`__. Backwards breaking changes (e.g.
-removing a field, introducing a required field) will warrant a new major
-version. Backwards compatible changes (e.g. introducing an optional field) will
-warrant a new minor version. Small fixes and internal changes (e.g. grammar,
-adding clarifying text to the spec) will warrant a new patch version; however,
-patch versions SHOULD NOT alter the structure of the test format and thus SHOULD
-NOT be relevant to test files.
+`semantic versioning <https://semver.org/>`__. The version is primarily used to
+validate test files with a `JSON schema <https://json-schema.org/>`__ and also
+allow test runners to determine whether a particular test file is supported.
+
+New tests files SHOULD always be written using the latest major version of this
+specification; however, test files SHOULD be conservative in the minor version
+they specify (as noted in `schemaVersion`_).
+
+
+JSON Schema Validation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Each major version of this specification will have a corresponding JSON schema
+for its most recent minor version (e.g. ``schema-1.1.json``). A JSON schema for
+a particular minor version MUST be capable of validating any and all test files
+in that major version series up to and including the minor version. For example,
+``schema-2.1.json`` should validate test files with `schemaVersion`_ "2.0" and
+"2.1", but would not be expected to validate "1.0", "2.2", or "3.0".
+
+The JSON schema MUST remain consistent with the `Test Format`_ section. If and
+when a new major version is introduced, the `Breaking Changes`_ section MUST be
+updated and any JSON schema(s) for a previous major version(s) MUST remain
+available so that older test files can still be validated.
+
+`Ajv <https://ajv.js.org/>`__ MAY be used to programmatically validate both YAML
+and JSON files using the JSON schema. The JSON schema MUST NOT use syntax that
+is unsupported by this tool, which bears mentioning because there are multiple
+versions of the
+`JSON schema specification <https://json-schema.org/specification.html>`__.
+
+
+Test Runner Support
+~~~~~~~~~~~~~~~~~~~
 
 Each test file defines a `schemaVersion`_, which test runners will use to
 determine compatibility (i.e. whether and how the test file will be
@@ -105,15 +131,32 @@ Test runners MUST NOT process incompatible files but MAY determine how to handle
 such files (e.g. skip and log a notice, fail and raise an error). Test runners
 MAY support multiple schema versions (as demonstrated in the example above).
 
-Each major version of this specification will have a corresponding JSON schema
-(e.g. `schema-1.json <schema-1.json>`__), which may be used to programmatically
-validate YAML and JSON files using a tool such as `Ajv <https://ajv.js.org/>`__.
 
-The latest JSON schema MUST remain consistent with the `Test Format`_ section.
-If and when a new major version is introduced, the `Breaking Changes`_ section
-must be updated and JSON schema(s) for any previous major version(s) MUST remain
-available so that older test files can still be validated. New tests files
-SHOULD always be written using the latest version of this specification.
+Impact of Spec Changes on Schema Version
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Backwards-breaking changes SHALL warrant a new major version. These changes
+include, but are not limited to:
+
+- Subtractive changes, such as removing a field, operation, or type of supported
+  entity or event
+- Changing an existing field from optional to required
+- Introducing a new, required field in the test format
+- Significant changes to test file execution (not BC)
+
+Backwards-compatible changes SHALL warrant a new minor version. These changes
+include, but are not limited to:
+
+- Additive changes, such as a introducing a new `Special Test Operation`_ or
+  type of supported entity or event
+- Changing an existing field from required to optional
+- Introducing a new, optional field in the test format
+- Minor changes to test file execution (BC)
+
+Small fixes and internal spec changes (e.g. grammar, adding clarifying text to
+the spec) MAY warrant a new patch version; however, patch versions SHOULD NOT
+alter the structure of the test format and thus SHOULD NOT be relevant to test
+files (as noted in `schemaVersion`_).
 
 
 Entity Map
@@ -2371,6 +2414,8 @@ Note: this will be cleared when publishing version 1.0 of the spec
 * Test files should specify schema version conservatively.
 
 * Add Goals section and note out-of-scope specs in Future Work.
+
+* Elaborate on schema version.
 
 2020-09-15:
 
