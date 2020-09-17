@@ -24,12 +24,33 @@ tests to a single schema, drivers can implement a single test runner to execute
 acceptance tests for multiple specifications, thereby reducing maintenance of
 existing specs and implementation time for new specifications.
 
+
 META
 ====
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`__.
+
+
+Goals
+=====
+
+This test format can be used to define tests for the following specifications:
+
+- `Change Streams <../change-streams/change-streams.rst>`__
+- `Command Monitoring <../command-monitoring/command-monitoring.rst>`__
+- `CRUD <../crud/crud.rst>`__
+- `GridFS <../gridfs/gridfs-spec.rst>`__
+- `Retryable Reads <../retryable-reads/retryable-reads.rst>`__
+- `Retryable Writes <../retryable-writes/retryable-writes.rst>`__
+- `Sessions <../sessions/driver-sessions.rst>`__
+- `Transactions <../transactions/transactions.rst>`__
+- `Convenient API for Transactions <../transactions-convenient-api/transactions-convenient-api.rst>`__
+
+This is not an exhaustive list. Specifications that are known to not be
+supported by this format may be discussed under `Future Work`_.
+
 
 Specification
 =============
@@ -159,11 +180,17 @@ The top-level fields of a test file are as follows:
 .. _schemaVersion:
 
 - ``schemaVersion``: Required string. Version of this specification to which the
-  test file complies. Test runners will use this to determine compatibility
-  (i.e. whether and how the test file will be interpreted). The format of this
-  string is defined in `Version String`_; however, test files SHOULD NOT need to
-  refer to specific patch versions since patch-level changes SHOULD NOT alter
-  the structure of the test format (as previously noted in `Schema Version`_).
+  test file complies.
+
+  Test files SHOULD be conservative when specifying a schema version. For
+  example, if the latest schema version is 1.1 but the test file complies with
+  schema version 1.0, the test file should specify 1.0.
+
+  Test runners will use this to determine compatibility (i.e. whether and how
+  the test file will be interpreted). The format of this string is defined in
+  `Version String`_; however, test files SHOULD NOT need to refer to specific
+  patch versions since patch-level changes SHOULD NOT alter the structure of the
+  test format (as previously noted in `Schema Version`_).
 
 .. _runOnRequirements:
 
@@ -2269,6 +2296,16 @@ where multiple getMore commands may be issued). No spec tests currently require
 this functionality, but that may change in the future.
 
 
+Assert expected log messages
+----------------------------
+
+When drivers support standardized logging, the test format may need to support
+assertions for messages expected to be logged while executing operations. Since
+log messages are strings, this may require an operator to match regex patterns
+within strings. Additionally, the test runner may need to support ignoring extra
+log output, similar to `Allow extra observed events to be ignored`_.
+
+
 Target failPoint by read preference
 -----------------------------------
 
@@ -2294,10 +2331,46 @@ test uploads using a defined `stream <entity_stream_>`_ entity and
 downloads using `$$matchesHexBytes`_.
 
 
+Support Client-side Encryption integration tests
+------------------------------------------------
+
+Supporting client-side encryption spec tests will require the following changes
+to the test format:
+
+- ``json_schema`` will need to be specified when creating a collection, via
+  either the collection entity definition or `initialData`_.
+- ``key_vault_data`` can be expressed via `initialData`_
+- ``autoEncryptOpts`` will need to be specified when defining a client entity.
+  Preparation of this field may require reading AWS credentials from environment
+  variables.
+
+The process for executing tests should not require significant changes, but test
+files will need to express a dependency on mongocryptd.
+
+
+Support SDAM integration tests
+------------------------------
+
+SDAM integration tests should not require test format changes, but will
+introduce several new special test operations for the "testRunner" object. While
+the tests themselves only define expectations for command monitoring events,
+some special operations may require observing additional event types. There are
+also special operations for defining threads and executing operations within
+threads, which may warrant introducing a new "thread" entity type.
+
+
 Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-17:
+
+* Future work for logging assertions, FLE tests, and SDAM tests
+
+* Test files should specify schema version conservatively.
+
+* Add Goals section and note out-of-scope specs in Future Work.
 
 2020-09-15:
 
