@@ -63,8 +63,9 @@ Entity
   Any object or value that is indexed by a unique name and stored in the
   `Entity Map`_. This will typically be a driver object (e.g. client, session)
   defined in `createEntities`_ but may also be a
-  `saved operation result <operation_saveResultAsEntity_>`_. Entities are
-  referenced throughout the test file (e.g. `Entity Test Operations`_).
+  `saved operation result <operation_saveResultAsEntity_>`_. A exhaustive list
+  of supported types is presented in `Supported Entity Types`_. Entities are
+  referenced by name throughout the test file (e.g. `Entity Test Operations`_).
 
 Internal MongoClient
   A MongoClient created specifically for use with internal test operations, such
@@ -194,6 +195,28 @@ Consider the following examples::
       - client: { id: client0 }
       - session: { id: session0, client: client0 }
       - session: { id: session1, client: session0 }
+
+
+Supported Entity Types
+~~~~~~~~~~~~~~~~~~~~~~
+
+Test runners MUST support the following types of entities:
+
+- MongoClient. See `entity_client`_ and `client`_.
+- Database. See `entity_database`_ and `database`_.
+- Collection. See `entity_collection`_ and `collection`_
+- ClientSession. See `entity_session`_ and `session`_.
+- GridFS Bucket. See `entity_bucket`_ and `bucket`_.
+- GridFS Stream. See `entity_stream`_.
+- ChangeStream. See `changeStream`_.
+- The following BSON types:
+
+  - 0x01 - 0x13
+  - 0xFF
+  - 0x7F
+
+This is an exhaustive list of permissible types for the entity map. Test runners
+MUST raise an error if another type would be added to the entity map.
 
 
 Test Format
@@ -451,6 +474,8 @@ The structure of this object is as follows:
     transaction options MUST remain nested under ``defaultTransactionOptions``
     and MUST NOT be flattened into ``sessionOptions``.
 
+.. _entity_bucket:
+
 - ``bucket``: Optional object. Defines a Bucket object, as defined in the
   `GridFS <../gridfs/gridfs-spec.rst>`__ spec.
 
@@ -618,15 +643,9 @@ The structure of this object is as follows:
 - ``saveResultAsEntity``: Optional string. If specified, the actual result
   returned by the operation (if any) will be saved with this name in the
   `Entity Map`_.  The test runner MUST raise an error if the name is already in
-  use. If the operation does not return a value (e.g. void method), the test
-  runner MUST store an empty value (e.g. ``null``) for the entity such that the
-  name will still be defined in the entity map.
+  use or if the result is not a `Supported Entity Type`_.
 
   This field is mutually exclusive with `expectError <operation_expectError_>`_.
-
-  This is primarily used for creating a `changeStream`_ entity from the result
-  of a `client_createChangeStream`_, `database_createChangeStream`_, or
-  `collection_createChangeStream`_ operation.
 
 
 expectedError
@@ -2024,10 +2043,9 @@ MUST assert that it matches the actual result of the operation according to the
 rules outlined in `Evaluating Matches`_.
 
 If `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ is specified,
-the test runner MUST store the result (if any) in the current test's entity map
-using the specified name. If the operation did not return a result (e.g.
-``void`` method), the test runner MAY decide to store an empty value (e.g.
-``null``) or do nothing and leave the entity name undefined.
+the test runner MUST store the result in the current test's entity map using the
+specified name. If the operation did not return a result or the result is not a
+`Supported Entity Type`_ then the test runner MUST raise an error.
 
 After asserting the operation's error and/or result and optionally saving the
 result, proceed to the subsequent operation.
@@ -2416,6 +2434,9 @@ Note: this will be cleared when publishing version 1.0 of the spec
 * Add Goals section and note out-of-scope specs in Future Work.
 
 * Elaborate on schema version.
+
+* Exhaustively list supported entity types and error when attempting to add an
+  unsupported type to the entity map
 
 2020-09-15:
 
