@@ -212,7 +212,7 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
        *
        * Possible values are the following:
        *   - "pending":       The Connection has been created but has not yet been established. Contributes to
-       *                      totalConnectionCount.
+       *                      totalConnectionCount and pendingConnectionCount.
        *
        *   - "available":     The Connection has been established and is waiting in the pool to be checked
        *                      out. Contributes to both totalConnectionCount and availableConnectionCount.
@@ -262,6 +262,8 @@ has the following properties:
    -  Attempting to check out a `Connection <#connection>`_ from the Pool results in an Error
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
+-  **Rate-limited:** A Pool MUST limit the number of connections being created at a given time to be 2 (maxConnecting). 
+
 
 .. code:: typescript
 
@@ -287,6 +289,12 @@ has the following properties:
        *  available in the pool.
        */
       availableConnectionCount: number;
+
+      /**
+       *  An integer expressiong how many Connections are currently
+       *  being established.
+       */
+      pendingConnectionCount: number;
 
       /**
        *  Returns a Connection for use
@@ -370,6 +378,7 @@ performs no I/O.
 
     connection = new Connection()
     increment total connection count
+    increment pending connection count
     set connection state to "pending"
     emit ConnectionCreatedEvent
     return connection
@@ -389,6 +398,7 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       handle OP_COMPRESSED
       perform connection authentication
       emit ConnectionReadyEvent
+      decrement pending connection count
       return connection
     except error:
       close connection
@@ -455,18 +465,32 @@ I/O.
 Checking Out a Connection
 -------------------------
 
-A Pool MUST have a method of allowing the driver to check out a `Connection <#connection>`_. Checking out a `Connection <#connection>`_ involves entering the WaitQueue and waiting for a `Connection <#connection>`_ to become available. If the thread times out in the WaitQueue, an error is thrown.
+A Pool MUST have a method of allowing the driver to check out a `Connection
+<#connection>`_. Checking out a `Connection <#connection>`_ involves entering
+the WaitQueue, waiting to be granted access to the list of available
+connections, and finding or creating a `Connection <#connection>`_ to be
+returned. If the thread times out in the WaitQueue, an error is thrown.
 
-If, in the process of iterating available `Connections <#connection>`_ in the
-pool by the checkOut method, a perished `Connection <#connection>`_ is
-encountered, such a `Connection <#connection>`_ MUST be closed (as described in
-`Closing a Connection <#closing-a-connection-internal-implementation>`_) and the
-iteration of available `Connections <#connection>`_ MUST continue until either a
-non-perished available `Connection <#connection>`_ is found or the list of
-available `Connections <#connection>`_ is exhausted. If no `Connections
-<#connection>`_ are available and the total number of `Connections
-<#connection>`_ is less than maxPoolSize, the pool MUST create a `Connection
-<#connection>`_, establish it, mark it as "in use" and return it.
+Once reaching the front of the WaitQueue, a thread begins iterating over the
+list of available `Connections <#connection>`_, searching for a non-perished one
+to be returned. If, in the process of iterating, a perished `Connection
+<#connection>`_ is encountered, such a `Connection <#connection>`_ MUST be
+closed (as described in `Closing a Connection
+<#closing-a-connection-internal-implementation>`_) and the iteration of
+available `Connections <#connection>`_ MUST continue until either a non-perished
+available `Connection <#connection>`_ is found or the list of available
+`Connections <#connection>`_ is exhausted.
+
+If the list is exhausted, the total number of `Connections <#connection>`_ is
+less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
+create a `Connection <#connection>`_, establish it, mark it as "in use" and
+return it. If totalConnectionCount == maxPoolSize or pendingConnectionCount ==
+maxConnecting, then the thread MUST wait until either both of those conditions
+are met or until a `Connection <#connection>`_ becomes available, re-entering
+the checkOut loop once it finishes waiting. This waiting MUST NOT block other
+threads from checking in `Connections <#connection>`_ to the pool. Threads that
+are waiting on the maxConnecting requirement to be met MUST receive the newly
+available `Connections <#connection>`_ in order that they entered the WaitQueue. 
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
@@ -475,7 +499,10 @@ least minPoolSize total `Connections <#connection>`_. If the pool does not
 implement a background thread, the checkOut method is responsible for
 `populating the pool
 <#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
-`Connections <#connection>`_ such that this requirement is met.
+`Connections <#connection>`_ such that this requirement is met; however, if this
+requirement is not met but pendingConnectionCount == maxConnecting, the thread
+performing checkOut is not responsible for ensuring minPoolSize and MUST
+continue the checkOut process without populating the pool.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is established. In
 addition, the Pool MUST NOT block other threads from checking out
@@ -500,12 +527,19 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             if connection is perished:
               close connection
               connection = Null
+          continue
         else if totalConnectionCount < maxPoolSize:
-          connection = create connection
+          if numConnecting < maxConnecting:
+            connection = create connection
+          else:
+            # this waiting MUST NOT prevent other threads from checking connections
+            # back in.
+            wait until numConnecting < maxConnecting or a connection is available
+            continue
         # If there is no background thread, the pool MUST ensure that
         # there are at least minPoolSize total connections.
         # This MUST be done in a non-blocking manner
-        while totalConnectionCount < minPoolSize:
+        while totalConnectionCount < minPoolSize and numConnecting < maxConnecting:
           populate the pool with a connection
           
     except pool is closed:
@@ -808,7 +842,8 @@ Why do we have separate ConnectionCreated and ConnectionReady events, but only o
 
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
--  ConnectionCreated adds a new “pending” `Connection <#connection>`_, meaning the totalConnectionCount increases by one
+-  ConnectionCreated adds a new “pending” `Connection <#connection>`_, meaning
+   the totalConnectionCount and pendingConnectionCount increase by one
 -  ConnectionReady establishes that the `Connection <#connection>`_ is ready for use, meaning the availableConnectionCount increases by one
 
 ConnectionClosed indicates that the `Connection <#connection>`_ is no longer a member of the pool, decrementing totalConnectionCount and potentially availableConnectionCount. After this point, the `Connection <#connection>`_ is no longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are not specified here.
