@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-15
+:Last Modified: 2020-09-21
 
 .. contents::
 
@@ -209,7 +209,7 @@ Test runners MUST support the following types of entities:
 - GridFS Bucket. See `entity_bucket`_ and `bucket`_.
 - GridFS Stream. See `entity_stream`_.
 - ChangeStream. See `changeStream`_.
-- The following BSON types:
+- The following BSON types and/or equivalent language types:
 
   - 0x01 - 0x13
   - 0xFF
@@ -2424,6 +2424,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-21:
+
+* Entity map can store equivalent language types for supported BSON types.
 
 2020-09-17:
 
