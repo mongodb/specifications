@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-21
+:Last Modified: 2020-09-22
 
 .. contents::
 
@@ -2018,15 +2018,18 @@ If `operation.object`_ is not "testRunner", this is an entity operation. If
 `operation.object`_ is defined in the current test's `Entity Map`_, the test
 runner MUST fetch that entity and note its type; otherwise, the test runner
 MUST raise an error for an undefined entity. If `operation.name`_ does not
-correspond to an operation for the entity type (per `Entity Test Operations`_),
-the test runner MUST raise an error for an undefined operation. Test runners MAY
-skip tests that include operations that are intentionally unimplemented (e.g.
+correspond to a known operation for the entity type (per
+`Entity Test Operations`_), the test runner MUST raise an error for an
+unsupported operation. Test runners MAY skip tests that include operations that
+are intentionally unimplemented (e.g.
 ``listCollectionNames``).
 
 Proceed with preparing the operation's arguments. If ``session`` is specified in
 `operation.arguments <operation_arguments_>`_, the test runner MUST resolve it
 to a session entity and MUST raise an error if the name is undefined or maps to
-an unexpected type. 
+an unexpected type. If a key in `operation.arguments`_ does not correspond to a
+known parameter/option for the operation, the test runner MUST raise an error
+for an unsupported argument.
 
 Before executing the operation, the test runner MUST be prepared to catch a
 potential error from the operation (e.g. enter a ``try`` block). Proceed with
@@ -2424,6 +2427,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-22
+
+* Test runners must raise errors for unsupported operations and arguments
 
 2020-09-21:
 
