@@ -209,14 +209,15 @@ Test runners MUST support the following types of entities:
 - GridFS Bucket. See `entity_bucket`_ and `bucket`_.
 - GridFS Stream. See `entity_stream`_.
 - ChangeStream. See `changeStream`_.
-- The following BSON types and/or equivalent language types:
+- Values of the following BSON types and/or equivalent language types:
 
   - 0x01 - 0x13
   - 0xFF
   - 0x7F
 
-This is an exhaustive list of permissible types for the entity map. Test runners
-MUST raise an error if another type would be added to the entity map.
+This is an exhaustive list of supported types for the entity map. Test runners
+MUST raise an error if an attempt is made to store an unsupported type in the
+entity map.
 
 
 Test Format
@@ -245,8 +246,8 @@ The top-level fields of a test file are as follows:
 
 .. _schemaVersion:
 
-- ``schemaVersion``: Required string. Version of this specification to which the
-  test file complies.
+- ``schemaVersion``: Required string. Version of this specification with which
+  the test file complies.
 
   Test files SHOULD be conservative when specifying a schema version. For
   example, if the latest schema version is 1.1 but the test file complies with
@@ -373,8 +374,14 @@ The structure of this object is as follows:
     to multiple mongos hosts (e.g. by inspecting the connection string). If
     false and the topology is a sharded cluster, the test runner MUST ensure
     that this MongoClient connects to only a single mongos host (e.g. by
-    modifying the connection string). This option has no effect for non-sharded
-    topologies.
+    modifying the connection string).
+
+    If this option is not specified and the topology is a sharded cluster, the
+    test runner MUST NOT enforce any limit on the number of mongos hosts in the
+    connection string and any tests using this client SHOULD NOT depend on a
+    particular number of mongos hosts.
+
+    This option has no effect for non-sharded topologies.
 
   .. _entity_client_observeEvents:
 
@@ -518,9 +525,9 @@ The structure of this object is as follows:
 collectionData
 ~~~~~~~~~~~~~~
 
-List of documents that should correspond to the contents of a collection. This
-structure is used by both `initialData`_ and `test.outcome <test_outcome_>`_,
-which insert and read documents, respectively.
+List of documents corresponding to the contents of a collection. This structure
+is used by both `initialData`_ and `test.outcome <test_outcome_>`_, which insert
+and read documents, respectively.
 
 The structure of this object is as follows:
 
@@ -2431,6 +2438,8 @@ Note: this will be cleared when publishing version 1.0 of the spec
 2020-09-22
 
 * Test runners must raise errors for unsupported operations and arguments
+
+* Clarify behavior when useMultipleMongoses is unspecified
 
 2020-09-21:
 
