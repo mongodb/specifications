@@ -1,0 +1,102 @@
+version: 1
+style: integration
+description: threads blocked by maxConnecting check out returned connections
+runOn:
+  # required for blockConnection in fail point
+  minServerVersion: "4.4.0"
+failPoint:
+  configureFailPoint: failCommand
+  mode: { times: 3 }
+  data:
+    failCommands: ["isMaster"]
+    closeConnection: false
+    blockConnection: true
+    blockTimeMS: 750
+poolOptions:
+  maxPoolSize: 10
+  waitQueueTimeoutMS: 5000
+operations:
+  # start a thread, check out a connection, and
+  # hold it until the other threads are blocked
+  # on maxConnecting.
+  - name: start
+    target: thread1
+  - name: checkOut
+    thread: thread1
+    label: conn0
+  # Start 2 new threads that wait for thread1 to check
+  # out its connection before attempting to check out their own. 
+  # This fills maxConnecting for the next 750ms.
+  - name: start
+    target: thread2
+  - name: waitForEvent
+    thread: thread2
+    count: 1
+  - name: checkOut
+    thread: thread2
+  - name: start
+    target: thread3
+  - name: waitForEvent
+    thread: thread3
+    count: 1
+  - name: checkOut
+    thread: thread3
+  # start a new thread that waits for the previous two threads to
+  # start creating their connections, then try to check out a
+  # new Connection. This thread should be blocked on maxConnecting.
+  - name: start
+    target: thread4
+  - name: waitForEvent
+    thread: thread4
+    event: ConnectionCreated
+    count: 3
+  - name: checkOut
+    thread: thread4
+  # In the thread that is holding the original Connection, wait
+  # for thread2 and thread3 to start creating their Connection,
+  # wait for a little longer, then check back in the Connection
+  # its been holding. thread4 should now check this Connection
+  # out without attempting to create a new Connection.
+  - name: waitForEvent
+    thread: thread1
+    event: ConnectionCreated
+    count: 3
+  - name: wait
+    thread: thread1
+    ms: 100
+  - name: checkIn
+    thread: thread1
+    connection: conn0
+  # wait until all threads have finished checking out.
+  - name: waitForEvent
+    event: ConnectionCheckedOut
+    count: 4
+events:
+  # thread1 checking out a Connection and holding it
+  - type: ConnectionCreated
+    address: 42
+    connectionId: 1
+  - type: ConnectionCheckedOut
+    address: 42
+  # threads 2 and 3 creating their Connections
+  - type: ConnectionCreated
+    address: 42
+  - type: ConnectionCreated
+    address: 42
+  # thread1 checking its Connection back in
+  - type: ConnectionCheckedIn
+    connectionId: 1
+    address: 42
+  # thread4 checking out the returned Connection
+  - type: ConnectionCheckedOut
+    connectionId: 1
+    address: 42
+  # threads 2 and 3 finishing Connection establishment
+  - type: ConnectionCheckedOut
+    address: 42
+  - type: ConnectionCheckedOut
+    address: 42
+ignore:
+  - ConnectionClosed
+  - ConnectionReady
+  - ConnectionPoolCreated
