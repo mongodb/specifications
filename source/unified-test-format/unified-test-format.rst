@@ -148,7 +148,7 @@ include, but are not limited to:
 Backwards-compatible changes SHALL warrant a new minor version. These changes
 include, but are not limited to:
 
-- Additive changes, such as a introducing a new `Special Test Operation`_ or
+- Additive changes, such as a introducing a new `Special Test Operations`_ or
   type of supported entity or event
 - Changing an existing field from required to optional
 - Introducing a new, optional field in the test format
