@@ -422,6 +422,8 @@ thread or async I/O.
     decrement total connection count
     if original state is "available":
       decrement available connection count
+    else if original state is "pending":
+      decrement pending connection count
     emit ConnectionClosedEvent
 
     # The following can happen at a later time (i.e. in background
@@ -457,6 +459,7 @@ I/O.
 
 .. code::
 
+   wait until pendingConnectionCount < maxConnecting
    create connection
    establish connection
    mark connection as available
@@ -473,13 +476,12 @@ returned. If the thread times out in the WaitQueue, an error is thrown.
 
 Once reaching the front of the WaitQueue, a thread begins iterating over the
 list of available `Connections <#connection>`_, searching for a non-perished one
-to be returned. If, in the process of iterating, a perished `Connection
-<#connection>`_ is encountered, such a `Connection <#connection>`_ MUST be
-closed (as described in `Closing a Connection
-<#closing-a-connection-internal-implementation>`_) and the iteration of
-available `Connections <#connection>`_ MUST continue until either a non-perished
-available `Connection <#connection>`_ is found or the list of available
-`Connections <#connection>`_ is exhausted.
+to be returned. If a perished `Connection <#connection>`_ is encountered, such a
+`Connection <#connection>`_ MUST be closed (as described in `Closing a
+Connection <#closing-a-connection-internal-implementation>`_) and the iteration
+of available `Connections <#connection>`_ MUST continue until either a
+non-perished available `Connection <#connection>`_ is found or the list of
+available `Connections <#connection>`_ is exhausted.
 
 If the list is exhausted, the total number of `Connections <#connection>`_ is
 less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
@@ -499,10 +501,7 @@ least minPoolSize total `Connections <#connection>`_. If the pool does not
 implement a background thread, the checkOut method is responsible for
 `populating the pool
 <#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
-`Connections <#connection>`_ such that this requirement is met; however, if this
-requirement is not met but pendingConnectionCount == maxConnecting, the thread
-performing checkOut is not responsible for ensuring minPoolSize and MUST
-continue the checkOut process without populating the pool.
+`Connections <#connection>`_ such that this requirement is met.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is established. In
 addition, the Pool MUST NOT block other threads from checking out
@@ -527,20 +526,14 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             if connection is perished:
               close connection
               connection = Null
-          continue
         else if totalConnectionCount < maxPoolSize:
           if numConnecting < maxConnecting:
             connection = create connection
           else:
-            # this waiting MUST NOT prevent other threads from checking connections
-            # back in.
+            # this waiting MUST NOT prevent other threads from checking Connections
+            # back in to the pool.
             wait until numConnecting < maxConnecting or a connection is available
             continue
-        # If there is no background thread, the pool MUST ensure that
-        # there are at least minPoolSize total connections.
-        # This MUST be done in a non-blocking manner
-        while totalConnectionCount < minPoolSize and numConnecting < maxConnecting:
-          populate the pool with a connection
           
     except pool is closed:
       emit ConnectionCheckOutFailedEvent(reason="poolClosed")
@@ -551,6 +544,12 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     finally:
       # This must be done in all drivers
       leave wait queue
+
+    # If there is no background thread, the pool MUST ensure that
+    # there are at least minPoolSize total connections.
+    # This MUST be done in a non-blocking manner
+    while totalConnectionCount < minPoolSize and numConnecting < maxConnecting:
+      populate the pool with a connection
 
     # If the Connection has not been established yet (TCP, TLS,
     # handshake, compression, and auth), it must be established
