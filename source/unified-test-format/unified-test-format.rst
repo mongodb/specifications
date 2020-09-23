@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-22
+:Last Modified: 2020-09-23
 
 .. contents::
 
@@ -209,15 +209,22 @@ Test runners MUST support the following types of entities:
 - GridFS Bucket. See `entity_bucket`_ and `bucket`_.
 - GridFS Stream. See `entity_stream`_.
 - ChangeStream. See `changeStream`_.
-- Values of the following BSON types and/or equivalent language types:
+- All known BSON types and/or equivalent language types for the target driver.
+  For the present version of the spec, the following BSON types are known:
+  0x01-0x13, 0x7F, 0xFF.
 
-  - 0x01 - 0x13
-  - 0xFF
-  - 0x7F
+  Tests SHOULD NOT utilize deprecated types (e.g. 0x0E: Symbol), since they may
+  not be supported by all drivers and could yield runtime errors (e.g. while
+  loading a test file with an Extended JSON parser).
 
 This is an exhaustive list of supported types for the entity map. Test runners
 MUST raise an error if an attempt is made to store an unsupported type in the
 entity map.
+
+Adding new entity types (including known BSON types) to this list will require
+a minor version bump to the spec and schema version. Removing entity types will
+require a major version bump. See `Impact of Spec Changes on Schema Version`_
+for more information.
 
 
 Test Format
@@ -2445,6 +2452,8 @@ Change Log
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-09-23:
+
+* Clarify BSON type support and advise against using deprecated types
 
 * Clarify error handling for $$sessionLsid
 
