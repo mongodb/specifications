@@ -1808,7 +1808,7 @@ Syntax::
     { $$unsetOrMatches: <anything> }
 
 This operator can be used anywhere a matched value is expected (including
-`expectResult <operation_expectResult_>`_). The test runner MUST assert that
+`expectResult <operation_expectResult_>`_). The test runner MUST assert that the
 actual value either does not exist or matches the expected value. Matching the
 expected value should use the standard rules in `Evaluating Matches`_, which
 means that it may contain special operators.
@@ -1840,12 +1840,15 @@ $$sessionLsid
 
 Syntax::
 
-    { $$sessionLsid: <string> }
+    { $$sessionLsid: <sessionEntityName> }
 
-This operation is used for matching any value with the logical session ID of a
-`session entity <entity_session_>`_. The value will refer to a unique name of a
-session entity. The YAML file SHOULD use an `alias node`_ for a session entity's
-``id`` field (e.g. ``session: *session0``).
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_).  If the
+`session entity <entity_session_>`_session entity is defined in the current
+test's `Entity Map`_, the test runner MUST assert that the actual value equals
+its logical session ID; otherwise, the test runner MUST raise an error for an
+undefined or mistyped entity. The YAML file SHOULD use an `alias node`_ for a
+session entity's ``id`` field (e.g. ``session: *session0``).
 
 An example of this operator follows::
 
@@ -1942,6 +1945,12 @@ If the test might execute a ``distinct`` command within a sharded transaction,
 for each target collection the test runner SHOULD execute a non-transactional
 ``distinct`` command on each mongos server using the internal MongoClient. See
 `StaleDbVersion Errors on Sharded Clusters`_ for more information.
+
+If the test might execute a ``configureFailPoint`` command, for each target
+client the test runner MAY specify a reduced value for ``heartbeatFrequencyMS``
+(and ``minHeartbeatFrequencyMS`` if possible) to speed up SDAM recovery time and
+server selection after a failure; however, test runners MUST NOT do so for any
+client that specifies ``heartbeatFrequencyMS`` in its ``uriOptions``. 
 
 If `test.expectEvents <test_expectEvents_>`_ is specified, for each client
 entity the test runner MUST enable all event listeners necessary to collect the
@@ -2435,7 +2444,14 @@ Change Log
 
 Note: this will be cleared when publishing version 1.0 of the spec
 
-2020-09-22
+2020-09-23:
+
+* Clarify error handling for $$sessionLsid
+
+* Suggest lowering heartbeatFrequencyMS and minHeartbeatFrquencyMS for clients
+  using fail points
+
+2020-09-22:
 
 * Test runners must raise errors for unsupported operations and arguments
 
