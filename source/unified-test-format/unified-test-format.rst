@@ -305,8 +305,12 @@ runOnRequirement
 A combination of server version and/or topology requirements for running the
 test(s).
 
-Server versions SHALL be compared numerically and do not follow the comparison
-rules discussed in `Schema Version`_.
+Server version strings consist of three components: major, minor, and patch.
+Each component is a non-negative integer and components are delimited by a dot
+character (i.e. "."). Version strings MUST include at least a major component.
+If a component is omitted, its value is zero. Each component of a version
+string SHALL be compared numerically. For example, "4.0.10" is greater than
+"4.0.9" and "3.6" and less than "4.2.0".
 
 The structure of this object is as follows:
 
@@ -2452,6 +2456,8 @@ Change Log
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-09-23:
+
+* Clarify server version string comparison rules
 
 * Clarify BSON type support and advise against using deprecated types
 
