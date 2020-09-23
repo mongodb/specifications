@@ -341,10 +341,10 @@ to parsing JSON numbers:
 Special rules for parsing ``$uuid`` fields
 ..........................................
 
-As per the `UUID specification`_, Binary subtypes 3 and 4 are used to
-represent UUIDs in BSON. Normally, UUIDs are represented in extended JSON
-as defined in the `Conversion table`_, e.g. the following document written
-with the MongoDB Python Driver::
+As per the `UUID specification`_, Binary subtype 3 or 4 are used to
+represent UUIDs in BSON. Consequently, UUIDs are handled as per the
+convention described for the ``Binary`` type in the `Conversion table`_,
+e.g. the following document written with the MongoDB Python Driver::
 
   {"Binary": uuid.UUID("c8edabc3-f738-4ca3-b68d-ab92a91478a3")}
 
@@ -352,13 +352,17 @@ is transformed into the following (newlines and spaces added for readability)::
 
   {"Binary": {
       "$binary": {
-          "base64": "o0w498Or7cijeBSpkquNtg==",
-          "subType": "03"}
+          "base64": "yO2rw/c4TKO2jauSqRR4ow==",
+          "subType": "04"}
       }
   }
 
+.. note:: The above described type conversion assumes that
+   UUID representation is set to ``STANDARD``. See the `UUID specification`_
+   for more information about UUID representations.
+
 While this transformation preserves BSON subtype information (since
-UUIDs can be represented as BSON subtype 3 *and* 4), base64-encoding
+UUIDs can be represented as BSON subtype 3 *or* 4), base64-encoding
 is not the standard way of representing UUIDs and using it makes comparing
 these values against textual representations coming from platform libraries
 difficult. Consequently, we also allow UUIDs to be represented in extended
