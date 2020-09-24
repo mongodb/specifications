@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-23
+:Last Modified: 2020-09-24
 
 .. contents::
 
@@ -31,6 +31,10 @@ META
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`__.
+
+This document tends to use "SHOULD" more frequently than other specifications,
+but mainly in the context of providing guidance on writing test files. This is
+discussed in more detail in `Design Rationale`_.
 
 
 Goals
@@ -276,7 +280,7 @@ The top-level fields of a test file are as follows:
 .. _createEntities:
 
 - ``createEntities``: Optional array of `entity`_ objects. List of entities
-  (e.g. client, collection, session objects) that should be created before each
+  (e.g. client, collection, session objects) that SHALL be created before each
   test case is executed.
 
   Test files SHOULD define entities in dependency order, such that all
@@ -286,7 +290,7 @@ The top-level fields of a test file are as follows:
 .. _initialData:
 
 - ``initialData``: Optional array of one or more `collectionData`_ objects. Data
-  that should exist in collections before each test case is executed.
+  that will exist in collections before each test case is executed.
 
   Before each test and for each `collectionData`_, the test runner MUST drop the
   collection and insert the specified documents (if any) using a "majority"
@@ -305,30 +309,27 @@ runOnRequirement
 A combination of server version and/or topology requirements for running the
 test(s).
 
-Server version strings consist of three components: major, minor, and patch.
-Each component is a non-negative integer and components are delimited by a dot
-character (i.e. "."). Version strings MUST include at least a major component.
-If a component is omitted, its value is zero. Each component of a version
-string SHALL be compared numerically. For example, "4.0.10" is greater than
-"4.0.9" and "3.6" and less than "4.2.0".
+The format of server version strings is defined in `Version String`_. When
+comparing server version strings, each component SHALL be compared numerically.
+For example, "4.0.10" is greater than "4.0.9" and "3.6" and less than "4.2.0".
 
 The structure of this object is as follows:
 
 - ``minServerVersion``: Optional string. The minimum server version (inclusive)
-  required to successfully run the tests. If this field is omitted, it should be
-  assumed that there is no lower bound on the required server version. The
-  format of this string is defined in `Version String`_.
+  required to successfully run the tests. If this field is omitted, there is no
+  lower bound on the required server version. The format of this string is
+  defined in `Version String`_.
 
 - ``maxServerVersion``: Optional string. The maximum server version (inclusive)
-  against which the tests can be run successfully. If this field is omitted, it
-  should be assumed that there is no upper bound on the required server version.
-  The format of this string is defined in `Version String`_.
+  against which the tests can be run successfully. If this field is omitted,
+  there is no upper bound on the required server version. The format of this
+  string is defined in `Version String`_.
 
 - ``topologies``: Optional array of strings. One or more of server topologies
   against which the tests can be run successfully. Valid topologies are
   "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
-  cluster backed by replica sets). If this field is omitted, it should be
-  assumed that there is no topology requirement for the test.
+  cluster backed by replica sets). If this field is omitted, there is no
+  topology requirement for the test.
 
   When matching a "sharded-replicaset" topology, test runners MUST ensure that
   all shards are backed by a replica set. The process for doing so is described
@@ -570,7 +571,7 @@ The structure of this object is as follows:
   this array are met, the test runner MUST skip this test.
 
   These requirements SHOULD be more restrictive than those specified in the
-  top-level `runOnRequirements`_ (if any). They SHOULD NOT be more permissive.
+  top-level `runOnRequirements`_ (if any) and SHOULD NOT be more permissive.
   This is advised because both sets of requirements MUST be satisified in order
   for a test to be executed and more permissive requirements at the test-level
   could be taken out of context on their own.
@@ -592,7 +593,7 @@ The structure of this object is as follows:
   observed in a particular order.
 
   If a driver only supports configuring event listeners globally (for all
-  clients), the test runner SHOULD associate each observed event with a client in
+  clients), the test runner SHOULD associate each observed event with a client
   in order to perform these assertions.
 
   Test files SHOULD NOT expect events from multiple specs (e.g. command
@@ -603,7 +604,7 @@ The structure of this object is as follows:
 .. _test_outcome:
 
 - ``outcome``: Optional array of one or more `collectionData`_ objects. Data
-  that should exist in collections after each test case is executed.
+  that is expected to exist in collections after each test case is executed.
 
   The list of documents herein SHOULD be sorted ascendingly by the ``_id`` field
   to allow for deterministic comparisons. The procedure for asserting collection
@@ -625,7 +626,7 @@ The structure of this object is as follows:
 .. _operation_object:
 
 - ``object``: Required string. Name of the object on which to perform the
-  operation. This should correspond to either an `entity`_ name (for
+  operation. This SHOULD correspond to either an `entity`_ name (for
   `Entity Test Operations`_) or "testRunner" (for `Special Test Operations`_).
   If the object is an entity, The YAML file SHOULD use an `alias node`_ for its
   ``id`` field (e.g. ``object: *collection0``).
@@ -902,8 +903,8 @@ Version String
 --------------
 
 Version strings, which are used for `schemaVersion`_ and `runOnRequirement`_,
-MUST conform to one of the following formats, where each component is an
-integer:
+MUST conform to one of the following formats, where each component is a
+non-negative integer:
 
 - ``<major>.<minor>.<patch>``
 - ``<major>.<minor>`` (``<patch>`` is assumed to be zero)
@@ -1099,7 +1100,7 @@ While operations typically raise an error *or* return a result, the
 ``bulkWrite`` operation is unique in that it may report both via the
 ``writeResult`` property of a BulkWriteException. In this case, the intermediary
 write result may be matched with `expectedError_expectResult`_. Because
-``writeResult`` is optional for drivers to implement, such assertions should
+``writeResult`` is optional for drivers to implement, such assertions SHOULD
 utilize the `$$unsetOrMatches`_ operator.
 
 Additionally, BulkWriteException is unique in that it aggregates one or more
@@ -1195,8 +1196,8 @@ parameter is a stream as defined in the `GridFS <../gridfs/gridfs-spec.rst>`__
 spec and not easily expressed in YAML/JSON. This parameter is expressed as an
 entity name, which the test runner MUST resolve to a `stream <entity_stream_>`_
 entity *before* passing it as a parameter to the method. The YAML file SHOULD
-use an `alias node`_ for a stream entity's ``id`` field
-(e.g. ``stream: *stream0``).
+use an `alias node`_ for a stream entity's ``id`` field (e.g.
+``stream: *stream0``).
 
 
 changeStream
@@ -1752,7 +1753,7 @@ An example of this operator follows::
       collection: { $$type: "string" }
 
 When the actual value is an array, test runners MUST NOT examine types of the
-array's elements. Only the type of actual field should be checked. This is
+array's elements. Only the type of actual field SHALL be checked. This is
 admittedly inconsistent with the behavior of the
 `$type <https://docs.mongodb.com/manual/reference/operator/query/type/>`__
 query operator, but there is presently no need for this behavior in tests.
@@ -1821,7 +1822,7 @@ Syntax::
 This operator can be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_). The test runner MUST assert that the
 actual value either does not exist or matches the expected value. Matching the
-expected value should use the standard rules in `Evaluating Matches`_, which
+expected value MUST use the standard rules in `Evaluating Matches`_, which
 means that it may contain special operators.
 
 This operator is primarily used to assert driver-optional fields from the CRUD
@@ -1873,7 +1874,7 @@ Test Runner Implementation
 
 The sections below describe instructions for instantiating the test runner,
 loading each test file, and executing each test within a test file. Test runners
-SHOULD NOT share state created by processing a test file with the processing of
+MUST NOT share state created by processing a test file with the processing of
 subsequent test files, and likewise for tests within a test file.
 
 
@@ -1924,9 +1925,9 @@ Executing a Test
 ~~~~~~~~~~~~~~~~
 
 The instructions in this section apply for each `test`_ occuring in a test file
-loaded by the test runner. After processing a test, test runners SHOULD reset
+loaded by the test runner. After processing a test, test runners MUST reset
 any internal state that resulted from doing so. For example, the `Entity Map`_
-created for one test SHOULD NOT be shared with another.
+created for one test MUST NOT be shared with another.
 
 If at any point while executing this test an unexpected error is encountered or
 an assertion fails, the test runner MUST consider this test to have failed and
@@ -2160,8 +2161,8 @@ points available for driver testing, but some fail points are documented in
 Configuring Fail Points
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``configureFailPoint`` command should be executed on the ``admin`` database
-and has the following structure::
+The ``configureFailPoint`` command is executed on the ``admin`` database and has
+the following structure::
 
     db.adminCommand({
         configureFailPoint: <string>,
@@ -2276,19 +2277,29 @@ This specification was primarily derived from the test formats used by the
 `Transactions <../transactions/transactions.rst>`__ and
 `CRUD <../crud/crud.rst>`__ specs, which have served models or other specs.
 
+This specification commonly uses "SHOULD" when providing guidance on writing
+test files. While this may appear contradictory to the driver mantra preferring
+"MUST", it is intentional. Some of this guidance addresses style (e.g. adding
+comments, using YAML anchors) and cannot be enforced with a JSON schema. Other
+guidance needs to be purposefully ignored in order to test the test runner
+implementation (e.g. defining entities out of order to trigger runtime errors).
+The specification does prefer "MUST" in other contexts, such as discussing parts
+of the test file format that *are* enforceable by the JSON schema or the test
+runner implementation.
+
 
 Breaking Changes
 ================
 
 This section is reserved for future use. Any breaking changes to the test format
-should be described here in detail for historical reference, in addition to any
+SHOULD be described here in detail for historical reference, in addition to any
 shorter description that may be added to the `Change Log`_.
 
 
 Related Issues
 ==============
 
-Note: this section should be removed before publishing version 1.0 of the spec.
+Note: this section will be removed before publishing version 1.0 of the spec.
 
 The following SPEC tickets are associated with
 `DRIVERS-709 <https://jira.mongodb.org/browse/DRIVERS-709>`__. This section will
@@ -2454,6 +2465,17 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-24:
+
+* Explain in "Design Rationale" why "SHOULD" is used more commonly in this
+  document.
+
+* Simplify paragraph about comparing server versions and refer to Version String
+  section for format info.
+
+* Change "SHOULD" to "MUST" to prohibit test runners from sharing state between
+  test files and test cases (e.g. entity map must be reset between tests).
 
 2020-09-23:
 
