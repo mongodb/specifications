@@ -642,16 +642,16 @@ Creating an Unmanaged Connection
 --------------------------------
 
 A Pool MUST have a method for creating an `Unmanaged Connection
-<#unmanaged-connection>`_. This method MUST connect the underlying TCP socket of
-the returned `Connection <#connection>`_, but it MUST NOT perform any steps of
-the authentication process or the MongoDB handshake as part of that. The
-returned `Connection <#connection>`_ MUST be marked as "unmanaged" and MUST NOT
-be allowed to be checked back into the Pool.
+<#unmanaged-connection>`_. The underlying TCP socket of the returned `Connection
+<#connection>`_ MUST be connected, but this method MUST NOT perform any steps of
+the authentication process or the MongoDB handshake as part of setting up the
+TCP connection. The returned `Connection <#connection>`_ MUST be marked as "unmanaged" and
+MUST NOT be allowed to be checked back into the Pool.
 
 This method MUST NOT emit any monitoring events under any circumstances.
 
 This method MUST wait until pendingConnectionCount < maxConnecting before
-proceeding with creating an `Unmanaged Connection <#unmanaged-connection>`_.
+proceeding with creating the `Unmanaged Connection <#unmanaged-connection>`_.
 
 This method is used to create the `Connections <#connection>`_ used by SDAM
 monitoring threads.
@@ -959,6 +959,19 @@ a `Connection <#connection>`_ is marked as "closed", it will not be checked out
 again, so ensuring the socket is torn down does not need to happen
 immediately and can happen at a later time, either via async I/O or a
 background thread. 
+
+What does the pool need to be able to create "Unmanaged Connections"?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to ensure that all TCP connections opened against the endpoint,
+including those that are created for the purposes of SDAM, are restricted and
+moderated equally (e.g. by maxConnecting), all TCP connection creation needs to
+go through the Pool. It is undesirable to use regular pooled connections for
+SDAM though, since the TCP connections used for monitoring do not need to
+authenticate, emit events, or compete for resources with application
+threads. Thus, a new `Connection <#connection>`_ type was needed that does not
+do those things but is still bound by the establishment restrictions as pooled
+`Connections <#connection>`_.
 
 Backwards Compatibility
 =======================
