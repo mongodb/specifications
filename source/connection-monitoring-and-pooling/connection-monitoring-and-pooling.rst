@@ -427,7 +427,6 @@ handshake, handling OP_COMPRESSED, and performing authentication.
       handle OP_COMPRESSED
       perform connection authentication
       emit ConnectionReadyEvent
-      decrement pending connection count
       return connection
     except error:
       close connection
@@ -597,6 +596,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     if connection state is "pending":
       try:
         establish connection
+        decrement pending connection count
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="error")
         decrement total connection count
