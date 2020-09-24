@@ -988,19 +988,10 @@ Reference Implementations
 Future Development
 ==================
 
-SDAM
-~~~~
-
-This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that “A monitor SHOULD NOT use the client's regular Connection pool”. Some possible solutions for this include:
-
--  Having each Endpoint representation in the driver create and manage a separate dedicated `Connection <#connection>`_ for monitoring purposes
--  Having each Endpoint representation in the driver maintain a separate pool of maxPoolSize 1 for monitoring purposes.
--  Having each Pool maintain a dedicated `Connection <#connection>`_ for monitoring purposes, with an API to expose that Connection.
-
 Advanced Pooling Behaviors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This spec does not address any advanced pooling behaviors like predictive pooling, aggressive `Connection <#connection>`_ creation, or handling high request volume. Future work may address this.
+This spec does not address all advanced pooling behaviors like predictive pooling or aggressive `Connection <#connection>`_ creation. Future work may address this.
 
 Add support for OP_MSG exhaustAllowed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
