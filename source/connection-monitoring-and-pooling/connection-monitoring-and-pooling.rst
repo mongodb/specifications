@@ -566,12 +566,12 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
               close connection
               connection = Null
         else if totalConnectionCount < maxPoolSize:
-          if numConnecting < maxConnecting:
+          if pendingConnectionCount < maxConnecting:
             connection = create connection
           else:
             # this waiting MUST NOT prevent other threads from checking Connections
             # back in to the pool.
-            wait until numConnecting < maxConnecting or a connection is available
+            wait until pendingConnectionCount < maxConnecting or a connection is available
             continue
           
     except pool is closed:
@@ -587,7 +587,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     # If there is no background thread, the pool MUST ensure that
     # there are at least minPoolSize total connections.
     # This MUST be done in a non-blocking manner
-    while totalConnectionCount < minPoolSize and numConnecting < maxConnecting:
+    while totalConnectionCount < minPoolSize and pendingConnectionCount < maxConnecting:
       populate the pool with a connection
 
     # If the Connection has not been established yet (TCP, TLS,
@@ -600,6 +600,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="error")
         decrement total connection count
+        decrement pending connection count
         throw
     else:
         decrement available connection count
