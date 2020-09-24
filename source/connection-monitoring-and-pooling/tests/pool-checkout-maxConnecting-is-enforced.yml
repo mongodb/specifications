@@ -2,8 +2,9 @@ version: 1
 style: integration
 description: maxConnecting is enforced
 runOn:
-  # required for blockConnection in fail point
-  minServerVersion: "4.4.0"
+  -
+    # required for blockConnection in fail point
+    minServerVersion: "4.4.0"
 failPoint:
   configureFailPoint: failCommand
   mode: { times: 3 }
@@ -43,7 +44,7 @@ operations:
     thread: thread3
   # wait until all Connections have been created.
   - name: waitForEvent
-    event: ConnectionReadyEvent
+    event: ConnectionReady
     count: 3
 events:
   # thread1 creates its connection
@@ -67,6 +68,7 @@ events:
   - type: ConnectionReady
     address: 42
 ignore:
+  - ConnectionCheckOutStarted
   - ConnectionCheckedIn
   - ConnectionCheckedOut
   - ConnectionClosed
