@@ -526,11 +526,10 @@ maxConnecting, then the thread MUST wait until either both of those conditions
 are met or until a `Connection <#connection>`_ becomes available, re-entering
 the checkOut loop once it finishes waiting. This waiting MUST NOT block other
 threads from checking in `Connections <#connection>`_ to the pool. Threads that
-are waiting on the maxConnecting requirement to be met MUST receive the newly
-available `Connections <#connection>`_ in order that they entered the
-WaitQueue. For drivers that implement the WaitQueue via a fair semaphore, a
-second semaphore may be required to implement this waiting. Waiting on this
-semaphore SHOULD be limited by the WaitQueueTimeout, if the driver supports one.
+are waiting MUST be notified in order that they entered the WaitQueue. For
+drivers that implement the WaitQueue via a fair semaphore, a second semaphore
+may be required to implement this. Waiting on this second semaphore SHOULD be
+limited by the WaitQueueTimeout, if the driver supports one.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
@@ -586,7 +585,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     # If there is no background thread, the pool MUST ensure that
     # there are at least minPoolSize total connections.
     # This MUST be done in a non-blocking manner
-    while totalConnectionCount < minPoolSize and pendingConnectionCount < maxConnecting:
+    while totalConnectionCount < minPoolSize:
       populate the pool with a connection
 
     # If the Connection has not been established yet (TCP, TLS,
