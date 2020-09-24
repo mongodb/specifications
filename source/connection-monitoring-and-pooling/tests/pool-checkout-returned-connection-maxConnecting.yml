@@ -26,7 +26,7 @@ operations:
     thread: thread1
     label: conn0
   # Start 2 new threads that wait for thread1 to check
-  # out its connection before attempting to check out their own. 
+  # out its connection before attempting to check out their own.
   # This fills maxConnecting for the next 750ms.
   - name: start
     target: thread2

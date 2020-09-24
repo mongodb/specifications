@@ -528,7 +528,7 @@ are met or until a `Connection <#connection>`_ becomes available, re-entering
 the checkOut loop once it finishes waiting. This waiting MUST NOT block other
 threads from checking in `Connections <#connection>`_ to the pool. Threads that
 are waiting on the maxConnecting requirement to be met MUST receive the newly
-available `Connections <#connection>`_ in order that they entered the WaitQueue. 
+available `Connections <#connection>`_ in order that they entered the WaitQueue.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
