@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: June 11, 2019
-:Version: 1.2.0
+:Last Modified: September 24, 2020
+:Version: 1.3.0
 
 .. contents::
 
@@ -1010,6 +1010,8 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
+:2020-09-24: Introduce maxConnecting requirement, Unmanaged Connections
+
 :2020-09-03: Clarify Connection states and definition. Require the use of a
              background thread and/or async I/O. Add tests to ensure
              ConnectionReadyEvents are fired after ConnectionCreatedEvents.
