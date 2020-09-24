@@ -2,8 +2,9 @@ version: 1
 style: integration
 description: threads blocked by maxConnecting check out returned connections
 runOn:
-  # required for blockConnection in fail point
-  minServerVersion: "4.4.0"
+  -
+    # required for blockConnection in fail point
+    minServerVersion: "4.4.0"
 failPoint:
   configureFailPoint: failCommand
   mode: { times: 3 }
@@ -31,6 +32,7 @@ operations:
     target: thread2
   - name: waitForEvent
     thread: thread2
+    event: ConnectionCheckedOut
     count: 1
   - name: checkOut
     thread: thread2
@@ -38,6 +40,7 @@ operations:
     target: thread3
   - name: waitForEvent
     thread: thread3
+    event: ConnectionCheckedOut
     count: 1
   - name: checkOut
     thread: thread3
@@ -100,3 +103,4 @@ ignore:
   - ConnectionClosed
   - ConnectionReady
   - ConnectionPoolCreated
+  - ConnectionCheckOutStarted
