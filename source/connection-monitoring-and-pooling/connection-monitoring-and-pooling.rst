@@ -406,8 +406,8 @@ performs no I/O.
 .. code::
 
     connection = new Connection()
-    increment total connection count
-    increment pending connection count
+    increment totalConnectionCount
+    increment pendingConnectionCount
     set connection state to "pending"
     emit ConnectionCreatedEvent
     return connection
@@ -453,12 +453,12 @@ ConnectionCounts in any way and MUST NOT emit a ConnectionClosedEvent.
     set connection state to "closed"
 
     if original state is "available":
-      decrement available connection count
+      decrement availableConnectionCount
     else if original state is "pending":
-      decrement pending connection count
+      decrement pendingConnectionCount
 
     if original state != "unmanaged":
-      decrement total connection count
+      decrement totalConnectionCount
       emit ConnectionClosedEvent
 
     # The following can happen at a later time (i.e. in background
@@ -475,7 +475,7 @@ available `Connections <#connection>`_.
 
 .. code::
 
-   increment available connection count
+   increment availableConnectionCount
    set connection state to "available"
    add connection to availableConnections
 
@@ -596,14 +596,14 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     if connection state is "pending":
       try:
         establish connection
-        decrement pending connection count
+        decrement pendingConnectionCount
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="error")
-        decrement total connection count
-        decrement pending connection count
+        decrement totalConnectionCount
+        decrement pendingConnectionCount
         throw
     else:
-        decrement available connection count
+        decrement availableConnectionCount
     set connection state to "in use"
     emit ConnectionCheckedOutEvent
     return connection
@@ -660,14 +660,14 @@ monitoring threads.
 
    wait until pendingConnectionCount < maxConnecting
    connection = new Connection()
-   increment pending connection count
+   increment pendingConnectionCount
    try:
      connect connection via TCP / TLS
      set connection state to "unmanaged"
-     decrement pending connection count
+     decrement pendingConnectionCount
      return connection
    except error:
-     decrement pending connection count
+     decrement pendingConnectionCount
      throw error
 
 
