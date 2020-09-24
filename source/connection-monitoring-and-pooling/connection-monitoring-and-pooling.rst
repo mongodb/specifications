@@ -547,7 +547,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
 "in use", and the pool's availableConnectionCount MUST be decremented.
 
 maxConnecting Implementation Note
-*********************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For drivers that implement the WaitQueue via a fair semaphore, a second
 semaphore may be required to implement the waiting a thread needs to do if
