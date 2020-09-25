@@ -652,7 +652,7 @@ The structure of this object is as follows:
 
 - ``expectResult``: Optional mixed type. A value corresponding to the expected
   result of the operation. This field may be a scalar value, a single document,
-  or an array of documents in the case of a multi-document read.  Test runners
+  or an array of documents in the case of a multi-document read. Test runners
   MUST follow the rules in `Evaluating Matches`_ when processing this assertion.
 
   This field is mutually exclusive with `expectError <operation_expectError_>`_.
@@ -662,7 +662,7 @@ The structure of this object is as follows:
 - ``saveResultAsEntity``: Optional string. If specified, the actual result
   returned by the operation (if any) will be saved with this name in the
   `Entity Map`_.  The test runner MUST raise an error if the name is already in
-  use or if the result is not a `Supported Entity Type`_.
+  use or if the result does not comply with `Supported Entity Types`_.
 
   This field is mutually exclusive with `expectError <operation_expectError_>`_.
 
@@ -1600,15 +1600,24 @@ following pseudo-code::
 
     function match (expected, actual):
       if expected is a document:
-        if first key of expected starts with "$$":
-          assert that the special operator (identified by key) matches
+        // handle special operators (e.g. $$type)
+        if first and only key of expected starts with "$$":
+          execute any assertion(s) for the special operator
           return
 
         assert that actual is a document
 
         for every key/value in expected:
+          // handle key-based operators (e.g. $$exists, $$unsetOrMatches)
+          if value is a document and its first and only key starts with "$$":
+            execute any assertion(s) for the special operator
+            continue to the next iteration unless actual value must be matched
+
           assert that actual[key] exists
           assert that actual[key] matches value
+
+        if expected is not the root document:
+          assert that actual does not contain additional keys
 
         return
 
@@ -1622,7 +1631,7 @@ following pseudo-code::
         return
 
       // expected is neither a document nor array
-      assert that actual and expected are the same type
+      assert that actual and expected are the same type, noting flexible numerics
       assert that actual and expected are equal
 
 The rules for comparing documents and arrays are discussed in more detail in
@@ -1641,44 +1650,77 @@ numerically equivalent. For example, an expected value of ``1`` would match an
 actual value of ``1.0`` (e.g. ``ok`` field in a server response) but would not
 match ``1.5``.
 
-When comparing types that may contain documents (e.g. CodeWScope), test runners
-MUST follow standard document matching rules when comparing those properties.
+When comparing types that contain documents as internal properties (e.g.
+CodeWScope), the rules in `Evaluating Matches`_ do not apply and the documents
+MUST match exactly; however, test runners MUST permit variation in document key
+order or otherwise normalize the documents before comparison.
 
 
-Extra Fields in Actual Documents
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Allowing Extra Fields in Root-level Documents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When matching expected and actual *documents*, test runners MUST permit the
-actual documents to contain additional fields not present in the expected
-document. For example, the following documents match::
+When matching root-level documents, test runners MUST permit the actual document
+to contain additional fields not present in the expected document. Examples of
+root-level documents include, but are not limited to:
+
+- ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
+- ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
+- `expectResult`_ for a `collection`_ ``findOneAndUpdate`` operation
+- `expectResult`_ for a `changeStream`_ `iterateUntilDocumentOrError`_ operation
+- each array element in `expectResult`_ for a `collection`_ ``find`` or
+  ``aggregate`` operation
+
+For example, the following documents match::
 
     expected: { x: 1 }
     actual: { x: 1, y: 1 }
 
-The inverse is not true. For example, the following documents would not match::
+The inverse is not true. For example, the following documents do not match::
 
     expected: { x: 1, y: 1 }
     actual: { x: 1 }
 
+Test runners MUST NOT permit additional fields in nested documents. For example,
+the following documents do not match::
+
+    expected: { x: { y: 1 } }
+    actual: { x: { y: 1, z: 1 } }
+
 It may be helpful to think of expected documents as a form of query criteria.
 The intention behind this rule is that it is not always feasible or relevant for
 a test to exhaustively specify all fields in an expected document (e.g. cluster
-time in a `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_ command).
+time in ``command`` for `CommandStartedEvent`_).
 
-Note that this rule for allowing extra fields in actual values only applies when
-matching documents. When comparing arrays, expected and actual values MUST
-contain the same number of elements. For example, the following arrays
-corresponding to a ``distinct`` operation result would not match::
-
-    expected: [ 1, 2, 3 ]
-    actual: [ 1, 2, 3, 4 ]
-
-That said, any individual documents *within* an array or list (e.g. result of a
-``find`` operation) MAY be matched according to the rules in this section. For
-example, the following arrays would match::
+When the expected value is an array, test runners MUST differentiate between
+an array of values, which may be documents, (e.g. ``distinct``) and an array of
+root-level documents (e.g. ``find``, ``aggregate``). For example, the following
+array of documents would not match if returned by ``distinct``, but would match
+if returned via ``find`` (after iterating the cursor):
 
     expected: [ { x: 1 }, { x: 2 } ]
     actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
+
+
+Document Key Order Variation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When matching documents, test runners MUST NOT require keys in the expected and
+actual document to appear in the same order. For example, the following
+documents would match:
+
+    expected: { x: 1, y: 1 }
+    actual: { y: 1, x: 1 }
+
+
+Arrays Must Contain the Same Number of Elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When comparing arrays, expected and actual values MUST contain the same number
+of elements. For example, the following arrays corresponding to a ``distinct``
+operation result would not match::
+
+    expected: [ 1, 2, 3 ]
+    actual: [ 1, 2, 3, 4 ]
 
 
 Special Operators for Matching Assertions
@@ -1696,8 +1738,8 @@ from MongoDB query operators, which use a single `$` prefix. The key will map to
 some value that influences the operator's behavior (if applicable).
 
 When examining the structure of an expected value during a comparison, test
-runners MUST examine the first key of any object for a ``$$`` prefix and, if
-present, defer to the special logic defined in this section.
+runners MUST check if the value is an object whose first and only key starts
+with ``$$`` and, if so, defer to the special logic defined in this section.
 
 
 $$exists
@@ -1856,9 +1898,9 @@ Syntax::
 
 This operator can be used anywhere a matched value is expected (including
 `expectResult <operation_expectResult_>`_).  If the
-`session entity <entity_session_>`_session entity is defined in the current
-test's `Entity Map`_, the test runner MUST assert that the actual value equals
-its logical session ID; otherwise, the test runner MUST raise an error for an
+`session entity <entity_session_>`_ is defined in the current test's
+`Entity Map`_, the test runner MUST assert that the actual value equals its
+logical session ID; otherwise, the test runner MUST raise an error for an
 undefined or mistyped entity. The YAML file SHOULD use an `alias node`_ for a
 session entity's ``id`` field (e.g. ``session: *session0``).
 
@@ -2007,12 +2049,11 @@ If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
 therein the test runner MUST assert that the collection contains exactly the
 expected data. The test runner MUST query each collection using the internal
 MongoClient, an ascending sort order on the ``_id`` field (i.e. ``{ _id: 1 }``),
-a "primary" read preference, a "local" read concern. The documents must match
-expected data exactly (`Evaluating Matches`_ does not apply); however, languages
-that are unable to preserve the order of keys in documents MAY permit variations
-in field order or otherwise normalize actual and expected documents before
-comparison. If the list of documents is empty, the test runner MUST assert that
-the collection is empty.
+a "primary" read preference, a "local" read concern. When comparing collection
+data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
+match exactly; however, test runners MUST permit variations in document key
+order or otherwise normalize the documents before comparison. If the list of
+documents is empty, the test runner MUST assert that the collection is empty.
 
 Clear the entity map for this test. For each ClientSession in the entity map,
 the test runner MUST end the session (e.g. call
@@ -2075,8 +2116,8 @@ rules outlined in `Evaluating Matches`_.
 
 If `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ is specified,
 the test runner MUST store the result in the current test's entity map using the
-specified name. If the operation did not return a result or the result is not a
-`Supported Entity Type`_ then the test runner MUST raise an error.
+specified name. If the operation did not return a result or the result does not
+comply with `Supported Entity Types`_ then the test runner MUST raise an error.
 
 After asserting the operation's error and/or result and optionally saving the
 result, proceed to the subsequent operation.
@@ -2467,6 +2508,9 @@ Change Log
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-09-24:
+
+* Improve docs for Evaluating Matches. Extra keys are only permitted in
+  root-level documents. Always permit key order variation.
 
 * Explain in "Design Rationale" why "SHOULD" is used more commonly in this
   document.
