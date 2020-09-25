@@ -132,9 +132,10 @@ runner, given the same major version component. For example:
   completeness, but test files SHOULD NOT need to refer to patch versions (as
   previously mentioned).
 
-Test runners MUST NOT process incompatible files but MAY determine how to handle
-such files (e.g. skip and log a notice, fail and raise an error). Test runners
-MAY support multiple schema versions (as demonstrated in the example above).
+Test runners MUST NOT process incompatible files and MUST raise an error if they
+encounter an incompatible file (as discussed in `Executing a Test File`_). Test
+runners MAY support multiple schema versions (as demonstrated in the example
+above).
 
 
 Impact of Spec Changes on Schema Version
@@ -1955,7 +1956,10 @@ files may use either.
 Upon loading a file, the test runner MUST read the `schemaVersion`_ field and
 determine if the test file can be processed further. Test runners MAY support
 multiple versions and MUST NOT process incompatible files (as discussed in
-`Schema Version`_).
+`Test Runner Support`_). If a test file is incompatible, test runners MUST raise
+an error and MAY do so by reporting a test failure. Test runners MAY make an
+effort to infer the number of tests (and their descriptions) from an
+incompatible file and report a failure for each test.
 
 If `runOnRequirements`_ is specified, the test runner MUST skip the test file
 unless one or more `runOnRequirement`_ objects are satisfied.
@@ -2508,6 +2512,8 @@ Change Log
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-09-24:
+
+* Test runners MUST raise an error for incompatible files
 
 * Improve docs for Evaluating Matches. Extra keys are only permitted in
   root-level documents. Always permit key order variation.
