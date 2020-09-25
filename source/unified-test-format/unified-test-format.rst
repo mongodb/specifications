@@ -2506,12 +2506,34 @@ also special operations for defining threads and executing operations within
 threads, which may warrant introducing a new "thread" entity type.
 
 
+Incorporate referenced entity operations into the schema version
+----------------------------------------------------------------
+
+The `Schema Version`_ is not impacted by changes to operations defined in other
+specs and referenced in `Entity Test Operations` (e.g. ``find`` for CRUD). The
+`operation.name <operation_name_>`_ and
+`operation.arguments <operation_arguments_>`_ fields are loosely defined in the
+JSON schema as string and object types, respectively.
+
+Ideally, all operations (and their arguments) would be enforced by the JSON
+schema *and* any changes to operations would affect the schema version
+accordingly. For example, a new ``find`` option would warrant a minor version
+bump both for the CRUD spec and this spec and its schema.
+
+As discussed in `Executing an Operation`_, test runners MUST raise errors for
+unsupported operations and arguments. This is a concession until such time that
+better processes can be established for versioning other specs *and* collating
+spec changes developed in parallel or during the same release cycle.
+
+
 Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-09-24:
+
+* Future work for incorporating referenced entity operations into schema version
 
 * Test runners MUST raise an error for incompatible files
 
