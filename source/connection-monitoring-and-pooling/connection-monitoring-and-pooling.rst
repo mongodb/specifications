@@ -43,16 +43,16 @@ Unmanaged Connection
 ~~~~~~~~~~~~~~~~~~~~
 
 An "Unmanaged Connection" refers to a `Connection <#connection>`_ created by the
-pool that does not count towards any connection count, may not be checked in to
+pool that does not contribute to any connection count, may not be checked in to
 the pool, and causes no monitoring events to be emitted over the course of its
 existence. It does contain a generation, an ID, and an established TCP
 connection, though no steps of the authentication process or the MongoDB
 handshake are performed as part of setting up that TCP connection.
 
-The same restrictions that apply to the creation of normal pooled `Connections
-<#connection>`_ apply to "Unmanaged Connections", and pendingConnectionCount is
-incremented while the underlying TCP connection of an "Unmanaged Connection" is
-being set up.
+The same establishment restrictions that apply to the creation of normal pooled
+`Connections <#connection>`_ apply to "Unmanaged Connections" too
+(e.g. maxConnecting), and pendingConnectionCount is incremented while the
+underlying TCP connection of an "Unmanaged Connection" is still being set up.
 
 "Unmanaged Connections" MUST be created and used by SDAM monitoring threads.
 
