@@ -595,12 +595,12 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     if connection state is "pending":
       try:
         establish connection
-        decrement pendingConnectionCount
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="error")
         decrement totalConnectionCount
-        decrement pendingConnectionCount
         throw
+      finally:
+        decrement pendingConnectionCount
     else:
         decrement availableConnectionCount
     set connection state to "in use"
