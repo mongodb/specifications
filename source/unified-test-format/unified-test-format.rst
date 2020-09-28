@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-24
+:Last Modified: 2020-09-28
 
 .. contents::
 
@@ -1863,10 +1863,11 @@ Syntax::
     { $$unsetOrMatches: <anything> }
 
 This operator can be used anywhere a matched value is expected (including
-`expectResult <operation_expectResult_>`_). The test runner MUST assert that the
-actual value either does not exist or matches the expected value. Matching the
-expected value MUST use the standard rules in `Evaluating Matches`_, which
-means that it may contain special operators.
+`expectResult <operation_expectResult_>`_), excluding an array element because
+`Arrays Must Contain the Same Number of Elements`_. The test runner MUST assert
+that the actual value either does not exist or matches the expected value.
+Matching the expected value MUST use the standard rules in
+`Evaluating Matches`_, which means that it may contain special operators.
 
 This operator is primarily used to assert driver-optional fields from the CRUD
 spec (e.g. ``insertedId`` for InsertOneResult, ``writeResult`` for
@@ -2530,6 +2531,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-28:
+
+* Prohibit $$unsetOrMatches for array elements
 
 2020-09-24:
 
