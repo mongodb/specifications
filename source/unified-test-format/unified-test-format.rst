@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-28
+:Last Modified: 2020-09-29
 
 .. contents::
 
@@ -280,9 +280,9 @@ The top-level fields of a test file are as follows:
 
 .. _createEntities:
 
-- ``createEntities``: Optional array of `entity`_ objects. List of entities
-  (e.g. client, collection, session objects) that SHALL be created before each
-  test case is executed.
+- ``createEntities``: Optional array of one or more `entity`_ objects. List of
+  entities (e.g. client, collection, session objects) that SHALL be created
+  before each test case is executed.
 
   Test files SHOULD define entities in dependency order, such that all
   referenced entities (e.g. client) are defined before any of their dependent
@@ -326,7 +326,7 @@ The structure of this object is as follows:
   there is no upper bound on the required server version. The format of this
   string is defined in `Version String`_.
 
-- ``topologies``: Optional array of strings. One or more of server topologies
+- ``topologies``: Optional array of one or more strings. Server topologies
   against which the tests can be run successfully. Valid topologies are
   "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
   cluster backed by replica sets). If this field is omitted, there is no
@@ -398,7 +398,7 @@ The structure of this object is as follows:
 
   .. _entity_client_observeEvents:
 
-  - ``observeEvents``: Optional array of strings. One or more types of events
+  - ``observeEvents``: Optional array of one or more strings. Types of events
     that can be observed for this client. Unspecified event types MUST be
     ignored by this client's event listeners and SHOULD NOT be included in
     `test.expectEvents <test_expectEvents_>`_ for this client.
@@ -419,8 +419,8 @@ The structure of this object is as follows:
 
   .. _entity_client_ignoreCommandMonitoringEvents:
 
-  - ``ignoreCommandMonitoringEvents``: Optional array of strings. One or more
-    command names for which the test runner MUST ignore any observed command
+  - ``ignoreCommandMonitoringEvents``: Optional array of one or more strings.
+    Command names for which the test runner MUST ignore any observed command
     monitoring events. The command(s) will be ignored in addition to
     ``configureFailPoint`` and any commands containing sensitive information
     (per the
@@ -565,7 +565,7 @@ The structure of this object is as follows:
 
 .. _test_runOnRequirements:
 
-- ``runOnRequirements``: Optional array of on or more `runOnRequirement`_
+- ``runOnRequirements``: Optional array of one or more `runOnRequirement`_
   objects. List of server version and/or topology requirements for which this
   test can be run. If specified, these requirements are evaluated independently
   and in addition to any top-level `runOnRequirements`_. If no requirements in
@@ -721,15 +721,15 @@ The structure of this object is as follows:
   Test files SHOULD NOT assert error codes for client errors, as specifications
   do not define standardized codes for client errors.
 
-- ``errorLabelsContain``: Optional array of strings. A list of error label
-  strings that the error is expected to have. The test runner MUST assert that
-  the error contains all of the specified labels (e.g. using the
+- ``errorLabelsContain``: Optional array of one or more strings. A list of error
+  label strings that the error is expected to have. The test runner MUST assert
+  that the error contains all of the specified labels (e.g. using the
   ``hasErrorLabel`` method).
 
-- ``errorLabelsOmit``: Optional array of strings. A list of error label strings
-  that the error is expected not to have. The test runner MUST assert that
-  the error does not contain any of the specified labels (e.g. using the
-  ``hasErrorLabel`` method).
+- ``errorLabelsOmit``: Optional array of one or more strings. A list of error
+  label strings that the error is expected not to have. The test runner MUST
+  assert that the error does not contain any of the specified labels (e.g. using
+  the ``hasErrorLabel`` method).
 
 .. _expectedError_expectResult:
 
@@ -767,51 +767,57 @@ This object MUST contain **exactly one** top-level key that identifies the
 event type and maps to a nested object, which contains one or more assertions
 for the event's properties.
 
+Some event properties are omitted in the following structures because they
+cannot be reliably tested. Taking command monitoring events as an example,
+``requestId`` and ``operationId`` are nondeterministic and types for
+``connectionId`` and ``failure`` can vary by implementation.
+
 The structure of this object is as follows:
 
 .. _expectedEvent_commandStartedEvent:
 
-- ``commandStartedEvent``: Optional object. Assertions for a one or more
+- ``commandStartedEvent``: Optional object. Assertions for one or more
   `CommandStartedEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields.
 
   The structure of this object is as follows:
 
-  - ``command``: Optional document. Test runners MUST follow the rules in
+  - ``command``: Optional document. A value corresponding to the expected
+    command document. Test runners MUST follow the rules in
     `Evaluating Matches`_ when processing this assertion.
 
-  - ``commandName``: Optional string. Test runners MUST assert that the actual
-    command name matches this value using a case-insensitive comparison.
+  - ``commandName``: Optional string. Test runners MUST assert that the command
+    name matches this value.
 
-  - ``databaseName``: Optional string. Test runners MUST assert that the actual
-    command name matches this value using a case-insensitive comparison. THe
-    YAML file SHOULD use an `alias node`_ for this value (e.g.
-    ``databaseName: *database0Name``).
+  - ``databaseName``: Optional string. Test runners MUST assert that the
+    database name matches this value. The YAML file SHOULD use an `alias node`_
+    for this value (e.g. ``databaseName: *database0Name``).
 
 .. _expectedEvent_commandSucceededEvent:
 
-- ``commandSucceededEvent``: Optional object. Assertions for a one or more
+- ``commandSucceededEvent``: Optional object. Assertions for one or more
   `CommandSucceededEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields.
 
   The structure of this object is as follows:
 
-  - ``reply``: Optional document. Test runners MUST follow the rules in
-    `Evaluating Matches`_ when processing this assertion.
+  - ``reply``: Optional document. A value corresponding to the expected
+    reply document. Test runners MUST follow the rules in `Evaluating Matches`_
+    when processing this assertion.
 
-  - ``commandName``: Optional string. Test runners MUST assert that the actual
-    command name matches this value using a case-insensitive comparison.
+  - ``commandName``: Optional string. Test runners MUST assert that the command
+    name matches this value.
 
 .. _expectedEvent_commandFailedEvent:
 
-- ``commandFailedEvent``: Optional object. Assertions for a one or more
+- ``commandFailedEvent``: Optional object. Assertions for one or more
   `CommandFailedEvent <../command-monitoring/command-monitoring.rst#api>`__
   fields.
 
   The structure of this object is as follows:
 
-  - ``commandName``: Optional string. Test runners MUST assert that the actual
-    command name matches this value using a case-insensitive comparison.
+  - ``commandName``: Optional string. Test runners MUST assert that the command
+    name matches this value.
 
 
 collectionOrDatabaseOptions
@@ -1841,7 +1847,7 @@ $$matchesHexBytes
 `````````````````
 
 Syntax, where ``hexBytes`` is an even number of hexademical characters
-(case-insensitive)::
+(case-insensitive) and MAY be empty::
 
     { $$matchesHexBytes: <hexBytes> }
 
@@ -2531,6 +2537,17 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-09-29:
+
+* Clarify that some optional arrays must contain one or more elements, since the
+  fields could otherwise be omitted.
+
+* $$matchesHexBytes may be an empty string, like hexBytes stream entity option
+
+* Note why some event properties are omitted in expectedEvent assertions 
+
+* Do not use case-insensitive comparisons for commandName
 
 2020-09-28:
 
