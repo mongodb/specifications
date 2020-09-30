@@ -257,6 +257,7 @@
 
     "test": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["description", "operations"],
       "properties": {
         "description": { "type": "string" },
