@@ -1,0 +1,5 @@
+description: "foo"
+
+tests:
+  - description: "foo"
+    operations: []

@@ -1,0 +1,7 @@
+description: "foo"
+
+schemaVersion: 0
+
+tests:
+  - description: "foo"
+    operations: []

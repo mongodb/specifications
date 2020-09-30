@@ -1,0 +1,11 @@
+description: "foo"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - stream:
+      hexBytes: "FF"
+
+tests:
+  - description: "foo"
+    operations: []
