@@ -182,7 +182,7 @@ pertaining to URI options apply here.
      - The amount of time a connection can be idle before it's closed
 
    * - maxPoolSize
-     - positive integer
+     - non-negative integer; 0 means no maximum
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time
