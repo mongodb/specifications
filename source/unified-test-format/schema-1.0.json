@@ -49,7 +49,7 @@
           "items": {
             "type": "string",
             "enum": ["single", "replicaset", "sharded", "sharded-replicaset"]
-          }          
+          }
         }
       }
     },
@@ -233,7 +233,10 @@
       "additionalProperties": false,
       "minProperties": 1,
       "properties": {
-        "isError": { "type": "boolean" },
+        "isError": {
+          "type": "boolean",
+          "const": true
+        },
         "isClientError": { "type": "boolean" },
         "errorContains": { "type": "string" },
         "errorCode": { "type": "integer" },
