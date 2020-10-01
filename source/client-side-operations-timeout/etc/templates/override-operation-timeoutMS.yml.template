@@ -1,0 +1,104 @@
+# Tests in this file are generated from override-operation-timeoutMS.yml.template.
+
+description: "timeoutMS can be overriden for an operation"
+
+schemaVersion: "1.0"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        timeoutMS: 10
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents: []
+
+tests:
+  # For each level operation, we execute two tests:
+  #
+  # 1. timeoutMS can be overridden to a non-zero value for an operation. Each test executes an operation using one of
+  # the entities defined above with an overriden timeoutMS=20 and configures a fail point to block the operation for
+  # 15ms so the operation succeeds.
+  #
+  # 2. timeoutMS can be overridden to 0 for an operation. Each test executes an operation using the entities defined
+  # above with an overridden timeoutMS=0 so the operation succeeds.
+
+  {% for operation in operations -%}
+  - description: "timeoutMS can be configured for an operation - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        arguments:
+          timeoutMS: 20
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$type: ["int", "long"] }
+  - description: "timeoutMS can be set to 0 for an operation - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        arguments:
+          timeoutMS: 0
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$exists: false }
+  {% endfor %}

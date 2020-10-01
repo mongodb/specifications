@@ -1,0 +1,115 @@
+# Tests in this file are generated from retryability-legacy-timeouts.yml.template.
+
+description: "legacy timeouts behave correctly for retryable operations"
+
+schemaVersion: "1.1"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        socketTimeoutMS: 10
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents: []
+
+tests:
+  # For each retryable operation, run two tests:
+  #
+  # 1. Socket timeouts are retried once - Each test constructs a client entity with socketTimeoutMS=10, configures a
+  # fail point to block the operation once for 15ms, and expects the operation to succeed.
+  #
+  # 2. Operations fail after two consecutive socket timeouts - Same as (1) but the fail point is configured to block
+  # the operation twice and the test expects the operation to fail.
+
+  {% for operation in operations -%}
+  - description: "operation succeeds after one socket timeout - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+  - description: "operation fails after two consecutive socket timeouts - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        expectError:
+            isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+  {% endfor %}

@@ -1,0 +1,238 @@
+description: "timeoutMS behaves correctly for non-tailable cursors"
+
+schemaVersion: "1.1"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        timeoutMS: 10
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents:
+      - { _id: 0 }
+      - { _id: 1 }
+
+tests:
+  # If timeoutMode is explicitly set to CURSOR_LIFETIME, the timeout should apply to the initial command.
+  # This should also be the case if timeoutMode is unset, but this is already tested in global-timeoutMS.yml.
+  - description: "timeoutMS applied to find if timeoutMode is cursor_lifetime"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["find"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: find
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMode: cursorLifetime
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  # If timeoutMode is unset, it should default to CURSOR_LIFETIME and the time remaining after the find succeeds should
+  # be applied to the getMore.
+  - description: "remaining timeoutMS applied to getMore if timeoutMode is unset"
+    operations:
+      # Block find/getMore for 15ms.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["find", "getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      # Run a find with timeoutMS=20 and batchSize=1 to force two batches, which will cause a find and a getMore to be
+      # sent. Both will block for 15ms so together they will go over the timeout.
+      - name: find
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMS: 20
+          batchSize: 1
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *databaseName
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *collectionName
+                maxTimeMS: { $$exists: false }
+          # After the cursor times out, drivers should attempt to close it, which requires executing killCursors
+          # because the cursor hasn't been fully iterated.
+          - commandStartedEvent:
+              commandName: killCursors
+              databaseName: *databaseName
+              command:
+                killCursors: *collectionName
+                cursors: { $$type: "array" }
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  # Same test as above, but with timeoutMode explicitly set to cursorLifetime.
+  - description: "remaining timeoutMS applied to getMore if timeoutMode is cursorLifetime"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["find", "getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: find
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMode: cursorLifetime
+          timeoutMS: 20
+          batchSize: 1
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                getMore: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *databaseName
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *collectionName
+                maxTimeMS: { $$exists: false }
+          # After the cursor times out, drivers should attempt to close it, which requires executing killCursors
+          # because the cursor hasn't been fully iterated.
+          - commandStartedEvent:
+              commandName: killCursors
+              databaseName: *databaseName
+              command:
+                killCursors: *collectionName
+                cursors: { $$type: "array" }
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  # If timeoutMode=ITERATION, timeoutMS should apply to the initial find command and the command shouldn't have a
+  # maxTimeMS field.
+  - description: "timeoutMS applied to find if timeoutMode is iteration"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["find"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: find
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMode: iteration
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                maxTimeMS: { $$exists: false }
+
+  # If timeoutMode=ITERATION, timeoutMS applies separately to the initial find and the getMore on the cursor. Neither
+  # command should have a maxTimeMS field.
+  - description: "timeoutMS is refreshed for getMore if timeoutMode is iteration"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["find", "getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: find
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMode: iteration
+          timeoutMS: 20
+          batchSize: 1
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *databaseName
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *collectionName
+                maxTimeMS: { $$exists: false }

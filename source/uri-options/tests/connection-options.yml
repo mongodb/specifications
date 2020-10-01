@@ -147,3 +147,63 @@ tests:
       hosts: ~
       auth: ~
       options: {}
+    -
+        # This is done as a separate test rather than adding timeoutMS to the "valid connection and timeout options"
+        # test because it includes legacy options like socketTimeoutMS, which would error if used with timeoutMS.
+        description: "valid non-zero timeoutMS is parsed correctly"
+        uri: "mongodb://example.com/?timeoutMS=100"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            timeoutMS: 100
+    -
+        description: "timeoutMS=0"
+        uri: "mongodb://example.com/?timeoutMS=0"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            timeoutMS: 0
+    -
+        description: "Non-numeric timeoutMS causes a warning"
+        uri: "mongodb://example.com/?timeoutMS=invalid"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "Too low timeoutMS causes a warning"
+        uri: "mongodb://example.com/?timeoutMS=-2"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "timeoutMS and socketTimeoutMS both present raises an error"
+        uri: "monogdb://example.com/?timeoutMS=100&socketTimeoutMS=100"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "timeoutMS and waitQueueTimeoutMS both present raises an error"
+        uri: "monogdb://example.com/?timeoutMS=100&waitQueueTimeoutMS=100"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "timeoutMS and wTimeoutMS both present raises an error"
+        uri: "monogdb://example.com/?timeoutMS=100&wTimeoutMS=100"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}

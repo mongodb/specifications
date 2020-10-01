@@ -1,0 +1,31 @@
+description: "tests for timeoutMS behavior that applies to all cursor types"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client client
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents: []
+
+tests:
+  - description: "error if timeoutMode is set and timeoutMS is not"
+    operations:
+      - name: find
+        object: *client
+        arguments:
+          filter: {}
+          timeoutMode: cursorLifetime 
+        expectError:
+          isClientError: true

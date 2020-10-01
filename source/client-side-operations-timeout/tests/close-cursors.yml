@@ -1,0 +1,172 @@
+description: "timeoutMS behaves correctly when closing cursors"
+
+schemaVersion: "1.1"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        connectTimeoutMS: 20
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+        - commandFailedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents:
+      - { _id: 0 }
+      - { _id: 1 }
+
+tests:
+  # If a cursor is closed before it's fully iterated, the killCursors command should use the min of timeoutMS and
+  # connectTimeoutMS as its timeout. If timeoutMS=0, the min should be connectTimeoutMS. Because some drivers ignore
+  # errors from the killCursors command, tests in this file use command monitoring assertions to assert killCursors
+  # failures.
+
+  # connectTimeoutMS (20) < timeoutMS (30)
+  - description: "min of connectTimeoutMS and timeoutMS used as timeoutMS when closing a cursor - connectTimeoutMS is lower"
+    operations:
+      # Configure killCursors to block for longer than connectTimeoutMS but not as long as timeoutMS.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["killCursors"]
+              blockConnection: true
+              blockTimeMS: 25
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMS: 30 # Specify a timeoutMS value that's higher than the client's connectTimeoutMS.
+          batchSize: 1
+        saveResultAsEntity: &cursor cursor
+      - name: closeFindCursor
+        object: *cursor
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+          - commandStartedEvent:
+              commandName: killCursors
+              databaseName: *databaseName
+              command:
+                killCursors: *collectionName
+                cursors: { $$type: array } 
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandFailedEvent:
+              commandName: killCursors
+
+  # timeoutMS (10) < connectTimeoutMS (20)
+  - description: "min of connectTimeoutMS and timeoutMS used as timeoutMS when closing a cursor - timeoutMS is lower"
+    operations:
+      # Configure killCursors to block for longer than timeoutMS but not as long as connectTimeoutMS.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["killCursors"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMS: 10 # Specify a timeoutMS value that's lower than the client's connectTimeoutMS.
+          batchSize: 1
+        saveResultAsEntity: &cursor cursor
+      - name: closeFindCursor
+        object: *cursor
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+          - commandStartedEvent:
+              commandName: killCursors
+              databaseName: *databaseName
+              command:
+                killCursors: *collectionName
+                cursors: { $$type: array } 
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandFailedEvent:
+              commandName: killCursors
+
+  # connectTimeoutMS (20) < timeoutMS(0)
+  - description: "min of connectTimeoutMS and timeoutMS used as timeoutMS when closing a cursor - timeoutMS is 0"
+    operations:
+      # Configure killCursors to block for longer than connectTimeoutMS.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["killCursors"]
+              blockConnection: true
+              blockTimeMS: 25
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMS: 0
+          batchSize: 1
+        saveResultAsEntity: &cursor cursor
+      - name: closeFindCursor
+        object: *cursor
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+          - commandStartedEvent:
+              commandName: killCursors
+              databaseName: *databaseName
+              command:
+                killCursors: *collectionName
+                cursors: { $$type: array }
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandFailedEvent:
+              commandName: killCursors

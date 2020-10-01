@@ -1,0 +1,74 @@
+description: "timeoutMS behaves correctly for bulkWrite operations"
+
+schemaVersion: "1.1"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll 
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents: []
+
+tests:
+  # Test that drivers do not refresh timeoutMS between commands. This is done by running a bulkWrite that will require
+  # two commands with timeoutMS=20 and blocking each command for 15ms. The server should take over 20ms total, so the
+  # bulkWrite should fail with a timeout error.
+  - description: "timeoutMS applied to entire bulkWrite, not individual commands"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["insert", "update"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: bulkWrite
+        object: *collection
+        arguments:
+          requests:
+            - insertOne:
+                document: { _id: 1 }
+            - replaceOne:
+                filter: { _id: 1 }
+                replacement: { x: 1 }
+          timeoutMS: 20
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: update
+              databaseName: *databaseName
+              command:
+                update: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }

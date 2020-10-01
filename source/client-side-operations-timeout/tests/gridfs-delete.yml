@@ -1,0 +1,179 @@
+description: "timeoutMS behaves correctly for GridFS delete operations"
+
+schemaVersion: "1.1"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        timeoutMS: 10
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - bucket:
+      id: &bucket bucket
+      database: *database
+  - collection:
+      id: &filesCollection filesCollection
+      database: *database
+      collectionName: &filesCollectionName fs.files
+  - collection:
+      id: &chunksCollection chunksCollection
+      database: *database
+      collectionName: &chunksCollectionName fs.chunks
+
+initialData:
+  - collectionName: *filesCollectionName
+    databaseName: *databaseName
+    documents:
+      - _id: &fileDocumentId { $oid: "000000000000000000000005" }
+        length: 10
+        chunkSize: 4
+        uploadDate: { $date: "1970-01-01T00:00:00.000Z" }
+        md5: "57d83cd477bfb1ccd975ab33d827a92b"
+        filename: "length-10"
+        contentType: "application/octet-stream"
+        aliases: []
+        metadata: {}
+  - collectionName: *chunksCollectionName
+    databaseName: *databaseName
+    documents:
+      - _id: { $oid: "000000000000000000000005" }
+        files_id: *fileDocumentId
+        n: 0
+        data: { $binary: { base64: "ESIzRA==", subType: "00" } } # hex: 11223344
+
+tests:
+  - description: "timeoutMS can be overridden for delete"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["delete"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: delete
+        object: *bucket
+        arguments:
+          id: *fileDocumentId
+          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+
+  - description: "timeoutMS applied to delete against the files collection"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["delete"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: delete
+        object: *bucket
+        arguments:
+          id: *fileDocumentId
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: delete
+              databaseName: *databaseName
+              command:
+                delete: *filesCollectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  - description: "timeoutMS applied to delete against the chunks collection"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:  
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["delete"]
+              blockConnection: true
+              blockTimeMS: 15
+              # The first "delete" will be against the files collection, so we skip it.
+              skip: 1
+      - name: delete
+        object: *bucket
+        arguments:
+          id: *fileDocumentId
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: delete
+              databaseName: *databaseName
+              command:
+                delete: *filesCollectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: delete
+              databaseName: *databaseName
+              command:
+                delete: *chunksCollectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  # Test that drivers are not refreshing the timeout between commands. We test this by doing an delete with
+  # timeoutMS=20 and blocking both "delete" commands for 15ms each. The server takes over 20ms total, so the delete
+  # should fail.
+  - description: "timeoutMS applied to entire delete, not individual parts"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:  
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["delete"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: delete
+        object: *bucket
+        arguments:
+          id: *fileDocumentId
+          timeoutMS: 20
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: delete
+              databaseName: *databaseName
+              command:
+                delete: *filesCollectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: delete
+              databaseName: *databaseName
+              command:
+                delete: *chunksCollectionName
+                maxTimeMS: { $$type: ["int", "long"] }
