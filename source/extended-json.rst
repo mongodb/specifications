@@ -10,8 +10,8 @@ Extended JSON
 :Advisory Group: Jeff Yemin, Christian Kvalheim, Hannes Magnusson, Matt Broadstone, Jesse Davis
 :Status: Proposed
 :Type: Standards
-:Last Modified: July 20, 2017
-:Version: 2.1.0
+:Last Modified: October 1, 2020
+:Version: 2.1.1
 
 .. contents::
 
@@ -312,6 +312,10 @@ in which case it SHOULD follow these rules:
 * If the **keys** of the parsed object exactly match the **keys** of a type
   wrapper in the Conversion table, but any of the **values** are of an incorrect
   type, then the parser MUST report an error.
+
+* If the ``$``-prefixed key does not match a known type wrapper in the 
+  Conversion table, the parser MUST NOT raise an error and MUST leave the value
+  as-is. See `Restrictions and limitations`_ for additional information.
 
 .. _regex: https://docs.mongodb.com/manual/reference/operator/query/regex/
 
@@ -925,6 +929,13 @@ a MongoDB query filter containing the ``$type`` operator?
 
 Changes
 =======
+
+v2.1.1
+------
+
+* Note that ``$``-prefixed keys not matching a known type MUST be left as-is
+  when parsing. This is patch-level change as this behavior was already required
+  in the BSON corpus tests ("Document with keys that start with $").
 
 v2.1.0
 ------
