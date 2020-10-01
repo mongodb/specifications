@@ -27,23 +27,20 @@
   },
   "operations": [
     {
+      "name": "checkOut",
+      "label": "conn0"
+    },
+    {
       "name": "start",
       "target": "thread1"
     },
     {
       "name": "checkOut",
-      "thread": "thread1",
-      "label": "conn0"
+      "thread": "thread1"
     },
     {
       "name": "start",
       "target": "thread2"
-    },
-    {
-      "name": "waitForEvent",
-      "thread": "thread2",
-      "event": "ConnectionCheckedOut",
-      "count": 1
     },
     {
       "name": "checkOut",
@@ -54,43 +51,20 @@
       "target": "thread3"
     },
     {
-      "name": "waitForEvent",
-      "thread": "thread3",
-      "event": "ConnectionCheckedOut",
-      "count": 1
-    },
-    {
       "name": "checkOut",
       "thread": "thread3"
     },
     {
-      "name": "start",
-      "target": "thread4"
-    },
-    {
       "name": "waitForEvent",
-      "thread": "thread4",
-      "event": "ConnectionCreated",
-      "count": 3
-    },
-    {
-      "name": "checkOut",
-      "thread": "thread4"
-    },
-    {
-      "name": "waitForEvent",
-      "thread": "thread1",
-      "event": "ConnectionCreated",
-      "count": 3
+      "event": "ConnectionCheckOutStarted",
+      "count": 4
     },
     {
       "name": "wait",
-      "thread": "thread1",
       "ms": 100
     },
     {
       "name": "checkIn",
-      "thread": "thread1",
       "connection": "conn0"
     },
     {
