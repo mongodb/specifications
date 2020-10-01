@@ -503,33 +503,33 @@ I/O.
 Checking Out a Connection
 -------------------------
 
-A Pool MUST have a method of allowing the driver to check out a `Connection
-<#connection>`_. Checking out a `Connection <#connection>`_ involves entering
-the WaitQueue, waiting to be granted access to the list of available
-connections, and finding or creating a `Connection <#connection>`_ to be
-returned. If the thread times out in the WaitQueue, an error is thrown.
+A Pool MUST have a method of allowing the driver to check out a `Connection`_.
+Checking out a `Connection`_ involves entering the WaitQueue, waiting to be
+granted access to the list of available connections, and finding or creating a
+`Connection`_ to be returned. If the thread times out in the WaitQueue, an error
+is thrown.
 
 Once reaching the front of the WaitQueue, a thread begins iterating over the
 list of available `Connections <#connection>`_, searching for a non-perished one
-to be returned. If a perished `Connection <#connection>`_ is encountered, such a
-`Connection <#connection>`_ MUST be closed (as described in `Closing a
-Connection <#closing-a-connection-internal-implementation>`_) and the iteration
-of available `Connections <#connection>`_ MUST continue until either a
-non-perished available `Connection <#connection>`_ is found or the list of
-available `Connections <#connection>`_ is exhausted.
+to be returned. If a perished `Connection`_ is encountered, such a `Connection`_
+MUST be closed (as described in `Closing a Connection
+<#closing-a-connection-internal-implementation>`_) and the iteration of
+available `Connections <#connection>`_ MUST continue until either a non-perished
+available `Connection`_ is found or the list of available `Connections
+<#connection>`_ is exhausted.
 
 If the list is exhausted, the total number of `Connections <#connection>`_ is
 less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
-create a `Connection <#connection>`_, establish it, mark it as "in use" and
-return it. If totalConnectionCount == maxPoolSize or pendingConnectionCount ==
-maxConnecting, then the thread MUST wait until either both of those conditions
-are met or until a `Connection <#connection>`_ becomes available, re-entering
-the checkOut loop once it finishes waiting. This waiting MUST NOT block other
-threads from checking in `Connections <#connection>`_ to the pool. Threads that
-are waiting MUST be notified in order that they entered the WaitQueue. For
-drivers that implement the WaitQueue via a fair semaphore, a second semaphore
-may be required to implement this. Waiting on this second semaphore SHOULD be
-limited by the WaitQueueTimeout, if the driver supports one.
+create a `Connection`_, establish it, mark it as "in use" and return it. If
+totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting,
+then the thread MUST wait until either both of those conditions are met or until
+a `Connection`_ becomes available, re-entering the checkOut loop once it
+finishes waiting. This waiting MUST NOT block other threads from checking in a
+`Connection`_ to the pool. Threads that are waiting MUST be notified in order
+that they entered the WaitQueue. For drivers that implement the WaitQueue via a
+fair semaphore, a second semaphore may be required to implement this. Waiting on
+this second semaphore SHOULD be limited by the WaitQueueTimeout, if the driver
+supports one.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
