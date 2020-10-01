@@ -194,10 +194,10 @@ pertaining to URI options apply here.
      - The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible for server selection
 
    * - minPoolSize
-     - positive integer
+     - non-negative integer
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
-     - The maximum number of clients or connections able to be created by a pool at a given time
+     - The number of connections the driver should create and main in the pool even when no operations are occurring 
 
    * - readConcernLevel
      - any string (`to allow for forwards compatibility with the server <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#unknown-levels-and-additional-options-for-string-based-readconcerns>`_)
