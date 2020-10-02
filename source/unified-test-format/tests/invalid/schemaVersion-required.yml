@@ -1,4 +1,4 @@
-description: "foo"
+description: "schemaVersion-required"
 
 tests:
   - description: "foo"

@@ -1,4 +1,4 @@
-description: "foo"
+description: "expectedError-additionalProperties"
 
 schemaVersion: "1.0"
 
