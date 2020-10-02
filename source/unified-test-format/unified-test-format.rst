@@ -983,11 +983,11 @@ documents when evaluating `expectResult`_ or `saveResultAsEntity`_.
 Iterating Returned Iterables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unless otherwise stated, test runners MUST fully iterate any iterable returned
-by an operation as part of that operation's execution. This is necessary to
-ensure consistent behavior among drivers, as discussed in `aggregate`_ and
-`find`_, and also ensures that error and event assertions can be evaluated
-consistently.
+Unless otherwise stated by an operation below, test runners MUST fully iterate
+any iterable returned by an operation as part of that operation's execution.
+This is necessary to ensure consistent behavior among drivers, as discussed in
+`aggregate`_ and `find`_, and also ensures that error and event assertions can
+be evaluated consistently.
 
 
 Client Operations
