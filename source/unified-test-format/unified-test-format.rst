@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-09-29
+:Last Modified: 2020-10-02
 
 .. contents::
 
@@ -73,8 +73,14 @@ Entity
 
 Internal MongoClient
   A MongoClient created specifically for use with internal test operations, such
-  as inserting collection data before a test, configuring fail points during a
-  test, or asserting collection data after a test.
+  as inserting collection data before a test, performing special assertions
+  during a test, or asserting collection data after a test.
+
+Iterable
+  This term is used by various specifications as the return type for operations
+  that return a sequence of items, which may be iterated. For example, the CRUD
+  spec uses this as the return value for ``find`` and permit API flexibility
+  rather than stipulate that a cursor object be returned directly.
 
 
 Schema Version
@@ -207,13 +213,13 @@ Supported Entity Types
 
 Test runners MUST support the following types of entities:
 
-- MongoClient. See `entity_client`_ and `client`_.
-- Database. See `entity_database`_ and `database`_.
-- Collection. See `entity_collection`_ and `collection`_
-- ClientSession. See `entity_session`_ and `session`_.
-- GridFS Bucket. See `entity_bucket`_ and `bucket`_.
+- MongoClient. See `entity_client`_ and `Client Operations`_.
+- Database. See `entity_database`_ and `Database Operations`_.
+- Collection. See `entity_collection`_ and `Collection Operations`_
+- ClientSession. See `entity_session`_ and `Session Operations`_.
+- GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
 - GridFS Stream. See `entity_stream`_.
-- ChangeStream. See `changeStream`_.
+- ChangeStream. See `ChangeStream Operations`_.
 - All known BSON types and/or equivalent language types for the target driver.
   For the present version of the spec, the following BSON types are known:
   0x01-0x13, 0x7F, 0xFF.
@@ -521,7 +527,7 @@ The structure of this object is as follows:
   stream is both readable *and* writable.
 
   This entity is primarily used with `uploadFromStream`_ and
-  `uploadFromStreamWithId`_ operations for `bucket`_ entities.
+  `uploadFromStreamWithId`_ `Bucket Operations`_.
 
   The structure of this object is as follows:
 
@@ -653,8 +659,8 @@ The structure of this object is as follows:
 
 - ``expectResult``: Optional mixed type. A value corresponding to the expected
   result of the operation. This field may be a scalar value, a single document,
-  or an array of documents in the case of a multi-document read. Test runners
-  MUST follow the rules in `Evaluating Matches`_ when processing this assertion.
+  or an array of values. Test runners MUST follow the rules in
+  `Evaluating Matches`_ when processing this assertion.
 
   This field is mutually exclusive with `expectError <operation_expectError_>`_.
 
@@ -926,6 +932,18 @@ Entity operations correspond to an API method on a driver object. If
 "collection0") then `operation.name <operation_name_>`_ is expected to reference
 an API method on that class.
 
+Test files SHALL use camelCase when referring to API methods and parameters,
+even if the defining specifications use other forms (e.g. snake_case in GridFS).
+
+This spec does not provide exhaustive documentation for all possible API methods
+that may appear in a test; however, the following sections discuss all supported
+entities and their operations in some level of detail. Special handling for
+certain operations is also discussed as needed.
+
+
+Expressing Required and Optional Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Some specifications group optional parameters for API methods under an
 ``options`` parameter (e.g. ``options: Optional<UpdateOptions>`` in the CRUD
 spec); however, driver APIs vary in how they accept options (e.g. Python's
@@ -934,6 +952,10 @@ depending on whether a language supports method overloading). Therefore, test
 files SHALL declare all required and optional parameters for an API method
 directly within `operation.arguments <operation_arguments_>`_ (e.g. ``upsert``
 for ``updateOne`` is *not* nested under an ``options`` key).
+
+
+Special Handling for Arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If ``session`` is specified in `operation.arguments`_, it is defined according
 to `commonOptions_session`_. Test runners MUST resolve the ``session`` argument
@@ -945,17 +967,31 @@ If ``readConcern``, ``readPreference``, or ``writeConcern`` are specified in
 corresponding definition in `Common Options`_ and MUST convert the value into
 the appropriate object *before* passing it as a parameter to any API method.
 
-This spec does not provide exhaustive documentation for all possible API methods
-that may appear in a test; however, the following sections discuss all supported
-entities and their operations in some level of detail. Special handling for
-certain operations is also discussed below.
 
-Test files SHALL use camelCase when referring to API methods and parameters,
-even if the defining specifications use other forms (e.g. snake_case in GridFS).
+Converting Returned Model Objects to Documents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For operations that return a model object (e.g. ``BulkWriteResult`` for
+``bulkWrite``), the test runner MUST convert the model object to a document when
+evaluating `expectResult <operation_expectResult_>`_ or
+`saveResultAsEntity <operation_saveResultAsEntity_>`_. Similarly, for operations
+that may return iterables of model objects (e.g. ``DatabaseInfo`` for
+``listDatabases``), the test runner MUST convert the iterable to an array of
+documents when evaluating `expectResult`_ or `saveResultAsEntity`_.
 
 
-client
-~~~~~~
+Iterating Returned Iterables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Unless otherwise stated, test runners MUST fully iterate any iterable returned
+by an operation as part of that operation's execution. This is necessary to
+ensure consistent behavior among drivers, as discussed in `aggregate`_ and
+`find`_, and also ensures that error and event assertions can be evaluated
+consistently.
+
+
+Client Operations
+-----------------
 
 These operations and their arguments may be documented in the following
 specifications:
@@ -970,21 +1006,26 @@ existing specification are described below.
 .. _client_createChangeStream:
 
 createChangeStream
-``````````````````
+~~~~~~~~~~~~~~~~~~
 
 Creates a cluster-level change stream and ensures that the server-side cursor
 has been created.
 
 This operation proxies the client's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the client's ``watch``
-operation directly for reasons discussed in `changeStream`_. Test runners MUST
-ensure that the server-side cursor is created (i.e. ``aggregate`` is executed)
-as part of this operation and before the resulting change stream might be saved
-with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+operation directly for reasons discussed in `ChangeStream Operations`_. Test
+runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
+is executed) as part of this operation and before the resulting change stream
+might be saved with
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+
+Test runners MUST NOT iterate the change stream when executing this operation
+and test files SHOULD NOT specify
+`operation.expectResult <operation_expectResult_>`_ for this operation.
 
 
-database
-~~~~~~~~
+Database Operations
+-------------------
 
 These operations and their arguments may be documented in the following
 specifications:
@@ -1000,21 +1041,26 @@ existing specification are described below.
 .. _database_createChangeStream:
 
 createChangeStream
-``````````````````
+~~~~~~~~~~~~~~~~~~
 
 Creates a database-level change stream and ensures that the server-side cursor
 has been created.
 
 This operation proxies the database's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the database's ``watch``
-operation directly for reasons discussed in `changeStream`_. Test runners MUST
-ensure that the server-side cursor is created (i.e. ``aggregate`` is executed)
-as part of this operation and before the resulting change stream might be saved
-with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+operation directly for reasons discussed in `ChangeStream Operations`_. Test
+runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
+is executed) as part of this operation and before the resulting change stream
+might be saved with
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+
+Test runners MUST NOT iterate the change stream when executing this operation
+and test files SHOULD NOT specify
+`operation.expectResult <operation_expectResult_>`_ for this operation.
 
 
 runCommand
-``````````
+~~~~~~~~~~
 
 Generic command runner.
 
@@ -1041,8 +1087,8 @@ The following arguments are supported:
 - ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
 
 
-collection
-~~~~~~~~~~
+Collection Operations
+---------------------
 
 These operations and their arguments may be documented in the following
 specifications:
@@ -1056,24 +1102,16 @@ Collection operations that require special handling or are not documented by an
 existing specification are described below.
 
 
-.. _collection_createChangeStream:
+aggregate
+~~~~~~~~~
 
-createChangeStream
-``````````````````
-
-Creates a collection-level change stream and ensures that the server-side cursor
-has been created.
-
-This operation proxies the collection's ``watch`` method and supports the same
-arguments and options. Test files SHOULD NOT use the collection's ``watch``
-operation directly for reasons discussed in `changeStream`_. Test runners MUST
-ensure that the server-side cursor is created (i.e. ``aggregate`` is executed)
-as part of this operation and before the resulting change stream might be saved
-with `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+When executing an ``aggregate`` operation, the test runner MUST fully iterate
+the result. This will ensure consistent behavior between drivers that eagerly
+create a server-side cursor and those that do so lazily when iteration begins.
 
 
 bulkWrite
-`````````
+~~~~~~~~~
 
 The ``requests`` parameter for ``bulkWrite`` is documented as a list of
 WriteModel interfaces. Each WriteModel implementation (e.g. InsertOneModel)
@@ -1124,8 +1162,37 @@ and compare with ``code`` instead, but MUST raise an error if the comparison
 cannot be attempted (e.g. ``code`` is also not available, translation fails).
 
 
-session
-~~~~~~~
+.. _collection_createChangeStream:
+
+createChangeStream
+~~~~~~~~~~~~~~~~~~
+
+Creates a collection-level change stream and ensures that the server-side cursor
+has been created.
+
+This operation proxies the collection's ``watch`` method and supports the same
+arguments and options. Test files SHOULD NOT use the collection's ``watch``
+operation directly for reasons discussed in `ChangeStream Operations`_. Test
+runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
+is executed) as part of this operation and before the resulting change stream
+might be saved with
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+
+Test runners MUST NOT iterate the change stream when executing this operation
+and test files SHOULD NOT specify
+`operation.expectResult <operation_expectResult_>`_ for this operation.
+
+
+find
+~~~~
+
+When executing a ``find`` operation, the test runner MUST fully iterate the
+result. This will ensure consistent behavior between drivers that eagerly create
+a server-side cursor and those that do so lazily when iteration begins.
+
+
+Session Operations
+------------------
 
 These operations and their arguments may be documented in the following
 specifications:
@@ -1138,7 +1205,7 @@ existing specification are described below.
 
 
 withTransaction
-```````````````
+~~~~~~~~~~~~~~~
 
 The ``withTransaction`` operation's ``callback`` parameter is a function and not
 easily expressed in YAML/JSON. For ease of testing, this parameter is expressed
@@ -1147,8 +1214,8 @@ as an array of `operation`_ objects (analogous to
 result assertions when executing these operations in the callback.
 
 
-bucket
-~~~~~~
+Bucket Operations
+-----------------
 
 These operations and their arguments may be documented in the following
 specifications:
@@ -1163,7 +1230,7 @@ existing specification are described below.
 .. _downloadToStreamByName:
 
 downloadToStream and downloadToStreamByName
-```````````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These operations SHOULD NOT be used in test files. See
 `IO operations for GridFS streams`_ in `Future Work`_.
@@ -1173,7 +1240,7 @@ These operations SHOULD NOT be used in test files. See
 .. _openDownloadStreamByName:
 
 openDownloadStream and openDownloadStreamByName
-```````````````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``openDownloadStream`` and ``openDownloadStreamByName`` operations SHOULD
 use `$$matchesHexBytes`_ in `expectResult <operation_expectResult_>`_ to match
@@ -1186,7 +1253,7 @@ with a subsequent operation (e.g. `uploadFromStream`_ ).
 .. _openUploadStreamWithId:
 
 openUploadStream and openUploadStreamWithId
-```````````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These operations SHOULD NOT be used in test files. See
 `IO operations for GridFS streams`_ in `Future Work`_. 
@@ -1196,7 +1263,7 @@ These operations SHOULD NOT be used in test files. See
 .. _uploadFromStreamWithId:
 
 uploadFromStream and uploadFromStreamWithId
-```````````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``uploadFromStream`` and ``uploadFromStreamWithId`` operations' ``stream``
 parameter is a stream as defined in the `GridFS <../gridfs/gridfs-spec.rst>`__
@@ -1207,8 +1274,8 @@ use an `alias node`_ for a stream entity's ``id`` field (e.g.
 ``stream: *stream0``).
 
 
-changeStream
-~~~~~~~~~~~~
+ChangeStream Operations
+-----------------------
 
 Change stream entities are special in that they are not defined in
 `createEntities`_ but are instead created by using
@@ -1230,7 +1297,7 @@ supported operations for change stream entities.
 
 
 iterateUntilDocumentOrError
-```````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Iterates the change stream until either a single document is returned or an
 error is raised.
@@ -1260,7 +1327,8 @@ failPoint
 ~~~~~~~~~
 
 The ``failPoint`` operation instructs the test runner to configure a fail point
-using a "primary" read preference using the specified client.
+using a "primary" read preference using the specified client entity (fail points
+are not configured using the internal MongoClient).
 
 The following arguments are supported:
 
@@ -1301,7 +1369,8 @@ targetedFailPoint
 ~~~~~~~~~~~~~~~~~
 
 The ``targetedFailPoint`` operation instructs the test runner to configure a
-fail point on a specific mongos.
+fail point on a specific mongos using the client entity associated with a
+pinned session.
 
 The following arguments are supported:
 
@@ -1672,10 +1741,10 @@ root-level documents include, but are not limited to:
 
 - ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
-- `expectResult`_ for a `collection`_ ``findOneAndUpdate`` operation
-- `expectResult`_ for a `changeStream`_ `iterateUntilDocumentOrError`_ operation
-- each array element in `expectResult`_ for a `collection`_ ``find`` or
-  ``aggregate`` operation
+- `expectResult`_ for a ``findOneAndUpdate`` `Collection Operation`_
+- `expectResult`_ for a `iterateUntilDocumentOrError`_ `ChangeStream Operation`_
+- each array element in `expectResult`_ for a `find`_ or `aggregate`_
+  `Collection Operation`_
 
 For example, the following documents match::
 
@@ -2115,6 +2184,11 @@ Before executing the operation, the test runner MUST be prepared to catch a
 potential error from the operation (e.g. enter a ``try`` block). Proceed with
 executing the operation and capture its result or error.
 
+Note that some operations require special handling, as discussed in
+`Entity Test Operations`_. For example, model objects may need to be converted
+to documents (before matching or saving in the entity map) and returned
+iterables may need to be fully iterated.
+
 If `operation.expectError <operation_expectError_>`_ is specified, the test
 runner MUST assert that the operation yielded an error; otherwise, the test
 runner MUST assert that the operation did not yield an error. If an error was
@@ -2370,7 +2444,7 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1216 <https://jira.mongodb.org/browse/SPEC-1216>`__: Update GridFS YAML tests to use newer format
 
-  See: `stream <entity_stream_>`_ entity and `bucket`_ operations
+  See: `stream <entity_stream_>`_ entity and `Bucket Operations`_
 
 * `SPEC-1229 <https://jira.mongodb.org/browse/SPEC-1229>`__: Standardize spec-test syntax for topology assertions
 
@@ -2537,6 +2611,18 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-10-02:
+
+* Restructure Entity Test Operations sections.
+
+* Clarify that fail points are not configured using the internal MongoClient.
+
+* Require model objects returned by operations be converted to documents before
+  being matched or saved in the entity map.
+
+* Require iterables returned by operations be fully iterated when executing an
+  operation, unless otherwise stated.
 
 2020-09-29:
 
