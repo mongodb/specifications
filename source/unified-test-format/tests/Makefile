@@ -1,15 +1,18 @@
 SCHEMA=../schema-1.0.json
 
-.PHONY: all invalid HAS_AJV
+.PHONY: all invalid valid-fail valid-pass HAS_AJV
 
-all: invalid
+all: invalid valid-fail valid-pass
 
-invalid:
-	@if ajv test -s $(SCHEMA) -d "invalid/*" --invalid > /dev/null; then \
-	    echo "PASSED";                                                   \
-	else                                                                 \
-	    echo "FAILED";                                                   \
-	fi
+invalid: HAS_AJV
+	@# Redirect stdout to hide expected validation errors
+	@ajv test -s $(SCHEMA) -d "invalid/*.yml" --invalid > /dev/null && echo "invalid/*.yml passed test"
+
+valid-fail: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "valid-fail/*.yml" --valid
+
+valid-pass: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "valid-pass/*.yml" --valid
 
 HAS_AJV:
 	@if ! command -v ajv > /dev/null; then                \

@@ -1,0 +1,172 @@
+description: "poc-change-streams"
+
+schemaVersion: "1.0"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents: [ commandStartedEvent ]
+      # Original tests in change-streams.yml did not observe getMore commands
+      ignoreCommandMonitoringEvents: [ getMore ]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name change-stream-tests
+  - database:
+      id: &database1 database1
+      client: *client0
+      databaseName: &database1Name change-stream-tests-2
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name test
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: &collection1Name test2
+  - collection:
+      id: &collection2 collection2
+      database: *database1
+      collectionName: &collection2Name test
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents: []
+  - collectionName: *collection1Name
+    databaseName: *database0Name
+    documents: []
+  - collectionName: *collection2Name
+    databaseName: *database1Name
+    documents: []
+
+tests:
+  - description: "Executing a watch helper on a MongoClient results in notifications for changes to all collections in all databases in the cluster."
+    runOnRequirements:
+      - minServerVersion: "3.8.0"
+        topologies: [ replicaset ]
+    operations:
+      - name: createChangeStream
+        object: *client0
+        saveResultAsEntity: &changeStream0 changeStream0
+      - name: insertOne
+        object: *collection1
+        arguments: { x: 1 }
+      - name: insertOne
+        object: *collection2
+        arguments: { y: 1 }
+      - name: insertOne
+        object: *collection0
+        arguments: { z: 1 }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: insert
+          ns:
+            db: *database0Name
+            coll: *collection1Name
+          fullDocument: { x: 1 }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: insert
+          ns:
+            db: *database1Name
+            coll: *collection2Name
+          fullDocument: { y: 1 }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: insert
+          ns:
+            db: *database0Name
+            coll: *collection0Name
+          fullDocument: { z: 1 }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                aggregate: 1
+                cursor: {}
+                pipeline:
+                  - $changeStream: { allChangesForCluster: true }
+              commandName: aggregate
+              databaseName: admin
+
+  - description: "Test consecutive resume"
+    runOnRequirements:
+      - minServerVersion: "4.1.7"
+        topologies: [ replicaset ]
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: [ getMore ]
+              closeConnection: true
+      - name: createChangeStream
+        object: *collection0
+        arguments:
+          batchSize: 1
+        saveResultAsEntity: *changeStream0
+      - name: insertOne
+        object: *collection0
+        arguments: { x: 1 }
+      - name: insertOne
+        object: *collection0
+        arguments: { x: 2 }
+      - name: insertOne
+        object: *collection0
+        arguments: { x: 3 }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: insert
+          ns:
+            db: *database0Name
+            coll: *collection0Name
+          fullDocument: { x: 1 }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: insert
+          ns:
+            db: *database0Name
+            coll: *collection0Name
+          fullDocument: { x: 2 }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult:
+          operationType: insert
+          ns:
+            db: *database0Name
+            coll: *collection0Name
+          fullDocument: { x: 3 }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                aggregate: *collection0Name
+                cursor: { batchSize: 1 }
+                pipeline:
+                  - $changeStream: {}
+              commandName: aggregate
+              databaseName: *database0Name
+          # The original test only asserted the first command, since expected
+          # events were only an ordered subset. This file does ignore getMore
+          # commands but we must expect the second aggregate command. While
+          # doing so we can also assert that it includes a resume token.
+          - commandStartedEvent:
+              command:
+                aggregate: *collection0Name
+                cursor: { batchSize: 1 }
+                pipeline:
+                  - $changeStream:
+                      resumeAfter: { $exists: true }
+              commandName: aggregate
+              databaseName: *database0Name
