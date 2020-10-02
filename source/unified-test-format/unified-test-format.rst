@@ -1741,10 +1741,10 @@ root-level documents include, but are not limited to:
 
 - ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
-- `expectResult`_ for a ``findOneAndUpdate`` `Collection Operation`_
-- `expectResult`_ for a `iterateUntilDocumentOrError`_ `ChangeStream Operation`_
-- each array element in `expectResult`_ for a `find`_ or `aggregate`_
-  `Collection Operation`_
+- `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
+- `expectResult`_ for `iterateUntilDocumentOrError`_ `ChangeStream Operations`_
+- each array element in `expectResult`_ for `find`_ or `aggregate`_
+  `Collection Operations`_
 
 For example, the following documents match::
 
@@ -2707,7 +2707,7 @@ Note: this will be cleared when publishing version 1.0 of the spec
 
 * Rename ``expected`` prefix to ``expect`` in test field names. Applies to
   ``expectEvents``, ``expectedError``, and ``expectResult``. Structures such as
- ` `expectedEvent`` were not renamed.
+  ``expectedEvent`` were not renamed.
 
 * Clarify that "sharded" implies "sharded-replicaset".
 
