@@ -655,6 +655,9 @@ The structure of this object is as follows:
   `expectResult <operation_expectResult_>`_ and
   `saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
+  This field SHOULD NOT be used for `Special Test Operations`_ (i.e.
+  ``object: testRunner``).
+
 .. _operation_expectResult:
 
 - ``expectResult``: Optional mixed type. A value corresponding to the expected
@@ -664,6 +667,9 @@ The structure of this object is as follows:
 
   This field is mutually exclusive with `expectError <operation_expectError_>`_.
 
+  This field SHOULD NOT be used for `Special Test Operations`_ (i.e.
+  ``object: testRunner``).
+
 .. _operation_saveResultAsEntity:
 
 - ``saveResultAsEntity``: Optional string. If specified, the actual result
@@ -672,6 +678,9 @@ The structure of this object is as follows:
   use or if the result does not comply with `Supported Entity Types`_.
 
   This field is mutually exclusive with `expectError <operation_expectError_>`_.
+
+  This field SHOULD NOT be used for `Special Test Operations`_ (i.e.
+  ``object: testRunner``).
 
 
 expectedError
@@ -1321,6 +1330,12 @@ special test operations (e.g. assertions). These operations are distinguished by
 `operation.object <operation_object_>`_ having a value of "testRunner". The
 `operation.name <operation_name_>`_ field will correspond to an operation
 defined below.
+
+Special test operations return no result and are always expected to succeed.
+These operations SHOULD NOT be combined with
+`expectError <operation_expectError_>`_,
+`expectResult <operation_expectResult_>`_, or
+`saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 
 failPoint
@@ -2611,6 +2626,11 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-10-03:
+
+* Note that special test operations should not be combined with expectError,
+  expectResult, or saveResultAsEntity.
 
 2020-10-02:
 
