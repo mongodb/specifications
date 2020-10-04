@@ -1194,6 +1194,25 @@ implement, assertions for that field SHOULD utilize the `$$unsetOrMatches`_
 operator.
 
 
+insertOne
+~~~~~~~~~
+
+The CRUD spec documents ``insertOne`` as returning an InsertOneResult; however,
+because all fields InsertOneResult are optional drivers are permitted to forgo
+it entirely and have ``insertOne`` return nothing (i.e. void method). Tests
+asserting InsertOneResult SHOULD utilize the `$$unsetOrMatches`_ operator for
+*both* the result object and any optional fields within, as in the following
+examples::
+
+    - name: insertOne
+      object: *collection0
+      arguments:
+        document: { _id: 2 }
+      expectResult:
+        $$unsetOrMatches:
+          insertedId: { $$unsetOrMatches: 2 }
+
+
 .. _collection_createChangeStream:
 
 createChangeStream
@@ -2651,6 +2670,8 @@ Change Log
 Note: this will be cleared when publishing version 1.0 of the spec
 
 2020-10-04:
+
+* Advise using $$unsetOrMatches for InsertOneResult
 
 * Clarifications for matching insertedIds in BulkWriteResult
 
