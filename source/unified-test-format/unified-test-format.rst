@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-02
+:Last Modified: 2020-10-04
 
 .. contents::
 
@@ -1127,7 +1127,8 @@ WriteModel interfaces. Each WriteModel implementation (e.g. InsertOneModel)
 provides important context to the method, but that type information is not
 easily expressed in YAML and JSON. To account for this, test files MUST nest
 each WriteModel object in a single-key object, where the key identifies the
-request type (e.g. "insertOne"), as in the following example::
+request type (e.g. "insertOne") and its value is an object expressing the
+parameters, as in the following example::
 
     arguments:
       requests:
@@ -1150,6 +1151,10 @@ request type (e.g. "insertOne"), as in the following example::
             filter: { x: { $gt: 2 } }
       ordered: true
 
+Because the ``insertedIds`` field of BulkWriteResult is optional for drivers to
+implement, assertions for that field SHOULD utilize the `$$unsetOrMatches`_
+operator.
+
 While operations typically raise an error *or* return a result, the
 ``bulkWrite`` operation is unique in that it may report both via the
 ``writeResult`` property of a BulkWriteException. In this case, the intermediary
@@ -1169,6 +1174,24 @@ translate the expected code name to a number (see:
 `error_codes.yml <https://github.com/mongodb/mongo/blob/master/src/mongo/base/error_codes.yml>`__)
 and compare with ``code`` instead, but MUST raise an error if the comparison
 cannot be attempted (e.g. ``code`` is also not available, translation fails).
+
+
+findOneAndReplace and findOneAndUpdate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``returnDocument`` option for ``findOneAndReplace`` and ``findOneAndUpdate``
+is documented as an enum with possible values "Before" and "After". Test files
+SHOULD express ``returnDocument`` a string and test runners MUST raise an error
+if its value does not case-insensitively match either enum value.
+
+
+insertMany
+~~~~~~~~~~
+
+The CRUD spec documents ``insertMany`` as returning a BulkWriteResult. Because
+the ``insertedIds`` field of BulkWriteResult is optional for drivers to
+implement, assertions for that field SHOULD utilize the `$$unsetOrMatches`_
+operator.
 
 
 .. _collection_createChangeStream:
@@ -2626,6 +2649,12 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-10-04:
+
+* Clarifications for matching insertedIds in BulkWriteResult
+
+* Test runners must error if returnDocument enum is invalid
 
 2020-10-03:
 
