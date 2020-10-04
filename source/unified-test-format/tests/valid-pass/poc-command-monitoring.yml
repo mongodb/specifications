@@ -87,8 +87,7 @@ tests:
         object: *collection0
         arguments:
           filter: { $or: true }
-        expectError:
-          isError: true
+        expectError: { isError: true }
     expectEvents:
       - client: *client0
         events:

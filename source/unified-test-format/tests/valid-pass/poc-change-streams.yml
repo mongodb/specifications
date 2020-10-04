@@ -5,6 +5,7 @@ schemaVersion: "1.0"
 createEntities:
   - client:
       id: &client0 client0
+      useMultipleMongoses: false
       observeEvents: [ commandStartedEvent ]
       # Original tests in change-streams.yml did not observe getMore commands
       ignoreCommandMonitoringEvents: [ getMore ]
