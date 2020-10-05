@@ -528,7 +528,7 @@ finishes waiting. This waiting MUST NOT block other threads from checking in a
 `Connection`_ to the pool. Threads that are waiting MUST be notified in order
 that they entered the WaitQueue. For drivers that implement the WaitQueue via a
 fair semaphore, a condition variable may also be required to implement
-this. Waiting on the conditional variable SHOULD be limited by the
+this. Waiting on the condition variable SHOULD be limited by the
 WaitQueueTimeout, if the driver supports one.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
