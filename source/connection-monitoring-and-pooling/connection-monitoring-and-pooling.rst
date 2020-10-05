@@ -695,6 +695,9 @@ monitoring the state of all available `Connections <#connection>`_. This backgro
 thread SHOULD
 
 -  Populate `Connections <#connection>`_ to ensure that the pool always satisfies **minPoolSize**
+    - The background thread SHOULD just go back to sleep instead of waiting for
+      pendingConnectionCount to become less than maxConnecting when satisfying
+      minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
 
 withConnection
