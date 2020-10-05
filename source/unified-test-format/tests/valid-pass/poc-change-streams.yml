@@ -52,13 +52,16 @@ tests:
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *collection1
-        arguments: { x: 1 }
+        arguments:
+          document: { x: 1 }
       - name: insertOne
         object: *collection2
-        arguments: { y: 1 }
+        arguments:
+          document: { y: 1 }
       - name: insertOne
         object: *collection0
-        arguments: { z: 1 }
+        arguments:
+          document: { z: 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
@@ -103,6 +106,7 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
+          client: *client0
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -116,13 +120,16 @@ tests:
         saveResultAsEntity: *changeStream0
       - name: insertOne
         object: *collection0
-        arguments: { x: 1 }
+        arguments:
+          document: { x: 1 }
       - name: insertOne
         object: *collection0
-        arguments: { x: 2 }
+        arguments:
+          document: { x: 2 }
       - name: insertOne
         object: *collection0
-        arguments: { x: 3 }
+        arguments:
+          document: { x: 3 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectResult:
