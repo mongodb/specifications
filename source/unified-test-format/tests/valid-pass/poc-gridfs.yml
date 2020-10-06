@@ -146,11 +146,11 @@ tests:
           sort: { _id: -1, n: 1 }
           limit: 2
         expectResult:
-          - _id: { $$type: "objectId" }
+          - _id: { $$type: objectId }
             files_id: { $$matchesEntity: *oid0 }
             n: 0
             data: { $binary: { base64: "ESIzRA==", subType: "00" } } # hex 11223344
-          - _id: { $$type: "objectId" }
+          - _id: { $$type: objectId }
             files_id: { $$matchesEntity: *oid0 }
             n: 1
             data: { $binary: { base64: "VQ==", subType: "00" } } # hex 55
