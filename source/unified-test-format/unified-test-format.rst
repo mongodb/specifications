@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-04
+:Last Modified: 2020-10-06
 
 .. contents::
 
@@ -2143,11 +2143,12 @@ client the test runner MAY specify a reduced value for ``heartbeatFrequencyMS``
 server selection after a failure; however, test runners MUST NOT do so for any
 client that specifies ``heartbeatFrequencyMS`` in its ``uriOptions``. 
 
-If `test.expectEvents <test_expectEvents_>`_ is specified, for each client
-entity the test runner MUST enable all event listeners necessary to collect the
-event types specified in `observeEvents <entity_client_observeEvents_>`_. Test
-runners MAY leave event listeners disabled for tests and/or clients that do not
-assert expected events.
+For each client entity where `observeEvents <entity_client_observeEvents_>`_
+has been specified, the test runner MUST enable all event listeners necessary to
+collect the specified event types. Test runners MAY leave event listeners
+disabled for tests that do not assert events (i.e. tests that omit both
+`test.expectEvents <test_expectEvents_>`_ and special operations such as
+`assertSameLsidOnLastTwoCommands`_).
 
 For each client with command monitoring enabled, the test runner MUST ignore
 events for the following:
@@ -2668,6 +2669,10 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-10-06:
+
+* Clarify rules for enabling event listeners
 
 2020-10-04:
 
