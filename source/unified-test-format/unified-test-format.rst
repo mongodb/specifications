@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-06
+:Last Modified: 2020-10-07
 
 .. contents::
 
@@ -218,7 +218,6 @@ Test runners MUST support the following types of entities:
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
 - GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
-- GridFS Stream. See `entity_stream`_.
 - ChangeStream. See `ChangeStream Operations`_.
 - All known BSON types and/or equivalent language types for the target driver.
   For the present version of the spec, the following BSON types are known:
@@ -519,26 +518,6 @@ The structure of this object is as follows:
     `GridFS <../source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
-
-.. _entity_stream:
-
-- ``stream``: Optional object. Defines a stream, as defined in the
-  `GridFS <../gridfs/gridfs-spec.rst>`__ spec. Test runners MUST ensure that
-  stream is both readable *and* writable.
-
-  This entity is primarily used with `uploadFromStream`_ and
-  `uploadFromStreamWithId`_ `Bucket Operations`_.
-
-  The structure of this object is as follows:
-
-  - ``id``: Required string. Unique name for this entity. The YAML file SHOULD
-    define a `node anchor`_ for this field (e.g. ``id: &stream0 stream0``).
-
-  - ``hexBytes``: Required string. The string MUST contain an even number of
-    hexademical characters (case-insensitive) and MAY be empty. The test runner
-    MUST raise an error if the string is malformed. The test runner MUST convert
-    the string to a byte sequence denoting the stream's readable data (if any).
-    For example, "12ab" would denote a stream with two bytes: "0x12" and "0xab".
 
 
 collectionData
@@ -1277,8 +1256,21 @@ Bucket operations that require special handling or are not documented by an
 existing specification are described below.
 
 
-.. _downloadToStream:
-.. _downloadToStreamByName:
+.. _download:
+.. _downloadByName:
+
+download and downloadByName
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These operations proxy the bucket's ``openDownloadStream`` and
+``openDownloadStreamByName`` methods and support the same parameters and
+options, but return a string containing the stream's contents instead of the
+stream itself. Test runners MUST fully read the stream to yield the returned
+string. This is also necessary to ensure that any expected errors are raised
+(e.g. missing chunks). Test files SHOULD use `$$matchesHexBytes`_ in
+`expectResult <operation_expectResult_>`_ to assert the contents of the returned
+string.
+
 
 downloadToStream and downloadToStreamByName
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1287,17 +1279,11 @@ These operations SHOULD NOT be used in test files. See
 `IO operations for GridFS streams`_ in `Future Work`_.
 
 
-.. _openDownloadStream:
-.. _openDownloadStreamByName:
-
 openDownloadStream and openDownloadStreamByName
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``openDownloadStream`` and ``openDownloadStreamByName`` operations SHOULD
-use `$$matchesHexBytes`_ in `expectResult <operation_expectResult_>`_ to match
-the contents of the returned stream. These operations MAY use
-`saveResultAsEntity <operation_saveResultAsEntity_>`_ to save the stream for use
-with a subsequent operation (e.g. `uploadFromStream`_ ).
+These operations SHOULD NOT be used in test files. See
+`download and downloadByName`_.
 
 
 .. _openUploadStream:
@@ -1310,19 +1296,33 @@ These operations SHOULD NOT be used in test files. See
 `IO operations for GridFS streams`_ in `Future Work`_. 
 
 
-.. _uploadFromStream:
-.. _uploadFromStreamWithId:
+.. _upload:
+.. _uploadWithId:
+
+upload and uploadWithId
+~~~~~~~~~~~~~~~~~~~~~~~
+
+These operations proxy the bucket's ``uploadFromStream`` and
+``uploadFromStreamWithId`` methods and support the same parameters and options
+with one exception: the ``source`` parameter is an object specifying hex bytes
+from which test runners MUST construct a readable stream for the underlying
+methods. The structure of ``source`` is as follows::
+
+    { $$hexBytes: <string> }
+
+The string MUST contain an even number of hexademical characters
+(case-insensitive) and MAY be empty. The test runner MUST raise an error if the
+structure of ``source`` or its string is malformed. The test runner MUST convert
+the string to a byte sequence denoting the stream's readable data (if any). For
+example, "12ab" would denote a stream with two bytes: "0x12" and "0xab".
+
+
 
 uploadFromStream and uploadFromStreamWithId
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``uploadFromStream`` and ``uploadFromStreamWithId`` operations' ``stream``
-parameter is a stream as defined in the `GridFS <../gridfs/gridfs-spec.rst>`__
-spec and not easily expressed in YAML/JSON. This parameter is expressed as an
-entity name, which the test runner MUST resolve to a `stream <entity_stream_>`_
-entity *before* passing it as a parameter to the method. The YAML file SHOULD
-use an `alias node`_ for a stream entity's ``id`` field (e.g.
-``stream: *stream0``).
+These operations SHOULD NOT be used in test files. See
+`upload and uploadWithId`_.
 
 
 ChangeStream Operations
@@ -1955,18 +1955,19 @@ An example of this operator follows::
     operations:
       -
         object: *bucket0
-        name: uploadFromStream
+        name: upload
         arguments:
           filename: "filename"
-          source: *stream0
+          source: { $$hexBytes: "12AB" }
         expectResult: { $$type: "objectId" }
         saveResultAsEntity: &objectid0 "objectid0"
       - object: *filesCollection
-        name: findOne
+        name: find
         arguments:
           sort: { uploadDate: -1 }
+          limit: 1
         expectResult:
-          _id: { $$matchesEntity: *objectid0 }
+          - _id: { $$matchesEntity: *objectid0 }
 
 
 $$matchesHexBytes
@@ -1978,13 +1979,10 @@ Syntax, where ``hexBytes`` is an even number of hexademical characters
     { $$matchesHexBytes: <hexBytes> }
 
 This operator can be used anywhere a matched value is expected (including
-`expectResult <operation_expectResult_>`_) and the actual value is a stream as
-defined in the `GridFS <../gridfs/gridfs-spec.rst>`__ spec. The test runner MUST
-convert the string to a byte sequence and compare it with the full contents of
-the stream. The test runner MUST raise an error if the string is malformed.
-
-This operator is primarily used to assert the contents of stream returned by
-`openDownloadStream`_ and `openDownloadStreamByName`_.
+`expectResult <operation_expectResult_>`_) and the actual value is a string.
+The test runner MUST raise an error if the ``hexBytes`` string is malformed.
+This operator is primarily used to assert the results of `download`_ and
+`downloadByName`_, which return stream contents as a string.
 
 
 $$unsetOrMatches
@@ -2502,7 +2500,7 @@ The following tickets are addressed by the test format:
 
 * `SPEC-1216 <https://jira.mongodb.org/browse/SPEC-1216>`__: Update GridFS YAML tests to use newer format
 
-  See: `stream <entity_stream_>`_ entity and `Bucket Operations`_
+  See: `Bucket Operations`_
 
 * `SPEC-1229 <https://jira.mongodb.org/browse/SPEC-1229>`__: Standardize spec-test syntax for topology assertions
 
@@ -2604,17 +2602,17 @@ the need does arise, `failPoint`_ can be enhanced to support a
 IO operations for GridFS streams
 --------------------------------
 
-Existing GridFS spec tests refer to "upload", "download", and "download_by_name"
+Original GridFS spec tests refer to "upload", "download", and "download_by_name"
 methods, which allow the tests to abstract stream IO and either upload a byte
-sequence or assert a downloaded byte sequence. In order to support methods such
-as ``downloadToStream``, ``openUploadStream``, and ``openUploadStreamWithId``,
-test runners would need to support IO operations to directly read from and write
-to a stream entity.
+sequence or assert a downloaded byte sequence. These operations correspond to
+the `download`_, `downloadByName`_, `upload`_, and `uploadWithId`_
+`Bucket Operations`_.
 
-Currently, `uploadFromStream`_ and `uploadFromStreamWithId`_ are sufficient to
-test uploads using a defined `stream <entity_stream_>`_ entity and
-`openDownloadStream`_ and `openDownloadStreamByName`_ are sufficient to test
-downloads using `$$matchesHexBytes`_.
+In order to support methods such as ``downloadToStream``, ``openUploadStream``,
+and ``openUploadStreamWithId``, test runners would need to represent streams as
+entities and support IO operations to directly read from and write to a stream
+entity. This may not be worth the added complexity if the existing operations
+provide adequate test coverage for GridFS implementations.
 
 
 Support Client-side Encryption integration tests
@@ -2669,6 +2667,12 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-10-07:
+
+* Removed stream entities. Created download, downloadByName, upload, and
+  uploadWithId operations for GridFS buckets, which proxy the underlying
+  methods and convert between streams and hex strings.
 
 2020-10-06:
 

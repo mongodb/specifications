@@ -20,9 +20,6 @@ createEntities:
       id: &bucket0_chunks_collection bucket0_chunks_collection
       database: *database0
       collectionName: &bucket0_chunks_collectionName fs.chunks
-  - stream:
-      id: &stream0 stream0
-      hexBytes: "1122334455"
 
 initialData:
   - collectionName: *bucket0_files_collectionName
@@ -75,15 +72,15 @@ tests:
     operations:
       # Original test uses "download" operation. We use an explicit operation
       # that returns a stream and then assert the contents of that stream.
-      - name: openDownloadStream
+      - name: download
         object: *bucket0
         arguments:
           id: { $oid: "000000000000000000000005" }
-        expectResult: { $$matchesHexbytes: "112233445566778899aa" }
+        expectResult: { $$matchesHexBytes: "112233445566778899aa" }
 
   - description: "Download when files entry does not exist"
     operations:
-      - name: openDownloadStream
+      - name: download
         object: *bucket0
         arguments:
           id: { $oid: "000000000000000000000000" }
@@ -102,7 +99,7 @@ tests:
             n: 1
         expectResult:
           deletedCount: 1
-      - name: openDownloadStream
+      - name: download
         object: *bucket0
         arguments:
           id: { $oid: "000000000000000000000005" }
@@ -113,11 +110,11 @@ tests:
     operations:
       # Original test uses "upload" operation. We use an explicit operation
       # that takes a stream, which has been created from the expected hex bytes.
-      - name: uploadFromStream
+      - name: upload
         object: *bucket0
         arguments:
           filename: filename
-          source: *stream0
+          source: { $$hexBytes: "1122334455" }
           chunkSizeBytes: 4
         # Original test references the result directly in "assert.data". Here,
         # we need to save the result as an entity, which we can later reference.
@@ -130,6 +127,7 @@ tests:
         arguments:
           filter: {}
           sort: { uploadDate: -1 }
+          limit: 1
         expectResult:
           - _id: { $$matchesEntity: *oid0 }
             length: 5
@@ -140,11 +138,11 @@ tests:
       - name: find
         object: *bucket0_chunks_collection
         arguments:
-          filter: {}
-          # We cannot use the saved ObjectId when querying, but sort and limit
-          # can be used to return the expected chunks in order
-          sort: { _id: -1, n: 1 }
-          limit: 2
+          # We cannot use the saved ObjectId when querying, but filtering by a
+          # non-zero timestamp will exclude initialData and sort can return the
+          # expected chunks in order.
+          filter: { _id: { $gt: { $oid: "000000000000000000000007" } } }
+          sort: { n: 1 }
         expectResult:
           - _id: { $$type: objectId }
             files_id: { $$matchesEntity: *oid0 }
