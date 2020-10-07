@@ -1012,6 +1012,13 @@ and test files SHOULD NOT specify
 `operation.expectResult <operation_expectResult_>`_ for this operation.
 
 
+watch
+~~~~~
+
+This operation SHOULD NOT be used in test files. See
+`client_createChangeStream`_.
+
+
 Database Operations
 -------------------
 
@@ -1073,6 +1080,13 @@ The following arguments are supported:
 - ``session``: Optional string. See `commonOptions_session`_.
 
 - ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
+
+
+watch
+~~~~~
+
+This operation SHOULD NOT be used in test files. See
+`database_createChangeStream`_.
 
 
 Collection Operations
@@ -1155,6 +1169,35 @@ and compare with ``code`` instead, but MUST raise an error if the comparison
 cannot be attempted (e.g. ``code`` is also not available, translation fails).
 
 
+.. _collection_createChangeStream:
+
+createChangeStream
+~~~~~~~~~~~~~~~~~~
+
+Creates a collection-level change stream and ensures that the server-side cursor
+has been created.
+
+This operation proxies the collection's ``watch`` method and supports the same
+arguments and options. Test files SHOULD NOT use the collection's ``watch``
+operation directly for reasons discussed in `ChangeStream Operations`_. Test
+runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
+is executed) as part of this operation and before the resulting change stream
+might be saved with
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
+
+Test runners MUST NOT iterate the change stream when executing this operation
+and test files SHOULD NOT specify
+`operation.expectResult <operation_expectResult_>`_ for this operation.
+
+
+find
+~~~~
+
+When executing a ``find`` operation, the test runner MUST fully iterate the
+result. This will ensure consistent behavior between drivers that eagerly create
+a server-side cursor and those that do so lazily when iteration begins.
+
+
 findOneAndReplace and findOneAndUpdate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1192,33 +1235,11 @@ examples::
           insertedId: { $$unsetOrMatches: 2 }
 
 
-.. _collection_createChangeStream:
+watch
+~~~~~
 
-createChangeStream
-~~~~~~~~~~~~~~~~~~
-
-Creates a collection-level change stream and ensures that the server-side cursor
-has been created.
-
-This operation proxies the collection's ``watch`` method and supports the same
-arguments and options. Test files SHOULD NOT use the collection's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
-`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
-
-Test runners MUST NOT iterate the change stream when executing this operation
-and test files SHOULD NOT specify
-`operation.expectResult <operation_expectResult_>`_ for this operation.
-
-
-find
-~~~~
-
-When executing a ``find`` operation, the test runner MUST fully iterate the
-result. This will ensure consistent behavior between drivers that eagerly create
-a server-side cursor and those that do so lazily when iteration begins.
+This operation SHOULD NOT be used in test files. See
+`collection_createChangeStream`_.
 
 
 Session Operations
@@ -1777,16 +1798,20 @@ actual values, as long as they are consistent:
 - Convert both values to BSON, and compare bytes
 - Convert both values to native representations, and compare accordingly
 
+When comparing types that contain documents as internal properties (e.g.
+CodeWScope), the rules in `Evaluating Matches`_ do not apply and the documents
+MUST match exactly; however, test runners MUST permit variation in document key
+order or otherwise normalize the documents before comparison.
+
+
+Flexible Numeric Comparisons
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When comparing numeric types (excluding Decimal128), test runners MUST consider
 32-bit, 64-bit, and floating point numbers to be equal if their values are
 numerically equivalent. For example, an expected value of ``1`` would match an
 actual value of ``1.0`` (e.g. ``ok`` field in a server response) but would not
 match ``1.5``.
-
-When comparing types that contain documents as internal properties (e.g.
-CodeWScope), the rules in `Evaluating Matches`_ do not apply and the documents
-MUST match exactly; however, test runners MUST permit variation in document key
-order or otherwise normalize the documents before comparison.
 
 
 Allowing Extra Fields in Root-level Documents
@@ -2673,6 +2698,10 @@ Note: this will be cleared when publishing version 1.0 of the spec
 * Removed stream entities. Created download, downloadByName, upload, and
   uploadWithId operations for GridFS buckets, which proxy the underlying
   methods and convert between streams and hex strings.
+
+* Create heading for Flexible Numeric Comparisons
+
+* Note that watch operations should not be used (point to createChangeStream)
 
 2020-10-06:
 
