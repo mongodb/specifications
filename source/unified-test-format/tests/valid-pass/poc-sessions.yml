@@ -54,6 +54,8 @@ tests:
         expectResult: []
       - name: assertSameLsidOnLastTwoCommands
         object: testRunner
+        arguments:
+          client: *client0
     expectEvents:
       - client: *client0
         events:
@@ -89,6 +91,8 @@ tests:
       - *find_with_implicit_session
       - name: assertSameLsidOnLastTwoCommands
         object: testRunner
+        arguments:
+          client: *client0
     expectEvents:
       - client: *client0
         events:
@@ -164,6 +168,8 @@ tests:
       - *find_with_implicit_session
       - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner
+        arguments:
+          client: *client0
     expectEvents:
       - client: *client0
         events:
@@ -175,7 +181,7 @@ tests:
                 documents: 
                   - { _id: 2 }
                 ordered: true
-                lsid: { $sessionLsid: *session0 }
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber: 1
               commandName: insert
               databaseName: *database0Name
@@ -186,7 +192,7 @@ tests:
                 documents: 
                   - { _id: 3 }
                 ordered: true
-                lsid: { $sessionLsid: *session0 }
+                lsid: { $$sessionLsid: *session0 }
                 txnNumber: 2
               commandName: insert
               databaseName: *database0Name
