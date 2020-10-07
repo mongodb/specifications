@@ -198,7 +198,7 @@ tests:
                 code: 91 # ShutdownInProgress
                 errmsg: "Replication is being shut down"
       - name: insertOne
-        object: *collection1
+        object: *collection0
         arguments:
           document: { _id: 3, x: 33 }
         expectError:
