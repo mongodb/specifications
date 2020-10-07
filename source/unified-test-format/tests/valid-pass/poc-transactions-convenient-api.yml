@@ -62,13 +62,12 @@ tests:
         object: *session0
         arguments:
           callback:
-            operations:
-              - name: insertOne
-                object: *collection0
-                arguments:
-                  session: *session0
-                  document: { _id: 1 }
-                expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
+            - name: insertOne
+              object: *collection0
+              arguments:
+                session: *session0
+                document: { _id: 1 }
+              expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
     expectEvents:
       - client: *client0
         events:
@@ -110,13 +109,12 @@ tests:
         object: *session1
         arguments:
           callback:
-            operations:
-              - name: insertOne
-                object: *collection1
-                arguments:
-                  session: *session1
-                  document: { _id: 1 }
-                expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
+            - name: insertOne
+              object: *collection1
+              arguments:
+                session: *session1
+                document: { _id: 1 }
+              expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
     expectEvents:
       - client: *client1
         events:
@@ -154,13 +152,12 @@ tests:
         object: *session2
         arguments:
           callback:
-            operations:
-              - name: insertOne
-                object: *collection0
-                arguments:
-                  session: *session2
-                  document: { _id: 1 }
-                expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
+            - name: insertOne
+              object: *collection0
+              arguments:
+                session: *session2
+                document: { _id: 1 }
+              expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
     expectEvents:
       - client: *client1
         events:
@@ -198,13 +195,12 @@ tests:
         object: *session0
         arguments:
           callback:
-            operations:
-              - name: insertOne
-                object: *collection0
-                arguments:
-                  session: *session0
-                  document: { _id: 1 }
-                expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
+            - name: insertOne
+              object: *collection0
+              arguments:
+                session: *session0
+                document: { _id: 1 }
+              expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
           readConcern: { level: majority }
           writeConcern: { w: 1 }
     expectEvents:
