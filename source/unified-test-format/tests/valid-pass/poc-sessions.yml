@@ -8,6 +8,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      useMultipleMongoses: false
       observeEvents: [ commandStartedEvent ]
   - database:
       id: &database0 database0

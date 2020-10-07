@@ -22,6 +22,7 @@ createEntities:
   # Entities for executing insert operations
   - client:
       id: &client1 client1
+      useMultipleMongoses: false
   - database:
       id: &database1 database1
       client: *client1
