@@ -79,12 +79,47 @@ tests:
                 pipeline: *pipeline
               databaseName: *databaseName
 
+  - description: "Find succeeds on second attempt"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ find ]
+              closeConnection: true
+      # Find options and expected result changed to use common initialData
+      - name: find
+        object: collection0
+        arguments:
+          filter: {}
+          sort: { _id: 1 }
+          limit: 2
+        expectResult:
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+    expectEvents:
+      - client: *client0
+        events:
+          - &findAttempt
+            commandStartedEvent:
+              command:
+                find: *collectionName
+                filter: {}
+                sort: { _id: 1 }
+                limit: 2
+              databaseName: *databaseName
+          - *findAttempt
+
   - description: "Find fails on first attempt"
     operations:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *client1 # uses retryReads=false
+          client: *client0
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 1 }
@@ -92,7 +127,7 @@ tests:
               failCommands: [ find ]
               closeConnection: true
       - name: find
-        object: collection1
+        object: collection1 # client uses retryReads=false
         arguments:
           filter: {}
           # Other arguments in the original test are not relevant
@@ -119,7 +154,7 @@ tests:
               failCommands: [ find ]
               closeConnection: true
       - name: find
-        object: collection1
+        object: collection0
         arguments:
           filter: {}
           # Other arguments in the original test are not relevant
@@ -127,16 +162,13 @@ tests:
     expectEvents:
       - client: *client0
         events:
-          - commandStartedEvent:
+          - &findAttempt
+            commandStartedEvent:
               command:
                 find: *collectionName
                 filter: {}
               databaseName: *databaseName
-          - commandStartedEvent:
-              command:
-                find: *collectionName
-                filter: {}
-              databaseName: *databaseName
+          - *findAttempt
 
   - description: "ListDatabases succeeds on second attempt"
     operations:
