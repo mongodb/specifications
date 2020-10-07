@@ -159,7 +159,7 @@ tests:
                 document: { _id: 1 }
               expectResult: { $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 1 } } }
     expectEvents:
-      - client: *client1
+      - client: *client0
         events:
           - commandStartedEvent:
               command:

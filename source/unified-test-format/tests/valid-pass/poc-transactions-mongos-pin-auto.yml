@@ -54,7 +54,7 @@ tests:
               failCommands: [ insert ]
               errorCode: 11601 # Interrupted
       - name: insertOne
-        object: collection
+        object: *collection0
         arguments:
           session: *session0
           document: { _id: 4 }
@@ -131,7 +131,7 @@ tests:
               failCommands: [ insert ]
               closeConnection: true
       - name: insertOne
-        object: collection
+        object: *collection0
         arguments:
           session: *session0
           document: { _id: 4 }

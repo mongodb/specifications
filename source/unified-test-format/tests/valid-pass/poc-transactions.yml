@@ -47,7 +47,7 @@ tests:
           session: *session0
           state: starting
 
-  - description: "create index on a non-existing collection"
+  - description: "explicitly create collection using create command"
     runOnRequirements:
       - minServerVersion: "4.3.4"
         topologies: [ replicaset, sharded-replicaset ]
