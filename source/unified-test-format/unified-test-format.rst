@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-07
+:Last Modified: 2020-10-08
 
 .. contents::
 
@@ -1372,9 +1372,8 @@ iterateUntilDocumentOrError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Iterates the change stream until either a single document is returned or an
-error is raised.
-
-If `expectResult <operation_expectResult_>`_ is specified, it SHOULD be a single
+error is raised. This operation takes no arguments. If
+`expectResult <operation_expectResult_>`_ is specified, it SHOULD be a single
 document.
 
 `Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
@@ -1383,6 +1382,15 @@ iteration (e.g. asynchronous drivers) not to iterate the change stream
 unnecessarily, as doing so could cause the test runner to block indefinitely.
 This should not be a concern for ``iterateUntilDocumentOrError`` as iteration
 only continues until either a document or error is encountered.
+
+Test runners MUST ensure that this operation will not inadvertently skip the
+first document in a change stream. Albeit rare, this could happen if
+``iterateUntilDocumentOrError`` were to blindly invoke ``next`` (or equivalent)
+on a change stream in a driver where newly created change streams are already
+positioned at their first element and the change stream cursor had a non-empty
+``firstBatch`` (i.e. ``resumeAfter`` or ``startAfter`` used). Alternatively,
+some drivers may use a different iterator method for advancing a change stream
+to its first position (e.g. ``rewind`` in PHP).
 
 
 Special Test Operations
@@ -2552,6 +2560,10 @@ The following tickets are addressed by the test format:
   creating an empty collection without inserting any documents (needed by
   transaction tests).
 
+* `SPEC-1660 <https://jira.mongodb.org/browse/SPEC-1660>`__: Consolidate failCommand documentation
+
+  See `Server Fail Points`_ and `failCommand`_.
+
 The following tickets can be resolved after the unified test format is approved
 and/or other specs begin porting their tests to the format:
 
@@ -2692,6 +2704,13 @@ Change Log
 ==========
 
 Note: this will be cleared when publishing version 1.0 of the spec
+
+2020-10-08:
+
+* Note special consideration to ensure iterateUntilDocumentOrError does not skip
+  the first result in a change stream
+
+* Add SPEC-1660 to related issues
 
 2020-10-07:
 
