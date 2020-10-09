@@ -1203,8 +1203,8 @@ findOneAndReplace and findOneAndUpdate
 
 The ``returnDocument`` option for ``findOneAndReplace`` and ``findOneAndUpdate``
 is documented as an enum with possible values "Before" and "After". Test files
-SHOULD express ``returnDocument`` a string and test runners MUST raise an error
-if its value does not case-insensitively match either enum value.
+SHOULD express ``returnDocument`` as a string and test runners MUST raise an
+error if its value does not case-insensitively match either enum value.
 
 
 insertMany
