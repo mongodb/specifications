@@ -39,23 +39,6 @@ one nor does it wrap an active one at all times.
 For the purposes of testing, a mocked ``Connection`` type could be used with the
 pool that never actually creates a TCP connection or performs any I/O.
 
-Unmanaged Connection
-~~~~~~~~~~~~~~~~~~~~
-
-An "Unmanaged Connection" refers to a `Connection <#connection>`_ created by the
-pool that does not contribute to any connection count, may not be checked in to
-the pool, and causes no monitoring events to be emitted over the course of its
-existence. It does contain a generation, an ID, and an established TCP
-connection, though no steps of the authentication process or the MongoDB
-handshake are performed as part of setting up that TCP connection.
-
-The same establishment restrictions that apply to the creation of normal pooled
-`Connections <#connection>`_ apply to "Unmanaged Connections" too
-(e.g. maxConnecting), and pendingConnectionCount is incremented while the
-underlying TCP connection of an "Unmanaged Connection" is still being set up.
-
-"Unmanaged Connections" MUST be created and used by SDAM monitoring threads.
-
 Endpoint
 ~~~~~~~~
 
@@ -193,8 +176,6 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
 -  **Single Track:** A `Connection`_ MUST limit itself to one request / response at a time. A `Connection`_ MUST NOT multiplex/pipeline requests to an Endpoint.
 -  **Monotonically Increasing ID:** A `Connection`_ MUST have an ID number associated with it. `Connection`_ IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
-
-   -  Note: `Unmanaged Connections <#unmanaged-connection>`_ do not perform any parts of the MongoDB Handshake or Authentication when created.
 -  **Perishable**: it is possible for a `Connection`_ to become **Perished**. A `Connection`_ is considered perished if any of the following are true:
 
    -  **Stale:** The `Connection`_ 's generation does not match the generation of the parent pool
@@ -239,9 +220,6 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
        *   - "in use":        The Connection has been established, checked out from the pool, and has yet
        *                      to be checked back in. Contributes to totalConnectionCount.
        *
-       *   - "unmanaged":     The Connection was created and established via createUnmanagedConnection
-       *                      and has yet to be closed. Does not contribute to any connection counts.
-       *
        *   - "closed":        The Connection has had its socket closed and cannot be used for any future
        *                      operations. Does not contribute to any connection counts.
        *
@@ -249,7 +227,7 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
        * in this specification. It is not required that drivers
        * actually include this field in their implementations of Connection.
        */
-      state: "pending" | "available" | "in use" | "unmanaged" | "closed";
+      state: "pending" | "available" | "in use" | "closed";
     }
 
 WaitQueue
@@ -337,13 +315,6 @@ has the following properties:
        *  Closes the pool, preventing the pool from creating and returning new Connections
        */
       close(): void;
-
-      /**
-       * Returns a newly established "unmanaged" Connection.
-       *
-       * This Connection MUST NOT be checked in to the pool.
-       */
-      createUnmanagedConnection(): Connection;
     }
 
 .. _connection-pool-behaviors-1:
@@ -443,10 +414,6 @@ necessary to close its underlying socket. The Driver SHOULD perform this
 teardown in a non-blocking manner, such as via the use of a background
 thread or async I/O.
 
-If the `Connection <#connection>`_ being closed is an `Unmanaged Connection
-<#unmanaged-connection>`_, then closing it MUST NOT modify any of the
-ConnectionCounts in any way and MUST NOT emit a ConnectionClosedEvent.
-
 .. code::
 
     original state = connection state
@@ -457,9 +424,8 @@ ConnectionCounts in any way and MUST NOT emit a ConnectionClosedEvent.
     else if original state is "pending":
       decrement pendingConnectionCount
 
-    if original state != "unmanaged":
-      decrement totalConnectionCount
-      emit ConnectionClosedEvent
+    decrement totalConnectionCount
+    emit ConnectionClosedEvent
 
     # The following can happen at a later time (i.e. in background
     # thread) or via non-blocking I/O.
@@ -636,39 +602,6 @@ Clearing a Connection Pool
 --------------------------
 
 A Pool MUST have a method of clearing all `Connections <#connection>`_ when instructed. Rather than iterating through every `Connection <#connection>`_, this method should simply increment the generation of the Pool, implicitly marking all current `Connections <#connection>`_ as stale. The checkOut and checkIn algorithms will handle clearing out stale `Connections <#connection>`_. If a user is subscribed to Connection Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
-
-Creating an Unmanaged Connection
---------------------------------
-
-A Pool MUST have a method for creating an `Unmanaged Connection
-<#unmanaged-connection>`_. The underlying TCP socket of the returned `Connection
-<#connection>`_ MUST be connected, but this method MUST NOT perform any steps of
-the authentication process or the MongoDB handshake as part of setting up the
-TCP connection. The returned `Connection <#connection>`_ MUST be marked as "unmanaged" and
-MUST NOT be allowed to be checked back into the Pool.
-
-This method MUST NOT emit any monitoring events under any circumstances.
-
-This method MUST wait until pendingConnectionCount < maxConnecting before
-proceeding with creating the `Unmanaged Connection <#unmanaged-connection>`_.
-
-This method is used to create the `Connections <#connection>`_ used by SDAM
-monitoring threads.
-
-.. code::
-
-   wait until pendingConnectionCount < maxConnecting
-   connection = new Connection()
-   increment pendingConnectionCount
-   try:
-     connect connection via TCP / TLS
-     set connection state to "unmanaged"
-     decrement pendingConnectionCount
-     return connection
-   except error:
-     decrement pendingConnectionCount
-     throw error
-
 
 Forking
 -------
@@ -962,19 +895,6 @@ again, so ensuring the socket is torn down does not need to happen
 immediately and can happen at a later time, either via async I/O or a
 background thread. 
 
-What does the pool need to be able to create "Unmanaged Connections"?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In order to ensure that all TCP connections opened against the endpoint,
-including those that are created for the purposes of SDAM, are restricted and
-moderated equally (e.g. by maxConnecting), all TCP connection creation needs to
-go through the Pool. It is undesirable to use regular pooled connections for
-SDAM though, since the TCP connections used for monitoring do not need to
-authenticate, emit events, or compete for resources with application
-threads. Thus, a new `Connection <#connection>`_ type was needed that does not
-do those things but is still bound by the establishment restrictions as pooled
-`Connections <#connection>`_.
-
 Backwards Compatibility
 =======================
 
@@ -990,6 +910,15 @@ Reference Implementations
 Future Development
 ==================
 
+SDAM
+~~~~
+
+This specification does not dictate how SDAM Monitoring connections are managed. SDAM specifies that “A monitor SHOULD NOT use the client's regular Connection pool”. Some possible solutions for this include:
+
+-  Having each Endpoint representation in the driver create and manage a separate dedicated `Connection <#connection>`_ for monitoring purposes
+-  Having each Endpoint representation in the driver maintain a separate pool of maxPoolSize 1 for monitoring purposes.
+-  Having each Pool maintain a dedicated `Connection <#connection>`_ for monitoring purposes, with an API to expose that Connection.
+
 Advanced Pooling Behaviors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1003,7 +932,7 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
-:2020-09-24: Introduce maxConnecting requirement, Unmanaged Connections
+:2020-09-24: Introduce maxConnecting requirement
 
 :2020-09-03: Clarify Connection states and definition. Require the use of a
              background thread and/or async I/O. Add tests to ensure

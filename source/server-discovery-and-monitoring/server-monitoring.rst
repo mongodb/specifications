@@ -145,11 +145,10 @@ but the decision is left to the implementer.
 Servers are monitored with dedicated sockets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the client contains a CMAP spec-compliant connection pool, a monitor MUST use
-the pool to create "Unmanaged Connection"s for use in monitoring. Otherwise, `A
-monitor SHOULD NOT use the client's regular connection pool`_ to acquire a
-socket; it uses a dedicated socket that does not count toward the pool's maximum
-size.
+`A monitor SHOULD NOT use the client's regular connection pool`_
+to acquire a socket;
+it uses a dedicated socket that does not count toward the pool's
+maximum size.
 
 Drivers MUST NOT authenticate on sockets used for monitoring nor include
 SCRAM mechanism negotiation (i.e. ``saslSupportedMechs``), as doing so would
@@ -909,8 +908,8 @@ Thus both operations SHOULD use connectTimeoutMS, since that is the value
 users supply to help the client guess if a server is down,
 based on users' knowledge of expected latencies on their networks.
 
-A monitor SHOULD NOT use the client's regular connection pool (non-CMAP)
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+A monitor SHOULD NOT use the client's regular connection pool
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 If a multi-threaded driver's connection pool enforces a maximum size
 and monitors use sockets from the pool,
@@ -925,10 +924,6 @@ The latter is more complex than it is worth.
 Since this rule is justified for drivers that enforce a maximum pool size,
 this spec recommends that all drivers follow the same rule
 for the sake of consistency.
-
-For drivers that implement their connection pool as specified in CMAP,
-"Unmanaged Connections", which do not compete with regular pooled connections,
-MUST be used.
 
 Monitors MUST use a dedicated connection for RTT commands
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -1087,9 +1082,6 @@ awaitable isMaster heartbeat in the new protocol.
 
 Changelog
 ---------
-
-- 2020-09-24 Require the use of createUnmanagedConnection for monitoring
-  connections where possible.
 
 - 2020-06-11 Support connectTimeoutMS=0 in streaming heartbeat protocol.
 
