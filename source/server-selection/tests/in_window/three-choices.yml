@@ -1,0 +1,37 @@
+description: Server with least connections and most available connections selected most
+topology_description:
+  type: Sharded
+  servers:
+  - address: a:27017
+    avg_rtt_ms: 35
+    type: Mongos
+  - address: b:27017
+    avg_rtt_ms: 35
+    type: Mongos
+  - address: c:27017
+    avg_rtt_ms: 35
+    type: Mongos
+in_window:
+    # chosen when randomly selected with c due to
+    # lower active count. loses tie to b due to lower
+    # available connection count
+    - address: a:27017
+      active_connection_count: 3
+      available_connection_count: 0
+
+    # should be selected whenever randomly chosen due to
+    # higher available connection count
+    - address: b:27017
+      active_connection_count: 6
+      available_connection_count: 1
+
+    # should never be selected due to high active count
+    - address: c:27017
+      active_connection_count: 20,
+      available_connection_count: 0
+
+max_pool_size: 100
+expected_frequencies:
+    a:27017: 0.66
+    b:27017: 0.33
+    c:27017: 0

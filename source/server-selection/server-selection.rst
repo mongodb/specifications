@@ -10,7 +10,7 @@ Server Selection
 :Status: Accepted
 :Type: Standards
 :Last Modified: 2020-03-17
-:Version: 1.11.0
+:Version: 1.12.0
 
 .. contents::
 
@@ -810,8 +810,9 @@ as follows:
 4. Filter the suitable servers by calling the optional, application-provided server
    selector.
 
-5. If there are any suitable servers, choose one at random from those
-   within the latency window and return it; otherwise, continue to the next step
+5. If there are any suitable servers, choose one from those within the latency
+   window according to `Selecting servers within the latency window`_ and return
+   it; otherwise, continue to the next step
 
 6. Request an immediate topology check, then block the server selection
    thread until the topology changes or until the server selection
@@ -821,6 +822,7 @@ as follows:
    the selection start time, raise a `server selection error`_
 
 8. Goto Step #2
+
 
 Single-threaded server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -867,9 +869,9 @@ as follows:
 7. Filter the suitable servers by calling the optional, application-provided
    server selector.
 
-8. If there are any suitable servers, choose one at random from those
-   within the latency window and return it; otherwise, mark the topology
-   stale and continue to step #8
+8. If there are any suitable servers, choose one from those within the latency
+   window according to `Selecting servers within the latency window`_ and return
+   it; otherwise, mark the topology stale and continue to step #8
 
 9. If `serverSelectionTryOnce`_ is true and the last scan time is newer than
    the selection start time, raise a `server selection error`_; otherwise,
@@ -995,8 +997,8 @@ server, but are passed through to mongos. See `Passing read preference to mongos
 
 For write operations, all servers of type Mongos are suitable.
 
-If more than one mongos is suitable, drivers MUST randomly select a suitable
-server within the latency window.
+If more than one mongos is suitable, drivers MUST select a suitable server
+within the latency window according to `Selecting servers within the latency window`_.
 
 Round Trip Times and the Latency Window
 ---------------------------------------
@@ -1031,8 +1033,8 @@ Selecting servers within the latency window
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Server selection results in a set of zero or more suitable servers.  If more
-than one server is suitable, a server MUST be selected randomly from among
-those within the latency window.
+than one server is suitable, a server MUST be selected from among those within
+the latency window.
 
 The ``localThresholdMS`` configuration parameter controls the size of the
 latency window used to select a suitable server.
@@ -1041,12 +1043,47 @@ The shortest average round trip time (RTT) from among suitable servers anchors
 one end of the latency window (``A``).  The other end is determined by adding
 ``localThresholdMS`` (``B = A + localThresholdMS``).
 
-A server MUST be selected randomly from among suitable servers that have an
-average RTT (``RTT``) within the latency window (i.e. ``A ≤ RTT ≤ B``).
+A server MUST be selected from among suitable servers that have an average RTT
+(``RTT``) within the latency window (i.e. ``A ≤ RTT ≤ B``). In other words, the
+suitable server with the shortest average RTT is **always** a possible choice.
+Other servers could be chosen if their average RTTs are no more than
+``localThresholdMS`` more than the shortest average RTT.
 
-In other words, the suitable server with the shortest average RTT is **always**
-a possible choice.  Other servers could be chosen if their average RTTs are no
-more than ``localThresholdMS`` more than the shortest average RTT.
+A server MUST be selected according to the following algorithm, which is a
+slight modification of the `"Power of Two Random Choices with Min Connections"
+<https://www.nginx.com/blog/nginx-power-of-two-choices-load-balancing-algorithm/>`_
+load balancing algorithm. The steps are as follows:
+
+1. Select two servers at random from the set of available servers in the latency
+   window. If there is only 1 server in the latency window, just return that server
+   without proceeding to the next steps.
+
+2. If ``abs(server1.pool.activeConnectionCount - server2.pool.activeConnectionCount) > max(0.05*maxPoolSize, 1)``,
+   then choose the server with the smaller ``activeConnectionCount``.
+
+3. Otherwise, choose the server with the higher ``availableConnectionCount``.
+
+See the `Connection Pool`_ definition in the CMAP specification for the
+definitions of availableConnectionCount and activeConnectionCount.
+
+In psuedocode::
+
+    def selectServerWithinLatencyWindow(suitable_servers):
+        in_window = servers in suitable_servers within the latency window
+
+        if len(in_window) == 1:
+           return in_window[0]
+
+        server1, server2 = random two entries from in_window
+
+        diff = abs(server1.pool.active_connection_count - server2.pool.active_connection_count)
+        if diff > max(0.05 * max_pool_size, 1):
+            return server in (server1, server2) with minimum active_connection_count
+        elif server1.pool.available_connection_count >= server2.pool.available_connection_count:
+            return server1
+        else:
+            return server2
+
 
 Checking an Idle Socket After socketCheckIntervalMS
 ---------------------------------------------------
@@ -1178,7 +1215,9 @@ Multi-threaded server selection implementation
 The following example uses a single lock for clarity.  Drivers are free to
 implement whatever concurrency model best suits their design.
 
-Pseudocode for `multi-threaded or asynchronous server selection`_::
+The following is pseudocode for `multi-threaded or asynchronous server
+selection`_. The psuedocode for the ``selectServerWithinLatencyWindow`` function is
+included in the `Selecting servers within the latency window`_ section above::
 
     def getServer(criteria):
         client.lock.acquire()
@@ -1210,8 +1249,7 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
                 servers = serverSelector(servers)
 
             if servers is not empty:
-                in_window = servers within the latency window
-                selected = random entry from in_window
+                selected = selectServerWithinLatencyWindow(servers)
                 client.lock.release()
                 return selected
 
@@ -1232,7 +1270,9 @@ Pseudocode for `multi-threaded or asynchronous server selection`_::
 Single-threaded server selection implementation
 -----------------------------------------------
 
-Pseudocode for `single-threaded server selection`_::
+The following is pseudocode for `single-threaded server selection`_. The
+psuedocode for the ``selectServerWithinLatencyWindow`` function is included in the
+`Selecting servers within the latency window`_ section above::
 
     def getServer(criteria):
         startTime = gettime()
@@ -1285,8 +1325,7 @@ Pseudocode for `single-threaded server selection`_::
                 servers = serverSelector(servers)
 
             if servers is not empty:
-                in_window = servers within the latency window
-                return random entry from in_window
+                return selectServerWithinLatencyWindow(servers)
             else:
                 topologyDescription.stale = true
 
@@ -1418,18 +1457,6 @@ other time-related configuration options.
 However, given a choice between the two, ``localThreshold`` is a more general
 term.  For drivers, we add the ``MS`` suffix for clarity about units and
 consistency with other configuration options.
-
-Random selection within the latency window
-------------------------------------------
-
-When more than one server is judged to be suitable, the spec calls for random
-selection to ensure a fair distribution of work among servers within the
-latency window.
-
-It would be hard to ensure a fair round-robin approach given the potential for
-servers to come and go.  Making newly available servers either first or last
-could lead to unbalanced work.  Random selection has a better fairness
-guarantee and keeps the design simpler.
 
 The slaveOK wire protocol flag
 ------------------------------
@@ -1629,7 +1656,7 @@ Mongos HA has similar problems with pinning, in that one can wind up pinned
 to a high-latency mongos even if a lower-latency mongos later becomes
 available.
 
-Random selection within the latency window avoids this problem and makes server
+Selection within the latency window avoids this problem and makes server
 selection exactly analogous to having multiple suitable servers from a replica
 set.  This is easier to explain and implement.
 
@@ -1705,17 +1732,42 @@ The user's intent in specifying two tag sets was to fall back to the second set
 if needed, so we filter by maxStalenessSeconds first, then tag_sets, and select
 Node 2.
 
+Why change from pure random selection when selecting from within the latency window?
+------------------------------------------------------------------------------------
+
+When a node slows down, pooled connections to it will remain checked out for
+longer periods of time due to operations taking longer to complete
+server-side. Assuming at least constant incoming operation load, more
+connections will need to be opened against the node to service new operations,
+further straining it and slowing it down. This can lead to runaway connection
+creation scenarios that can cripple a deployment ("connnection storms"). As part
+of DRIVERS-781, the load balancing algorithm was changed to more evenly spread
+out the workload among suitable servers to prevent any single node from being
+overloaded. The new algorithm achieves this by routing operations to servers
+with fewer active connections, thereby reducing the number of new operations and
+connection creations routed towards nodes that are busier. The previous random
+selection mechanism did not take load into account and could assign work to
+nodes that were under too much stress already.
+
+As an added benefit, the new algorithm gives preference to nodes that have
+recently been discovered and are thus are more likely to be alive (e.g. during a
+rolling restart). The narrowing to two random choices first ensures new servers
+aren't overly preferred however, preventing a "thundering herd" situation.
+
 References
 ==========
 
 - `Server Discovery and Monitoring`_ specification
 - `Driver Authentication`_ specification
+- `Connection Monitoring and Pooling`_ specificaiton
 
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
 .. _Max Staleness: https://github.com/mongodb/specifications/tree/master/source/max-staleness
 .. _idleWritePeriodMS: https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#idlewriteperiodms
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
+.. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool
+.. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 
 Changes
 =======
@@ -1768,6 +1820,9 @@ selection rules.
 2019-06-07: Clarify language for aggregate and mapReduce commands that write
 
 2020-03-17: Specify read preferences with support for server hedged reads
+
+2020-10-10: Consider connection pool health when selecting servers within the
+latency window.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

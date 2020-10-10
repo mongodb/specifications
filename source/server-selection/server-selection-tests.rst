@@ -217,45 +217,23 @@ correctly passed to Mongos in the following scenarios:
   - $readPreference is used
 
 
-Random Selection Within Latency Window
-======================================
+Selection Within Latency Window
+===============================
 
-The Server Selection spec mandates that drivers select a server at random from the
-set of suitable servers that are within the latency window. Drivers implementing the
-spec SHOULD test their implementations in a language-specific way to confirm randomness.
+The Server Selection spec mandates that drivers select a server from within the
+latency window according to a certain algorithm. There are YAML tests verifying
+that drivers implement this algorithm correctly. Drivers implementing the spec
+MUST use them test their implementations.
 
-For example, the following topology description, operation, and read preference will
-return a set of three suitable servers within the latency window::
+The tests each include some information about the servers within the latency
+window. For each case, the driver passes this information into whatever function
+it uses to select from within the window. Because the algorithm relies on
+randomness, this process MUST be repeated 1000 times. Once the 1000 selections
+are complete, the runner tallies up the number of times each server was selected
+and compares those counts to the expected results included in the test
+case. Specifics of the test format and how to run the tests are included in the
+tests README.
 
-   topology_description:
-     type: ReplicaSetWithPrimary
-     servers:
-     - &secondary_1
-       address: b:27017
-       avg_rtt_ms: 5
-       type: RSSecondary
-       tags: {}
-     - &secondary_2
-       address: c:27017
-       avg_rtt_ms: 10
-       type: RSSecondary
-       tags: {}
-     - &primary
-       address: a:27017
-       avg_rtt_ms: 6
-       type: RSPrimary
-       tags: {}
-   operation: read
-   read_preference:
-     mode: Nearest
-     tags: {}
-   in_latency_window:
-   - *primary
-   - *secondary_1
-   - *secondary_2
-
-Drivers SHOULD check that their implementation selects one of ``primary``, ``secondary_1``,
-and ``secondary_2`` at random.
 
 Application-Provided Server Selector
 ====================================
