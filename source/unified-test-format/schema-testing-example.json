@@ -1,0 +1,63 @@
+{
+  "tests": [
+    {
+      "description": "valid because error:true and result has only expected fields",
+      "operations": [
+        {
+          "object": "collection",
+          "name": "runCommand",
+          "error": true,
+          "result": {
+            "errorContains": "string"
+          }
+        }
+      ]
+    },
+    {
+      "description": "valid because error == false. result can be any type (non-object)",
+      "operations": [
+        {
+          "object": "collection",
+          "name": "operation",
+          "error": false,
+          "result": 1
+        }
+      ]
+    },
+    {
+      "description": "valid because error == false. result can be any type (object)",
+      "operations": [
+        {
+          "object": "collection",
+          "name": "operation",
+          "error": false,
+          "result": {
+            "foo": "bar"
+          }
+        }
+      ]
+    },
+    {
+      "description": "valid because error != true. result can be any type (non-object)",
+      "operations": [
+        {
+          "object": "collection",
+          "name": "operation",
+          "result": 1
+        }
+      ]
+    },
+    {
+      "description": "valid because error != true. result can be any type (object)",
+      "operations": [
+        {
+          "object": "collection",
+          "name": "operation",
+          "result": {
+            "foo": "bar"
+          }
+        }
+      ]
+    }
+  ]
+}
