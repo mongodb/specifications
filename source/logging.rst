@@ -72,12 +72,12 @@ recompilation).
        for emitted messages for each `component <Components_>`_.
      - Support configuration by specifying environment variables corresponding
        to each `component <Components_>`_, as well as by specifying the
-       environment variable `MONGODB_LOGGING_ALL`.
+       environment variable ``MONGODB_LOGGING_ALL``.
 
        Each of these variables may be set to any of the
        `severity levels <Severity Levels_>`_ to indicate the minimum severity
        level at which messages should be emitted for the corresponding component
-       (or in the case of `MONGODB_LOGGING_ALL`, all components).
+       (or in the case of ``MONGODB_LOGGING_ALL``, all components).
 
        Providing a value for ``MONGODB_LOGGING_ALL`` is equivalent to providing
        that value for all of the per-component variables.
