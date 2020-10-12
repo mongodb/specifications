@@ -111,7 +111,7 @@ recompilation).
    * - Support for configuring the maximum length for extended JSON documents
        in log messages, with a default max length of 1000 characters.
      - Support configuration via the environment variable
-       ``MONGODB_MAX_DOCUMENT_LENGTH``.
+       ``MONGODB_LOGGING_MAX_DOCUMENT_LENGTH``.
       
        When unspecified, any document longer than 1000 characters MUST be
        truncated to 1000 characters.
