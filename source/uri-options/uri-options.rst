@@ -182,10 +182,10 @@ pertaining to URI options apply here.
      - The amount of time a connection can be idle before it's closed
 
    * - maxPoolSize
-     - positive integer
+     - non-negative integer; 0 means no maximum
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
-     - The maximum number of clients or connections able to be created by a pool at a given time
+     - The maximum number of clients or connections able to be created by a pool at a given time. This count includes connections which are currently checked out.
 
    * - maxStalenessSeconds
      - -1 (no max staleness check) or integer >= 90
@@ -194,10 +194,10 @@ pertaining to URI options apply here.
      - The maximum replication lag, in wall clock time, that a secondary can suffer and still be eligible for server selection
 
    * - minPoolSize
-     - positive integer
+     - non-negative integer
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
-     - The maximum number of clients or connections able to be created by a pool at a given time
+     - The number of connections the driver should create and maintain in the pool even when no operations are occurring. This count includes connections which are currently checked out. 
 
    * - readConcernLevel
      - any string (`to allow for forwards compatibility with the server <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#unknown-levels-and-additional-options-for-string-based-readconcerns>`_)
