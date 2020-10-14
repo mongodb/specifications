@@ -10,7 +10,7 @@ Logging
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-12
+:Last Modified: 2020-10-14
 
 .. contents::
 
@@ -72,22 +72,22 @@ recompilation).
        for emitted messages for each `component <Components_>`_.
      - Support configuration by specifying environment variables corresponding
        to each `component <Components_>`_, as well as by specifying the
-       environment variable ``MONGODB_LOGGING_ALL``.
+       environment variable ``MONGODB_LOG_ALL``.
 
        Each of these variables may be set to any of the
        `severity levels <Severity Levels_>`_ to indicate the minimum severity
        level at which messages should be emitted for the corresponding component
-       (or in the case of ``MONGODB_LOGGING_ALL``, all components).
+       (or in the case of ``MONGODB_LOG_ALL``, all components).
 
-       Providing a value for ``MONGODB_LOGGING_ALL`` is equivalent to providing
+       Providing a value for ``MONGODB_LOG_ALL`` is equivalent to providing
        that value for all of the per-component variables.
 
-       If ``MONGODB_LOGGING_ALL`` is specified in addition to one or more
+       If ``MONGODB_LOG_ALL`` is specified in addition to one or more
        component variables, the component variable's value MUST be used to
        determine the minimum level for that component.
 
        E.g. if the user sets 
-       ``MONGODB_LOGGING_ALL=debug MONGODB_LOGGING_COMMAND=info``, the command
+       ``MONGODB_LOG_ALL=debug MONGODB_LOG_COMMAND=info``, the command
        component is set to ``info`` level and all other components are set to
        ``debug`` level.
 
@@ -98,7 +98,7 @@ recompilation).
 
    * - Support for configuring where log messages should be output, including stderr,
        stdout, and an output file with a configurable path.
-     - Support configuration via the environment variable ``MONGODB_LOGGING_PATH``.
+     - Support configuration via the environment variable ``MONGODB_LOG_PATH``.
        
        If the value is "stdout" or "stderr" (case-insensitive), log to the
        corresponding output stream.
@@ -111,7 +111,7 @@ recompilation).
    * - Support for configuring the maximum length for extended JSON documents
        in log messages, with a default max length of 1000 characters.
      - Support configuration via the environment variable
-       ``MONGODB_LOGGING_MAX_DOCUMENT_LENGTH``.
+       ``MONGODB_LOG_MAX_DOCUMENT_LENGTH``.
       
        When unspecified, any document longer than 1000 characters MUST be
        truncated to 1000 characters.
@@ -144,21 +144,21 @@ listed specifications; this list is expected to grow over time.
 
    * - Command
      - `Command Monitoring <../command-monitoring/command-monitoring.rst>`__
-     - ``MONGODB_LOGGING_COMMAND``
+     - ``MONGODB_LOG_COMMAND``
 
    * - SDAM
      - `Server Discovery and Monitoring
        <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
-     - ``MONGODB_LOGGING_SDAM``
+     - ``MONGODB_LOG_SDAM``
 
    * - Server Selection
      - `Server Selection <../server-selection/server-selection.rst>`__
-     - ``MONGODB_LOGGING_SERVER_SELECTION``
+     - ``MONGODB_LOG_SERVER_SELECTION``
 
    * - Connection
      - `Connection Monitoring and Pooling
        <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
-     - ``MONGODB_LOGGING_CONNECTION``
+     - ``MONGODB_LOG_CONNECTION``
 
 Severity Levels
 ---------------
@@ -307,3 +307,4 @@ support it, so we can't require it.
 
 Change Log
 ==========
+2020-10-14: Shorten environment variable names by prefixing with ``MONGODB_LOG`` rather than ``MONGODB_LOGGING``.
