@@ -488,7 +488,7 @@ The structure of this object is as follows:
     ``id`` field (e.g. ``client: *client0``).
 
   - ``sessionOptions``: Optional object. Map of parameters to pass to
-    `MongoClient.startSession <../source/sessions/driver-sessions.rst#startsession>`__
+    `MongoClient.startSession <../sessions/driver-sessions.rst#startsession>`__
     when creating the session. Supported options are defined in the following
     specifications:
 
@@ -515,7 +515,7 @@ The structure of this object is as follows:
 
   - ``bucketOptions``: Optional object. Additional options used to construct
     the bucket object. Supported options are defined in the
-    `GridFS <../source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
+    `GridFS <../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
 
