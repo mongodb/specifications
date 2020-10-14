@@ -91,6 +91,9 @@ recompilation).
        component is set to ``info`` level and all other components are set to
        ``debug`` level.
 
+       These variables may also be set to "off" (case-insensitive) to indicate
+       that nothing should be logged.
+
        The default is to not log anything.
 
        If a variable is set to an invalid value, it MUST be treated as if it
@@ -174,11 +177,6 @@ inspired by the Syslog Protocol as described in `RFC 5424
      - Level Name
      - Meaning
      - Environment Variable value (case-insensitive)
-
-   * - N/A
-     - Off
-     - Nothing is logged.
-     - off
 
    * - 0
      - Emergency
@@ -307,4 +305,6 @@ support it, so we can't require it.
 
 Change Log
 ==========
-2020-10-14: Shorten environment variable names by prefixing with ``MONGODB_LOG`` rather than ``MONGODB_LOGGING``.
+2020-10-14: 
+- Shorten environment variable names by prefixing with ``MONGODB_LOG`` rather than ``MONGODB_LOGGING``.
+- Remove "off" from table of log levels; describe its behavior in section on environment variables instead.
