@@ -399,6 +399,11 @@ The structure of this object is as follows:
     connection string and any tests using this client SHOULD NOT depend on a
     particular number of mongos hosts.
 
+    This option SHOULD be set to true if the resulting entity is used to
+    conduct transactions against a sharded cluster. This is advised because
+    connecting to multiple mongos servers is necessary to test session
+    pinning.
+
     This option has no effect for non-sharded topologies.
 
   .. _entity_client_observeEvents:
@@ -1455,8 +1460,7 @@ targetedFailPoint
 ~~~~~~~~~~~~~~~~~
 
 The ``targetedFailPoint`` operation instructs the test runner to configure a
-fail point on a specific mongos using the client entity associated with a
-pinned session.
+fail point on a specific mongos.
 
 The following arguments are supported:
 
@@ -1465,20 +1469,23 @@ The following arguments are supported:
 
 - ``session``: Required string. See `commonOptions_session`_.
 
-  The client entity associated with this session SHOULD specify true for
-  `useMultipleMongoses <entity_client_useMultipleMongoses_>`_. This is advised
-  because multiple mongos connections are necessary to test session pinning.
+The mongos on which to set the fail point is determined by the ``session``
+argument (after resolution to a session entity). Test runners MUST error if
+the session is not pinned to a mongos server at the time this operation is
+executed.
 
-The MongoClient and mongos on which to run the ``configureFailPoint`` command is
-determined by the ``session`` argument (after resolution to a session entity).
-Test runners MUST error if the session is not pinned to a mongos server at the
-time this operation is executed.
+If the driver exposes an API to target a specific server for a command, the
+test runner SHOULD use the the client entity associated with the the session
+to execute the ``configureFailPoint`` command. In this case, the test runner
+MUST also ensure that this command is excluded from the list of observed
+command monitoring events for this client (if applicable). If such an API is
+not available, test runners MUST create a new MongoClient that is directly
+connected to the session's pinned server for this operation. The new
+MongoClient instance MUST be closed once the command has finished executing.
 
 When executing this operation, the test runner MUST keep a record of both the
-fail point and session (or pinned mongos server) so that the fail point can be
-disabled on the same mongos server after the test. The test runner MUST also
-ensure that the ``configureFailPoint`` command is excluded from the list of
-observed command monitoring events for this client (if applicable).
+fail point and pinned mongos server so that the fail point can be disabled on
+the same mongos server after the test.
 
 An example of this operation follows::
 
