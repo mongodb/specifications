@@ -10,7 +10,7 @@ Logging
 :Status: Draft
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-14
+:Last Modified: 2020-10-15
 
 .. contents::
 
@@ -235,11 +235,15 @@ in the list of permitted levels for consistency with Syslog and so that they
 may be used in the future if needed.
 
 Not all logging frameworks will necessarily support all of these levels. If an
-equivalent level is not available, drivers SHOULD emit messages for that level
+equivalent level is not available, drivers MUST emit messages for that level
 at the closest less severe level if one is available, or the closest more
-severe level otherwise. For example, if an Informational level is not available
-and Debug is, Informational messages should be emitted at Debug level. If a
-Trace level is not available, Debug should be used.
+severe level otherwise.
+
+For example, if an Informational level is not available and a Debug level is,
+messages that are specified to be Informational level MUST be emitted at Debug
+level. 
+If a Trace level is not available but Debug is, messages that are specified as
+Trace level MUST be emitted at debug level.
 
 Structured Logging
 ------------------
@@ -295,6 +299,12 @@ Future Work
 Following the completion of this specification, a number of other driver
 specifications will be updated to include relevant log messages.
 
+This specification may be updated in the future to include meanings and examples
+for Emergency, Alert, and Critical log levels if the need to use such levels
+arises. If so, the specification should also define how drivers should
+handle messages specified with those levels if their logging framework does not
+support those levels.
+
 Q&A
 ---
 **Q**: The server produces structured log messages as of 4.4. Why doesn't this
@@ -308,3 +318,7 @@ Change Log
 2020-10-14: 
 - Shorten environment variable names by prefixing with ``MONGODB_LOG`` rather than ``MONGODB_LOGGING``.
 - Remove "off" from table of log levels; describe its behavior in section on environment variables instead.
+
+2020-10-15:
+- Change rule for handling missing log levels to use "MUST" rather than "SHOULD".
+- Mention in future work defining of Emergency, Alert, and Critical levels.
