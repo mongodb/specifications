@@ -240,15 +240,13 @@
             ],
             "ordered": false
           },
-          "expectError": {
-            "expectResult": {
-              "deletedCount": 0,
-              "insertedCount": 2,
-              "matchedCount": 0,
-              "modifiedCount": 0,
-              "upsertedCount": 0,
-              "upsertedIds": {}
-            }
+          "expectResult": {
+            "deletedCount": 0,
+            "insertedCount": 2,
+            "matchedCount": 0,
+            "modifiedCount": 0,
+            "upsertedCount": 0,
+            "upsertedIds": {}
           }
         }
       ],
