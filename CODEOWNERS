@@ -5,9 +5,9 @@
 /source/crud/ @jmikola @egiurleo
 /source/driver-bulk-update.rst @jmikola @egiurleo
 
-# Transactions: Durran Jordan, Isabel Atkinson
-/source/transactions/ @durran @isabelatkinson
-/source/transactions-convenient-api/ @durran @isabelatkinson
+# Transactions: Durran Jordan, Isabella Siu
+/source/transactions/ @durran @iwysiu
+/source/transactions-convenient-api/ @durran @iwysiu
 
 # Client Side Encryption: Kevin Albertson, Sam Rossi
 /source/client-side-encryption/ @kevinAlbs @saghm
