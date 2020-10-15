@@ -956,23 +956,25 @@ credentials. Querying the URI will return the JSON response:
    }
 If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is unset, drivers MUST use the EC2 endpoint,
 
-.. code:: javascript
+.. code:: html
+
     http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>
 with the required header,
 
-.. code:: javascript
-    X-aws-ec2-metadata-token: <secret token>
-to access the EC2 instance's metadata.
+.. code:: html
 
-Drivers MUST obtain the role-name from querying the URI
+    X-aws-ec2-metadata-token: <secret-token>
+to access the EC2 instance's metadata. Drivers MUST obtain the role name from querying the URI
 
-.. code:: javascript
-    http://169.254.169.254/latest/meta-data/iam/security-credentials/.
-The role-name request also requires the header ``X-aws-ec2-metadata-token``. Drivers MUST use v2 of the EC2 Instance Metadata Service (`IMDSv2 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_) to access the secret token. In other words, Drivers MUST:
-* Start a session with a simple HTTP PUT request to IMDSv2.
-** The URL is http://169.254.169.254/latest/api/token.
-** The required header is ``X-aws-ec2-metadata-token-ttl-seconds``. Its value is the number of seconds the secret token should remain valid with a max of six hours (21600 seconds).
-* Capture the secret token IMDSv2 returned as a response to the PUT request. This token is the value for the header ``X-aws-ec2-metadata-token``.
+.. code:: html
+
+    http://169.254.169.254/latest/meta-data/iam/security-credentials/
+The role name request also requires the header ``X-aws-ec2-metadata-token``. Drivers MUST use v2 of the EC2 Instance Metadata Service (`IMDSv2 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_) to access the secret token. In other words, Drivers MUST:
+
+	* Start a session with a simple HTTP PUT request to IMDSv2.
+		* The URL is ``http://169.254.169.254/latest/api/token``.
+		* The required header is ``X-aws-ec2-metadata-token-ttl-seconds``. Its value is the number of seconds the secret token should remain valid with a max of six hours (`21600` seconds).
+	* Capture the secret token IMDSv2 returned as a response to the PUT request. This token is the value for the header ``X-aws-ec2-metadata-token``.
 The curl recipe below demonstrates the above. It retrieves a secret token that's valid for 30 seconds. It then uses that token to access the EC2 instance's credentials:
 
 .. code:: shell-session
@@ -980,8 +982,7 @@ The curl recipe below demonstrates the above. It retrieves a secret token that's
     $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
     $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
     $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
-Drives can test this process using the mock EC2 server in `aws_services_lib <https://github.com/mongodb/specifications/blob/master/source/auth/tests/aws_services_lib>`_
-The JSON response will have the format:
+Drives can test this process using the mock EC2 server in `aws_services_lib <https://github.com/mongodb/specifications/blob/master/source/auth/tests/aws_services_lib>`_. The JSON response will have the format:
 
 .. code:: javascript
 
@@ -995,7 +996,7 @@ The JSON response will have the format:
           "Expiration": <date>
       }
 
-See `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_. From either JSON response drivers 
+From the JSON response drivers 
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
 
