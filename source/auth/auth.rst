@@ -972,10 +972,9 @@ to access the EC2 instance's metadata. Drivers MUST obtain the role name from qu
 The role name request also requires the header ``X-aws-ec2-metadata-token``. Drivers MUST use v2 of the EC2 Instance Metadata Service (`IMDSv2 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_) to access the secret token. In other words, Drivers MUST
 
 * Start a session with a simple HTTP PUT request to IMDSv2.
- * The URL is ``http://169.254.169.254/latest/api/token``.
- * The required header is ``X-aws-ec2-metadata-token-ttl-seconds``. Its value is the number of seconds the secret token should remain valid with a max of six hours (`21600` seconds).
+	* The URL is ``http://169.254.169.254/latest/api/token``.
+	* The required header is ``X-aws-ec2-metadata-token-ttl-seconds``. Its value is the number of seconds the secret token should remain valid with a max of six hours (`21600` seconds).
 * Capture the secret token IMDSv2 returned as a response to the PUT request. This token is the value for the header ``X-aws-ec2-metadata-token``.
-
 The curl recipe below demonstrates the above. It retrieves a secret token that's valid for 30 seconds. It then uses that token to access the EC2 instance's credentials:
 
 .. code:: shell-session
