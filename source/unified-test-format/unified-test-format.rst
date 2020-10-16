@@ -6,10 +6,10 @@ Unified Test Format
 :Spec Version: 1.0.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
-:Status: Draft
+:Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-08
+:Last Modified: 2020-10-16
 
 .. contents::
 
