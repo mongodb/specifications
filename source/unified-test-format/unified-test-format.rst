@@ -1475,7 +1475,7 @@ the session is not pinned to a mongos server at the time this operation is
 executed.
 
 If the driver exposes an API to target a specific server for a command, the
-test runner SHOULD use the the client entity associated with the the session
+test runner SHOULD use the client entity associated with the session
 to execute the ``configureFailPoint`` command. In this case, the test runner
 MUST also ensure that this command is excluded from the list of observed
 command monitoring events for this client (if applicable). If such an API is
