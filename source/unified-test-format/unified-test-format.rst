@@ -1981,12 +1981,13 @@ Syntax, where ``entityName`` is a string::
 
     { $$matchesEntity: <entityName> }
 
-This operator can be used anywhere a matched value is expected (including
-`expectResult <operation_expectResult_>`_). If the entity name is defined in the
-current test's `Entity Map`_, the test runner MUST fetch that entity and assert
-that the actual value matches the entity using the standard rules in
-`Evaluating Matches`_; otherwise, the test runner MUST raise an error for an
-undefined entity. The YAML file SHOULD use an `alias node`_ for the entity name.
+This operator can be used to reference a BSON entity anywhere a matched value
+is expected (including `expectResult <operation_expectResult_>`_). If the
+BSON entity is defined in the current test's `Entity Map`_, the test runner
+MUST fetch that entity and assert that the actual value matches the entity
+using the standard rules in `Evaluating Matches`_; otherwise, the test runner
+MUST raise an error for an undefined or mistyped entity. The YAML file SHOULD
+use an `alias node`_ for the entity name.
 
 This operator is primarily used to assert identifiers for uploaded GridFS files.
 
