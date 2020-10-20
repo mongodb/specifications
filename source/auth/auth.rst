@@ -860,7 +860,7 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15
         ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
 Region Calculation
-~~~~~~~~~~~~~~~~~~
+``````````````````
 
 To get the region from the host, the driver MUST follow the algorithm expressed in psuedocode below. :: 
 
@@ -923,6 +923,8 @@ The order in which Drivers MUST search for credentials is:
 #. ECS endpoint if and only if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set.
 #. EC2 endpoint
 
+URI
+___
 An example URI for authentication with MONGODB-AWS using AWS IAM credentials passed through the URI is as follows:
 
 .. code:: javascript
@@ -936,8 +938,12 @@ request. If so, then in addition to a username and password, users MAY also prov
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
 |
+Environment variables
+_____________________
 AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
 
+ECS endpoint
+____________
 If a username and password are not provided and the aforementioned enviornment variables are not set, drivers MUST query a link-local AWS address for temporary credentials.
 If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. Drivers SHOULD
 enforce a 10 second read timeout while waiting for incoming content from both the ECS and EC2 endpoints. If the
@@ -954,6 +960,9 @@ credentials. Querying the URI will return the JSON response:
     "SecretAccessKey": <secret_access_key>,
     "Token": <security_token>
    }
+   
+EC2 endpoint
+____________
 If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is unset, drivers MUST use the EC2 endpoint,
 
 .. code:: html
@@ -995,19 +1004,20 @@ To re-direct queries from the EC2 endpoint to the mock server, replace the link-
 	$ ROLE_NAME=`curl http://localhost:8000/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
 	$ curl http://localhost:8000/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
 	
-The output should be:
+The JSON response from both the actual and mock EC2 endpoint will be in this format:
 
 .. code:: javascript
 
 	{
-	  	"Code" : "Success",
-  		"LastUpdated" : "2019-11-20T17:19:19Z",
-  		"Type" : "AWS-HMAC",
-  		"AccessKeyId" : "tempuser",
-  		"SecretAccessKey" : "fakefakefakefakefakeFAKEFAKEFAKEFAKEFAKE",
-  		"Token" : "FAKETEMPORARYSESSIONTOKENfaketemporarysessiontoken",
-  		"Expiration" : "2019-11-20T23:37:45Z"
-	} 
+    		"Code": "Success",
+    		"LastUpdated" : <date>,
+    		"Type": "AWS-HMAC",
+		"AccessKeyId" : <access_key>,
+    		"SecretAccessKey": <secret_access_key>,
+    		"Token" : <security_token>,
+    		"Expiration": <date>
+	}
+
 From the JSON response drivers 
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
