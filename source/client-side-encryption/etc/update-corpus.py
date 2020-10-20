@@ -16,7 +16,7 @@ new_corpus_data = json.loads(open(new_corpus_path, "r").read())
 old_corpus_data = json.loads(open(old_corpus_path, "r").read())
 
 for (key, val) in new_corpus_data.items():
-    if key == "_id" or key == "altname_aws" or key == "altname_local":
+    if key in ["_id", "altname_aws", "altname_local", "altname_azure", "altname_gcp"]:
         continue
     if new_corpus_data[key]["algo"] == "det":
         old_corpus_data[key] = new_corpus_data[key]
