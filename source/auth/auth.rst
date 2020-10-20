@@ -860,7 +860,7 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15
         ``*``, Denotes a header that MUST be included in SignedHeaders, if present.
 
 Region Calculation
-~~~~~~~~~~~~~~~~~~
+``````````````````
 
 To get the region from the host, the driver MUST follow the algorithm expressed in psuedocode below. :: 
 
@@ -923,6 +923,8 @@ The order in which Drivers MUST search for credentials is:
 #. ECS endpoint if and only if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set.
 #. EC2 endpoint
 
+URI
+___
 An example URI for authentication with MONGODB-AWS using AWS IAM credentials passed through the URI is as follows:
 
 .. code:: javascript
@@ -936,8 +938,12 @@ request. If so, then in addition to a username and password, users MAY also prov
 
    "mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
 |
+Environment variables
+_____________________
 AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
 
+ECS endpoint
+____________
 If a username and password are not provided and the aforementioned enviornment variables are not set, drivers MUST query a link-local AWS address for temporary credentials.
 If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error. Drivers SHOULD
 enforce a 10 second read timeout while waiting for incoming content from both the ECS and EC2 endpoints. If the
@@ -954,39 +960,65 @@ credentials. Querying the URI will return the JSON response:
     "SecretAccessKey": <secret_access_key>,
     "Token": <security_token>
    }
+   
+EC2 endpoint
+____________
+If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is unset, drivers MUST use the EC2 endpoint,
 
-If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is not set drivers MUST assume we are on an
-EC2 instance and use the endpoint ``http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>``
-whereas ``role-name`` can be obtained from querying the URI
-``http://169.254.169.254/latest/meta-data/iam/security-credentials/``. Drivers MUST use `IMDSv2, session-oriented
-requests
-<https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_
-to retrieve content from the EC2 instance's link-local address. This will require drivers to first retrieve a
-secret token to use as a password to make requests to IMDSv2 for credentials. On subsequent request, clients MUST set
-a header named `X-aws-ec2-metadata-token` with this token. For example, this curl recipe retrieves a session token
-that's valid for 30 seconds and then uses that token to access the EC2 instance's credentials:
+.. code:: html
+
+    http://169.254.169.254/latest/meta-data/iam/security-credentials/<role-name>
+with the required header,
+
+.. code:: html
+
+    X-aws-ec2-metadata-token: <secret-token>
+to access the EC2 instance's metadata. Drivers MUST obtain the role name from querying the URI
+
+.. code:: html
+
+    http://169.254.169.254/latest/meta-data/iam/security-credentials/
+The role name request also requires the header ``X-aws-ec2-metadata-token``. Drivers MUST use v2 of the EC2 Instance Metadata Service (`IMDSv2 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`_) to access the secret token. In other words, Drivers MUST
+
+* Start a session with a simple HTTP PUT request to IMDSv2.
+	* The URL is ``http://169.254.169.254/latest/api/token``.
+	* The required header is ``X-aws-ec2-metadata-token-ttl-seconds``. Its value is the number of seconds the secret token should remain valid with a max of six hours (`21600` seconds).
+* Capture the secret token IMDSv2 returned as a response to the PUT request. This token is the value for the header ``X-aws-ec2-metadata-token``.
+The curl recipe below demonstrates the above. It retrieves a secret token that's valid for 30 seconds. It then uses that token to access the EC2 instance's credentials:
 
 .. code:: shell-session
 
     $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
     $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
     $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
+Drivers can test this process using the mock EC2 server in `mongo-enterprise-modules <https://github.com/10gen/mongo-enterprise-modules/blob/master/jstests/external_auth/lib/ec2_metadata_http_server.py>`_. The script must be run with `python3`:
 
-The JSON response will have the format:
+.. code:: shell-session
+
+	python3 ec2_metadata_http_server.py
+To re-direct queries from the EC2 endpoint to the mock server, replace the link-local address (``http://169.254.169.254``) with the IP and port of the mock server (by default, ``http://localhost:8000``). For example, the curl script above becomes:
+
+.. code:: shell-session
+
+	$ TOKEN=`curl -X PUT "http://localhost:8000/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
+	$ ROLE_NAME=`curl http://localhost:8000/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
+	$ curl http://localhost:8000/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
+	
+The JSON response from both the actual and mock EC2 endpoint will be in this format:
 
 .. code:: javascript
 
-      {
-          "Code": "Success",
-          "LastUpdated" : <date>,
-          "Type": "AWS-HMAC",
-          "AccessKeyId" : <access_key>,
-          "SecretAccessKey": <secret_access_key>,
-          "Token" : <security_token>,
-          "Expiration": <date>
-      }
+	{
+    		"Code": "Success",
+    		"LastUpdated" : <date>,
+    		"Type": "AWS-HMAC",
+		"AccessKeyId" : <access_key>,
+    		"SecretAccessKey": <secret_access_key>,
+    		"Token" : <security_token>,
+    		"Expiration": <date>
+	}
 
-See `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_. From either JSON response drivers 
+From the JSON response drivers 
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
 
