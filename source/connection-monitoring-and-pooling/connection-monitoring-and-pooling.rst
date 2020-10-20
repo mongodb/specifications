@@ -278,6 +278,9 @@ has the following properties:
        */
       generation: number;
     
+      // Any of the following connection counts may be computed rather than
+      // actually stored on the pool.
+
       /**
        *  An integer expressing how many total Connections
        *  ("pending" + "available" + "in use") the pool currently has
