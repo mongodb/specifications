@@ -453,7 +453,7 @@ If the kmsProvider is "azure" the masterKey is required and has the following fi
 .. code:: typescript
 
    {
-      keyVaultEndpoint: String, //Host with optional port. Example: "example.vault.azure.net".
+      keyVaultEndpoint: String, // Host with optional port. Example: "example.vault.azure.net".
       keyName: String,
       keyVersion: Optional<String>
    }
@@ -474,7 +474,7 @@ If the kmsProvider is "gcp" the masterKey is required and has the following fiel
 If the kmsProvider is "local" the masterKey is not applicable.
 
 Drivers MUST document the expected value of masterKey for "aws", "azure", and "gcp" and
-that it is required, not optional.
+that it is required for these providers, not optional.
 
 The value of any endpoint option is a host name with optional port number separated by a
 colon. E.g. "kms.us-east-1.amazonaws.com" or "kms.us-east-1.amazonaws.com:443".
@@ -811,7 +811,7 @@ masterKey contents
 
 ======== ======== ========================================================================
 **Name** **Type** **Description**
-provider "aws"    -
+provider "aws"
 key      String   AWS ARN. Only applicable for "aws" provider.
 region   String   AWS Region that contains AWS ARN. Only applicable for "aws" provider.
 endpoint String   Alternate AWS endpoint (needed for FIPS endpoints)
@@ -819,7 +819,7 @@ endpoint String   Alternate AWS endpoint (needed for FIPS endpoints)
 
 ================= ======== ===============================================================
 **Name**          **Type** **Description**
-provider          "azure"  -
+provider          "azure"
 keyVaultEndpoint  String   Required key vault endpoint. (e.g. "example.vault.azure.net")
 keyName           String   Required key name.
 keyVersion        String   Optional key version.
@@ -827,18 +827,18 @@ keyVersion        String   Optional key version.
 
 ========== ======== ======================================================================
 **Name**   **Type** **Description**
-provider   "gcp"    -
+provider   "gcp"
 projectId  String   Required project ID.
 location   String   Required location name (e.g. "global")
 keyRing    String   Required key ring name.
 keyName    String   Required key name.
 keyVersion String   Optional key version.
-endpoint   String   Optional, KMS URL, defaults to https:/cloudkms.googleapis.com
+endpoint   String   Optional, KMS URL, defaults to https://cloudkms.googleapis.com
 ========== ======== ======================================================================
 
 ======== ======== ========================================================================
 **Name** **Type** **Description**
-provider "local"  -
+provider "local"
 ======== ======== ========================================================================
 
 Data keys are needed for encryption and decryption. They are identified
