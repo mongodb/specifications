@@ -10,15 +10,6 @@ handwritten test files to make them more readable and easier
 to change.
 """
 
-master_keys = {
-    "aws": {
-        "provider": "aws",
-        "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        "region": "us-east-1"
-    },
-    "local": {}
-}
-
 keys = {
     "basic": {
         "status": 1,
@@ -28,7 +19,11 @@ keys = {
                 "subType": "04"
             }
         },
-        "masterKey": master_keys["aws"],
+        "masterKey": {
+            "provider": "aws",
+            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+            "region": "us-east-1"
+        },
         "updateDate": {
             "$date": {
                 "$numberLong": "1552949630483"
@@ -47,33 +42,6 @@ keys = {
         },
         "keyAltNames": ["altname", "another_altname"]
     },
-    "different_id": {
-        "status": 1,
-        "_id": {
-            "$binary": {
-                "base64": "BBBBBBBBBBBBBBBBBBBBBB==",
-                "subType": "04"
-            }
-        },
-        "masterKey": master_keys["aws"],
-        "updateDate": {
-            "$date": {
-                "$numberLong": "1552949630483"
-            }
-        },
-        "keyMaterial": {
-            "$binary": {
-                "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW",
-                "subType": "00"
-            }
-        },
-        "creationDate": {
-            "$date": {
-                "$numberLong": "1552949630483"
-            }
-        },
-        "keyAltNames": []
-    },
     "local": {
         "_id": {
             "$binary": {
@@ -91,6 +59,74 @@ keys = {
         "updateDate": {"$date": {"$numberLong": "1552949630483"}},
         "status": {"$numberInt": "0"},
         "masterKey": {"provider": "local"}
+    },
+    "azure": {
+        "_id": {
+            "$binary": {
+                "base64": "AZURE+AAAAAAAAAAAAAAAA==",
+                "subType": "04"
+            }
+        },
+        "keyMaterial": {
+            "$binary": {
+                "base64": "df6fFLZqBsZSnQz2SnTYWNBtznIHktVSDMaidAdL7yVVgxBJQ0DyPZUR2HDQB4hdYym3w4C+VGqzcyTZNJOXn6nJzpGrGlIQMcjv93HE4sP2d245ShQCi1nTkLmMaXN63E2fzltOY3jW7ojf5Z4+r8kxmzyfymmSRgo0w8AF7lUWvFhnBYoE4tE322L31vtAK3Zj8pTPvw8/TcUdMSI9Y669IIzxbMy5yMPmdzpnb8nceUv6/CJoeiLhbt5GgaHqIAv7tHFOY8ZX8ztowMLa3GeAjd9clvzraDTqrfMFYco/kDKAW5iPQQ+Xuy1fP8tyFp0ZwaL/7Ed2sc819j8FTQ==",
+                "subType": "00"
+            }
+        },
+        "creationDate": {
+            "$date": {
+                "$numberLong": "1601573901680"
+            }
+        },
+        "updateDate": {
+            "$date": {
+                "$numberLong": "1601573901680"
+            }
+        },
+        "status": {
+            "$numberInt": "0"
+        },
+        "masterKey": {
+            "provider": "azure",
+            "keyVaultEndpoint": "key-vault-kevinalbs.vault.azure.net",
+            "keyName": "test-key"
+        },
+        "keyAltNames": ["altname", "azure_altname"]
+    },
+    "gcp": {
+        "_id": {
+            "$binary": {
+                "base64": "GCP+AAAAAAAAAAAAAAAAAA==",
+                "subType": "04"
+            }
+        },
+        "keyMaterial": {
+            "$binary": {
+                "base64": "CiQAg4LDql74hjYPZ957Z7YpCrD6yTVVXKegflJDstQ/xngTyx0SiQEAkWNo/fjPj6jMNSvEop07/29Fu72QHFDRYM3e/KFHfnMQjKzfxb1yX1dC6MbO5FZG/UNBkXlJgPqbHNVuizea3QC24kV5iOiEb4nTM7+RW+8TfVb6QerWWe6MjC+kNpj4LMVcc1lFfVDeGgpJLyMLNGitrjR16qH8qQTNbGNy0toTL69JUmgS8Q==",
+                "subType": "00"
+            }
+        },
+        "creationDate": {
+            "$date": {
+                "$numberLong": "1601574333107"
+            }
+        },
+        "updateDate": {
+            "$date": {
+                "$numberLong": "1601574333107"
+            }
+        },
+        "status": {
+            "$numberInt": "0"
+        },
+        "masterKey": {
+            "provider": "gcp",
+            "projectId": "csfle-poc",
+            "location": "global",
+            "keyRing": "test",
+            "keyName": "quickstart"
+        },
+        "keyAltNames": ["altname", "gcp_altname"]
     }
 }
 
@@ -122,6 +158,20 @@ schemas = {
             "encrypted_string_equivalent": {
                 "encrypt": {
                     "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
+            "encrypted_string_azure": {
+                "encrypt": {
+                    "keyId": [keys["azure"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
+            "encrypted_string_gcp": {
+                "encrypt": {
+                    "keyId": [keys["gcp"]["_id"]],
                     "bsonType": "string",
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
@@ -390,6 +440,28 @@ ciphertexts = [
             }
         }
     },
+    {
+        "schema": "basic",
+        "field": "encrypted_string_azure",
+        "plaintext": "string0",
+        "data": {
+            "$binary": {
+                "base64": "AQGVERPgAAAAAAAAAAAAAAAC32sgJOGfvVYZUdXopkumfuC01OaC6tJcucltuMMIXSZE+xgj7ZV/oDGQWr+Y8+jVw1VtEG4Z91qfgYxPQbTYKQ==",
+                "subType": "06"
+            }
+        }
+    },
+    {
+        "schema": "basic",
+        "field": "encrypted_string_gcp",
+        "plaintext": "string0",
+        "data": {
+            "$binary": {
+                "base64": "ARgj/gAAAAAAAAAAAAAAAAACJfomfoCsTp+XRhJ0qROHL1E1RJfWeCpUiZcT8+IC3ykNBuk/yltS6UTmKOpNCIkqtMmokXorQkIsJb9lp5NsFQ==",
+                "subType": "06"
+            }
+        }
+    }
 ]
 
 
@@ -461,7 +533,7 @@ for filepath in sys.argv[1:-1]:
 
     rendered = template.render(**injections)
     # check for valid YAML.
-    parsed = yaml.load(rendered)
+    parsed = yaml.load(rendered, Loader=yaml.Loader)
     open(f"{os.path.join(targetdir,filename + '.yml')}", "w").write(rendered)
     print(f"Generated {os.path.join(targetdir,filename)}.yml")
     print("""Run "make" from specifications/source directory to generate corresponding JSON file""")

@@ -75,7 +75,11 @@ Each YAML file has the following keys:
 
       - ``kmsProviders`` A dictionary of KMS providers to set on the key vault ("aws" or "local")
 
-        - ``aws`` The AWS KMS provider. An empty object. Drivers MUST fill in AWS credentials from the environment.
+        - ``aws`` The AWS KMS provider. An empty object. Drivers MUST fill in AWS credentials (`accessKeyId`, `secretAccessKey`) from the environment.
+
+        - ``azure`` The Azure KMS provider credentials. An empty object. Drivers MUST fill in Azure credentials (`tenantId`, `clientId`, and `clientSecret`) from the environment.
+
+        - ``gcp`` The GCP KMS provider credentials. An empty object. Drivers MUST fill in GCP credentials (`email`, `privateKey`) from the environment.
 
         - ``local`` The local KMS provider.
 
@@ -143,7 +147,7 @@ Then for each element in ``tests``:
 
 #. Create a **new** MongoClient using ``clientOptions``.
 
-   #. If ``autoEncryptOpts`` includes ``aws`` as a KMS provider, pass in AWS credentials from the environment.
+   #. If ``autoEncryptOpts`` includes ``aws``, ``azure``, and/or ``gcp`` as a KMS provider, pass in credentials from the environment.
    #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it to ``keyvault.datakeys``.
 
 #. For each element in ``operations``:
