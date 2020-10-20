@@ -982,20 +982,32 @@ The curl recipe below demonstrates the above. It retrieves a secret token that's
     $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
     $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
     $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
-Drivers can test this process using the mock EC2 server in `mongo-enterprise-modules <https://github.com/10gen/mongo-enterprise-modules/blob/master/jstests/external_auth/lib/ec2_metadata_http_server.py>`_. The JSON response will have the format:
+Drivers can test this process using the mock EC2 server in `mongo-enterprise-modules <https://github.com/10gen/mongo-enterprise-modules/blob/master/jstests/external_auth/lib/ec2_metadata_http_server.py>`_. The script must be run with `python3`:
+
+.. code:: shell-session
+
+	python3 ec2_metadata_http_server.py
+To re-direct queries from the EC2 endpoint to the mock server, replace the link-local address (``http://169.254.169.254``) with the IP and port of the mock server (by default, ``http://localhost:8000``). For example, the curl script above becomes:
+
+.. code:: shell-session
+
+	$ TOKEN=`curl -X PUT "http://localhost:8000/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
+	$ ROLE_NAME=`curl http://localhost:8000/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
+	$ curl http://localhost:8000/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
+	
+The output should be:
 
 .. code:: javascript
 
-      {
-          "Code": "Success",
-          "LastUpdated" : <date>,
-          "Type": "AWS-HMAC",
-          "AccessKeyId" : <access_key>,
-          "SecretAccessKey": <secret_access_key>,
-          "Token" : <security_token>,
-          "Expiration": <date>
-      }
-
+	{
+	  	"Code" : "Success",
+  		"LastUpdated" : "2019-11-20T17:19:19Z",
+  		"Type" : "AWS-HMAC",
+  		"AccessKeyId" : "tempuser",
+  		"SecretAccessKey" : "fakefakefakefakefakeFAKEFAKEFAKEFAKEFAKE",
+  		"Token" : "FAKETEMPORARYSESSIONTOKENfaketemporarysessiontoken",
+  		"Expiration" : "2019-11-20T23:37:45Z"
+	} 
 From the JSON response drivers 
 MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
