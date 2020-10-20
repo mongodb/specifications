@@ -469,13 +469,14 @@ I/O.
 Checking Out a Connection
 -------------------------
 
-A Pool MUST have a method of allowing the driver to check out a `Connection`_.
-Checking out a `Connection`_ involves entering the WaitQueue, waiting to be
-granted access to the list of available connections, and finding or creating a
-`Connection`_ to be returned. If the thread times out in the WaitQueue, an error
-is thrown.
+A Pool MUST have a method that allows the driver to check out a `Connection`_.
+Checking out a `Connection`_ involves submitting a request to the WaitQueue and,
+once that request reaches the front of the queue, having the Pool find or create
+a `Connection`_ to fulfill that request. If waitQueueTimeoutMS is specified,
+then requests MUST time out after spending waitQueueTimeoutMS or longer in the
+WaitQueue without receiving a `Connection`_.
 
-Once reaching the front of the WaitQueue, a thread begins iterating over the
+To service a request for a `Connection`_, the Pool MUST first iterate over the
 list of available `Connections <#connection>`_, searching for a non-perished one
 to be returned. If a perished `Connection`_ is encountered, such a `Connection`_
 MUST be closed (as described in `Closing a Connection
@@ -488,14 +489,15 @@ If the list is exhausted, the total number of `Connections <#connection>`_ is
 less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
 create a `Connection`_, establish it, mark it as "in use" and return it. If
 totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting,
-then the thread MUST wait until either both of those conditions are met or until
-a `Connection`_ becomes available, re-entering the checkOut loop once it
-finishes waiting. This waiting MUST NOT block other threads from checking in a
-`Connection`_ to the pool. Threads that are waiting MUST be notified in order
-that they entered the WaitQueue. For drivers that implement the WaitQueue via a
-fair semaphore, a condition variable may also be required to implement
-this. Waiting on the condition variable SHOULD be limited by the
-WaitQueueTimeout, if the driver supports one.
+then the pool MUST wait to service the request until either both of those
+conditions are met or until a `Connection`_ becomes available, re-entering the
+checkOut loop in either case. This waiting MUST NOT prevent `Connections
+<#connection>`_ from being checked into the pool. Additionally, the Pool MUST
+NOT service any newer checkOut requests before fulfilling the original one which
+could not be fulfilled. For drivers that implement the WaitQueue via a fair
+semaphore, a condition variable may also be needed to to meet this
+requirement. Waiting on the condition variable SHOULD also be limited by the
+WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
 If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
 
@@ -506,9 +508,10 @@ implement a background thread, the checkOut method is responsible for
 <#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
 `Connections <#connection>`_ such that this requirement is met.
 
-A `Connection <#connection>`_ MUST NOT be checked out until it is established. In
-addition, the Pool MUST NOT block other threads from checking out
-`Connections <#connection>`_ while establishing a `Connection <#connection>`_.
+A `Connection <#connection>`_ MUST NOT be checked out until it is
+established. In addition, the Pool MUST NOT prevent other threads from checking
+out `Connections <#connection>`_ while establishing a `Connection
+<#connection>`_.
 
 Before a given `Connection <#connection>`_ is returned from checkOut, it must be marked as
 "in use", and the pool's availableConnectionCount MUST be decremented.
