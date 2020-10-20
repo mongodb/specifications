@@ -316,7 +316,7 @@ to authenticate.
 
    gcp: {
       email: String,
-      privateKey: String or byte[] // May be passed as a base64 encoded string.
+      privateKey: String or byte[], // May be passed as a base64 encoded string.
       endpoint: Optional<String> // Defaults to oauth2.googleapis.com
    }
 
@@ -443,9 +443,9 @@ key. If the kmsProvider is "aws" it is required and has the following fields:
 .. code:: typescript
 
    {
-      region: String, // Required.
-      key: String, // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
-      endpoint: String // Optional. An alternate host identifier to send KMS requests to. May include port number.
+      region: String,
+      key: String, // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number.
    }
 
 If the kmsProvider is "azure" the masterKey is required and has the following fields:
@@ -453,9 +453,9 @@ If the kmsProvider is "azure" the masterKey is required and has the following fi
 .. code:: typescript
 
    {
-      keyVaultEndpoint: String, // Required. Host with optional port. Example: "example.vault.azure.net".
-      keyName: String, // Required.
-      keyVersion: Optional<String> // Optional.
+      keyVaultEndpoint: String, //Host with optional port. Example: "example.vault.azure.net".
+      keyName: String,
+      keyVersion: Optional<String>
    }
 
 If the kmsProvider is "gcp" the masterKey is required and has the following fields:
@@ -463,10 +463,10 @@ If the kmsProvider is "gcp" the masterKey is required and has the following fiel
 .. code:: typescript
 
    {
-      projectId: String, // Required
-      location: String, // Required
-      keyRing: String, // Required
-      keyName: String, // Required
+      projectId: String,
+      location: String,
+      keyRing: String,
+      keyName: String,
       keyVersion: Optional<String>,
       endpoint: Optional<String> // Host with optional port. Defaults to "cloudkms.googleapis.com".
    }

@@ -631,8 +631,6 @@ Test specifying custom endpoints for authenticating Azure and GCP and for a cust
          }
       }
 
-   Create a ``ClientEncryption`` object (referred to as ``client_encryption_invalid``).
-
    Create a new ``ClientEncryption`` object (referred to as ``client_encryption_invalid``).
 
    Configure with KMS providers as follows:
