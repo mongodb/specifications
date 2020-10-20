@@ -16,10 +16,9 @@ failPoint:
     blockTimeMS: 750
 poolOptions:
   maxPoolSize: 10
-  # waitQueueTimeoutMS is not supposed to limit the time it takes to
-  # establish a connection, but given that the option will soon be deprecated anyways,
-  # drivers may skip this test if their implementation of waitQueueTimeoutMS does
-  # include establishment time.
+  # Drivers that limit connection establishment by waitQueueTimeoutMS may skip
+  # this test. While waitQueueTimeoutMS is technically not supposed to limit establishment time,
+  # it will soon be deprecated, so it is easier for those drivers to just skip this test.
   waitQueueTimeoutMS: 50
 operations:
   # start creating two connections simultaneously.
