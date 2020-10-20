@@ -479,7 +479,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    Create a new BSON document, named ``corpus_copied``.
    Iterate over each field of ``corpus``.
 
-   - If the field name is ``_id``, ``altname_aws`` and ``altname_local``, copy the field to ``corpus_copied``.
+   - If the field name is ``_id``, ``altname_aws``, ``altname_local``, ``altname_azure``, or ``altname_gcp``, copy the field to ``corpus_copied``.
    - If ``method`` is ``auto``, copy the field to ``corpus_copied``.
    - If ``method`` is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
 
@@ -605,6 +605,99 @@ Data keys created with AWS KMS may specify a custom endpoint to contact (instead
       }
 
    Expect this to fail with an exception with a message containing the string: "parse error"
+
+Azure and GCP custom endpoints
+``````````````````````````````
+
+Test specifying custom endpoints for authenticating Azure and GCP and for a custom GCP KMS endpoint.
+
+1. Create a ``ClientEncryption`` object (referred to as ``client_encryption``).
+
+   Configure with KMS providers as follows:
+
+   .. code:: javascript
+
+      {
+         "azure": {
+            "tenantId": <set from environment>,
+            "clientId": <set from environment>,
+            "clientSecret": <set from environment>,
+            "identityPlatformEndpoint": "login.microsoftonline.com:443"
+         },
+            "gcp": {
+            "email": <set from environment>,
+            "privateKey": <set from environment>,
+            "endpoint": "oauth2.googleapis.com:443"
+         }
+      }
+
+   Create a ``ClientEncryption`` object (referred to as ``client_encryption_invalid``).
+
+   Create a new ``ClientEncryption`` object (referred to as ``client_encryption_invalid``).
+
+   Configure with KMS providers as follows:
+
+   .. code:: javascript
+
+      {
+         "azure": {
+            "tenantId": <set from environment>,
+            "clientId": <set from environment>,
+            "clientSecret": <set from environment>,
+            "identityPlatformEndpoint": "example.com:443"
+         },
+            "gcp": {
+            "email": <set from environment>,
+            "privateKey": <set from environment>,
+            "endpoint": "example.com:443"
+         }
+      }
+
+   Configure both ``ClientEncryption`` objects with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
+
+2. Call `client_encryption.createDataKey()` with "azure" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "keyVaultEndpoint": "key-vault-kevinalbs.vault.azure.net",
+        "keyName": "test-key"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+   Call ``client_encryption_invalid`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
+
+3. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "projectId": "csfle-poc",
+        "location": "global",
+        "keyRing": "test",
+        "keyName": "quickstart",
+        "endpoint": "cloudkms.googleapis.com:443"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+   Call ``client_encryption_invalid`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
+
+4. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "provider": "gcp",
+        "projectId": "csfle-poc",
+        "location": "global",
+        "keyRing": "test",
+        "keyName": "quickstart",
+        "endpoint": "example.com:443"
+      }
+
+   Expect this to fail with an exception with a message containing the string: "Error parsing JSON in KMS response".
 
 Bypass spawning mongocryptd
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
