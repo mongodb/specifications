@@ -982,7 +982,7 @@ The curl recipe below demonstrates the above. It retrieves a secret token that's
     $ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
     $ ROLE_NAME=`curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
     $ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
-Drivers can test this process using the mock EC2 server in `aws_services_lib <https://github.com/mongodb/specifications/blob/master/source/auth/tests/aws_services_lib>`_. The JSON response will have the format:
+Drivers can test this process using the mock EC2 server in `mongo-enterprise-modules <https://github.com/10gen/mongo-enterprise-modules/blob/master/jstests/external_auth/lib/ec2_metadata_http_server.py>`_. The JSON response will have the format:
 
 .. code:: javascript
 
