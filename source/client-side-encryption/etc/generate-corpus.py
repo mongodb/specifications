@@ -163,7 +163,12 @@ for algo in ("rand", "det"):
         corpus_sections.append (""" "%s": %s """ % (key, json.dumps(map)))
 
 
+def reformat (json_str):
+    as_json = json.loads(json_str)
+    return json.dumps (as_json, indent=2)
+
 schema = """{ "bsonType": "object", "properties": { %s } }""" % (",\n".join(schema_sections))
-open(os.path.join(targetdir, "corpus-schema.json"), "w").write(schema)
-open(os.path.join(targetdir, "corpus.json"), "w").write("{%s}" % ",\n".join(corpus_sections))
+open(os.path.join(targetdir, "corpus-schema.json"), "w").write(reformat(schema))
+corpus = "{%s}" %  ",\n".join(corpus_sections)
+open(os.path.join(targetdir, "corpus.json"), "w").write(reformat(corpus))
 print("Generated corpus.json and corpus-schema.json in target directory")

@@ -161,6 +161,18 @@ schemas = {
                     "bsonType": "string",
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
+            }
+        },
+        "bsonType": "object"
+    },
+    "all": {
+        "properties": {
+            "encrypted_string_aws": {
+                "encrypt": {
+                    "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
             },
             "encrypted_string_azure": {
                 "encrypt": {
@@ -175,7 +187,14 @@ schemas = {
                     "bsonType": "string",
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
-            }
+            },
+            "encrypted_string_local": {
+                "encrypt": {
+                    "keyId": [keys["local"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
         },
         "bsonType": "object"
     },
