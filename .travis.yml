@@ -17,6 +17,7 @@ matrix:
         - 3.7
       install:
         - npm install -g js-yaml
+        - pip3 install pymongo pyyaml jinja2
       script:
         - python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
         - python3 ./source/client-side-encryption/etc/generate-corpus.py ./source/client-side-encryption/corpus
