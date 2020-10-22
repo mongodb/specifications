@@ -228,13 +228,25 @@ First, perform the setup.
    - A MongoClient configured with auto encryption (referred to as ``client_encrypted``)
    - A ``ClientEncryption`` object (referred to as ``client_encryption``)
 
-   Configure both objects with ``aws`` and the ``local`` KMS providers as follows:
+   Configure both objects with the following KMS providers:
 
    .. code:: javascript
 
       {
-          "aws": { <AWS credentials> },
-          "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
+         "aws": {
+            "accessKeyId": <set from environment>,
+            "secretAccessKey": <set from environment>
+         },
+         "azure": {
+            "tenantId": <set from environment>,
+            "clientId": <set from environment>,
+            "clientSecret": <set from environment>,
+         },
+            "gcp": {
+            "email": <set from environment>,
+            "privateKey": <set from environment>,
+         }
+         "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
       }
 
    Configure both objects with ``keyVaultNamespace`` set to ``keyvault.datakeys``.
@@ -260,58 +272,61 @@ First, perform the setup.
 
    Configure ``client_encryption`` with the ``keyVaultClient`` of the previously created ``client``.
 
-Then, test creating and using data keys from a ``local`` KMS provider:
+For each KMS provider (``aws``, ``azure``, ``gcp``, and ``local``), referred to as ``provider_name``, run the following test.
 
-#. Call ``client_encryption.createDataKey()`` with the ``local`` KMS provider and keyAltNames set to ``["local_altname"]``.
+#. Call ``client_encryption.createDataKey()``.
 
-   - Expect a BSON binary with subtype 4 to be returned, referred to as ``local_datakey_id``.
-   - Use ``client`` to run a ``find`` on ``keyvault.datakeys`` by querying with the ``_id`` set to the ``local_datakey_id``.
-   - Expect that exactly one document is returned with the "masterKey.provider" equal to "local".
+   - Set keyAltNames to ``["<provider_name>_altname"]``.
+   - Set the masterKey document based on ``provider_name``.
+
+     For "aws":
+
+     .. code:: javascript
+
+        {
+          region: "us-east-1",
+          key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+        }
+
+     For "azure":
+
+     .. code:: javascript
+
+        {
+          "keyVaultEndpoint": "key-vault-kevinalbs.vault.azure.net",
+          "keyName": "test-key"
+        }
+
+     For "gcp":
+
+     .. code:: javascript
+
+        {
+          "projectId": "csfle-poc",
+          "location": "global",
+          "keyRing": "test",
+          "keyName": "quickstart"
+        }
+
+     For "local", do not set a masterKey document.
+   - Expect a BSON binary with subtype 4 to be returned, referred to as ``datakey_id``.
+   - Use ``client`` to run a ``find`` on ``keyvault.datakeys`` by querying with the ``_id`` set to the ``datakey_id``.
+   - Expect that exactly one document is returned with the "masterKey.provider" equal to ``provider_name``.
    - Check that ``client`` captured a command_started event for the ``insert`` command containing a majority writeConcern.
 
-#. Call ``client_encryption.encrypt()`` with the value "hello local", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``local_datakey_id``.
+#. Call ``client_encryption.encrypt()`` with the value "hello <provider_name>", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``datakey_id``.
 
-   - Expect the return value to be a BSON binary subtype 6, referred to as ``local_encrypted``.
-   - Use ``client_encrypted`` to insert ``{ _id: "local", "value": <local_encrypted> }`` into ``db.coll``.
-   - Use ``client_encrypted`` to run a find querying with ``_id`` of "local" and expect ``value`` to be "hello local".
+   - Expect the return value to be a BSON binary subtype 6, referred to as ``encrypted``.
+   - Use ``client_encrypted`` to insert ``{ _id: "<provider_name>", "value": <encrypted> }`` into ``db.coll``.
+   - Use ``client_encrypted`` to run a find querying with ``_id`` of "<provider_name>" and expect ``value`` to be "hello local".
 
-#. Call ``client_encryption.encrypt()`` with the value "hello local", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``local_altname``.
+#. Call ``client_encryption.encrypt()`` with the value "hello <provider_name>", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``<provider_name>_altname``.
 
-   - Expect the return value to be a BSON binary subtype 6. Expect the value to exactly match the value of ``local_encrypted``.
-
-Then, repeat the above tests with the ``aws`` KMS provider:
-
-#. Call ``client_encryption.createDataKey()`` with the ``aws`` KMS provider, keyAltNames set to ``["aws_altname"]``, and ``masterKey`` as follows:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
-      }
-
-
-   - Expect a BSON binary with subtype 4 to be returned, referred to as ``aws_datakey_id``.
-   - Use ``client`` to run a ``find`` on ``keyvault.datakeys`` by querying with the ``_id`` set to the ``aws_datakey_id``.
-   - Expect that exactly one document is returned with the "masterKey.provider" equal to "aws".
-   - Check that ``client`` captured a command_started event for the ``insert`` command containing a majority writeConcern.
-
-#. Call ``client_encryption.encrypt()`` with the value "hello aws", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_id`` of ``aws_datakey_id``.
-
-   - Expect the return value to be a BSON binary subtype 6, referred to as ``aws_encrypted``.
-   - Use ``client_encrypted`` to insert ``{ _id: "aws", "value": <aws_encrypted> }`` into ``db.coll``.
-   - Use ``client_encrypted`` to run a find querying with ``_id`` of "aws" and expect ``value`` to be "hello aws".
-
-#. Call ``client_encryption.encrypt()`` with the value "hello aws", the algorithm ``AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic``, and the ``key_alt_name`` of ``aws_altname``.
-
-   - Expect the return value to be a BSON binary subtype 6. Expect the value to exactly match the value of ``aws_encrypted``.
-
-
-Then, run the following final tests:
+   - Expect the return value to be a BSON binary subtype 6. Expect the value to exactly match the value of ``encrypted``.
 
 #. Test explicit encrypting an auto encrypted field.
 
-   - Use ``client_encrypted`` to attempt to insert ``{ "encrypted_placeholder": (local_encrypted) }``
+   - Use ``client_encrypted`` to attempt to insert ``{ "encrypted_placeholder": <encrypted> }``
    - Expect an exception to be thrown, since this is an attempt to auto encrypt an already encrypted value.
 
 
@@ -521,103 +536,24 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 Custom Endpoint Test
 ~~~~~~~~~~~~~~~~~~~~
 
-Data keys created with AWS KMS may specify a custom endpoint to contact (instead of the default endpoint derived from the AWS region).
+Setup
+`````
 
-1. Create a ``ClientEncryption`` object (referred to as ``client_encryption``)
+For each test cases, start by creating two ``ClientEncryption`` objects. Recreate the ``ClientEncryption`` objects for each test case.
 
-   Configure with ``aws`` KMS providers as follows:
+Create a ``ClientEncryption`` object (referred to as ``client_encryption``)
 
-   .. code:: javascript
+Configure with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
 
-      {
-          "aws": { <AWS credentials> }
-      }
+Configure with KMS providers as follows:
 
-   Configure with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
+.. code:: javascript
 
-2. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
-      }
-
-   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
-
-3. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "kms.us-east-1.amazonaws.com"
-      }
-
-   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
-
-4. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "kms.us-east-1.amazonaws.com:443"
-      }
-
-   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
-
-5. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "kms.us-east-1.amazonaws.com:12345"
-      }
-
-   Expect this to fail with a socket connection error.
-
-6. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "kms.us-east-2.amazonaws.com"
-      }
-
-   Expect this to fail with an exception with a message containing the string: "us-east-1"
-
-7. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-        region: "us-east-1",
-        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "example.com"
-      }
-
-   Expect this to fail with an exception with a message containing the string: "parse error"
-
-Azure and GCP custom endpoints
-``````````````````````````````
-
-Test specifying custom endpoints for authenticating Azure and GCP and for a custom GCP KMS endpoint.
-
-1. Create a ``ClientEncryption`` object (referred to as ``client_encryption``).
-
-   Configure with KMS providers as follows:
-
-   .. code:: javascript
-
-      {
+   {
+         "aws": {
+            "accessKeyId": <set from environment>,
+            "secretAccessKey": <set from environment>
+         },
          "azure": {
             "tenantId": <set from environment>,
             "clientId": <set from environment>,
@@ -629,15 +565,17 @@ Test specifying custom endpoints for authenticating Azure and GCP and for a cust
             "privateKey": <set from environment>,
             "endpoint": "oauth2.googleapis.com:443"
          }
-      }
+   }
 
-   Create a new ``ClientEncryption`` object (referred to as ``client_encryption_invalid``).
+Create a ``ClientEncryption`` object (referred to as ``client_encryption_invalid``)
 
-   Configure with KMS providers as follows:
+Configure with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
 
-   .. code:: javascript
+Configure with KMS providers as follows:
 
-      {
+.. code:: javascript
+
+   {
          "azure": {
             "tenantId": <set from environment>,
             "clientId": <set from environment>,
@@ -649,11 +587,83 @@ Test specifying custom endpoints for authenticating Azure and GCP and for a cust
             "privateKey": <set from environment>,
             "endpoint": "example.com:443"
          }
+   }
+
+Test cases
+``````````
+
+1. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
       }
 
-   Configure both ``ClientEncryption`` objects with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
-2. Call `client_encryption.createDataKey()` with "azure" as the provider and the following masterKey:
+2. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-1.amazonaws.com"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+3. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-1.amazonaws.com:443"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+4. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-1.amazonaws.com:12345"
+      }
+
+   Expect this to fail with a socket connection error.
+
+5. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "kms.us-east-2.amazonaws.com"
+      }
+
+   Expect this to fail with an exception with a message containing the string: "us-east-1"
+
+6. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        region: "us-east-1",
+        key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+        endpoint: "example.com"
+      }
+
+   Expect this to fail with an exception with a message containing the string: "parse error"
+
+7. Call `client_encryption.createDataKey()` with "azure" as the provider and the following masterKey:
 
    .. code:: javascript
 
@@ -664,9 +674,9 @@ Test specifying custom endpoints for authenticating Azure and GCP and for a cust
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
-   Call ``client_encryption_invalid`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
+   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
 
-3. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
+8. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
 
    .. code:: javascript
 
@@ -680,14 +690,13 @@ Test specifying custom endpoints for authenticating Azure and GCP and for a cust
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
-   Call ``client_encryption_invalid`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
+   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
 
-4. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
+9. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
 
    .. code:: javascript
 
       {
-        "provider": "gcp",
         "projectId": "csfle-poc",
         "location": "global",
         "keyRing": "test",
@@ -695,7 +704,7 @@ Test specifying custom endpoints for authenticating Azure and GCP and for a cust
         "endpoint": "example.com:443"
       }
 
-   Expect this to fail with an exception with a message containing the string: "Error parsing JSON in KMS response".
+   Expect this to fail with an exception with a message containing the string: "Invalid KMS response".
 
 Bypass spawning mongocryptd
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

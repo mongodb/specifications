@@ -316,12 +316,12 @@ to authenticate.
 
    gcp: {
       email: String,
-      privateKey: String or byte[], // May be passed as a base64 encoded string.
+      privateKey: byte[] or String, // May be passed as a base64 encoded string.
       endpoint: Optional<String> // Defaults to oauth2.googleapis.com
    }
 
    local: {
-      key: byte[96] // The master key used to encrypt/decrypt data keys.
+      key: byte[96] or String // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
    }
 
 See `Why are extraOptions and kmsProviders maps?`_
@@ -437,7 +437,7 @@ DataKeyOpts
 
 masterKey
 ^^^^^^^^^
-The masterKey identifies a KMS-specific key used to encrypt the new data
+The masterKey document identifies a KMS-specific key used to encrypt the new data
 key. If the kmsProvider is "aws" it is required and has the following fields:
 
 .. code:: typescript
@@ -445,7 +445,7 @@ key. If the kmsProvider is "aws" it is required and has the following fields:
    {
       region: String,
       key: String, // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
-      endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number.
+      endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number. Defaults to "kms.<region>.amazonaws.com"
    }
 
 If the kmsProvider is "azure" the masterKey is required and has the following fields:
@@ -455,7 +455,7 @@ If the kmsProvider is "azure" the masterKey is required and has the following fi
    {
       keyVaultEndpoint: String, // Host with optional port. Example: "example.vault.azure.net".
       keyName: String,
-      keyVersion: Optional<String>
+      keyVersion: Optional<String> // A specific version of the named key, defaults to using the key's primary version.
    }
 
 If the kmsProvider is "gcp" the masterKey is required and has the following fields:
@@ -467,21 +467,22 @@ If the kmsProvider is "gcp" the masterKey is required and has the following fiel
       location: String,
       keyRing: String,
       keyName: String,
-      keyVersion: Optional<String>,
+      keyVersion: Optional<String>, // A specific version of the named key, defaults to using the key's primary version.
       endpoint: Optional<String> // Host with optional port. Defaults to "cloudkms.googleapis.com".
    }
 
 If the kmsProvider is "local" the masterKey is not applicable.
 
-Drivers MUST document the expected value of masterKey for "aws", "azure", and "gcp" and
-that it is required for these providers, not optional.
+Drivers MUST document the expected fields in the masterKey document for the
+"aws", "azure", and "gcp" KMS providers. Additionally, they MUST document that
+masterKey is **required** for these providers and is not optional.
 
-The value of any endpoint option is a host name with optional port number separated by a
-colon. E.g. "kms.us-east-1.amazonaws.com" or "kms.us-east-1.amazonaws.com:443".
-It is assumed that the host name is not an IP address or IP literal. Though
-drivers MUST NOT inspect the value of "endpoint" that a user sets when creating
-a data key, a driver will inspect it when connecting to KMS to determine a port
-number if present.
+The value of `endpoint` or `keyVaultEndpoint` is a host name with optional port
+number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
+"kms.us-east-1.amazonaws.com:443". It is assumed that the host name is not an IP
+address or IP literal. Though drivers MUST NOT inspect the value of "endpoint"
+that a user sets when creating a data key, a driver will inspect it when
+connecting to KMS to determine a port number if present.
 
 keyAltNames
 ^^^^^^^^^^^
