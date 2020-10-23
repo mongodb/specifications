@@ -2236,8 +2236,8 @@ Clear the entity map for this test. For each ClientSession in the entity map,
 the test runner MUST end the session (e.g. call
 `endSession <../sessions/driver-sessions.rst#endsession>`_).
 
-If the test failed or started a transaction, the test runner MUST terminate
-any open transactions (see: `Terminating Open Transactions`_).
+If the test started a transaction, the test runner MUST terminate any open
+transactions (see: `Terminating Open Transactions`_).
 
 Proceed to the subsequent test.
 
