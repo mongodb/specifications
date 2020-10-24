@@ -24,5 +24,5 @@ for (key, val) in new_corpus_data.items():
     if new_corpus_data[key]["algo"] == "rand" and key not in old_corpus_data:
         old_corpus_data[key] = new_corpus_data[key]
 
-open(old_corpus_path, "w").write(json.dumps(old_corpus_data))
+open(old_corpus_path, "w").write(json.dumps(old_corpus_data, indent=2))
 print ("updated %s" % (old_corpus_path))

@@ -43,7 +43,7 @@ tests:
         command:
           insert: *collection_name
           documents:
-            - &doc0_encrypted { _id: 1, encrypted_string_azure: {{ciphertext("string0", field="encrypted_string_azure", schema="basic")}} }
+            - &doc0_encrypted { _id: 1, encrypted_string_azure: {{ciphertext("string0", field="encrypted_string_azure", schema="all")}} }
           ordered: true
         command_name: insert
     outcome:

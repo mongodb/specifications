@@ -5,7 +5,7 @@ collection_name: &collection_name "default"
 
 data: []
 json_schema: {'properties': {'encrypted_string_aws': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'encrypted_string_azure': {'encrypt': {'keyId': [{'$binary': {'base64': 'AZURE+AAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'encrypted_string_gcp': {'encrypt': {'keyId': [{'$binary': {'base64': 'GCP+AAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'encrypted_string_local': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
-key_vault_data: [{'_id': {'$binary': {'base64': 'AZURE+AAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'keyMaterial': {'$binary': {'base64': 'df6fFLZqBsZSnQz2SnTYWNBtznIHktVSDMaidAdL7yVVgxBJQ0DyPZUR2HDQB4hdYym3w4C+VGqzcyTZNJOXn6nJzpGrGlIQMcjv93HE4sP2d245ShQCi1nTkLmMaXN63E2fzltOY3jW7ojf5Z4+r8kxmzyfymmSRgo0w8AF7lUWvFhnBYoE4tE322L31vtAK3Zj8pTPvw8/TcUdMSI9Y669IIzxbMy5yMPmdzpnb8nceUv6/CJoeiLhbt5GgaHqIAv7tHFOY8ZX8ztowMLa3GeAjd9clvzraDTqrfMFYco/kDKAW5iPQQ+Xuy1fP8tyFp0ZwaL/7Ed2sc819j8FTQ==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1601573901680'}}, 'updateDate': {'$date': {'$numberLong': '1601573901680'}}, 'status': {'$numberInt': '0'}, 'masterKey': {'provider': 'azure', 'keyVaultEndpoint': 'key-vault-kevinalbs.vault.azure.net', 'keyName': 'test-key'}, 'keyAltNames': ['altname', 'azure_altname']}]
+key_vault_data: [{'_id': {'$binary': {'base64': 'AZURE+AAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'keyMaterial': {'$binary': {'base64': 'n+HWZ0ZSVOYA3cvQgP7inN4JSXfOH85IngmeQxRpQHjCCcqT3IFqEWNlrsVHiz3AELimHhX4HKqOLWMUeSIT6emUDDoQX9BAv8DR1+E1w4nGs/NyEneac78EYFkK3JysrFDOgl2ypCCTKAypkn9CkAx1if4cfgQE93LW4kczcyHdGiH36CIxrCDGv1UzAvERN5Qa47DVwsM6a+hWsF2AAAJVnF0wYLLJU07TuRHdMrrphPWXZsFgyV+lRqJ7DDpReKNO8nMPLV/mHqHBHGPGQiRdb9NoJo8CvokGz4+KE8oLwzKf6V24dtwZmRkrsDV4iOhvROAzz+Euo1ypSkL3mw==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1601573901680'}}, 'updateDate': {'$date': {'$numberLong': '1601573901680'}}, 'status': {'$numberInt': '0'}, 'masterKey': {'provider': 'azure', 'keyVaultEndpoint': 'key-vault-csfle.vault.azure.net', 'keyName': 'key-name-csfle'}, 'keyAltNames': ['altname', 'azure_altname']}]
 
 tests:
   - description: "Insert a document with auto encryption using Azure KMS provider"
@@ -43,7 +43,7 @@ tests:
         command:
           insert: *collection_name
           documents:
-            - &doc0_encrypted { _id: 1, encrypted_string_azure: {'$binary': {'base64': 'AQGVERPgAAAAAAAAAAAAAAAC32sgJOGfvVYZUdXopkumfuC01OaC6tJcucltuMMIXSZE+xgj7ZV/oDGQWr+Y8+jVw1VtEG4Z91qfgYxPQbTYKQ==', 'subType': '06'}} }
+            - &doc0_encrypted { _id: 1, encrypted_string_azure: {'$binary': {'base64': 'AQGVERPgAAAAAAAAAAAAAAAC5DbBSwPwfSlBrDtRuglvNvCXD1KzDuCKY2P+4bRFtHDjpTOE2XuytPAUaAbXf1orsPq59PVZmsbTZbt2CB8qaQ==', 'subType': '06'}} }
           ordered: true
         command_name: insert
     outcome:

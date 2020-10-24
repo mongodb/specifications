@@ -69,7 +69,7 @@ keys = {
         },
         "keyMaterial": {
             "$binary": {
-                "base64": "df6fFLZqBsZSnQz2SnTYWNBtznIHktVSDMaidAdL7yVVgxBJQ0DyPZUR2HDQB4hdYym3w4C+VGqzcyTZNJOXn6nJzpGrGlIQMcjv93HE4sP2d245ShQCi1nTkLmMaXN63E2fzltOY3jW7ojf5Z4+r8kxmzyfymmSRgo0w8AF7lUWvFhnBYoE4tE322L31vtAK3Zj8pTPvw8/TcUdMSI9Y669IIzxbMy5yMPmdzpnb8nceUv6/CJoeiLhbt5GgaHqIAv7tHFOY8ZX8ztowMLa3GeAjd9clvzraDTqrfMFYco/kDKAW5iPQQ+Xuy1fP8tyFp0ZwaL/7Ed2sc819j8FTQ==",
+                "base64": "n+HWZ0ZSVOYA3cvQgP7inN4JSXfOH85IngmeQxRpQHjCCcqT3IFqEWNlrsVHiz3AELimHhX4HKqOLWMUeSIT6emUDDoQX9BAv8DR1+E1w4nGs/NyEneac78EYFkK3JysrFDOgl2ypCCTKAypkn9CkAx1if4cfgQE93LW4kczcyHdGiH36CIxrCDGv1UzAvERN5Qa47DVwsM6a+hWsF2AAAJVnF0wYLLJU07TuRHdMrrphPWXZsFgyV+lRqJ7DDpReKNO8nMPLV/mHqHBHGPGQiRdb9NoJo8CvokGz4+KE8oLwzKf6V24dtwZmRkrsDV4iOhvROAzz+Euo1ypSkL3mw==",
                 "subType": "00"
             }
         },
@@ -88,8 +88,8 @@ keys = {
         },
         "masterKey": {
             "provider": "azure",
-            "keyVaultEndpoint": "key-vault-kevinalbs.vault.azure.net",
-            "keyName": "test-key"
+            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+            "keyName": "key-name-csfle"
         },
         "keyAltNames": ["altname", "azure_altname"]
     },
@@ -102,7 +102,7 @@ keys = {
         },
         "keyMaterial": {
             "$binary": {
-                "base64": "CiQAg4LDql74hjYPZ957Z7YpCrD6yTVVXKegflJDstQ/xngTyx0SiQEAkWNo/fjPj6jMNSvEop07/29Fu72QHFDRYM3e/KFHfnMQjKzfxb1yX1dC6MbO5FZG/UNBkXlJgPqbHNVuizea3QC24kV5iOiEb4nTM7+RW+8TfVb6QerWWe6MjC+kNpj4LMVcc1lFfVDeGgpJLyMLNGitrjR16qH8qQTNbGNy0toTL69JUmgS8Q==",
+                "base64": "CiQAIgLj0WyktnB4dfYHo5SLZ41K4ASQrjJUaSzl5vvVH0G12G0SiQEAjlV8XPlbnHDEDFbdTO4QIe8ER2/172U1ouLazG0ysDtFFIlSvWX5ZnZUrRMmp/R2aJkzLXEt/zf8Mn4Lfm+itnjgo5R9K4pmPNvvPKNZX5C16lrPT+aA+rd+zXFSmlMg3i5jnxvTdLHhg3G7Q/Uv1ZIJskKt95bzLoe0tUVzRWMYXLIEcohnQg==",
                 "subType": "00"
             }
         },
@@ -121,10 +121,10 @@ keys = {
         },
         "masterKey": {
             "provider": "gcp",
-            "projectId": "csfle-poc",
+            "projectId": "devprod-drivers",
             "location": "global",
-            "keyRing": "test",
-            "keyName": "quickstart"
+            "keyRing": "key-ring-csfle",
+            "keyName": "key-name-csfle"
         },
         "keyAltNames": ["altname", "gcp_altname"]
     }
@@ -460,23 +460,23 @@ ciphertexts = [
         }
     },
     {
-        "schema": "basic",
+        "schema": "all",
         "field": "encrypted_string_azure",
         "plaintext": "string0",
         "data": {
             "$binary": {
-                "base64": "AQGVERPgAAAAAAAAAAAAAAAC32sgJOGfvVYZUdXopkumfuC01OaC6tJcucltuMMIXSZE+xgj7ZV/oDGQWr+Y8+jVw1VtEG4Z91qfgYxPQbTYKQ==",
+                "base64": "AQGVERPgAAAAAAAAAAAAAAAC5DbBSwPwfSlBrDtRuglvNvCXD1KzDuCKY2P+4bRFtHDjpTOE2XuytPAUaAbXf1orsPq59PVZmsbTZbt2CB8qaQ==",
                 "subType": "06"
             }
         }
     },
     {
-        "schema": "basic",
+        "schema": "all",
         "field": "encrypted_string_gcp",
         "plaintext": "string0",
         "data": {
             "$binary": {
-                "base64": "ARgj/gAAAAAAAAAAAAAAAAACJfomfoCsTp+XRhJ0qROHL1E1RJfWeCpUiZcT8+IC3ykNBuk/yltS6UTmKOpNCIkqtMmokXorQkIsJb9lp5NsFQ==",
+                "base64": "ARgj/gAAAAAAAAAAAAAAAAACwFd+Y5Ojw45GUXNvbcIpN9YkRdoHDHkR4kssdn0tIMKlDQOLFkWFY9X07IRlXsxPD8DcTiKnl6XINK28vhcGlg==",
                 "subType": "06"
             }
         }

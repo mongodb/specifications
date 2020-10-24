@@ -5,7 +5,7 @@ collection_name: &collection_name "default"
 
 data: []
 json_schema: {'properties': {'encrypted_string_aws': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'encrypted_string_azure': {'encrypt': {'keyId': [{'$binary': {'base64': 'AZURE+AAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'encrypted_string_gcp': {'encrypt': {'keyId': [{'$binary': {'base64': 'GCP+AAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}, 'encrypted_string_local': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
-key_vault_data: [{'_id': {'$binary': {'base64': 'GCP+AAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'keyMaterial': {'$binary': {'base64': 'CiQAg4LDql74hjYPZ957Z7YpCrD6yTVVXKegflJDstQ/xngTyx0SiQEAkWNo/fjPj6jMNSvEop07/29Fu72QHFDRYM3e/KFHfnMQjKzfxb1yX1dC6MbO5FZG/UNBkXlJgPqbHNVuizea3QC24kV5iOiEb4nTM7+RW+8TfVb6QerWWe6MjC+kNpj4LMVcc1lFfVDeGgpJLyMLNGitrjR16qH8qQTNbGNy0toTL69JUmgS8Q==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1601574333107'}}, 'updateDate': {'$date': {'$numberLong': '1601574333107'}}, 'status': {'$numberInt': '0'}, 'masterKey': {'provider': 'gcp', 'projectId': 'csfle-poc', 'location': 'global', 'keyRing': 'test', 'keyName': 'quickstart'}, 'keyAltNames': ['altname', 'gcp_altname']}]
+key_vault_data: [{'_id': {'$binary': {'base64': 'GCP+AAAAAAAAAAAAAAAAAA==', 'subType': '04'}}, 'keyMaterial': {'$binary': {'base64': 'CiQAIgLj0WyktnB4dfYHo5SLZ41K4ASQrjJUaSzl5vvVH0G12G0SiQEAjlV8XPlbnHDEDFbdTO4QIe8ER2/172U1ouLazG0ysDtFFIlSvWX5ZnZUrRMmp/R2aJkzLXEt/zf8Mn4Lfm+itnjgo5R9K4pmPNvvPKNZX5C16lrPT+aA+rd+zXFSmlMg3i5jnxvTdLHhg3G7Q/Uv1ZIJskKt95bzLoe0tUVzRWMYXLIEcohnQg==', 'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1601574333107'}}, 'updateDate': {'$date': {'$numberLong': '1601574333107'}}, 'status': {'$numberInt': '0'}, 'masterKey': {'provider': 'gcp', 'projectId': 'devprod-drivers', 'location': 'global', 'keyRing': 'key-ring-csfle', 'keyName': 'key-name-csfle'}, 'keyAltNames': ['altname', 'gcp_altname']}]
 
 tests:
   - description: "Insert a document with auto encryption using GCP KMS provider"
@@ -43,7 +43,7 @@ tests:
         command:
           insert: *collection_name
           documents:
-            - &doc0_encrypted { _id: 1, encrypted_string_gcp: {'$binary': {'base64': 'ARgj/gAAAAAAAAAAAAAAAAACJfomfoCsTp+XRhJ0qROHL1E1RJfWeCpUiZcT8+IC3ykNBuk/yltS6UTmKOpNCIkqtMmokXorQkIsJb9lp5NsFQ==', 'subType': '06'}} }
+            - &doc0_encrypted { _id: 1, encrypted_string_gcp: {'$binary': {'base64': 'ARgj/gAAAAAAAAAAAAAAAAACwFd+Y5Ojw45GUXNvbcIpN9YkRdoHDHkR4kssdn0tIMKlDQOLFkWFY9X07IRlXsxPD8DcTiKnl6XINK28vhcGlg==', 'subType': '06'}} }
           ordered: true
         command_name: insert
     outcome:
