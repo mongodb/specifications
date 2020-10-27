@@ -10,15 +10,6 @@ handwritten test files to make them more readable and easier
 to change.
 """
 
-master_keys = {
-    "aws": {
-        "provider": "aws",
-        "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        "region": "us-east-1"
-    },
-    "local": {}
-}
-
 keys = {
     "basic": {
         "status": 1,
@@ -28,7 +19,11 @@ keys = {
                 "subType": "04"
             }
         },
-        "masterKey": master_keys["aws"],
+        "masterKey": {
+            "provider": "aws",
+            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+            "region": "us-east-1"
+        },
         "updateDate": {
             "$date": {
                 "$numberLong": "1552949630483"
@@ -47,33 +42,6 @@ keys = {
         },
         "keyAltNames": ["altname", "another_altname"]
     },
-    "different_id": {
-        "status": 1,
-        "_id": {
-            "$binary": {
-                "base64": "BBBBBBBBBBBBBBBBBBBBBB==",
-                "subType": "04"
-            }
-        },
-        "masterKey": master_keys["aws"],
-        "updateDate": {
-            "$date": {
-                "$numberLong": "1552949630483"
-            }
-        },
-        "keyMaterial": {
-            "$binary": {
-                "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gF9FSYZL9Ze8TvTA3WBd3nmAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDLV3GHktEO8AlpsYBwIBEIB7ho0DQF7hEQPRz/8b61AHm2czX53Y9BNu5z+oyGYsoP643M58aTGsaHQzkTaAmGKlZTAEOjJkRJ4gZoabVuv4g6aJqf4k4w8pK7iIgHwMNy4nbUAqOWmqtnKpHZgy6jcFN2DzZzHIi4SNFsCkFc6Aw30ixtvqIDQPAXMW",
-                "subType": "00"
-            }
-        },
-        "creationDate": {
-            "$date": {
-                "$numberLong": "1552949630483"
-            }
-        },
-        "keyAltNames": []
-    },
     "local": {
         "_id": {
             "$binary": {
@@ -91,6 +59,74 @@ keys = {
         "updateDate": {"$date": {"$numberLong": "1552949630483"}},
         "status": {"$numberInt": "0"},
         "masterKey": {"provider": "local"}
+    },
+    "azure": {
+        "_id": {
+            "$binary": {
+                "base64": "AZURE+AAAAAAAAAAAAAAAA==",
+                "subType": "04"
+            }
+        },
+        "keyMaterial": {
+            "$binary": {
+                "base64": "n+HWZ0ZSVOYA3cvQgP7inN4JSXfOH85IngmeQxRpQHjCCcqT3IFqEWNlrsVHiz3AELimHhX4HKqOLWMUeSIT6emUDDoQX9BAv8DR1+E1w4nGs/NyEneac78EYFkK3JysrFDOgl2ypCCTKAypkn9CkAx1if4cfgQE93LW4kczcyHdGiH36CIxrCDGv1UzAvERN5Qa47DVwsM6a+hWsF2AAAJVnF0wYLLJU07TuRHdMrrphPWXZsFgyV+lRqJ7DDpReKNO8nMPLV/mHqHBHGPGQiRdb9NoJo8CvokGz4+KE8oLwzKf6V24dtwZmRkrsDV4iOhvROAzz+Euo1ypSkL3mw==",
+                "subType": "00"
+            }
+        },
+        "creationDate": {
+            "$date": {
+                "$numberLong": "1601573901680"
+            }
+        },
+        "updateDate": {
+            "$date": {
+                "$numberLong": "1601573901680"
+            }
+        },
+        "status": {
+            "$numberInt": "0"
+        },
+        "masterKey": {
+            "provider": "azure",
+            "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+            "keyName": "key-name-csfle"
+        },
+        "keyAltNames": ["altname", "azure_altname"]
+    },
+    "gcp": {
+        "_id": {
+            "$binary": {
+                "base64": "GCP+AAAAAAAAAAAAAAAAAA==",
+                "subType": "04"
+            }
+        },
+        "keyMaterial": {
+            "$binary": {
+                "base64": "CiQAIgLj0WyktnB4dfYHo5SLZ41K4ASQrjJUaSzl5vvVH0G12G0SiQEAjlV8XPlbnHDEDFbdTO4QIe8ER2/172U1ouLazG0ysDtFFIlSvWX5ZnZUrRMmp/R2aJkzLXEt/zf8Mn4Lfm+itnjgo5R9K4pmPNvvPKNZX5C16lrPT+aA+rd+zXFSmlMg3i5jnxvTdLHhg3G7Q/Uv1ZIJskKt95bzLoe0tUVzRWMYXLIEcohnQg==",
+                "subType": "00"
+            }
+        },
+        "creationDate": {
+            "$date": {
+                "$numberLong": "1601574333107"
+            }
+        },
+        "updateDate": {
+            "$date": {
+                "$numberLong": "1601574333107"
+            }
+        },
+        "status": {
+            "$numberInt": "0"
+        },
+        "masterKey": {
+            "provider": "gcp",
+            "projectId": "devprod-drivers",
+            "location": "global",
+            "keyRing": "key-ring-csfle",
+            "keyName": "key-name-csfle"
+        },
+        "keyAltNames": ["altname", "gcp_altname"]
     }
 }
 
@@ -126,6 +162,39 @@ schemas = {
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
             }
+        },
+        "bsonType": "object"
+    },
+    "all": {
+        "properties": {
+            "encrypted_string_aws": {
+                "encrypt": {
+                    "keyId": [keys["basic"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
+            "encrypted_string_azure": {
+                "encrypt": {
+                    "keyId": [keys["azure"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
+            "encrypted_string_gcp": {
+                "encrypt": {
+                    "keyId": [keys["gcp"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
+            "encrypted_string_local": {
+                "encrypt": {
+                    "keyId": [keys["local"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
         },
         "bsonType": "object"
     },
@@ -390,6 +459,28 @@ ciphertexts = [
             }
         }
     },
+    {
+        "schema": "all",
+        "field": "encrypted_string_azure",
+        "plaintext": "string0",
+        "data": {
+            "$binary": {
+                "base64": "AQGVERPgAAAAAAAAAAAAAAAC5DbBSwPwfSlBrDtRuglvNvCXD1KzDuCKY2P+4bRFtHDjpTOE2XuytPAUaAbXf1orsPq59PVZmsbTZbt2CB8qaQ==",
+                "subType": "06"
+            }
+        }
+    },
+    {
+        "schema": "all",
+        "field": "encrypted_string_gcp",
+        "plaintext": "string0",
+        "data": {
+            "$binary": {
+                "base64": "ARgj/gAAAAAAAAAAAAAAAAACwFd+Y5Ojw45GUXNvbcIpN9YkRdoHDHkR4kssdn0tIMKlDQOLFkWFY9X07IRlXsxPD8DcTiKnl6XINK28vhcGlg==",
+                "subType": "06"
+            }
+        }
+    }
 ]
 
 
@@ -461,7 +552,7 @@ for filepath in sys.argv[1:-1]:
 
     rendered = template.render(**injections)
     # check for valid YAML.
-    parsed = yaml.load(rendered)
+    parsed = yaml.load(rendered, Loader=yaml.Loader)
     open(f"{os.path.join(targetdir,filename + '.yml')}", "w").write(rendered)
     print(f"Generated {os.path.join(targetdir,filename)}.yml")
     print("""Run "make" from specifications/source directory to generate corresponding JSON file""")

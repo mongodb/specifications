@@ -16,7 +16,7 @@ new_corpus_data = json.loads(open(new_corpus_path, "r").read())
 old_corpus_data = json.loads(open(old_corpus_path, "r").read())
 
 for (key, val) in new_corpus_data.items():
-    if key == "_id" or key == "altname_aws" or key == "altname_local":
+    if key in ["_id", "altname_aws", "altname_local", "altname_azure", "altname_gcp"]:
         continue
     if new_corpus_data[key]["algo"] == "det":
         old_corpus_data[key] = new_corpus_data[key]
@@ -24,5 +24,5 @@ for (key, val) in new_corpus_data.items():
     if new_corpus_data[key]["algo"] == "rand" and key not in old_corpus_data:
         old_corpus_data[key] = new_corpus_data[key]
 
-open(old_corpus_path, "w").write(json.dumps(old_corpus_data))
+open(old_corpus_path, "w").write(json.dumps(old_corpus_data, indent=2))
 print ("updated %s" % (old_corpus_path))

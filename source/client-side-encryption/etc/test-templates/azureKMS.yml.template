@@ -1,0 +1,53 @@
+runOn:
+  - minServerVersion: "4.1.10"
+database_name: &database_name "default"
+collection_name: &collection_name "default"
+
+data: []
+json_schema: {{schema("all")}}
+key_vault_data: [{{key("azure")}}]
+
+tests:
+  - description: "Insert a document with auto encryption using Azure KMS provider"
+    clientOptions:
+      autoEncryptOpts:
+        kmsProviders:
+          azure: {}
+    operations:
+      - name: insertOne
+        arguments:
+          document: &doc0 { _id: 1, encrypted_string_azure: "string0" }
+    expectations:
+    # Auto encryption will request the collection info.
+    - command_started_event:
+        command:
+          listCollections: 1
+          filter:
+            name: *collection_name
+        command_name: listCollections
+    - command_started_event:
+        command:
+          listCollections: 1
+          filter:
+            name: "datakeys"
+          $db: keyvault
+        command_name: listCollections
+    # Then key is fetched from the key vault.
+    - command_started_event:
+        command:
+          find: datakeys
+          filter: { $or: [ { _id: { $in: [ {{key("azure")["_id"]}} ] } }, { keyAltNames: { $in: [] } } ] }
+          $db: keyvault
+        command_name: find
+    - command_started_event:
+        command:
+          insert: *collection_name
+          documents:
+            - &doc0_encrypted { _id: 1, encrypted_string_azure: {{ciphertext("string0", field="encrypted_string_azure", schema="all")}} }
+          ordered: true
+        command_name: insert
+    outcome:
+      collection:
+        # Outcome is checked using a separate MongoClient without auto encryption.
+        data:
+          - *doc0_encrypted

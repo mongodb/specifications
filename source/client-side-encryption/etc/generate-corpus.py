@@ -15,7 +15,7 @@ targetdir = sys.argv[1]
 
 # Generate test data from this matrix of axes.
 axes = [
-    ("kms", [ "aws", "local" ]),
+    ("kms", [ "aws", "local", "azure", "gcp"]),
     ("type", [ "double", "string", "object", "array", "binData=00", "binData=04", "undefined", "objectId", "bool", "date", "null", "regex", "dbPointer", "javascript", "symbol", "javascriptWithScope", "int", "timestamp", "long", "decimal", "minKey", "maxKey" ]),
     ("algo", [ "rand", "det" ]),
     ("method", [ "auto", "explicit" ]),
@@ -45,13 +45,14 @@ def gen_schema (map):
     if map["identifier"] == "id":
         if map["kms"] == "local":
             key_id = """[ { "$binary": { "base64": "LOCALAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
-        else:
+        elif map["kms"] == "aws":
             key_id = """[ { "$binary": { "base64": "AWSAAAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
+        elif map["kms"] == "azure":
+            key_id = """[ { "$binary": { "base64": "AZUREAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
+        elif map["kms"] == "gcp":
+            key_id = """[ { "$binary": { "base64": "GCPAAAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
     else:
-        if map["kms"] == "local":
-            key_id = "\"/altname_local\""
-        else:
-            key_id = "\"/altname_aws\""
+        key_id = "\"/altname_" + map["kms"] + "\""
 
     if map["algo"] == "rand":
         algorithm = "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
@@ -125,6 +126,8 @@ corpus_sections = [
     """ "_id": "client_side_encryption_corpus" """ ,
     """ "altname_aws": "aws" """ ,
     """ "altname_local": "local" """ ,
+    """ "altname_azure": "azure" """ ,
+    """ "altname_gcp": "gcp" """ ,
 ]
 
 def enumerate_axis (map, axis, remaining):
@@ -160,7 +163,12 @@ for algo in ("rand", "det"):
         corpus_sections.append (""" "%s": %s """ % (key, json.dumps(map)))
 
 
+def reformat (json_str):
+    as_json = json.loads(json_str)
+    return json.dumps (as_json, indent=2)
+
 schema = """{ "bsonType": "object", "properties": { %s } }""" % (",\n".join(schema_sections))
-open(os.path.join(targetdir, "corpus-schema.json"), "w").write(schema)
-open(os.path.join(targetdir, "corpus.json"), "w").write("{%s}" % ",\n".join(corpus_sections))
+open(os.path.join(targetdir, "corpus-schema.json"), "w").write(reformat(schema))
+corpus = "{%s}" %  ",\n".join(corpus_sections)
+open(os.path.join(targetdir, "corpus.json"), "w").write(reformat(corpus))
 print("Generated corpus.json and corpus-schema.json in target directory")

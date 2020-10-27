@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: June 14, 2019
-:Version: 1.1.0
+:Last Modified: October 19, 2020
+:Version: 1.2.0
 
 .. contents::
 
@@ -20,10 +20,10 @@ Client Side Encryption
 Abstract
 ========
 
-MongoDB 4.2 introduces support for client side encryption, guaranteeing
+MongoDB 4.2 introduced support for client side encryption, guaranteeing
 that sensitive data can only be encrypted and decrypted with access to both
-MongoDB and a separate key management provider (initially, only AWS KMS and
-a local provider supported). Once enabled, data can be seamlessly encrypted
+MongoDB and a separate key management provider (supporting AWS, Azure, GCP
+and a local provider). Once enabled, data can be seamlessly encrypted
 and decrypted with minimal application code changes.
 
 META
@@ -41,7 +41,7 @@ encrypted MongoClient
 
 data key
    A key used to encrypt and decrypt BSON values. Data keys are
-   encrypted with a key management service (AWS KMS) and stored within a document in the
+   encrypted with a key management service (e.g. AWS KMS) and stored within a document in the
    MongoDB key vault collection (see `Key vault collection schema for data keys`_ for a description of the data key document). Therefore, a client needs access to both
    MongoDB and the external KMS service to utilize a data key.
 
@@ -143,7 +143,7 @@ The driver communicates with…
 -  **MongoDB cluster** to get remote JSON Schemas.
 -  **MongoDB key vault collection** to get encrypted data keys and create new data
    keys.
--  **AWS KMS** to decrypt fetched data keys and encrypt new data keys.
+-  **A KMS Provider** to decrypt fetched data keys and encrypt new data keys.
 -  **mongocryptd** to ask what values in BSON commands must be
    encrypted.
 
@@ -161,10 +161,11 @@ The key material in the key vault collection is encrypted with a separate
 KMS service. Therefore, encryption and decryption requires access to a
 MongoDB cluster and the KMS service.
 
-AWS KMS
--------
-AWS KMS is used to decrypt data keys after fetching from the MongoDB Key
-Vault, and encrypt newly created data keys.
+KMS Provider
+------------
+A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, or the local provider) is
+used to decrypt data keys after fetching from the MongoDB Key Vault, and
+encrypt newly created data keys.
 
 mongocryptd
 -----------
@@ -282,8 +283,8 @@ keyVaultNamespace
 The key vault collection namespace refers to a collection that contains all
 data keys used for encryption and decryption (aka the key vault collection).
 Data keys are stored as documents in a special MongoDB collection. Data
-keys are protected with encryption by a KMS provider (AWS KMS or a local
-master key).
+keys are protected with encryption by a KMS provider (AWS KMS, Azure key
+vault, GCP KMS, or a local master key).
 
 keyVaultClient
 ^^^^^^^^^^^^^^
@@ -294,9 +295,10 @@ MongoDB cluster.
 
 kmsProviders
 ^^^^^^^^^^^^
-Multiple KMS providers may be specified. Initially, two KMS providers
-are supported: "aws" and "local". The kmsProviders map values differ by
-provider:
+Multiple KMS providers may be specified. The kmsProviders map values differ by
+provider ("aws", "azure", "gcp", and "local"). The "local" provider is configured
+with master key material. The external providers are configured with credentials
+to authenticate.
 
 .. code:: typescript
 
@@ -305,8 +307,21 @@ provider:
       secretAccessKey: String
    }
 
+   azure: {
+      tenantId: String,
+      clientId: String,
+      clientSecret: String,
+      identityPlatformEndpoint: Optional<String> // Defaults to login.microsoftonline.com
+   }
+
+   gcp: {
+      email: String,
+      privateKey: byte[] or String, // May be passed as a base64 encoded string.
+      endpoint: Optional<String> // Defaults to oauth2.googleapis.com
+   }
+
    local: {
-      key: byte[96] // The master key used to encrypt/decrypt data keys.
+      key: byte[96] or String // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
    }
 
 See `Why are extraOptions and kmsProviders maps?`_
@@ -422,28 +437,52 @@ DataKeyOpts
 
 masterKey
 ^^^^^^^^^
-The masterKey identifies a KMS-specific key used to encrypt the new data
+The masterKey document identifies a KMS-specific key used to encrypt the new data
 key. If the kmsProvider is "aws" it is required and has the following fields:
 
 .. code:: typescript
 
    {
-      region: String, // Required.
-      key: String, // Required. The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
-      endpoint: String // Optional. An alternate host identifier to send KMS requests to. May include port number.
+      region: String,
+      key: String, // The Amazon Resource Name (ARN) to the AWS customer master key (CMK).
+      endpoint: Optional<String> // An alternate host identifier to send KMS requests to. May include port number. Defaults to "kms.<region>.amazonaws.com"
    }
 
-Drivers MUST document the expected value of masterKey for "aws" and that
-it is required, not optional.
+If the kmsProvider is "azure" the masterKey is required and has the following fields:
 
-The value of "endpoint" is a host name with optional port number separated by a
-colon. E.g. "kms.us-east-1.amazonaws.com" or "kms.us-east-1.amazonaws.com:443".
-It is assumed that the host name is not an IP address or IP literal. Though
-drivers MUST NOT inspect the value of "endpoint" that a user sets when creating
-a data key, a driver will inspect it when connecting to KMS to determine a port
-number if present.
+.. code:: typescript
+
+   {
+      keyVaultEndpoint: String, // Host with optional port. Example: "example.vault.azure.net".
+      keyName: String,
+      keyVersion: Optional<String> // A specific version of the named key, defaults to using the key's primary version.
+   }
+
+If the kmsProvider is "gcp" the masterKey is required and has the following fields:
+
+.. code:: typescript
+
+   {
+      projectId: String,
+      location: String,
+      keyRing: String,
+      keyName: String,
+      keyVersion: Optional<String>, // A specific version of the named key, defaults to using the key's primary version.
+      endpoint: Optional<String> // Host with optional port. Defaults to "cloudkms.googleapis.com".
+   }
 
 If the kmsProvider is "local" the masterKey is not applicable.
+
+Drivers MUST document the expected fields in the masterKey document for the
+"aws", "azure", and "gcp" KMS providers. Additionally, they MUST document that
+masterKey is **required** for these providers and is not optional.
+
+The value of `endpoint` or `keyVaultEndpoint` is a host name with optional port
+number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
+"kms.us-east-1.amazonaws.com:443". It is assumed that the host name is not an IP
+address or IP literal. Though drivers MUST NOT inspect the value of "endpoint"
+that a user sets when creating a data key, a driver will inspect it when
+connecting to KMS to determine a port number if present.
 
 keyAltNames
 ^^^^^^^^^^^
@@ -773,10 +812,34 @@ masterKey contents
 
 ======== ======== ========================================================================
 **Name** **Type** **Description**
-provider String   Either "aws" or "local". More providers will be available in the future.
+provider "aws"
 key      String   AWS ARN. Only applicable for "aws" provider.
 region   String   AWS Region that contains AWS ARN. Only applicable for "aws" provider.
-endpoint string   Alternate AWS endpoint (needed for FIPS endpoints)
+endpoint String   Alternate AWS endpoint (needed for FIPS endpoints)
+======== ======== ========================================================================
+
+================= ======== ===============================================================
+**Name**          **Type** **Description**
+provider          "azure"
+keyVaultEndpoint  String   Required key vault endpoint. (e.g. "example.vault.azure.net")
+keyName           String   Required key name.
+keyVersion        String   Optional key version.
+================= ======== ===============================================================
+
+========== ======== ======================================================================
+**Name**   **Type** **Description**
+provider   "gcp"
+projectId  String   Required project ID.
+location   String   Required location name (e.g. "global")
+keyRing    String   Required key ring name.
+keyName    String   Required key name.
+keyVersion String   Optional key version.
+endpoint   String   Optional, KMS URL, defaults to https://cloudkms.googleapis.com
+========== ======== ======================================================================
+
+======== ======== ========================================================================
+**Name** **Type** **Description**
+provider "local"
 ======== ======== ========================================================================
 
 Data keys are needed for encryption and decryption. They are identified
@@ -1334,6 +1397,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
+| 2020-10-19 | Add 'azure' and 'gcp' KMS providers                        |
 | 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
 | 2019-12-17 | Clarified bypassAutoEncryption and managing mongocryptd    |
 +------------+------------------------------------------------------------+
