@@ -293,8 +293,8 @@ For each KMS provider (``aws``, ``azure``, ``gcp``, and ``local``), referred to 
      .. code:: javascript
 
         {
-          "keyVaultEndpoint": "key-vault-kevinalbs.vault.azure.net",
-          "keyName": "test-key"
+          "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+          "keyName": "key-name-csfle"
         }
 
      For "gcp":
@@ -302,10 +302,10 @@ For each KMS provider (``aws``, ``azure``, ``gcp``, and ``local``), referred to 
      .. code:: javascript
 
         {
-          "projectId": "csfle-poc",
+          "projectId": "devprod-drivers",
           "location": "global",
-          "keyRing": "test",
-          "keyName": "quickstart"
+          "keyRing": "key-ring-csfle",
+          "keyName": "key-name-csfle"
         }
 
      For "local", do not set a masterKey document.
@@ -668,8 +668,8 @@ Test cases
    .. code:: javascript
 
       {
-        "keyVaultEndpoint": "key-vault-kevinalbs.vault.azure.net",
-        "keyName": "test-key"
+         "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
+         "keyName": "key-name-csfle"
       }
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
@@ -681,10 +681,10 @@ Test cases
    .. code:: javascript
 
       {
-        "projectId": "csfle-poc",
+        "projectId": "devprod-drivers",
         "location": "global",
-        "keyRing": "test",
-        "keyName": "quickstart",
+        "keyRing": "key-ring-csfle",
+        "keyName": "key-name-csfle",
         "endpoint": "cloudkms.googleapis.com:443"
       }
 
@@ -697,10 +697,10 @@ Test cases
    .. code:: javascript
 
       {
-        "projectId": "csfle-poc",
+        "projectId": "devprod-drivers",
         "location": "global",
-        "keyRing": "test",
-        "keyName": "quickstart",
+        "keyRing": "key-ring-csfle",
+        "keyName": "key-name-csfle",
         "endpoint": "example.com:443"
       }
 
