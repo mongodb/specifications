@@ -7,6 +7,9 @@ runOnRequirements:
 
 createEntities:
   - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
       id: &client client
       uriOptions:
         timeoutMS: 10
@@ -16,9 +19,6 @@ createEntities:
       # Drivers are not required to execute killCursors during resume attempts, so it should be ignored for command
       # monitoring assertions.
       ignoreCommandMonitoringEvents: ["killCursors"]
-  - client:
-      id: &failPointClient failPointClient
-      useMultipleMongoses: false
   - database:
       id: &database database
       client: *client
