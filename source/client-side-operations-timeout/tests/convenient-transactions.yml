@@ -44,6 +44,7 @@ tests:
             - name: insertOne
               object: *collection
               arguments:
+                document: { x: 1 }
                 session: *session
                 timeoutMS: 50
               expectError:
