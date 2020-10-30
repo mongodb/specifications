@@ -45,18 +45,16 @@ tests:
                 id: &client client
                 uriOptions:
                   socketTimeoutMS: 10
-            {% if operation.object != "client" -%}
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            {% endif -%}
-            {% if operation.object == "collection" -%}
             - collection:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            {% endif %}
+            - session:
+                client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}
@@ -78,19 +76,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
-            {% if operation.object != "client" -%}
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            {% endif -%}
-            {% if operation.object == "collection" -%}
             - collection:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            {% endif %}
+            - session:
+                client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}
@@ -112,19 +108,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
-            {% if operation.object != "client" -%}
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            {% endif -%}
-            {% if operation.object == "collection" -%}
             - collection:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            {% endif %}
+            - session:
+                client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}
@@ -146,18 +140,18 @@ tests:
           entities:
             - client:
                 id: &client client
-            {% if operation.object != "client" -%}
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            {% endif -%}
-            {% if operation.object == "collection" -%}
             - collection:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            {% endif %}
+            - session:
+                client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}

@@ -45,7 +45,16 @@ tests:
                 id: &client client
                 uriOptions:
                   socketTimeoutMS: 10
-            
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listDatabases
         object: *client
         arguments:
@@ -64,8 +73,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
-            
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listDatabases
         object: *client
         arguments:
@@ -84,8 +102,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
-            
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listDatabases
         object: *client
         arguments:
@@ -106,7 +133,16 @@ tests:
                 id: &client client
                 uriOptions:
                   socketTimeoutMS: 10
-            
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listDatabaseNames
         object: *client
         arguments:
@@ -125,8 +161,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
-            
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listDatabaseNames
         object: *client
         arguments:
@@ -145,8 +190,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
-            
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listDatabaseNames
         object: *client
         arguments:
@@ -167,7 +221,16 @@ tests:
                 id: &client client
                 uriOptions:
                   socketTimeoutMS: 10
-            
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: createChangeStream
         object: *client
         arguments:
@@ -186,8 +249,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
-            
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: createChangeStream
         object: *client
         arguments:
@@ -206,8 +278,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
-            
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: createChangeStream
         object: *client
         arguments:
@@ -232,7 +313,12 @@ tests:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: aggregate
         object: *database
         arguments:
@@ -251,12 +337,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: aggregate
         object: *database
         arguments:
@@ -275,12 +366,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: aggregate
         object: *database
         arguments:
@@ -298,11 +394,18 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: aggregate
         object: *database
         arguments:
@@ -327,7 +430,12 @@ tests:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listCollections
         object: *database
         arguments:
@@ -346,12 +454,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listCollections
         object: *database
         arguments:
@@ -370,12 +483,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listCollections
         object: *database
         arguments:
@@ -400,7 +518,12 @@ tests:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listCollectionNames
         object: *database
         arguments:
@@ -419,12 +542,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listCollectionNames
         object: *database
         arguments:
@@ -443,12 +571,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: listCollectionNames
         object: *database
         arguments:
@@ -473,7 +606,12 @@ tests:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: runCommand
         object: *database
         arguments:
@@ -492,12 +630,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: runCommand
         object: *database
         arguments:
@@ -516,12 +659,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: runCommand
         object: *database
         arguments:
@@ -546,7 +694,12 @@ tests:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: createChangeStream
         object: *database
         arguments:
@@ -565,12 +718,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: createChangeStream
         object: *database
         arguments:
@@ -589,12 +747,17 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
                 databaseName: &databaseName test
-            
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
       - name: createChangeStream
         object: *database
         arguments:
@@ -623,7 +786,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: aggregate
         object: *collection
         arguments:
@@ -642,7 +806,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -651,7 +815,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: aggregate
         object: *collection
         arguments:
@@ -670,7 +835,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -679,7 +844,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: aggregate
         object: *collection
         arguments:
@@ -697,6 +863,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -705,7 +873,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: aggregate
         object: *collection
         arguments:
@@ -734,7 +903,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: count
         object: *collection
         arguments:
@@ -753,7 +923,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -762,7 +932,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: count
         object: *collection
         arguments:
@@ -781,7 +952,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -790,7 +961,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: count
         object: *collection
         arguments:
@@ -808,6 +980,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -816,7 +990,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: count
         object: *collection
         arguments:
@@ -845,7 +1020,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: countDocuments
         object: *collection
         arguments:
@@ -864,7 +1040,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -873,7 +1049,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: countDocuments
         object: *collection
         arguments:
@@ -892,7 +1069,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -901,7 +1078,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: countDocuments
         object: *collection
         arguments:
@@ -930,7 +1108,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: estimatedDocumentCount
         object: *collection
         
@@ -946,7 +1125,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -955,7 +1134,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: estimatedDocumentCount
         object: *collection
         
@@ -971,7 +1151,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -980,7 +1160,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: estimatedDocumentCount
         object: *collection
         
@@ -995,6 +1176,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1003,7 +1186,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: estimatedDocumentCount
         object: *collection
         
@@ -1028,7 +1212,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: distinct
         object: *collection
         arguments:
@@ -1048,7 +1233,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1057,7 +1242,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: distinct
         object: *collection
         arguments:
@@ -1077,7 +1263,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1086,7 +1272,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: distinct
         object: *collection
         arguments:
@@ -1105,6 +1292,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1113,7 +1302,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: distinct
         object: *collection
         arguments:
@@ -1143,7 +1333,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: find
         object: *collection
         arguments:
@@ -1162,7 +1353,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1171,7 +1362,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: find
         object: *collection
         arguments:
@@ -1190,7 +1382,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1199,7 +1391,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: find
         object: *collection
         arguments:
@@ -1217,6 +1410,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1225,7 +1420,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: find
         object: *collection
         arguments:
@@ -1254,7 +1450,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOne
         object: *collection
         arguments:
@@ -1273,7 +1470,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1282,7 +1479,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOne
         object: *collection
         arguments:
@@ -1301,7 +1499,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1310,7 +1508,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOne
         object: *collection
         arguments:
@@ -1328,6 +1527,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1336,7 +1537,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOne
         object: *collection
         arguments:
@@ -1365,7 +1567,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: listIndexes
         object: *collection
         
@@ -1381,7 +1584,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1390,7 +1593,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: listIndexes
         object: *collection
         
@@ -1406,7 +1610,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1415,7 +1619,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: listIndexes
         object: *collection
         
@@ -1441,7 +1646,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: listIndexNames
         object: *collection
         
@@ -1457,7 +1663,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1466,7 +1672,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: listIndexNames
         object: *collection
         
@@ -1482,7 +1689,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1491,7 +1698,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: listIndexNames
         object: *collection
         
@@ -1517,7 +1725,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createChangeStream
         object: *collection
         arguments:
@@ -1536,7 +1745,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1545,7 +1754,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createChangeStream
         object: *collection
         arguments:
@@ -1564,7 +1774,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1573,7 +1783,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createChangeStream
         object: *collection
         arguments:
@@ -1602,7 +1813,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: insertOne
         object: *collection
         arguments:
@@ -1621,7 +1833,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1630,7 +1842,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: insertOne
         object: *collection
         arguments:
@@ -1649,7 +1862,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1658,7 +1871,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: insertOne
         object: *collection
         arguments:
@@ -1687,7 +1901,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: insertMany
         object: *collection
         arguments:
@@ -1707,7 +1922,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1716,7 +1931,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: insertMany
         object: *collection
         arguments:
@@ -1736,7 +1952,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1745,7 +1961,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: insertMany
         object: *collection
         arguments:
@@ -1775,7 +1992,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: deleteOne
         object: *collection
         arguments:
@@ -1794,7 +2012,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1803,7 +2021,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: deleteOne
         object: *collection
         arguments:
@@ -1822,7 +2041,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1831,7 +2050,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: deleteOne
         object: *collection
         arguments:
@@ -1860,7 +2080,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: deleteMany
         object: *collection
         arguments:
@@ -1879,7 +2100,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1888,7 +2109,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: deleteMany
         object: *collection
         arguments:
@@ -1907,7 +2129,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1916,7 +2138,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: deleteMany
         object: *collection
         arguments:
@@ -1945,7 +2168,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: replaceOne
         object: *collection
         arguments:
@@ -1965,7 +2189,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1974,7 +2198,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: replaceOne
         object: *collection
         arguments:
@@ -1994,7 +2219,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2003,7 +2228,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: replaceOne
         object: *collection
         arguments:
@@ -2033,7 +2259,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: updateOne
         object: *collection
         arguments:
@@ -2053,7 +2280,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2062,7 +2289,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: updateOne
         object: *collection
         arguments:
@@ -2082,7 +2310,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2091,7 +2319,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: updateOne
         object: *collection
         arguments:
@@ -2121,7 +2350,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: updateMany
         object: *collection
         arguments:
@@ -2141,7 +2371,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2150,7 +2380,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: updateMany
         object: *collection
         arguments:
@@ -2170,7 +2401,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2179,7 +2410,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: updateMany
         object: *collection
         arguments:
@@ -2209,7 +2441,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -2228,7 +2461,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2237,7 +2470,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -2256,7 +2490,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2265,7 +2499,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -2283,6 +2518,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2291,7 +2528,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -2320,7 +2558,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -2340,7 +2579,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2349,7 +2588,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -2369,7 +2609,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2378,7 +2618,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -2397,6 +2638,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2405,7 +2648,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -2435,7 +2679,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -2455,7 +2700,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2464,7 +2709,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -2484,7 +2730,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2493,7 +2739,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -2512,6 +2759,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2520,7 +2769,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -2550,7 +2800,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: bulkWrite
         object: *collection
         arguments:
@@ -2571,7 +2822,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2580,7 +2831,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: bulkWrite
         object: *collection
         arguments:
@@ -2601,7 +2853,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2610,7 +2862,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: bulkWrite
         object: *collection
         arguments:
@@ -2641,7 +2894,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createIndex
         object: *collection
         arguments:
@@ -2661,7 +2915,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2670,7 +2924,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createIndex
         object: *collection
         arguments:
@@ -2690,7 +2945,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2699,7 +2954,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createIndex
         object: *collection
         arguments:
@@ -2718,6 +2974,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2726,7 +2984,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: createIndex
         object: *collection
         arguments:
@@ -2756,7 +3015,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndex
         object: *collection
         arguments:
@@ -2775,7 +3035,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2784,7 +3044,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndex
         object: *collection
         arguments:
@@ -2803,7 +3064,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2812,7 +3073,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndex
         object: *collection
         arguments:
@@ -2830,6 +3092,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2838,7 +3102,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndex
         object: *collection
         arguments:
@@ -2867,7 +3132,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndexes
         object: *collection
         
@@ -2883,7 +3149,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2892,7 +3158,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndexes
         object: *collection
         
@@ -2908,7 +3175,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  wTimeoutMS: 10
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2917,7 +3184,8 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndexes
         object: *collection
         
@@ -2932,6 +3200,8 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2940,10 +3210,269 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: &collectionName coll
-            
+            - session:
+                client: *client
       - name: dropIndexes
         object: *collection
         
         expectError:
           isClientError: true
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - commitTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: commitTransaction
+        object: *session
+        
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - commitTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: commitTransaction
+        object: *session
+        
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - commitTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: commitTransaction
+        object: *session
+        
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - abortTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: abortTransaction
+        object: *session
+        
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - abortTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: abortTransaction
+        object: *session
+        
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - abortTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: abortTransaction
+        object: *session
+        
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - withTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: withTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { x: 1 }
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - withTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: withTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { x: 1 }
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - withTransaction on session"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            - session:
+                client: *client
+      - name: withTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { x: 1 }
+          
+        expectError:
+          isClientError: true
+
   

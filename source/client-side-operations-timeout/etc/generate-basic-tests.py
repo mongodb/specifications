@@ -28,6 +28,12 @@ BULK_WRITE_ARGUMENTS = '''requests:
             - insertOne:
                 document: { _id: 1 }'''
 
+WITH_TXN_ARGUMENTS = '''callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { x: 1 }'''
+
 COLLECTION_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
     Operation('count', 'count', 'collection', ['filter: {}']),
@@ -55,6 +61,14 @@ COLLECTION_OPERATIONS = [
     Operation('dropIndexes', 'dropIndexes', 'collection', []),
 ]
 
+SESSION_OPERATIONS = [
+    Operation('commitTransaction', 'commitTransaction', 'session', []),
+    Operation('abortTransaction', 'abortTransaction', 'session', []),
+    Operation('withTransaction', 'insert', 'session', [WITH_TXN_ARGUMENTS]),
+]
+
+# Session operations are generally tested in other files, so they're not included in the list of all operations.
+# Individual generation functions can choose to include them if needed.
 OPERATIONS = CLIENT_OPERATIONS + DB_OPERATIONS + COLLECTION_OPERATIONS
 
 RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in 
@@ -113,7 +127,7 @@ def generate_retryable():
     generate('retryability-legacy-timeouts', RETRYABLE_WRITE_OPERATIONS + RETRYABLE_READ_OPERATIONS)
 
 def generate_deprecated():
-    generate('deprecated-options', OPERATIONS)
+    generate('deprecated-options', OPERATIONS + SESSION_OPERATIONS)
 
 generate_global_timeout_tests()
 generate_override_db()
