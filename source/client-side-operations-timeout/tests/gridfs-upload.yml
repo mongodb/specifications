@@ -44,6 +44,7 @@ tests:
   - description: "timeoutMS can be overridden for upload"
     operations:
       - name: failPoint
+        object: testRunner
         arguments:
           client: *failPointClient
           failPoint:
