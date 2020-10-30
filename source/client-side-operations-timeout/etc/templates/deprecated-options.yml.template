@@ -1,0 +1,174 @@
+description: "operations error if timeoutMS is used with a deprecated timeout option"
+
+schemaVersion: "1.1"
+
+tests:
+  # One-off test to assert that commitTransaction errors if both maxCommitTimeMS and timeoutMS are set.
+  - description: "error if maxCommitTimeMS and timeoutMS are both specified"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+            - session:
+                id: &session session
+                client: *client
+                sessionOptions:
+                  defaultTransactionOptions:
+                    maxCommitTimeMS: 10
+      - name: startTransaction
+        object: *session
+      - name: commitTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10
+        expectError:
+          isClientError: true
+
+  # For each operation, run these tests:
+  #
+  # 1. Error if both socketTimeoutMS and timeoutMS are set.
+  # 2. Error if both waitQueueTimeoutMS and timeoutMS are set.
+  # 3. Error if both wTimeoutMS and timeoutMS are set.
+  # 4. If the operation supports the maxTimeMS option, error if both maxTimeMS and timeoutMS are set.
+
+  {% for operation in operations %}
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            {% if operation.object != "client" -%}
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            {% endif -%}
+            {% if operation.object == "collection" -%}
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            {% endif %}
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          timeoutMS: 10
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            {% if operation.object != "client" -%}
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            {% endif -%}
+            {% if operation.object == "collection" -%}
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            {% endif %}
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          timeoutMS: 10
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            {% if operation.object != "client" -%}
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            {% endif -%}
+            {% if operation.object == "collection" -%}
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            {% endif %}
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          timeoutMS: 10
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        expectError:
+          isClientError: true
+
+  {% if max_time_supported(operation.operation_name) -%}
+  - description: "error if maxTimeMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+            {% if operation.object != "client" -%}
+            - database:
+                id: &database database
+                client: *client
+                databaseName: &databaseName test
+            {% endif -%}
+            {% if operation.object == "collection" -%}
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: &collectionName coll
+            {% endif %}
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          timeoutMS: 10
+          maxTimeMS: 10
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        expectError:
+          isClientError: true
+  {% endif -%}
+  {% endfor %}

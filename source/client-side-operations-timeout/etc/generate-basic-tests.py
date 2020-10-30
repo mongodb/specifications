@@ -83,11 +83,16 @@ def get_command_object(object):
         return 1
     return '*collectionName'
 
+def max_time_supported(operation_name):
+    return operation_name in ['aggregate', 'count', 'estimatedDocumentCount', 'distinct', 'find', 'findOne',
+    'findOneAndDelete', 'findOneAndReplace', 'findOneAndUpdate', 'createIndex', 'dropIndex', 'dropIndexes']
+
 def generate(name, operations):
     template = get_template(name)
     injections = {
         'operations': operations,
         'get_command_object': get_command_object,
+        'max_time_supported': max_time_supported,
     }
     write_yaml(name, template, injections)
 
@@ -107,8 +112,12 @@ def generate_retryable():
     generate('retryability-timeoutMS', RETRYABLE_WRITE_OPERATIONS + RETRYABLE_READ_OPERATIONS)
     generate('retryability-legacy-timeouts', RETRYABLE_WRITE_OPERATIONS + RETRYABLE_READ_OPERATIONS)
 
+def generate_deprecated():
+    generate('deprecated-options', OPERATIONS)
+
 generate_global_timeout_tests()
 generate_override_db()
 generate_override_coll()
 generate_override_operation()
 generate_retryable()
+generate_deprecated()
