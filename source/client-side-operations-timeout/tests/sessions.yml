@@ -17,6 +17,7 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+        - commandFailedEvent
   - database:
       id: &database database
       client: *client
@@ -59,6 +60,19 @@ tests:
         object: *session
         arguments:
           timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
 
   - description: "timeoutMS applied to commitTransaction"
     operations:
@@ -84,6 +98,21 @@ tests:
         object: *session
         expectError:
           isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+          - commandFailedEvent:
+              commandName: commitTransaction
 
   - description: "timeoutMS can be overridden for abortTransaction"
     operations:
@@ -109,6 +138,19 @@ tests:
         object: *session
         arguments:
           timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandStartedEvent:
+              commandName: abortTransaction
+              databaseName: admin
+              command:
+                abortTransaction: 1
 
   - description: "timeoutMS applied to abortTransaction"
     operations:
@@ -130,7 +172,22 @@ tests:
         arguments:
           session: *session
           document: { _id: 1 }
+      # Drivers ignore errors for abortTransaction, so expectError can't be used here. Instead, command monitoring
+      # expectations are used to assert that the command failed.
       - name: abortTransaction
         object: *session
-        expectError:
-          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandStartedEvent:
+              commandName: abortTransaction
+              databaseName: admin
+              command:
+                abortTransaction: 1
+          - commandFailedEvent:
+              commandName: abortTransaction
