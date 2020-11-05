@@ -609,6 +609,14 @@ Clearing a Connection Pool
 
 A Pool MUST have a method of clearing all `Connections <#connection>`_ when instructed. Rather than iterating through every `Connection <#connection>`_, this method should simply increment the generation of the Pool, implicitly marking all current `Connections <#connection>`_ as stale. The checkOut and checkIn algorithms will handle clearing out stale `Connections <#connection>`_. If a user is subscribed to Connection Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
 
+As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
+requests in the WaitQueue MUST fail with errors indicating that the pool was
+cleared while the checkOut was being performed. The error returned MUST be
+considered a retryable error. Clearing the WaitQueue MUST happen eagerly so that
+any operations waiting on `Connections <#connection>`_ can retry as soon as
+possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear requests from
+the WaitQueue.
+
 Forking
 -------
 
