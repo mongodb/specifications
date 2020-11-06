@@ -9,7 +9,7 @@ runOnRequirements:
   - minServerVersion: "4.0"
     topologies: ["replicaset"]
   - minServerVersion: "4.2"
-    topologies: ["sharded"]
+    topologies: ["replicaset", "sharded-replicaset"]
 
 createEntities:
   - client:
