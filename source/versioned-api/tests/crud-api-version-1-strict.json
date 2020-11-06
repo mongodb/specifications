@@ -149,6 +149,9 @@
             "pipeline": [
               {
                 "$listLocalSessions": {}
+              },
+              {
+                "$limit": 1
               }
             ]
           }
@@ -165,6 +168,9 @@
                   "pipeline": [
                     {
                       "$listLocalSessions": {}
+                    },
+                    {
+                      "$limit": 1
                     }
                   ],
                   "apiVersion": "1",

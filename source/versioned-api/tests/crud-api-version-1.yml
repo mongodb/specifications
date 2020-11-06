@@ -69,7 +69,8 @@ tests:
         object: *adminDatabase
         arguments:
           pipeline: &pipeline
-            - $listLocalSessions: { }
+            - $listLocalSessions: {}
+            - $limit: 1
     expectEvents:
       - client: *client
         events:
