@@ -198,6 +198,7 @@ tests:
         object: *collection
         arguments:
           fieldName: x
+          filter: {}
         expectError:
           isError: true
           errorContains: "command distinct is not in API Version 1"
@@ -211,16 +212,13 @@ tests:
                 key: x
                 <<: *expectedApiVersion
 
-  # estimatedDocumentCount will fail until drivers use collStats to fetch this
+  # estimatedDocumentCount will fail once count has been removed from version 1
+  # CRUD API will be updated to account for this, so this shouldn't ever fail
   - description: "estimatedDocumentCount appends declared API version"
     operations:
       - name: estimatedDocumentCount
         object: *collection
         arguments: {}
-        expectError:
-          isError: true
-          errorContains: "command count is not in API Version 1"
-          errorCodeName: "APIStrictError"
     expectEvents:
       - client: *client
         events:
@@ -365,9 +363,8 @@ tests:
       - name: updateMany
         object: *collection
         arguments:
-          requests:
-            filter: { _id: { $gt: 1 } }
-            update: { $inc: { x: 1 } }
+          filter: { _id: { $gt: 1 } }
+          update: { $inc: { x: 1 } }
     expectEvents:
       - client: *client
         events:
@@ -383,9 +380,8 @@ tests:
       - name: updateOne
         object: *collection
         arguments:
-          requests:
-            filter: { _id: 2 }
-            update: { $inc: { x: 1 } }
+          filter: { _id: 2 }
+          update: { $inc: { x: 1 } }
     expectEvents:
       - client: *client
         events:
