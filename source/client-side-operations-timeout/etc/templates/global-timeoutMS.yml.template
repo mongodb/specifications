@@ -2,7 +2,7 @@
 
 description: "timeoutMS can be configured on a MongoClient"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 runOnRequirements:
   - minServerVersion: "4.4"

@@ -1,6 +1,6 @@
 description: "operations error if timeoutMS is used with a deprecated timeout option"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 tests:
   # One-off test to assert that commitTransaction errors if both maxCommitTimeMS and timeoutMS are set.

@@ -2,7 +2,7 @@
 
 description: "legacy timeouts behave correctly for retryable operations"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 runOnRequirements:
   - minServerVersion: "4.4"

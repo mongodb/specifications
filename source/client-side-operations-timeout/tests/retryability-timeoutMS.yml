@@ -2,7 +2,7 @@
 
 description: "timeoutMS behaves correctly for retryable operations"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 # failCommand is available on 4.0+ replica sets and 4.2+ sharded clusters.
 runOnRequirements:

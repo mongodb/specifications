@@ -1,6 +1,6 @@
 description: "MaxTimeMSExpired server errors are transformed into a custom timeout error"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 runOnRequirements:
   - minServerVersion: "4.0"

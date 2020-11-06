@@ -2,7 +2,7 @@
 
 description: "timeoutMS can be overriden for a MongoCollection"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 runOnRequirements:
   - minServerVersion: "4.4"

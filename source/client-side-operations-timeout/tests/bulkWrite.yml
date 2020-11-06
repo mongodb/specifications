@@ -1,6 +1,6 @@
 description: "timeoutMS behaves correctly for bulkWrite operations"
 
-schemaVersion: "1.1"
+schemaVersion: "1.2"
 
 runOnRequirements:
   - minServerVersion: "4.4"
