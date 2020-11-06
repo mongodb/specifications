@@ -99,7 +99,7 @@ tests:
           {% endfor %}
         {%- endif %}
         expectError:
-            isTimeoutError: true
+            isNetworkError: true
     expectEvents:
       - client: *client
         events:

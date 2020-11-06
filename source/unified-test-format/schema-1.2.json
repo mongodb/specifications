@@ -261,6 +261,10 @@
         "isTimeoutError": {
           "type": "boolean",
           "const": true
+        },
+        "isNetworkError": {
+          "type": "boolean",
+          "const": true
         }
       }
     },

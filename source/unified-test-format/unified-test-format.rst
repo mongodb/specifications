@@ -218,7 +218,29 @@ Test runners MUST support the following types of entities:
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
 - GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
-- ChangeStream. See `ChangeStream Operations`_.
+- ChangeStream. Change stream entities are special in that they are not
+  defined in `createEntities`_ but are instead created by using
+  `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
+  `client_createChangeStream`_, `database_createChangeStream`_, or
+  `collection_createChangeStream`_ operation.
+  
+  Test files SHOULD NOT use a ``watch`` operation to create a change
+  stream, as the implementation of that method may vary among drivers. For
+  example, some implementations of ``watch`` immediately execute ``aggregate``
+  and construct the server-side cursor, while others may defer ``aggregate``
+  until the change stream object is iterated.
+
+  See `Cursor Operations`_ for a list of operations.
+- FindCursor. See `FindCursor Operations`_. These entities are not defined in
+  `createEntities_` but are instead created by using
+  `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
+  `collection_createFindCursor`_ operation.
+
+  Test files SHOULD only use this entity type to store tailable cursor
+  entities. Non-tailable cursors should be created and iterated via the
+  ``find`` operation instead.
+
+  See `Cursor Operations`_ for a list of operations.
 - All known BSON types and/or equivalent language types for the target driver.
   For the present version of the spec, the following BSON types are known:
   0x01-0x13, 0x7F, 0xFF.
@@ -688,6 +710,16 @@ The structure of this object is as follows:
 
   Client errors include, but are not limited to: parameter validation errors
   before a command is sent to the server; network errors.
+
+- ``isNetworkError``: Optional boolean. If true, the test runner MUST assert
+  that the error represents a network error or a network timeout. If false, the
+  test runner MUST assert that the error does not represent a network error or
+  network timeout.
+
+- ``isTimeoutError``: Optional boolean. If true, the test runner MUST assert
+  that the error represents a timeout due to use of the ``timeoutMS`` option.
+  If false, the test runner MUST assert that the error does not represent a
+  timeout.
 
 - ``errorContains``: Optional string. A substring of the expected error message
   (e.g. "errmsg" field in a server error document). The test runner MUST assert
@@ -1195,6 +1227,26 @@ and test files SHOULD NOT specify
 `operation.expectResult <operation_expectResult_>`_ for this operation.
 
 
+.. _collection_createFindCursor:
+
+createFindCursor
+~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``find`` method to create a cursor.
+Test runners MUST ensure that the server-side cursor is created (i.e. a
+``find`` command is executed) as part of this operation and before the
+resulting cursor might be saved with `operation.saveResultAsEntity
+<operation_saveResultAsEntity_>`_. Test runners for drivers that lazily
+execute the ``find`` command on the first iteration of the cursor MUST
+iterate the resulting cursor once. The result from this iteration MUST be
+used as the result for the first ``iterateUntilDocumentOrError`` operation
+on the cursor.
+
+Test runners MUST NOT iterate the resulting cursor when executing this
+operation and test files SHOULD NOT specify `operation.expectResult
+<operation_expectResult_>`_ for this operation.
+
+
 find
 ~~~~
 
@@ -1351,35 +1403,29 @@ These operations SHOULD NOT be used in test files. See
 `upload and uploadWithId`_.
 
 
-ChangeStream Operations
------------------------
+Cursor Operations
+-----------------
 
-Change stream entities are special in that they are not defined in
-`createEntities`_ but are instead created by using
-`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
-`client_createChangeStream`_, `database_createChangeStream`_, or
-`collection_createChangeStream`_ operation.
+There are no defined APIs for change streams and cursors, since the
+mechanisms for iteration may differ between synchronous and asynchronous
+drivers. To account for this, this section explicitly defines the supported
+operations for the ``ChangeStream`` and ``FindCursor`` entity types.
 
-Test files SHOULD NOT use a ``watch`` operation to create a change stream, as
-the implementation of that method may vary among drivers. For example, some
-implementations of ``watch`` immediately execute ``aggregate`` and construct the
-server-side cursor, while others may defer ``aggregate`` until the change stream
-object is iterated.
-
-The `Change Streams <../change-streams/change-streams.rst>`__ spec does not
-define a consistent API for the ChangeStream class, since the mechanisms for
-iteration and capturing a resume token may differ between synchronous and
-asynchronous drivers. To account for this, this section explicitly defines the
-supported operations for change stream entities.
-
+Test runners MUST ensure that the iteration operations defined in this
+section will not inadvertently skip the first document for a cursor. Albeit
+rare, this could happen if ``iterateUntilDocumentOrError`` were to blindly
+invoke ``next`` (or equivalent) on a cursor in a driver where newly created
+cursors are already positioned at their first element and the cursor had a
+non-empty ``firstBatch``. Alternatively, some drivers may use a different
+iterator method for advancing a cursor to its first position (e.g. ``rewind``
+in PHP).
 
 iterateUntilDocumentOrError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Iterates the change stream until either a single document is returned or an
-error is raised. This operation takes no arguments. If
-`expectResult <operation_expectResult_>`_ is specified, it SHOULD be a single
-document.
+Iterates the cursor until either a single document is returned or an error is
+raised. This operation takes no arguments. If `expectResult
+<operation_expectResult_>`_ is specified, it SHOULD be a single document.
 
 `Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
 in the change stream spec cautions drivers that implement a blocking mode of
@@ -1388,14 +1434,17 @@ unnecessarily, as doing so could cause the test runner to block indefinitely.
 This should not be a concern for ``iterateUntilDocumentOrError`` as iteration
 only continues until either a document or error is encountered.
 
-Test runners MUST ensure that this operation will not inadvertently skip the
-first document in a change stream. Albeit rare, this could happen if
-``iterateUntilDocumentOrError`` were to blindly invoke ``next`` (or equivalent)
-on a change stream in a driver where newly created change streams are already
-positioned at their first element and the change stream cursor had a non-empty
-``firstBatch`` (i.e. ``resumeAfter`` or ``startAfter`` used). Alternatively,
-some drivers may use a different iterator method for advancing a change stream
-to its first position (e.g. ``rewind`` in PHP).
+iterateOnce
+~~~~~~~~~~~
+
+Performs a single iteration of the cursor. If the cursor's current batch is
+empty, one ``getMore`` MUST be done to attempt to get more results. This
+operation takes no arguments. If `expectResult <operation_expectResult_>`_ is
+specified, it SHOULD be a single document.
+
+Test files SHOULD only use this operation to do command monitoring assertions
+on the ``getMore`` command. Tests that require making assertions about the
+result of iteration should use `iterateUntilDocumentOrError`_ instead.
 
 
 Special Test Operations
@@ -1756,6 +1805,29 @@ An example of this operation follows::
 Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
 
+createEntities
+~~~~~~~~~~~~~~
+
+The ``createEntities`` operation instructs the test runner to create the
+provided entities and store them in the current test's `Entity Map`_.
+
+- ``entities``: Required array of one or more `entity`_ objects. As with the
+file-level `createEntities`_ directive, test files SHOULD declare entities in
+dependency order, such that all referenced entities are defined before any of
+their dependent entities.
+
+An example of this operation follows::
+
+    - name: createEntities
+      object: testRunner
+      arguments:
+        entities:
+          - client:
+              id: &client0 client0
+          - database:
+              id: &database0 database0
+              client: *client0
+              databaseName: &databaseName test
 
 Evaluating Matches
 ------------------
