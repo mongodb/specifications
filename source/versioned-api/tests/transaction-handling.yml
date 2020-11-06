@@ -30,7 +30,7 @@ _yamlAnchors:
     - &expectedApiVersion
       apiVersion: "1"
       apiStrict: { $$unsetOrMatches: false }
-      apiDeprecationErrors: true
+      apiDeprecationErrors: { $$unsetOrMatches: false }
     - &noApiVersion
       apiVersion: { $$exists: false }
       apiStrict: { $$exists: false }

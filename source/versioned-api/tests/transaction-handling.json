@@ -50,7 +50,9 @@
         "apiStrict": {
           "$$unsetOrMatches": false
         },
-        "apiDeprecationErrors": true
+        "apiDeprecationErrors": {
+          "$$unsetOrMatches": false
+        }
       },
       {
         "apiVersion": {
@@ -172,7 +174,9 @@
                   "apiStrict": {
                     "$$unsetOrMatches": false
                   },
-                  "apiDeprecationErrors": true
+                  "apiDeprecationErrors": {
+                    "$$unsetOrMatches": false
+                  }
                 }
               }
             },
@@ -251,7 +255,9 @@
                   "apiStrict": {
                     "$$unsetOrMatches": false
                   },
-                  "apiDeprecationErrors": true
+                  "apiDeprecationErrors": {
+                    "$$unsetOrMatches": false
+                  }
                 },
                 "commandName": "ping",
                 "databaseName": "versioned-api-tests"
