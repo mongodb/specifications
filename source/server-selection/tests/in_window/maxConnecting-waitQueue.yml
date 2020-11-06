@@ -28,7 +28,7 @@ in_window:
 
     # should be selected over a due to available connections
     - address: c:27017
-      active_connection_count: 15,
+      active_connection_count: 16
       available_connection_count: 3
       wait_queue_length: 0
 

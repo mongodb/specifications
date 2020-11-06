@@ -19,16 +19,16 @@ in_window:
       available_connection_count: 0
       wait_queue_length: 10
 
-    # these two always get selected when paired with a
+    # these two always get selected when paired with "a"
     # but split the rest of the selections evenly
     - address: b:27017
       active_connection_count: 100
       available_connection_count: 0
-      wait_queue_length: 5
-    - address: c:27017
-      active_connection_count: 100,
-      available_connection_count: 0
       wait_queue_length: 4
+    - address: c:27017
+      active_connection_count: 100
+      available_connection_count: 0
+      wait_queue_length: 3
 
 max_pool_size: 100
 expected_frequencies:

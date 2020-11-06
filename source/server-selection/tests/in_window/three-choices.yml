@@ -29,12 +29,12 @@ in_window:
 
     # should never be selected due to high active count
     - address: c:27017
-      active_connection_count: 20,
+      active_connection_count: 20
       available_connection_count: 0
       wait_queue_length: 0
 
 max_pool_size: 100
 expected_frequencies:
-    a:27017: 0.66
-    b:27017: 0.33
+    a:27017: 0.33
+    b:27017: 0.66
     c:27017: 0

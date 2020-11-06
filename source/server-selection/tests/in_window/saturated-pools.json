@@ -31,13 +31,13 @@
       "address": "b:27017",
       "active_connection_count": 100,
       "available_connection_count": 0,
-      "wait_queue_length": 5
+      "wait_queue_length": 4
     },
     {
       "address": "c:27017",
-      "active_connection_count": "100,",
+      "active_connection_count": 100,
       "available_connection_count": 0,
-      "wait_queue_length": 4
+      "wait_queue_length": 3
     }
   ],
   "max_pool_size": 100,
