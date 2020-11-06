@@ -1,5 +1,5 @@
 {
-  "description": "Server with least connections and most available connections selected most",
+  "description": "waitQueue length caused by maxConnecting is considered",
   "topology_description": {
     "type": "Sharded",
     "servers": [
@@ -23,27 +23,27 @@
   "in_window": [
     {
       "address": "a:27017",
-      "active_connection_count": 3,
+      "active_connection_count": 6,
       "available_connection_count": 0,
-      "wait_queue_length": 0
+      "wait_queue_length": 10
     },
     {
       "address": "b:27017",
-      "active_connection_count": 6,
-      "available_connection_count": 1,
+      "active_connection_count": 10,
+      "available_connection_count": 0,
       "wait_queue_length": 0
     },
     {
       "address": "c:27017",
-      "active_connection_count": "20,",
-      "available_connection_count": 0,
+      "active_connection_count": "15,",
+      "available_connection_count": 3,
       "wait_queue_length": 0
     }
   ],
   "max_pool_size": 100,
   "expected_frequencies": {
-    "a:27017": 0.66,
-    "b:27017": 0.33,
-    "c:27017": 0
+    "a:27017": 0,
+    "b:27017": 0.66,
+    "c:27017": 0.33
   }
 }

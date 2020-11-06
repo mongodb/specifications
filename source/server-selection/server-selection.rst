@@ -1049,8 +1049,12 @@ suitable server with the shortest average RTT is **always** a possible choice.
 Other servers could be chosen if their average RTTs are no more than
 ``localThresholdMS`` more than the shortest average RTT.
 
-A server MUST be selected according to the following algorithm, which is a
-slight modification of the `"Power of Two Random Choices with Min Connections"
+If a driver does not implement a CMAP-compliant connection pool, then a server
+MUST be selected at random from those within the latency window.
+
+If a driver does implement a CMAP-compliant connection pool, then a server MUST
+be selected according to the following algorithm, which is a slight modification
+of the `"Power of Two Random Choices with Min Connections"
 <https://www.nginx.com/blog/nginx-power-of-two-choices-load-balancing-algorithm/>`_
 load balancing algorithm. The steps are as follows:
 
@@ -1058,8 +1062,10 @@ load balancing algorithm. The steps are as follows:
    window. If there is only 1 server in the latency window, just return that server
    without proceeding to the next steps.
 
-2. If ``abs(server1.pool.activeConnectionCount - server2.pool.activeConnectionCount) > max(0.05*maxPoolSize, 1)``,
-   then choose the server with the smaller ``activeConnectionCount``.
+2. Calculate each server's ``operationCount``, which is the sum of the pool's
+   activeConnectionCount and the length of the pool's WaitQueue. If the
+   difference between the two server's ``operationCounts`` is greater than 5% of
+   maxPoolSize, then choose the server with the smaller ``operationCount``.
 
 3. Otherwise, choose the server with the higher ``availableConnectionCount``.
 
@@ -1076,9 +1082,13 @@ In psuedocode::
 
         server1, server2 = random two entries from in_window
 
-        diff = abs(server1.pool.active_connection_count - server2.pool.active_connection_count)
-        if diff > max(0.05 * max_pool_size, 1):
-            return server in (server1, server2) with minimum active_connection_count
+        server1_op_count = server1.pool.active_connection_count + len(server1.pool.wait_queue)
+        server2_op_count = server2.pool.active_connection_count + len(server2.pool.wait_queue)
+        if abs(server1_op_count - server2_op_count) > max(0.05 * max_pool_size, 1):
+            if server1_op_count < server_2_op_count:
+                return server1
+            else:
+                return server2
         elif server1.pool.available_connection_count >= server2.pool.available_connection_count:
             return server1
         else:

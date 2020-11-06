@@ -18,17 +18,20 @@ in_window:
     - address: a:27017
       active_connection_count: 3
       available_connection_count: 0
+      wait_queue_length: 0
 
     # should be selected whenever randomly chosen due to
     # higher available connection count
     - address: b:27017
       active_connection_count: 6
       available_connection_count: 1
+      wait_queue_length: 0
 
     # should never be selected due to high active count
     - address: c:27017
       active_connection_count: 20,
       available_connection_count: 0
+      wait_queue_length: 0
 
 max_pool_size: 100
 expected_frequencies:

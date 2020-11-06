@@ -84,6 +84,9 @@ Each YAML file for these tests has the following format:
   - ``available_connection_count``: the number of available connections this
     server currently has in its pool.
 
+  - ``wait_queue_length``: the number of requests in the wait queue
+    for this server's pool.
+
 - ``max_pool_size``: the maximum number of connections allowed in a server's
   connection pool.
 
