@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.0.0
+:Spec Version: 1.1.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-10-16
+:Last Modified: 2020-11-06
 
 .. contents::
 
@@ -308,6 +308,11 @@ The top-level fields of a test file are as follows:
 - ``tests``: Required array of one or more `test`_ objects. List of test cases
   to be executed independently of each other.
 
+.. _yamlAnchors
+
+- ``_yamlAnchors``: Optional object containing arbitrary data. This is only used
+  to define anchors within the YAML files and MUST NOT be used by test runners.
+
 
 runOnRequirement
 ~~~~~~~~~~~~~~~~
@@ -343,6 +348,11 @@ The structure of this object is as follows:
   "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
   "sharded" implies "sharded-replicaset", but not vice versa).
 
+- ``serverParameters``: Optional object of server parameters to check against.
+  To check server parameters, drivers send a ``{ getParameter: '*' }`` command
+  to the server using the internal MongoClient. The result SHOULD be cached to
+  avoid repeated calls. The result is then compared to the expected server
+  parameters as described in the `Evaluating Matches`_ section.
 
 entity
 ~~~~~~
@@ -439,6 +449,14 @@ The structure of this object is as follows:
 
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
+
+  - ``serverApi``: Optional object to declare an API version on the client
+    entity. A ``version`` string is required, and test runners MUST fail if the
+    given version string is not supported by the driver. The ``strict`` and
+    ``deprecationErrors`` members take an optional boolean that is passed to the
+    ``ServerApi`` object. See the
+    `Versioned API <../versioned-api/versioned-api.rst>`__ spec for more details
+    on these fields.
 
 .. _entity_database:
 
@@ -2644,3 +2662,7 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2020-11-06: Added ``serverApi`` option for client entities, ``_yamlAnchors``
+             property to define values for later use in YAML tests, and
+             ``serverParameters`` property for ``runOnRequirements``.
