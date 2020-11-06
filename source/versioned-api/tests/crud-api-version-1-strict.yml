@@ -88,11 +88,11 @@ tests:
             - updateOne:
                 filter: { _id: 2 }
                 update: { $inc: { x: 1 } }
+            - deleteMany:
+                filter: { x: { $nin: [ 24, 34 ] } }
             - updateMany:
                 filter: { _id: { $gt: 1 } }
                 update: { $inc: { x: 1 } }
-            - deleteMany:
-                filter: { x: { $nin: [ 24, 34 ] } }
             - deleteOne:
                 filter: { _id: 7 }
             - replaceOne:
@@ -117,15 +117,15 @@ tests:
                 <<: *expectedApiVersion
           - commandStartedEvent:
               command:
-                update: *collectionName
-                updates:
-                  - { q: { _id: { $gt: 1 } }, u: { $inc: { x: 1 } }, multi: true }
-                <<: *expectedApiVersion
-          - commandStartedEvent:
-              command:
                 delete: *collectionName
                 deletes:
                   - { q: { x: { $nin: [ 24, 34 ] } }, limit: 0 }
+                <<: *expectedApiVersion
+          - commandStartedEvent:
+              command:
+                update: *collectionName
+                updates:
+                  - { q: { _id: { $gt: 1 } }, u: { $inc: { x: 1 } }, multi: true }
                 <<: *expectedApiVersion
           - commandStartedEvent:
               command:
