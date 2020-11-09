@@ -1453,6 +1453,18 @@ Test files SHOULD only use this operation to do command monitoring assertions
 on the ``getMore`` command. Tests that require making assertions about the
 result of iteration should use `iterateUntilDocumentOrError`_ instead.
 
+close
+~~~~~
+
+Closes the cursor. Because drivers do not consistently propagate errors from
+the ``killCursors`` command, test runners MUST suppress all errors when
+closing the cursor. Test files SHOULD NOT specify `expectResult
+<operation_expectResult_>`_ or `expectError <operation_expectError_>`_ for
+this operation. To assert whether the ``killCursors`` command succeeded or
+failed, test files SHOULD use command monitoring assertions with
+`commandSucceededEvent <expectedEvent_commandSucceededEvent_>`_ and
+`commandFailedEvent <expectedEvent_commandFailedEvent_>`_ events.
+
 
 Special Test Operations
 -----------------------
