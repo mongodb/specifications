@@ -1038,7 +1038,7 @@ has been created.
 
 This operation proxies the client's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the client's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
+operation directly for reasons discussed in `Supported Entity Types`_. Test
 runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
 is executed) as part of this operation and before the resulting change stream
 might be saved with
@@ -1080,7 +1080,7 @@ has been created.
 
 This operation proxies the database's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the database's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
+operation directly for reasons discussed in `Supported Entity Types`_. Test
 runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
 is executed) as part of this operation and before the resulting change stream
 might be saved with
@@ -1216,7 +1216,7 @@ has been created.
 
 This operation proxies the collection's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the collection's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
+operation directly for reasons discussed in `Supported Entity Types`_. Test
 runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
 is executed) as part of this operation and before the resulting change stream
 might be saved with
@@ -1911,7 +1911,7 @@ root-level documents include, but are not limited to:
 - ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 - `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
-- `expectResult`_ for `iterateUntilDocumentOrError`_ `ChangeStream Operations`_
+- `expectResult`_ for `iterateUntilDocumentOrError`_.
 - each array element in `expectResult`_ for `find`_ or `aggregate`_
   `Collection Operations`_
 
