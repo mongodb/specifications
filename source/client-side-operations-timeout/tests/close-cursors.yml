@@ -61,7 +61,7 @@ tests:
           timeoutMS: 30 # Specify a timeoutMS value that's higher than the client's connectTimeoutMS.
           batchSize: 1
         saveResultAsEntity: &cursor cursor
-      - name: closeFindCursor
+      - name: close
         object: *cursor
         expectError:
           isTimeoutError: true
@@ -105,7 +105,7 @@ tests:
           timeoutMS: 10 # Specify a timeoutMS value that's lower than the client's connectTimeoutMS.
           batchSize: 1
         saveResultAsEntity: &cursor cursor
-      - name: closeFindCursor
+      - name: close
         object: *cursor
         expectError:
           isTimeoutError: true
@@ -149,7 +149,7 @@ tests:
           timeoutMS: 0
           batchSize: 1
         saveResultAsEntity: &cursor cursor
-      - name: closeFindCursor
+      - name: close
         object: *cursor
         expectError:
           isTimeoutError: true
