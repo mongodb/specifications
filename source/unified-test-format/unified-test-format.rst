@@ -787,6 +787,13 @@ The structure of each object is as follows:
   executing `operations`_. If the array is empty, the test runner MUST assert
   that no events were observed on the client (excluding ignored events).
 
+- ``ignoreCommandMonitoringEvents``: Optional array of one or more strings.
+  Command names for which the test runner MUST ignore any observed command
+  monitoring events. The command(s) will be ignored in addition to those
+  already ignored by an entity-level `ignoreCommandMonitoringEvents
+  <entity_client_ignoreCommandMonitoringEvents_>`_ directive for the client
+  entity under test.
+
 
 expectedEvent
 ~~~~~~~~~~~~~
