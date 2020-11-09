@@ -231,10 +231,10 @@ Test runners MUST support the following types of entities:
   until the change stream object is iterated.
 
   See `Cursor Operations`_ for a list of operations.
-- FindCursor. See `FindCursor Operations`_. These entities are not defined in
-  `createEntities_` but are instead created by using
-  `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
-  `collection_createFindCursor`_ operation.
+- FindCursor. These entities are not defined in `createEntities`_ but are
+  instead created by using `operation.saveResultAsEntity
+  <operation_saveResultAsEntity_>`_ with a `collection_createFindCursor`_
+  operation.
 
   Test files SHOULD only use this entity type to store tailable cursor
   entities. Non-tailable cursors should be created and iterated via the
@@ -1246,8 +1246,7 @@ resulting cursor might be saved with `operation.saveResultAsEntity
 <operation_saveResultAsEntity_>`_. Test runners for drivers that lazily
 execute the ``find`` command on the first iteration of the cursor MUST
 iterate the resulting cursor once. The result from this iteration MUST be
-used as the result for the first ``iterateUntilDocumentOrError`` operation
-on the cursor.
+used as the result for the first iteration operation on the cursor.
 
 Test runners MUST NOT iterate the resulting cursor when executing this
 operation and test files SHOULD NOT specify `operation.expectResult
@@ -1413,19 +1412,18 @@ These operations SHOULD NOT be used in test files. See
 Cursor Operations
 -----------------
 
-There are no defined APIs for change streams and cursors, since the
+There are no defined APIs for change streams and cursors since the
 mechanisms for iteration may differ between synchronous and asynchronous
 drivers. To account for this, this section explicitly defines the supported
 operations for the ``ChangeStream`` and ``FindCursor`` entity types.
 
 Test runners MUST ensure that the iteration operations defined in this
 section will not inadvertently skip the first document for a cursor. Albeit
-rare, this could happen if ``iterateUntilDocumentOrError`` were to blindly
-invoke ``next`` (or equivalent) on a cursor in a driver where newly created
-cursors are already positioned at their first element and the cursor had a
-non-empty ``firstBatch``. Alternatively, some drivers may use a different
-iterator method for advancing a cursor to its first position (e.g. ``rewind``
-in PHP).
+rare, this could happen if an operation were to blindly invoke ``next`` (or
+equivalent) on a cursor in a driver where newly created cursors are already
+positioned at their first element and the cursor had a non-empty
+``firstBatch``. Alternatively, some drivers may use a different iterator
+method for advancing a cursor to its first position (e.g. ``rewind`` in PHP).
 
 iterateUntilDocumentOrError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1434,8 +1432,9 @@ Iterates the cursor until either a single document is returned or an error is
 raised. This operation takes no arguments. If `expectResult
 <operation_expectResult_>`_ is specified, it SHOULD be a single document.
 
-`Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
-in the change stream spec cautions drivers that implement a blocking mode of
+Some specification sections (e.g. `Iterating the Change Stream
+<../change-streams/tests#iterating-the-change-stream>`__) caution drivers
+that implement a blocking mode of
 iteration (e.g. asynchronous drivers) not to iterate the change stream
 unnecessarily, as doing so could cause the test runner to block indefinitely.
 This should not be a concern for ``iterateUntilDocumentOrError`` as iteration
@@ -1445,13 +1444,15 @@ iterateOnce
 ~~~~~~~~~~~
 
 Performs a single iteration of the cursor. If the cursor's current batch is
-empty, one ``getMore`` MUST be done to attempt to get more results. This
-operation takes no arguments. If `expectResult <operation_expectResult_>`_ is
+empty, one ``getMore`` MUST be attempted to get more results. This operation
+takes no arguments. If `expectResult <operation_expectResult_>`_ is
 specified, it SHOULD be a single document.
 
-Test files SHOULD only use this operation to do command monitoring assertions
-on the ``getMore`` command. Tests that require making assertions about the
-result of iteration should use `iterateUntilDocumentOrError`_ instead.
+Due to the non-deterministic nature of some cursor types (e.g. change streams
+on sharded clusters), test files SHOULD only use this operation to perform
+command monitoring assertions on the ``getMore`` command. Tests that perform
+assertions about the result of iteration should use
+`iterateUntilDocumentOrError`_ instead.
 
 close
 ~~~~~
@@ -1831,9 +1832,9 @@ The ``createEntities`` operation instructs the test runner to create the
 provided entities and store them in the current test's `Entity Map`_.
 
 - ``entities``: Required array of one or more `entity`_ objects. As with the
-file-level `createEntities`_ directive, test files SHOULD declare entities in
-dependency order, such that all referenced entities are defined before any of
-their dependent entities.
+  file-level `createEntities`_ directive, test files SHOULD declare entities in
+  dependency order, such that all referenced entities are defined before any of
+  their dependent entities.
 
 An example of this operation follows::
 
