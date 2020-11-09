@@ -69,6 +69,10 @@ Each YAML file has the following keys:
 
   - ``skipReason``: |txn|
 
+  - ``useMultipleMongoses``: |txn|
+
+  - ``failPoint``: |txn|
+
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
     - ``autoEncryptOpts``: Optional
@@ -104,7 +108,10 @@ Each YAML file has the following keys:
 
     - ``arguments``: |txn|
 
-    - ``result``: |txn|
+    - ``result``: Same as the Transactions spec test format with one addition: if the operation is expected to return
+      an error, the ``result`` document may contain an ``isTimeoutError`` boolean field. If ``true``, the test runner
+      MUST assert that the error represents a timeout due to the use of the ``timeoutMS`` operation. If ``false``, the
+      test runner MUST assert that the error does not represent a timeout.
 
   - ``expectations``: |txn|
 
