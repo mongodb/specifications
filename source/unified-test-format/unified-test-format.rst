@@ -2156,6 +2156,21 @@ An example of this operator follows::
       lsid: { $$sessionLsid: *session0 }
 
 
+$$lte
+`````
+
+Syntax::
+
+    { $$lte: 5 }
+
+This operator can be used anywhere a matched value is expected (including
+`expectResult <operation_expectResult_>`_). The test runner MUST assert that
+the actual value is less than or equal to the specified value. Test runners
+MUST also apply the rules specified in `Flexible Numeric Comparisons`_ for
+this operator. For example, an expected value of ``1`` would match an actual
+value of ``1.0`` and ``0.0`` but would not match ``1.1``.
+
+
 Test Runner Implementation
 --------------------------
 
