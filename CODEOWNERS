@@ -1,9 +1,9 @@
 # SDAM: Shane Harvey, Neal Beeken
 /source/server-discovery-and-monitoring/ @ShaneHarvey @nbbeeken
 
-# CRUD: Jeremy Mikola, Emily Giurleo
-/source/crud/ @jmikola @egiurleo
-/source/driver-bulk-update.rst @jmikola @egiurleo
+# CRUD: Jeremy Mikola
+/source/crud/ @jmikola
+/source/driver-bulk-update.rst @jmikola
 
 # Transactions: Durran Jordan, Isabella Siu
 /source/transactions/ @durran @iwysiu
