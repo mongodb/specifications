@@ -34,20 +34,25 @@ tests:
             listCollections: 1
             filter:
               name: *collection_name
+            maxTimeMS: { $$type: ["int", "long"] }
           command_name: listCollections
-  - description: "timeoutMS applied to find to get keyvault data"
+
+  # Test that timeoutMS applies to the sum of all operations done for client-side encryption. This is done by blocking
+  # listCollections and find for 10ms each and running an insertOne with timeoutMS=25. There should be two
+  # listCollections commands and one "find" command, so the sum should take more than timeoutMS.
+  - description: "remaining timeoutMS applied to find to get keyvault data"
     failPoint:
       configureFailPoint: failCommand
-      mode: { times: 1 }
+      mode: { times: 3 }
       data:
-        failCommands: ["find"]
+        failCommands: ["listCollections", "find"]
         blockConnection: true
-        blockTimeMS: 15
+        blockTimeMS: 10
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
           aws: {} # Credentials filled in from environment.
-        timeoutMS: 10
+        timeoutMS: 25
     operations:
       - name: insertOne
         arguments:
@@ -61,6 +66,7 @@ tests:
             listCollections: 1
             filter:
               name: *collection_name
+            maxTimeMS: { $$type: ["int", "long"] }
           command_name: listCollections
       - command_started_event:
           command:
@@ -68,6 +74,7 @@ tests:
             filter:
               name: "datakeys"
             $db: keyvault
+            maxTimeMS: { $$type: ["int", "long"] }
           command_name: listCollections
       # Then key is fetched from the key vault.
       - command_started_event:
@@ -76,4 +83,5 @@ tests:
             filter: {"$or": [{"_id": {"$in": [ {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}} ] }}, {"keyAltNames": {"$in": []}}]}
             $db: keyvault
             readConcern: { level: "majority" }
+            maxTimeMS: { $$type: ["int", "long"] }
           command_name: find

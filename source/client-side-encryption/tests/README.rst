@@ -30,7 +30,8 @@ The spec tests format is an extension of `transactions spec tests <https://githu
 
 - Addition of `$$type` to command_started_event and outcome.
 
-The semantics of `$$type` is that any actual value matching the BSON type indicated by the BSON type string is considered a match.
+The semantics of `$$type` is that any actual value matching one of the types indicated by either a BSON type string
+or an array of BSON type strings is considered a match.
 
 For example, the following matches a command_started_event for an insert of a document where `random` must be of type ``binData``::
 
@@ -42,6 +43,16 @@ For example, the following matches a command_started_event for an insert of a do
         ordered: true
       command_name: insert
 
+The following matches a command_started_event for an insert of a document where ``random`` must be of type
+``binData`` or ``string``::
+
+  - command_started_event:
+      command:
+        insert: *collection_name
+        documents:
+          - { random: { $$type: ["binData", "string"] } }
+        ordered: true
+      command_name: insert
 
 The values of `$$type` correspond to `these documented string representations of BSON types <https://docs.mongodb.com/manual/reference/bson-types/>`_.
 
