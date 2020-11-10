@@ -844,8 +844,8 @@ For multi-threaded clients, the server selection algorithm is as follows:
 9. Request an immediate topology check, then block the server selection thread
    until the topology changes or until the server selection timeout has elapsed
 
-10. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since the
-   selection start time, raise a `server selection error`_
+10. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
+    the selection start time, raise a `server selection error`_
 
 11. Goto Step #2
 
@@ -1485,7 +1485,7 @@ server-side. Assuming at least constant incoming operation load, more
 connections will then need to be opened against the node to service new
 operations that it is selected for, further straining it and slowing it
 down. This can lead to runaway connection creation scenarios that can cripple a
-deployment ("connnection storms"). As part of DRIVERS-781, the random choice
+deployment ("connection storms"). As part of DRIVERS-781, the random choice
 portion of multi-threaded server selection was changed to more evenly spread out
 the workload among suitable servers in order to prevent any single node from
 being overloaded. The new steps achieve this by routing operations to servers
@@ -1502,9 +1502,9 @@ situation. Additionally, the `maxConnecting`_ provisions included in the CMAP
 specification prevent drivers from crippling new nodes with connection storms.
 
 An alternative approach to this would be to prefer selecting servers that
-already have available connections. While this could help reduce latency, this
-approach does not achieve the benefits of routing operations away from slow
-servers or of preferring newly introduced servers. Additionally, this approach
+already have available connections. While that approach could help reduce
+latency, it does not achieve the benefits of routing operations away from slow
+servers or of preferring newly introduced servers. Additionally, that approach
 could lead to the same node being selected repeatedly rather than spreading the
 load out among all suitable servers.
 
@@ -1789,7 +1789,7 @@ References
 
 - `Server Discovery and Monitoring`_ specification
 - `Driver Authentication`_ specification
-- `Connection Monitoring and Pooling`_ specificaiton
+- `Connection Monitoring and Pooling`_ specification
 
 .. _Server Discovery and Monitoring: https://github.com/mongodb/specifications/tree/master/source/server-discovery-and-monitoring
 .. _heartbeatFrequencyMS: https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms
@@ -1851,8 +1851,8 @@ selection rules.
 
 2020-03-17: Specify read preferences with support for server hedged reads
 
-2020-10-10: Consider server load when selecting servers within the
-latency window.
+2020-10-10: Consider server load when selecting servers within the latency
+window.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
