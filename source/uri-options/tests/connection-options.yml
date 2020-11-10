@@ -185,7 +185,7 @@ tests:
         options: {}
     -
         description: "timeoutMS and socketTimeoutMS both present raises an error"
-        uri: "monogdb://example.com/?timeoutMS=100&socketTimeoutMS=100"
+        uri: "mongodb://example.com/?timeoutMS=100&socketTimeoutMS=100"
         valid: false
         warning: false
         hosts: ~
@@ -193,7 +193,7 @@ tests:
         options: {}
     -
         description: "timeoutMS and waitQueueTimeoutMS both present raises an error"
-        uri: "monogdb://example.com/?timeoutMS=100&waitQueueTimeoutMS=100"
+        uri: "mongodb://example.com/?timeoutMS=100&waitQueueTimeoutMS=100"
         valid: false
         warning: false
         hosts: ~
@@ -201,7 +201,7 @@ tests:
         options: {}
     -
         description: "timeoutMS and wTimeoutMS both present raises an error"
-        uri: "monogdb://example.com/?timeoutMS=100&wTimeoutMS=100"
+        uri: "mongodb://example.com/?timeoutMS=100&wTimeoutMS=100"
         valid: false
         warning: false
         hosts: ~
