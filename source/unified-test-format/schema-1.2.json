@@ -53,6 +53,12 @@
         }
       }
     },
+    
+    "ignoreCommandMonitoringEvents": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string" }
+    },    
 
     "entity": {
       "type": "object",
@@ -76,11 +82,7 @@
                 "enum": ["commandStartedEvent", "commandSucceededEvent", "commandFailedEvent"]
               }
             },
-            "ignoreCommandMonitoringEvents": {
-              "type": "array",
-              "minItems": 1,
-              "items": { "type": "string" }
-            }
+            "ignoreCommandMonitoringEvents": { "$ref": "#/definitions/ignoreCommandMonitoringEvents" }
           }
         },
         "database": {
@@ -160,11 +162,7 @@
       "required": ["client", "events"],
       "properties": {
         "client": { "type": "string" },
-        "ignoreCommandMonitoringEvents": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "type": "string" }
-        },
+        "ignoreCommandMonitoringEvents": { "$ref": "#/definitions/ignoreCommandMonitoringEvents" },
         "events": {
           "type": "array",
           "items": { "$ref": "#/definitions/expectedEvent" }
@@ -258,14 +256,8 @@
           "items": { "type": "string" }
         },
         "expectResult": {},
-        "isTimeoutError": {
-          "type": "boolean",
-          "const": true
-        },
-        "isNetworkError": {
-          "type": "boolean",
-          "const": true
-        }
+        "isTimeoutError": { "type": "boolean" },
+        "isNetworkError": { "type": "boolean" }
       }
     },
 
