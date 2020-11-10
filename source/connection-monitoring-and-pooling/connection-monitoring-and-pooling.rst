@@ -10,7 +10,7 @@ Connection Monitoring and Pooling
 :Type: Standards
 :Minimum Server Version: N/A
 :Last Modified: September 24, 2020
-:Version: 1.4.0
+:Version: 1.3.0
 
 .. contents::
 
@@ -52,13 +52,6 @@ For convenience, a Thread refers to:
 -  A shared-address-space process (a.k.a. a thread) in multi-threaded drivers
 -  An Execution Frame / Continuation in asynchronous drivers
 -  A goroutine in Go
-
-Active Connection
-~~~~~~~~~~~~~~~~~
-
-An "active Connection" is a `Connection`_ that is either pending or in use. The
-server selection algorithm takes the number of active connections a particular
-pool has into account when deciding among suitable choices.
 
 Behavioral Description
 ======================
@@ -183,7 +176,17 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
 -  **Single Track:** A `Connection`_ MUST limit itself to one request / response at a time. A `Connection`_ MUST NOT multiplex/pipeline requests to an Endpoint.
 -  **Monotonically Increasing ID:** A `Connection`_ MUST have an ID number associated with it. `Connection`_ IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1 for each new Connection.
 -  **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a MongoDB Handshake and Authentication as specified in the `Handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`__, `OP_COMPRESSED <https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.rst>`__, and `Authentication <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`__ specifications.
--  **Perishable**: it is possible for a `Connection`_ to become **Perished**. See `Determining if a Connection is "perished"`_ for what this entails. 
+-  **Perishable**: it is possible for a `Connection`_ to become **Perished**. A `Connection`_ is considered perished if any of the following are true:
+
+   -  **Stale:** The `Connection`_ 's generation does not match the generation of the parent pool
+   -  **Idle:** The `Connection`_ is currently "available" (as defined below) and has been for longer than **maxIdleTimeMS**.
+   -  **Errored:** The `Connection`_ has experienced an error that indicates it is no longer recommended for use. Examples include, but are not limited to:
+
+      -  Network Error
+      -  Network Timeout
+      -  Endpoint closing the connection
+      -  Driver-Side Timeout
+      -  Wire-Protocol Error
 
 .. code:: typescript
 
@@ -260,7 +263,6 @@ has the following properties:
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
 -  **Rate-limited:** A Pool MUST limit the number of connections being created at a given time to be 2 (maxConnecting). 
--  **Live:** A Pool MUST periodically ensure its available `Connections <#connection>`_ are “live”, removing any perished ones it encounters.
 
 
 .. code:: typescript
@@ -296,14 +298,6 @@ has the following properties:
        *  being established.
        */
       pendingConnectionCount: number;
-
-      /**
-       * An integer expressing how many Connections are in-use or
-       * are being established. This is used in server selection.
-       */
-      activeConnectionCount(): number {
-          return (totalConnectionCount - availableConnectionCount) + pendingConnectionCount;
-      }
 
       /**
        *  Returns a Connection for use
@@ -609,25 +603,6 @@ Otherwise, the `Connection <#connection>`_ is marked as available.
       close connection
     else:
       mark connection as available
-
-Determining if a Connection is "perished"
------------------------------------------
-
-Before checking a `Connection`_ in or out, the pool MUST
-ensure the `Connection`_ is not "perished". A `Connection`_ is
-considered "perished" if it is at least one of the following:
-
--  **Stale:** The `Connection`_ 's generation does not match the generation of the parent pool
--  **Idle:** The `Connection`_ is currently "available" and has been for longer than **maxIdleTimeMS**.
--  **Errored:** The `Connection`_ has experienced an error that indicates it is no longer recommended for use. Examples of how a `Connection`_ might enter such a state include, but are not limited to:
-
-   -  Network Error
-   -  Network Timeout
-   -  Endpoint closing the connection
-   -  Driver-Side Timeout
-   -  Wire-Protocol Error
-
--  **Dead:** The `Connection`_ is currently "available" but has become unusable (e.g. due to the endpoint closing the other end of the underlying TCP socket or a network disruption). To determine if a `Connection`_ is in such a state, the pool MUST check if it is “live” by using poll(), select(), or similar functionality available in the language’s networking library. This check MUST NOT block. This can be achieved by passing a timeout of 0 to poll(), for example.
 
 Clearing a Connection Pool
 --------------------------
@@ -963,8 +938,6 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
-:2020-10-10: Require liveness checking of pooled Connections
-
 :2020-09-24: Introduce maxConnecting requirement
 
 :2020-09-03: Clarify Connection states and definition. Require the use of a
