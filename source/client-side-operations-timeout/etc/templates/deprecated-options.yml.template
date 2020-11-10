@@ -23,7 +23,7 @@ tests:
       - name: commitTransaction
         object: *session
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
         expectError:
           isClientError: true
 
@@ -54,16 +54,15 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
-        {% if operation.arguments|length > 0 -%}
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        {%- endif %}
         expectError:
           isClientError: true
 
@@ -76,7 +75,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -86,16 +85,15 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
-        {% if operation.arguments|length > 0 -%}
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        {%- endif %}
         expectError:
           isClientError: true
 
@@ -108,7 +106,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -118,16 +116,15 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
-        {% if operation.arguments|length > 0 -%}
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        {%- endif %}
         expectError:
           isClientError: true
 
@@ -140,8 +137,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -151,17 +146,16 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
-        {% if operation.arguments|length > 0 -%}
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        {%- endif %}
         expectError:
           isClientError: true
   {% endif -%}

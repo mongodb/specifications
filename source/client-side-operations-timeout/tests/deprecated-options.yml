@@ -23,7 +23,7 @@ tests:
       - name: commitTransaction
         object: *session
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
         expectError:
           isClientError: true
 
@@ -54,11 +54,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listDatabases
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -73,7 +74,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -83,11 +84,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listDatabases
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -102,7 +104,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -112,11 +114,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listDatabases
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -142,11 +145,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listDatabaseNames
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -161,7 +165,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -171,11 +175,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listDatabaseNames
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -190,7 +195,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -200,11 +205,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listDatabaseNames
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -230,11 +236,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -249,7 +256,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -259,11 +266,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -278,7 +286,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -288,11 +296,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *client
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -318,11 +327,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -337,7 +347,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -347,11 +357,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -366,7 +377,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -376,11 +387,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -394,8 +406,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -405,12 +415,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           pipeline: []
           
         expectError:
@@ -435,11 +446,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listCollections
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -454,7 +466,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -464,11 +476,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listCollections
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -483,7 +496,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -493,11 +506,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listCollections
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -523,11 +537,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listCollectionNames
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -542,7 +557,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -552,11 +567,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listCollectionNames
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -571,7 +587,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -581,11 +597,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listCollectionNames
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -611,11 +628,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: runCommand
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           command: { ping: 1 }
           
         expectError:
@@ -630,7 +648,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -640,11 +658,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: runCommand
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           command: { ping: 1 }
           
         expectError:
@@ -659,7 +678,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -669,11 +688,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: runCommand
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           command: { ping: 1 }
           
         expectError:
@@ -699,11 +719,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -718,7 +739,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -728,11 +749,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -747,7 +769,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -757,11 +779,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *database
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -787,11 +810,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -806,7 +830,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -816,11 +840,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -835,7 +860,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -845,11 +870,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -863,8 +889,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -874,12 +898,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           pipeline: []
           
         expectError:
@@ -904,11 +929,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -923,7 +949,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -933,11 +959,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -952,7 +979,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -962,11 +989,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -980,8 +1008,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -991,12 +1017,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           filter: {}
           
         expectError:
@@ -1021,11 +1048,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: countDocuments
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1040,7 +1068,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1050,11 +1078,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: countDocuments
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1069,7 +1098,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1079,11 +1108,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: countDocuments
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1109,10 +1139,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: estimatedDocumentCount
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1125,7 +1158,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1135,10 +1168,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: estimatedDocumentCount
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1151,7 +1187,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1161,10 +1197,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: estimatedDocumentCount
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1176,8 +1215,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1187,10 +1224,14 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: estimatedDocumentCount
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          maxTimeMS: 100000
+          
         expectError:
           isClientError: true
   
@@ -1213,11 +1254,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           fieldName: x
           filter: {}
           
@@ -1233,7 +1275,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1243,11 +1285,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           fieldName: x
           filter: {}
           
@@ -1263,7 +1306,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1273,11 +1316,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           fieldName: x
           filter: {}
           
@@ -1292,8 +1336,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1303,12 +1345,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           fieldName: x
           filter: {}
           
@@ -1334,11 +1377,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1353,7 +1397,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1363,11 +1407,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1382,7 +1427,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1392,11 +1437,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1410,8 +1456,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1421,12 +1465,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           filter: {}
           
         expectError:
@@ -1451,11 +1496,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1470,7 +1516,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1480,11 +1526,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1499,7 +1546,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1509,11 +1556,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -1527,8 +1575,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1538,12 +1584,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           filter: {}
           
         expectError:
@@ -1568,10 +1615,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1584,7 +1634,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1594,10 +1644,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1610,7 +1663,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1620,10 +1673,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1647,10 +1703,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listIndexNames
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1663,7 +1722,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1673,10 +1732,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listIndexNames
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1689,7 +1751,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1699,10 +1761,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: listIndexNames
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -1726,11 +1791,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -1745,7 +1811,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1755,11 +1821,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -1774,7 +1841,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1784,11 +1851,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createChangeStream
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           pipeline: []
           
         expectError:
@@ -1814,11 +1882,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: insertOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           document: { x: 1 }
           
         expectError:
@@ -1833,7 +1902,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1843,11 +1912,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: insertOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           document: { x: 1 }
           
         expectError:
@@ -1862,7 +1932,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1872,11 +1942,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: insertOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           document: { x: 1 }
           
         expectError:
@@ -1902,11 +1973,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: insertMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           documents:
             - { x: 1 }
           
@@ -1922,7 +1994,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1932,11 +2004,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: insertMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           documents:
             - { x: 1 }
           
@@ -1952,7 +2025,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -1962,11 +2035,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: insertMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           documents:
             - { x: 1 }
           
@@ -1993,11 +2067,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: deleteOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2012,7 +2087,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2022,11 +2097,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: deleteOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2041,7 +2117,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2051,11 +2127,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: deleteOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2081,11 +2158,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: deleteMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2100,7 +2178,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2110,11 +2188,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: deleteMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2129,7 +2208,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2139,11 +2218,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: deleteMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2169,11 +2249,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: replaceOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2189,7 +2270,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2199,11 +2280,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: replaceOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2219,7 +2301,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2229,11 +2311,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: replaceOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2260,11 +2343,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: updateOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2280,7 +2364,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2290,11 +2374,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: updateOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2310,7 +2395,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2320,11 +2405,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: updateOne
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2351,11 +2437,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: updateMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2371,7 +2458,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2381,11 +2468,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: updateMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2401,7 +2489,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2411,11 +2499,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: updateMany
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2442,11 +2531,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2461,7 +2551,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2471,11 +2561,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2490,7 +2581,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2500,11 +2591,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           
         expectError:
@@ -2518,8 +2610,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2529,12 +2619,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           filter: {}
           
         expectError:
@@ -2559,11 +2650,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2579,7 +2671,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2589,11 +2681,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2609,7 +2702,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2619,11 +2712,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2638,8 +2732,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2649,12 +2741,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           filter: {}
           replacement: { x: 1 }
           
@@ -2680,11 +2773,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2700,7 +2794,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2710,11 +2804,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2730,7 +2825,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2740,11 +2835,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2759,8 +2855,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2770,12 +2864,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -2801,11 +2896,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: bulkWrite
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           requests:
             - insertOne:
                 document: { _id: 1 }
@@ -2822,7 +2918,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2832,11 +2928,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: bulkWrite
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           requests:
             - insertOne:
                 document: { _id: 1 }
@@ -2853,7 +2950,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2863,11 +2960,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: bulkWrite
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           requests:
             - insertOne:
                 document: { _id: 1 }
@@ -2895,11 +2993,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           keys: { x: 1 }
           name: "x_1"
           
@@ -2915,7 +3014,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2925,11 +3024,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           keys: { x: 1 }
           name: "x_1"
           
@@ -2945,7 +3045,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2955,11 +3055,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           keys: { x: 1 }
           name: "x_1"
           
@@ -2974,8 +3075,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -2985,12 +3084,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           keys: { x: 1 }
           name: "x_1"
           
@@ -3016,11 +3116,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           name: "x_1"
           
         expectError:
@@ -3035,7 +3136,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3045,11 +3146,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           name: "x_1"
           
         expectError:
@@ -3064,7 +3166,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3074,11 +3176,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           name: "x_1"
           
         expectError:
@@ -3092,8 +3195,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3103,12 +3204,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: 10
-          maxTimeMS: 10
+          timeoutMS: 100000
+          maxTimeMS: 100000
           name: "x_1"
           
         expectError:
@@ -3133,10 +3235,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3149,7 +3254,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3159,10 +3264,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3175,7 +3283,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3185,10 +3293,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3200,8 +3311,6 @@ tests:
           entities:
             - client:
                 id: &client client
-                uriOptions:
-                  socketTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3211,10 +3320,14 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: dropIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 100000
+          maxTimeMS: 100000
+          
         expectError:
           isClientError: true
   
@@ -3237,10 +3350,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: commitTransaction
         object: *session
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3253,7 +3369,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3263,10 +3379,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: commitTransaction
         object: *session
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3279,7 +3398,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3289,10 +3408,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: commitTransaction
         object: *session
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3316,10 +3438,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: abortTransaction
         object: *session
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3332,7 +3457,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3342,10 +3467,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: abortTransaction
         object: *session
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3358,7 +3486,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3368,10 +3496,13 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: abortTransaction
         object: *session
-        
+        arguments:
+          timeoutMS: 100000
+          
         expectError:
           isClientError: true
 
@@ -3395,11 +3526,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           callback:
             - name: insertOne
               object: *collection
@@ -3418,7 +3550,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  waitQueueTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3428,11 +3560,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           callback:
             - name: insertOne
               object: *collection
@@ -3451,7 +3584,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  wTimeoutMS: 10
             - database:
                 id: &database database
                 client: *client
@@ -3461,11 +3594,12 @@ tests:
                 database: *database
                 collectionName: &collectionName coll
             - session:
+                id: &session session
                 client: *client
       - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 10
+          timeoutMS: 100000
           callback:
             - name: insertOne
               object: *collection
