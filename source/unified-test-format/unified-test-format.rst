@@ -218,6 +218,9 @@ Test runners MUST support the following types of entities:
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
 - GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
+
+.. _entity_changestream:
+
 - ChangeStream. Change stream entities are special in that they are not
   defined in `createEntities`_ but are instead created by using
   `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
@@ -792,7 +795,10 @@ The structure of each object is as follows:
   monitoring events. The command(s) will be ignored in addition to those
   already ignored by an entity-level `ignoreCommandMonitoringEvents
   <entity_client_ignoreCommandMonitoringEvents_>`_ directive for the client
-  entity under test.
+  entity under test. Events for these commands MUST be captured during test
+  execution but MUST be filtered out when comparing lists of expected and
+  actual events. The filtering MUST be done before any command monitoring
+  assertions are performed.
 
 
 expectedEvent
@@ -1045,10 +1051,10 @@ has been created.
 
 This operation proxies the client's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the client's ``watch``
-operation directly for reasons discussed in `Supported Entity Types`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
+operation directly for reasons discussed in `ChangeStream
+<entity_changestream_>`_. Test runners MUST ensure that the server-side
+cursor is created (i.e. ``aggregate`` is executed) as part of this operation
+and before the resulting change stream might be saved with
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 Test runners MUST NOT iterate the change stream when executing this operation
@@ -1087,10 +1093,10 @@ has been created.
 
 This operation proxies the database's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the database's ``watch``
-operation directly for reasons discussed in `Supported Entity Types`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
+operation directly for reasons discussed in `ChangeStream
+<entity_changestream_>`_. Test runners MUST ensure that the server-side
+cursor is created (i.e. ``aggregate`` is executed) as part of this operation
+and before the resulting change stream might be saved with
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 Test runners MUST NOT iterate the change stream when executing this operation
@@ -1221,12 +1227,12 @@ createChangeStream
 Creates a collection-level change stream and ensures that the server-side cursor
 has been created.
 
-This operation proxies the collection's ``watch`` method and supports the same
-arguments and options. Test files SHOULD NOT use the collection's ``watch``
-operation directly for reasons discussed in `Supported Entity Types`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
+This operation proxies the collection's ``watch`` method and supports the
+same arguments and options. Test files SHOULD NOT use the collection's
+``watch`` operation directly for reasons discussed in `ChangeStream
+<entity_changestream_>`_. Test runners MUST ensure that the server-side
+cursor is created (i.e. ``aggregate`` is executed) as part of this operation
+and before the resulting change stream might be saved with
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 Test runners MUST NOT iterate the change stream when executing this operation
