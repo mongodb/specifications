@@ -12,29 +12,13 @@ topology_description:
     avg_rtt_ms: 35
     type: Mongos
 in_window:
-    # chosen when randomly selected with c due to
-    # lower active count. loses tie to b due to lower
-    # available connection count
     - address: a:27017
-      active_connection_count: 3
-      available_connection_count: 0
-      wait_queue_length: 0
-
-    # should be selected whenever randomly chosen due to
-    # higher available connection count
+      operation_count: 3
     - address: b:27017
-      active_connection_count: 6
-      available_connection_count: 1
-      wait_queue_length: 0
-
-    # should never be selected due to high active count
+      operation_count: 6
     - address: c:27017
-      active_connection_count: 20
-      available_connection_count: 0
-      wait_queue_length: 0
-
-max_pool_size: 100
+      operation_count: 20
 expected_frequencies:
-    a:27017: 0.33
-    b:27017: 0.66
-    c:27017: 0
+    a:27017: 0.0
+    b:27017: 0.33
+    c:27017: 0.66

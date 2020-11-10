@@ -217,22 +217,65 @@ correctly passed to Mongos in the following scenarios:
   - $readPreference is used
 
 
-Selection Within Latency Window
-===============================
+Random Selection Within Latency Window (single-threaded drivers)
+================================================================
 
-The Server Selection spec mandates that drivers select a server from within the
-latency window according to a certain algorithm. There are YAML tests verifying
-that drivers implement this algorithm correctly. Drivers implementing the spec
-MUST use them test their implementations.
+The Server Selection spec mandates that single-threaded drivers select
+a server at random from the set of suitable servers that are within
+the latency window. Drivers implementing the spec SHOULD test their
+implementations in a language-specific way to confirm randomness.
 
-The tests each include some information about the servers within the latency
-window. For each case, the driver passes this information into whatever function
-it uses to select from within the window. Because the algorithm relies on
-randomness, this process MUST be repeated 1000 times. Once the 1000 selections
-are complete, the runner tallies up the number of times each server was selected
-and compares those counts to the expected results included in the test
-case. Specifics of the test format and how to run the tests are included in the
-tests README.
+For example, the following topology description, operation, and read preference will
+return a set of three suitable servers within the latency window::
+
+   topology_description:
+     type: ReplicaSetWithPrimary
+     servers:
+     - &secondary_1
+       address: b:27017
+       avg_rtt_ms: 5
+       type: RSSecondary
+       tags: {}
+     - &secondary_2
+       address: c:27017
+       avg_rtt_ms: 10
+       type: RSSecondary
+       tags: {}
+     - &primary
+       address: a:27017
+       avg_rtt_ms: 6
+       type: RSPrimary
+       tags: {}
+   operation: read
+   read_preference:
+     mode: Nearest
+     tags: {}
+   in_latency_window:
+   - *primary
+   - *secondary_1
+   - *secondary_2
+
+Drivers SHOULD check that their implementation selects one of ``primary``, ``secondary_1``,
+and ``secondary_2`` at random.
+
+operationCount-based Selection Within Latency Window (multi-threaded or async drivers)
+======================================================================================
+
+The Server Selection spec mandates that multi-threaded or async
+drivers select a server from within the latency window according to
+their operationCounts. There are YAML tests verifying that drivers
+implement this selection correctly. Multi-threaded or async drivers
+implementing the spec MUST use them test their implementations.
+
+The tests each include some information about the servers within the
+latency window. For each case, the driver passes this information into
+whatever function it uses to select from within the window. Because
+the selection algorithm relies on randomness, this process MUST be
+repeated 2000 times. Once the 2000 selections are complete, the runner
+tallies up the number of times each server was selected and compares
+those counts to the expected results included in the test
+case. Specifics of the test format and how to run the tests are
+included in the tests README.
 
 
 Application-Provided Server Selector

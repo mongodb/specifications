@@ -23,27 +23,20 @@
   "in_window": [
     {
       "address": "a:27017",
-      "active_connection_count": 3,
-      "available_connection_count": 0,
-      "wait_queue_length": 0
+      "operation_count": 3
     },
     {
       "address": "b:27017",
-      "active_connection_count": 6,
-      "available_connection_count": 1,
-      "wait_queue_length": 0
+      "operation_count": 6
     },
     {
       "address": "c:27017",
-      "active_connection_count": 20,
-      "available_connection_count": 0,
-      "wait_queue_length": 0
+      "operation_count": 20
     }
   ],
-  "max_pool_size": 100,
   "expected_frequencies": {
-    "a:27017": 0.33,
-    "b:27017": 0.66,
-    "c:27017": 0
+    "a:27017": 0,
+    "b:27017": 0.33,
+    "c:27017": 0.66
   }
 }

@@ -69,6 +69,10 @@ against ``suitable_servers`` if possible.
 Selection Within Latency Window Tests
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+These tests verify that servers select servers from within the latency
+window correctly. These tests MUST only be implemented by
+multi-threaded or async drivers.
+
 Each YAML file for these tests has the following format:
 
 - ``topology_description``: the state of a mocked cluster
@@ -78,17 +82,7 @@ Each YAML file for these tests has the following format:
 
   - ``address``: a unique address identifying this server
 
-  - ``active_connection_count``: the number of active connections this server
-    currently has open
-
-  - ``available_connection_count``: the number of available connections this
-    server currently has in its pool.
-
-  - ``wait_queue_length``: the number of requests in the wait queue
-    for this server's pool.
-
-- ``max_pool_size``: the maximum number of connections allowed in a server's
-  connection pool.
+  - ``operation_count``: the ``operationCount`` for this server
 
 - ``expected_frequencies``: a document whose keys are the server addresses from the
   ``in_window`` array and values are numbers in [0, 1] indicating the frequency
@@ -96,7 +90,7 @@ Each YAML file for these tests has the following format:
 
 For each file, pass the information from `in_window` to whatever function is
 used to select a server from within the latency window 1000 times, counting how
-many times each server is selected.  Once 1000 selectoins have been made, verify
+many times each server is selected.  Once 2000 selections have been made, verify
 that each server was selected at a frequency within 0.05 of the frequency
 contained in ``expected_frequencies`` for that server. If the expected frequency
 for a given server is 1 or 0, then the observed frequency MUST be exactly equal

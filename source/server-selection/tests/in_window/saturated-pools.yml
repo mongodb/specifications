@@ -12,25 +12,13 @@ topology_description:
     avg_rtt_ms: 35
     type: Mongos
 in_window:
-    # never gets selected because its WaitQueue is bigger than
-    # the other two
     - address: a:27017
-      active_connection_count: 100
-      available_connection_count: 0
-      wait_queue_length: 10
-
-    # these two always get selected when paired with "a"
-    # but split the rest of the selections evenly
+      operation_count: 110
     - address: b:27017
-      active_connection_count: 100
-      available_connection_count: 0
-      wait_queue_length: 4
+      operation_count: 100
     - address: c:27017
-      active_connection_count: 100
-      available_connection_count: 0
-      wait_queue_length: 3
+      operation_count: 100
 
-max_pool_size: 100
 expected_frequencies:
     a:27017: 0
     b:27017: 0.5
