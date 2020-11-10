@@ -230,12 +230,12 @@ tests:
           filter: {}
           sort: { _id: 1 }
           batchSize: 3
-          limit: 4
         expectResult:
           - { _id: 1, x: 11 }
           - { _id: 2, x: 22 }
           - { _id: 3, x: 33 }
           - { _id: 4, x: 44 }
+          - { _id: 5, x: 55 }
     expectEvents:
       - client: *client
         events:
