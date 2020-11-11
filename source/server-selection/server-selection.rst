@@ -1503,6 +1503,9 @@ aren't overly preferred however, preventing a "thundering herd"
 situation. Additionally, the `maxConnecting`_ provisions included in the CMAP
 specification prevent drivers from crippling new nodes with connection storms.
 
+This approach is based on the `"Power of Two Random Choices with Least Connections" <https://web.archive.org/web/20191212194243/https://www.nginx.com/blog/nginx-power-of-two-choices-load-balancing-algorithm/>`_
+load balancing algorithm.
+
 An alternative approach to this would be to prefer selecting servers that
 already have available connections. While that approach could help reduce
 latency, it does not achieve the benefits of routing operations away from slow
