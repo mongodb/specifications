@@ -98,4 +98,7 @@ to the expected one.
 
 Mocking may be required to implement these tests. A mocked topology description
 is included in each file for drivers that require a full description to
-implement these tests.
+implement these tests. If a ReadPreference needs to be specified as part of
+running these tests, specify one with the default ("primary") mode. The provided
+topologies will always be sharded so this should not have an effect on the
+results of the test.
