@@ -123,6 +123,7 @@ tests:
         {% if operation.operation_name == "dropIndex" -%}
         expectError:
           isClientError: false
+          isTimeoutError: false
         {%- endif %}
     expectEvents:
       - client: *client

@@ -772,7 +772,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          pipeline: [ $listLocalSessions: { } ]
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
     expectEvents:
       - client: *client
@@ -803,7 +803,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          pipeline: [ $listLocalSessions: { } ]
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
         expectError:
             isNetworkError: true

@@ -28,7 +28,7 @@ tests:
   # For each database-level operation, we execute two tests:
   #
   # 1. timeoutMS can be overridden to a non-zero value for a MongoDatabase. Each test constructs uses the client entity
-  # defined above to construct a database entity with timeoutMS=20 and configures a fail point to block the operation
+  # defined above to construct a database entity with timeoutMS=1000 and configures a fail point to block the operation
   # for 15ms so the operation succeeds.
   #
   # 2. timeoutMS can be overridden to 0 for a MongoDatabase. Each test constructs a database entity with timeoutMS=0
@@ -47,7 +47,7 @@ tests:
                 client: *client
                 databaseName: *databaseName
                 databaseOptions:
-                  timeoutMS: 20
+                  timeoutMS: 1000
             - collection:
                 id: &collection collection
                 database: *database
@@ -71,6 +71,11 @@ tests:
           {{arg}}
           {% endfor %}
         {%- endif %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
     expectEvents:
       - client: *client
         events:
@@ -80,6 +85,10 @@ tests:
               command:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$type: ["int", "long"] }
+          {% if operation.operation_name == "createChangeStream" %}
+          - commandStartedEvent:
+              commandName: killCursors
+          {% endif %}
   - description: "timeoutMS can be set to 0 on a MongoDatabase - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: createEntities
@@ -115,6 +124,11 @@ tests:
           {{arg}}
           {% endfor %}
         {%- endif %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
     expectEvents:
       - client: *client
         events:
@@ -124,4 +138,8 @@ tests:
               command:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$exists: false }
+          {% if operation.operation_name == "createChangeStream" %}
+          - commandStartedEvent:
+              commandName: killCursors
+          {% endif %}
   {% endfor %}

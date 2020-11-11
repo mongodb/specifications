@@ -1412,7 +1412,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          pipeline: [ $listLocalSessions: { } ]
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
         expectError:
           isTimeoutError: true
@@ -1448,7 +1448,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          pipeline: [ $listLocalSessions: { } ]
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
     expectEvents:
       - client: *client
@@ -1489,7 +1489,7 @@ tests:
         object: *database
         arguments:
           timeoutMS: 0
-          pipeline: [ $listLocalSessions: { } ]
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
     expectEvents:
       - client: *client

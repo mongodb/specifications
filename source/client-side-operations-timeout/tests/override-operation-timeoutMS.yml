@@ -36,7 +36,7 @@ tests:
   # For each level operation, we execute two tests:
   #
   # 1. timeoutMS can be overridden to a non-zero value for an operation. Each test executes an operation using one of
-  # the entities defined above with an overriden timeoutMS=20 and configures a fail point to block the operation for
+  # the entities defined above with an overriden timeoutMS=1000 and configures a fail point to block the operation for
   # 15ms so the operation succeeds.
   #
   # 2. timeoutMS can be overridden to 0 for an operation. Each test executes an operation using the entities defined
@@ -58,9 +58,10 @@ tests:
       - name: listDatabases
         object: *client
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -70,6 +71,7 @@ tests:
               command:
                 listDatabases: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - listDatabases on client"
     operations:
       - name: failPoint
@@ -89,6 +91,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -98,6 +101,7 @@ tests:
               command:
                 listDatabases: 1
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - listDatabaseNames on client"
     operations:
       - name: failPoint
@@ -114,9 +118,10 @@ tests:
       - name: listDatabaseNames
         object: *client
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -126,6 +131,7 @@ tests:
               command:
                 listDatabases: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - listDatabaseNames on client"
     operations:
       - name: failPoint
@@ -145,6 +151,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -154,6 +161,7 @@ tests:
               command:
                 listDatabases: 1
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - createChangeStream on client"
     operations:
       - name: failPoint
@@ -170,9 +178,10 @@ tests:
       - name: createChangeStream
         object: *client
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -182,6 +191,10 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
+          - commandStartedEvent:
+              commandName: killCursors
+          
   - description: "timeoutMS can be set to 0 for an operation - createChangeStream on client"
     operations:
       - name: failPoint
@@ -201,6 +214,7 @@ tests:
           timeoutMS: 0
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -210,6 +224,10 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$exists: false }
+          
+          - commandStartedEvent:
+              commandName: killCursors
+          
   - description: "timeoutMS can be configured for an operation - aggregate on database"
     operations:
       - name: failPoint
@@ -226,9 +244,10 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 20
-          pipeline: [ $listLocalSessions: { } ]
+          timeoutMS: 1000
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
+        
     expectEvents:
       - client: *client
         events:
@@ -238,6 +257,7 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - aggregate on database"
     operations:
       - name: failPoint
@@ -255,8 +275,9 @@ tests:
         object: *database
         arguments:
           timeoutMS: 0
-          pipeline: [ $listLocalSessions: { } ]
+          pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
+        
     expectEvents:
       - client: *client
         events:
@@ -266,6 +287,7 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - listCollections on database"
     operations:
       - name: failPoint
@@ -282,9 +304,10 @@ tests:
       - name: listCollections
         object: *database
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -294,6 +317,7 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - listCollections on database"
     operations:
       - name: failPoint
@@ -313,6 +337,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -322,6 +347,7 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - listCollectionNames on database"
     operations:
       - name: failPoint
@@ -338,9 +364,10 @@ tests:
       - name: listCollectionNames
         object: *database
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -350,6 +377,7 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - listCollectionNames on database"
     operations:
       - name: failPoint
@@ -369,6 +397,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -378,6 +407,7 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - runCommand on database"
     operations:
       - name: failPoint
@@ -394,9 +424,10 @@ tests:
       - name: runCommand
         object: *database
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           command: { ping: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -406,6 +437,7 @@ tests:
               command:
                 ping: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - runCommand on database"
     operations:
       - name: failPoint
@@ -425,6 +457,7 @@ tests:
           timeoutMS: 0
           command: { ping: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -434,6 +467,7 @@ tests:
               command:
                 ping: 1
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - createChangeStream on database"
     operations:
       - name: failPoint
@@ -450,9 +484,10 @@ tests:
       - name: createChangeStream
         object: *database
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -462,6 +497,10 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$type: ["int", "long"] }
+          
+          - commandStartedEvent:
+              commandName: killCursors
+          
   - description: "timeoutMS can be set to 0 for an operation - createChangeStream on database"
     operations:
       - name: failPoint
@@ -481,6 +520,7 @@ tests:
           timeoutMS: 0
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -490,6 +530,10 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$exists: false }
+          
+          - commandStartedEvent:
+              commandName: killCursors
+          
   - description: "timeoutMS can be configured for an operation - aggregate on collection"
     operations:
       - name: failPoint
@@ -506,9 +550,10 @@ tests:
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -518,6 +563,7 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - aggregate on collection"
     operations:
       - name: failPoint
@@ -537,6 +583,7 @@ tests:
           timeoutMS: 0
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -546,6 +593,7 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - count on collection"
     operations:
       - name: failPoint
@@ -562,9 +610,10 @@ tests:
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -574,6 +623,7 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - count on collection"
     operations:
       - name: failPoint
@@ -593,6 +643,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -602,6 +653,7 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - countDocuments on collection"
     operations:
       - name: failPoint
@@ -618,9 +670,10 @@ tests:
       - name: countDocuments
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -630,6 +683,7 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - countDocuments on collection"
     operations:
       - name: failPoint
@@ -649,6 +703,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -658,6 +713,7 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - estimatedDocumentCount on collection"
     operations:
       - name: failPoint
@@ -674,8 +730,9 @@ tests:
       - name: estimatedDocumentCount
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           
+        
     expectEvents:
       - client: *client
         events:
@@ -685,6 +742,7 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - estimatedDocumentCount on collection"
     operations:
       - name: failPoint
@@ -703,6 +761,7 @@ tests:
         arguments:
           timeoutMS: 0
           
+        
     expectEvents:
       - client: *client
         events:
@@ -712,6 +771,7 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - distinct on collection"
     operations:
       - name: failPoint
@@ -728,10 +788,11 @@ tests:
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           fieldName: x
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -741,6 +802,7 @@ tests:
               command:
                 distinct: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - distinct on collection"
     operations:
       - name: failPoint
@@ -761,6 +823,7 @@ tests:
           fieldName: x
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -770,6 +833,7 @@ tests:
               command:
                 distinct: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - find on collection"
     operations:
       - name: failPoint
@@ -786,9 +850,10 @@ tests:
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -798,6 +863,7 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - find on collection"
     operations:
       - name: failPoint
@@ -817,6 +883,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -826,6 +893,7 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - findOne on collection"
     operations:
       - name: failPoint
@@ -842,9 +910,10 @@ tests:
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -854,6 +923,7 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - findOne on collection"
     operations:
       - name: failPoint
@@ -873,6 +943,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -882,6 +953,7 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - listIndexes on collection"
     operations:
       - name: failPoint
@@ -898,8 +970,9 @@ tests:
       - name: listIndexes
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           
+        
     expectEvents:
       - client: *client
         events:
@@ -909,6 +982,7 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - listIndexes on collection"
     operations:
       - name: failPoint
@@ -927,6 +1001,7 @@ tests:
         arguments:
           timeoutMS: 0
           
+        
     expectEvents:
       - client: *client
         events:
@@ -936,6 +1011,7 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - listIndexNames on collection"
     operations:
       - name: failPoint
@@ -952,8 +1028,9 @@ tests:
       - name: listIndexNames
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           
+        
     expectEvents:
       - client: *client
         events:
@@ -963,6 +1040,7 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - listIndexNames on collection"
     operations:
       - name: failPoint
@@ -981,6 +1059,7 @@ tests:
         arguments:
           timeoutMS: 0
           
+        
     expectEvents:
       - client: *client
         events:
@@ -990,6 +1069,7 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - createChangeStream on collection"
     operations:
       - name: failPoint
@@ -1006,9 +1086,10 @@ tests:
       - name: createChangeStream
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1018,6 +1099,10 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
+          - commandStartedEvent:
+              commandName: killCursors
+          
   - description: "timeoutMS can be set to 0 for an operation - createChangeStream on collection"
     operations:
       - name: failPoint
@@ -1037,6 +1122,7 @@ tests:
           timeoutMS: 0
           pipeline: []
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1046,6 +1132,10 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$exists: false }
+          
+          - commandStartedEvent:
+              commandName: killCursors
+          
   - description: "timeoutMS can be configured for an operation - insertOne on collection"
     operations:
       - name: failPoint
@@ -1062,9 +1152,10 @@ tests:
       - name: insertOne
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           document: { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1074,6 +1165,7 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - insertOne on collection"
     operations:
       - name: failPoint
@@ -1093,6 +1185,7 @@ tests:
           timeoutMS: 0
           document: { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1102,6 +1195,7 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - insertMany on collection"
     operations:
       - name: failPoint
@@ -1118,10 +1212,11 @@ tests:
       - name: insertMany
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           documents:
             - { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1131,6 +1226,7 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - insertMany on collection"
     operations:
       - name: failPoint
@@ -1151,6 +1247,7 @@ tests:
           documents:
             - { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1160,6 +1257,7 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - deleteOne on collection"
     operations:
       - name: failPoint
@@ -1176,9 +1274,10 @@ tests:
       - name: deleteOne
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1188,6 +1287,7 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - deleteOne on collection"
     operations:
       - name: failPoint
@@ -1207,6 +1307,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1216,6 +1317,7 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - deleteMany on collection"
     operations:
       - name: failPoint
@@ -1232,9 +1334,10 @@ tests:
       - name: deleteMany
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1244,6 +1347,7 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - deleteMany on collection"
     operations:
       - name: failPoint
@@ -1263,6 +1367,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1272,6 +1377,7 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - replaceOne on collection"
     operations:
       - name: failPoint
@@ -1288,10 +1394,11 @@ tests:
       - name: replaceOne
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           replacement: { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1301,6 +1408,7 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - replaceOne on collection"
     operations:
       - name: failPoint
@@ -1321,6 +1429,7 @@ tests:
           filter: {}
           replacement: { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1330,6 +1439,7 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - updateOne on collection"
     operations:
       - name: failPoint
@@ -1346,10 +1456,11 @@ tests:
       - name: updateOne
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           update: { $set: { x: 1 } }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1359,6 +1470,7 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - updateOne on collection"
     operations:
       - name: failPoint
@@ -1379,6 +1491,7 @@ tests:
           filter: {}
           update: { $set: { x: 1 } }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1388,6 +1501,7 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - updateMany on collection"
     operations:
       - name: failPoint
@@ -1404,10 +1518,11 @@ tests:
       - name: updateMany
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           update: { $set: { x: 1 } }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1417,6 +1532,7 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - updateMany on collection"
     operations:
       - name: failPoint
@@ -1437,6 +1553,7 @@ tests:
           filter: {}
           update: { $set: { x: 1 } }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1446,6 +1563,7 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - findOneAndDelete on collection"
     operations:
       - name: failPoint
@@ -1462,9 +1580,10 @@ tests:
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1474,6 +1593,7 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - findOneAndDelete on collection"
     operations:
       - name: failPoint
@@ -1493,6 +1613,7 @@ tests:
           timeoutMS: 0
           filter: {}
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1502,6 +1623,7 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - findOneAndReplace on collection"
     operations:
       - name: failPoint
@@ -1518,10 +1640,11 @@ tests:
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           replacement: { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1531,6 +1654,7 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - findOneAndReplace on collection"
     operations:
       - name: failPoint
@@ -1551,6 +1675,7 @@ tests:
           filter: {}
           replacement: { x: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1560,6 +1685,7 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - findOneAndUpdate on collection"
     operations:
       - name: failPoint
@@ -1576,10 +1702,11 @@ tests:
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           filter: {}
           update: { $set: { x: 1 } }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1589,6 +1716,7 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - findOneAndUpdate on collection"
     operations:
       - name: failPoint
@@ -1609,6 +1737,7 @@ tests:
           filter: {}
           update: { $set: { x: 1 } }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1618,6 +1747,7 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - bulkWrite on collection"
     operations:
       - name: failPoint
@@ -1634,11 +1764,12 @@ tests:
       - name: bulkWrite
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           requests:
             - insertOne:
                 document: { _id: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1648,6 +1779,7 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - bulkWrite on collection"
     operations:
       - name: failPoint
@@ -1669,6 +1801,7 @@ tests:
             - insertOne:
                 document: { _id: 1 }
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1678,6 +1811,7 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - createIndex on collection"
     operations:
       - name: failPoint
@@ -1694,10 +1828,11 @@ tests:
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           keys: { x: 1 }
           name: "x_1"
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1707,6 +1842,7 @@ tests:
               command:
                 createIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - createIndex on collection"
     operations:
       - name: failPoint
@@ -1727,6 +1863,7 @@ tests:
           keys: { x: 1 }
           name: "x_1"
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1736,6 +1873,7 @@ tests:
               command:
                 createIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - dropIndex on collection"
     operations:
       - name: failPoint
@@ -1752,9 +1890,12 @@ tests:
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           name: "x_1"
           
+        expectError:
+          isClientError: false
+          isTimeoutError: false
     expectEvents:
       - client: *client
         events:
@@ -1764,6 +1905,7 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - dropIndex on collection"
     operations:
       - name: failPoint
@@ -1783,6 +1925,9 @@ tests:
           timeoutMS: 0
           name: "x_1"
           
+        expectError:
+          isClientError: false
+          isTimeoutError: false
     expectEvents:
       - client: *client
         events:
@@ -1792,6 +1937,7 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   - description: "timeoutMS can be configured for an operation - dropIndexes on collection"
     operations:
       - name: failPoint
@@ -1808,8 +1954,9 @@ tests:
       - name: dropIndexes
         object: *collection
         arguments:
-          timeoutMS: 20
+          timeoutMS: 1000
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1819,6 +1966,7 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
+          
   - description: "timeoutMS can be set to 0 for an operation - dropIndexes on collection"
     operations:
       - name: failPoint
@@ -1837,6 +1985,7 @@ tests:
         arguments:
           timeoutMS: 0
           
+        
     expectEvents:
       - client: *client
         events:
@@ -1846,4 +1995,5 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
+          
   

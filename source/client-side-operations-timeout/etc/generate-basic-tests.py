@@ -14,7 +14,7 @@ CLIENT_OPERATIONS = [
 ]
 
 DB_OPERATIONS = [
-    Operation('aggregate', 'aggregate', 'database', ['pipeline: [ $listLocalSessions: { } ]']),
+    Operation('aggregate', 'aggregate', 'database', ['pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]']),
     Operation('listCollections', 'listCollections', 'database', ['filter: {}']),
     Operation('listCollectionNames', 'listCollections', 'database', ['filter: {}']),
     Operation('runCommand', 'ping', 'database', ['command: { ping: 1 }']),
