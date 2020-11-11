@@ -1478,21 +1478,23 @@ guarantee and keeps the design simpler.
 operationCount-based selection within the latency window (multi-threaded or async)
 ----------------------------------------------------------------------------------
 
-When a node begins slows down, any pooled connections opened against it which
-are checked out for operation execution will remain checked out for longer
-periods of time due to the operations taking longer to complete
-server-side. Assuming at least constant incoming operation load, more
-connections will then need to be opened against the node to service new
-operations that it is selected for, further straining it and slowing it
-down. This can lead to runaway connection creation scenarios that can cripple a
-deployment ("connection storms"). As part of DRIVERS-781, the random choice
-portion of multi-threaded server selection was changed to more evenly spread out
-the workload among suitable servers in order to prevent any single node from
-being overloaded. The new steps achieve this by routing operations to servers
-with fewer ongoing operations, thereby reducing the number of new operations
-routed towards nodes that are busier. The previous random selection mechanism
-did not take load into account and could assign work to nodes that were under
-too much stress already.
+As operation execution slows down on a node (e.g. due to degraded server-side
+performance or increased network latency), checked-out pooled connections to
+that node will begin to remain checked out for longer periods of time. Assuming
+at least constant incoming operation load, more connections will then need to be
+opened against the node to service new operations that it gets selected for,
+further straining it and slowing it down. This can lead to runaway connection
+creation scenarios that can cripple a deployment ("connection storms"). As part
+of DRIVERS-781, the random choice portion of multi-threaded server selection was
+changed to more evenly spread out the workload among suitable servers in order
+to prevent any single node from being overloaded. The new steps achieve this by
+approximating an individual server's load via the number of concurrent
+operations that node is processing (operationCount) and then routing operations
+to servers with less load. This should reduce the number of new operations
+routed towards nodes that are busier and thus increase the number routed towards
+nodes that are servicing operations faster or are simply less busy. The previous
+random selection mechanism did not take load into account and could assign work
+to nodes that were under too much stress already.
 
 As an added benefit, the new approach gives preference to nodes that have
 recently been discovered and are thus are more likely to be alive (e.g. during a
