@@ -28,12 +28,6 @@ BULK_WRITE_ARGUMENTS = '''requests:
             - insertOne:
                 document: { _id: 1 }'''
 
-WITH_TXN_ARGUMENTS = '''callback:
-            - name: insertOne
-              object: *collection
-              arguments:
-                document: { x: 1 }'''
-
 COLLECTION_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
     Operation('count', 'count', 'collection', ['filter: {}']),
@@ -64,7 +58,7 @@ COLLECTION_OPERATIONS = [
 SESSION_OPERATIONS = [
     Operation('commitTransaction', 'commitTransaction', 'session', []),
     Operation('abortTransaction', 'abortTransaction', 'session', []),
-    Operation('withTransaction', 'insert', 'session', [WITH_TXN_ARGUMENTS]),
+    Operation('withTransaction', 'insert', 'session', ['callback: []']),
 ]
 
 # Session operations are generally tested in other files, so they're not included in the list of all operations.

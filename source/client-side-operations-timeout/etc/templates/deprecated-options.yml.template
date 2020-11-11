@@ -2,9 +2,38 @@ description: "operations error if timeoutMS is used with a deprecated timeout op
 
 schemaVersion: "1.2"
 
+initialData:
+  - collectionName: &collectionName coll
+    databaseName: &databaseName test
+    documents: []
+
 tests:
-  # One-off test to assert that commitTransaction errors if both maxCommitTimeMS and timeoutMS are set.
-  - description: "error if maxCommitTimeMS and timeoutMS are both specified"
+  # One-off tests to assert that drivers error if both maxCommitTimeMS and timeoutMS are set.
+
+  - description: "abortTransaction errors if maxCommitTimeMS and timeoutMS are both specified"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+            - session:
+                id: &session session
+                client: *client
+                sessionOptions:
+                  defaultTransactionOptions:
+                    maxCommitTimeMS: 10
+      - name: startTransaction
+        object: *session
+      - name: abortTransaction
+        object: *session
+        arguments:
+          timeoutMS: 100000
+        expectError:
+          isClientError: true
+
+  - description: "commitTransaction errors if maxCommitTimeMS and timeoutMS are both specified"
     operations:
       - name: createEntities
         object: testRunner
@@ -24,6 +53,36 @@ tests:
         object: *session
         arguments:
           timeoutMS: 100000
+        expectError:
+          isClientError: true
+
+  - description: "withTransaction errors if maxCommitTimeMS and timeoutMS are both specified"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+                sessionOptions:
+                  defaultTransactionOptions:
+                    maxCommitTimeMS: 10
+      - name: withTransaction
+        object: *session
+        arguments:
+          timeoutMS: 100000
+          callback: []
         expectError:
           isClientError: true
 
@@ -48,11 +107,11 @@ tests:
             - database:
                 id: &database database
                 client: *client
-                databaseName: &databaseName test
+                databaseName: *databaseName
             - collection:
                 id: &collection collection
                 database: *database
-                collectionName: &collectionName coll
+                collectionName: *collectionName
             - session:
                 id: &session session
                 client: *client
@@ -79,11 +138,11 @@ tests:
             - database:
                 id: &database database
                 client: *client
-                databaseName: &databaseName test
+                databaseName: *databaseName
             - collection:
                 id: &collection collection
                 database: *database
-                collectionName: &collectionName coll
+                collectionName: *collectionName
             - session:
                 id: &session session
                 client: *client
@@ -110,11 +169,11 @@ tests:
             - database:
                 id: &database database
                 client: *client
-                databaseName: &databaseName test
+                databaseName: *databaseName
             - collection:
                 id: &collection collection
                 database: *database
-                collectionName: &collectionName coll
+                collectionName: *collectionName
             - session:
                 id: &session session
                 client: *client
@@ -140,11 +199,11 @@ tests:
             - database:
                 id: &database database
                 client: *client
-                databaseName: &databaseName test
+                databaseName: *databaseName
             - collection:
                 id: &collection collection
                 database: *database
-                collectionName: &collectionName coll
+                collectionName: *collectionName
             - session:
                 id: &session session
                 client: *client
