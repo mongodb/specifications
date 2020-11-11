@@ -16,20 +16,21 @@ tests:
       - name: createEntities
         object: testRunner
         arguments:
-          client:
-            id: &client client
-            observeEvents:
-              - commandStartedEvent
-            uriOptions:
-              socketTimeoutMS: 50000
-          database:
-            id: &database database
-            client: *client
-            databaseName: *databaseName
-          collection:
-            id: &collection collection
-            database: *database
-            collectionName: *collectionName
+          entities:
+            - client:
+                id: &client client
+                observeEvents:
+                  - commandStartedEvent
+                uriOptions:
+                  socketTimeoutMS: 50000
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
       - name: insertOne
         object: *collection
         arguments:
@@ -49,20 +50,21 @@ tests:
       - name: createEntities
         object: testRunner
         arguments:
-          client:
-            id: &client client
-            observeEvents:
-              - commandStartedEvent
-            uriOptions:
-              waitQueueTimeoutMS: 50000
-          database:
-            id: &database database
-            client: *client
-            databaseName: *databaseName
-          collection:
-            id: &collection collection
-            database: *database
-            collectionName: *collectionName
+          entities:
+            - client:
+                id: &client client
+                observeEvents:
+                  - commandStartedEvent
+                uriOptions:
+                  waitQueueTimeoutMS: 50000
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
       - name: insertOne
         object: *collection
         arguments:
@@ -82,20 +84,21 @@ tests:
       - name: createEntities
         object: testRunner
         arguments:
-          client:
-            id: &client client
-            observeEvents:
-              - commandStartedEvent
-            uriOptions:
-              wTimeoutMS: &wTimeoutMS 50000
-          database:
-            id: &database database
-            client: *client
-            databaseName: *databaseName
-          collection:
-            id: &collection collection
-            database: *database
-            collectionName: *collectionName
+          entities:
+            - client:
+                id: &client client
+                observeEvents:
+                  - commandStartedEvent
+                uriOptions:
+                  wTimeoutMS: &wTimeoutMS 50000
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
       - name: insertOne
         object: *collection
         arguments:
@@ -120,18 +123,19 @@ tests:
       - name: createEntities
         object: testRunner
         arguments:
-          client:
-            id: &client client
-            observeEvents:
-              - commandStartedEvent
-          database:
-            id: &database database
-            client: *client
-            databaseName: *databaseName
-          collection:
-            id: &collection collection
-            database: *database
-            collectionName: *collectionName
+          entities:
+            - client:
+                id: &client client
+                observeEvents:
+                  - commandStartedEvent
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
       - name: estimatedDocumentCount
         object: *collection
         arguments:
@@ -152,24 +156,25 @@ tests:
       - name: createEntities
         object: testRunner
         arguments:
-          client:
-            id: &client client
-            observeEvents:
-              - commandStartedEvent
-          database:
-            id: &database database
-            client: *client
-            databaseName: *databaseName
-          collection:
-            id: &collection collection
-            database: *database
-            collectionName: *collectionName
-          session:
-            id: &session session
-            client: *client
-            sessionOptions:
-              defaultTransactionOptions:
-                maxCommitTimeMS: &maxCommitTimeMS 50000
+          entities:
+            - client:
+                id: &client client
+                observeEvents:
+                  - commandStartedEvent
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+                sessionOptions:
+                  defaultTransactionOptions:
+                    maxCommitTimeMS: &maxCommitTimeMS 1000
       - name: startTransaction
         object: *session
       - name: insertOne
