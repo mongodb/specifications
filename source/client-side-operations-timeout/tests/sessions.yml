@@ -17,6 +17,7 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+        - commandSucceededEvent
         - commandFailedEvent
   - database:
       id: &database database
@@ -36,44 +37,10 @@ initialData:
     documents: []
 
 tests:
-  - description: "timeoutMS can be overridden for commitTransaction"
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["commitTransaction"]
-              blockConnection: true
-              blockTimeMS: 15
-      - name: startTransaction
-        object: *session
-      - name: insertOne
-        object: *collection
-        arguments:
-          session: *session
-          document: { _id: 1 }
-      - name: commitTransaction
-        object: *session
-        arguments:
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *collectionName
-          - commandStartedEvent:
-              commandName: commitTransaction
-              databaseName: admin
-              command:
-                commitTransaction: 1
+  # Drivers ignore errors from abortTransaction, so the tests in this file use commandSucceededEvent and
+  # commandFailedEvent events to assert success/failure.
 
+  # Failure test for commitTransaction to assert that it inherits the client's timeoutMS.
   - description: "timeoutMS applied to commitTransaction"
     operations:
       - name: failPoint
@@ -106,6 +73,8 @@ tests:
               databaseName: *databaseName
               command:
                 insert: *collectionName
+          - commandSucceededEvent:
+              commandName: insert
           - commandStartedEvent:
               commandName: commitTransaction
               databaseName: admin
@@ -114,6 +83,93 @@ tests:
           - commandFailedEvent:
               commandName: commitTransaction
 
+  # Success test for commitTransaction. The client timeoutMS is 10, so the test blocks the operation for 15ms and
+  # overrides the timeout to 50ms. The operation should succeed.
+  - description: "timeoutMS can be overridden for commitTransaction"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["commitTransaction"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: startTransaction
+        object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          session: *session
+          document: { _id: 1 }
+      - name: commitTransaction
+        object: *session
+        arguments:
+          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandSucceededEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+          - commandSucceededEvent:
+              commandName: commitTransaction
+
+  # Failure test for abortTransaction to assert that it inherits the client's timeoutMS.
+  - description: "timeoutMS applied to abortTransaction"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["abortTransaction"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: startTransaction
+        object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          session: *session
+          document: { _id: 1 }
+      - name: abortTransaction
+        object: *session
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandSucceededEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: abortTransaction
+              databaseName: admin
+              command:
+                abortTransaction: 1
+          - commandFailedEvent:
+              commandName: abortTransaction
+
+  # Success test for commitTransaction. The client timeoutMS is 10, so the test blocks the operation for 15ms and
+  # overrides the timeout to 50ms. The operation should succeed.
   - description: "timeoutMS can be overridden for abortTransaction"
     operations:
       - name: failPoint
@@ -146,48 +202,12 @@ tests:
               databaseName: *databaseName
               command:
                 insert: *collectionName
-          - commandStartedEvent:
-              commandName: abortTransaction
-              databaseName: admin
-              command:
-                abortTransaction: 1
-
-  - description: "timeoutMS applied to abortTransaction"
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["abortTransaction"]
-              blockConnection: true
-              blockTimeMS: 15
-      - name: startTransaction
-        object: *session
-      - name: insertOne
-        object: *collection
-        arguments:
-          session: *session
-          document: { _id: 1 }
-      # Drivers ignore errors for abortTransaction, so expectError can't be used here. Instead, command monitoring
-      # expectations are used to assert that the command failed.
-      - name: abortTransaction
-        object: *session
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
+          - commandSucceededEvent:
               commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *collectionName
           - commandStartedEvent:
               commandName: abortTransaction
               databaseName: admin
               command:
                 abortTransaction: 1
-          - commandFailedEvent:
+          - commandSucceededEvent:
               commandName: abortTransaction
