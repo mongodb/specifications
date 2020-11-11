@@ -65,7 +65,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          pipeline: []
+          pipeline: [ $listLocalSessions: { } ]
           
     expectEvents:
       - client: *client
@@ -106,7 +106,7 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          pipeline: []
+          pipeline: [ $listLocalSessions: { } ]
           
     expectEvents:
       - client: *client

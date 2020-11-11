@@ -392,7 +392,7 @@ tests:
         object: *database
         arguments:
           timeoutMS: 100000
-          pipeline: []
+          pipeline: [ $listLocalSessions: { } ]
           
         expectError:
           isClientError: true
@@ -422,7 +422,7 @@ tests:
         object: *database
         arguments:
           timeoutMS: 100000
-          pipeline: []
+          pipeline: [ $listLocalSessions: { } ]
           
         expectError:
           isClientError: true
@@ -452,7 +452,7 @@ tests:
         object: *database
         arguments:
           timeoutMS: 100000
-          pipeline: []
+          pipeline: [ $listLocalSessions: { } ]
           
         expectError:
           isClientError: true
@@ -481,7 +481,7 @@ tests:
         arguments:
           timeoutMS: 100000
           maxTimeMS: 100000
-          pipeline: []
+          pipeline: [ $listLocalSessions: { } ]
           
         expectError:
           isClientError: true
