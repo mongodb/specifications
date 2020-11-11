@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "style": "unit",
+  "description": "clearing pool clears the WaitQueue",
+  "poolOptions": {
+    "maxPoolSize": 1,
+    "waitQueueTimeoutMS": 1000
+  },
+  "operations": [
+    {
+      "name": "checkOut"
+    },
+    {
+      "name": "start",
+      "target": "thread1"
+    },
+    {
+      "name": "checkOut",
+      "thread": "thread1"
+    },
+    {
+      "name": "start",
+      "target": "thread2"
+    },
+    {
+      "name": "checkOut",
+      "thread": "thread2"
+    },
+    {
+      "name": "start",
+      "thread": "thread3"
+    },
+    {
+      "name": "checkOut",
+      "thread": "thread3"
+    },
+    {
+      "name": "clear"
+    }
+  ],
+  "events": [
+    {
+      "type": "ConnectionCheckOutStarted",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutStarted",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutStarted",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutStarted",
+      "address": 42
+    },
+    {
+      "type": "ConnectionPoolCleared",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutFailed",
+      "reason": "error",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutFailed",
+      "reason": "error",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckOutFailed",
+      "reason": "error",
+      "address": 42
+    }
+  ],
+  "ignore": [
+    "ConnectionPoolCreated",
+    "ConnectionCreated",
+    "ConnectionReady"
+  ]
+}
