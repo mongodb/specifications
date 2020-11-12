@@ -52,9 +52,8 @@ When this is done:
 
 - The client sends the specified API version to the server, causing the server
   to behave in a manner compatible with that API version.
-- The driver will behave in a manner compatible with the driver's behavior as of
-  the release when the driver first started to support the specified server API
-  version.
+- The driver will behave in a manner compatible with a server configured with
+  that API version, regardless of the server's actual release version.
 
 Presently there is no specification for how a driver must behave when a
 particular server API version is requested, or what driver operations are
@@ -101,7 +100,10 @@ This specification and subsequent specifications will define the known API
 versions. Drivers SHOULD define an enumeration containing the known API
 versions, using the version identifiers given. Drivers MAY deviate from the
 version identifiers used in this and subsequent specifications if doing so is
-necessary given the driver's programming language's constraints.
+necessary given the driver's programming language's constraints. Drivers MUST
+ensure that adding new API versions to this enumeration does not result in
+backward compatibility breaks in non-major releases. This can be the case in
+languages that allow exhaustive ``switch`` statements (e.g. Swift).
 
 Drivers for languages that don't have enums (e.g. PHP) MUST expose the version
 as a string, but SHOULD offer constants to allow for IDE features such as code
@@ -117,8 +119,8 @@ The ``ServerApi`` class stores an API version, along with flags that decide
 whether or not unknown or deprecated commands in the specified API version
 trigger a server-side error. A ``version`` MUST be specified when declaring an
 API version, while the ``strict`` and ``deprecationErrors`` options are both
-optional and default to ``false``. The ``ServerApi`` class is considered
-immutable; changes to the declared API version MUST be prohibited.
+optional. The ``ServerApi`` class is considered immutable; changes to the
+declared API version MUST be prohibited.
 
 
 Declared Version Inheritance
@@ -157,8 +159,8 @@ options:
 If an API version was declared, drivers MUST add the ``apiVersion`` option to
 every command that is sent to a server. Drivers MUST add the ``apiStrict`` and
 ``apiDeprecationErrors`` options if they were specified by the user, even when
-the specified value is equal to the server default. Drivers SHOULD NOT add these
-options if the user did not specify a value.
+the specified value is equal to the server default. Drivers MUST NOT add any
+API versioning options if the user did not specify them.
 
 
 Cursors
@@ -167,6 +169,9 @@ Cursors
 The ``getMore`` command does not accept API parameters; cursors inherit their
 API parameters from the initiating command. Drivers MUST NOT include API
 parameters when sending ``getMore`` commands to the server.
+
+In contrast, the ``killCursors`` command accepts API parameters and drivers MUST
+include them as they would with all other commands.
 
 
 Transactions

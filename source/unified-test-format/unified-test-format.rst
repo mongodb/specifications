@@ -349,10 +349,17 @@ The structure of this object is as follows:
   "sharded" implies "sharded-replicaset", but not vice versa).
 
 - ``serverParameters``: Optional object of server parameters to check against.
-  To check server parameters, drivers send a ``{ getParameter: '*' }`` command
-  to the server using the internal MongoClient. The result SHOULD be cached to
-  avoid repeated calls. The result is then compared to the expected server
-  parameters as described in the `Evaluating Matches`_ section.
+  To check server parameters, drivers send a
+  ``{ getParameter: 1, <parameter>: 1 }`` command to the server using the
+  internal MongoClient. Drivers MAY also choose to send a
+  ``{ getParameter: '*' }`` command and fetch all parameters at once. The result
+  SHOULD be cached to avoid repeated calls to fetch the same parameter. Test
+  runners MUST apply the rules specified in `Flexible Numeric Comparisons`_ when
+  comparing values. If a server does not support a parameter, test runners MUST
+  treat the comparison as not equal and skip the test. This includes errors that
+  occur when fetching a single parameter using ``getParameter``.
+
+Test runners MUST evaluate these conditions in the order specified above.
 
 entity
 ~~~~~~
