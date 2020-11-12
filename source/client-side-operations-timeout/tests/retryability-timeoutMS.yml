@@ -2325,7 +2325,9 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: estimatedDocumentCount
         object: *collection
-        
+        arguments:
+          timeoutMS: 0
+          
     expectEvents:
       - client: *client
         events:
@@ -2801,7 +2803,9 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: listIndexes
         object: *collection
-        
+        arguments:
+          timeoutMS: 0
+          
     expectEvents:
       - client: *client
         events:

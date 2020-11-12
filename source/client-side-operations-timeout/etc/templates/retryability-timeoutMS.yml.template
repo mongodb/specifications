@@ -161,13 +161,11 @@ tests:
               errorLabels: ["RetryableWriteError"]
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
-        {% if operation.arguments|length > 0 -%}
         arguments:
           timeoutMS: 0
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        {%- endif %}
     expectEvents:
       - client: *client
         events:
