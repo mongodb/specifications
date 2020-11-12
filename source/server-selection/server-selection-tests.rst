@@ -265,7 +265,7 @@ The Server Selection spec mandates that multi-threaded or async
 drivers select a server from within the latency window according to
 their operationCounts. There are YAML tests verifying that drivers
 implement this selection correctly. Multi-threaded or async drivers
-implementing the spec MUST use them test their implementations.
+implementing the spec MUST use them to test their implementations.
 
 The tests each include some information about the servers within the
 latency window. For each case, the driver passes this information into
