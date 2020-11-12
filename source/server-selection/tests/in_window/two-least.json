@@ -1,5 +1,5 @@
 {
-  "description": "waitQueue length caused by maxConnecting is considered",
+  "description": "Two tied for least operations share all selections",
   "topology_description": {
     "type": "Sharded",
     "servers": [
@@ -23,7 +23,7 @@
   "in_window": [
     {
       "address": "a:27017",
-      "operation_count": 16
+      "operation_count": 10
     },
     {
       "address": "b:27017",
@@ -35,8 +35,8 @@
     }
   ],
   "expected_frequencies": {
-    "a:27017": 0.165,
-    "b:27017": 0.66,
-    "c:27017": 0.165
+    "a:27017": 0.5,
+    "b:27017": 0.5,
+    "c:27017": 0
   }
 }

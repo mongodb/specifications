@@ -1,4 +1,4 @@
-description: Server with shortest WaitQueue among full pools selected
+description: Two tied for least operations share all selections
 topology_description:
   type: Sharded
   servers:
@@ -13,13 +13,12 @@ topology_description:
     type: Mongos
 in_window:
     - address: a:27017
-      operation_count: 110
+      operation_count: 10
     - address: b:27017
-      operation_count: 100
+      operation_count: 10
     - address: c:27017
-      operation_count: 100
-
+      operation_count: 16
 expected_frequencies:
-    a:27017: 0
+    a:27017: 0.5
     b:27017: 0.5
-    c:27017: 0.5
+    c:27017: 0

@@ -89,9 +89,9 @@ Each YAML file for these tests has the following format:
   at which the server should have been selected.
 
 For each file, pass the information from `in_window` to whatever function is
-used to select a server from within the latency window 1000 times, counting how
-many times each server is selected.  Once 2000 selections have been made, verify
-that each server was selected at a frequency within 0.05 of the frequency
+used to select a server from within the latency window 10000 times, counting how
+many times each server is selected.  Once 10000 selections have been made, verify
+that each server was selected at a frequency within 0.02 of the frequency
 contained in ``expected_frequencies`` for that server. If the expected frequency
 for a given server is 1 or 0, then the observed frequency MUST be exactly equal
 to the expected one.

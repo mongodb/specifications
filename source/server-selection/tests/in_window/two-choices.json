@@ -1,5 +1,5 @@
 {
-  "description": "Server with shortest WaitQueue among full pools selected",
+  "description": "Better of two choices always selected",
   "topology_description": {
     "type": "Sharded",
     "servers": [
@@ -23,20 +23,15 @@
   "in_window": [
     {
       "address": "a:27017",
-      "operation_count": 110
+      "operation_count": 0
     },
     {
       "address": "b:27017",
-      "operation_count": 100
-    },
-    {
-      "address": "c:27017",
-      "operation_count": 100
+      "operation_count": 5
     }
   ],
   "expected_frequencies": {
-    "a:27017": 0,
-    "b:27017": 0.5,
-    "c:27017": 0.5
+    "a:27017": 1,
+    "b:27017": 0
   }
 }
