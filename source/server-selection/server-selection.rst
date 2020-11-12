@@ -1251,7 +1251,7 @@ selection`_::
                     selected = in_window[0]
                 else:
                     server1, server2 = random two entries from in_window
-                    if server1.operation_count >= server2.operation_count:
+                    if server1.operation_count <= server2.operation_count:
                         selected = server1
                     else:
                         selected = server2
