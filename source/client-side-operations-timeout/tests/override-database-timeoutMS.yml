@@ -18,6 +18,8 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
 
 initialData:
   - collectionName: &collectionName coll
@@ -77,7 +79,6 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - aggregate on database"
     operations:
       - name: createEntities
@@ -120,7 +121,6 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - listCollections on database"
     operations:
       - name: createEntities
@@ -163,7 +163,6 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - listCollections on database"
     operations:
       - name: createEntities
@@ -206,7 +205,6 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - listCollectionNames on database"
     operations:
       - name: createEntities
@@ -249,7 +247,6 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - listCollectionNames on database"
     operations:
       - name: createEntities
@@ -292,7 +289,6 @@ tests:
               command:
                 listCollections: 1
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - runCommand on database"
     operations:
       - name: createEntities
@@ -335,7 +331,6 @@ tests:
               command:
                 ping: 1
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - runCommand on database"
     operations:
       - name: createEntities
@@ -378,7 +373,6 @@ tests:
               command:
                 ping: 1
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - createChangeStream on database"
     operations:
       - name: createEntities
@@ -421,10 +415,6 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$type: ["int", "long"] }
-          
-          - commandStartedEvent:
-              commandName: killCursors
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - createChangeStream on database"
     operations:
       - name: createEntities
@@ -467,10 +457,6 @@ tests:
               command:
                 aggregate: 1
                 maxTimeMS: { $$exists: false }
-          
-          - commandStartedEvent:
-              commandName: killCursors
-          
   - description: "timeoutMS can be configured on a MongoDatabase - aggregate on collection"
     operations:
       - name: createEntities
@@ -513,7 +499,6 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - aggregate on collection"
     operations:
       - name: createEntities
@@ -556,7 +541,6 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - count on collection"
     operations:
       - name: createEntities
@@ -599,7 +583,6 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - count on collection"
     operations:
       - name: createEntities
@@ -642,7 +625,6 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - countDocuments on collection"
     operations:
       - name: createEntities
@@ -685,7 +667,6 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - countDocuments on collection"
     operations:
       - name: createEntities
@@ -728,7 +709,6 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - estimatedDocumentCount on collection"
     operations:
       - name: createEntities
@@ -769,7 +749,6 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - estimatedDocumentCount on collection"
     operations:
       - name: createEntities
@@ -810,7 +789,6 @@ tests:
               command:
                 count: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - distinct on collection"
     operations:
       - name: createEntities
@@ -854,7 +832,6 @@ tests:
               command:
                 distinct: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - distinct on collection"
     operations:
       - name: createEntities
@@ -898,7 +875,6 @@ tests:
               command:
                 distinct: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - find on collection"
     operations:
       - name: createEntities
@@ -941,7 +917,6 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - find on collection"
     operations:
       - name: createEntities
@@ -984,7 +959,6 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - findOne on collection"
     operations:
       - name: createEntities
@@ -1027,7 +1001,6 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - findOne on collection"
     operations:
       - name: createEntities
@@ -1070,7 +1043,6 @@ tests:
               command:
                 find: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - listIndexes on collection"
     operations:
       - name: createEntities
@@ -1111,7 +1083,6 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - listIndexes on collection"
     operations:
       - name: createEntities
@@ -1152,7 +1123,6 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - listIndexNames on collection"
     operations:
       - name: createEntities
@@ -1193,7 +1163,6 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - listIndexNames on collection"
     operations:
       - name: createEntities
@@ -1234,7 +1203,6 @@ tests:
               command:
                 listIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - createChangeStream on collection"
     operations:
       - name: createEntities
@@ -1277,10 +1245,6 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
-          - commandStartedEvent:
-              commandName: killCursors
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - createChangeStream on collection"
     operations:
       - name: createEntities
@@ -1323,10 +1287,6 @@ tests:
               command:
                 aggregate: *collectionName
                 maxTimeMS: { $$exists: false }
-          
-          - commandStartedEvent:
-              commandName: killCursors
-          
   - description: "timeoutMS can be configured on a MongoDatabase - insertOne on collection"
     operations:
       - name: createEntities
@@ -1369,7 +1329,6 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - insertOne on collection"
     operations:
       - name: createEntities
@@ -1412,7 +1371,6 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - insertMany on collection"
     operations:
       - name: createEntities
@@ -1456,7 +1414,6 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - insertMany on collection"
     operations:
       - name: createEntities
@@ -1500,7 +1457,6 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - deleteOne on collection"
     operations:
       - name: createEntities
@@ -1543,7 +1499,6 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - deleteOne on collection"
     operations:
       - name: createEntities
@@ -1586,7 +1541,6 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - deleteMany on collection"
     operations:
       - name: createEntities
@@ -1629,7 +1583,6 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - deleteMany on collection"
     operations:
       - name: createEntities
@@ -1672,7 +1625,6 @@ tests:
               command:
                 delete: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - replaceOne on collection"
     operations:
       - name: createEntities
@@ -1716,7 +1668,6 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - replaceOne on collection"
     operations:
       - name: createEntities
@@ -1760,7 +1711,6 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - updateOne on collection"
     operations:
       - name: createEntities
@@ -1804,7 +1754,6 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - updateOne on collection"
     operations:
       - name: createEntities
@@ -1848,7 +1797,6 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - updateMany on collection"
     operations:
       - name: createEntities
@@ -1892,7 +1840,6 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - updateMany on collection"
     operations:
       - name: createEntities
@@ -1936,7 +1883,6 @@ tests:
               command:
                 update: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - findOneAndDelete on collection"
     operations:
       - name: createEntities
@@ -1979,7 +1925,6 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - findOneAndDelete on collection"
     operations:
       - name: createEntities
@@ -2022,7 +1967,6 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - findOneAndReplace on collection"
     operations:
       - name: createEntities
@@ -2066,7 +2010,6 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - findOneAndReplace on collection"
     operations:
       - name: createEntities
@@ -2110,7 +2053,6 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - findOneAndUpdate on collection"
     operations:
       - name: createEntities
@@ -2154,7 +2096,6 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - findOneAndUpdate on collection"
     operations:
       - name: createEntities
@@ -2198,7 +2139,6 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - bulkWrite on collection"
     operations:
       - name: createEntities
@@ -2243,7 +2183,6 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - bulkWrite on collection"
     operations:
       - name: createEntities
@@ -2288,7 +2227,6 @@ tests:
               command:
                 insert: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - createIndex on collection"
     operations:
       - name: createEntities
@@ -2332,7 +2270,6 @@ tests:
               command:
                 createIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - createIndex on collection"
     operations:
       - name: createEntities
@@ -2376,7 +2313,6 @@ tests:
               command:
                 createIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - dropIndex on collection"
     operations:
       - name: createEntities
@@ -2421,7 +2357,6 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - dropIndex on collection"
     operations:
       - name: createEntities
@@ -2466,7 +2401,6 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   - description: "timeoutMS can be configured on a MongoDatabase - dropIndexes on collection"
     operations:
       - name: createEntities
@@ -2507,7 +2441,6 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
-          
   - description: "timeoutMS can be set to 0 on a MongoDatabase - dropIndexes on collection"
     operations:
       - name: createEntities
@@ -2548,5 +2481,4 @@ tests:
               command:
                 dropIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
-          
   

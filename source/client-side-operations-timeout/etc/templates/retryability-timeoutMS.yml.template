@@ -22,6 +22,8 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
   - database:
       id: &database database
       client: *client

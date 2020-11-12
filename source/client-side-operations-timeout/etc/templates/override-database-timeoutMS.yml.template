@@ -18,6 +18,8 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
 
 initialData:
   - collectionName: &collectionName coll
@@ -85,10 +87,6 @@ tests:
               command:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$type: ["int", "long"] }
-          {% if operation.operation_name == "createChangeStream" %}
-          - commandStartedEvent:
-              commandName: killCursors
-          {% endif %}
   - description: "timeoutMS can be set to 0 on a MongoDatabase - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: createEntities
@@ -138,8 +136,4 @@ tests:
               command:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$exists: false }
-          {% if operation.operation_name == "createChangeStream" %}
-          - commandStartedEvent:
-              commandName: killCursors
-          {% endif %}
   {% endfor %}

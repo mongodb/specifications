@@ -18,6 +18,8 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
   - database:
       id: &database database
       client: *client
@@ -77,10 +79,6 @@ tests:
               command:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$type: ["int", "long"] }
-          {% if operation.operation_name == "createChangeStream" %}
-          - commandStartedEvent:
-              commandName: killCursors
-          {% endif %}
   - description: "timeoutMS can be set to 0 for an operation - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: failPoint
@@ -115,8 +113,4 @@ tests:
               command:
                 {{operation.command_name}}: {{get_command_object(operation.object)}}
                 maxTimeMS: { $$exists: false }
-          {% if operation.operation_name == "createChangeStream" %}
-          - commandStartedEvent:
-              commandName: killCursors
-          {% endif %}
   {% endfor %}
