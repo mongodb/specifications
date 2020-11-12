@@ -8,9 +8,6 @@ topology_description:
   - address: b:27017
     avg_rtt_ms: 35
     type: Mongos
-  - address: c:27017
-    avg_rtt_ms: 35
-    type: Mongos
 in_window:
     - address: a:27017
       operation_count: 0
