@@ -261,23 +261,54 @@ and ``secondary_2`` at random.
 operationCount-based Selection Within Latency Window (multi-threaded or async drivers)
 ======================================================================================
 
-The Server Selection spec mandates that multi-threaded or async
-drivers select a server from within the latency window according to
-their operationCounts. There are YAML tests verifying that drivers
-implement this selection correctly which can be found in the
-``tests/in_window`` directory. There is also a prose test that can be
-found in the tests README. Multi-threaded or async drivers
-implementing the spec MUST use them to test their implementations.
+The Server Selection spec mandates that multi-threaded or async drivers select a
+server from within the latency window according to their operationCounts. There
+are YAML tests verifying that drivers implement this selection correctly which
+can be found in the ``tests/in_window`` directory. Multi-threaded or async
+drivers implementing the spec MUST use them to test their implementations.
 
-The YAML tests each include some information about the servers within
-the latency window. For each case, the driver passes this information
-into whatever function it uses to select from within the
-window. Because the selection algorithm relies on randomness, this
-process MUST be repeated 2000 times. Once the 2000 selections are
-complete, the runner tallies up the number of times each server was
-selected and compares those counts to the expected results included in
-the test case. Specifics of the test format and how to run the tests
-are included in the tests README.
+The YAML tests each include some information about the servers within the late
+ncy window. For each case, the driver passes this information into whatever
+function it uses to select from within the window. Because the selection
+algorithm relies on randomness, this process MUST be repeated 2000 times. Once
+the 2000 selections are complete, the runner tallies up the number of times each
+server was selected and compares those counts to the expected results included
+in the test case. Specifics of the test format and how to run the tests are
+included in the tests README.
+
+Prose Test
+----------
+
+Multi-threaded and async drivers MUST also implement the following prose test:
+
+1. Configure a sharded cluster with two mongoses.
+
+2. Enable the following failpoint against exactly one of the mongoses::
+
+     {
+        configureFailPoint: "failCommand",
+        mode: { times: 10000 },
+        data: {
+            failCommands: ["find"],
+            blockConnection: true,
+            blockTimeMS: 500,
+            appName: "loadBalancingTest",
+        },
+    }
+
+3. Create a client with both mongoses' adresses in its seed list,
+   appName="loadBalancingTest", and command monitoring enabled.
+
+4. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
+   using that client.
+
+5. Assert that fewer than 25% of the CommandStartedEvents occurred on the mongos
+   that the failpoint was enabled on.
+
+6. Disable the failpoint.
+
+7. Repeat this test without any failpoints and assert that each mongos was
+   selected roughly 50% of the time.
 
 
 Application-Provided Server Selector
