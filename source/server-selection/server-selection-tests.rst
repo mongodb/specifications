@@ -308,7 +308,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 6. Disable the failpoint.
 
 7. Repeat this test without any failpoints and assert that each mongos was
-   selected roughly 50% of the time.
+   selected roughly 50% (within +/- 10%) of the time.
 
 
 Application-Provided Server Selector
