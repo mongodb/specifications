@@ -12,7 +12,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 10
+        timeoutMS: 20
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -53,17 +53,17 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
           filename: filename
           source: { $$hexBytes: "1122334455" }
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+          timeoutMS: 1000
 
   # On the first write to the bucket, drivers check if the files collection is empty to see if indexes need to be
   # created.
-  - description: "timeoutMS applied to find to initial find on files collection"
+  - description: "timeoutMS applied to initial find on files collection"
     operations:
       - name: failPoint
         object: testRunner
@@ -75,7 +75,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -94,7 +94,7 @@ tests:
                 maxTimeMS: { $$type: ["int", "long"] }
 
   # On the first write to the bucket, drivers check if the files collection has the correct indexes.
-  - description: "timeoutMS applied to find to listIndexes on files collection"
+  - description: "timeoutMS applied to listIndexes on files collection"
     operations:
       - name: failPoint
         object: testRunner
@@ -106,7 +106,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -122,7 +122,7 @@ tests:
               commandName: listIndexes
               databaseName: *databaseName
               command:
-                find: *filesCollectionName
+                listIndexes: *filesCollectionName
                 maxTimeMS: { $$type: ["int", "long"] }
 
   # If the files collection is empty when the first write to the bucket occurs, drivers attempt to create an index
@@ -139,7 +139,7 @@ tests:
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -159,7 +159,7 @@ tests:
                 maxTimeMS: { $$type: ["int", "long"] }
 
   # On the first write to the bucket, drivers check if the chunks collection has the correct indexes.
-  - description: "timeoutMS applied to find to listIndexes on chunks collection"
+  - description: "timeoutMS applied to listIndexes on chunks collection"
     operations:
       - name: failPoint
         object: testRunner
@@ -167,13 +167,12 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # The first listIndexes will be on the files collection, so we skip it.
+            mode: { skip: 1 }
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 15
-              # The first listIndexes will be on the files collection, so we skip it.
-              skip: 1
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -191,13 +190,13 @@ tests:
               commandName: listIndexes
               databaseName: *databaseName
               command:
-                find: *filesCollectionName
+                listIndexes: *filesCollectionName
                 maxTimeMS: { $$type: ["int", "long"] }
           - commandStartedEvent:
               commandName: listIndexes
               databaseName: *databaseName
               command:
-                find: *chunksCollectionName
+                listIndexes: *chunksCollectionName
                 maxTimeMS: { $$type: ["int", "long"] }
 
   # If the files collection is empty when the first write to the bucket occurs, drivers attempt to create an index
@@ -210,14 +209,13 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # This index is created after the one on the files collection, so we skip the first createIndexes command
+            # and target the second.
+            mode: { skip: 1 }
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 15
-              # This index is created after the one on the files collection, so we skip the first createIndexes command
-              # and target the second.
-              skip: 1
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -256,7 +254,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -283,14 +281,13 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            # Skip the insert to upload the chunk. Because the whole file fits into one chunk, the second insert will
+            # be the files document upload.
+            mode: { skip: 1 }
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
-              # Skip the insert to upload the chunk. Because the whole file fits into one chunk, the second insert will
-              # be the files document upload.
-              skip: 1
+              blockTimeMS: 25
       - name: upload
         object: *bucket
         arguments:
@@ -317,9 +314,10 @@ tests:
                 insert: *filesCollectionName
                 maxTimeMS: { $$type: ["int", "long"] }
 
-  # Test that drivers are not refreshing the timeout between commands. We test this by doing an upload with timeoutMS=20
-  # and blocking the initial "find" and "listIndexes" commands for 15ms each. The server takes over 20ms total, so the
-  # upload should fail.
+  # Test that drivers apply timeoutMS to the entire upload rather than refreshing it between individual commands. We
+  # test this by blocking the "find" and "listIndexes" commands for 15ms each and performing an upload. The upload
+  # should inherit timeoutMS=20 from the client/database and the server takes over 20ms total, so the operation should
+  # fail.
   - description: "timeoutMS applied to upload as a whole, not individual parts"
     operations:
       - name: failPoint
@@ -338,7 +336,6 @@ tests:
         arguments:
           filename: filename
           source: { $$hexBytes: "1122334455" }
-          timeoutMS: 20
         expectError:
           isTimeoutError: true
     expectEvents:
