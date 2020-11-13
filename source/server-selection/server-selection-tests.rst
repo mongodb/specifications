@@ -8,7 +8,7 @@ Server Selection -- Test Plan
 :Advisors: David Golden
 :Status: Draft
 :Type: Standards
-:Last Modified: March 17, 2020
+:Last Modified: November 12, 2020
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -264,18 +264,20 @@ operationCount-based Selection Within Latency Window (multi-threaded or async dr
 The Server Selection spec mandates that multi-threaded or async
 drivers select a server from within the latency window according to
 their operationCounts. There are YAML tests verifying that drivers
-implement this selection correctly. Multi-threaded or async drivers
+implement this selection correctly which can be found in the
+``tests/in_window`` directory. There is also a prose test that can be
+found in the tests README. Multi-threaded or async drivers
 implementing the spec MUST use them to test their implementations.
 
-The tests each include some information about the servers within the
-latency window. For each case, the driver passes this information into
-whatever function it uses to select from within the window. Because
-the selection algorithm relies on randomness, this process MUST be
-repeated 2000 times. Once the 2000 selections are complete, the runner
-tallies up the number of times each server was selected and compares
-those counts to the expected results included in the test
-case. Specifics of the test format and how to run the tests are
-included in the tests README.
+The YAML tests each include some information about the servers within
+the latency window. For each case, the driver passes this information
+into whatever function it uses to select from within the
+window. Because the selection algorithm relies on randomness, this
+process MUST be repeated 2000 times. Once the 2000 selections are
+complete, the runner tallies up the number of times each server was
+selected and compares those counts to the expected results included in
+the test case. Specifics of the test format and how to run the tests
+are included in the tests README.
 
 
 Application-Provided Server Selector
