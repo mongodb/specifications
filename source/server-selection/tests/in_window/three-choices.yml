@@ -1,24 +1,27 @@
-description: Server with least connections and most available connections selected most
+description: Selections from three servers occur at proper distributions
 topology_description:
   type: Sharded
   servers:
-  - address: a:27017
-    avg_rtt_ms: 35
-    type: Mongos
-  - address: b:27017
-    avg_rtt_ms: 35
-    type: Mongos
-  - address: c:27017
-    avg_rtt_ms: 35
-    type: Mongos
-in_window:
     - address: a:27017
-      operation_count: 3
+      avg_rtt_ms: 35
+      type: Mongos
     - address: b:27017
-      operation_count: 6
+      avg_rtt_ms: 35
+      type: Mongos
     - address: c:27017
-      operation_count: 20
-expected_frequencies:
+      avg_rtt_ms: 35
+      type: Mongos
+mocked_topology_state:
+  - address: a:27017
+    operation_count: 3
+  - address: b:27017
+    operation_count: 6
+  - address: c:27017
+    operation_count: 20
+iterations: 2000
+outcome:
+  tolerance: 0.05
+  expected_frequencies:
     a:27017: 0.66
     b:27017: 0.33
     c:27017: 0
