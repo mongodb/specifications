@@ -66,8 +66,8 @@ Drivers implementing server selection MUST test that their implementation
 correctly returns the set of servers in ``in_latency_window``. Drivers SHOULD also test
 against ``suitable_servers`` if possible.
 
-Selection Within Latency Window Tests
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Selection Within Latency Window Spec Tests
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 These tests verify that servers select servers from within the latency
 window correctly. These tests MUST only be implemented by
@@ -102,3 +102,38 @@ implement these tests. If a ReadPreference needs to be specified as part of
 running these tests, specify one with the default ("primary") mode. The provided
 topologies will always be sharded so this should not have an effect on the
 results of the test.
+
+Selection Within Latency Window Prose Test
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Multi-threaded and async drivers MUST also implement the following
+prose test:
+
+1. Configure a sharded cluster with two mongoses.
+
+2. Enable the following failpoint against exactly one of the mongoses::
+
+     {
+        configureFailPoint: "failCommand",
+        mode: { times: 10000 },
+        data: {
+            failCommands: ["find"],
+            blockConnection: true,
+            blockTimeMS: 500,
+            appName: "loadBalancingTest",
+        },
+    }
+
+3. Create a client with both mongoses' adresses in its seed list,
+   appName="loadBalancingTest", and command monitoring enabled.
+
+4. Start 10 concurrent threads / tasks that each run 10 `findOne`
+   operations using that client.
+
+5. Assert that fewer than 25% of the CommandStartedEvents occurred on
+   the mongos that the failpoint was enabled on.
+
+6. Disable the failpoint.
+
+7. Repeat this test without any failpoints and assert that each mongos
+   was selected roughly 50% of the time.
