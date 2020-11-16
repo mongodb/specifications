@@ -90,7 +90,7 @@ Each YAML file for these tests has the following format:
 
 - ``outcome``: an object describing the expected outcome of the selections
 
-  - ``tolerance``: the maximum difference beterrn an observed frequency and an
+  - ``tolerance``: the maximum difference between an observed frequency and an
     expected one
 
   - ``expected_frequencies``: a document whose keys are the server addresses
