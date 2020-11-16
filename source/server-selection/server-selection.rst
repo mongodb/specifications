@@ -804,9 +804,10 @@ operationCount
 Multi-threaded or async drivers MUST keep track of the number of operations that
 a given server is currently executing (the server's ``operationCount``). This
 value MUST be incremented once a server is selected for an operation and MUST be
-decremented once that operation has completed, regardless of its outcome. This
-value SHOULD be stored on the ``Server`` type that also owns the connection pool
-for the server, if there exists such a type in the driver's implementation, or
+decremented once that operation has completed, regardless of its outcome. Where
+this value is stored is left as a implementation detail of the driver; some
+example locations include the ``Server`` type that also owns the connection pool
+for the server (if there exists such a type in the driver's implementation) or
 on the pool itself. Incrementing or decrementing a server's ``operationCount``
 MUST NOT wake up any threads that are waiting for a topology update as part of
 server selection. See `operationCount-based selection within the latency window
