@@ -12,7 +12,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 10
+        timeoutMS: 20
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -68,13 +68,13 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: rename
         object: *bucket
         arguments:
           id: *fileDocumentId
           newFilename: "foo"
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+          timeoutMS: 50 # The client timeoutMS is 20 and the operation blocks for 25ms, so 50ms should let it succeed.
     expectEvents:
       - client: *client
         events:
@@ -97,7 +97,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: rename
         object: *bucket
         arguments:
@@ -115,7 +115,7 @@ tests:
                 update: *filesCollectionName
                 maxTimeMS: { $$type: ["int", "long"] }
 
-  # Tests for the "drop" operation.
+  # Tests for the "drop" opration.
 
   - description: "timeoutMS can be overridden for drop"
     operations:
@@ -129,11 +129,11 @@ tests:
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: drop
         object: *bucket
         arguments:
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+          timeoutMS: 50 # The client timeoutMS is 20 and the operation blocks for 25ms, so 50ms should let it succeed.
 
   - description: "timeoutMS applied to files collection drop"
     operations:
@@ -147,7 +147,7 @@ tests:
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 25
       - name: drop
         object: *bucket
         expectError:
@@ -170,13 +170,13 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            mode:
+              # Skip the drop for the files collection.
+              skip: 1
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 15
-              # Skip the drop for the files collection.
-              skip: 1
+              blockTimeMS: 25
       - name: drop
         object: *bucket
         expectError:
@@ -213,8 +213,6 @@ tests:
               blockTimeMS: 15
       - name: drop
         object: *bucket
-        arguments:
-          timeoutMS: 20
         expectError:
           isTimeoutError: true
     expectEvents:
