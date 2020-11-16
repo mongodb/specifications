@@ -145,6 +145,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -175,6 +178,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -239,6 +245,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -269,6 +278,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -333,6 +345,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -363,6 +378,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -427,6 +445,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -457,6 +478,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -485,6 +509,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -549,6 +576,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -579,6 +609,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -643,6 +676,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -673,6 +709,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -737,6 +776,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -767,6 +809,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -831,6 +876,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -861,6 +909,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -925,6 +976,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -955,6 +1009,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -983,6 +1040,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1047,6 +1107,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1077,6 +1140,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1105,6 +1171,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1169,6 +1238,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1199,6 +1271,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1262,6 +1337,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1291,6 +1369,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1318,6 +1399,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1382,6 +1466,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1413,6 +1500,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1442,6 +1532,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1507,6 +1600,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1537,6 +1633,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1565,6 +1664,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1629,6 +1731,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1659,6 +1764,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1687,6 +1795,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1750,6 +1861,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1779,6 +1893,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1841,6 +1958,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1870,6 +1990,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1933,6 +2056,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1963,6 +2089,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2027,6 +2156,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2057,6 +2189,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2122,6 +2257,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2153,6 +2291,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2218,6 +2359,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2248,6 +2392,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2312,6 +2459,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2342,6 +2492,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2407,6 +2560,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2438,6 +2594,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2504,6 +2663,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2535,6 +2697,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2601,6 +2766,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2632,6 +2800,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2697,6 +2868,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2727,6 +2901,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2755,6 +2932,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2820,6 +3000,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2851,6 +3034,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2880,6 +3066,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2946,6 +3135,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2977,6 +3169,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3006,6 +3201,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3073,6 +3271,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3105,6 +3306,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3172,6 +3376,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3203,6 +3410,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3232,6 +3442,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3297,6 +3510,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3327,6 +3543,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3355,6 +3574,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3418,6 +3640,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3447,6 +3672,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3474,6 +3702,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3536,6 +3767,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3565,6 +3799,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3627,6 +3864,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3656,6 +3896,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3719,6 +3962,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3749,6 +3995,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3814,6 +4063,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3845,6 +4097,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3910,6 +4165,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3940,6 +4198,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4004,6 +4265,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4034,6 +4298,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4098,6 +4365,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4128,6 +4398,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4156,6 +4429,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4221,6 +4497,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4252,6 +4531,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4316,6 +4598,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -4345,6 +4630,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
