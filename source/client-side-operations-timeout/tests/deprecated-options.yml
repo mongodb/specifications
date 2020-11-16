@@ -112,6 +112,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -203,6 +206,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -294,6 +300,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -385,6 +394,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -504,6 +516,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -595,6 +610,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -686,6 +704,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -777,6 +798,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -868,6 +892,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -987,6 +1014,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1106,6 +1136,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1197,6 +1230,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1312,6 +1348,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1435,6 +1474,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1554,6 +1596,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1673,6 +1718,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1761,6 +1809,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1849,6 +1900,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -1940,6 +1994,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2031,6 +2088,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2125,6 +2185,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2216,6 +2279,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2307,6 +2373,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2401,6 +2470,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2495,6 +2567,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2589,6 +2664,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2708,6 +2786,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2831,6 +2912,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -2954,6 +3038,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3051,6 +3138,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3174,6 +3264,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3293,6 +3386,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3408,6 +3504,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3496,6 +3595,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3584,6 +3686,9 @@ tests:
                 id: &collection collection
                 database: *database
                 collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
             - session:
                 id: &session session
                 client: *client
@@ -3652,6 +3757,601 @@ tests:
         arguments:
           timeoutMS: 100000
           callback: []
+          
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - upload on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
+            - session:
+                id: &session session
+                client: *client
+      - name: upload
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          filename: filename
+          source: { $$hexBytes: "1122334455" }
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - upload on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: upload
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          filename: filename
+          source: { $$hexBytes: "1122334455" }
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - upload on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: upload
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          filename: filename
+          source: { $$hexBytes: "1122334455" }
+          
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - download on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
+            - session:
+                id: &session session
+                client: *client
+      - name: download
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - download on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: download
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - download on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: download
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - delete on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
+            - session:
+                id: &session session
+                client: *client
+      - name: delete
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - delete on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: delete
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - delete on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: delete
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - find on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
+            - session:
+                id: &session session
+                client: *client
+      - name: find
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          filter: {}
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - find on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: find
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          filter: {}
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - find on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: find
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          filter: {}
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if maxTimeMS and timeoutMS are both specified - find on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: find
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          maxTimeMS: 100000
+          filter: {}
+          
+        expectError:
+          isClientError: true
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - rename on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
+            - session:
+                id: &session session
+                client: *client
+      - name: rename
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          newFilename: newName
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - rename on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: rename
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          newFilename: newName
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - rename on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: rename
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          id: nonExistentId
+          newFilename: newName
+          
+        expectError:
+          isClientError: true
+
+  
+  - description: "error if socketTimeoutMS and timeoutMS are both specified - drop on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - bucket:
+                id: &bucket bucket
+                database: *database
+            - session:
+                id: &session session
+                client: *client
+      - name: drop
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - drop on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  waitQueueTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: drop
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
+          
+        expectError:
+          isClientError: true
+
+  - description: "error if wTimeoutMS and timeoutMS are both specified - drop on bucket"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 10
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: drop
+        object: *bucket
+        arguments:
+          timeoutMS: 100000
           
         expectError:
           isClientError: true

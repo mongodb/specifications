@@ -55,14 +55,25 @@ COLLECTION_OPERATIONS = [
     Operation('dropIndexes', 'dropIndexes', 'collection', []),
 ]
 
+# Should only be used for client-side validation tests.
 SESSION_OPERATIONS = [
     Operation('commitTransaction', 'commitTransaction', 'session', []),
     Operation('abortTransaction', 'abortTransaction', 'session', []),
     Operation('withTransaction', 'insert', 'session', ['callback: []']),
 ]
 
-# Session operations are generally tested in other files, so they're not included in the list of all operations.
-# Individual generation functions can choose to include them if needed.
+# Should only be used for client-side validation tests.
+GRIDFS_OPERATIONS = [
+    Operation('upload', '', 'bucket', ['filename: filename', 'source: { $$hexBytes: "1122334455" }']),
+    Operation('download', '', 'bucket', ['id: nonExistentId']),
+    Operation('delete', '', 'bucket', ['id: nonExistentId']),
+    Operation('find', '', 'bucket', ['filter: {}']),
+    Operation('rename', '', 'bucket', ['id: nonExistentId', 'newFilename: newName']),
+    Operation('drop', '', 'bucket', []),
+]
+
+# Session and GridFS operations are generally tested in other files, so they're not included in the list of all
+# operations. Individual generation functions can choose to include them if needed.
 OPERATIONS = CLIENT_OPERATIONS + DB_OPERATIONS + COLLECTION_OPERATIONS
 
 RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in 
@@ -121,7 +132,7 @@ def generate_retryable():
     generate('retryability-legacy-timeouts', RETRYABLE_WRITE_OPERATIONS + RETRYABLE_READ_OPERATIONS)
 
 def generate_deprecated():
-    generate('deprecated-options', OPERATIONS + SESSION_OPERATIONS)
+    generate('deprecated-options', OPERATIONS + SESSION_OPERATIONS + GRIDFS_OPERATIONS)
 
 generate_global_timeout_tests()
 generate_override_db()
