@@ -28,12 +28,15 @@ createEntities:
 initialData:
   - collectionName: *collectionName
     databaseName: *databaseName
+    collectionOptions:
+      capped: true
+      size: 500
     documents:
       - { _id: 0 }
       - { _id: 1 }
 
 tests:
-  - description: "error if timeoutMode is cursorLifetime"
+  - description: "error if timeoutMode is cursor_lifetime"
     operations:
       - name: find
         object: *collection
@@ -177,6 +180,55 @@ tests:
         object: *tailableCursor
       - name: iterateUntilDocumentOrError
         object: *tailableCursor
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                tailable: true
+                awaitData: true
+                maxTimeMS: { $$exists: true }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *databaseName
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *collectionName
+                maxTimeMS: 1
+
+  # The timeoutMS value should be refreshed for getMore's. This is a failure test. The find inherits timeoutMS=10 from
+  # the collection and the getMore blocks for 15ms, causing iteration to fail with a timeout error.
+  - description: "timeoutMS is refreshed for getMore - failure"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: {}
+          cursorType: tailableAwait
+          batchSize: 1
+          maxAwaitTimeMS: 1
+        saveResultAsEntity: &tailableCursor tailableCursor
+      # Iterate twice to force a getMore.
+      - name: iterateUntilDocumentOrError
+        object: *tailableCursor
+      - name: iterateUntilDocumentOrError
+        object: *tailableCursor
+        expectError:
+          isTimeoutError: true
     expectEvents:
       - client: *client
         events:

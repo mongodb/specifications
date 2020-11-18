@@ -81,7 +81,10 @@ tests:
                 awaitData: { $$exists: false }
                 maxTimeMS: { $$exists: false }
 
-  - description: "timeoutMS is refreshed for getMore"
+  # The timeoutMS option should apply separately to the initial "find" and each getMore. This is a success test. The
+  # find is executed with timeoutMS=20 and both find and getMore commands are configured to block for 15ms each. Neither
+  # exceeds the timeout so the operation succeeds.
+  - description: "timeoutMS is refreshed for getMore - success"
     operations:
       - name: failPoint
         object: testRunner
@@ -108,6 +111,56 @@ tests:
         object: *tailableCursor
       - name: iterateUntilDocumentOrError
         object: *tailableCursor
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                tailable: true
+                awaitData: { $$exists: false }
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *databaseName
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *collectionName
+                maxTimeMS: { $$exists: false }
+
+  # The timeoutMS option should apply separately to the initial "find" and each getMore. This is a failure test. The
+  # find inherits timeoutMS=10 from the collection and the getMore command blocks for 15ms, causing iteration to fail
+  # with a timeout error.
+  - description: "timeoutMS is refreshed for getMore - failure"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: createFindCursor
+        object: *collection
+        arguments:
+          filter: {}
+          cursorType: tailable
+          batchSize: 1
+        saveResultAsEntity: &tailableCursor tailableCursor
+      # Iterate the cursor twice: the first iteration will return the document from the batch in the find and the
+      # second will do a getMore.
+      - name: iterateUntilDocumentOrError
+        object: *tailableCursor
+      - name: iterateUntilDocumentOrError
+        object: *tailableCursor
+        expectError:
+          isTimeoutError: true
     expectEvents:
       - client: *client
         events:

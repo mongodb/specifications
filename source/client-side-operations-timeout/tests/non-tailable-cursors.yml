@@ -250,7 +250,7 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 2 }
+            mode: { times: 1 }
             data:
               failCommands: ["getMore"]
               blockConnection: true
