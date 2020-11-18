@@ -261,6 +261,11 @@ has the following properties:
    -  Checking in a `Connection <#connection>`_ to the Pool automatically closes the `Connection <#connection>`_
    -  Attempting to check out a `Connection <#connection>`_ from the Pool results in an Error
 
+-  **Clearable:** A Pool MUST be able to be cleared. When a Pool is cleared, all pooled and checked out connections will be lazily closed as they are checkedIn or encountered in checkOut. Additionally, the following behaviors change until the pool is marked as "ready" again:
+
+   -  Attempting to check out a `Connection <#connection>`_ from the Pool results in a retryable Error
+   -  Connections are not created in the background to satisfy minPoolSize
+
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
 -  **Rate-limited:** A Pool MUST limit the number of connections being created at a given time to be 2 (maxConnecting). 
 
@@ -277,6 +282,11 @@ has the following properties:
        *  A generation number representing the SDAM generation of the pool
        */
       generation: number;
+
+      /**
+       *  The state of the pool.
+       */
+      state: "cleared" | "ready" | "closed";
     
       // Any of the following connection counts may be computed rather than
       // actually stored on the pool.
@@ -310,12 +320,20 @@ has the following properties:
       checkIn(connection: Connection): void;
 
       /**
-       *  Mark all current Connections as stale.
+       *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "cleared".
+       *  No connections may be checked out or created in this pool until ready() is called again.
        */
       clear(): void;
 
       /**
-       *  Closes the pool, preventing the pool from creating and returning new Connections
+       *  Mark the pool as "ready", allowing checkOuts to resume and connections to be created in the background.
+       *  A pool can only transition from "cleared" to "ready". A "closed" pool
+       *  cannot be marked as "ready" via this method.
+       */
+      ready(): void;
+
+      /**
+       *  Marks the pool as "closed", preventing the pool from creating and returning new Connections
        */
       close(): void;
     }
@@ -335,25 +353,18 @@ The SDAM specification defines `when
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-creation>`_
 the driver should create connection pools.
 
-Once a pool is created, if minPoolSize is set, the pool MUST immediately begin
-being `populated
-<#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
-`Connections <#connection>`_ such that totalConnections >= minPoolSize. This
-MUST be done in a non-blocking manner, such as via the use of a background
-thread or asynchronous I/O. See `Populating the Pool with a Connection
-<#populating-the-pool-with-a-connection-internal-implementation>`_ for more
-details on the steps involved.
+When a pool is created, its state MUST initially be set to "cleared". Even if
+minPoolSize is set, the pool MUST NOT begin being `populated
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with
+`Connections <#connection>`_ until it has been marked as "ready". Monitoring threads will
+ready the pool once they have successfully performed a check and
+transitioned the server to a known ServerType.
 
 .. code::
 
     set generation to 0
+    set state to "cleared"
     emit PoolCreatedEvent
-    if minPoolSize is set:
-      # this MAY be performed on a background thread
-      # if it is not performed on a background thread, this MUST
-      # utilize non-blocking I/O.
-      while totalConnectionCount < minPoolSize:
-        populate pool with a connection
 
 Closing a Connection Pool
 -------------------------
@@ -365,11 +376,25 @@ When a pool is closed, it MUST first close all available `Connections <#connecti
 
 .. code::
 
-    mark pool as CLOSED
+    mark pool as "closed"
     for connection in availableConnections:
       close connection
     emit PoolClosedEvent
 
+Marking a Connection Pool as Ready
+----------------------------------
+
+Connection Pools start off as "cleared", and they are marked as "ready" by
+monitors after they perform successfull server checks. Once a pool is "ready",
+it can start checking out `Connections <#connection>`_ and populating them in
+the background.
+
+.. code::
+
+   mark pool as "ready"
+   resume background thread
+   emit PoolReadyEvent
+    
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
 
@@ -459,14 +484,21 @@ connections managed by the pool is at least minPoolSize.
 
 Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
-I/O.
+I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
+
+If an error is encountered while populating a connection, the pool MUST be
+cleared. The pool SHOULD notify the corresponding monitor that such an error
+occurred, if possible according to the driver's implementation.
 
 .. code::
 
-   wait until pendingConnectionCount < maxConnecting
+   wait until pendingConnectionCount < maxConnecting and pool is "ready"
    create connection
-   establish connection
-   mark connection as available
+   try:
+     establish connection
+     mark connection as available
+   except error:
+     clear pool
 
 
 Checking Out a Connection
@@ -502,11 +534,14 @@ semaphore, a condition variable may also be needed to to meet this
 requirement. Waiting on the condition variable SHOULD also be limited by the
 WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
-If the pool is closed, any attempt to check out a `Connection <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be removed from the waitQueue and throw an Error.
+If the pool is "closed" or "cleared", any attempt to check out a `Connection
+<#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be
+removed from the waitQueue and throw an Error. The error thrown as a result of
+the pool being "cleared" MUST be retryable.
 
-If minPoolSize is set, the `Connection <#connection>`_ Pool MUST always have at
-least minPoolSize total `Connections <#connection>`_. If the pool does not
-implement a background thread, the checkOut method is responsible for
+If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
+minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
+not implement a background thread, the checkOut method is responsible for
 `populating the pool
 <#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
 `Connections <#connection>`_ such that this requirement is met.
@@ -547,6 +582,9 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
     except pool is closed:
       emit ConnectionCheckOutFailedEvent(reason="poolClosed")
       throw PoolClosedError
+    except pool is cleared:
+      emit ConnectionCheckOutFailedEvent(reason="poolCleared")
+      throw PoolClearedError
     except timeout:
       emit ConnectionCheckOutFailedEvent(reason="timeout")
       throw WaitQueueTimeoutError
@@ -607,7 +645,15 @@ Otherwise, the `Connection <#connection>`_ is marked as available.
 Clearing a Connection Pool
 --------------------------
 
-A Pool MUST have a method of clearing all `Connections <#connection>`_ when instructed. Rather than iterating through every `Connection <#connection>`_, this method should simply increment the generation of the Pool, implicitly marking all current `Connections <#connection>`_ as stale. The checkOut and checkIn algorithms will handle clearing out stale `Connections <#connection>`_. If a user is subscribed to Connection Monitoring events, a PoolClearedEvent MUST be emitted after incrementing the generation.
+A Pool MUST have a method of clearing all `Connections <#connection>`_ when
+instructed. Rather than iterating through every `Connection <#connection>`_,
+this method should simply increment the generation of the Pool, implicitly
+marking all current `Connections <#connection>`_ as stale. It should also
+transition the pool's state to "cleared" to halt the creation of new connections
+until it is marked as "ready" again. The checkOut and checkIn algorithms will
+handle clearing out stale `Connections <#connection>`_. If a user is subscribed
+to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
+incrementing the generation / marking the pool as "cleared".
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
@@ -678,6 +724,16 @@ Events
        *  Any non-default pool options that were set on this Connection Pool.
        */
       options: {...}
+    }
+
+    /**
+     *  Emitted when a Connection Pool is marked as ready.
+     */
+    interface PoolReadyEvent {
+      /**
+       *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+       */
+      address: string;
     }
 
     /**
