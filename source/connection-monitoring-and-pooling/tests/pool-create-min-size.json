@@ -1,11 +1,18 @@
 {
   "version": 1,
   "style": "unit",
-  "description": "must be able to start a pool with minPoolSize connections",
+  "description": "must be able to start a pool with minPoolSize connections (new)",
   "poolOptions": {
     "minPoolSize": 3
   },
   "operations": [
+    {
+      "name": "wait",
+      "ms": 200
+    },
+    {
+      "name": "ready"
+    },
     {
       "name": "waitForEvent",
       "event": "ConnectionCreated",
@@ -25,6 +32,10 @@
       "type": "ConnectionPoolCreated",
       "address": 42,
       "options": 42
+    },
+    {
+      "type": "ConnectionPoolReady",
+      "address": 42
     },
     {
       "type": "ConnectionCreated",

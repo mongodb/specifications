@@ -1,10 +1,11 @@
 version: 1
 style: unit
-description: clearing pool clears the WaitQueue
+description: clearing pool clears the WaitQueue (new)
 poolOptions:
   maxPoolSize: 1
   waitQueueTimeoutMS: 1000
 operations:
+  - name: ready
   # check out only connection in the pool
   - name: checkOut
   # start a few threads that all will enter
@@ -47,6 +48,7 @@ events:
     reason: error
     address: 42
 ignore:
+  - ConnectionPoolReady
   - ConnectionPoolCreated
   - ConnectionCreated
   - ConnectionReady
