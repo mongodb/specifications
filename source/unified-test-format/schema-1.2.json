@@ -149,6 +149,7 @@
       "properties": {
         "collectionName": { "type": "string" },
         "databaseName": { "type": "string" },
+        "collectionOptions": { "type": "object" },
         "documents": {
           "type": "array",
           "items": { "type": "object" }

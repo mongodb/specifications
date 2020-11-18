@@ -28,6 +28,9 @@ createEntities:
 initialData:
   - collectionName: *collectionName
     databaseName: *databaseName
+    collectionOptions:
+      capped: true
+      size: 500
     documents:
       - { _id: 0 }
       - { _id: 1 }

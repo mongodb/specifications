@@ -323,9 +323,12 @@ The top-level fields of a test file are as follows:
 - ``initialData``: Optional array of one or more `collectionData`_ objects. Data
   that will exist in collections before each test case is executed.
 
-  Before each test and for each `collectionData`_, the test runner MUST drop the
-  collection and insert the specified documents (if any) using a "majority"
-  write concern. If no documents are specified, the test runner MUST create the
+  Before each test and for each `collectionData`_, the test runner MUST drop
+  the collection. If a ``collectionOptions`` document is present, the test
+  runner MUST execute a ``create`` command to create the collection with the
+  specified options. The test runner MUST then insert the specified documents
+  (if any) using a "majority" write concern. If no documents are present and
+  ``collectionOptions`` is not set, the test runner MUST create the
   collection with a "majority" write concern.
 
 .. _tests:
@@ -562,6 +565,10 @@ The structure of this object is as follows:
 - ``collectionName``: Required string. See `commonOptions_collectionName`_.
 
 - ``databaseName``: Required string. See `commonOptions_databaseName`_.
+
+- ``collectionOptions``: Optional object. Options that MUST be passed to the
+  ``create`` command when creating the collection. Test files SHOULD only use
+  this for `initialData`_.
 
 - ``documents``: Required array of objects. List of documents corresponding to
   the contents of the collection. This list may be empty.
