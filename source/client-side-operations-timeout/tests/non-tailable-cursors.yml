@@ -31,6 +31,7 @@ initialData:
     documents:
       - { _id: 0 }
       - { _id: 1 }
+      - { _id: 2 }
 
 tests:
   # If timeoutMode is explicitly set to CURSOR_LIFETIME, the timeout should apply to the initial command.
@@ -88,7 +89,7 @@ tests:
         arguments:
           filter: {}
           timeoutMS: 20
-          batchSize: 1
+          batchSize: 2
         expectError:
           isTimeoutError: true
     expectEvents:
@@ -117,8 +118,8 @@ tests:
                 cursors: { $$type: "array" }
                 maxTimeMS: { $$type: ["int", "long"] }
 
-  # Same test as above, but with timeoutMode explicitly set to cursorLifetime.
-  - description: "remaining timeoutMS applied to getMore if timeoutMode is cursorLifetime"
+  # Same test as above, but with timeoutMode explicitly set to CURSOR_LIFETIME.
+  - description: "remaining timeoutMS applied to getMore if timeoutMode is cursor_lifetime"
     operations:
       - name: failPoint
         object: testRunner
@@ -137,7 +138,7 @@ tests:
           filter: {}
           timeoutMode: cursorLifetime
           timeoutMS: 20
-          batchSize: 1
+          batchSize: 2
         expectError:
           isTimeoutError: true
     expectEvents:
@@ -148,7 +149,7 @@ tests:
               databaseName: *databaseName
               command:
                 find: *collectionName
-                getMore: { $$type: ["int", "long"] }
+                maxTimeMS: { $$type: ["int", "long"] }
           - commandStartedEvent:
               commandName: getMore
               databaseName: *databaseName
@@ -199,8 +200,9 @@ tests:
                 maxTimeMS: { $$exists: false }
 
   # If timeoutMode=ITERATION, timeoutMS applies separately to the initial find and the getMore on the cursor. Neither
-  # command should have a maxTimeMS field.
-  - description: "timeoutMS is refreshed for getMore if timeoutMode is iteration"
+  # command should have a maxTimeMS field. This is a success test. The "find" is executed with timeoutMS=20 and both
+  # "find" and "getMore" commands are blocked for 15ms each. Neither exceeds the timeout, so iteration succeeds.
+  - description: "timeoutMS is refreshed for getMore if timeoutMode is iteration - success"
     operations:
       - name: failPoint
         object: testRunner
@@ -219,7 +221,7 @@ tests:
           filter: {}
           timeoutMode: iteration
           timeoutMS: 20
-          batchSize: 1
+          batchSize: 2
     expectEvents:
       - client: *client
         events:
@@ -236,3 +238,53 @@ tests:
                 getMore: { $$type: ["int", "long"] }
                 collection: *collectionName
                 maxTimeMS: { $$exists: false }
+
+  # If timeoutMode=ITERATION, timeoutMS applies separately to the initial find and the getMore on the cursor. Neither
+  # command should have a maxTimeMS field. This is a failure test. The "find" inherits timeoutMS=10 and "getMore"
+  # commands are blocked for 15ms, causing iteration to fail with a timeout error.
+  - description: "timeoutMS is refreshed for getMore if timeoutMode is iteration - failure"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["getMore"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: find
+        object: *collection
+        arguments:
+          filter: {}
+          timeoutMode: iteration
+          batchSize: 2
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: find
+              databaseName: *databaseName
+              command:
+                find: *collectionName
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: getMore
+              databaseName: *databaseName
+              command:
+                getMore: { $$type: ["int", "long"] }
+                collection: *collectionName
+                maxTimeMS: { $$exists: false }
+          # After the cursor times out, drivers should attempt to close it, which requires executing killCursors
+          # because the cursor hasn't been fully iterated.
+          - commandStartedEvent:
+              commandName: killCursors
+              databaseName: *databaseName
+              command:
+                killCursors: *collectionName
+                cursors: { $$type: "array" }
+                maxTimeMS: { $$type: ["int", "long"] }
