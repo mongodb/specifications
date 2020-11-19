@@ -209,3 +209,35 @@ This test requires MongoDB 4.9.0+.
 
 5. Stop the timer. Assert that the ``ping`` took between 2 seconds and 3.5
    seconds to complete.
+
+Connection Pool Management
+--------------------------
+
+This test will be used to ensure monitors properly create and unpause connection
+pools when they discover servers.
+
+1. Create a client with directConnection=true, appName="SDAMPoolManagementTest",
+   and heartbeatFrequencyMS=500 (or lower if possible).
+
+2. Verify via SDAM and CMAP event monitoring that a ConnectionPoolCreatedEvent occurs
+   after the first ServerHeartbeatSucceededEvent event does.
+
+3. Enable the following failpoint::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 1 },
+         data: {
+             failCommands: ["isMaster"],
+             errorCode: 1234,
+             appName: "SDAMPoolManagementTest"
+         }
+     }
+
+4. Verify that a ServerHeartbeatFailedEvent and a ConnectionPoolClearedEvent (CMAP) are
+   emitted.
+
+5. Then verify that a ServerHeartbeatSucceededEvent and a ConnectionPoolReadyEvent (CMAP)
+   are emitted.
+
+6. Disable the failpoint.
