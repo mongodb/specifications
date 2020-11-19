@@ -394,7 +394,7 @@ the background.
    mark pool as "ready"
    resume background thread
    emit PoolReadyEvent
-    
+
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
 

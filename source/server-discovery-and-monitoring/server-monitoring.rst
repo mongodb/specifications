@@ -671,7 +671,7 @@ The event API here is assumed to be like the standard `Python Event
             # for drivers that implement CMAP, mark the connection pool as ready
             # once the server transitions to a known state.
             if previousDescription.type == Unknown and description.type != Unknown:
-                mark connection for server as "ready"
+                mark connection pool for server as "ready"
 
             topology.onServerDescriptionChanged(description)
             if description.error != Null:
