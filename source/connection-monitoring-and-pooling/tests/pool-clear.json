@@ -26,7 +26,8 @@
     },
     {
       "name": "waitForEvent",
-      "event": "ConnectionReady"
+      "event": "ConnectionReady",
+      "count": 1
     }
   ],
   "events": [
@@ -60,6 +61,7 @@
     }
   ],
   "ignore": [
-    "ConnectionPoolCreated"
+    "ConnectionPoolCreated",
+    "ConnectionClosed"
   ]
 }

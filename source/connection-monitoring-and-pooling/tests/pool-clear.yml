@@ -15,6 +15,7 @@ operations:
   - name: ready
   - name: waitForEvent
     event: ConnectionReady
+    count: 1
 events:
   - type: ConnectionPoolReady
     address: 42
@@ -32,3 +33,4 @@ events:
     address: 42
 ignore:
   - ConnectionPoolCreated
+  - ConnectionClosed

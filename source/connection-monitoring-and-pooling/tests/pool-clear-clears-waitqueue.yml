@@ -39,13 +39,13 @@ events:
   - type: ConnectionPoolCleared
     address: 42
   - type: ConnectionCheckOutFailed
-    reason: error
+    reason: connectionError
     address: 42
   - type: ConnectionCheckOutFailed
-    reason: error
+    reason: connectionError
     address: 42
   - type: ConnectionCheckOutFailed
-    reason: error
+    reason: connectionError
     address: 42
 ignore:
   - ConnectionPoolReady
