@@ -286,7 +286,7 @@ has the following properties:
       /**
        *  The state of the pool.
        */
-      state: "cleared" | "ready" | "closed";
+      state: "paused" | "ready" | "closed";
     
       // Any of the following connection counts may be computed rather than
       // actually stored on the pool.
@@ -320,14 +320,14 @@ has the following properties:
       checkIn(connection: Connection): void;
 
       /**
-       *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "cleared".
+       *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "paused".
        *  No connections may be checked out or created in this pool until ready() is called again.
        */
       clear(): void;
 
       /**
        *  Mark the pool as "ready", allowing checkOuts to resume and connections to be created in the background.
-       *  A pool can only transition from "cleared" to "ready". A "closed" pool
+       *  A pool can only transition from "paused" to "ready". A "closed" pool
        *  cannot be marked as "ready" via this method.
        */
       ready(): void;
@@ -353,7 +353,7 @@ The SDAM specification defines `when
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-creation>`_
 the driver should create connection pools.
 
-When a pool is created, its state MUST initially be set to "cleared". Even if
+When a pool is created, its state MUST initially be set to "paused". Even if
 minPoolSize is set, the pool MUST NOT begin being `populated
 <#populating-the-pool-with-a-connection-internal-implementation>`_ with
 `Connections <#connection>`_ until it has been marked as "ready". Monitoring threads will
@@ -363,7 +363,7 @@ transitioned the server to a known ServerType.
 .. code::
 
     set generation to 0
-    set state to "cleared"
+    set state to "paused"
     emit PoolCreatedEvent
 
 Closing a Connection Pool
@@ -384,7 +384,7 @@ When a pool is closed, it MUST first close all available `Connections <#connecti
 Marking a Connection Pool as Ready
 ----------------------------------
 
-Connection Pools start off as "cleared", and they are marked as "ready" by
+Connection Pools start off as "paused", and they are marked as "ready" by
 monitors after they perform successfull server checks. Once a pool is "ready",
 it can start checking out `Connections <#connection>`_ and populating them in
 the background.
@@ -534,10 +534,10 @@ semaphore, a condition variable may also be needed to to meet this
 requirement. Waiting on the condition variable SHOULD also be limited by the
 WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
-If the pool is "closed" or "cleared", any attempt to check out a `Connection
+If the pool is "closed" or "paused", any attempt to check out a `Connection
 <#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be
 removed from the waitQueue and throw an Error. The error thrown as a result of
-the pool being "cleared" MUST be retryable.
+the pool being "paused" MUST be retryable.
 
 If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
 minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
@@ -649,11 +649,11 @@ A Pool MUST have a method of clearing all `Connections <#connection>`_ when
 instructed. Rather than iterating through every `Connection <#connection>`_,
 this method should simply increment the generation of the Pool, implicitly
 marking all current `Connections <#connection>`_ as stale. It should also
-transition the pool's state to "cleared" to halt the creation of new connections
+transition the pool's state to "paused" to halt the creation of new connections
 until it is marked as "ready" again. The checkOut and checkIn algorithms will
 handle clearing out stale `Connections <#connection>`_. If a user is subscribed
 to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
-incrementing the generation / marking the pool as "cleared".
+incrementing the generation / marking the pool as "paused".
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
