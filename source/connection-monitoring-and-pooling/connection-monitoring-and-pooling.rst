@@ -579,11 +579,11 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             wait until pendingConnectionCount < maxConnecting or a connection is available
             continue
           
-    except pool is closed:
+    except pool is "closed":
       emit ConnectionCheckOutFailedEvent(reason="poolClosed")
       throw PoolClosedError
-    except pool is cleared:
-      emit ConnectionCheckOutFailedEvent(reason="poolCleared")
+    except pool is "paused":
+      emit ConnectionCheckOutFailedEvent(reason="connectionError")
       throw PoolClearedError
     except timeout:
       emit ConnectionCheckOutFailedEvent(reason="timeout")
