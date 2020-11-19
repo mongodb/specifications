@@ -597,9 +597,12 @@ are not replica set member states at all.
 | RSGhost           | "isreplicaset: true" in response.                             |
 +-------------------+---------------------------------------------------------------+
 
-A server can transition from any state to any other.
-For example, an administrator could shut down a secondary
-and bring up a mongos in its place.
+A server can transition from any state to any other.  For example, an
+administrator could shut down a secondary and bring up a mongos in its place.
+
+When a server transitions from Unknown to data-bearing type, the driver MUST
+ensure the server's connection pool is set up (if the driver implements
+connection pooling). See `Connection Pool Management`_ for more information.
 
 .. _RSGhost: #RSGhost-and-RSOther
 
@@ -1194,14 +1197,16 @@ See the Driver Sessions Spec for the purpose of this value.
 .. _drivers update their topology view in response to errors:
 
 
-Connection Pool Creation
-''''''''''''''''''''''''
+Connection Pool Management
+''''''''''''''''''''''''''
 
-For drivers that support connection pools, after a server check is complete,
-if the server is determined to be `data-bearing
+For drivers that support connection pools, after a server check is complete, if
+the server is determined to be `data-bearing
 <https://github.com/mongodb/specifications/blob/masterserver-discovery-and-monitoring.rst#data-bearing-server-type>`_
-and does not already have a connection pool, the driver MUST create
-the connection pool for the server.
+and does not already have a connection pool, the driver MUST create the
+connection pool for the server. Additionally, if a driver implements a CMAP
+compliant connection pool, the server's pool (even if it already existed) MUST
+be marked as "ready".
 
 Error handling
 ''''''''''''''
