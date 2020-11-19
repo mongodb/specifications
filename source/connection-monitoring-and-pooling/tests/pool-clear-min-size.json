@@ -1,7 +1,7 @@
 {
   "version": 1,
   "style": "unit",
-  "description": "pool clear halts background minPoolSize establishments (new)",
+  "description": "pool clear halts background minPoolSize establishments",
   "poolOptions": {
     "minPoolSize": 1
   },

@@ -1,6 +1,6 @@
 version: 1
 style: unit
-description: pool starts as cleared and becomes ready (new)
+description: pool starts as cleared and becomes ready
 operations:
   - name: start
     target: thread1

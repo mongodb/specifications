@@ -1,7 +1,7 @@
 {
   "version": 1,
   "style": "integration",
-  "description": "error during minPoolSize population clears pool (new)",
+  "description": "error during minPoolSize population clears pool",
   "runOn": [
     {
       "minServerVersion": "4.2.0"

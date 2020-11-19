@@ -1,7 +1,7 @@
 {
   "version": 1,
   "style": "unit",
-  "description": "clearing pool clears the WaitQueue (new)",
+  "description": "clearing pool clears the WaitQueue",
   "poolOptions": {
     "maxPoolSize": 1,
     "waitQueueTimeoutMS": 1000

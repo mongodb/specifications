@@ -1,6 +1,6 @@
 version: 1
 style: unit
-description: must be able to start a pool with minPoolSize connections (new)
+description: must be able to start a pool with minPoolSize connections
 poolOptions:
   minPoolSize: 3
 operations:
