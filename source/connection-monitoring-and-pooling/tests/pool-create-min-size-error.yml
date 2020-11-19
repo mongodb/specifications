@@ -30,7 +30,7 @@ events:
   - type: ConnectionClosed
     address: 42
     connectionId: 42
-    reason: connectionError
+    reason: error
   - type: ConnectionPoolCleared
     address: 42
 ignore:
