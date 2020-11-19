@@ -21,7 +21,7 @@
     "initialData": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/definitions/collectionData" }
+      "items": { "$ref": "#/definitions/initialCollectionData" }
     },
     "tests": {
       "type": "array",
@@ -142,7 +142,7 @@
       }
     },
 
-    "collectionData": {
+    "initialCollectionData": {
       "type": "object",
       "additionalProperties": false,
       "required": ["collectionName", "databaseName", "documents"],
@@ -150,6 +150,20 @@
         "collectionName": { "type": "string" },
         "databaseName": { "type": "string" },
         "collectionOptions": { "type": "object" },
+        "documents": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+
+    "outcomeCollectionData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collectionName", "databaseName", "documents"],
+      "properties": {
+        "collectionName": { "type": "string" },
+        "databaseName": { "type": "string" },
         "documents": {
           "type": "array",
           "items": { "type": "object" }
@@ -285,7 +299,7 @@
         "outcome": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/definitions/collectionData" }
+          "items": { "$ref": "#/definitions/outcomeCollectionData" }
         }
       }
     }
