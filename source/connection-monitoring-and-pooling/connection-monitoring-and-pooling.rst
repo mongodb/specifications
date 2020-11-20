@@ -284,7 +284,20 @@ has the following properties:
       generation: number;
 
       /**
-       *  The state of the pool.
+       * The state of the pool.
+       *
+       * Possible values are the following:
+       *   - "paused":        The initial state of the pool. Connections may not be checked out nor can they
+       *                      be established in the background to satisfy minPoolSize. Clearing a pool
+       *                      transitions it to this state.
+       *
+       *   - "ready":         The healthy state of the pool. It can service checkOut requests and create
+       *                      connections in the background. The pool can be set to this state via the
+       *                      ready() method.
+       *
+       *   - "closed":        The pool is destroyed. No more Connections may ever be checked out nor any
+       *                      created in the background. The pool can be set to this sate via the close()
+       *                      method. The pool cannot transition to any other state after being closed.
        */
       state: "paused" | "ready" | "closed";
     
