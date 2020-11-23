@@ -2,6 +2,12 @@ description: "operations error if timeoutMS is used with a deprecated timeout op
 
 schemaVersion: "1.2"
 
+# Most tests in this file can be executed against any server version, but some tests execute operations that are only
+# available on higher server versions (e.g. abortTransaction). To avoid too many special cases in templated tests, the
+# min server version is set to 4.2 for all.
+runOnRequirements:
+  - minServerVersion: "4.2"
+
 initialData:
   - collectionName: &collectionName coll
     databaseName: &databaseName test

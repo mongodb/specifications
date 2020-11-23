@@ -33,9 +33,9 @@ initialData:
 tests:
   # For each collection-level operation, we execute two tests:
   #
-  # 1. timeoutMS can be overridden to a non-zero value for a MongoCollection. Each test constructs uses the client
-  # entity defined above to construct a collection entity with timeoutMS=1000 and configures a fail point to block the
-  # operation for 15ms so the operation succeeds.
+  # 1. timeoutMS can be overridden to a non-zero value for a MongoCollection. Each test uses the client entity defined
+  # above to construct a collection entity with timeoutMS=1000 and configures a fail point to block the operation for
+  # 15ms so the operation succeeds.
   #
   # 2. timeoutMS can be overridden to 0 for a MongoCollection. Each test constructs a collection entity with
   # timeoutMS=0 using the global client entity and configures a fail point to block the operation for 15ms. The
