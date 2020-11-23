@@ -78,37 +78,6 @@ tests:
               arguments:
                 session: *session
                 document: { _id: 1 }
-
-  # Test that the original timeoutMS value is used for the abortTransaction command if one is required. The test forces
-  # both the callback and the abortTransaction to fail. Because drivers ignore server errors from abortTransaction
-  # commands, the test uses command monitoring to assert that it actually failed.
-  - description: "timeoutMS refreshed for abortTransaction if callback fails"
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 2 }
-            data:
-              failCommands: ["insert", "abortTransaction"]
-              blockConnection: true
-              blockTimeMS: 20
-      - name: withTransaction
-        object: *session
-        arguments:
-          timeoutMS: 10 # Override client timeoutMS to make operations fail quickly.
-          callback:
-            - name: insertOne
-              object: *collection
-              arguments:
-                session: *session
-                document: { _id: 1 }
-              expectError:
-                isTimeoutError: true
-        expectError:
-          isTimeoutError: true
     expectEvents:
       - client: *client
         events:
@@ -117,13 +86,9 @@ tests:
               databaseName: *databaseName
               command:
                 insert: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandFailedEvent:
-              commandName: insert
+                documents: [ { _id: 1 } ]
           - commandStartedEvent:
-              commandName: abortTransaction
+              commandName: commitTransaction
               databaseName: admin
               command:
-                abortTransaction: 1
-          - commandFailedEvent:
-              commandName: abortTransaction
+                commitTransaction: 1
