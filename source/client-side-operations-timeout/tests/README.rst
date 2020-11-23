@@ -517,6 +517,40 @@ username and password).
 
    - Expect this to fail with a timeout error after no more than 15ms.
 
+Convenient Transactions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This test MUST only run against replica sets and sharded clusters with server versions 4.4 or higher.
+
+#. Using ``internalClient``, drop the ``db.coll`` collection.
+#. Using ``internalClient``, set the following fail point:
+
+   .. code:: javascript
+
+       {
+           configureFailPoint: failCommand,
+           mode: { times: 2 },
+           data: {
+               failCommands: ["insert"],
+               blockConnection: true,
+               blockTimeMS: 15
+           }
+       }
+
+#. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=20``.
+#. Using ``client``, execute a ``withTransaction`` operation with the following callback:
+
+   .. code:: typescript
+
+       def callback() {
+           coll = client.database("db").collection("coll")
+           coll.insert_one({ _id: 1 })
+           coll.insert_one({ _id: 2 })
+       }
+
+#. Expect the previous ``withTransaction`` call to fail with a timeout error.
+#. Verify that three commands were executed against ``db.coll``: two ``insert`` commands and one ``abortTransaction``.
+
 Unit Tests
 ==========
 

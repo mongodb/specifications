@@ -79,67 +79,6 @@ tests:
                 session: *session
                 document: { _id: 1 }
 
-  # Test that timeoutMS is not refreshed between commands. The client entity is configured with timeoutMS=20 and the
-  # test configures a fail point to block two inserts for 15ms each. The callback takes over 20ms total, so it times
-  # out.
-  - description: "timeoutMS applied to entire withTransaction call, not individual operations"
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 2 }
-            data:
-              failCommands: ["insert"]
-              blockConnection: true
-              blockTimeMS: 15
-      - name: withTransaction
-        object: *session
-        arguments:
-          callback:
-            # The first insertOne should succeed but the second should fail with a timeout error.
-            - name: insertOne
-              object: *collection
-              arguments:
-                session: *session
-                document: { _id: 1 }
-            - name: insertOne
-              object: *collection
-              arguments:
-                session: *session
-                document: { _id: 2 }
-              expectError:
-                isTimeoutError: true
-        # The error from the second insert should be propagated so the withTransaction call should fail with a time out
-        # as well.
-        expectError:
-          isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandFailedEvent:
-              commandName: insert
-          # The callback fails so drivers automatically send an abortTransaction, which should succeed.
-          - commandStartedEvent:
-              commandName: abortTransaction
-              databaseName: admin
-              command:
-                abortTransaction: 1
-
   # Test that the original timeoutMS value is used for the abortTransaction command if one is required. The test forces
   # both the callback and the abortTransaction to fail. Because drivers ignore server errors from abortTransaction
   # commands, the test uses command monitoring to assert that it actually failed.
