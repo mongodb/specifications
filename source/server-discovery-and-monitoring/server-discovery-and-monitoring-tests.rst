@@ -196,16 +196,16 @@ This test requires MongoDB 4.9.0+.
          data: {
              failCommands: ["isMaster"],
              errorCode: 1234,
-             appName: "SDAMSleepTest"
+             appName: "SDAMMinHeartbeatFrequencyTest"
          }
      }
 
-2. Create a client with directConnection=true, appName="SDAMSleepTest", and
-   serverSelectionTimeoutMS=unlimited.
+2. Create a client with directConnection=true, appName="SDAMMinHeartbeatFrequencyTest", and
+   serverSelectionTimeoutMS=10000.
 
 3. Start a timer.
 
-4. Execute a ``ping`` command with unlimited ServerSelectionTimeoutMS.
+4. Execute a ``ping`` command.
 
 5. Stop the timer. Assert that the ``ping`` took between 4.5 seconds and 6.5
    seconds to complete.
