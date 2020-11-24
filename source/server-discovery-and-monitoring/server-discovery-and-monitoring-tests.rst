@@ -192,7 +192,7 @@ This test requires MongoDB 4.9.0+.
 
      {
          configureFailPoint: "failCommand",
-         mode: { times: 10 },
+         mode: { times: 5 },
          data: {
              failCommands: ["isMaster"],
              errorCode: 1234,
@@ -201,11 +201,11 @@ This test requires MongoDB 4.9.0+.
      }
 
 2. Create a client with directConnection=true, appName="SDAMMinHeartbeatFrequencyTest", and
-   serverSelectionTimeoutMS=10000.
+   serverSelectionTimeoutMS=5000.
 
 3. Start a timer.
 
 4. Execute a ``ping`` command.
 
-5. Stop the timer. Assert that the ``ping`` took between 4.5 seconds and 6.5
+5. Stop the timer. Assert that the ``ping`` took between 2 seconds and 3.5
    seconds to complete.
