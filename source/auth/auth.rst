@@ -918,10 +918,9 @@ MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. 
 
 The order in which Drivers MUST search for credentials is:
 
-#. Credentials passed through the URI
+#. The URI
 #. Environment variables
-#. ECS endpoint if and only if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set.
-#. EC2 endpoint
+#. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
 
 URI
 ___
