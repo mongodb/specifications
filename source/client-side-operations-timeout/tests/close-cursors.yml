@@ -21,13 +21,9 @@ createEntities:
       id: &database database
       client: *client
       databaseName: &databaseName test
-  - collection:
-      id: &collection collection
-      database: *database
-      collectionName: &collectionName coll
 
 initialData:
-  - collectionName: *collectionName
+  - collectionName: &collectionName coll
     databaseName: *databaseName
     documents:
       - { _id: 0 }
@@ -42,6 +38,16 @@ tests:
   # connectTimeoutMS (20) < timeoutMS (30)
   - description: "min of connectTimeoutMS and timeoutMS used as timeoutMS when closing a cursor - connectTimeoutMS is lower"
     operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+                collectionOptions:
+                    timeoutMS: 30 # Specify a timeoutMS value that's higher than the client's connectTimeoutMS.
       # Configure killCursors to block for longer than connectTimeoutMS but not as long as timeoutMS.
       - name: failPoint
         object: testRunner
@@ -58,13 +64,10 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          timeoutMS: 30 # Specify a timeoutMS value that's higher than the client's connectTimeoutMS.
           batchSize: 1
         saveResultAsEntity: &cursor cursor
       - name: close
         object: *cursor
-        expectError:
-          isTimeoutError: true
     expectEvents:
       - client: *client
         events:
@@ -86,6 +89,16 @@ tests:
   # timeoutMS (10) < connectTimeoutMS (20)
   - description: "min of connectTimeoutMS and timeoutMS used as timeoutMS when closing a cursor - timeoutMS is lower"
     operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+                collectionOptions:
+                    timeoutMS: 10 # Specify a timeoutMS value that's lower than the client's connectTimeoutMS.
       # Configure killCursors to block for longer than timeoutMS but not as long as connectTimeoutMS.
       - name: failPoint
         object: testRunner
@@ -102,13 +115,10 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          timeoutMS: 10 # Specify a timeoutMS value that's lower than the client's connectTimeoutMS.
           batchSize: 1
         saveResultAsEntity: &cursor cursor
       - name: close
         object: *cursor
-        expectError:
-          isTimeoutError: true
     expectEvents:
       - client: *client
         events:
@@ -131,6 +141,16 @@ tests:
   - description: "min of connectTimeoutMS and timeoutMS used as timeoutMS when closing a cursor - timeoutMS is 0"
     operations:
       # Configure killCursors to block for longer than connectTimeoutMS.
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+                collectionOptions:
+                    timeoutMS: 0
       - name: failPoint
         object: testRunner
         arguments:
@@ -146,13 +166,10 @@ tests:
         object: *collection
         arguments:
           filter: {}
-          timeoutMS: 0
           batchSize: 1
         saveResultAsEntity: &cursor cursor
       - name: close
         object: *cursor
-        expectError:
-          isTimeoutError: true
     expectEvents:
       - client: *client
         events:
