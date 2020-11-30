@@ -918,10 +918,12 @@ MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. 
 
 The order in which Drivers MUST search for credentials is:
 
-#. Credentials passed through the URI
+#. The URI
 #. Environment variables
-#. ECS endpoint if and only if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set.
-#. EC2 endpoint
+#. The ECS endpoint if ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is set. Otherwise, the EC2 endpoint.
+
+.. note::
+	See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in `Q & A`_
 
 URI
 ___
@@ -1251,6 +1253,9 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
     problem, MongoDB decided that the best user experience on upgrade and
     lowest technical risk of implementation is to require drivers to continue
     to not SASLprep usernames in SCRAM-SHA-256.
+    
+Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
+	No. While it's possible to allow access to EC2 instance metadata in ECS, for security reasons, Amazon states it's best practice to avoid this. (See `accessing EC2 metadata in ECS <https://aws.amazon.com/premiumsupport/knowledge-center/ecs-container-ec2-metadata/>`_ and `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_)
 
 Version History
 ===============
