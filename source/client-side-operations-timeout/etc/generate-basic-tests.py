@@ -3,8 +3,6 @@ from jinja2 import Template
 import os
 import sys
 
-# TODO: do tests distinguish between createIndex and createIndexes?
-
 Operation = namedtuple('Operation', ['operation_name', 'command_name', 'object', 'arguments'])
 
 CLIENT_OPERATIONS = [
