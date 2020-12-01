@@ -18,8 +18,18 @@ set to true.
 Testing with required API version
 =================================
 
-Drivers MUST test against a server with the ``requireApiVersion`` parameter
-enabled that also requires authentication. Since API versioning options can't be
-specified using the connection string, drivers MUST rely on environment
-variables to receive the API version to use in tests. The ``apiStrict`` and
-``apiDeprecationErrors`` options are not required for this test.
+Drivers MUST run their test suite against a cluster with the
+``requireApiVersion`` parameter enabled and also requires authentication.
+
+To run this test, proceed as follows:
+* Start a standalone mongod instance
+** This can be done using ``mongo-orchestration`` or manually
+* Connect to the standalone instance and run the following command on the
+  ``admin`` database: ``{ setParameter: 1, requireApiVersion: true }``
+* Declare an API version for the test run through the ``MONGODB_API_VERSION``
+  environment variable.
+* If the environment variable is set, all clients created in tests MUST declare
+  the ``ServerApiVersion`` specified.
+
+No other topologies must be tested until ``mongo-orchestration`` can handle
+servers with ``requireApiVersion`` enabled.
