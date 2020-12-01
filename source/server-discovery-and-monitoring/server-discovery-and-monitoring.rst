@@ -1204,9 +1204,11 @@ For drivers that support connection pools, after a server check is complete, if
 the server is determined to be `data-bearing
 <https://github.com/mongodb/specifications/blob/masterserver-discovery-and-monitoring.rst#data-bearing-server-type>`_
 and does not already have a connection pool, the driver MUST create the
-connection pool for the server. Additionally, if a driver implements a CMAP
-compliant connection pool, the server's pool (even if it already existed) MUST
-be marked as "ready".
+connection pool for the server.
+
+Additionally, if a driver implements a CMAP compliant connection pool and the
+server was previously Unknown, the server's pool (even if it already existed)
+MUST be marked as "ready". See the `Server Monitoring spec`_ for more information.
 
 Error handling
 ''''''''''''''

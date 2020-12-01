@@ -587,6 +587,17 @@ The polling protocol is used to monitor MongoDB <= 4.4 servers. The client
 `checks`_ a server with an isMaster command and then sleeps for
 heartbeatFrequencyMS before running another check.
 
+Marking the connection pool as ready (CMAP only)
+''''''''''''''''''''''''''''''''''''''''''''''''
+
+When a monitor completes a successful check against a server that was previously
+Unknown, it MUST mark the connection pool for that server as "ready", and it
+MUST do this *before* updating the TopologyDescription (e.g. through
+``onServerDescriptionChanged``). This ordering is used to ensure a server does
+not get selected while its pool is still paused. See the `Connection Pool`_
+definition in the CMAP specification for more details on marking the pool as
+"ready".
+
 Error handling
 ''''''''''''''
 
@@ -1117,3 +1128,4 @@ Changelog
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-monitoring.rst#heartbeats
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
+.. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool
