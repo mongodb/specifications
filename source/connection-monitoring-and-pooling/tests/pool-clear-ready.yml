@@ -19,7 +19,7 @@ events:
     address: 42
   - type: ConnectionCheckedOut
     address: 42
-    id: 42
+    connectionId: 42
   - type: ConnectionPoolCleared
     address: 42
   - type: ConnectionCheckOutFailed
