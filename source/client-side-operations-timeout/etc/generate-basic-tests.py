@@ -75,7 +75,7 @@ GRIDFS_OPERATIONS = [
 OPERATIONS = CLIENT_OPERATIONS + DB_OPERATIONS + COLLECTION_OPERATIONS
 
 RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in 
-    ['insertOne', 'updateOne', 'deleteOne', 'replaceOne', 'findOneAndDelete', 'findOneAndUpdate', 'findOneAndReplace', 'insertMany']
+    ['insertOne', 'updateOne', 'deleteOne', 'replaceOne', 'findOneAndDelete', 'findOneAndUpdate', 'findOneAndReplace', 'insertMany', 'bulkWrite']
 ]
 
 RETRYABLE_READ_OPERATIONS = [op for op in OPERATIONS if op.operation_name in

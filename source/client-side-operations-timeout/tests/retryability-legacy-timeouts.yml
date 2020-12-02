@@ -566,6 +566,74 @@ tests:
               databaseName: *databaseName
               command:
                 findAndModify: *collectionName
+  - description: "operation succeeds after one socket timeout - bulkWrite on collection"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: bulkWrite
+        object: *collection
+        arguments:
+          requests:
+            - insertOne:
+                document: { _id: 1 }
+          
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+  - description: "operation fails after two consecutive socket timeouts - bulkWrite on collection"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: bulkWrite
+        object: *collection
+        arguments:
+          requests:
+            - insertOne:
+                document: { _id: 1 }
+          
+        expectError:
+            isNetworkError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
   - description: "operation succeeds after one socket timeout - listDatabases on client"
     operations:
       - name: failPoint

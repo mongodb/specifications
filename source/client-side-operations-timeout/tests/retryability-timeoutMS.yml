@@ -1034,6 +1034,132 @@ tests:
               command:
                 findAndModify: *collectionName
                 maxTimeMS: { $$exists: false }
+  - description: "timeoutMS applies to whole operation, not individual attempts - bulkWrite on collection"
+    runOnRequirements:
+      - minServerVersion: "4.4"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 15
+              errorCode: 7
+              errorLabels: ["RetryableWriteError"]
+      - name: bulkWrite
+        object: *collection
+        arguments:
+          requests:
+            - insertOne:
+                document: { _id: 1 }
+          
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+  - description: "operation is retried multiple times for non-zero timeoutMS - bulkWrite on collection"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["insert"]
+              errorCode: 7
+              closeConnection: false
+              errorLabels: ["RetryableWriteError"]
+      - name: bulkWrite
+        object: *collection
+        arguments:
+          requests:
+            - insertOne:
+                document: { _id: 1 }
+          
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+  - description: "operation is retried multiple times if timeoutMS is zero - bulkWrite on collection"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["insert"]
+              errorCode: 7
+              closeConnection: false
+              errorLabels: ["RetryableWriteError"]
+      - name: bulkWrite
+        object: *collection
+        arguments:
+          timeoutMS: 0
+          requests:
+            - insertOne:
+                document: { _id: 1 }
+          
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$exists: false }
   - description: "timeoutMS applies to whole operation, not individual attempts - listDatabases on client"
     runOnRequirements:
       - minServerVersion: "4.4"
