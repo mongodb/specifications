@@ -152,6 +152,8 @@ For each YAML file with ``style: unit``:
 
   - If ``poolOptions`` is specified, use those options to initialize both pools
   - The returned pool must have an ``address`` set as a string value.
+  - If the pool uses a background thread to satisfy ``minPoolSize``, ensure it
+    attempts to create a new connection every 50ms.
 
 - Process each ``operation`` in ``operations`` (on the main thread)
 
