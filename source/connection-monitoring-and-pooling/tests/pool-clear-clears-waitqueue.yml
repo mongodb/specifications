@@ -3,7 +3,7 @@ style: unit
 description: clearing pool clears the WaitQueue
 poolOptions:
   maxPoolSize: 1
-  waitQueueTimeoutMS: 1000
+  waitQueueTimeoutMS: 10000
 operations:
   - name: ready
   # check out only connection in the pool
@@ -31,8 +31,7 @@ operations:
   # from the WaitQueue
   - name: clear
   # the 3 threads are immediately ejected from the WaitQueue,
-  # so the ConnectionCheckOutFailed events should be emitted
-  # before the ConnectionCheckIn event here.
+  # so this checkIn should cause any checkOuts to succeed.
   - name: checkIn
     connection: conn1
   - name: waitForEvent
@@ -60,10 +59,9 @@ events:
   - type: ConnectionCheckOutFailed
     reason: connectionError
     address: 42
-  - type: ConnectionCheckedIn
-    address: 42
 ignore:
   - ConnectionPoolReady
   - ConnectionPoolCreated
   - ConnectionCreated
   - ConnectionReady
+  - ConnectionCheckedIn

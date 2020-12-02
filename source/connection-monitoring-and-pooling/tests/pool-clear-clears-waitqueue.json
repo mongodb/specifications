@@ -4,7 +4,7 @@
   "description": "clearing pool clears the WaitQueue",
   "poolOptions": {
     "maxPoolSize": 1,
-    "waitQueueTimeoutMS": 1000
+    "waitQueueTimeoutMS": 10000
   },
   "operations": [
     {
@@ -95,16 +95,13 @@
       "type": "ConnectionCheckOutFailed",
       "reason": "connectionError",
       "address": 42
-    },
-    {
-      "type": "ConnectionCheckedIn",
-      "address": 42
     }
   ],
   "ignore": [
     "ConnectionPoolReady",
     "ConnectionPoolCreated",
     "ConnectionCreated",
-    "ConnectionReady"
+    "ConnectionReady",
+    "ConnectionCheckedIn"
   ]
 }
