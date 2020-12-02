@@ -129,7 +129,7 @@
       }
     },
     {
-      "description": "UpdateOne fails with a RetryableWriteError label after two connection failures",
+      "description": "UpdateOne succeeds after two connection failures",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -156,17 +156,16 @@
         }
       },
       "outcome": {
-        "error": true,
         "result": {
-          "errorLabelsContain": [
-            "RetryableWriteError"
-          ]
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedCount": 0
         },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,

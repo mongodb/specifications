@@ -822,7 +822,7 @@
       ]
     },
     {
-      "description": "Download fails after two NotWritablePrimary errors",
+      "description": "Download succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -843,8 +843,7 @@
             "id": {
               "$oid": "000000000000000000000001"
             }
-          },
-          "error": true
+          }
         }
       ],
       "expectations": [

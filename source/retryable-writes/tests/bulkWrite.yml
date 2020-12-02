@@ -209,7 +209,7 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
-        description: "First insertOne is never committed"
+        description: "First insertOne not committed on second attempt"
         failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
@@ -233,20 +233,29 @@ tests:
                             filter: { _id: 1 }
                 options: { ordered: true }
         outcome:
-            error: true
             result:
-                deletedCount: 0
-                insertedCount: 0
+                deletedCount: 1
+                insertedCount: 1
                 insertedIds: { }
-                matchedCount: 0
-                modifiedCount: 0
+                matchedCount: 1
+                modifiedCount: 1
                 upsertedCount: 0
                 upsertedIds: { }
             collection:
                 data:
-                    - { _id: 1, x: 11 }
+                    - { _id: 2, x: 23 }
     -
+        # After the changes in DRIVERS-555, drivers retry commands indefinitely
+        # rather than stopping after one retry. Because the server does not
+        # support both "skip" and "times" in the same fail point, the update
+        # command targetted by the fail point in this test loops forever. This
+        # test must be skipped until this functionality is implemented in
+        # SERVER-53186.
+        #
+        # Once the SERVER ticket is implemented, this test should also be
+        # changed to expect the operation to succeed.
         description: "Second updateOne is never committed"
+        skipReason: "SERVER-53186"
         failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
             mode: { skip: 1 }
@@ -284,7 +293,17 @@ tests:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
     -
+        # After the changes in DRIVERS-555, drivers retry commands indefinitely
+        # rather than stopping after one retry. Because the server does not
+        # support both "skip" and "times" in the same fail point, the update
+        # command targetted by the fail point in this test loops forever. This
+        # test must be skipped until this functionality is implemented in
+        # SERVER-53186.
+        #
+        # Once the SERVER ticket is implemented, this test should also be
+        # changed to expect the operation to succeed.
         description: "Third updateOne is never committed"
+        skipReason: "SERVER-53186"
         failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
             mode: { skip: 2 }

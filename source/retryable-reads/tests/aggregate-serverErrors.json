@@ -1056,7 +1056,7 @@
       ]
     },
     {
-      "description": "Aggregate fails after two NotWritablePrimary errors",
+      "description": "Aggregate succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1089,7 +1089,16 @@
               }
             ]
           },
-          "error": true
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
         }
       ],
       "expectations": [

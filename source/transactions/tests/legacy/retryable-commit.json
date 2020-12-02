@@ -18,7 +18,7 @@
   "data": [],
   "tests": [
     {
-      "description": "commitTransaction fails after two errors",
+      "description": "commitTransaction succeeds after two errors",
       "clientOptions": {
         "retryWrites": false
       },
@@ -50,19 +50,6 @@
           },
           "result": {
             "insertedId": 1
-          }
-        },
-        {
-          "name": "commitTransaction",
-          "object": "session0",
-          "result": {
-            "errorLabelsContain": [
-              "RetryableWriteError",
-              "UnknownTransactionCommitResult"
-            ],
-            "errorLabelsOmit": [
-              "TransientTransactionError"
-            ]
           }
         },
         {
@@ -201,19 +188,6 @@
           },
           "result": {
             "insertedId": 1
-          }
-        },
-        {
-          "name": "commitTransaction",
-          "object": "session0",
-          "result": {
-            "errorLabelsContain": [
-              "RetryableWriteError",
-              "UnknownTransactionCommitResult"
-            ],
-            "errorLabelsOmit": [
-              "TransientTransactionError"
-            ]
           }
         },
         {

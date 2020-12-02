@@ -134,6 +134,75 @@
       ]
     },
     {
+      "description": "CountDocuments succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "countDocuments",
+          "object": "collection",
+          "arguments": {
+            "filter": {}
+          },
+          "result": 2
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": 1,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": 1,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
       "description": "CountDocuments fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -161,75 +230,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$match": {}
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": 1
-                    }
-                  }
-                }
-              ]
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "CountDocuments fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "aggregate"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "countDocuments",
-          "object": "collection",
-          "arguments": {
-            "filter": {}
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$match": {}
-                },
-                {
-                  "$group": {
-                    "_id": 1,
-                    "n": {
-                      "$sum": 1
-                    }
-                  }
-                }
-              ]
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {

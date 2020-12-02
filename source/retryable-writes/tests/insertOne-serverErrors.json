@@ -955,7 +955,7 @@
       }
     },
     {
-      "description": "InsertOne fails after multiple retryable writeConcernErrors",
+      "description": "InsertOne succeeds after multiple retryable writeConcernErrors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -984,11 +984,8 @@
         }
       },
       "outcome": {
-        "error": true,
         "result": {
-          "errorLabelsContain": [
-            "RetryableWriteError"
-          ]
+          "insertedId": 3
         },
         "collection": {
           "data": [
@@ -1115,7 +1112,7 @@
       }
     },
     {
-      "description": "InsertOne fails with a RetryableWriteError label after two connection failures",
+      "description": "InsertOne succeeds after two connection failures",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -1138,11 +1135,8 @@
         }
       },
       "outcome": {
-        "error": true,
         "result": {
-          "errorLabelsContain": [
-            "RetryableWriteError"
-          ]
+          "insertedId": 3
         },
         "collection": {
           "data": [
@@ -1153,6 +1147,10 @@
             {
               "_id": 2,
               "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ]
         }

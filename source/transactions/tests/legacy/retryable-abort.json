@@ -18,7 +18,7 @@
   "data": [],
   "tests": [
     {
-      "description": "abortTransaction only performs a single retry",
+      "description": "abortTransaction performs multiple retries",
       "clientOptions": {
         "retryWrites": false
       },
@@ -79,6 +79,22 @@
             },
             "command_name": "insert",
             "database_name": "transaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "abortTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "startTransaction": null,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "abortTransaction",
+            "database_name": "admin"
           }
         },
         {

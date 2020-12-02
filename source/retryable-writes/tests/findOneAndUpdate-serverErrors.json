@@ -129,7 +129,7 @@
       }
     },
     {
-      "description": "FindOneAndUpdate fails with a RetryableWriteError label after two connection failures",
+      "description": "FindOneAndUpdate succeeds after two connection failures",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -157,17 +157,15 @@
         }
       },
       "outcome": {
-        "error": true,
         "result": {
-          "errorLabelsContain": [
-            "RetryableWriteError"
-          ]
+          "_id": 1,
+          "x": 11
         },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,

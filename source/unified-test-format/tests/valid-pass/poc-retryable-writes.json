@@ -187,7 +187,7 @@
       ]
     },
     {
-      "description": "FindOneAndUpdate is never committed",
+      "description": "FindOneAndUpdate is not committed on second attempt",
       "operations": [
         {
           "name": "failPoint",
@@ -219,8 +219,9 @@
             },
             "returnDocument": "Before"
           },
-          "expectError": {
-            "isError": true
+          "expectResult": {
+            "_id": 1,
+            "x": 11
           }
         }
       ],
@@ -231,7 +232,7 @@
           "documents": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,
@@ -406,7 +407,7 @@
       ]
     },
     {
-      "description": "InsertOne fails after multiple retryable writeConcernErrors",
+      "description": "InsertOne succeeds after multiple retryable writeConcernErrors",
       "runOnRequirements": [
         {
           "minServerVersion": "4.0",
@@ -453,10 +454,10 @@
               "x": 33
             }
           },
-          "expectError": {
-            "errorLabelsContain": [
-              "RetryableWriteError"
-            ]
+          "expectResult": {
+            "insertedId": {
+              "$$unsetOrMatches": 3
+            }
           }
         }
       ],

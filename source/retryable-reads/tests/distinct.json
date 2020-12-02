@@ -133,6 +133,69 @@
       ]
     },
     {
+      "description": "Distinct succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "distinct"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            }
+          },
+          "result": [
+            22,
+            33
+          ]
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "distinct": "coll",
+              "key": "x",
+              "query": {
+                "_id": {
+                  "$gt": 1
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
       "description": "Distinct fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -165,66 +228,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "distinct": "coll",
-              "key": "x",
-              "query": {
-                "_id": {
-                  "$gt": 1
-                }
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "Distinct fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "distinct"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "distinct",
-          "object": "collection",
-          "arguments": {
-            "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 1
-              }
-            }
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "distinct": "coll",
-              "key": "x",
-              "query": {
-                "_id": {
-                  "$gt": 1
-                }
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {

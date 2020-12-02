@@ -90,6 +90,46 @@
       ]
     },
     {
+      "description": "EstimatedDocumentCount succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection",
+          "result": 2
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
       "description": "EstimatedDocumentCount fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -114,46 +154,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "count": "coll"
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "EstimatedDocumentCount fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "count"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "estimatedDocumentCount",
-          "object": "collection",
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "count": "coll"
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {

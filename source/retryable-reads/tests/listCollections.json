@@ -75,6 +75,43 @@
       ]
     },
     {
+      "description": "ListCollections succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "listCollections",
+          "object": "database"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
+            }
+          }
+        }
+      ]
+    },
+    {
       "description": "ListCollections fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -99,44 +136,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "listCollections": 1
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "ListCollections fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "listCollections"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "listCollections",
-          "object": "database",
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "listCollections": 1
-            }
-          }
-        },
         {
           "command_started_event": {
             "command": {

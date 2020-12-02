@@ -115,49 +115,6 @@
           ]
         }
       }
-    },
-    {
-      "description": "InsertMany fails after multiple network errors",
-      "failPoint": {
-        "configureFailPoint": "onPrimaryTransactionalWrite",
-        "mode": "alwaysOn",
-        "data": {
-          "failBeforeCommitExceptionCode": 1
-        }
-      },
-      "operation": {
-        "name": "insertMany",
-        "arguments": {
-          "documents": [
-            {
-              "_id": 2,
-              "x": 22
-            },
-            {
-              "_id": 3,
-              "x": 33
-            },
-            {
-              "_id": 4,
-              "x": 44
-            }
-          ],
-          "options": {
-            "ordered": true
-          }
-        }
-      },
-      "outcome": {
-        "error": true,
-        "collection": {
-          "data": [
-            {
-              "_id": 1,
-              "x": 11
-            }
-          ]
-        }
-      }
     }
   ]
 }

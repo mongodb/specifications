@@ -82,7 +82,7 @@
       }
     },
     {
-      "description": "DeleteOne is never committed",
+      "description": "DeleteOne is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -101,13 +101,8 @@
         }
       },
       "outcome": {
-        "error": true,
         "collection": {
           "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
             {
               "_id": 2,
               "x": 22

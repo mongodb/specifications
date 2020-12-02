@@ -427,7 +427,7 @@
       ]
     },
     {
-      "description": "ListDatabaseNames fails after two NotWritablePrimary errors",
+      "description": "ListDatabaseNames succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -443,8 +443,7 @@
       "operations": [
         {
           "name": "listDatabaseNames",
-          "object": "client",
-          "error": true
+          "object": "client"
         }
       ],
       "expectations": [

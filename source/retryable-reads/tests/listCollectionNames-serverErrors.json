@@ -427,7 +427,7 @@
       ]
     },
     {
-      "description": "ListCollectionNames fails after two NotWritablePrimary errors",
+      "description": "ListCollectionNames succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -443,8 +443,7 @@
       "operations": [
         {
           "name": "listCollectionNames",
-          "object": "database",
-          "error": true
+          "object": "database"
         }
       ],
       "expectations": [

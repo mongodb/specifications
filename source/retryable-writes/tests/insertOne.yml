@@ -44,7 +44,7 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
-        description: "InsertOne is never committed"
+        description: "InsertOne is not committed on second attempt"
         failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
@@ -54,8 +54,10 @@ tests:
             arguments:
                 document: { _id: 3, x: 33 }
         outcome:
-            error: true
+            result:
+                insertedId: 3
             collection:
                 data:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }

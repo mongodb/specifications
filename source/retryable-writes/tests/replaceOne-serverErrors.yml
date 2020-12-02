@@ -60,7 +60,7 @@ tests:
                     - { _id: 1, x: 111 }
                     - { _id: 2, x: 22 }
     -
-        description: "ReplaceOne fails with a RetryableWriteError label after two connection failures"
+        description: "ReplaceOne succeeds after two connection failures"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -73,10 +73,11 @@ tests:
                 filter: { _id: 1 }
                 replacement: { _id: 1, x: 111 }
         outcome:
-            error: true
             result:
-                errorLabelsContain: ["RetryableWriteError"]
+                matchedCount: 1
+                modifiedCount: 1
+                upsertedCount: 0
             collection:
                 data:
-                    - { _id: 1, x: 11 }
+                    - { _id: 1, x: 111 }
                     - { _id: 2, x: 22 }

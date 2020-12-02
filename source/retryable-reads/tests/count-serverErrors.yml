@@ -125,15 +125,12 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "Count fails after two NotWritablePrimary errors"
+        description: "Count succeeds after two NotWritablePrimary errors"
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [count], errorCode: 10107 }
-        operations:
-            - &retryable_operation_fails
-                <<: *retryable_operation
-                error: true
+        operations: [*retryable_operation_succeeds]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -144,7 +141,9 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 10107 }
-        operations: [*retryable_operation_fails]
+        operations:
+            - <<: *retryable_operation
+              error: true
         expectations:
              - *retryable_command_started_event
 

@@ -94,7 +94,7 @@
       }
     },
     {
-      "description": "FindOneAndDelete is never committed",
+      "description": "FindOneAndDelete is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -118,13 +118,12 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "_id": 1,
+          "x": 11
+        },
         "collection": {
           "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
             {
               "_id": 2,
               "x": 22

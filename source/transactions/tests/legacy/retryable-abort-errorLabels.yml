@@ -8,7 +8,7 @@ collection_name: &collection_name "test"
 
 data: []
 tests:
-  - description: abortTransaction only retries once with RetryableWriteError from server
+  - description: abortTransaction retries multiple times with RetryableWriteError from server
     failPoint:
       configureFailPoint: failCommand
       mode: { times: 2 }
@@ -56,7 +56,19 @@ tests:
             writeConcern:
           command_name: abortTransaction
           database_name: admin
-      - command_started_event: # Driver retries abort once
+      # Driver retries abort twice
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+      - command_started_event:
           command:
             abortTransaction: 1
             lsid: session0

@@ -107,7 +107,7 @@
       }
     },
     {
-      "description": "DeleteOne fails with RetryableWriteError label after two connection failures",
+      "description": "DeleteOne succeeds after two connection failures",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -129,18 +129,11 @@
         }
       },
       "outcome": {
-        "error": true,
         "result": {
-          "errorLabelsContain": [
-            "RetryableWriteError"
-          ]
+          "deletedCount": 1
         },
         "collection": {
           "data": [
-            {
-              "_id": 1,
-              "x": 11
-            },
             {
               "_id": 2,
               "x": 22

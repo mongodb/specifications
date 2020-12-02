@@ -52,7 +52,7 @@ tests:
                 data:
                     - { _id: 2, x: 22 }
     -
-        description: "FindOneAndDelete fails with a RetryableWriteError label after two connection failures"
+        description: "FindOneAndDelete succeeds after two connection failures"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -65,10 +65,7 @@ tests:
                 filter: { x: { $gte: 11 } }
                 sort: { x: 1 }
         outcome:
-            error: true
-            result:
-                errorLabelsContain: ["RetryableWriteError"]
+            result: { _id: 1, x: 11 }
             collection:
                 data:
-                    - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }

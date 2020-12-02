@@ -102,7 +102,7 @@
       }
     },
     {
-      "description": "FindOneAndReplace is never committed",
+      "description": "FindOneAndReplace is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -126,12 +126,15 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "_id": 1,
+          "x": 11
+        },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 111
             },
             {
               "_id": 2,

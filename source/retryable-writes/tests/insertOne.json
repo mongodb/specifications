@@ -100,7 +100,7 @@
       }
     },
     {
-      "description": "InsertOne is never committed",
+      "description": "InsertOne is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -120,7 +120,9 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "insertedId": 3
+        },
         "collection": {
           "data": [
             {
@@ -130,6 +132,10 @@
             {
               "_id": 2,
               "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
             }
           ]
         }

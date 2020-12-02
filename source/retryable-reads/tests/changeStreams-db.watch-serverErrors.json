@@ -610,8 +610,7 @@
       "operations": [
         {
           "name": "watch",
-          "object": "database",
-          "error": true
+          "object": "database"
         }
       ],
       "expectations": [

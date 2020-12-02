@@ -433,7 +433,7 @@ tests:
                     - { _id: 2, x: 22 }
                     - { _id: 3, x: 33 }
     -
-        description: "InsertOne fails after multiple retryable writeConcernErrors"
+        description: "InsertOne succeeds after multiple retryable writeConcernErrors"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -448,14 +448,13 @@ tests:
             arguments:
                 document: { _id: 3, x: 33 }
         outcome:
-            error: true
             result:
-                errorLabelsContain: ["RetryableWriteError"]
+                insertedId: 3
             collection:
                 data:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
-                    - { _id: 3, x: 33 }  # The write was still applied.
+                    - { _id: 3, x: 33 }
     -
         description: "InsertOne fails after WriteConcernError Interrupted"
         failPoint:
@@ -506,7 +505,7 @@ tests:
                     - { _id: 3, x: 33 }  # The write was still applied.
 
     -
-        description: "InsertOne fails with a RetryableWriteError label after two connection failures"
+        description: "InsertOne succeeds after two connection failures"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -518,10 +517,10 @@ tests:
             arguments:
                 document: { _id: 3, x: 33 }
         outcome:
-            error: true
             result:
-                errorLabelsContain: ["RetryableWriteError"]
+                insertedId: 3
             collection:
                 data:
                     - { _id: 1, x: 11 }
                     - { _id: 2, x: 22 }
+                    - { _id: 3, x: 33 }

@@ -48,7 +48,7 @@ tests:
                     - { _id: 1, x: 111 }
                     - { _id: 2, x: 22 }
     -
-        description: "ReplaceOne is never committed"
+        description: "ReplaceOne is not committed on second attempt"
         failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
@@ -59,8 +59,11 @@ tests:
                 filter: { _id: 1 }
                 replacement: { _id: 1, x: 111 }
         outcome:
-            error: true
+            result:
+                matchedCount: 1
+                modifiedCount: 1
+                upsertedCount: 0
             collection:
                 data:
-                    - { _id: 1, x: 11 }
+                    - { _id: 1, x: 111 }
                     - { _id: 2, x: 22 }

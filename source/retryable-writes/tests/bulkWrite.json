@@ -441,7 +441,7 @@
       }
     },
     {
-      "description": "First insertOne is never committed",
+      "description": "First insertOne not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -492,21 +492,20 @@
         }
       },
       "outcome": {
-        "error": true,
         "result": {
-          "deletedCount": 0,
-          "insertedCount": 0,
+          "deletedCount": 1,
+          "insertedCount": 1,
           "insertedIds": {},
-          "matchedCount": 0,
-          "modifiedCount": 0,
+          "matchedCount": 1,
+          "modifiedCount": 1,
           "upsertedCount": 0,
           "upsertedIds": {}
         },
         "collection": {
           "data": [
             {
-              "_id": 1,
-              "x": 11
+              "_id": 2,
+              "x": 23
             }
           ]
         }
@@ -514,6 +513,7 @@
     },
     {
       "description": "Second updateOne is never committed",
+      "skipReason": "SERVER-53186",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -592,6 +592,7 @@
     },
     {
       "description": "Third updateOne is never committed",
+      "skipReason": "SERVER-53186",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {

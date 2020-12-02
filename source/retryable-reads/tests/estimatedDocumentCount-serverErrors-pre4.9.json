@@ -470,7 +470,7 @@
       ]
     },
     {
-      "description": "EstimatedDocumentCount fails after two NotWritablePrimary errors",
+      "description": "EstimatedDocumentCount succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -487,7 +487,7 @@
         {
           "name": "estimatedDocumentCount",
           "object": "collection",
-          "error": true
+          "result": 2
         }
       ],
       "expectations": [

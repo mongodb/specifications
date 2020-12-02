@@ -78,6 +78,45 @@
       ]
     },
     {
+      "description": "ListIndexNames succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listIndexes"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "listIndexNames",
+          "object": "collection"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexes": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexes": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
       "description": "ListIndexNames fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -102,46 +141,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "listIndexes": "coll"
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "ListIndexNames fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "listIndexes"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "listIndexNames",
-          "object": "collection",
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "listIndexes": "coll"
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {

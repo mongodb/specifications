@@ -56,7 +56,7 @@ tests:
                     - { _id: 1, x: 12 }
                     - { _id: 2, x: 22 }
     -
-        description: "FindOneAndUpdate fails with a RetryableWriteError label after two connection failures"
+        description: "FindOneAndUpdate succeeds after two connection failures"
         failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -70,10 +70,8 @@ tests:
                 update: { $inc: { x: 1 } }
                 returnDocument: "Before"
         outcome:
-            error: true
-            result:
-                errorLabelsContain: ["RetryableWriteError"]
+            result: { _id: 1, x: 11 }
             collection:
                 data:
-                    - { _id: 1, x: 11 }
+                    - { _id: 1, x: 12 }
                     - { _id: 2, x: 22 }

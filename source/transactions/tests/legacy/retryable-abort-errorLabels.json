@@ -13,7 +13,7 @@
   "data": [],
   "tests": [
     {
-      "description": "abortTransaction only retries once with RetryableWriteError from server",
+      "description": "abortTransaction retries multiple times with RetryableWriteError from server",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -74,6 +74,22 @@
             },
             "command_name": "insert",
             "database_name": "transaction-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "abortTransaction": 1,
+              "lsid": "session0",
+              "txnNumber": {
+                "$numberLong": "1"
+              },
+              "startTransaction": null,
+              "autocommit": false,
+              "writeConcern": null
+            },
+            "command_name": "abortTransaction",
+            "database_name": "admin"
           }
         },
         {

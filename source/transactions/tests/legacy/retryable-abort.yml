@@ -12,7 +12,7 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: abortTransaction only performs a single retry
+  - description: abortTransaction performs multiple retries
 
     clientOptions:
       retryWrites: false
@@ -55,6 +55,18 @@ tests:
             writeConcern:
           command_name: insert
           database_name: *database_name
+      - command_started_event:
+          command:
+            abortTransaction: 1
+            lsid: session0
+            txnNumber:
+              $numberLong: "1"
+            startTransaction:
+            autocommit: false
+            writeConcern:
+          command_name: abortTransaction
+          database_name: admin
+      # abortTransaction is retried twice
       - command_started_event:
           command:
             abortTransaction: 1

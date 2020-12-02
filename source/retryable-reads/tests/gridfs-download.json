@@ -167,6 +167,60 @@
       ]
     },
     {
+      "description": "Download succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "find"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "download",
+          "object": "gridfsbucket",
+          "arguments": {
+            "id": {
+              "$oid": "000000000000000000000001"
+            }
+          }
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
       "description": "Download fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -196,61 +250,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "find": "fs.files",
-              "filter": {
-                "_id": {
-                  "$oid": "000000000000000000000001"
-                }
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "Download fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "find"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "download",
-          "object": "gridfsbucket",
-          "arguments": {
-            "id": {
-              "$oid": "000000000000000000000001"
-            }
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "find": "fs.files",
-              "filter": {
-                "_id": {
-                  "$oid": "000000000000000000000001"
-                }
-              }
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {

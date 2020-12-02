@@ -756,7 +756,7 @@
       ]
     },
     {
-      "description": "DownloadByName fails after two NotWritablePrimary errors",
+      "description": "DownloadByName succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -775,8 +775,7 @@
           "object": "gridfsbucket",
           "arguments": {
             "filename": "abc"
-          },
-          "error": true
+          }
         }
       ],
       "expectations": [

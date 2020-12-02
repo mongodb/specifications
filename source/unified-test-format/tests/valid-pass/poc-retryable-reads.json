@@ -322,7 +322,7 @@
       ]
     },
     {
-      "description": "Find fails on second attempt",
+      "description": "Find succeeds on third attempt",
       "operations": [
         {
           "name": "failPoint",
@@ -349,15 +349,35 @@
           "arguments": {
             "filter": {}
           },
-          "expectError": {
-            "isError": true
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
         }
       ],
       "expectEvents": [
         {
           "client": "client0",
           "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "coll",
+                  "filter": {}
+                },
+                "databaseName": "retryable-reads-tests"
+              }
+            },
             {
               "commandStartedEvent": {
                 "command": {

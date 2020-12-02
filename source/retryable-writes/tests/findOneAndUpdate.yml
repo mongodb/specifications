@@ -44,7 +44,7 @@ tests:
                     - { _id: 1, x: 12 }
                     - { _id: 2, x: 22 }
     -
-        description: "FindOneAndUpdate is never committed"
+        description: "FindOneAndUpdate is not committed on second attempt"
         failPoint:
             configureFailPoint: onPrimaryTransactionalWrite
             mode: { times: 2 }
@@ -55,8 +55,8 @@ tests:
                 filter: { _id: 1 }
                 update: { $inc: { x : 1 }}
         outcome:
-            error: true
+            result: { _id: 1, x: 11 }
             collection:
                 data:
-                    - { _id: 1, x: 11 }
+                    - { _id: 1, x: 12 }
                     - { _id: 2, x: 22 }

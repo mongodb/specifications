@@ -88,7 +88,7 @@ tests:
           - { _id: 1, x: 12 }
           - { _id: 2, x: 22 }
 
-  - description: "FindOneAndUpdate is never committed"
+  - description: "FindOneAndUpdate is not committed on second attempt"
     operations:
       - name: failPoint
         object: testRunner
@@ -104,12 +104,12 @@ tests:
           filter: { _id: 1 }
           update: { $inc: { x : 1 } }
           returnDocument: Before
-        expectError: { isError: true }
+        expectResult: { _id: 1, x: 11 }
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName
         documents:
-          - { _id: 1, x: 11 }
+          - { _id: 1, x: 12 }
           - { _id: 2, x: 22 }
 
   - description: "InsertMany succeeds after PrimarySteppedDown"
@@ -181,7 +181,7 @@ tests:
           - { _id: 1, x: 11 }
           - { _id: 2, x: 22 }
 
-  - description: "InsertOne fails after multiple retryable writeConcernErrors"
+  - description: "InsertOne succeeds after multiple retryable writeConcernErrors"
     runOnRequirements: *failCommand_requirements
     operations:
       - name: failPoint
@@ -200,8 +200,8 @@ tests:
         object: *collection0
         arguments:
           document: { _id: 3, x: 33 }
-        expectError:
-          errorLabelsContain: [ RetryableWriteError ]
+        expectResult:
+          insertedId: { $$unsetOrMatches: 3 }
     outcome:
       - collectionName: *collectionName
         databaseName: *databaseName

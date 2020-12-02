@@ -487,7 +487,7 @@ for tests.
 
 At a high level, the test plan will cover executing supported read operations
 within a MongoClient where retryable reads have been enabled, ensuring that
-reads are retried exactly once.
+reads are retried.
 
 Motivation for Change 
 ======================

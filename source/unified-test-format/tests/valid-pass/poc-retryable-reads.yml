@@ -141,7 +141,7 @@ tests:
                 filter: {}
               databaseName: *databaseName
 
-  - description: "Find fails on second attempt"
+  - description: "Find succeeds on third attempt"
     operations:
       - name: failPoint
         object: testRunner
@@ -158,7 +158,10 @@ tests:
         arguments:
           filter: {}
           # Other arguments in the original test are not relevant
-        expectError: { isError: true }
+        expectResult:
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 }
+          - { _id: 3, x: 33 }
     expectEvents:
       - client: *client0
         events:
@@ -168,6 +171,7 @@ tests:
                 find: *collectionName
                 filter: {}
               databaseName: *databaseName
+          - *findAttempt
           - *findAttempt
 
   - description: "ListDatabases succeeds on second attempt"

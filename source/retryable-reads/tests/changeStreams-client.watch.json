@@ -107,6 +107,61 @@
       ]
     },
     {
+      "description": "client.watch succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "watch",
+          "object": "client"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
       "description": "client.watch fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -131,62 +186,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": 1,
-              "cursor": {},
-              "pipeline": [
-                {
-                  "$changeStream": {
-                    "allChangesForCluster": true
-                  }
-                }
-              ]
-            },
-            "database_name": "admin"
-          }
-        }
-      ]
-    },
-    {
-      "description": "client.watch fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "aggregate"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "watch",
-          "object": "client",
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": 1,
-              "cursor": {},
-              "pipeline": [
-                {
-                  "$changeStream": {
-                    "allChangesForCluster": true
-                  }
-                }
-              ]
-            },
-            "database_name": "admin"
-          }
-        },
         {
           "command_started_event": {
             "command": {

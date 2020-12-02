@@ -104,7 +104,7 @@
       }
     },
     {
-      "description": "UpdateOne is never committed",
+      "description": "UpdateOne is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -128,12 +128,16 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "matchedCount": 1,
+          "modifiedCount": 1,
+          "upsertedCount": 0
+        },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,
@@ -243,7 +247,7 @@
       }
     },
     {
-      "description": "UpdateOne with upsert is never committed",
+      "description": "UpdateOne with upsert is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -269,7 +273,12 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "matchedCount": 0,
+          "modifiedCount": 0,
+          "upsertedCount": 1,
+          "upsertedId": 3
+        },
         "collection": {
           "data": [
             {
@@ -279,6 +288,10 @@
             {
               "_id": 2,
               "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 34
             }
           ]
         }

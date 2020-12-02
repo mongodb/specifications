@@ -638,7 +638,7 @@
       ]
     },
     {
-      "description": "client.watch fails after two NotWritablePrimary errors",
+      "description": "client.watch succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -654,8 +654,7 @@
       "operations": [
         {
           "name": "watch",
-          "object": "client",
-          "error": true
+          "object": "client"
         }
       ],
       "expectations": [

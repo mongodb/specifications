@@ -788,7 +788,7 @@
       ]
     },
     {
-      "description": "CountDocuments fails after two NotWritablePrimary errors",
+      "description": "CountDocuments succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -808,7 +808,7 @@
           "arguments": {
             "filter": {}
           },
-          "error": true
+          "result": 2
         }
       ],
       "expectations": [

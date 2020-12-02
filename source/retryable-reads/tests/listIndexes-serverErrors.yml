@@ -120,15 +120,12 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
-        description: "ListIndexes fails after two NotWritablePrimary errors"
+        description: "ListIndexes succeeds after two NotWritablePrimary errors"
         failPoint:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [listIndexes], errorCode: 10107 }
-        operations:
-            - &retryable_operation_fails
-                <<: *retryable_operation
-                error: true
+        operations: [*retryable_operation]
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -139,7 +136,9 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [listIndexes], errorCode: 10107 }
-        operations: [*retryable_operation_fails]
+        operations:
+            - <<: *retryable_operation
+              error: true
         expectations:
              - *retryable_command_started_event
 

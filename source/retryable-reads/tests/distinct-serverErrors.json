@@ -726,7 +726,7 @@
       ]
     },
     {
-      "description": "Distinct fails after two NotWritablePrimary errors",
+      "description": "Distinct succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -751,7 +751,10 @@
               }
             }
           },
-          "error": true
+          "result": [
+            22,
+            33
+          ]
         }
       ],
       "expectations": [

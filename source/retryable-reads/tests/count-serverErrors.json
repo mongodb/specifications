@@ -502,7 +502,7 @@
       ]
     },
     {
-      "description": "Count fails after two NotWritablePrimary errors",
+      "description": "Count succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -522,7 +522,7 @@
           "arguments": {
             "filter": {}
           },
-          "error": true
+          "result": 2
         }
       ],
       "expectations": [

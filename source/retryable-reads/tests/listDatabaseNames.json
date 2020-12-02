@@ -75,6 +75,43 @@
       ]
     },
     {
+      "description": "ListDatabaseNames succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listDatabases"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "listDatabaseNames",
+          "object": "client"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listDatabases": 1
+            }
+          }
+        }
+      ]
+    },
+    {
       "description": "ListDatabaseNames fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -99,44 +136,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "listDatabases": 1
-            }
-          }
-        }
-      ]
-    },
-    {
-      "description": "ListDatabaseNames fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "listDatabases"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "listDatabaseNames",
-          "object": "client",
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "listDatabases": 1
-            }
-          }
-        },
         {
           "command_started_event": {
             "command": {

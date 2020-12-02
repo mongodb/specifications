@@ -12,7 +12,7 @@ collection_name: &collection_name "test"
 data: []
 
 tests:
-  - description: commitTransaction fails after two errors
+  - description: commitTransaction succeeds after two errors
 
     clientOptions:
       retryWrites: false
@@ -35,13 +35,6 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # First call to commit fails after a single retry attempt.
-      - name: commitTransaction
-        object: session0
-        result:
-          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
-      # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
         object: session0
 
@@ -72,6 +65,7 @@ tests:
             writeConcern:
           command_name: commitTransaction
           database_name: admin
+      # commitTransaction is retried twice.
       - command_started_event:
           command:
             commitTransaction: 1
@@ -127,13 +121,6 @@ tests:
             _id: 1
         result:
           insertedId: 1
-      # First call to commit fails after a single retry attempt.
-      - name: commitTransaction
-        object: session0
-        result:
-          errorLabelsContain: ["RetryableWriteError", "UnknownTransactionCommitResult"]
-          errorLabelsOmit: ["TransientTransactionError"]
-      # Second call to commit succeeds because the failpoint was disabled.
       - name: commitTransaction
         object: session0
 
@@ -164,6 +151,7 @@ tests:
             writeConcern: { w: 2, j: true, wtimeout: 5000 }
           command_name: commitTransaction
           database_name: admin
+      # commitTransaction is retried twice
       - command_started_event:
           command:
             commitTransaction: 1

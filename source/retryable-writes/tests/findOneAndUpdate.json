@@ -104,7 +104,7 @@
       }
     },
     {
-      "description": "FindOneAndUpdate is never committed",
+      "description": "FindOneAndUpdate is not committed on second attempt",
       "failPoint": {
         "configureFailPoint": "onPrimaryTransactionalWrite",
         "mode": {
@@ -128,12 +128,15 @@
         }
       },
       "outcome": {
-        "error": true,
+        "result": {
+          "_id": 1,
+          "x": 11
+        },
         "collection": {
           "data": [
             {
               "_id": 1,
-              "x": 11
+              "x": 12
             },
             {
               "_id": 2,

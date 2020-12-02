@@ -43,6 +43,15 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
+        description: "CountDocuments succeeds on third attempt"
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+        operations: [*retryable_operation_succeeds]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
         description: "CountDocuments fails on first attempt"
         clientOptions:
             retryReads: false
@@ -52,13 +61,4 @@ tests:
                 <<: *retryable_operation
                 error: true
         expectations:
-             - *retryable_command_started_event
-    -
-        description: "CountDocuments fails on second attempt"
-        failPoint:
-            <<: *failCommand_failPoint
-            mode: { times: 2 }
-        operations: [*retryable_operation_fails]
-        expectations:
-             - *retryable_command_started_event
              - *retryable_command_started_event

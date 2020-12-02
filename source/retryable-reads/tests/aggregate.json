@@ -185,6 +185,99 @@
       ]
     },
     {
+      "description": "Aggregate succeeds on third attempt",
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              },
+              {
+                "$sort": {
+                  "x": 1
+                }
+              }
+            ]
+          },
+          "result": [
+            {
+              "_id": 2,
+              "x": 22
+            },
+            {
+              "_id": 3,
+              "x": 33
+            }
+          ]
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {
+                    "_id": {
+                      "$gt": 1
+                    }
+                  }
+                },
+                {
+                  "$sort": {
+                    "x": 1
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
       "description": "Aggregate fails on first attempt",
       "clientOptions": {
         "retryReads": false
@@ -225,90 +318,6 @@
         }
       ],
       "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$sort": {
-                    "x": 1
-                  }
-                }
-              ]
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        }
-      ]
-    },
-    {
-      "description": "Aggregate fails on second attempt",
-      "failPoint": {
-        "configureFailPoint": "failCommand",
-        "mode": {
-          "times": 2
-        },
-        "data": {
-          "failCommands": [
-            "aggregate"
-          ],
-          "closeConnection": true
-        }
-      },
-      "operations": [
-        {
-          "name": "aggregate",
-          "object": "collection",
-          "arguments": {
-            "pipeline": [
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$sort": {
-                  "x": 1
-                }
-              }
-            ]
-          },
-          "error": true
-        }
-      ],
-      "expectations": [
-        {
-          "command_started_event": {
-            "command": {
-              "aggregate": "coll",
-              "pipeline": [
-                {
-                  "$match": {
-                    "_id": {
-                      "$gt": 1
-                    }
-                  }
-                },
-                {
-                  "$sort": {
-                    "x": 1
-                  }
-                }
-              ]
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
         {
           "command_started_event": {
             "command": {

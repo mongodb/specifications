@@ -37,6 +37,15 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
+        description: "ListDatabases succeeds on third attempt"
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+        operations: [*retryable_operation]
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
         description: "ListDatabases fails on first attempt"
         clientOptions:
             retryReads: false
@@ -47,13 +56,3 @@ tests:
                 error: true
         expectations:
              - *retryable_command_started_event
-    -
-        description: "ListDatabases fails on second attempt"
-        failPoint:
-            <<: *failCommand_failPoint
-            mode: { times: 2 }
-        operations: [*retryable_operation_fails]
-        expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
-

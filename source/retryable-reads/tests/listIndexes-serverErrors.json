@@ -449,7 +449,7 @@
       ]
     },
     {
-      "description": "ListIndexes fails after two NotWritablePrimary errors",
+      "description": "ListIndexes succeeds after two NotWritablePrimary errors",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
@@ -465,8 +465,7 @@
       "operations": [
         {
           "name": "listIndexes",
-          "object": "collection",
-          "error": true
+          "object": "collection"
         }
       ],
       "expectations": [
