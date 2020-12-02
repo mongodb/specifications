@@ -27,7 +27,7 @@
     {
       "name": "waitForEvent",
       "event": "ConnectionReady",
-      "count": 1
+      "count": 2
     }
   ],
   "events": [

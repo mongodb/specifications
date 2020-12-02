@@ -15,7 +15,7 @@ operations:
   - name: ready
   - name: waitForEvent
     event: ConnectionReady
-    count: 1
+    count: 2
 events:
   - type: ConnectionPoolReady
     address: 42
