@@ -33,7 +33,7 @@ operations:
   - name: waitForEvent
     event: ConnectionCreated
     count: 1
-  # wait some more time to ensure thread1's Connection is ready first
+  # wait some more time to ensure thread1 has begun establishing a Connection
   - name: wait
     ms: 100
   # start 2 check out requests. Only one thread should
