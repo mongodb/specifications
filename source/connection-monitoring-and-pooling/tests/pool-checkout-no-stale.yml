@@ -8,6 +8,7 @@ operations:
   - name: checkIn
     connection: conn
   - name: clear
+  - name: ready
   - name: checkOut
 events:
   - type: ConnectionPoolCreated

@@ -18,6 +18,9 @@
       "name": "clear"
     },
     {
+      "name": "ready"
+    },
+    {
       "name": "checkOut"
     }
   ],
