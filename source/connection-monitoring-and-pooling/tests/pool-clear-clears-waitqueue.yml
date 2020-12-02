@@ -8,6 +8,7 @@ operations:
   - name: ready
   # check out only connection in the pool
   - name: checkOut
+    label: conn1
   # start a few threads that all will enter
   # the wait queue
   - name: start
@@ -22,9 +23,21 @@ operations:
     target: thread3 
   - name: checkOut
     thread: thread3
+  # wait for the 3 threads to start checking out a connection
+  - name: waitForEvent
+    event: ConnectionCheckOutStarted
+    count: 4
   # clear the pool, ejecting the previous three threads
   # from the WaitQueue
   - name: clear
+  # the 3 threads are immediately ejected from the WaitQueue,
+  # so the ConnectionCheckOutFailed events should be emitted
+  # before the ConnectionCheckIn event here.
+  - name: checkIn
+    connection: conn1
+  - name: waitForEvent
+    event: ConnectionCheckOutFailed
+    count: 3
 events:
   - type: ConnectionCheckOutStarted
     address: 42
@@ -46,6 +59,8 @@ events:
     address: 42
   - type: ConnectionCheckOutFailed
     reason: connectionError
+    address: 42
+  - type: ConnectionCheckedIn
     address: 42
 ignore:
   - ConnectionPoolReady

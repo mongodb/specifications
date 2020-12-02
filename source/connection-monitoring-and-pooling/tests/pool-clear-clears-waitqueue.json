@@ -11,7 +11,8 @@
       "name": "ready"
     },
     {
-      "name": "checkOut"
+      "name": "checkOut",
+      "label": "conn1"
     },
     {
       "name": "start",
@@ -38,7 +39,21 @@
       "thread": "thread3"
     },
     {
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutStarted",
+      "count": 4
+    },
+    {
       "name": "clear"
+    },
+    {
+      "name": "checkIn",
+      "connection": "conn1"
+    },
+    {
+      "name": "waitForEvent",
+      "event": "ConnectionCheckOutFailed",
+      "count": 3
     }
   ],
   "events": [
@@ -79,6 +94,10 @@
     {
       "type": "ConnectionCheckOutFailed",
       "reason": "connectionError",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCheckedIn",
       "address": 42
     }
   ],
