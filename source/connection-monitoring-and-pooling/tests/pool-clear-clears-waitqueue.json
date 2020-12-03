@@ -102,6 +102,7 @@
     "ConnectionPoolCreated",
     "ConnectionCreated",
     "ConnectionReady",
-    "ConnectionCheckedIn"
+    "ConnectionCheckedIn",
+    "ConnectionClosed"
   ]
 }
