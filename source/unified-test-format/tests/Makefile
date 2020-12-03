@@ -1,8 +1,8 @@
-SCHEMA=../schema-1.0.json
+SCHEMA=../schema-1.2.json
 
-.PHONY: all invalid valid-fail valid-pass HAS_AJV
+.PHONY: all invalid valid-fail valid-pass client-side-operations-timeout HAS_AJV
 
-all: invalid valid-fail valid-pass
+all: invalid valid-fail valid-pass client-side-operations-timeout
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
@@ -13,6 +13,9 @@ valid-fail: HAS_AJV
 
 valid-pass: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "valid-pass/*.yml" --valid
+
+client-side-operations-timeout: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../client-side-operations-timeout/tests/*.yml" --valid
 
 HAS_AJV:
 	@if ! command -v ajv > /dev/null; then                \
