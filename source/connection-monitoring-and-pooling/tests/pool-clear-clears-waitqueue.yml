@@ -31,7 +31,7 @@ operations:
   # from the WaitQueue
   - name: clear
   # the 3 threads are immediately ejected from the WaitQueue,
-  # so this checkIn should cause any checkOuts to succeed.
+  # so this checkIn should cause not any checkOuts to succeed.
   - name: checkIn
     connection: conn1
   - name: waitForEvent
