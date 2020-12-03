@@ -400,7 +400,7 @@ Marking a Connection Pool as Ready
 ----------------------------------
 
 Connection Pools start off as "paused", and they are marked as "ready" by
-monitors after they perform successfull server checks. Once a pool is "ready",
+monitors after they perform successful server checks. Once a pool is "ready",
 it can start checking out `Connections <#connection>`_ and populating them in
 the background.
 
@@ -998,7 +998,7 @@ not. This enables the following behaviors:
 1. The pool can halt the creation of background connection establishments until
    the endpoint becomes available again. Without the "paused" state, the pool
    would have no way of determining when to begin establishing background
-   connections again, so it would just continuially attempt, and often fail, to
+   connections again, so it would just continually attempt, and often fail, to
    create connections until minPoolSize was satisfied, even after repeated
    failures. This could unnecessarily waste resources both server and driver side.
 
