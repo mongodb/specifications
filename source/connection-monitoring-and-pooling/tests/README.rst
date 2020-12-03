@@ -72,10 +72,11 @@ Valid Unit Test Operations are the following:
 
   - ``target``: The name of the thread to wait for.
 
-- ``waitForEvent(event, count)``: block the current thread until ``event`` has occurred ``count`` times
+- ``waitForEvent(event, count, timeout)``: block the current thread until ``event`` has occurred ``count`` times
 
   - ``event``: The name of the event
   - ``count``: The number of times the event must occur (counting from the start of the test)
+  - ``timeout``: If specified, time out with an error after waiting for this many milliseconds without seeing the required events
 
 - ``label = pool.checkOut()``: call ``checkOut`` on pool, returning the checked out connection
 

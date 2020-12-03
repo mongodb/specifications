@@ -3,12 +3,11 @@ style: unit
 description: clearing pool clears the WaitQueue
 poolOptions:
   maxPoolSize: 1
-  waitQueueTimeoutMS: 10000
+  waitQueueTimeoutMS: 30000
 operations:
   - name: ready
   # check out only connection in the pool
   - name: checkOut
-    label: conn1
   # start a few threads that all will enter
   # the wait queue
   - name: start
@@ -30,13 +29,10 @@ operations:
   # clear the pool, ejecting the previous three threads
   # from the WaitQueue
   - name: clear
-  # the 3 threads are immediately ejected from the WaitQueue,
-  # so this checkIn should cause not any checkOuts to succeed.
-  - name: checkIn
-    connection: conn1
   - name: waitForEvent
     event: ConnectionCheckOutFailed
     count: 3
+    timeout: 1000
 events:
   - type: ConnectionCheckOutStarted
     address: 42
