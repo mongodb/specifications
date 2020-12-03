@@ -184,9 +184,9 @@ Integration Test Runner
 The steps to run the integration tests are the same as those used to run the
 unit tests with the following modifications:
 
- - The integration tests MUST be run against an actual endpoint. If the
-   deployment being tested contains multiple endpoints, then the runner MUST
-   only use one of them to run the tests against.
+- The integration tests MUST be run against an actual endpoint. If the
+  deployment being tested contains multiple endpoints, then the runner MUST
+  only use one of them to run the tests against.
 
 - For each test, if `failPoint` is specified, its value is a
   ``configureFailPoint`` command. Run the command on the admin database of the
