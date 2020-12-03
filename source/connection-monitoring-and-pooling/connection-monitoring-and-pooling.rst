@@ -674,7 +674,9 @@ transition the pool's state to "paused" to halt the creation of new connections
 until it is marked as "ready" again. The checkOut and checkIn algorithms will
 handle clearing out stale `Connections <#connection>`_. If a user is subscribed
 to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
-incrementing the generation / marking the pool as "paused".
+incrementing the generation / marking the pool as "paused". If the pool is
+already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared
+event.
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
@@ -1009,6 +1011,17 @@ not. This enables the following behaviors:
    between SDAM and Server Selection. These requests would then likely fail with
    potentially high latency, again wasting resources both server and driver side.
 
+Why not emit PoolCleared events when clearing a paused pool?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If a pool is already paused when it is cleared, that means it was previously
+cleared and no new connections have been created since then. Thus, clearing the
+pool in this case is essentially a no-op, so there is no need to notify any
+listeners that it has occurred. The generation is still incremented, however, to
+ensure future errors that caused the duplicate clear will stop attempting to
+clear the pool again. This situation is possible if the pool is cleared by the
+background thread after it encounters an error establishing a connection, but
+the ServerDescription for the endpoint was not updated accordingly yet.
 
 Backwards Compatibility
 =======================
