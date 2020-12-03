@@ -980,6 +980,30 @@ again, so ensuring the socket is torn down does not need to happen
 immediately and can happen at a later time, either via async I/O or a
 background thread. 
 
+Why can the pool be paused?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The distinction between the "paused" state and the "ready" state allows the pool
+to determine whether or not the endpoint it is associated with is available or
+not. This enables the following behaviors:
+
+1. The pool can halt the creation of background connection establishments until
+   the endpoint becomes available again. Without the "paused" state, the pool
+   would have no way of determining when to begin establishing background
+   connections again, so it would just continuially attempt, and often fail, to
+   create connections until minPoolSize was satisfied, even after repeated
+   failures. This could unnecessarily waste resources both server and driver side.
+
+2. The pool can evict requests that enter the WaitQueue after the pool was
+   cleared but before the server was in a known state again. Such requests can
+   occur when a server is selected at the same time as it becomes marked as
+   Unknown in highly concurrent workloads. Without the "paused" state, the pool
+   would attempt to service these requests, since it would assume they were
+   routed to the pool because its endpoint was available, not because of a race
+   between SDAM and Server Selection. These requests would then likely fail with
+   potentially high latency, again wasting resources both server and driver side.
+
+
 Backwards Compatibility
 =======================
 
