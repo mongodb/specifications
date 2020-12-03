@@ -502,8 +502,12 @@ could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
 If an error is encountered while populating a connection, the pool MUST be
-cleared. The pool SHOULD notify the corresponding monitor that such an error
-occurred, if possible according to the driver's implementation.
+cleared if the `Connection's <#connection>`_ generation is greater than or equal
+to the pool's generation. The error SHOULD be handled like a network error that
+occurred *Before the handshake completed* according to the `Network error when
+reading or writing`_ section in the SDAM specification, if possible in the
+driver's implementation. If not possible, then the error will get handled that
+way by the existing SDAM machinery next time checkOut is called.
 
 .. code::
 
@@ -513,7 +517,9 @@ occurred, if possible according to the driver's implementation.
      establish connection
      mark connection as available
    except error:
-     clear pool
+     if connection.generation >= pool.generation:
+       clear pool
+       handle pre handshake network error # if possible
 
 
 Checking Out a Connection
@@ -550,9 +556,9 @@ requirement. Waiting on the condition variable SHOULD also be limited by the
 WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
 If the pool is "closed" or "paused", any attempt to check out a `Connection
-<#connection>`_ MUST throw an Error, and any items in the waitQueue MUST be
-removed from the waitQueue and throw an Error. The error thrown as a result of
-the pool being "paused" MUST be retryable.
+<#connection>`_ MUST throw an Error. The error thrown as a result of the pool
+being "paused" MUST be considered a non-timeout network error for the purposes
+of retryability and monitoring.
 
 If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
 minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
@@ -1049,3 +1055,7 @@ Change log
 
 :2019-06-06: Add "connectionError" as a valid reason for
              ConnectionCheckOutFailedEvent
+
+.. Section for links.
+
+.. _Network error when reading or writing: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
