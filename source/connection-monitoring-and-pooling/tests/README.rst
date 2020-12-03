@@ -152,11 +152,10 @@ For each YAML file with ``style: unit``:
   - If ``poolOptions`` is specified, use those options to initialize both pools
   - The returned pool must have an ``address`` set as a string value.
 
-- Execute each ``operation`` in ``operations``
+- Process each ``operation`` in ``operations`` (on the main thread)
 
-  - If a ``thread`` is specified, execute in that corresponding thread. Otherwise, execute in the main thread.
+  - If a ``thread`` is specified, the main thread MUST schedule the operation to execute in the corresponding thread. Otherwise, execute the operation directly in the main thread.
 
-- Wait for the main thread to finish executing all of its operations
 - If ``error`` is presented
 
   - Assert that an actual error ``actualError`` was thrown by the main thread
