@@ -178,3 +178,34 @@ Attempt a write to a collection.
 
 Outcome: Verify that the write succeeded or failed depending on existing
 driver behavior with respect to the starting topology.
+
+Monitors sleep at least minHeartbeatFreqencyMS between checks
+-------------------------------------------------------------
+
+This test will be used to ensure monitors sleep for an appropriate amount of
+time between failed server checks so as to not flood the server with new
+connection creations.
+
+This test requires MongoDB 4.9.0+.
+
+1. Enable the following failpoint::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 5 },
+         data: {
+             failCommands: ["isMaster"],
+             errorCode: 1234,
+             appName: "SDAMMinHeartbeatFrequencyTest"
+         }
+     }
+
+2. Create a client with directConnection=true, appName="SDAMMinHeartbeatFrequencyTest", and
+   serverSelectionTimeoutMS=5000.
+
+3. Start a timer.
+
+4. Execute a ``ping`` command.
+
+5. Stop the timer. Assert that the ``ping`` took between 2 seconds and 3.5
+   seconds to complete.
