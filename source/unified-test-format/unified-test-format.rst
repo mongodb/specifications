@@ -1038,6 +1038,14 @@ Database operations that require special handling or are not documented by an
 existing specification are described below.
 
 
+aggregate
+~~~~~~~~~
+
+When executing an ``aggregate`` operation, the test runner MUST fully iterate
+the result. This will ensure consistent behavior between drivers that eagerly
+create a server-side cursor and those that do so lazily when iteration begins.
+
+
 .. _database_createChangeStream:
 
 createChangeStream
