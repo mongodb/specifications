@@ -1,0 +1,27 @@
+name: Unified Test Format Schema Check
+
+on:
+  push: ~
+  pull_request: ~
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Set up npm
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Install dependencies
+        run: |
+          npm install -g ajv-cli
+      - name: Check unified format test files against schema
+        run: |
+          cd source/unified-test-format/tests && make

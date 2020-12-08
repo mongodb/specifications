@@ -1,0 +1,24 @@
+name: Check code snippets in RST files
+
+on:
+  push: ~
+  pull_request: ~
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install rstcheck==3.3.1
+      - name: Check RST files with rstcheck
+        run: |
+          rstcheck -r source/ --ignore-language c,python,java --report error
