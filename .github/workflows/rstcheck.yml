@@ -1,7 +1,8 @@
 name: Check code snippets in RST files
 
 on:
-  push: ~
+  push:
+    branches: [master]
   pull_request: ~
 
 jobs:

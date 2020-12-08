@@ -1,7 +1,8 @@
 name: Check if all JSON test files are up-to-date
 
 on:
-  push: ~
+  push:
+    branches: [master]
   pull_request: ~
 
 jobs:
