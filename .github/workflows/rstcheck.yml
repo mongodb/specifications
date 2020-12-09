@@ -1,4 +1,4 @@
-name: Check code snippets in RST files
+name: Check RST file syntax
 
 on:
   push:

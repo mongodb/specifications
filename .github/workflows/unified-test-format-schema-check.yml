@@ -1,4 +1,4 @@
-name: Unified Test Format Schema Check
+name: Check unified test format files against schema
 
 on:
   push:
