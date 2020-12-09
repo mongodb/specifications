@@ -229,7 +229,7 @@ MongoDB 4.2.9+.
 
      {
          configureFailPoint: "failCommand",
-         mode: { times: 1 },
+         mode: { times: 2 },
          data: {
              failCommands: ["isMaster"],
              errorCode: 1234,
