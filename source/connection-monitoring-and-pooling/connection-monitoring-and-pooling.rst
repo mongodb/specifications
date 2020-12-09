@@ -519,10 +519,11 @@ time checkOut is called.
      establish connection
      mark connection as available
    except error:
-     if connection.generation >= pool.generation:
-       clear pool
-       handle pre handshake network error # if possible
-
+     if CMAP background thread/task has access to the topology:
+         topology.handle_pre_handshake_error(error) # if possible, defer error handling to SDAM
+     else:
+         if connection.generation >= pool.generation:
+             clear pool
 
 Checking Out a Connection
 -------------------------
