@@ -501,13 +501,15 @@ Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, the pool MUST be
-cleared if the `Connection's <#connection>`_ generation is greater than or equal
-to the pool's generation. The error SHOULD be handled like a network error that
-occurred *Before the handshake completed* according to the `Network error when
-reading or writing`_ section in the SDAM specification, if possible in the
-driver's implementation. If not possible, then the error will get handled that
-way by the existing SDAM machinery next time checkOut is called.
+If an error is encountered while populating a connection, it SHOULD be handled
+via the SDAM machinery according to the `Application Errors`_ section in the SDAM
+specification, if possible in the driver's implementation. When doing so, the
+error MUST be treated as a network error that occurred while executing an
+operation but *Before the handshake completed*. If it is not possible for a
+driver to handle the error via the SDAM machinery, then the pool MUST be cleared
+if the connection's generation is greater than or equal to the pool's
+generation. The error will then get handled later by the SDAM machinery next
+time checkOut is called.
 
 .. code::
 
@@ -1071,4 +1073,4 @@ Change log
 
 .. Section for links.
 
-.. _Network error when reading or writing: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
+.. _Application Error: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
