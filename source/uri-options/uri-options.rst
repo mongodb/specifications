@@ -339,7 +339,8 @@ pertaining to URI options apply here.
      - positive number
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools, with exceptions described in the `Connection Pooling spec`_
-     - The maximum number of clients or connections able to be created by a pool at a given time
+     - Amount of time spent attempting to check out a connection from a server's
+       connection pool before timing out
 
    * - wTimeoutMS
      - non-negative 64-bit integer; 0 means no timeout
