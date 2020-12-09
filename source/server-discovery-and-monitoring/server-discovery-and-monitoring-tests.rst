@@ -222,7 +222,7 @@ MongoDB 4.2.9+.
 1. Create a client with directConnection=true, appName="SDAMPoolManagementTest",
    and heartbeatFrequencyMS=500 (or lower if possible).
 
-2. Verify via SDAM and CMAP event monitoring that a ConnectionPoolCreatedEvent occurs
+2. Verify via SDAM and CMAP event monitoring that a ConnectionPoolReadyEvent occurs
    after the first ServerHeartbeatSucceededEvent event does.
 
 3. Enable the following failpoint::
