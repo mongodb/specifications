@@ -216,6 +216,9 @@ Connection Pool Management
 This test will be used to ensure monitors properly create and unpause connection
 pools when they discover servers.
 
+This test requires failCommand appName support which is only available in
+MongoDB 4.2.9+.
+
 1. Create a client with directConnection=true, appName="SDAMPoolManagementTest",
    and heartbeatFrequencyMS=500 (or lower if possible).
 
