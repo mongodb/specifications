@@ -1074,4 +1074,4 @@ Change log
 
 .. Section for links.
 
-.. _Application Error: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
+.. _Application Error: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#application-errors
