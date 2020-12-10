@@ -979,8 +979,8 @@ Iterating Returned Iterables
 Unless otherwise stated by an operation below, test runners MUST fully iterate
 any iterable returned by an operation as part of that operation's execution.
 This is necessary to ensure consistent behavior among drivers, as discussed in
-`aggregate`_ and `find`_, and also ensures that error and event assertions can
-be evaluated consistently.
+`collection_aggregate`_ and `find`_, and also ensures that error and event
+assertions can be evaluated consistently.
 
 
 Client Operations
@@ -1037,6 +1037,7 @@ specifications:
 Database operations that require special handling or are not documented by an
 existing specification are described below.
 
+.. _database_aggregate:
 
 aggregate
 ~~~~~~~~~
@@ -1116,6 +1117,7 @@ specifications:
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
 
+.. _collection_aggregate:
 
 aggregate
 ~~~~~~~~~
