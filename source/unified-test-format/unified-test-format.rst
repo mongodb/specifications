@@ -1004,8 +1004,8 @@ Iterating Returned Iterables
 Unless otherwise stated by an operation below, test runners MUST fully iterate
 any iterable returned by an operation as part of that operation's execution.
 This is necessary to ensure consistent behavior among drivers, as discussed in
-`aggregate`_ and `find`_, and also ensures that error and event assertions can
-be evaluated consistently.
+`collection_aggregate`_ and `find`_, and also ensures that error and event
+assertions can be evaluated consistently.
 
 
 Client Operations
@@ -1061,6 +1061,15 @@ specifications:
 
 Database operations that require special handling or are not documented by an
 existing specification are described below.
+
+.. _database_aggregate:
+
+aggregate
+~~~~~~~~~
+
+When executing an ``aggregate`` operation, the test runner MUST fully iterate
+the result. This will ensure consistent behavior between drivers that eagerly
+create a server-side cursor and those that do so lazily when iteration begins.
 
 
 .. _database_createChangeStream:
@@ -1133,6 +1142,7 @@ specifications:
 Collection operations that require special handling or are not documented by an
 existing specification are described below.
 
+.. _collection_aggregate:
 
 aggregate
 ~~~~~~~~~
@@ -1865,7 +1875,7 @@ root-level documents include, but are not limited to:
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 - `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
 - `expectResult`_ for `iterateUntilDocumentOrError`_ `ChangeStream Operations`_
-- each array element in `expectResult`_ for `find`_ or `aggregate`_
+- each array element in `expectResult`_ for `find`_ or `collection_aggregate`_
   `Collection Operations`_
 
 For example, the following documents match::
