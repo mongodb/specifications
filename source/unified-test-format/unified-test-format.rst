@@ -1850,7 +1850,7 @@ root-level documents include, but are not limited to:
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 - `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
 - `expectResult`_ for `iterateUntilDocumentOrError`_ `ChangeStream Operations`_
-- each array element in `expectResult`_ for `find`_ or `aggregate`_
+- each array element in `expectResult`_ for `find`_ or `collection_aggregate`_
   `Collection Operations`_
 
 For example, the following documents match::
