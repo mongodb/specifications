@@ -681,11 +681,12 @@ event.
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
-cleared while the checkOut was being performed. The error returned MUST be
-considered a retryable error. Clearing the WaitQueue MUST happen eagerly so that
-any operations waiting on `Connections <#connection>`_ can retry as soon as
-possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear requests from
-the WaitQueue.
+cleared while the checkOut was being performed. The error returned as a result
+of the pool being cleared MUST be considered a non-timeout network error for the
+purposes of retryability and monitoring. Clearing the WaitQueue MUST happen
+eagerly so that any operations waiting on `Connections <#connection>`_ can retry
+as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
+requests from the WaitQueue.
 
 Forking
 -------
