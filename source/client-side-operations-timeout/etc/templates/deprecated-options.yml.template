@@ -1,4 +1,4 @@
-description: "operations error if timeoutMS is used with a deprecated timeout option"
+description: "operations ignore deprected timeout options if timeoutMS is set"
 
 schemaVersion: "1.2"
 
@@ -8,15 +8,37 @@ schemaVersion: "1.2"
 runOnRequirements:
   - minServerVersion: "4.2"
 
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+
 initialData:
   - collectionName: &collectionName coll
     databaseName: &databaseName test
     documents: []
 
 tests:
-  # One-off tests to assert that drivers error if both maxCommitTimeMS and timeoutMS are set.
+  # For each operation, run these tests:
+  #
+  # 1. socketTimeoutMS is ignored if timeoutMS is set. The test creates a client with socketTimeoutMS=1, configures and
+  # a failpoint to block the operation for 5ms, runs the operation with timeoutMS=10000, and expects it to succeed.
+  #
+  # 2. wTimeoutMS is ignored if timeoutMS is set. The test creates a client with wTimeoutMS=1, runs the operation with
+  # timeoutMS=10000, expects the operation to succeed, and uses command monitoring expectations to assert that the
+  # command sent to the server does not contain a writeConcern field.
+  #
+  # 3. If the operation supports maxTimeMS, it ignores maxTimeMS if timeoutMS is set. The test executes the operation
+  # with maxTimeMS=1 and timeoutMS=10000. It expects the operation to succeed and uses command monitoring expectations
+  # to assert that the command contains a maxTimeMS field. It does not make any assertions to verify that the maxTimeMS
+  # field was correctly derived from timeoutMS. If the driver sets maxTimeMS=1 in the command, the operation will fail
+  # with a MaxTimeMSExpired server error.
 
-  - description: "abortTransaction errors if maxCommitTimeMS and timeoutMS are both specified"
+  # Tests for commitTransaction. These are not included in the operations loop because the tests need to execute
+  # additional "startTransaction" and "insertOne" operations to establish a server-side transaction. There is also one
+  # additional test to assert that maxCommitTimeMS is ignored if timeoutMS is set.
+
+  - description: "commitTransaction ignores socketTimeoutMS if timeoutMS is set"
     operations:
       - name: createEntities
         object: testRunner
@@ -24,45 +46,44 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  socketTimeoutMS: 1
+                useMultipleMongoses: false
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
             - session:
                 id: &session session
                 client: *client
-                sessionOptions:
-                  defaultTransactionOptions:
-                    maxCommitTimeMS: 10
-      - name: startTransaction
-        object: *session
-      - name: abortTransaction
-        object: *session
-        arguments:
-          timeoutMS: 100000
-        expectError:
-          isClientError: true
-
-  - description: "commitTransaction errors if maxCommitTimeMS and timeoutMS are both specified"
-    operations:
-      - name: createEntities
+      - name: failPoint
         object: testRunner
         arguments:
-          entities:
-            - client:
-                id: &client client
-            - session:
-                id: &session session
-                client: *client
-                sessionOptions:
-                  defaultTransactionOptions:
-                    maxCommitTimeMS: 10
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["commitTransaction"]
+              blockConnection: true
+              blockTimeMS: 5
       - name: startTransaction
         object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          document: { _id: 1 }
+          session: *session
       - name: commitTransaction
         object: *session
         arguments:
-          timeoutMS: 100000
-        expectError:
-          isClientError: true
+          timeoutMS: 10000
 
-  - description: "withTransaction errors if maxCommitTimeMS and timeoutMS are both specified"
+  - description: "commitTransaction ignores wTimeoutMS if timeoutMS is set"
     operations:
       - name: createEntities
         object: testRunner
@@ -70,6 +91,56 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  wTimeoutMS: 1
+                observeEvents:
+                  - commandStartedEvent
+                ignoreCommandMonitoringEvents: ["insert"]
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: startTransaction
+        object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          document: { _id: 1 }
+          session: *session
+      - name: commitTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10000
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  - description: "commitTransaction ignores maxCommitTimeMS if timeoutMS is set"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - commandStartedEvent
+                ignoreCommandMonitoringEvents: ["insert"]
             - database:
                 id: &database database
                 client: *client
@@ -83,24 +154,295 @@ tests:
                 client: *client
                 sessionOptions:
                   defaultTransactionOptions:
-                    maxCommitTimeMS: 10
+                    maxCommitTimeMS: 1
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          arguments:
+            failPoint:
+              configureFailPoint: failCommand
+              mode: { times: 1 }
+              data:
+                failCommands: ["commitTransaction"]
+                blockConnection: true
+                blockTimeMS: 5
+      - name: startTransaction
+        object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          document: { _id: 1 }
+          session: *session
+      - name: commitTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10000
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                maxTimeMS: { $$type: ["int", "long"] }
+  
+  # Tests for abortTransaction. These are not included in the operations loop because the tests need to execute
+  # additional "startTransaction" and "insertOne" operations to establish a server-side transaction.
+
+  - description: "abortTransaction ignores socketTimeoutMS if timeoutMS is set"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 1
+                useMultipleMongoses: false
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["abortTransaction"]
+              blockConnection: true
+              blockTimeMS: 5
+      - name: startTransaction
+        object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          document: { _id: 1 }
+          session: *session
+      - name: abortTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10000
+
+  - description: "abortTransaction ignores wTimeoutMS if timeoutMS is set"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 1
+                observeEvents:
+                  - commandStartedEvent
+                ignoreCommandMonitoringEvents: ["insert"]
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: startTransaction
+        object: *session
+      - name: insertOne
+        object: *collection
+        arguments:
+          document: { _id: 1 }
+          session: *session
+      - name: abortTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10000
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  # Tests for withTransaction. These are not included in the operations loop because the command monitoring
+  # expectations contain multiple commands. There is also one additional test to assert that maxCommitTimeMS is ignored
+  # if timeoutMS is set.
+
+  - description: "withTransaction ignores socketTimeoutMS if timeoutMS is set"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  socketTimeoutMS: 1
+                useMultipleMongoses: false
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["commitTransaction"]
+              blockConnection: true
+              blockTimeMS: 5
       - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 100000
-          callback: []
-        expectError:
-          isClientError: true
+          timeoutMS: 10000
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { _id: 1 }
+                session: *session
 
-  # For each operation, run these tests:
-  #
-  # 1. Error if both socketTimeoutMS and timeoutMS are set.
-  # 2. Error if both waitQueueTimeoutMS and timeoutMS are set.
-  # 3. Error if both wTimeoutMS and timeoutMS are set.
-  # 4. If the operation supports the maxTimeMS option, error if both maxTimeMS and timeoutMS are set.
+  - description: "withTransaction ignores wTimeoutMS if timeoutMS is set"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                uriOptions:
+                  wTimeoutMS: 1
+                observeEvents:
+                  - commandStartedEvent
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+      - name: withTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10000
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { _id: 1 }
+                session: *session
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  - description: "withTransaction ignores maxCommitTimeMS if timeoutMS is set"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - commandStartedEvent
+                ignoreCommandMonitoringEvents: ["insert"]
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+            - session:
+                id: &session session
+                client: *client
+                sessionOptions:
+                  defaultTransactionOptions:
+                    maxCommitTimeMS: 1
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          arguments:
+            failPoint:
+              configureFailPoint: failCommand
+              mode: { times: 1 }
+              data:
+                failCommands: ["commitTransaction"]
+                blockConnection: true
+                blockTimeMS: 5
+      - name: withTransaction
+        object: *session
+        arguments:
+          timeoutMS: 10000
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { _id: 1 }
+                session: *session
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                maxTimeMS: { $$type: ["int", "long"] }
+
+  # Tests for operations that can be generated.
 
   {% for operation in operations %}
-  - description: "error if socketTimeoutMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+  - description: "socketTimeoutMS is ignored if timeoutMS is set - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: createEntities
         object: testRunner
@@ -109,7 +451,8 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 10
+                  socketTimeoutMS: 1
+                useMultipleMongoses: false
             - database:
                 id: &database database
                 client: *client
@@ -124,6 +467,17 @@ tests:
             - session:
                 id: &session session
                 client: *client
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 5
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         arguments:
@@ -131,10 +485,8 @@ tests:
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        expectError:
-          isClientError: true
 
-  - description: "error if waitQueueTimeoutMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+  - description: "wTimeoutMS is ignored if timeoutMS is set - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: createEntities
         object: testRunner
@@ -143,7 +495,9 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  waitQueueTimeoutMS: 10
+                  wTimeoutMS: 1
+                observeEvents:
+                  - commandStartedEvent
             - database:
                 id: &database database
                 client: *client
@@ -165,45 +519,19 @@ tests:
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        expectError:
-          isClientError: true
-
-  - description: "error if wTimeoutMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
-    operations:
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
-            - client:
-                id: &client client
-                uriOptions:
-                  wTimeoutMS: 10
-            - database:
-                id: &database database
-                client: *client
-                databaseName: *databaseName
-            - collection:
-                id: &collection collection
-                database: *database
-                collectionName: *collectionName
-            - bucket:
-                id: &bucket bucket
-                database: *database
-            - session:
-                id: &session session
-                client: *client
-      - name: {{operation.operation_name}}
-        object: *{{operation.object}}
-        arguments:
-          timeoutMS: 100000
-          {% for arg in operation.arguments -%}
-          {{arg}}
-          {% endfor %}
-        expectError:
-          isClientError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
 
   {% if max_time_supported(operation.operation_name) -%}
-  - description: "error if maxTimeMS and timeoutMS are both specified - {{operation.operation_name}} on {{operation.object}}"
+  - description: "maxTimeMS is ignored if timeoutMS is set - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: createEntities
         object: testRunner
@@ -211,6 +539,9 @@ tests:
           entities:
             - client:
                 id: &client client
+                useMultipleMongoses: false
+                observeEvents:
+                  - commandStartedEvent
             - database:
                 id: &database database
                 client: *client
@@ -225,15 +556,33 @@ tests:
             - session:
                 id: &session session
                 client: *client
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 5
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         arguments:
-          timeoutMS: 100000
-          maxTimeMS: 100000
+          timeoutMS: 10000
+          maxTimeMS: 1
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
-        expectError:
-          isClientError: true
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$type: ["int", "long"] }
   {% endif -%}
   {% endfor %}

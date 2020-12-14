@@ -594,7 +594,9 @@ Unit Tests
 The tests enumerated in this section could not be expressed in either spec or prose format. Drivers SHOULD implement
 these if it is possible to do so using the driver's existing test infrastructure.
 
-- When executing an operation, the remaining ``timeoutMS`` value should apply to connection checkout.
+- Operations should ignore ``waitQueueTimeoutMS`` if ``timeoutMS`` is also set.
+- If ``timeoutMS`` is set for an operation, the remaining ``timeoutMS`` value should apply to connection checkout after a server has been selected.
+- If ``timeoutMS`` is not set for an operation, ``waitQueueTimeoutMS`` should apply to connection checkout after a server has been selected.
 - If a new connection is required to execute an operation, ``min(remaining computedServerSelectionTimeout, connectTimeoutMS)`` should apply to socket establishment.
 - For drivers that have control over OCSP behavior, ``min(remaining computedServerSelectionTimeout, 5 seconds)`` should apply to HTTP requests against OCSP responders.
 - If ``timeoutMS`` is unset, operations fail after two non-consecutive socket timeouts.
