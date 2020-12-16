@@ -804,6 +804,8 @@ Proceed to run the test case.
 
 Each test case configures a ``MongoClient`` with automatic encryption (named ``client_encrypted``).
 
+Each test must assert the number of unique ``MongoClient``s created. This can be accomplished by capturing ``TopologyOpeningEvent``, or by checking command started events for a client identifier (not possible in all drivers).
+
 Running a test case
 ```````````````````
 - Create a ``MongoClient`` named ``client_encrypted`` configured as follows:
@@ -811,7 +813,6 @@ Running a test case
    - ``AutoEncrytionOpts.kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
    - ``maxPoolSize=1``
    - Capture command started events.
-   - Capture SDAM monitoring events.
    - Append ``TestCase.AutoEncryptionOpts`` (defined below)
 - If the testcase sets ``AutoEncryptionOpts.bypassAutoEncryption=true``:
    - Use ``client_test`` to insert ``{ "_id": 0, "encrypted": <ciphertext> }``.
@@ -820,14 +821,7 @@ Running a test case
 - Run a ``findOne`` operation, with the filter ``{ "_id": 0 }``.
 - Expect the result to be ``{ "_id": 0, "encrypted": "string0" }``.
 - Check captured events against ``TestCase.Expectations``.
-
-(Drivers with a thread-unsafe ``MongoClient`` MUST skip the following steps)
-
-- Run the following sequence of operations 10 times concurrently (e.g. in 10 separate threads), indexed by ``i``.
-   - Use ``client_encrypted`` to insert ``{ "_id": ``i``, "encrypted": "string0" }``.
-   - Run a ``findOne`` operation, with the filter ``{ "_id": ``i`` }``.
-   - Expect the result to be ``{ "_id": ``i``, "encrypted": "string0" }``.
-- Expect the operations to have completed with no errors.
+- Check the number of unique ``MongoClient``s created is equal to ``TestCase.ExpectedNumberOfClients``.
 
 Case 1
 ``````
@@ -841,7 +835,7 @@ Case 1
       - a find on "keyvault".
       - an insert on "db".
       - a find on "db"
-   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+- ExpectedNumberOfClients: 2
 
 Case 2
 ``````
@@ -856,7 +850,7 @@ Case 2
       - a find on "db"
    - Expect ``client_metadata`` to have captured one ``CommandStartedEvent``:
       - a listCollections to "db".
-   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+- ExpectedNumberOfClients: 2
 
 Case 3
 ``````
@@ -871,7 +865,7 @@ Case 3
       - a find on "db"
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
-   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+- ExpectedNumberOfClients: 2
 
 Case 4
 ``````
@@ -887,7 +881,7 @@ Case 4
       - a listCollections to "db".
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
-   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
+- ExpectedNumberOfClients: 1
 
 Case 5
 ``````
@@ -900,7 +894,7 @@ Case 5
       - an insert on "db".
       - a find on "keyvault".
       - a find on "db"
-   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+- ExpectedNumberOfClients: 2
 
 Case 6
 ``````
@@ -913,8 +907,8 @@ Case 6
       - an insert on "db".
       - a find on "keyvault".
       - a find on "db"
-   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
    - Expect ``client_metadata`` to have captured zero ``CommandStartedEvent``.
+- ExpectedNumberOfClients: 1
 
 Case 7
 ``````
@@ -926,9 +920,9 @@ Case 7
    - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
       - an insert on "db".
       - a find on "db"
-   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
+- ExpectedNumberOfClients: 1
 
 Case 8
 ``````
@@ -940,7 +934,7 @@ Case 8
    - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
       - an insert on "db".
       - a find on "db"
-   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
    - Expect ``client_metadata`` to have captured zero ``CommandStartedEvent``.
+- ExpectedNumberOfClients: 1
