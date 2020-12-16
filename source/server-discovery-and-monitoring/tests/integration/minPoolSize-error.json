@@ -1,7 +1,7 @@
 {
   "runOn": [
     {
-      "minServerVersion": "4.4"
+      "minServerVersion": "4.9"
     }
   ],
   "database_name": "sdam-tests",
@@ -13,15 +13,14 @@
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "skip": 2
+          "skip": 3
         },
         "data": {
           "failCommands": [
             "isMaster"
           ],
           "appName": "SDAMminPoolSizeError",
-          "closeConnection": false,
-          "errorCode": 91
+          "closeConnection": true
         }
       },
       "clientOptions": {
@@ -72,10 +71,7 @@
           "arguments": {
             "failPoint": {
               "configureFailPoint": "failCommand",
-              "mode": "off",
-              "data": {
-                "errorCode": 91
-              }
+              "mode": "off"
             }
           }
         },
@@ -84,7 +80,7 @@
           "object": "testRunner",
           "arguments": {
             "event": "PoolReadyEvent",
-            "count": 1
+            "count": 2
           }
         },
         {
@@ -93,7 +89,7 @@
           "command_name": "ping",
           "arguments": {
             "command": {
-              "ping": {}
+              "ping": 1
             }
           },
           "error": false
