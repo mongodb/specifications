@@ -822,6 +822,7 @@ Running a test case
 - Check captured events against ``TestCase.Expectations``.
 
 (Drivers with a thread-unsafe ``MongoClient`` MUST skip the following steps)
+
 - Run the following sequence of operations 10 times concurrently (e.g. in 10 separate threads), indexed by ``i``.
    - Use ``client_encrypted`` to insert ``{ "_id": ``i``, "encrypted": "string0" }``.
    - Run a ``findOne`` operation, with the filter ``{ "_id": ``i`` }``.
