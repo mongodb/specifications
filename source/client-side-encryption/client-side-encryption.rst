@@ -295,13 +295,13 @@ A client used to run ``listCollections`` to determine whether a collection has
 an associated JSON schema with encrypted fields specified.
 
 If a ``metadataClient`` is not set, and ``bypassAutomaticEncryption=false`` then
-an internal ``MongoClient`` is used internally with the same options as the
-parent ``MongoClient`` excluding the ``AutoEncryptionOpts``.
+an internal ``MongoClient`` is used with the same options as the parent ``MongoClient``
+excluding the ``AutoEncryptionOpts``.
 
 Drivers MUST document this behavior, using the following as a template:
 
    If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` with
-   ``bypassAutomaticEncryption=false``, a ``metadataClient`` is necessary. If a
+   ``bypassAutomaticEncryption=false`` then a ``metadataClient`` is necessary. If a
    ``metadataClient`` is not passed as an option, a separate ``MongoClient`` is
    used internally. It is configured using the options of the parent ``MongoClient``
    with the ``AutoEncryptionOpts`` omitted.
@@ -316,12 +316,12 @@ keyVaultClient can be used to route data key queries to a separate
 MongoDB cluster.
 
 A ``keyVaultClient`` is necessary for both automatic encryption and decryption.
-If a ``keyVaultClient`` is not set then an internal ``MongoClient`` is used the
-same options as the parent ``MongoClient`` excluding the ``AutoEncryptionOpts``.
+If a ``keyVaultClient`` is not set then an internal ``MongoClient`` is used with
+the same options as the parent ``MongoClient`` excluding the ``AutoEncryptionOpts``.
 
 Drivers MUST document this behavior, using the following as a template:
 
-   If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` with a
+   If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` then a
    ``keyVaultClient`` is necessary. If a ``keyVaultClient`` is not passed as an
    option, a separate ``MongoClient`` is used internally. It is configured using the
    options of the parent ``MongoClient`` with the ``AutoEncryptionOpts`` omitted.
@@ -1376,7 +1376,8 @@ has a remote schema. This uses the ``metadataClient``.
 - a ``find`` against the key vault collection to fetch keys. This uses the
 ``keyVaultClient``.
 
-**Why not reuse the parent MongoClient?**
+Why not reuse the parent MongoClient?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 These operations MUST NOT reuse the same connection pool as the parent
 ``MongoClient`` configured with automatic encryption to avoid possible deadlock
@@ -1396,7 +1397,8 @@ connections from the pool when processing a single command. If maxPoolSize=1,
 this is an immediate deadlock. If maxPoolSize=2, and two threads check out the
 first connection, they will deadlock attempting to check out the second.
 
-**Why are keyVaultClient and metadataClient separate exposed options?**
+Why are keyVaultClient and metadataClient separate exposed options?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``keyVaultClient`` supports the use case where the key vault collection is
 stored on a MongoDB cluster separate from the data-bearing cluster.
@@ -1412,21 +1414,29 @@ the parent ``MongoClient``.
 This is an exposed option to provide a way for users to configure (e.g. set a
 lower ``minPoolSize`` to avoid additional connections).
 
-**Why is the metadataClient not needed if bypassAutoEncryption=true**
+Why is the metadataClient not needed if bypassAutoEncryption=true
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Because automatic decryption does not require the JSON schema.
 ``listCollections`` is not run during automatic encryption.
 
-**Can the keyVaultClient and the metadataClient be the same?**
+Can the keyVaultClient and the metadataClient be set to the same MongoClient?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Technically yes, but not all drivers support this. In some drivers, the
 ``keyVaultClient`` and ``metadataClient`` is configured by passing client
 options, instead of a client object.
 
-If a ``metadataClient`` is passed, but a ``keyVaultClient`` is set, it would be
-possible to have the ``keyVaultClient`` internally use the passed
-``metadataClient``. This was decided against because it adds complexity to the
-API.
+Can the metadataClient serve as the internal client when no keyVaultClient is set?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Technically yes, but it adds complexity to the API without a clear benefit.
+
+The ``metadataClient`` and ``keyVaultClient`` currently serve separate distinct
+purposes from the user's perspective.
+
+The ``keyVaultClient`` fetches keys from the key vault collection.
+The ``metadataClient`` runs ``listCollections`` to check for remote schemas.
 
 Future work
 ===========
