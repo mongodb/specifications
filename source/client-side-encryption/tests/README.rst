@@ -770,3 +770,177 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 #. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed. 
 
 #. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run an ``isMaster`` command and ensure it fails with a server selection timeout.
+
+Deadlock tests
+~~~~~~~~~~~~~~
+
+There are several test cases. Before each test case, perform the setup.
+
+Drivers that do not support ``maxPoolSize`` may skip the warning/error cases.
+
+Setup
+`````
+
+Create three ``MongoClient``s with ``maxPoolSize=1``, ``readConcern=majority`` and ``writeConcern=majority``:
+- ``client_test`` for test operations
+- ``client_keyvault`` to use as a ``keyVaultClient``. Capture command started events.
+- ``client_metadata`` to use as a ``metadataClient``. Capture command started events.
+
+Using ``client_test``, drop the collections ``keyvault.datakeys`` and ``db.coll``.
+Insert the document `external/external-key.json <../external/external-key.json>`_ into ``keyvault.datakeys``.
+Create a collection ``db.coll`` configured with a JSON schema `external/external-schema.json <../external/external-schema.json>`_ as the validator, like so:
+
+.. code:: typescript
+
+   {"create": "coll", "validator": {"$jsonSchema": <json_schema>}}
+
+Create a ``ClientEncryption`` object, named ``client_encryption`` configured with:
+- ``keyVaultClient``=``client_test``
+- ``keyVaultNamespace``="keyvault.datakeys"
+- ``kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
+
+Use ``client_encryption`` to encrypt the value "string0" with ``algorithm``="AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic" and ``keyAltName``="local". Store the result in a variable named ``ciphertext``.
+
+Proceed to run the test case.
+
+Each test case configures a ``MongoClient`` with automatic encryption (named ``client_encrypted``).
+
+Running a test case
+```````````````````
+- Create a ``MongoClient`` named ``client_encrypted`` configured as follows:
+   - ``AutoEncrytionOpts.keyVaultNamespace="keyvault.datakeys"``
+   - ``AutoEncrytionOpts.kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
+   - ``maxPoolSize=1``
+   - Capture command started events.
+   - Capture SDAM monitoring events.
+   - Append ``TestCase.AutoEncryptionOpts`` (defined below)
+- If the testcase sets ``AutoEncryptionOpts.bypassAutoEncryption=true``:
+   - Use ``client_test`` to insert ``{ "_id": 0, "encrypted": <ciphertext> }``.
+- Otherwise:
+   - Use ``client_encrypted`` to insert ``{ "_id": 0, "encrypted": "string0" }``.
+- Run a ``findOne`` operation, with the filter ``{ "_id": 0 }``.
+- Expect the result to be ``{ "_id": 0, "encrypted": "string0" }``.
+- Check captured events against ``TestCase.Expectations``.
+
+(Drivers with a thread-unsafe ``MongoClient`` MUST skip the following steps)
+- Run the following sequence of operations 10 times concurrently (e.g. in 10 separate threads), indexed by ``i``.
+   - Use ``client_encrypted`` to insert ``{ "_id": ``i``, "encrypted": "string0" }``.
+   - Run a ``findOne`` operation, with the filter ``{ "_id": ``i`` }``.
+   - Expect the result to be ``{ "_id": ``i``, "encrypted": "string0" }``.
+- Expect the operations to have completed with no errors.
+
+Case 1
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=false
+   - keyVaultClient=unset
+   - metadataClient=unset
+- Expectations:
+   - Expect ``client_encrypted`` to have captured four ``CommandStartedEvent``:
+      - a listCollections to "db".
+      - a find on "keyvault".
+      - an insert on "db".
+      - a find on "db"
+   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+
+Case 2
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=false
+   - keyVaultClient=unset
+   - metadataClient=client_metadata
+- Expectations:
+   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
+      - a find on "keyvault".
+      - an insert on "db".
+      - a find on "db"
+   - Expect ``client_metadata`` to have captured one ``CommandStartedEvent``:
+      - a listCollections to "db".
+   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+
+Case 3
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=false
+   - keyVaultClient=client_keyvault
+   - metadataClient=unset
+- Expectations:
+   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
+      - a listCollections to "db".
+      - an insert on "db".
+      - a find on "db"
+   - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
+      - a find on "keyvault".
+   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+
+Case 4
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=false
+   - keyVaultClient=client_keyvault
+   - metadataClient=client_metadata
+- Expectations:
+   - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
+      - an insert on "db".
+      - a find on "db"
+   - Expect ``client_metadata`` to have captured one ``CommandStartedEvent``:
+      - a listCollections to "db".
+   - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
+      - a find on "keyvault".
+   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
+
+Case 5
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=true
+   - keyVaultClient=unset
+   - metadataClient=unset
+- Expectations:
+   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
+      - an insert on "db".
+      - a find on "keyvault".
+      - a find on "db"
+   - Expect ``client_encrypted`` to have captured two ``TopologyOpeningEvent``.
+
+Case 6
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=true
+   - keyVaultClient=unset
+   - metadataClient=client_metadata
+- Expectations:
+   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
+      - an insert on "db".
+      - a find on "keyvault".
+      - a find on "db"
+   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
+   - Expect ``client_metadata`` to have captured zero ``CommandStartedEvent``.
+
+Case 7
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=true
+   - keyVaultClient=client_keyvault
+   - metadataClient=unset
+- Expectations:
+   - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
+      - an insert on "db".
+      - a find on "db"
+   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
+   - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
+      - a find on "keyvault".
+
+Case 8
+``````
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=true
+   - keyVaultClient=client_keyvault
+   - metadataClient=client_metadata
+- Expectations:
+   - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
+      - an insert on "db".
+      - a find on "db"
+   - Expect ``client_encrypted`` to have captured one ``TopologyOpeningEvent``.
+   - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
+      - a find on "keyvault".
+   - Expect ``client_metadata`` to have captured zero ``CommandStartedEvent``.
