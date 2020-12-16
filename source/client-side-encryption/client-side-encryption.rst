@@ -1430,13 +1430,17 @@ options, instead of a client object.
 Can the metadataClient serve as the internal client when no keyVaultClient is set?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Technically yes, but it adds complexity to the API without a clear benefit.
+No, it was decided against since it adds complexity to the API without a clear
+benefit.
 
 The ``metadataClient`` and ``keyVaultClient`` currently serve separate distinct
 purposes from the user's perspective.
 
 The ``keyVaultClient`` fetches keys from the key vault collection.
 The ``metadataClient`` runs ``listCollections`` to check for remote schemas.
+
+The behavior is that if a ``metadataClient`` is set, but a ``keyVaultClient``
+is not set, an internal client will be created to serve as the ``keyVaultClient``.
 
 Future work
 ===========
