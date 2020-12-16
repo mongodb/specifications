@@ -237,7 +237,9 @@ MongoClient Changes
       // Implementation details.
       private mongocrypt_t libmongocrypt_handle; // Handle to libmongocrypt.
       private Optional<MongoClient> mongocryptd_client; // Client to mongocryptd.
-      private Optional<MongoClient> keyvault_client; // Optional external client containing the key vault collection.
+      private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient or internal_client.
+      private MongoClient metadata_client; // Client used to run listCollections. This is either an external MongoClient or internal_client.
+      private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient and/or metadataClient was set.
    }
 
    class AutoEncryptionOpts {
@@ -247,6 +249,7 @@ MongoClient Changes
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
+      metadataClient: Optional<MongoClient>;
    }
 
 A MongoClient can be configured to automatically encrypt collection
@@ -286,12 +289,44 @@ Data keys are stored as documents in a special MongoDB collection. Data
 keys are protected with encryption by a KMS provider (AWS KMS, Azure key
 vault, GCP KMS, or a local master key).
 
+metadataClient
+^^^^^^^^^^^^^^
+A client used to run ``listCollections`` to determine whether a collection has
+an associated JSON schema with encrypted fields specified.
+
+If a ``metadataClient`` is not set, and ``bypassAutomaticEncryption=false`` then
+an internal ``MongoClient`` is used internally with the same options as the
+parent ``MongoClient`` excluding the ``AutoEncryptionOpts``.
+
+Drivers MUST document this behavior, using the following as a template:
+
+   If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` with
+   ``bypassAutomaticEncryption=false``, a ``metadataClient`` is necessary. If a
+   ``metadataClient`` is not passed as an option, a separate ``MongoClient`` is
+   used internally. It is configured using the options of the parent ``MongoClient``
+   with the ``AutoEncryptionOpts`` omitted.
+
+See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
+
 keyVaultClient
 ^^^^^^^^^^^^^^
 The key vault collection is assumed to reside on the same MongoDB
 cluster as indicated by the connecting URI. But the optional
 keyVaultClient can be used to route data key queries to a separate
 MongoDB cluster.
+
+A ``keyVaultClient`` is necessary for both automatic encryption and decryption.
+If a ``keyVaultClient`` is not set then an internal ``MongoClient`` is used the
+same options as the parent ``MongoClient`` excluding the ``AutoEncryptionOpts``.
+
+Drivers MUST document this behavior, using the following as a template:
+
+   If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` with a
+   ``keyVaultClient`` is necessary. If a ``keyVaultClient`` is not passed as an
+   option, a separate ``MongoClient`` is used internally. It is configured using the
+   options of the parent ``MongoClient`` with the ``AutoEncryptionOpts`` omitted.
+
+See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 kmsProviders
 ^^^^^^^^^^^^
@@ -1332,6 +1367,85 @@ on sockets. See the SDAM spec description of `cooldownMS <../source/server-disco
 Because single threaded drivers may exceed ``serverSelectionTimeoutMS`` by the
 duration of the topology scan, ``connectTimeoutMS`` is also reduced.
 
+What's the deal with metadataClient, keyVaultClient, and the internal client?
+-----------------------------------------------------------------------------
+
+When automatically encrypting a command, the driver runs:
+- a ``listCollections`` command against to determine if the target collection
+has a remote schema. This uses the ``metadataClient``.
+- a ``find`` against the ``keyVaultClient`` to fetch keys. This uses the
+``keyVaultClient``.
+
+**Why not reuse the parent MongoClient?**
+These operations MUST NOT reuse the same connection pool as the parent ``MongoClient`` configured with automatic encryption to avoid possible deadlock situations.
+
+Drivers supporting a connection pool (see `CMAP specification
+</source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_)
+support an option for limiting the connection pool size: ``maxPoolSize``.
+
+Drivers require checking out a connection before serializing the command If the
+``listCollections`` command sent during automatic encryption uses the same
+connection pool as the parent MongoClient, the application is susceptible to
+deadlocks. The relevant logic looks like:
+
+.. code::
+
+   server := client.SelectServer()
+   conn := server.Pool.CheckOut()
+   if client configured with automatic encryption {
+      // Begin the automatic encryption state machine.
+      // ...
+      switch (state) {
+         case need listCollections {
+            reply := client.Database(dbname).Command ({"listCollection": 1})
+            // ERROR, using the same client will check out another connection from the pool! This can cause a deadlock.
+         }
+         case need keys {
+            cursor := client.Database(dbname).Find (filter)
+            // ERROR, using the same client will check out another connection from the pool! This can cause a deadlock.
+         }
+      }
+      // ...
+   }
+   server.Pool.CheckIn (conn)
+
+A single operation checks out two connections from the same pool. If
+maxPoolSize=1, this is an immediate deadlock. If maxPoolSize=2, and two threads
+check out the first connection, they will deadlock attempting to check out the
+second.
+
+**Why are keyVaultClient and metadataClient separate exposed options?**
+
+The ``keyVaultClient`` supports the use case where the key vault collection is
+stored on a MongoDB cluster separate from the data-bearing cluster.
+
+The ``metadataClient`` is only used for ``listCollections`` against the
+data-bearing cluster.
+
+``listCollections`` responses are cached by libmongocrypt for one minute.
+
+The use pattern of the ``metadataClient`` will likely differ from the parent
+``MongoClient``
+
+This is an exposed option to provide a way for users to configure (e.g. set a
+lower ``minPoolSize`` to avoid additional connections).
+
+**Why is the metadataClient not needed if bypassAutoEncryption=true**
+
+Because automatic decryption does not require the JSON schema.
+``listCollections`` is not run during automatic encryption.
+
+**Can the keyVaultClient and the metadataClient be the same?**
+
+Technically yes, but not all drivers support this. In some drivers, the
+``keyVaultClient`` and ``metadataClient`` is configured by passing client
+options, instead of a client object.
+
+If a ``metadataClient`` is passed, but a ``keyVaultClient`` is set, it would be
+possible to have the ``keyVaultClient`` internally use the passed
+``metadataClient``. This was decided against because it adds complexity to the
+API.
+
 Future work
 ===========
 
@@ -1397,6 +1511,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
+| 2020-12-12 | Add metadataClient option and internal clients             |
 | 2020-10-19 | Add 'azure' and 'gcp' KMS providers                        |
 | 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
 | 2019-12-17 | Clarified bypassAutoEncryption and managing mongocryptd    |
