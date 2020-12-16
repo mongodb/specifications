@@ -64,7 +64,7 @@
               "ping": {}
             }
           },
-          "error": false
+          "error": true
         },
         {
           "name": "configureFailPoint",
