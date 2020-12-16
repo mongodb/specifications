@@ -11,7 +11,7 @@ Client Side Encryption
 :Type: Standards
 :Minimum Server Version: 4.2
 :Last Modified: October 19, 2020
-:Version: 1.2.0
+:Version: 1.3.0
 
 .. contents::
 
