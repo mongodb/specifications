@@ -774,9 +774,7 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 Deadlock tests
 ~~~~~~~~~~~~~~
 
-There are several test cases. Before each test case, perform the setup.
-
-Drivers that do not support ``maxPoolSize`` may skip the warning/error cases.
+There are multiple parameterized test cases. Before each test case, perform the setup.
 
 Setup
 `````
@@ -798,6 +796,7 @@ Create a ``ClientEncryption`` object, named ``client_encryption`` configured wit
 - ``keyVaultClient``=``client_test``
 - ``keyVaultNamespace``="keyvault.datakeys"
 - ``kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
+- ``readConcern=majority`` and ``writeConcern=majority``
 
 Use ``client_encryption`` to encrypt the value "string0" with ``algorithm``="AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic" and ``keyAltName``="local". Store the result in a variable named ``ciphertext``.
 
