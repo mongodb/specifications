@@ -1,7 +1,7 @@
 # Test SDAM error handling.
 runOn:
     # failCommand appName requirements
-    - minServerVersion: "4.4"
+    - minServerVersion: "4.9"
 
 database_name: &database_name "sdam-tests"
 collection_name: &collection_name "sdam-minPoolSize-error"
