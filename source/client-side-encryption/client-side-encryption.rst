@@ -1371,48 +1371,30 @@ What's the deal with metadataClient, keyVaultClient, and the internal client?
 -----------------------------------------------------------------------------
 
 When automatically encrypting a command, the driver runs:
-- a ``listCollections`` command against to determine if the target collection
+- a ``listCollections`` command to determine if the target collection
 has a remote schema. This uses the ``metadataClient``.
-- a ``find`` against the ``keyVaultClient`` to fetch keys. This uses the
+- a ``find`` against the key vault collection to fetch keys. This uses the
 ``keyVaultClient``.
 
 **Why not reuse the parent MongoClient?**
-These operations MUST NOT reuse the same connection pool as the parent ``MongoClient`` configured with automatic encryption to avoid possible deadlock situations.
+
+These operations MUST NOT reuse the same connection pool as the parent
+``MongoClient`` configured with automatic encryption to avoid possible deadlock
+situations.
 
 Drivers supporting a connection pool (see `CMAP specification
 </source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`_)
 support an option for limiting the connection pool size: ``maxPoolSize``.
 
-Drivers require checking out a connection before serializing the command If the
-``listCollections`` command sent during automatic encryption uses the same
+Drivers need to check out a connection before serializing the command. If the
+``listCollections`` or ``find`` command during automatic encryption uses the same
 connection pool as the parent MongoClient, the application is susceptible to
-deadlocks. The relevant logic looks like:
+deadlocks.
 
-.. code::
-
-   server := client.SelectServer()
-   conn := server.Pool.CheckOut()
-   if client configured with automatic encryption {
-      // Begin the automatic encryption state machine.
-      // ...
-      switch (state) {
-         case need listCollections {
-            reply := client.Database(dbname).Command ({"listCollection": 1})
-            // ERROR, using the same client will check out another connection from the pool! This can cause a deadlock.
-         }
-         case need keys {
-            cursor := client.Database(dbname).Find (filter)
-            // ERROR, using the same client will check out another connection from the pool! This can cause a deadlock.
-         }
-      }
-      // ...
-   }
-   server.Pool.CheckIn (conn)
-
-A single operation checks out two connections from the same pool. If
-maxPoolSize=1, this is an immediate deadlock. If maxPoolSize=2, and two threads
-check out the first connection, they will deadlock attempting to check out the
-second.
+Using the same connection pool causes automatic encryption to check out multiple
+connections from the pool when processing a single command. If maxPoolSize=1,
+this is an immediate deadlock. If maxPoolSize=2, and two threads check out the
+first connection, they will deadlock attempting to check out the second.
 
 **Why are keyVaultClient and metadataClient separate exposed options?**
 
@@ -1424,8 +1406,8 @@ data-bearing cluster.
 
 ``listCollections`` responses are cached by libmongocrypt for one minute.
 
-The use pattern of the ``metadataClient`` will likely differ from the parent
-``MongoClient``
+The use pattern of the ``metadataClient`` will likely greatly differ from
+the parent ``MongoClient``.
 
 This is an exposed option to provide a way for users to configure (e.g. set a
 lower ``minPoolSize`` to avoid additional connections).
@@ -1511,7 +1493,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
-| 2020-12-12 | Add metadataClient option and internal clients             |
+| 2020-12-12 | Add metadataClient option and internal client              |
 | 2020-10-19 | Add 'azure' and 'gcp' KMS providers                        |
 | 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
 | 2019-12-17 | Clarified bypassAutoEncryption and managing mongocryptd    |
