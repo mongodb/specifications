@@ -14,12 +14,11 @@ tests:
     # first or second background minPoolSize establishments to fail.
     failPoint:
       configureFailPoint: failCommand
-      mode: { skip: 2 }
+      mode: { skip: 3 }
       data:
         failCommands: ["isMaster"]
         appName: SDAMminPoolSizeError
-        closeConnection: false
-        errorCode: 91 # ShutdownInProgress
+        closeConnection: true
     clientOptions:
       heartbeatFrequencyMS: 10000
       appname: SDAMminPoolSizeError
@@ -61,19 +60,17 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode: off
-            data:
-              errorCode: 91 # ShutdownInProgress
       # Wait for monitor to discover the primary and mark the pool as ready again.
       - name: waitForEvent
         object: testRunner
         arguments:
           event: PoolReadyEvent
-          count: 1
+          count: 2
       # Perform an operation to ensure the node is discovered.
       - name: runCommand
         object: database
         command_name: ping
         arguments:
           command:
-            ping: {}
+            ping: 1
         error: false
