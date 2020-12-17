@@ -9,7 +9,7 @@ collection_name: &collection_name "sdam-minPoolSize-error"
 data: []
 
 tests:
-  - description: Command error on minPoolSize background creation
+  - description: Network error on minPoolSize background creation
     # Configure the initial monitor handshake to succeed but the
     # first or second background minPoolSize establishments to fail.
     failPoint:

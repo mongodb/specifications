@@ -9,7 +9,7 @@
   "data": [],
   "tests": [
     {
-      "description": "Command error on minPoolSize background creation",
+      "description": "Network error on minPoolSize background creation",
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
