@@ -1391,13 +1391,13 @@ recovering" error::
                 handleStateChangeError(response, response["$err"], response["code"])
 
     def handleStateChangeError(response, message, code):
-        # Ignore stale errors based on generation and topologyVersion.
-        if isStaleError(client.topologyDescription, response)
-            return
-
-        # Mark the server Unknown
-        unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
         with client.lock:
+            # Ignore stale errors based on generation and topologyVersion.
+            if isStaleError(client.topologyDescription, response)
+                return
+
+            # Mark the server Unknown
+            unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
             onServerDescriptionChanged(unknown, connection pool for server)
             if isShutdown(code) or (error was from <4.2):
                 # the pools must only be cleared while the lock is held.
