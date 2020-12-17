@@ -611,7 +611,7 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 #. Clear the connection pool for the server (See `Clear the connection pool on
    both network and command errors`_). For CMAP compliant drivers, clearing the
    pool MUST be synchronized with marking the server as Unknown (see `Why
-   synchronize clearing a server's pool with updates to the topology?`_).
+   synchronize clearing a server's pool with updating the topology?`_).
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
    (See `retry ismaster calls once`_ and
@@ -1131,3 +1131,4 @@ Changelog
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
 .. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool
+.. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring-monitoring.rst#why-synchronize-clearing-a-servers-pool-with-updating-the-topology?

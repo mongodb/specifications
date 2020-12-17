@@ -2104,8 +2104,8 @@ the duplicate (or stale) network error can be identified (changes in
    client ignores the error because the error originated from a
    connection with generation 1.**
 
-Why synchronize clearing a server's pool with updates to the topology?
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Why synchronize clearing a server's pool with updating the topology?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Doing so solves the following race condition among application threads
 and the monitor during error handling, similar to the previous
