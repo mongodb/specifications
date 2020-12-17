@@ -294,16 +294,16 @@ metadataClient
 A client used to run ``listCollections`` to determine whether a collection has
 an associated JSON schema with encrypted fields specified.
 
-If a ``metadataClient`` is not set, and ``bypassAutomaticEncryption=false`` then
-an internal ``MongoClient`` is used with the same options as the parent ``MongoClient``
-excluding the ``AutoEncryptionOpts``.
+If a ``metadataClient`` is not passed in, and
+``bypassAutomaticEncryption=false``, the ``metadataClient`` is set to an
+internal ``MongoClient``. See `keyVaultClient, metadataClient, and the internal
+MongoClient`_ for configuration behavior.
 
 Drivers MUST document this behavior, using the following as a template:
 
-   If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` with
-   ``bypassAutomaticEncryption=false`` then a ``metadataClient`` is necessary. If a
-   ``metadataClient`` is not passed as an option, a separate ``MongoClient`` is
-   used internally. It is configured using the options of the parent ``MongoClient``
+   If ``metadataClient`` is not passed as an option, and
+   ``bypassAutomaticEncryption=false``, a separate ``MongoClient`` is used
+   internally. It is configured using the options of the parent ``MongoClient``
    with the ``AutoEncryptionOpts`` omitted.
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
@@ -315,18 +315,56 @@ cluster as indicated by the connecting URI. But the optional
 keyVaultClient can be used to route data key queries to a separate
 MongoDB cluster.
 
-A ``keyVaultClient`` is necessary for both automatic encryption and decryption.
-If a ``keyVaultClient`` is not set then an internal ``MongoClient`` is used with
-the same options as the parent ``MongoClient`` excluding the ``AutoEncryptionOpts``.
+If a ``keyVaultClient`` is not passed, the ``keyVaultClient`` is set to an
+internal ``MongoClient``. See `keyVaultClient, metadataClient, and the internal
+MongoClient`_ for configuration behavior.
 
 Drivers MUST document this behavior, using the following as a template:
 
-   If the ``MongoClient`` is configured with ``AutoEncryptionOpts`` then a
-   ``keyVaultClient`` is necessary. If a ``keyVaultClient`` is not passed as an
-   option, a separate ``MongoClient`` is used internally. It is configured using the
-   options of the parent ``MongoClient`` with the ``AutoEncryptionOpts`` omitted.
+   If ``keyVaultClient`` is not passed as an option, a separate ``MongoClient``
+   is used internally. It is configured using the options of the parent
+   ``MongoClient`` with the ``AutoEncryptionOpts`` omitted.
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
+
+keyVaultClient, metadataClient, and the internal MongoClient
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If a ``keyVaultClient`` is not passed, it is set to an internal ``MongoClient``.
+
+If a ``metadataClient`` is not passed, and ``bypassAutomaticEncryption=false``,
+it is set to an internal ``MongoClient``. If ``bypassAutomaticEncryption=true``,
+the option is ignored since ``listCollections`` is only run during automatic
+encryption.
+
+If neither are passed, they are set to the same internal ``MongoClient``.
+
+The internal ``MongoClient`` MUST be configured with the same options as the
+parent ``MongoClient`` with the ``AutoEncryptionOpts`` excluded.
+
+The following pseudo-code describes the configuration behavior:
+
+.. code::
+   def getOrCreateInternalClient (client, clientOpts):
+      if client.internalClient != None:
+         return client.internalClient
+      internalClientOpts = copy(clientOpts)
+      internalClientOpts.autoEncryptionOpts = None
+      client.internalClient = MongoClient (internalClientOpts)
+
+   def configureAutoEncryptionClients (client, clientOpts):
+      if clientOpts.autoEncryptionOpts.keyVaultClient != None:
+         client.keyVaultClient = clientOpts.autoEncryptionOpts.keyVaultClient
+      else:
+         client.keyVaultClient = getOrCreateInternalClient (client, clientOpts)
+
+      if clientOpts.autoEncryptionOpts.bypassAutomaticEncryption:
+         # metadataClient not needed. It is not an error if a user passed metadataClient.
+         return
+
+      if clientOpts.autoEncryptionOpts.metadataClient != None:
+         client.metadataClient = clientOpts.autoEncryptionOpts.metadataClient
+      else:
+         client.metadataClient = getOrCreateInternalClient (client, clientOpts)
 
 kmsProviders
 ^^^^^^^^^^^^
