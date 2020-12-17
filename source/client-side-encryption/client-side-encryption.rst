@@ -336,7 +336,8 @@ it is set to an internal ``MongoClient``. If ``bypassAutomaticEncryption=true``,
 the option is ignored since ``listCollections`` is only run during automatic
 encryption.
 
-If neither are passed, they are set to the same internal ``MongoClient``.
+The ``keyVaultClient`` and ``metadataClient`` MUST be set to the same internal
+``MongoClient`` if neither are passed in and ``bypassAutomaticEncryption=false``.
 
 The internal ``MongoClient`` MUST be configured with the same options as the
 parent ``MongoClient`` with the ``AutoEncryptionOpts`` excluded.
@@ -350,6 +351,7 @@ The following pseudo-code describes the configuration behavior:
       internalClientOpts = copy(clientOpts)
       internalClientOpts.autoEncryptionOpts = None
       client.internalClient = MongoClient (internalClientOpts)
+      return client.internalClient
 
    def configureAutoEncryptionClients (client, clientOpts):
       if clientOpts.autoEncryptionOpts.keyVaultClient != None:
