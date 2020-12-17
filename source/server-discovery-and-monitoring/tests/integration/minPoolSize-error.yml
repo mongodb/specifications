@@ -60,12 +60,6 @@ tests:
           failPoint:
             configureFailPoint: failCommand
             mode: off
-      # Wait for monitor to discover the primary and mark the pool as ready again.
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          event: PoolReadyEvent
-          count: 2
       # Perform an operation to ensure the node is discovered.
       - name: runCommand
         object: database
@@ -74,3 +68,9 @@ tests:
           command:
             ping: 1
         error: false
+      # Assert that the monitor discovered the primary and mark the pool as ready again.
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          event: PoolReadyEvent
+          count: 2

@@ -76,14 +76,6 @@
           }
         },
         {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "event": "PoolReadyEvent",
-            "count": 2
-          }
-        },
-        {
           "name": "runCommand",
           "object": "database",
           "command_name": "ping",
@@ -93,6 +85,14 @@
             }
           },
           "error": false
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "event": "PoolReadyEvent",
+            "count": 2
+          }
         }
       ]
     }
