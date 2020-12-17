@@ -265,7 +265,7 @@ has the following properties:
 
 -  **Pausable:** A Pool MUST be able to be paused and resumed. A Pool is paused automatically when it is cleared, and it can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
 
-   -  Attempting to check out a `Connection <#connection>`_ from the Pool results in a retryable Error
+   -  Attempting to check out a `Connection <#connection>`_ from the Pool results in a retryable error
    -  Connections are not created in the background to satisfy minPoolSize
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
