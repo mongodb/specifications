@@ -345,6 +345,7 @@ parent ``MongoClient`` with the ``AutoEncryptionOpts`` excluded.
 The following pseudo-code describes the configuration behavior:
 
 .. code::
+
    def getOrCreateInternalClient (client, clientOpts):
       if client.internalClient != None:
          return client.internalClient
