@@ -590,11 +590,10 @@ heartbeatFrequencyMS before running another check.
 Marking the connection pool as ready (CMAP only)
 ''''''''''''''''''''''''''''''''''''''''''''''''
 
-When a monitor completes a successful check against a server that was previously
-Unknown, it MUST mark the connection pool for that server as "ready", and it
-MUST do this *before* updating the TopologyDescription (e.g. through
-``onServerDescriptionChanged``). This ordering is used to ensure a server does
-not get selected while its pool is still paused. See the `Connection Pool`_
+When a monitor completes a successful check against a server, it MUST mark the
+connection pool for that server as "ready", and it MUST do while holding the
+lock to the TopologyDescription. This is required to ensure a server does not
+get selected while its pool is still paused. See the `Connection Pool`_
 definition in the CMAP specification for more details on marking the pool as
 "ready".
 
@@ -609,8 +608,10 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 
 #. Close the current monitoring connection.
 #. Mark the server Unknown.
-#. Clear the connection pool for the server. (See
-   `Clear the connection pool on both network and command errors`_.)
+#. Clear the connection pool for the server (See `Clear the connection pool on
+   both network and command errors`_). For CMAP compliant drivers, clearing the
+   pool MUST be synchronized with marking the server as Unknown (see `Why
+   synchronize clearing a server's pool with updates to the topology?`_).
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
    (See `retry ismaster calls once`_ and
@@ -679,15 +680,16 @@ The event API here is assumed to be like the standard `Python Event
                 wait()
                 continue
 
-            # for drivers that implement CMAP, mark the connection pool as ready
-            # once the server transitions to a known state.
-            if previousDescription.type == Unknown and description.type != Unknown:
-                mark connection pool for server as "ready"
+            with client.lock:
+                # for drivers that implement CMAP, mark the connection pool as ready after
+                # performing a successful check.
+                if description.type != Unknown:
+                    mark connection pool for server as "ready"
 
-            topology.onServerDescriptionChanged(description)
-            if description.error != Null:
-                # Clear the connection pool only after the server description is set to Unknown.
-                clear connection pool for server
+                topology.onServerDescriptionChanged(description)
+                if description.error != Null:
+                    # Clear the connection pool only after the server description is set to Unknown.
+                    clear connection pool for server
 
             # Immediately proceed to the next check if the previous response
             # was successful and included the topologyVersion field, or the
