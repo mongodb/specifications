@@ -371,9 +371,9 @@ the driver should create connection pools.
 When a pool is created, its state MUST initially be set to "paused". Even if
 minPoolSize is set, the pool MUST NOT begin being `populated
 <#populating-the-pool-with-a-connection-internal-implementation>`_ with
-`Connections <#connection>`_ until it has been marked as "ready". Monitoring threads will
-ready the pool once they have successfully performed a check and
-transitioned the server to a known ServerType.
+`Connections <#connection>`_ until it has been marked as "ready". SDAM will mark
+the pool as "ready" on each successful check. See `Connection Pool Management`_
+section in the SDAM specification for more information.
 
 .. code::
 
@@ -1077,3 +1077,4 @@ Change log
 .. Section for links.
 
 .. _Application Errors: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#application-errors
+.. _Connection Pool Management: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#connection-pool-management
