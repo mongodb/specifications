@@ -23,7 +23,7 @@ tests:
       heartbeatFrequencyMS: 10000
       appname: SDAMminPoolSizeError
       minPoolSize: 10
-      serverSelectionTimeoutMS: 100
+      serverSelectionTimeoutMS: 1000
     operations:
       # Wait for monitor to succeed handshake and mark the pool as ready.
       - name: waitForEvent
