@@ -1131,4 +1131,4 @@ Changelog
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
 .. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool
-.. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring-monitoring.rst#why-synchronize-clearing-a-servers-pool-with-updating-the-topology?
+.. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?
