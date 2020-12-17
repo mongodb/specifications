@@ -404,6 +404,9 @@ monitors after they perform successful server checks. Once a pool is "ready",
 it can start checking out `Connections <#connection>`_ and populating them in
 the background.
 
+If the pool is already "ready" when this method is invoked, then this
+method MUST immediately return and MUST NOT emit a PoolReadyEvent.
+
 .. code::
 
    mark pool as "ready"
