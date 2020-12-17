@@ -681,12 +681,7 @@ The event API here is assumed to be like the standard `Python Event
                 continue
 
             with client.lock:
-                # for drivers that implement CMAP, mark the connection pool as ready after
-                # performing a successful check.
-                if description.type != Unknown:
-                    mark connection pool for server as "ready"
-
-                topology.onServerDescriptionChanged(description)
+                topology.onServerDescriptionChanged(description, connection pool for server)
                 if description.error != Null:
                     # Clear the connection pool only after the server description is set to Unknown.
                     clear connection pool for server

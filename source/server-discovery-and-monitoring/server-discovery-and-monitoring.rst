@@ -1398,7 +1398,7 @@ recovering" error::
         # Mark the server Unknown
         unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
         with client.lock:
-            onServerDescriptionChanged(unknown)
+            onServerDescriptionChanged(unknown, connection pool for server)
             if isShutdown(code) or (error was from <4.2):
                 # the pools must only be cleared while the lock is held.
                 clear connection pool for server
@@ -1599,8 +1599,9 @@ ServerDescription is processed at a time, and it must be acquired
 before invoking this function. Once the client has taken the lock it
 must do no I/O::
 
-    def onServerDescriptionChanged(server):
+    def onServerDescriptionChanged(server, pool):
         # "server" is the new ServerDescription.
+        # "pool" is the pool associated with the server
 
         if server.address not in client.topologyDescription.servers:
             # The server was once in the topologyDescription, otherwise
@@ -1619,6 +1620,11 @@ must do no I/O::
         # Replace server's previous description.
         address = server.address
         newTopologyDescription.servers[address] = server
+
+        # for drivers that implement CMAP, mark the connection pool as ready after
+        # a successful check.
+        if server.type != Unknown:
+            pool.ready()
 
         take any additional actions,
         depending on the TopologyType and server...
