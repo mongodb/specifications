@@ -10,7 +10,7 @@ Connection Monitoring and Pooling
 :Type: Standards
 :Minimum Server Version: N/A
 :Last Modified: September 24, 2020
-:Version: 1.3.0
+:Version: 1.4.0
 
 .. contents::
 
@@ -1065,6 +1065,8 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
+:2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.
+
 :2020-09-24: Introduce maxConnecting requirement
 
 :2020-09-03: Clarify Connection states and definition. Require the use of a

@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.19
+:Version: 2.20
 :Last Modified: 2020-06-08
 
 .. contents::
@@ -2395,6 +2395,9 @@ stale application errors.
 2020-05-07: Include error field in ServerDescription equality comparison.
 
 2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
+
+2020-12-17: Mark the pool for a server as "ready" after performing a successful
+check. Synchronize pool clearing with SDAM updates.
 
 .. Section for links.
 

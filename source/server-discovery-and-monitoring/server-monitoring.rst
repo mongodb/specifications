@@ -1097,6 +1097,9 @@ awaitable isMaster heartbeat in the new protocol.
 Changelog
 ---------
 
+- 2020-12-17: Mark the pool for a server as "ready" after performing a successful
+  check. Synchronize pool clearing with SDAM updates.
+
 - 2020-06-11 Support connectTimeoutMS=0 in streaming heartbeat protocol.
 
 - 2020-05-20 Include rationale for why we don't use `awaitedTimeMS`
