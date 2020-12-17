@@ -24,6 +24,7 @@ tests:
       appname: SDAMminPoolSizeError
       minPoolSize: 10
       serverSelectionTimeoutMS: 1000
+      directConnection: true
     operations:
       # Wait for monitor to succeed handshake and mark the pool as ready.
       - name: waitForEvent

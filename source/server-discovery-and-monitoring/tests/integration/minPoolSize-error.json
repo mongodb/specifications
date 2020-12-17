@@ -27,7 +27,8 @@
         "heartbeatFrequencyMS": 10000,
         "appname": "SDAMminPoolSizeError",
         "minPoolSize": 10,
-        "serverSelectionTimeoutMS": 1000
+        "serverSelectionTimeoutMS": 1000,
+        "directConnection": true
       },
       "operations": [
         {
