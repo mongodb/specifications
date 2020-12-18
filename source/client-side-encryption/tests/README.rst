@@ -779,10 +779,9 @@ There are multiple parameterized test cases. Before each test case, perform the 
 Setup
 `````
 
-Create three ``MongoClient``s with ``maxPoolSize=1``, ``readConcern=majority`` and ``writeConcern=majority``:
+Create two ``MongoClient``s with ``maxPoolSize=1``, ``readConcern=majority`` and ``writeConcern=majority``:
 - ``client_test`` for test operations
 - ``client_keyvault`` to use as a ``keyVaultClient``. Capture command started events.
-- ``client_metadata`` to use as a ``metadataClient``. Capture command started events.
 
 Using ``client_test``, drop the collections ``keyvault.datakeys`` and ``db.coll``.
 Insert the document `external/external-key.json <../external/external-key.json>`_ into ``keyvault.datakeys``.
@@ -811,8 +810,8 @@ Running a test case
 - Create a ``MongoClient`` named ``client_encrypted`` configured as follows:
    - ``AutoEncrytionOpts.keyVaultNamespace="keyvault.datakeys"``
    - ``AutoEncrytionOpts.kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
-   - ``maxPoolSize=1``
    - Capture command started events.
+   - Set ``maxPoolSize=TestCase.MaxPoolSize``
    - Append ``TestCase.AutoEncryptionOpts`` (defined below)
 - If the testcase sets ``AutoEncryptionOpts.bypassAutoEncryption=true``:
    - Use ``client_test`` to insert ``{ "_id": 0, "encrypted": <ciphertext> }``.
@@ -825,10 +824,10 @@ Running a test case
 
 Case 1
 ``````
+- MaxPoolSize: 1
 - AutoEncryptionOpts:
    - bypassAutoEncryption=false
    - keyVaultClient=unset
-   - metadataClient=unset
 - Expectations:
    - Expect ``client_encrypted`` to have captured four ``CommandStartedEvent``:
       - a listCollections to "db".
@@ -839,25 +838,10 @@ Case 1
 
 Case 2
 ``````
-- AutoEncryptionOpts:
-   - bypassAutoEncryption=false
-   - keyVaultClient=unset
-   - metadataClient=client_metadata
-- Expectations:
-   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
-      - a find on "keyvault".
-      - an insert on "db".
-      - a find on "db"
-   - Expect ``client_metadata`` to have captured one ``CommandStartedEvent``:
-      - a listCollections to "db".
-- ExpectedNumberOfClients: 2
-
-Case 3
-``````
+- MaxPoolSize: 1
 - AutoEncryptionOpts:
    - bypassAutoEncryption=false
    - keyVaultClient=client_keyvault
-   - metadataClient=unset
 - Expectations:
    - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
       - a listCollections to "db".
@@ -867,74 +851,86 @@ Case 3
       - a find on "keyvault".
 - ExpectedNumberOfClients: 2
 
+Case 3
+``````
+- MaxPoolSize: 1
+- AutoEncryptionOpts:
+   - bypassAutoEncryption=true
+   - keyVaultClient=unset
+- Expectations:
+   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
+      - an insert on "db".
+      - a find on "keyvault".
+      - a find on "db"
+- ExpectedNumberOfClients: 2
+
 Case 4
 ``````
+- MaxPoolSize: 1
 - AutoEncryptionOpts:
-   - bypassAutoEncryption=false
+   - bypassAutoEncryption=true
    - keyVaultClient=client_keyvault
-   - metadataClient=client_metadata
 - Expectations:
    - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
       - an insert on "db".
       - a find on "db"
-   - Expect ``client_metadata`` to have captured one ``CommandStartedEvent``:
-      - a listCollections to "db".
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
 - ExpectedNumberOfClients: 1
 
 Case 5
 ``````
+- MaxPoolSize: 0
 - AutoEncryptionOpts:
-   - bypassAutoEncryption=true
+   - bypassAutoEncryption=false
    - keyVaultClient=unset
-   - metadataClient=unset
 - Expectations:
-   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
-      - an insert on "db".
+   - Expect ``client_encrypted`` to have captured five ``CommandStartedEvent``:
+      - a listCollections to "db".
+      - a listCollections to "keyvault".
       - a find on "keyvault".
+      - an insert on "db".
       - a find on "db"
-- ExpectedNumberOfClients: 2
+- ExpectedNumberOfClients: 1
 
 Case 6
 ``````
+- MaxPoolSize: 0
 - AutoEncryptionOpts:
-   - bypassAutoEncryption=true
-   - keyVaultClient=unset
-   - metadataClient=client_metadata
+   - bypassAutoEncryption=false
+   - keyVaultClient=client_keyvault
 - Expectations:
    - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
+      - a listCollections to "db".
       - an insert on "db".
-      - a find on "keyvault".
       - a find on "db"
-   - Expect ``client_metadata`` to have captured zero ``CommandStartedEvent``.
+   - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
+      - a find on "keyvault".
 - ExpectedNumberOfClients: 1
 
 Case 7
 ``````
+- MaxPoolSize: 0
 - AutoEncryptionOpts:
    - bypassAutoEncryption=true
-   - keyVaultClient=client_keyvault
-   - metadataClient=unset
+   - keyVaultClient=unset
 - Expectations:
-   - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
+   - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
       - an insert on "db".
-      - a find on "db"
-   - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
+      - a find on "db"
 - ExpectedNumberOfClients: 1
 
 Case 8
 ``````
+- MaxPoolSize: 0
 - AutoEncryptionOpts:
    - bypassAutoEncryption=true
    - keyVaultClient=client_keyvault
-   - metadataClient=client_metadata
 - Expectations:
    - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
       - an insert on "db".
       - a find on "db"
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
-   - Expect ``client_metadata`` to have captured zero ``CommandStartedEvent``.
 - ExpectedNumberOfClients: 1

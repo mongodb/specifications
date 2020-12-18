@@ -238,7 +238,7 @@ MongoClient Changes
       private mongocrypt_t libmongocrypt_handle; // Handle to libmongocrypt.
       private Optional<MongoClient> mongocryptd_client; // Client to mongocryptd.
       private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient or internal_client.
-      private MongoClient metadata_client; // Client used to run listCollections. This is either an external MongoClient or internal_client.
+      private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient and/or metadataClient was set.
    }
 
@@ -289,25 +289,6 @@ Data keys are stored as documents in a special MongoDB collection. Data
 keys are protected with encryption by a KMS provider (AWS KMS, Azure key
 vault, GCP KMS, or a local master key).
 
-metadataClient
-^^^^^^^^^^^^^^
-A client used to run ``listCollections`` to determine whether a collection has
-an associated JSON schema with encrypted fields specified.
-
-If a ``metadataClient`` is not passed in, and
-``bypassAutomaticEncryption=false``, the ``metadataClient`` is set to an
-internal ``MongoClient``. See `keyVaultClient, metadataClient, and the internal
-MongoClient`_ for configuration behavior.
-
-Drivers MUST document this behavior, using the following as a template:
-
-   If ``metadataClient`` is not passed as an option, and
-   ``bypassAutomaticEncryption=false``, a separate ``MongoClient`` is used
-   internally. It is configured using the options of the parent ``MongoClient``
-   with the ``AutoEncryptionOpts`` omitted.
-
-See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
-
 keyVaultClient
 ^^^^^^^^^^^^^^
 The key vault collection is assumed to reside on the same MongoDB
@@ -315,34 +296,16 @@ cluster as indicated by the connecting URI. But the optional
 keyVaultClient can be used to route data key queries to a separate
 MongoDB cluster.
 
-If a ``keyVaultClient`` is not passed, the ``keyVaultClient`` is set to an
+If a ``keyVaultClient`` is not passed, and the parent ``MongoClient`` is
+configured with a non-zero ``maxPoolSize``, the ``keyVaultClient`` is set to an
 internal ``MongoClient``. See `keyVaultClient, metadataClient, and the internal
 MongoClient`_ for configuration behavior.
-
-Drivers MUST document this behavior, using the following as a template:
-
-   If ``keyVaultClient`` is not passed as an option, a separate ``MongoClient``
-   is used internally. It is configured using the options of the parent
-   ``MongoClient`` with the ``AutoEncryptionOpts`` omitted.
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 keyVaultClient, metadataClient, and the internal MongoClient
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If a ``keyVaultClient`` is not passed, it is set to an internal ``MongoClient``.
-
-If a ``metadataClient`` is not passed, and ``bypassAutomaticEncryption=false``,
-it is set to an internal ``MongoClient``. If ``bypassAutomaticEncryption=true``,
-the option is ignored since ``listCollections`` is only run during automatic
-encryption.
-
-The ``keyVaultClient`` and ``metadataClient`` MUST be set to the same internal
-``MongoClient`` if neither are passed in and ``bypassAutomaticEncryption=false``.
-
-The internal ``MongoClient`` MUST be configured with the same options as the
-parent ``MongoClient`` with the ``AutoEncryptionOpts`` excluded.
-
-The following pseudo-code describes the configuration behavior:
+The following pseudo-code describes the configuration behavior for the three ``MongoClient``s:
 
 .. code::
 
@@ -351,23 +314,40 @@ The following pseudo-code describes the configuration behavior:
          return client.internalClient
       internalClientOpts = copy(clientOpts)
       internalClientOpts.autoEncryptionOpts = None
+      internalClientOpts.minPoolSize = 0
       client.internalClient = MongoClient (internalClientOpts)
       return client.internalClient
 
    def configureAutoEncryptionClients (client, clientOpts):
       if clientOpts.autoEncryptionOpts.keyVaultClient != None:
          client.keyVaultClient = clientOpts.autoEncryptionOpts.keyVaultClient
+      elif clientOpts.maxPoolSize == 0:
+         client.keyVaultClient = client
       else:
          client.keyVaultClient = getOrCreateInternalClient (client, clientOpts)
 
       if clientOpts.autoEncryptionOpts.bypassAutomaticEncryption:
-         # metadataClient not needed. It is not an error if a user passed metadataClient.
-         return
-
-      if clientOpts.autoEncryptionOpts.metadataClient != None:
-         client.metadataClient = clientOpts.autoEncryptionOpts.metadataClient
+         client.metadataClient = None
+      elif clientOpts.maxPoolSize == 0:
+         client.metadataClient = client
       else:
          client.metadataClient = getOrCreateInternalClient (client, clientOpts)
+
+Drivers MUST document that an additional ``MongoClient`` may be created, using
+the following as a template:
+
+   If a ``MongoClient`` with a limited connection pool size (i.e a non-zero
+   ``maxPoolSize``) is configured with ``AutoEncryptionOpts``, a separate
+   internal ``MongoClient`` is created if any of the following are true:
+
+   - ``AutoEncryptionOpts.keyVaultClient`` is not passed.
+   - ``AutoEncryptionOpts.bypassAutomaticEncryption`` is ``false``.
+
+   If an internal ``MongoClient`` is created, it is configured with the same
+   options as the parent ``MongoClient`` except ``minPoolSize=0`` and
+   ``AutoEncryptionOpts`` is omitted.
+
+See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
 kmsProviders
 ^^^^^^^^^^^^
@@ -1417,8 +1397,8 @@ has a remote schema. This uses the ``metadataClient``.
 - a ``find`` against the key vault collection to fetch keys. This uses the
 ``keyVaultClient``.
 
-Why not reuse the parent MongoClient?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why not reuse the parent MongoClient when maxPoolSize is non-zero?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 These operations MUST NOT reuse the same connection pool as the parent
 ``MongoClient`` configured with automatic encryption to avoid possible deadlock
@@ -1438,8 +1418,8 @@ connections from the pool when processing a single command. If maxPoolSize=1,
 this is an immediate deadlock. If maxPoolSize=2, and two threads check out the
 first connection, they will deadlock attempting to check out the second.
 
-Why are keyVaultClient and metadataClient separate exposed options?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why is keyVaultClient an exposed option, but metadataClient private?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``keyVaultClient`` supports the use case where the key vault collection is
 stored on a MongoDB cluster separate from the data-bearing cluster.
@@ -1450,38 +1430,17 @@ data-bearing cluster.
 ``listCollections`` responses are cached by libmongocrypt for one minute.
 
 The use pattern of the ``metadataClient`` will likely greatly differ from
-the parent ``MongoClient``.
+the parent ``MongoClient``. So it is configured with ``minPoolSize=0``.
 
-This is an exposed option to provide a way for users to configure (e.g. set a
-lower ``minPoolSize`` to avoid additional connections).
+The ``metadataClient`` is not an exposed option because a user could
+misconfigure it to point to another MongoDB cluster, which could be a 
+security risk.
 
 Why is the metadataClient not needed if bypassAutoEncryption=true
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Because automatic decryption does not require the JSON schema.
 ``listCollections`` is not run during automatic encryption.
-
-Can the keyVaultClient and the metadataClient be set to the same MongoClient?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Technically yes, but not all drivers support this. In some drivers, the
-``keyVaultClient`` and ``metadataClient`` is configured by passing client
-options, instead of a client object.
-
-Can the metadataClient serve as the internal client when no keyVaultClient is set?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-No, it was decided against since it adds complexity to the API without a clear
-benefit.
-
-The ``metadataClient`` and ``keyVaultClient`` currently serve separate distinct
-purposes from the user's perspective.
-
-The ``keyVaultClient`` fetches keys from the key vault collection.
-The ``metadataClient`` runs ``listCollections`` to check for remote schemas.
-
-The behavior is that if a ``metadataClient`` is set, but a ``keyVaultClient``
-is not set, an internal client will be created to serve as the ``keyVaultClient``.
 
 Future work
 ===========
