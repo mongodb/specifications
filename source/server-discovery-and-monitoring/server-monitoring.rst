@@ -587,6 +587,16 @@ The polling protocol is used to monitor MongoDB <= 4.4 servers. The client
 `checks`_ a server with an isMaster command and then sleeps for
 heartbeatFrequencyMS before running another check.
 
+Marking the connection pool as ready (CMAP only)
+''''''''''''''''''''''''''''''''''''''''''''''''
+
+When a monitor completes a successful check against a server, it MUST mark the
+connection pool for that server as "ready", and doing so MUST be synchronized
+with the update to the topology (e.g. by marking the pool as ready in
+onServerDescriptionChanged). This is required to ensure a server does not get
+selected while its pool is still paused. See the `Connection Pool`_ definition
+in the CMAP specification for more details on marking the pool as "ready".
+
 Error handling
 ''''''''''''''
 
@@ -598,8 +608,10 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
 
 #. Close the current monitoring connection.
 #. Mark the server Unknown.
-#. Clear the connection pool for the server. (See
-   `Clear the connection pool on both network and command errors`_.)
+#. Clear the connection pool for the server (See `Clear the connection pool on
+   both network and command errors`_). For CMAP compliant drivers, clearing the
+   pool MUST be synchronized with marking the server as Unknown (see `Why
+   synchronize clearing a server's pool with updating the topology?`_).
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
    (See `retry ismaster calls once`_ and
@@ -667,10 +679,12 @@ The event API here is assumed to be like the standard `Python Event
                 # Wait before running the next check.
                 wait()
                 continue
-            topology.onServerDescriptionChanged(description)
-            if description.error != Null:
-                # Clear the connection pool only after the server description is set to Unknown.
-                clear connection pool for server
+
+            with client.lock:
+                topology.onServerDescriptionChanged(description, connection pool for server)
+                if description.error != Null:
+                    # Clear the connection pool only after the server description is set to Unknown.
+                    clear connection pool for server
 
             # Immediately proceed to the next check if the previous response
             # was successful and included the topologyVersion field, or the
@@ -1083,6 +1097,9 @@ awaitable isMaster heartbeat in the new protocol.
 Changelog
 ---------
 
+- 2020-12-17: Mark the pool for a server as "ready" after performing a successful
+  check. Synchronize pool clearing with SDAM updates.
+
 - 2020-06-11 Support connectTimeoutMS=0 in streaming heartbeat protocol.
 
 - 2020-05-20 Include rationale for why we don't use `awaitedTimeMS`
@@ -1111,3 +1128,5 @@ Changelog
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-monitoring.rst#heartbeats
 .. _OP_MSG Spec: /source/message/OP_MSG.rst
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
+.. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool
+.. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?

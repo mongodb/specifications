@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.19
+:Version: 2.20
 :Last Modified: 2020-06-08
 
 .. contents::
@@ -597,9 +597,12 @@ are not replica set member states at all.
 | RSGhost           | "isreplicaset: true" in response.                             |
 +-------------------+---------------------------------------------------------------+
 
-A server can transition from any state to any other.
-For example, an administrator could shut down a secondary
-and bring up a mongos in its place.
+A server can transition from any state to any other.  For example, an
+administrator could shut down a secondary and bring up a mongos in its place.
+
+When a server transitions from Unknown to data-bearing type, the driver MUST
+ensure the server's connection pool is set up (if the driver implements
+connection pooling). See `Connection Pool Management`_ for more information.
 
 .. _RSGhost: #RSGhost-and-RSOther
 
@@ -1194,14 +1197,24 @@ See the Driver Sessions Spec for the purpose of this value.
 .. _drivers update their topology view in response to errors:
 
 
-Connection Pool Creation
-''''''''''''''''''''''''
+Connection Pool Management
+''''''''''''''''''''''''''
 
-For drivers that support connection pools, after a server check is complete,
-if the server is determined to be `data-bearing
+For drivers that support connection pools, after a server check is
+complete, if the server is determined to be `data-bearing
 <https://github.com/mongodb/specifications/blob/masterserver-discovery-and-monitoring.rst#data-bearing-server-type>`_
 and does not already have a connection pool, the driver MUST create
-the connection pool for the server.
+the connection pool for the server. Additionally, if a driver
+implements a CMAP compliant connection pool, the server's pool (even
+if it already existed) MUST be marked as "ready". See the `Server
+Monitoring spec`_ for more information.
+
+Clearing the connection pool for a server MUST be synchronized with
+the update to the corresponding ServerDescription (e.g. by holding the
+lock on the TopologyDescription when clearing the pool). This prevents
+a possible race between the monitors and application threads. See `Why
+synchronize clearing a server's pool with updating the topology?`_ for
+more information.
 
 Error handling
 ''''''''''''''
@@ -1378,13 +1391,17 @@ recovering" error::
                 handleStateChangeError(response, response["$err"], response["code"])
 
     def handleStateChangeError(response, message, code):
-        # Ignore stale errors based on generation and topologyVersion.
-        if isStaleError(client.topologyDescription, response)
-            return
+        with client.lock:
+            # Ignore stale errors based on generation and topologyVersion.
+            if isStaleError(client.topologyDescription, response)
+                return
 
-        # Mark the server Unknown
-        unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
-        onServerDescriptionChanged(unknown)
+            # Mark the server Unknown
+            unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
+            onServerDescriptionChanged(unknown, connection pool for server)
+            if isShutdown(code) or (error was from <4.2):
+                # the pools must only be cleared while the lock is held.
+                clear connection pool for server
 
         if multi-threaded:
             request immediate check
@@ -1395,8 +1412,6 @@ recovering" error::
             if isNotMaster(message):
                 check failing server
 
-        if isShutdown(code) or (error was from <4.2):
-            clear connection pool for server
 
     def isStaleError(topologyDescription, response):
         currentServer = topologyDescription.servers[server.address]
@@ -1577,25 +1592,22 @@ should be synchronized so only one thread can run it at a time.
 Replacing the TopologyDescription
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Drivers may use the following pseudocode to guide
-their implementation.
-The client object has a lock and a condition variable.
-It uses the lock to ensure that only one new ServerDescription is processed
-at a time.
-Once the client has taken the lock it must do no I/O::
+Drivers may use the following pseudocode to guide their
+implementation.  The client object has a lock and a condition
+variable.  It uses the lock to ensure that only one new
+ServerDescription is processed at a time, and it must be acquired
+before invoking this function. Once the client has taken the lock it
+must do no I/O::
 
-    def onServerDescriptionChanged(server):
+    def onServerDescriptionChanged(server, pool):
         # "server" is the new ServerDescription.
-
-        # This thread cannot do any I/O until the lock is released.
-        client.lock.acquire()
+        # "pool" is the pool associated with the server
 
         if server.address not in client.topologyDescription.servers:
             # The server was once in the topologyDescription, otherwise
             # we wouldn't have been monitoring it, but an intervening
             # state-change removed it. E.g., we got a host list from
             # the primary that didn't include this server.
-            client.lock.release()
             return
 
         newTopologyDescription = client.topologyDescription.copy()
@@ -1603,12 +1615,16 @@ Once the client has taken the lock it must do no I/O::
         # Ignore this update if the current topologyVersion is greater than
         # the new ServerDescription's.
         if isStaleServerDescription(td, server):
-            client.lock.release()
             return
 
         # Replace server's previous description.
         address = server.address
         newTopologyDescription.servers[address] = server
+
+        # for drivers that implement CMAP, mark the connection pool as ready after
+        # a successful check.
+        if server.type != Unknown:
+            pool.ready()
 
         take any additional actions,
         depending on the TopologyType and server...
@@ -1616,7 +1632,6 @@ Once the client has taken the lock it must do no I/O::
         # Replace TopologyDescription and notify waiters.
         client.topologyDescription = newTopologyDescription
         client.condition.notifyAll()
-        client.lock.release()
 
     def compareTopologyVersion(tv1, tv2):
         """Return -1 if tv1<tv2, 0 if tv1==tv2, 1 if tv1>tv2"""
@@ -2095,6 +2110,34 @@ the duplicate (or stale) network error can be identified (changes in
    client ignores the error because the error originated from a
    connection with generation 1.**
 
+Why synchronize clearing a server's pool with updating the topology?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Doing so solves the following race condition among application threads
+and the monitor during error handling, similar to the previous
+example:
+
+#. A write begins on an application thread.
+#. The server restarts.
+#. The application thread receives a non-timeout network error.
+#. The application thread acquires the lock on the TopologyDescription, marks
+   the Server as Unknown, and releases the lock.
+#. The monitor re-checks the server and marks it Primary and its pool
+   as "ready".
+#. Several other application threads enter the WaitQueue of the
+   server's pool.
+#. The application thread clears the server's pool, evicting all those
+   new threads from the WaitQueue, causing them to return errors or to
+   retry. Additionally, the pool is now "paused", but the server is
+   considered the Primary, meaning future operations will be routed to
+   the server and fail until the next heartbeat marks the pool as
+   "ready" again.
+
+If marking the server as Unknown and clearing its pool were
+synchronized, then the monitor marking the server as Primary after its
+check would happen after the pool was cleared and thus avoid putting
+it an inconsistent state.
+
 What is the purpose of topologyVersion?
 '''''''''''''''''''''''''''''''''''''''
 
@@ -2351,6 +2394,9 @@ stale application errors.
 2020-05-07: Include error field in ServerDescription equality comparison.
 
 2020-06-08: Clarify reasoning behind how SDAM determines if a topologyVersion is stale.
+
+2020-12-17: Mark the pool for a server as "ready" after performing a successful
+check. Synchronize pool clearing with SDAM updates.
 
 .. Section for links.
 
