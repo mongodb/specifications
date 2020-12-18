@@ -261,11 +261,11 @@ has the following properties:
    -  Checking in a `Connection <#connection>`_ to the Pool automatically closes the `Connection <#connection>`_
    -  Attempting to check out a `Connection <#connection>`_ from the Pool results in an Error
 
--  **Clearable:** A Pool MUST be able to be cleared. Clearing the pool marks all pooled and checked out `Connections <#connection>`_ as stale and lazily closes them as they are checkedIn or encountered in checkOut. Additionally, all requests are evicted from the WaitQueue and return retryable errors.
+-  **Clearable:** A Pool MUST be able to be cleared. Clearing the pool marks all pooled and checked out `Connections <#connection>`_ as stale and lazily closes them as they are checkedIn or encountered in checkOut. Additionally, all requests are evicted from the WaitQueue and return errors that are considered non-timeout network errors.
 
 -  **Pausable:** A Pool MUST be able to be paused and resumed. A Pool is paused automatically when it is cleared, and it can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
 
-   -  Attempting to check out a `Connection <#connection>`_ from the Pool results in a retryable error
+   -  Attempting to check out a `Connection <#connection>`_ from the Pool results in a non-timeout network error
    -  Connections are not created in the background to satisfy minPoolSize
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
