@@ -2120,9 +2120,8 @@ example:
 #. A write begins on an application thread.
 #. The server restarts.
 #. The application thread receives a non-timeout network error.
-#. The application thread acquires the lock on the.
-   TopologyDescription, marks the Server as Unknown, and releases the
-   lock.
+#. The application thread acquires the lock on the TopologyDescription, marks
+   the Server as Unknown, and releases the lock.
 #. The monitor re-checks the server and marks it Primary and its pool
    as "ready".
 #. Several other application threads enter the WaitQueue of the
