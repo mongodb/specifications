@@ -591,11 +591,11 @@ Marking the connection pool as ready (CMAP only)
 ''''''''''''''''''''''''''''''''''''''''''''''''
 
 When a monitor completes a successful check against a server, it MUST mark the
-connection pool for that server as "ready", and it MUST do while holding the
-lock to the TopologyDescription. This is required to ensure a server does not
-get selected while its pool is still paused. See the `Connection Pool`_
-definition in the CMAP specification for more details on marking the pool as
-"ready".
+connection pool for that server as "ready", and doing so MUST be synchronized
+with the update to the topology (e.g. by marking the pool as ready in
+onServerDescriptionChanged). This is required to ensure a server does not get
+selected while its pool is still paused. See the `Connection Pool`_ definition
+in the CMAP specification for more details on marking the pool as "ready".
 
 Error handling
 ''''''''''''''
