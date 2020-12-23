@@ -148,9 +148,14 @@ tests:
                 document: { _id: 1 }
               expectError:
                 isTimeoutError: true
+        expectError:
+          isTimeoutError: true
     expectEvents:
       - client: *client
         events:
+          # Because the insert expects an error and gets an error, it technically succeeds, so withTransaction will
+          # try to run commitTransaction. This will fail client-side, though, because the timeout has already expired,
+          # so no command is sent.
           - commandStartedEvent:
               commandName: insert
               databaseName: *databaseName
@@ -161,13 +166,3 @@ tests:
                 maxTimeMS: { $$type: ["int", "long"] }
           - commandFailedEvent:
               commandName: insert
-          # The insert was expected to fail and should fail, so the callback should not return an error. In this case,
-          # withTransaction should commit the transaction.
-          - commandStartedEvent:
-              commandName: commitTransaction
-              databaseName: admin
-              command:
-                commitTransaction: 1
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandSucceededEvent:
-              commandName: commitTransaction
