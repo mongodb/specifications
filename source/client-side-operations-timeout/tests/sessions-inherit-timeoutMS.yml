@@ -1,4 +1,4 @@
-description: "timeoutMS behaves correctly for session operations"
+description: "sessions inherit timeoutMS from their parent MongoClient"
 
 schemaVersion: "1.2"
 
@@ -40,7 +40,6 @@ tests:
   # Drivers ignore errors from abortTransaction, so the tests in this file use commandSucceededEvent and
   # commandFailedEvent events to assert success/failure.
 
-  # Failure test for commitTransaction to assert that it inherits the client's timeoutMS.
   - description: "timeoutMS applied to commitTransaction"
     operations:
       - name: failPoint
@@ -80,54 +79,10 @@ tests:
               databaseName: admin
               command:
                 commitTransaction: 1
+                maxTimeMS: { $$type: ["int", "long"] }
           - commandFailedEvent:
               commandName: commitTransaction
 
-  # Success test for commitTransaction. The client timeoutMS is 10, so the test blocks the operation for 15ms and
-  # overrides the timeout to 50ms. The operation should succeed.
-  - description: "timeoutMS can be overridden for commitTransaction"
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["commitTransaction"]
-              blockConnection: true
-              blockTimeMS: 15
-      - name: startTransaction
-        object: *session
-      - name: insertOne
-        object: *collection
-        arguments:
-          session: *session
-          document: { _id: 1 }
-      - name: commitTransaction
-        object: *session
-        arguments:
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *collectionName
-          - commandSucceededEvent:
-              commandName: insert
-          - commandStartedEvent:
-              commandName: commitTransaction
-              databaseName: admin
-              command:
-                commitTransaction: 1
-          - commandSucceededEvent:
-              commandName: commitTransaction
-
-  # Failure test for abortTransaction to assert that it inherits the client's timeoutMS.
   - description: "timeoutMS applied to abortTransaction"
     operations:
       - name: failPoint
@@ -165,12 +120,11 @@ tests:
               databaseName: admin
               command:
                 abortTransaction: 1
+                maxTimeMS: { $$type: ["int", "long"] }
           - commandFailedEvent:
               commandName: abortTransaction
 
-  # Success test for commitTransaction. The client timeoutMS is 10, so the test blocks the operation for 15ms and
-  # overrides the timeout to 50ms. The operation should succeed.
-  - description: "timeoutMS can be overridden for abortTransaction"
+  - description: "timeoutMS applied to withTransaction"
     operations:
       - name: failPoint
         object: testRunner
@@ -180,20 +134,20 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands: ["abortTransaction"]
+              failCommands: ["insert"]
               blockConnection: true
               blockTimeMS: 15
-      - name: startTransaction
-        object: *session
-      - name: insertOne
-        object: *collection
-        arguments:
-          session: *session
-          document: { _id: 1 }
-      - name: abortTransaction
+      - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                session: *session
+                document: { _id: 1 }
+              expectError:
+                isTimeoutError: true
     expectEvents:
       - client: *client
         events:
@@ -202,12 +156,18 @@ tests:
               databaseName: *databaseName
               command:
                 insert: *collectionName
-          - commandSucceededEvent:
+                # withTransaction specifies timeoutMS for each operation in the callback that uses the session, so the
+                # insert command should have a maxTimeMS field.
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandFailedEvent:
               commandName: insert
+          # The insert was expected to fail and should fail, so the callback should not return an error. In this case,
+          # withTransaction should commit the transaction.
           - commandStartedEvent:
-              commandName: abortTransaction
+              commandName: commitTransaction
               databaseName: admin
               command:
-                abortTransaction: 1
+                commitTransaction: 1
+                maxTimeMS: { $$type: ["int", "long"] }
           - commandSucceededEvent:
-              commandName: abortTransaction
+              commandName: commitTransaction
