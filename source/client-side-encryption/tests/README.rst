@@ -795,7 +795,6 @@ Create a ``ClientEncryption`` object, named ``client_encryption`` configured wit
 - ``keyVaultClient``=``client_test``
 - ``keyVaultNamespace``="keyvault.datakeys"
 - ``kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
-- ``readConcern=majority`` and ``writeConcern=majority``
 
 Use ``client_encryption`` to encrypt the value "string0" with ``algorithm``="AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic" and ``keyAltName``="local". Store the result in a variable named ``ciphertext``.
 
@@ -808,16 +807,17 @@ Each test must assert the number of unique ``MongoClient``s created. This can be
 Running a test case
 ```````````````````
 - Create a ``MongoClient`` named ``client_encrypted`` configured as follows:
-   - ``AutoEncrytionOpts.keyVaultNamespace="keyvault.datakeys"``
-   - ``AutoEncrytionOpts.kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
+   - Set ``AutoEncryptionOpts``:
+      - ``keyVaultNamespace="keyvault.datakeys"``
+      - ``kmsProviders``=``{ "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }``
+      - Append ``TestCase.AutoEncryptionOpts`` (defined below)
    - Capture command started events.
    - Set ``maxPoolSize=TestCase.MaxPoolSize``
-   - Append ``TestCase.AutoEncryptionOpts`` (defined below)
 - If the testcase sets ``AutoEncryptionOpts.bypassAutoEncryption=true``:
-   - Use ``client_test`` to insert ``{ "_id": 0, "encrypted": <ciphertext> }``.
+   - Use ``client_test`` to insert ``{ "_id": 0, "encrypted": <ciphertext> }`` into ``db.coll``.
 - Otherwise:
    - Use ``client_encrypted`` to insert ``{ "_id": 0, "encrypted": "string0" }``.
-- Run a ``findOne`` operation, with the filter ``{ "_id": 0 }``.
+- Use ``client_encrypted`` to run a ``findOne`` operation on ``db.coll``, with the filter ``{ "_id": 0 }``.
 - Expect the result to be ``{ "_id": 0, "encrypted": "string0" }``.
 - Check captured events against ``TestCase.Expectations``.
 - Check the number of unique ``MongoClient``s created is equal to ``TestCase.ExpectedNumberOfClients``.
