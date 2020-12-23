@@ -17,7 +17,6 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
-        - commandFailedEvent
   - database:
       id: &database database
       client: *client
@@ -45,7 +44,7 @@ tests:
             - name: insertOne
               object: *collection
               arguments:
-                document: { x: 1 }
+                document: { _id: 1 }
                 session: *session
                 timeoutMS: 50
               expectError:
@@ -54,3 +53,53 @@ tests:
       # The only operation run fails with a client-side error, so there should be no events for the client.
       - client: *client
         events: []
+
+  - description: "timeoutMS is not refreshed for each operation in the callback"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: withTransaction
+        object: *session
+        arguments:
+          callback:
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { _id: 1 }
+                session: *session
+            - name: insertOne
+              object: *collection
+              arguments:
+                document: { _id: 2 }
+                session: *session
+              expectError:
+                isTimeoutError: true
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      - client: *client
+        events:
+          # Because the second insert expects an error and gets an error, it technically succeeds, so withTransaction
+          # will try to run commitTransaction. This will fail client-side, though, because the timeout has already
+          # expired, so no command is sent.
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
