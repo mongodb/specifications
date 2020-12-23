@@ -185,8 +185,8 @@ fields (i.e. a username and password). Each test in this section requires driver
 for some CMAP events to be published. Drivers MUST wait for up to 10 seconds and fail the test if the specified events
 are not published within that time.
 
-connectTimeoutMS used for handshake commands
-````````````````````````````````````````````
+timeoutMS used for handshake commands
+`````````````````````````````````````
 
 #. Using ``internalClient``, set the following fail point:
 
@@ -208,14 +208,14 @@ connectTimeoutMS used for handshake commands
 #. Create a MongoClient (referred to as ``client``) configured with the following:
 
    - ``minPoolSize`` of 1
-   - ``connectTimeoutMS`` of 10
+   - ``timeoutMS`` of 10
    - ``appName`` of ``timeoutBackgroundPoolTest``
    - CMAP monitor configured to listen for ``ConnectionCreatedEvent`` and ``ConnectionClosedEvent`` events.
 
 #. Wait for a ``ConnectionCreatedEvent`` and a ``ConnectionClosedEvent`` to be published.
 
-connectTimeoutMS is refreshed for each handshake command
-`````````````````````````````````````````````````````````````
+timeoutMS is refreshed for each handshake command
+`````````````````````````````````````````````````
 
 #. Using ``internalClient``, set the following fail point:
 
@@ -235,7 +235,7 @@ connectTimeoutMS is refreshed for each handshake command
 #. Create a MongoClient (referred to as ``client``) configured with the following:
 
    - ``minPoolSize`` of 1
-   - ``connectTimeoutMS`` of 20
+   - ``timeoutMS`` of 20
    - ``appName`` of ``refreshTimeoutBackgroundPoolTest``
    - CMAP monitor configured to listen for ``ConnectionCreatedEvent`` and ``ConnectionReady`` events.
 
