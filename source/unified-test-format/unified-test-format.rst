@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.1.0
+:Spec Version: 1.1.1
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-11-06
+:Last Modified: 2020-12-23
 
 .. contents::
 
@@ -99,12 +99,18 @@ they specify (as noted in `schemaVersion`_).
 JSON Schema Validation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Each major version of this specification will have a corresponding JSON schema
-for its most recent minor version (e.g. ``schema-1.1.json``). A JSON schema for
-a particular minor version MUST be capable of validating any and all test files
+Each major version of this specification SHALL have one JSON schema, which will
+correspond to its most recent minor version. When a new minor version is
+introduced, the previous schema file for that major version SHALL be renamed.
+For example: if an additive change is made to version 1.0 of the spec, the
+``schema-1.0.json`` file will be renamed to ``schema-1.1.json`` and modified
+accordingly.
+
+A particular minor version MUST be capable of validating any and all test files
 in that major version series up to and including the minor version. For example,
 ``schema-2.1.json`` should validate test files with `schemaVersion`_ "2.0" and
-"2.1", but would not be expected to validate "1.0", "2.2", or "3.0".
+"2.1", but would not be expected to validate files specifying "1.0", "2.2", or
+"3.0".
 
 The JSON schema MUST remain consistent with the `Test Format`_ section. If and
 when a new major version is introduced, the `Breaking Changes`_ section MUST be
@@ -2679,6 +2685,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2020-12-23: Clarify how JSON schema is renamed for new minor versions.
 
 :2020-11-06: Added ``serverApi`` option for client entities, ``_yamlAnchors``
              property to define values for later use in YAML tests, and
