@@ -517,6 +517,41 @@ username and password).
 
    - Expect this to fail with a timeout error after no more than 15ms.
 
+endSession
+~~~~~~~~~~
+
+This test MUST only be run against replica sets and sharded clusters with server version 4.4 or higher. It MUST be
+run three times: once with the timeout specified via the MongoClient ``timeoutMS`` option, once with the timeout
+specified via the ClientSession ``defaultTimeoutMS`` option, and once more with the timeout specified via the
+``timeoutMS`` option for the ``endSession`` operation. In all cases, the timeout MUST be set to 10 milliseconds.
+
+#. Using ``internalClient``, drop the ``db.coll`` collection.
+#. Using ``internalClient``, set the following fail point:
+
+   .. code:: javascript
+
+       {
+           configureFailPoint: failCommand,
+           mode: { times: 1 },
+           data: {
+               failCommands: ["abortTransaction"],
+               blockConnection: true,
+               blockTimeMS: 15
+           }
+       }
+
+#. Create a new MongoClient (referred to as ``client``) and an explicit ClientSession derived from that MongoClient (referred to as ``session``).
+#. Execute the following code:
+
+   .. code:: typescript
+       coll = client.database("db").collection("coll")
+       session.start_transaction()
+       coll.insert_one({x: 1}, session=session)
+
+#. Using ``session``, execute ``session.end_session``
+
+   - Expect this to fail with a timeout error after no more than 15ms.
+
 Convenient Transactions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -540,15 +575,15 @@ timeoutMS is not refreshed for each operation in the callback
            }
        }
 
-#. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=20``.
-#. Using ``client``, execute a ``withTransaction`` operation with the following callback:
+#. Create a new MongoClient (referred to as ``client``) with ``timeoutMS=20`` and an explicit ClientSession derived from that MongoClient (referred to as ``session``).
+#. Using ``session``, execute a ``withTransaction`` operation with the following callback:
 
    .. code:: typescript
 
        def callback() {
            coll = client.database("db").collection("coll")
-           coll.insert_one({ _id: 1 })
-           coll.insert_one({ _id: 2 })
+           coll.insert_one({ _id: 1 }, session=session)
+           coll.insert_one({ _id: 2 }, session=session)
        }
 
 #. Expect the previous ``withTransaction`` call to fail with a timeout error.
@@ -572,14 +607,14 @@ timeoutMS is refreshed for abortTransaction if the callback fails
            }
        }
 
-#. Create a new MongoClient (referred to as ``client``) configured with ``timeoutMS=10``.
-#. Using ``client``, execute a ``withTransaction`` operation with the following callback:
+#. Create a new MongoClient (referred to as ``client``) configured with ``timeoutMS=10`` and an explicit ClientSession derived from that MongoClient (referred to as ``session``).
+#. Using ``session``, execute a ``withTransaction`` operation with the following callback:
 
    .. code:: typescript
 
        def callback() {
            coll = client.database("db").collection("coll")
-           coll.insert_one({ _id: 1 })
+           coll.insert_one({ _id: 1 }, session=session)
        }
 
 #. Expect the previous ``withTransaction`` call to fail with a timeout error.
