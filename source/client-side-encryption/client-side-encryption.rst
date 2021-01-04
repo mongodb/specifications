@@ -297,7 +297,7 @@ keyVaultClient can be used to route data key queries to a separate
 MongoDB cluster.
 
 If a ``keyVaultClient`` is not passed, and the parent ``MongoClient`` is
-configured with a non-zero ``maxPoolSize``, the ``keyVaultClient`` is set to an
+configured with a limited ``maxPoolSize``, the ``keyVaultClient`` is set to an
 internal ``MongoClient``. See `keyVaultClient, metadataClient, and the internal
 MongoClient`_ for configuration behavior.
 
@@ -1397,8 +1397,8 @@ has a remote schema. This uses the ``metadataClient``.
 - a ``find`` against the key vault collection to fetch keys. This uses the
 ``keyVaultClient``.
 
-Why not reuse the parent MongoClient when maxPoolSize is non-zero?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why not reuse the parent MongoClient when maxPoolSize is limited?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 These operations MUST NOT reuse the same connection pool as the parent
 ``MongoClient`` configured with automatic encryption to avoid possible deadlock

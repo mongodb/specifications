@@ -880,6 +880,8 @@ Case 4
 
 Case 5
 ``````
+Drivers that do not support an unlimited maximum pool size MUST skip this test.
+
 - MaxPoolSize: 0
 - AutoEncryptionOpts:
    - bypassAutoEncryption=false
@@ -895,6 +897,8 @@ Case 5
 
 Case 6
 ``````
+Drivers that do not support an unlimited maximum pool size MUST skip this test.
+
 - MaxPoolSize: 0
 - AutoEncryptionOpts:
    - bypassAutoEncryption=false
@@ -910,6 +914,8 @@ Case 6
 
 Case 7
 ``````
+Drivers that do not support an unlimited maximum pool size MUST skip this test.
+
 - MaxPoolSize: 0
 - AutoEncryptionOpts:
    - bypassAutoEncryption=true
@@ -923,6 +929,8 @@ Case 7
 
 Case 8
 ``````
+Drivers that do not support an unlimited maximum pool size MUST skip this test.
+
 - MaxPoolSize: 0
 - AutoEncryptionOpts:
    - bypassAutoEncryption=true
