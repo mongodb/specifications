@@ -249,7 +249,6 @@ MongoClient Changes
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
-      metadataClient: Optional<MongoClient>;
    }
 
 A MongoClient can be configured to automatically encrypt collection
