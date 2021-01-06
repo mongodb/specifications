@@ -860,8 +860,8 @@ Case 3
 - Expectations:
    - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
       - an insert on "db".
-      - a find on "keyvault".
       - a find on "db"
+      - a find on "keyvault".
 - ExpectedNumberOfClients: 2
 
 Case 4
@@ -923,8 +923,8 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
 - Expectations:
    - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
       - an insert on "db".
-      - a find on "keyvault".
       - a find on "db"
+      - a find on "keyvault".
 - ExpectedNumberOfClients: 1
 
 Case 8

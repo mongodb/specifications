@@ -237,7 +237,7 @@ MongoClient Changes
       // Implementation details.
       private mongocrypt_t libmongocrypt_handle; // Handle to libmongocrypt.
       private Optional<MongoClient> mongocryptd_client; // Client to mongocryptd.
-      private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient or internal_client.
+      private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient, the parent MongoClient, or internal_client.
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
       private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient and/or metadataClient was set.
    }
