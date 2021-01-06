@@ -89,7 +89,7 @@ tests:
               databaseName: *databaseName
               command:
                 insert: *timeoutCollectionName
-                maxTimeMS: {{ $lte: *timeoutMS }}
+                maxTimeMS: { $$lte: *timeoutMS }
 
   - description: "command is not sent if RTT is greater than timeoutMS"
     operations:

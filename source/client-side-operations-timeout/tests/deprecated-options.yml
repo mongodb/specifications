@@ -29,10 +29,9 @@ tests:
   # command sent to the server does not contain a writeConcern field.
   #
   # 3. If the operation supports maxTimeMS, it ignores maxTimeMS if timeoutMS is set. The test executes the operation
-  # with maxTimeMS=1 and timeoutMS=10000. It expects the operation to succeed and uses command monitoring expectations
-  # to assert that the command contains a maxTimeMS field. It does not make any assertions to verify that the maxTimeMS
-  # field was correctly derived from timeoutMS. If the driver sets maxTimeMS=1 in the command, the operation will fail
-  # with a MaxTimeMSExpired server error.
+  # with timeoutMS=100 and maxTimeMS=500. It expects the operation to succeed and uses command monitoring expectations
+  # to assert that the actual maxTimeMS value sent was less than or equal to 100, thereby asserting that it was
+  # actually derived from timeoutMS.
 
   # Tests for commitTransaction. These are not included in the operations loop because the tests need to execute
   # additional "startTransaction" and "insertOne" operations to establish a server-side transaction. There is also one
@@ -154,19 +153,7 @@ tests:
                 client: *client
                 sessionOptions:
                   defaultTransactionOptions:
-                    maxCommitTimeMS: 1
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          arguments:
-            failPoint:
-              configureFailPoint: failCommand
-              mode: { times: 1 }
-              data:
-                failCommands: ["commitTransaction"]
-                blockConnection: true
-                blockTimeMS: 5
+                    maxCommitTimeMS: 5000
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -177,7 +164,7 @@ tests:
       - name: commitTransaction
         object: *session
         arguments:
-          timeoutMS: 10000
+          timeoutMS: &timeoutMS 1000
     expectEvents:
       - client: *client
         events:
@@ -186,7 +173,8 @@ tests:
               databaseName: admin
               command:
                 commitTransaction: 1
-                maxTimeMS: { $$type: ["int", "long"] }
+                # Assert that the final maxTimeMS field is derived from timeoutMS, not maxCommitTimeMS.
+                maxTimeMS: { $$lte: *timeoutMS }
   
   # Tests for abortTransaction. These are not included in the operations loop because the tests need to execute
   # additional "startTransaction" and "insertOne" operations to establish a server-side transaction.
@@ -275,10 +263,10 @@ tests:
       - client: *client
         events:
           - commandStartedEvent:
-              commandName: commitTransaction
+              commandName: abortTransaction
               databaseName: admin
               command:
-                commitTransaction: 1
+                abortTransaction: 1
                 writeConcern: { $$exists: false }
                 maxTimeMS: { $$type: ["int", "long"] }
 
@@ -297,6 +285,8 @@ tests:
                 uriOptions:
                   socketTimeoutMS: 1
                 useMultipleMongoses: false
+                observeEvents:
+                  - commandStartedEvent
             - database:
                 id: &database database
                 client: *client
@@ -329,6 +319,22 @@ tests:
               arguments:
                 document: { _id: 1 }
                 session: *session
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *collectionName
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "withTransaction ignores wTimeoutMS if timeoutMS is set"
     operations:
@@ -406,23 +412,11 @@ tests:
                 client: *client
                 sessionOptions:
                   defaultTransactionOptions:
-                    maxCommitTimeMS: 1
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          arguments:
-            failPoint:
-              configureFailPoint: failCommand
-              mode: { times: 1 }
-              data:
-                failCommands: ["commitTransaction"]
-                blockConnection: true
-                blockTimeMS: 5
+                    maxCommitTimeMS: 5000
       - name: withTransaction
         object: *session
         arguments:
-          timeoutMS: 10000
+          timeoutMS: &timeoutMS 1000
           callback:
             - name: insertOne
               object: *collection
@@ -437,7 +431,8 @@ tests:
               databaseName: admin
               command:
                 commitTransaction: 1
-                maxTimeMS: { $$type: ["int", "long"] }
+                # Assert that the final maxTimeMS field is derived from timeoutMS, not maxCommitTimeMS.
+                maxTimeMS: { $$lte: *timeoutMS }
 
   # Tests for operations that can be generated.
 
@@ -814,22 +809,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["aggregate"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
     expectEvents:
@@ -840,7 +824,7 @@ tests:
               databaseName: *databaseName
               command:
                 aggregate: 1
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - listCollections on database"
     operations:
@@ -1301,22 +1285,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["aggregate"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           pipeline: []
           
     expectEvents:
@@ -1327,7 +1300,7 @@ tests:
               databaseName: *databaseName
               command:
                 aggregate: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - count on collection"
     operations:
@@ -1440,22 +1413,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["count"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: count
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           filter: {}
           
     expectEvents:
@@ -1466,7 +1428,7 @@ tests:
               databaseName: *databaseName
               command:
                 count: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - countDocuments on collection"
     operations:
@@ -1664,22 +1626,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["count"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: estimatedDocumentCount
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           
     expectEvents:
       - client: *client
@@ -1689,7 +1640,7 @@ tests:
               databaseName: *databaseName
               command:
                 count: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - distinct on collection"
     operations:
@@ -1804,22 +1755,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["distinct"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           fieldName: x
           filter: {}
           
@@ -1831,7 +1771,7 @@ tests:
               databaseName: *databaseName
               command:
                 distinct: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - find on collection"
     operations:
@@ -1944,22 +1884,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["find"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           filter: {}
           
     expectEvents:
@@ -1970,7 +1899,7 @@ tests:
               databaseName: *databaseName
               command:
                 find: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - findOne on collection"
     operations:
@@ -2083,22 +2012,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["find"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           filter: {}
           
     expectEvents:
@@ -2109,7 +2027,7 @@ tests:
               databaseName: *databaseName
               command:
                 find: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - listIndexes on collection"
     operations:
@@ -3096,22 +3014,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["findAndModify"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           filter: {}
           
     expectEvents:
@@ -3122,7 +3029,7 @@ tests:
               databaseName: *databaseName
               command:
                 findAndModify: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - findOneAndReplace on collection"
     operations:
@@ -3237,22 +3144,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["findAndModify"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           filter: {}
           replacement: { x: 1 }
           
@@ -3264,7 +3160,7 @@ tests:
               databaseName: *databaseName
               command:
                 findAndModify: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - findOneAndUpdate on collection"
     operations:
@@ -3379,22 +3275,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["findAndModify"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -3406,7 +3291,7 @@ tests:
               databaseName: *databaseName
               command:
                 findAndModify: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - bulkWrite on collection"
     operations:
@@ -3612,22 +3497,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["createIndexes"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           keys: { x: 1 }
           name: "x_1"
           
@@ -3639,7 +3513,7 @@ tests:
               databaseName: *databaseName
               command:
                 createIndexes: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - dropIndex on collection"
     operations:
@@ -3752,22 +3626,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["dropIndexes"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           name: "x_1"
           
     expectEvents:
@@ -3778,7 +3641,7 @@ tests:
               databaseName: *databaseName
               command:
                 dropIndexes: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
   - description: "socketTimeoutMS is ignored if timeoutMS is set - dropIndexes on collection"
     operations:
@@ -3889,22 +3752,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["dropIndexes"]
-              blockConnection: true
-              blockTimeMS: 5
       - name: dropIndexes
         object: *collection
         arguments:
-          timeoutMS: 10000
-          maxTimeMS: 1
+          timeoutMS: &timeoutMS 100
+          maxTimeMS: 500
           
     expectEvents:
       - client: *client
@@ -3914,5 +3766,5 @@ tests:
               databaseName: *databaseName
               command:
                 dropIndexes: *collectionName
-                maxTimeMS: { $$type: ["int", "long"] }
+                maxTimeMS: { $$lte: *timeoutMS }
   
