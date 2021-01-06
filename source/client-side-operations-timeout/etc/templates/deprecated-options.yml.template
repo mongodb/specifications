@@ -480,6 +480,11 @@ tests:
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
 
   - description: "wTimeoutMS is ignored if timeoutMS is set - {{operation.operation_name}} on {{operation.object}}"
     operations:
@@ -493,6 +498,8 @@ tests:
                   wTimeoutMS: 1
                 observeEvents:
                   - commandStartedEvent
+                ignoreCommandMonitoringEvents:
+                  - killCursors
             - database:
                 id: &database database
                 client: *client
@@ -514,6 +521,11 @@ tests:
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
     expectEvents:
       - client: *client
         events:
@@ -537,6 +549,8 @@ tests:
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
+                ignoreCommandMonitoringEvents:
+                  - killCursors
             - database:
                 id: &database database
                 client: *client
@@ -559,6 +573,11 @@ tests:
           {% for arg in operation.arguments -%}
           {{arg}}
           {% endfor %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
     expectEvents:
       - client: *client
         events:
