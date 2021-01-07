@@ -239,7 +239,7 @@ MongoClient Changes
       private Optional<MongoClient> mongocryptd_client; // Client to mongocryptd.
       private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient, the parent MongoClient, or internal_client.
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
-      private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient and/or metadataClient was set.
+      private Optional<MongoClient> internal_client; // An internal MongoClient. An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
    }
 
    class AutoEncryptionOpts {
