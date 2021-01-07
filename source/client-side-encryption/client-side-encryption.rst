@@ -332,6 +332,11 @@ The following pseudo-code describes the configuration behavior for the three ``M
       else:
          client.metadataClient = getOrCreateInternalClient (client, clientOpts)
 
+Configuring the internal ``MongoClient`` MUST match the parent ``MongoClient``,
+except ``minPoolSize`` is set to ``0`` and ``AutoEncryptionOpts`` is omitted.
+This includes copying the options and host information from the URI, and other
+non-URI configuration (monitoring callbacks, versioned API, etc.).
+
 Drivers MUST document that an additional ``MongoClient`` may be created, using
 the following as a template:
 
@@ -343,8 +348,8 @@ the following as a template:
    - ``AutoEncryptionOpts.bypassAutomaticEncryption`` is ``false``.
 
    If an internal ``MongoClient`` is created, it is configured with the same
-   options as the parent ``MongoClient`` except ``minPoolSize=0`` and
-   ``AutoEncryptionOpts`` is omitted.
+   options as the parent ``MongoClient`` except ``minPoolSize`` is set to ``0``
+   and ``AutoEncryptionOpts`` is omitted.
 
 See `What's the deal with metadataClient, keyVaultClient, and the internal client?`_
 
