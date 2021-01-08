@@ -861,7 +861,6 @@ Case 3
    - keyVaultClient=unset
 - Expectations:
    - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
-      - an insert on "db".
       - a find on "db"
       - a find on "keyvault".
 - ExpectedNumberOfClients: 2
@@ -874,7 +873,6 @@ Case 4
    - keyVaultClient=client_keyvault
 - Expectations:
    - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
-      - an insert on "db".
       - a find on "db"
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
@@ -924,7 +922,6 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
    - keyVaultClient=unset
 - Expectations:
    - Expect ``client_encrypted`` to have captured three ``CommandStartedEvent``:
-      - an insert on "db".
       - a find on "db"
       - a find on "keyvault".
 - ExpectedNumberOfClients: 1
@@ -939,7 +936,6 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
    - keyVaultClient=client_keyvault
 - Expectations:
    - Expect ``client_encrypted`` to have captured two ``CommandStartedEvent``:
-      - an insert on "db".
       - a find on "db"
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
