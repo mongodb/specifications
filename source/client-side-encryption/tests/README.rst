@@ -779,12 +779,14 @@ There are multiple parameterized test cases. Before each test case, perform the 
 Setup
 `````
 
-Create two ``MongoClient``s with ``maxPoolSize=1``, ``readConcern=majority`` and ``writeConcern=majority``:
-- ``client_test`` for test operations
-- ``client_keyvault`` to use as a ``keyVaultClient``. Capture command started events.
+Create a ``MongoClient`` for setup operations named ``client_test``.
+
+Create a ``MongoClient`` for key vault operations with ``maxPoolSize=1`` named ``client_keyvault``. Capture command started events.
 
 Using ``client_test``, drop the collections ``keyvault.datakeys`` and ``db.coll``.
-Insert the document `external/external-key.json <../external/external-key.json>`_ into ``keyvault.datakeys``.
+
+Insert the document `external/external-key.json <../external/external-key.json>`_ into ``keyvault.datakeys`` with majority write concern.
+
 Create a collection ``db.coll`` configured with a JSON schema `external/external-schema.json <../external/external-schema.json>`_ as the validator, like so:
 
 .. code:: typescript
