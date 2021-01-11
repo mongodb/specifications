@@ -774,6 +774,10 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 Deadlock tests
 ~~~~~~~~~~~~~~
 
+.. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+
+The following tests only apply to drivers that have implemented a connection pool (see the `Connection Monitoring and Pooling`_ specification).
+
 There are multiple parameterized test cases. Before each test case, perform the setup.
 
 Setup
