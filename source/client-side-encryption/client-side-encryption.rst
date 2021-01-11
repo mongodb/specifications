@@ -239,7 +239,7 @@ MongoClient Changes
       private Optional<MongoClient> mongocryptd_client; // Client to mongocryptd.
       private MongoClient keyvault_client; // Client used to run find on the key vault collection. This is either an external MongoClient, the parent MongoClient, or internal_client.
       private MongoClient metadata_client; // Client used to run listCollections. This is either the parent MongoClient or internal_client.
-      private Optional<MongoClient> internal_client; // An internal MongoClient. An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
+      private Optional<MongoClient> internal_client; // An internal MongoClient. Created if no external keyVaultClient was set, or if a metadataClient is needed
    }
 
    class AutoEncryptionOpts {
@@ -1443,8 +1443,9 @@ security risk.
 Why is the metadataClient not needed if bypassAutoEncryption=true
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Because automatic decryption does not require the JSON schema.
-``listCollections`` is not run during automatic encryption.
+JSON schema data is only needed for automatic encryption but not for automatic
+decryption. ``listCollections`` is not run when ``bypassAutoEncryption`` is
+``true``, making a metadataClient unnecessary.
 
 Future work
 ===========
