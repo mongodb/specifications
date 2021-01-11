@@ -65,7 +65,7 @@ tests:
                 maxTimeMS: { $$type: ["int", "long"] }
 
   # A server response like {ok: 1, writeConcernError: {code: 50, ...}} is transformed.
-  - description: "basic MaxTimeMSExpired error is transformed"
+  - description: "write concern error MaxTimeMSExpired is transformed"
     operations:
       - name: failPoint
         object: testRunner
@@ -78,6 +78,7 @@ tests:
               failCommands: ["insert"]
               writeConcernError:
                 code: 50
+                errmsg: "maxTimeMS expired"
       - name: insertOne
         object: *collection
         arguments:

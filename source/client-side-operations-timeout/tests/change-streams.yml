@@ -12,8 +12,6 @@ createEntities:
       useMultipleMongoses: false
   - client:
       id: &client client
-      uriOptions:
-        timeoutMS: 10
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -74,6 +72,7 @@ tests:
         object: *collection
         arguments:
           pipeline: []
+          timeoutMS: 10
         expectError:
           isTimeoutError: true
     expectEvents:
@@ -235,6 +234,7 @@ tests:
           # Specify a short maxAwaitTimeMS because otherwise the getMore on the new cursor will wait for 1000ms and
           # time out.
           maxAwaitTimeMS: 1
+          timeoutMS: 100
         saveResultAsEntity: &changeStream changeStream
       # Block getMore for 15ms to force the next() call to time out.
       - name: failPoint
@@ -247,7 +247,7 @@ tests:
             data:
               failCommands: ["getMore"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 150
       # The original aggregate didn't return any events so this should do a getMore and return a timeout error.
       - name: iterateUntilDocumentOrError
         object: *changeStream
@@ -290,8 +290,7 @@ tests:
                 collection: *collectionName
 
   # The timeoutMS value should be refreshed for getMore's. This is a failure test. The createChangeStream operation
-  # inherits timeoutMS=10 from the collection and the getMore blocks for 15ms, causing iteration to fail with a timeout
-  # error.
+  # sets timeoutMS=10 and the getMore blocks for 15ms, causing iteration to fail with a timeout error.
   - description: "timeoutMS is refreshed for getMore - failure"
     operations:
       - name: failPoint
@@ -309,6 +308,7 @@ tests:
         object: *collection
         arguments:
           pipeline: []
+          timeoutMS: 10
         saveResultAsEntity: &changeStream changeStream
       # The first iteration should do a getMore
       - name: iterateUntilDocumentOrError

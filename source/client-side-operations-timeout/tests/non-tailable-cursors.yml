@@ -16,6 +16,8 @@ createEntities:
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
   - database:
       id: &database database
       client: *client
@@ -111,15 +113,6 @@ tests:
                 getMore: { $$type: ["int", "long"] }
                 collection: *collectionName
                 maxTimeMS: { $$exists: false }
-          # After the cursor times out, drivers should attempt to close it, which requires executing killCursors
-          # because the cursor hasn't been fully iterated.
-          - commandStartedEvent:
-              commandName: killCursors
-              databaseName: *databaseName
-              command:
-                killCursors: *collectionName
-                cursors: { $$type: "array" }
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # Same test as above, but with timeoutMode explicitly set to CURSOR_LIFETIME.
   - description: "remaining timeoutMS applied to getMore if timeoutMode is cursor_lifetime"
@@ -160,15 +153,6 @@ tests:
                 getMore: { $$type: ["int", "long"] }
                 collection: *collectionName
                 maxTimeMS: { $$exists: false }
-          # After the cursor times out, drivers should attempt to close it, which requires executing killCursors
-          # because the cursor hasn't been fully iterated.
-          - commandStartedEvent:
-              commandName: killCursors
-              databaseName: *databaseName
-              command:
-                killCursors: *collectionName
-                cursors: { $$type: "array" }
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # If timeoutMode=ITERATION, timeoutMS should apply to the initial find command and the command shouldn't have a
   # maxTimeMS field.
@@ -282,15 +266,6 @@ tests:
                 getMore: { $$type: ["int", "long"] }
                 collection: *collectionName
                 maxTimeMS: { $$exists: false }
-          # After the cursor times out, drivers should attempt to close it, which requires executing killCursors
-          # because the cursor hasn't been fully iterated.
-          - commandStartedEvent:
-              commandName: killCursors
-              databaseName: *databaseName
-              command:
-                killCursors: *collectionName
-                cursors: { $$type: "array" }
-                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "maxTimeMS is added to aggregate with a $out stage if timeoutMode is iteration"
     operations:
@@ -299,6 +274,9 @@ tests:
         arguments:
           pipeline:
             - $out: *aggregateOutputCollectionName
+          # A 10ms timeout causes spurious failures. This test doesn't assert that the operation times out and only
+          # asserts that timeoutMS is used to derive a maxTimeMS command field, so we can set a higher timeoutMS here.
+          timeoutMS: 100
     expectEvents:
       - client: *client
         events:
@@ -316,6 +294,9 @@ tests:
         arguments:
           pipeline:
             - $merge: *aggregateOutputCollectionName
+          # A 10ms timeout causes spurious failures. This test doesn't assert that the operation times out and only
+          # asserts that timeoutMS is used to derive a maxTimeMS command field, so we can set a higher timeoutMS here.
+          timeoutMS: 100
     expectEvents:
       - client: *client
         events:

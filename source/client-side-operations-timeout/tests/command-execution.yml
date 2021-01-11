@@ -3,7 +3,9 @@ description: "timeoutMS behaves correctly during command execution"
 schemaVersion: "1.2"
 
 runOnRequirements:
-  - minServerVersion: "4.4"
+  # The appName filter cannot be used to set a fail point on connection handshakes until server version 4.9 due to
+  # SERVER-49220/SERVER-49336.
+  - minServerVersion: "4.9"
 
 createEntities:
   - client:
@@ -30,13 +32,14 @@ tests:
         object: testRunner
         arguments:
           client: *failPointClient
-          configureFailPoint: failCommand
-          mode: "alwaysOn"
-          data:
-            failCommands: ["isMaster"]
-            appName: &appName reduceMaxTimeMSTest
-            blockConnection: true
-            blockTimeMS: 10
+          failPoint:
+            configureFailPoint: failCommand
+            mode: "alwaysOn"
+            data:
+              failCommands: ["isMaster"]
+              appName: &appName reduceMaxTimeMSTest
+              blockConnection: true
+              blockTimeMS: 10
       # Create a client with the app name specified in the fail point. Also create database and collection entities
       # derived from the new client. There are two collection entities: one with no timeoutMS, which is used to run
       # an initial operation, and one with a timeoutMS higher than the fail point's blockTimeMS value.

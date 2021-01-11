@@ -115,7 +115,8 @@ tests:
                 update: *filesCollectionName
                 maxTimeMS: { $$type: ["int", "long"] }
 
-  # Tests for the "drop" opration.
+  # Tests for the "drop" opration. Any tests that might result in multiple commands being sent do not have expectEvents
+  # assertions as these assertions reduce test robustness and can cause flaky failures.
 
   - description: "timeoutMS can be overridden for drop"
     operations:
@@ -181,22 +182,6 @@ tests:
         object: *bucket
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          # We expect two drop commands to be sent: one for files and one for chunks.
-          - commandStartedEvent:
-              commandName: drop
-              databaseName: *databaseName
-              command:
-                drop: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: drop
-              databaseName: *databaseName
-              command:
-                drop: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "timeoutMS applied to drop as a whole, not individual parts"
     operations:
@@ -215,18 +200,3 @@ tests:
         object: *bucket
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: drop
-              databaseName: *databaseName
-              command:
-                drop: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: drop
-              databaseName: *databaseName
-              command:
-                drop: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }

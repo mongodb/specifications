@@ -14,8 +14,6 @@ createEntities:
       uriOptions:
         timeoutMS: 20
       useMultipleMongoses: false
-      observeEvents:
-        - commandStartedEvent
   - database:
       id: &database database
       client: *client
@@ -41,6 +39,9 @@ initialData:
     documents: []
 
 tests:
+  # Many tests in this file do not specify command monitoring expectations because GridFS uploads internally do a
+  # number of operations, so expecting an exact set of commands can cause flaky failures.
+
   - description: "timeoutMS can be overridden for upload"
     operations:
       - name: failPoint
@@ -83,15 +84,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *databaseName
-              command:
-                find: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # On the first write to the bucket, drivers check if the files collection has the correct indexes.
   - description: "timeoutMS applied to listIndexes on files collection"
@@ -114,16 +106,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        ignoreCommandMonitoringEvents: ["find"]
-        events:
-          - commandStartedEvent:
-              commandName: listIndexes
-              databaseName: *databaseName
-              command:
-                listIndexes: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # If the files collection is empty when the first write to the bucket occurs, drivers attempt to create an index
   # on the bucket's files collection.
@@ -147,16 +129,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        ignoreCommandMonitoringEvents: ["find", "listIndexes"]
-        events:
-          - commandStartedEvent:
-              commandName: createIndexes
-              databaseName: *databaseName
-              command:
-                createIndexes: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # On the first write to the bucket, drivers check if the chunks collection has the correct indexes.
   - description: "timeoutMS applied to listIndexes on chunks collection"
@@ -180,24 +152,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        ignoreCommandMonitoringEvents: ["find", "createIndexes"]
-        events:
-          # We expect two listIndexes commands: the initial one on the files collection and the one under test on the
-          # chunks collection.
-          - commandStartedEvent:
-              commandName: listIndexes
-              databaseName: *databaseName
-              command:
-                listIndexes: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: listIndexes
-              databaseName: *databaseName
-              command:
-                listIndexes: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # If the files collection is empty when the first write to the bucket occurs, drivers attempt to create an index
   # on the bucket's chunks collection.
@@ -223,24 +177,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        ignoreCommandMonitoringEvents: ["find", "listIndexes"]
-        events:
-          # We expect two createIndexes commands: one on the files collection and the one under test on the chunks
-          # collection.
-          - commandStartedEvent:
-              commandName: createIndexes
-              databaseName: *databaseName
-              command:
-                createIndexes: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: createIndexes
-              databaseName: *databaseName
-              command:
-                createIndexes: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "timeoutMS applied to chunk insertion"
     operations:
@@ -262,16 +198,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        ignoreCommandMonitoringEvents: ["find", "listIndexes", "createIndexes"]
-        events:
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "timeoutMS applied to creation of files document"
     operations:
@@ -295,24 +221,6 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        ignoreCommandMonitoringEvents: ["find", "listIndexes", "createIndexes"]
-        events:
-          # We expect two insert commands: one to insert the chunk and one under test to create the files collection
-          # document.
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: insert
-              databaseName: *databaseName
-              command:
-                insert: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # Test that drivers apply timeoutMS to the entire upload rather than refreshing it between individual commands. We
   # test this by blocking the "find" and "listIndexes" commands for 15ms each and performing an upload. The upload
@@ -338,18 +246,3 @@ tests:
           source: { $$hexBytes: "1122334455" }
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: find
-              databaseName: *databaseName
-              command:
-                find: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: listIndexes
-              databaseName: *databaseName
-              command:
-                listIndexes: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
