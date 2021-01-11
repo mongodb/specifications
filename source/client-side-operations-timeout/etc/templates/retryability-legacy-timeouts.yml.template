@@ -15,7 +15,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        socketTimeoutMS: 10
+        socketTimeoutMS: 50
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -38,8 +38,8 @@ initialData:
 tests:
   # For each retryable operation, run two tests:
   #
-  # 1. Socket timeouts are retried once - Each test constructs a client entity with socketTimeoutMS=10, configures a
-  # fail point to block the operation once for 15ms, and expects the operation to succeed.
+  # 1. Socket timeouts are retried once - Each test constructs a client entity with socketTimeoutMS=50, configures a
+  # fail point to block the operation once for 55ms, and expects the operation to succeed.
   #
   # 2. Operations fail after two consecutive socket timeouts - Same as (1) but the fail point is configured to block
   # the operation twice and the test expects the operation to fail.
@@ -57,7 +57,7 @@ tests:
             data:
               failCommands: ["{{operation.command_name}}"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}
@@ -91,7 +91,7 @@ tests:
             data:
               failCommands: ["{{operation.command_name}}"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}

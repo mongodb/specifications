@@ -18,7 +18,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 20
+        timeoutMS: 50
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -41,9 +41,9 @@ initialData:
 tests:
   # For each retryable operation, run three tests:
   #
-  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=20 and the operation is
-  # fails with a retryable error after being blocked server-side for 15ms. The operation should fail with a timeout error
-  # because the second attempt should take it over the 20ms limit. This test only runs on 4.4+ because it uses the
+  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=50 and the operation is
+  # fails with a retryable error after being blocked server-side for 30ms. The operation should fail with a timeout error
+  # because the second attempt should take it over the 50ms limit. This test only runs on 4.4+ because it uses the
   # blockConnection option in failCommand.
   #
   # 2. operation is retried multiple times if timeoutMS is set to a non-zero value - Client timeoutMS=20 and the
@@ -74,7 +74,7 @@ tests:
             data:
               failCommands: ["{{operation.command_name}}"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 30
               errorCode: 7
               errorLabels: ["RetryableWriteError"]
       - name: {{operation.operation_name}}
@@ -87,21 +87,6 @@ tests:
         {%- endif %}
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: {{operation.command_name}}
-              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
-              command:
-                {{operation.command_name}}: {{get_command_object(operation.object)}}
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: {{operation.command_name}}
-              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
-              command:
-                {{operation.command_name}}: {{get_command_object(operation.object)}}
-                maxTimeMS: { $$type: ["int", "long"] }
   - description: "operation is retried multiple times for non-zero timeoutMS - {{operation.operation_name}} on {{operation.object}}"
     operations:
       - name: failPoint

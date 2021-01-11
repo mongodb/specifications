@@ -15,7 +15,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        socketTimeoutMS: 10
+        socketTimeoutMS: 50
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -38,8 +38,8 @@ initialData:
 tests:
   # For each retryable operation, run two tests:
   #
-  # 1. Socket timeouts are retried once - Each test constructs a client entity with socketTimeoutMS=10, configures a
-  # fail point to block the operation once for 15ms, and expects the operation to succeed.
+  # 1. Socket timeouts are retried once - Each test constructs a client entity with socketTimeoutMS=50, configures a
+  # fail point to block the operation once for 55ms, and expects the operation to succeed.
   #
   # 2. Operations fail after two consecutive socket timeouts - Same as (1) but the fail point is configured to block
   # the operation twice and the test expects the operation to fail.
@@ -56,7 +56,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: insertOne
         object: *collection
         arguments:
@@ -87,7 +87,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: insertOne
         object: *collection
         arguments:
@@ -120,7 +120,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: insertMany
         object: *collection
         arguments:
@@ -152,7 +152,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: insertMany
         object: *collection
         arguments:
@@ -186,7 +186,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: deleteOne
         object: *collection
         arguments:
@@ -217,7 +217,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: deleteOne
         object: *collection
         arguments:
@@ -250,7 +250,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: replaceOne
         object: *collection
         arguments:
@@ -282,7 +282,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: replaceOne
         object: *collection
         arguments:
@@ -316,7 +316,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: updateOne
         object: *collection
         arguments:
@@ -348,7 +348,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: updateOne
         object: *collection
         arguments:
@@ -382,7 +382,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -413,7 +413,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -446,7 +446,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -478,7 +478,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -512,7 +512,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -544,7 +544,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -578,7 +578,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: bulkWrite
         object: *collection
         arguments:
@@ -611,7 +611,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: bulkWrite
         object: *collection
         arguments:
@@ -646,7 +646,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listDatabases
         object: *client
         arguments:
@@ -677,7 +677,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listDatabases
         object: *client
         arguments:
@@ -710,7 +710,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listDatabaseNames
         object: *client
         arguments:
@@ -741,7 +741,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listDatabaseNames
         object: *client
         arguments:
@@ -774,7 +774,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *client
         arguments:
@@ -805,7 +805,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *client
         arguments:
@@ -838,7 +838,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: aggregate
         object: *database
         arguments:
@@ -869,7 +869,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: aggregate
         object: *database
         arguments:
@@ -902,7 +902,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listCollections
         object: *database
         arguments:
@@ -933,7 +933,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listCollections
         object: *database
         arguments:
@@ -966,7 +966,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listCollectionNames
         object: *database
         arguments:
@@ -997,7 +997,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listCollectionNames
         object: *database
         arguments:
@@ -1030,7 +1030,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *database
         arguments:
@@ -1061,7 +1061,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *database
         arguments:
@@ -1094,7 +1094,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: aggregate
         object: *collection
         arguments:
@@ -1125,7 +1125,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: aggregate
         object: *collection
         arguments:
@@ -1158,7 +1158,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: count
         object: *collection
         arguments:
@@ -1189,7 +1189,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: count
         object: *collection
         arguments:
@@ -1222,7 +1222,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: countDocuments
         object: *collection
         arguments:
@@ -1253,7 +1253,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: countDocuments
         object: *collection
         arguments:
@@ -1286,7 +1286,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: estimatedDocumentCount
         object: *collection
         
@@ -1315,7 +1315,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: estimatedDocumentCount
         object: *collection
         
@@ -1346,7 +1346,7 @@ tests:
             data:
               failCommands: ["distinct"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: distinct
         object: *collection
         arguments:
@@ -1378,7 +1378,7 @@ tests:
             data:
               failCommands: ["distinct"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: distinct
         object: *collection
         arguments:
@@ -1412,7 +1412,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: find
         object: *collection
         arguments:
@@ -1443,7 +1443,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: find
         object: *collection
         arguments:
@@ -1476,7 +1476,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOne
         object: *collection
         arguments:
@@ -1507,7 +1507,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: findOne
         object: *collection
         arguments:
@@ -1540,7 +1540,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listIndexes
         object: *collection
         
@@ -1569,7 +1569,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: listIndexes
         object: *collection
         
@@ -1600,7 +1600,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *collection
         arguments:
@@ -1631,7 +1631,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: createChangeStream
         object: *collection
         arguments:

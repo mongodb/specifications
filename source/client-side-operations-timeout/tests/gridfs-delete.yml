@@ -123,21 +123,6 @@ tests:
           id: *fileDocumentId
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: delete
-              databaseName: *databaseName
-              command:
-                delete: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: delete
-              databaseName: *databaseName
-              command:
-                delete: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
 
   # Test that drivers are not refreshing the timeout between commands. We test this by blocking both "delete" commands
   # for 15ms each. The delete should inherit timeoutMS=20 from the client/database and the server takes over 20ms
@@ -161,18 +146,3 @@ tests:
           id: *fileDocumentId
         expectError:
           isTimeoutError: true
-    expectEvents:
-      - client: *client
-        events:
-          - commandStartedEvent:
-              commandName: delete
-              databaseName: *databaseName
-              command:
-                delete: *filesCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
-          - commandStartedEvent:
-              commandName: delete
-              databaseName: *databaseName
-              command:
-                delete: *chunksCollectionName
-                maxTimeMS: { $$type: ["int", "long"] }
