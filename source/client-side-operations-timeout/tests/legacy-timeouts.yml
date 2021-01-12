@@ -152,6 +152,8 @@ tests:
 
   # Same test as above but with the maxCommitTimeMS option.
   - description: "maxCommitTimeMS option is used directly as the maxTimeMS field on a commitTransaction command"
+    runOnRequirements:
+      - topologies: ["replicaset", "sharded-replicaset"]
     operations:
       - name: createEntities
         object: testRunner

@@ -7,6 +7,7 @@ schemaVersion: "1.2"
 # min server version is set to 4.2 for all.
 runOnRequirements:
   - minServerVersion: "4.2"
+    topologies: ["replicaset", "sharded-replicaset"]
 
 createEntities:
   - client:
