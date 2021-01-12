@@ -30,7 +30,7 @@ tests:
   # command sent to the server does not contain a writeConcern field.
   #
   # 3. If the operation supports maxTimeMS, it ignores maxTimeMS if timeoutMS is set. The test executes the operation
-  # with timeoutMS=100 and maxTimeMS=500. It expects the operation to succeed and uses command monitoring expectations
+  # with timeoutMS=1000 and maxTimeMS=5000. It expects the operation to succeed and uses command monitoring expectations
   # to assert that the actual maxTimeMS value sent was less than or equal to 100, thereby asserting that it was
   # actually derived from timeoutMS.
 
@@ -47,8 +47,13 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 1
+                  # This test uses 20 instead of 1 like other tests because socketTimeoutMS also applies to the
+                  # operation done to start the server-side transaction and it needs time to succeed.
+                  socketTimeoutMS: 20
                 useMultipleMongoses: false
+                observeEvents:
+                  - commandStartedEvent
+                ignoreCommandMonitoringEvents: ["aggregate"]
             - database:
                 id: &database database
                 client: *client
@@ -73,15 +78,25 @@ tests:
               blockTimeMS: 5
       - name: startTransaction
         object: *session
-      - name: insertOne
+      - name: countDocuments
         object: *collection
         arguments:
-          document: { _id: 1 }
+          filter: {}
           session: *session
       - name: commitTransaction
         object: *session
         arguments:
           timeoutMS: 10000
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: commitTransaction
+              databaseName: admin
+              command:
+                commitTransaction: 1
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "commitTransaction ignores wTimeoutMS if timeoutMS is set"
     operations:
@@ -95,7 +110,7 @@ tests:
                   wTimeoutMS: 1
                 observeEvents:
                   - commandStartedEvent
-                ignoreCommandMonitoringEvents: ["insert"]
+                ignoreCommandMonitoringEvents: ["aggregate"]
             - database:
                 id: &database database
                 client: *client
@@ -109,10 +124,10 @@ tests:
                 client: *client
       - name: startTransaction
         object: *session
-      - name: insertOne
+      - name: countDocuments
         object: *collection
         arguments:
-          document: { _id: 1 }
+          filter: {}
           session: *session
       - name: commitTransaction
         object: *session
@@ -140,7 +155,7 @@ tests:
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
-                ignoreCommandMonitoringEvents: ["insert"]
+                ignoreCommandMonitoringEvents: ["aggregate"]
             - database:
                 id: &database database
                 client: *client
@@ -157,10 +172,10 @@ tests:
                     maxCommitTimeMS: 5000
       - name: startTransaction
         object: *session
-      - name: insertOne
+      - name: countDocuments
         object: *collection
         arguments:
-          document: { _id: 1 }
+          filter: {}
           session: *session
       - name: commitTransaction
         object: *session
@@ -189,8 +204,13 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 1
+                  # This test uses 20 instead of 1 like other tests because socketTimeoutMS also applies to the
+                  # operation done to start the server-side transaction and it needs time to succeed.
+                  socketTimeoutMS: 20
                 useMultipleMongoses: false
+                observeEvents:
+                  - commandStartedEvent
+                ignoreCommandMonitoringEvents: ["aggregate"]
             - database:
                 id: &database database
                 client: *client
@@ -215,15 +235,25 @@ tests:
               blockTimeMS: 5
       - name: startTransaction
         object: *session
-      - name: insertOne
+      - name: countDocuments
         object: *collection
         arguments:
-          document: { _id: 1 }
+          filter: {}
           session: *session
       - name: abortTransaction
         object: *session
         arguments:
           timeoutMS: 10000
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: abortTransaction
+              databaseName: admin
+              command:
+                abortTransaction: 1
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
 
   - description: "abortTransaction ignores wTimeoutMS if timeoutMS is set"
     operations:
@@ -237,7 +267,7 @@ tests:
                   wTimeoutMS: 1
                 observeEvents:
                   - commandStartedEvent
-                ignoreCommandMonitoringEvents: ["insert"]
+                ignoreCommandMonitoringEvents: ["aggregate"]
             - database:
                 id: &database database
                 client: *client
@@ -251,10 +281,10 @@ tests:
                 client: *client
       - name: startTransaction
         object: *session
-      - name: insertOne
+      - name: countDocuments
         object: *collection
         arguments:
-          document: { _id: 1 }
+          filter: {}
           session: *session
       - name: abortTransaction
         object: *session
@@ -284,7 +314,9 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  socketTimeoutMS: 1
+                  # This test uses 20 instead of 1 like other tests because socketTimeoutMS also applies to the
+                  # operation done to start the server-side transaction and it needs time to succeed.
+                  socketTimeoutMS: 20
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -315,19 +347,19 @@ tests:
         arguments:
           timeoutMS: 10000
           callback:
-            - name: insertOne
+            - name: countDocuments
               object: *collection
               arguments:
-                document: { _id: 1 }
+                filter: {}
                 session: *session
     expectEvents:
       - client: *client
         events:
           - commandStartedEvent:
-              commandName: insert
+              commandName: aggregate
               databaseName: *databaseName
               command:
-                insert: *collectionName
+                aggregate: *collectionName
                 maxTimeMS: { $$type: ["int", "long"] }
           - commandStartedEvent:
               commandName: commitTransaction
@@ -365,19 +397,19 @@ tests:
         arguments:
           timeoutMS: 10000
           callback:
-            - name: insertOne
+            - name: countDocuments
               object: *collection
               arguments:
-                document: { _id: 1 }
+                filter: {}
                 session: *session
     expectEvents:
       - client: *client
         events:
           - commandStartedEvent:
-              commandName: insert
+              commandName: aggregate
               databaseName: *databaseName
               command:
-                insert: *collectionName
+                aggregate: *collectionName
                 writeConcern: { $$exists: false }
                 maxTimeMS: { $$type: ["int", "long"] }
           - commandStartedEvent:
@@ -399,7 +431,6 @@ tests:
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
-                ignoreCommandMonitoringEvents: ["insert"]
             - database:
                 id: &database database
                 client: *client
@@ -419,14 +450,21 @@ tests:
         arguments:
           timeoutMS: &timeoutMS 1000
           callback:
-            - name: insertOne
+            - name: countDocuments
               object: *collection
               arguments:
-                document: { _id: 1 }
+                filter: {}
                 session: *session
     expectEvents:
       - client: *client
         events:
+          - commandStartedEvent:
+              commandName: aggregate
+              databaseName: *databaseName
+              command:
+                aggregate: *collectionName
+                writeConcern: { $$exists: false }
+                maxTimeMS: { $$type: ["int", "long"] }
           - commandStartedEvent:
               commandName: commitTransaction
               databaseName: admin
@@ -831,8 +869,8 @@ tests:
       - name: aggregate
         object: *database
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
           
         
@@ -1330,8 +1368,8 @@ tests:
       - name: aggregate
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           pipeline: []
           
         
@@ -1465,8 +1503,8 @@ tests:
       - name: count
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           filter: {}
           
         
@@ -1689,8 +1727,8 @@ tests:
       - name: estimatedDocumentCount
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           
         
     expectEvents:
@@ -1825,8 +1863,8 @@ tests:
       - name: distinct
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           fieldName: x
           filter: {}
           
@@ -1961,8 +1999,8 @@ tests:
       - name: find
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           filter: {}
           
         
@@ -2096,8 +2134,8 @@ tests:
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           filter: {}
           
         
@@ -3145,8 +3183,8 @@ tests:
       - name: findOneAndDelete
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           filter: {}
           
         
@@ -3282,8 +3320,8 @@ tests:
       - name: findOneAndReplace
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           filter: {}
           replacement: { x: 1 }
           
@@ -3420,8 +3458,8 @@ tests:
       - name: findOneAndUpdate
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           filter: {}
           update: { $set: { x: 1 } }
           
@@ -3653,8 +3691,8 @@ tests:
       - name: createIndex
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           keys: { x: 1 }
           name: "x_1"
           
@@ -3793,8 +3831,8 @@ tests:
       - name: dropIndex
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           name: "x_1"
           
         expectError:
@@ -3928,8 +3966,8 @@ tests:
       - name: dropIndexes
         object: *collection
         arguments:
-          timeoutMS: &timeoutMS 100
-          maxTimeMS: 500
+          timeoutMS: &timeoutMS 1000
+          maxTimeMS: 5000
           
         
     expectEvents:
