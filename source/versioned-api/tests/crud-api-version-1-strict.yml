@@ -69,6 +69,10 @@ tests:
           pipeline: &pipeline
             - $listLocalSessions: {}
             - $limit: 1
+        expectError:
+          isError: true
+          errorContains: "stage $listLocalSessions is not allowed with 'apiStrict: true' in API Version 1"
+          errorCodeName: "APIStrictError"
     expectEvents:
       - client: *client
         events:
