@@ -763,7 +763,8 @@ The abortTransaction server command has the following format:
         lsid : { id : <UUID> },
         txnNumber : <Int64>,
         autocommit : false,
-        writeConcern : {...}
+        writeConcern : {...},
+        recoveryToken : {...}
     }
 
 Both commands MUST be sent to the admin database.
