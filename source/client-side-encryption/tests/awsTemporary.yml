@@ -48,10 +48,10 @@ tests:
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
-          awsTemporary: {}
+          awsTemporaryNoSessionToken: {}
     operations:
       - name: insertOne
         arguments:
           document: *doc0
         result:
-          errorContains: "LMAO"
+          errorContains: "security token"
