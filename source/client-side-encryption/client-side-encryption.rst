@@ -364,7 +364,8 @@ to authenticate.
 
    aws: {
       accessKeyId: String,
-      secretAccessKey: String
+      secretAccessKey: String,
+      sessionToken: Optional<String> // Required for temporary AWS credentials.
    }
 
    azure: {
