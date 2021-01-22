@@ -147,7 +147,32 @@ Then for each element in ``tests``:
 
 #. Create a **new** MongoClient using ``clientOptions``.
 
-   #. If ``autoEncryptOpts`` includes ``aws``, ``azure``, and/or ``gcp`` as a KMS provider, pass in credentials from the environment.
+   #. If ``autoEncryptOpts`` includes ``aws``, ``awsTemporary``, ``awsTemporaryNoSessionToken``, ``azure``, and/or ``gcp`` as a KMS provider, pass in credentials from the environment.
+      - ``awsTemporary``, and ``awsTemporaryNoSessionToken`` require temporary AWS credentials. These can be retrieved using the csfle `set-temp-creds.sh <https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/csfle>`_ script.
+      - ``aws``, ``awsTemporary``, and ``awsTemporaryNoSessionToken`` are mutually exclusive.
+      - The following is a full KMS providers map for reference:
+
+        .. code:: javascript
+
+           {
+              "aws": {
+                 "accessKeyId": <set from environment>,
+                 "secretAccessKey": <set from environment>
+                 "sessionToken": <set from environment>
+              },
+              "azure": {
+                 "tenantId": <set from environment>,
+                 "clientId": <set from environment>,
+                 "clientSecret": <set from environment>,
+              },
+                 "gcp": {
+                 "email": <set from environment>,
+                 "privateKey": <set from environment>,
+              }
+              "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
+           }
+
+
    #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it to ``keyvault.datakeys``.
 
 #. For each element in ``operations``:
