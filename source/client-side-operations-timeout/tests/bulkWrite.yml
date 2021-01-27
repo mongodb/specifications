@@ -30,7 +30,7 @@ initialData:
 
 tests:
   # Test that drivers do not refresh timeoutMS between commands. This is done by running a bulkWrite that will require
-  # two commands with timeoutMS=20 and blocking each command for 15ms. The server should take over 20ms total, so the
+  # two commands with timeoutMS=50 and blocking each command for 30ms. The server should take over 50ms total, so the
   # bulkWrite should fail with a timeout error.
   - description: "timeoutMS applied to entire bulkWrite, not individual commands"
     operations:
@@ -44,7 +44,7 @@ tests:
             data:
               failCommands: ["insert", "update"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 30
       - name: bulkWrite
         object: *collection
         arguments:
@@ -54,7 +54,7 @@ tests:
             - replaceOne:
                 filter: { _id: 1 }
                 replacement: { x: 1 }
-          timeoutMS: 20
+          timeoutMS: 50
         expectError:
           isTimeoutError: true
     expectEvents:

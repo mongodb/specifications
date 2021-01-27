@@ -12,7 +12,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 10
+        timeoutMS: 50
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -53,12 +53,12 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: find
         object: *bucket
         arguments:
           filter: {}
-          timeoutMS: 50 # The client timeoutMS is 10 and the operation blocks for 15ms, so 50ms should let it succeed.
+          timeoutMS: 100 # The client timeoutMS is 50 and the operation blocks for 55ms, so 100ms should let it succeed.
     expectEvents:
       - client: *client
         events:
@@ -81,7 +81,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 55
       - name: find
         object: *bucket
         arguments:

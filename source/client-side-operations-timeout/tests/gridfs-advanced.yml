@@ -12,7 +12,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 20
+        timeoutMS: 50
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -68,13 +68,13 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: rename
         object: *bucket
         arguments:
           id: *fileDocumentId
           newFilename: "foo"
-          timeoutMS: 50 # The client timeoutMS is 20 and the operation blocks for 25ms, so 50ms should let it succeed.
+          timeoutMS: 100 # The client timeoutMS is 50 and the operation blocks for 55ms, so 100ms should let it succeed.
     expectEvents:
       - client: *client
         events:
@@ -97,7 +97,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: rename
         object: *bucket
         arguments:
@@ -130,11 +130,11 @@ tests:
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: drop
         object: *bucket
         arguments:
-          timeoutMS: 50 # The client timeoutMS is 20 and the operation blocks for 25ms, so 50ms should let it succeed.
+          timeoutMS: 100 # The client timeoutMS is 50 and the operation blocks for 55ms, so 100ms should let it succeed.
 
   - description: "timeoutMS applied to files collection drop"
     operations:
@@ -148,7 +148,7 @@ tests:
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: drop
         object: *bucket
         expectError:
@@ -177,7 +177,7 @@ tests:
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: drop
         object: *bucket
         expectError:
@@ -195,7 +195,7 @@ tests:
             data:
               failCommands: ["drop"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 30
       - name: drop
         object: *bucket
         expectError:

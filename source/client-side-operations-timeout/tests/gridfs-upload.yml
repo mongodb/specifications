@@ -12,7 +12,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 20
+        timeoutMS: 50
       useMultipleMongoses: false
   - database:
       id: &database database
@@ -54,7 +54,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -76,7 +76,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -98,7 +98,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -121,7 +121,7 @@ tests:
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -144,7 +144,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -169,7 +169,7 @@ tests:
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -190,7 +190,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -213,7 +213,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: upload
         object: *bucket
         arguments:
@@ -223,8 +223,8 @@ tests:
           isTimeoutError: true
 
   # Test that drivers apply timeoutMS to the entire upload rather than refreshing it between individual commands. We
-  # test this by blocking the "find" and "listIndexes" commands for 15ms each and performing an upload. The upload
-  # should inherit timeoutMS=20 from the client/database and the server takes over 20ms total, so the operation should
+  # test this by blocking the "find" and "listIndexes" commands for 30ms each and performing an upload. The upload
+  # should inherit timeoutMS=50 from the client/database and the server takes over 50ms total, so the operation should
   # fail.
   - description: "timeoutMS applied to upload as a whole, not individual parts"
     operations:
@@ -238,7 +238,7 @@ tests:
             data:
               failCommands: ["find", "listIndexes"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 30
       - name: upload
         object: *bucket
         arguments:

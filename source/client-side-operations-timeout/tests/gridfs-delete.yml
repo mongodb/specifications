@@ -12,7 +12,7 @@ createEntities:
   - client:
       id: &client client
       uriOptions:
-        timeoutMS: 20
+        timeoutMS: 50
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -66,12 +66,12 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: delete
         object: *bucket
         arguments:
           id: *fileDocumentId
-          timeoutMS: 50 # The client timeoutMS is 20 and the operation blocks for 25ms, so 50ms should let it succeed.
+          timeoutMS: 100 # The client timeoutMS is 50 and the operation blocks for 55ms, so 100ms should let it succeed.
 
   - description: "timeoutMS applied to delete against the files collection"
     operations:
@@ -85,7 +85,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: delete
         object: *bucket
         arguments:
@@ -116,7 +116,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 55
       - name: delete
         object: *bucket
         arguments:
@@ -125,7 +125,7 @@ tests:
           isTimeoutError: true
 
   # Test that drivers are not refreshing the timeout between commands. We test this by blocking both "delete" commands
-  # for 15ms each. The delete should inherit timeoutMS=20 from the client/database and the server takes over 20ms
+  # for 30ms each. The delete should inherit timeoutMS=50 from the client/database and the server takes over 50ms
   # total, so the operation should fail.
   - description: "timeoutMS applied to entire delete, not individual parts"
     operations:
@@ -139,7 +139,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 30
       - name: delete
         object: *bucket
         arguments:
