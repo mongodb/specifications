@@ -154,14 +154,3 @@ at the top level of this repository to convert all YAML test files to JSON.
 Licensing
 ----------------
 All the specs in this repository are available under the  `Creative Commons Attribution-NonCommercial-ShareAlike 3.0 United States License <https://creativecommons.org/licenses/by-nc-sa/3.0/us/>`_.
-
-In the future...
-----------------
-
-- Templates will have logos, and templates for authorship, copyright,
-  disclaimers, etc.
-
-- Non-PDF output targets.
-
-If you have specific feature requests, or need help getting things
-running, please contact samk@10gen.com.
