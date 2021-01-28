@@ -196,8 +196,8 @@ should be checked:
    the retry timeout has been exceeded, ``withTransaction`` should propagate the
    error to its caller.
  * If committing raises an error with the UnknownTransactionCommitResult label,
-   the error is not a write concern timeout, and the retry timeout has been
-   exceeded, ``withTransaction`` should propagate the error to its caller.
+   and the retry timeout has been exceeded, ``withTransaction`` should
+   propagate the error to its caller.
  * If committing raises an error with the TransientTransactionError label and
    the retry timeout has been exceeded, ``withTransaction`` should propagate the
    error to its caller. This case may occur if the commit was internally retried
