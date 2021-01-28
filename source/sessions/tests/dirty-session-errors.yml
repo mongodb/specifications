@@ -309,11 +309,9 @@ tests:
 
   - description: Dirty implicit session is discarded (read)
 
-    # Enable the failpoint with times:2 so that this test can pass with or
-    # without retryable reads.
     failPoint:
         configureFailPoint: failCommand
-        mode: { times: 2 }
+        mode: { times: 1 }
         data:
             failCommands: ["aggregate"]
             closeConnection: true
@@ -325,13 +323,33 @@ tests:
           pipeline:
             - $project:
                 _id: 1
-        error: true
+        result:
+          - { _id: 1 }
       - *find_with_implicit_session
       - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner
 
-    # Don't include expectations because a driver may or may not retry the
-    # aggregate depending on if they have implemented the retryable reads spec.
+    expectations:
+      - command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline:
+              - { $project: { _id: 1 } }
+          command_name: aggregate
+          database_name: *database_name
+      - command_started_event:
+          command:
+            aggregate: *collection_name
+            pipeline:
+              - { $project: { _id: 1 } }
+          command_name: aggregate
+          database_name: *database_name
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {_id: -1}
+          command_name: find
+          database_name: *database_name
 
     outcome:
       collection:
@@ -340,11 +358,9 @@ tests:
 
   - description: Dirty implicit session is discarded (non-cursor returning read)
 
-    # Enable the failpoint with times:2 so that this test can pass with or
-    # without retryable reads.
     failPoint:
         configureFailPoint: failCommand
-        mode: { times: 2 }
+        mode: { times: 1 }
         data:
             failCommands: ["aggregate"]
             closeConnection: true
@@ -354,13 +370,28 @@ tests:
         object: collection
         arguments:
           filter: {}
-        error: true
+        result: 1
       - *find_with_implicit_session
       - name: assertDifferentLsidOnLastTwoCommands
         object: testRunner
 
-    # Don't include expectations because a driver may or may not retry the
-    # count depending on if they have implemented the retryable reads spec.
+    expectations:
+      - command_started_event:
+          command:
+            aggregate: *collection_name
+          command_name: aggregate
+          database_name: *database_name
+      - command_started_event:
+          command:
+            aggregate: *collection_name
+          command_name: aggregate
+          database_name: *database_name
+      - command_started_event:
+          command:
+            find: *collection_name
+            filter: {_id: -1}
+          command_name: find
+          database_name: *database_name
 
     outcome:
       collection:
