@@ -462,6 +462,78 @@ The structure of this object is as follows:
 
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
+    
+  - ``storeEventsAsEntities``: Optional map of event names to entity names.
+    If provided the test runner MUST:
+    
+      - For each entity name, create the respective entity with a type of
+        "event list". If multiple event names map to the same entity name,
+        exactly one entity MUST be created. If the entity already exists
+        (such as from a previous ``storeEventsAsEntities`` declaration from
+        another client), the test runner MUST raise an error.
+      - Set up an event subscriber for each event named. The event subscriber
+        MUST serialize the events it receives into a document and append
+        the document to the array stored in the specified entity.
+        The fields in the document MUST be as follows:
+        
+        - For ``CommandStartedEvent``:
+       
+          - ``name``: the name of the event, i.e. ``CommandStartedEvent``.
+          - ``commandName``: the name of the command, e.g. ``insert``.
+          - ``startTime``: the (floating-point) number of seconds since
+            the Unix epoch when the command began executing.
+          - ``address``: the address of the server to which the command
+             was sent, e.g. ``localhost:27017``.
+        
+        - For ``CommandSucceededEvent``:
+       
+          - ``name``: the name of the event, i.e. ``CommandSucceededEvent``.
+          - ``commandName``: the name of the command, e.g. ``insert``.
+          - ``duration``: the time, in (floating-point) seconds, it took for
+            the command to execute.
+          - ``startTime``: the (floating-point) number of seconds since
+            the Unix epoch when the command began executing.
+          - ``address``: the address of the server to which the command
+             was sent, e.g. ``localhost:27017``.
+        
+        - For ``CommandFailedEvent``:
+       
+          - ``name``: the name of the event, i.e. ``CommandFailedEvent``.
+          - ``commandName``: the name of the command, e.g. ``insert``.
+          - ``duration``: the time, in (floating-point) seconds, it took for
+            the command to execute.
+          - ``failure``: this field MUST contain a textual description
+             of the error encountered while executing the command.
+          - ``startTime``: the (floating-point) number of seconds since
+            the Unix epoch when the command began executing.
+          - ``address``: the address of the server to which the command
+             was sent, e.g. ``localhost:27017``.
+             
+        - For connection pool events (``PoolCreatedEvent``,
+          ``PoolReadyEvent``, ``PoolClearedEvent``, ``PoolClosedEvent``):
+               
+          - ``name``: the name of the event, e.g. ``PoolCreatedEvent``.
+          - ``time``: the (floating-point) number of seconds since the
+            Unix epoch when the event was published.
+          - ``address``: the address of the server that the command was
+            published for, e.g. ``localhost:27017``.
+        
+        - For connnection events (``ConnectionCreatedEvent``,
+          ``ConnectionReadyEvent``, ``ConnectionClosedEvent``,
+          ``ConnectionCheckOutStartedEvent``, ``ConnectionCheckOutFailedEvent``,
+          ``ConnectionCheckedOutEvent``, ``ConnectionCheckedInEvent``):
+               
+          - ``name``: the name of the event, e.g. ``ConnectionCreatedEvent``.
+          - ``time``: the (floating-point) number of seconds since the
+            Unix epoch when the event was published.
+          - ``address``: the address of the server that the command was
+            published for, e.g. ``localhost:27017``.
+          - ``connectionId``: the identifier for the connection for which
+            the event was published.
+          - ``reason``: a textual reason for why the event was published
+            (if defined by the CMAP specification for the respective event;
+            ``ConnectionClosedEvent`` and ``ConnectionCheckOutFailedEvent``
+            are specified to have the ``reason`` field).
 
   - ``serverApi``: Optional object to declare an API version on the client
     entity. A ``version`` string is required, and test runners MUST fail if the
@@ -1796,6 +1868,92 @@ An example of this operation follows::
 
 Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
+
+
+loop
+~~~~
+
+The ``loop`` operation executes sub-operations in a loop until a termination
+signal is received by the unified test runner. It supports the following
+arguments:
+
+- ``operations``: the sub-operations to run on each loop iteration.
+  Each sub-operation must be a valid operation as described in this
+  specification.
+
+- ``storeErrorsAsEntity``: if specified, the runner MUST handle errors
+  arising during sub-operation execution and append a document with error
+  information to the array stored in the specified entity. If
+  ``storeFailuresAsEntity`` is specified, the runner MUST NOT include
+  failures in the errors. If ``storeFailuresAsEntity`` is not specified,
+  the runner MUST include failures in the errors. The error document
+  MUST contain the following fields:
+  
+  - ``error``: the textual description of the error encountered.
+  - ``time``: the number of (floating-point) seconds since the Unix epoch
+    when the error was encountered.
+
+- ``storeFailuresAsEntity``: if specified, the runner MUST handle failures
+  arising during sub-operation execution and append a document with failure
+  information to the array stored in the specified entity. If
+  not specified, the runner MUST treat failures as errors, and either
+  handle them following the logic described in ``storeErrorsAsEntity``
+  or cause them to terminate execution, if ``storeErrorsAsEntity`` is not
+  specified. The failure document MUST contain the following fields:
+  
+  - ``error``: the textual description of the failure encountered.
+  - ``time``: the number of (floating-point) seconds since the Unix epoch
+    when the failure was encountered.
+
+- ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
+  the number of iterations of the loop performed, and store that number
+  in the specified entity.
+
+The following termination behavior MUST be implemented by the unified test
+runner:
+
+- There MUST be a way to request termination of the loops. This request
+  will be made by the Atlas testing workload executor in response to
+  receiving the termination signal from Astrolabe.
+  
+- When the termination request is received, the workload executor MUST
+  stop looping. The current loop iteration SHOULD complete to its natural
+  conclusion (success or failure).
+
+- After the termination request is received, the runner MUST NOT start
+  any further loops.
+  
+- When the termination request is received, the runner SHOULD skip
+  any non-loop operations not yet started and terminate as soon as practical.
+  
+- Termination request MUST cause a successful termination of the test
+  overall, i.e., receiving the termination request MUST NOT by itself be
+  considered an error.
+
+The exact mechanism by which the termination signal is delivered to the
+unified test runner, including the respective API, is left to the driver.
+
+An example of this operation follows::
+
+    - name: loop
+      object: testRunner
+      arguments:
+        storeErrorsAsEntity: errors
+        storeFailuresAsEntity: failures
+        storeIterationsAsEntity: iterations
+        operations:
+          - name: find
+            object: *collection0
+            arguments:
+              filter: { _id: { $gt: 1 }}
+              sort: { _id: 1 }
+            expectResult:
+              -
+                _id: 2
+                x: 22
+              -
+                _id: 3
+                x: 33
 
 
 Evaluating Matches
