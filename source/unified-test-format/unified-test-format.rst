@@ -497,6 +497,10 @@ The structure of this object is as follows:
           - ``commandName``: the name of the command, e.g. ``insert``.
           - ``startTime``: the (floating-point) number of seconds since
             the Unix epoch when the command began executing.
+            The ``CommandStartedEvent`` does not currently include a
+            ``startTime`` field; the start time MUST be the time when
+            the event was published, or as close to it as is reasonably
+            possible for the test runner to determine.
           - ``address``: the address of the server to which the command
              was sent, e.g. ``localhost:27017``.
         
@@ -508,6 +512,10 @@ The structure of this object is as follows:
             the command to execute.
           - ``startTime``: the (floating-point) number of seconds since
             the Unix epoch when the command began executing.
+            The test runner MUST correlate each ``CommandSucceededEvent`` with
+            the respective ``CommandStartedEvent`` and include the
+            ``startTime`` from the ``CommandStartedEvent`` into the
+            respective ``CommandSucceededEvent``.
           - ``address``: the address of the server to which the command
              was sent, e.g. ``localhost:27017``.
         
@@ -521,6 +529,10 @@ The structure of this object is as follows:
              of the error encountered while executing the command.
           - ``startTime``: the (floating-point) number of seconds since
             the Unix epoch when the command began executing.
+            The test runner MUST correlate each ``CommandFailedEvent`` with
+            the respective ``CommandStartedEvent`` and include the
+            ``startTime`` from the ``CommandStartedEvent`` into the
+            respective ``CommandFailedEvent``.
           - ``address``: the address of the server to which the command
              was sent, e.g. ``localhost:27017``.
              
