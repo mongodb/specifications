@@ -1888,9 +1888,8 @@ currently not possible to run ``listIndexes`` from within a transaction.
 loop
 ~~~~
 
-The ``loop`` operation executes sub-operations in a loop until a termination
-signal is received by the unified test runner. It supports the following
-arguments:
+The ``loop`` operation executes sub-operations in a loop.
+It supports the following arguments:
 
 - ``operations``: the sub-operations to run on each loop iteration.
   Each sub-operation must be a valid operation as described in this
@@ -1945,8 +1944,9 @@ runner:
   overall, i.e., receiving the termination request MUST NOT by itself be
   considered an error.
 
-The exact mechanism by which the termination signal is delivered to the
-unified test runner, including the respective API, is left to the driver.
+The exact mechanism by which the workload executor requests termination
+of the loop in the test runner, including the respective API, is left
+to the driver.
 
 An example of this operation follows::
 
