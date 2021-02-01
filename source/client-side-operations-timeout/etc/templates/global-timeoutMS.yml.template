@@ -22,7 +22,7 @@ tests:
   # For each operation, we execute two tests:
   #
   # 1. timeoutMS can be configured to a non-zero value on a MongoClient and is inherited by the operation. Each test
-  # constructs a client entity with timeoutMS=20 and configures a fail point to block the operation for 25ms so
+  # constructs a client entity with timeoutMS=50 and configures a fail point to block the operation for 60ms so
   # execution results in a timeout error.
   #
   # 2. timeoutMS can be set to 0 for a MongoClient. Each test constructs a client entity with timeoutMS=0 and
@@ -39,7 +39,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -61,7 +61,7 @@ tests:
             data:
               failCommands: ["{{operation.command_name}}"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: {{operation.operation_name}}
         object: *{{operation.object}}
         {% if operation.arguments|length > 0 -%}

@@ -29,7 +29,7 @@ createEntities:
       id: &session session
       client: *client
       sessionOptions:
-        defaultTimeoutMS: 10
+        defaultTimeoutMS: 50
 
 initialData:
   - collectionName: *collectionName
@@ -52,7 +52,7 @@ tests:
             data:
               failCommands: ["commitTransaction"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 60
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -95,7 +95,7 @@ tests:
             data:
               failCommands: ["abortTransaction"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 60
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -136,7 +136,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 15
+              blockTimeMS: 60
       - name: withTransaction
         object: *session
         arguments:

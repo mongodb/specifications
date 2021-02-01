@@ -22,7 +22,7 @@ tests:
   # For each operation, we execute two tests:
   #
   # 1. timeoutMS can be configured to a non-zero value on a MongoClient and is inherited by the operation. Each test
-  # constructs a client entity with timeoutMS=20 and configures a fail point to block the operation for 25ms so
+  # constructs a client entity with timeoutMS=50 and configures a fail point to block the operation for 60ms so
   # execution results in a timeout error.
   #
   # 2. timeoutMS can be set to 0 for a MongoClient. Each test constructs a client entity with timeoutMS=0 and
@@ -38,7 +38,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -60,7 +60,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: listDatabases
         object: *client
         arguments:
@@ -135,7 +135,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -157,7 +157,7 @@ tests:
             data:
               failCommands: ["listDatabases"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: listDatabaseNames
         object: *client
         arguments:
@@ -232,7 +232,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -254,7 +254,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: createChangeStream
         object: *client
         arguments:
@@ -329,7 +329,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -351,7 +351,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: aggregate
         object: *database
         arguments:
@@ -426,7 +426,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -448,7 +448,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: listCollections
         object: *database
         arguments:
@@ -523,7 +523,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -545,7 +545,7 @@ tests:
             data:
               failCommands: ["listCollections"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: listCollectionNames
         object: *database
         arguments:
@@ -620,7 +620,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -642,7 +642,7 @@ tests:
             data:
               failCommands: ["ping"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: runCommand
         object: *database
         arguments:
@@ -717,7 +717,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -739,7 +739,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: createChangeStream
         object: *database
         arguments:
@@ -814,7 +814,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -836,7 +836,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: aggregate
         object: *collection
         arguments:
@@ -911,7 +911,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -933,7 +933,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: count
         object: *collection
         arguments:
@@ -1008,7 +1008,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1030,7 +1030,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: countDocuments
         object: *collection
         arguments:
@@ -1105,7 +1105,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1127,7 +1127,7 @@ tests:
             data:
               failCommands: ["count"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: estimatedDocumentCount
         object: *collection
         
@@ -1198,7 +1198,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1220,7 +1220,7 @@ tests:
             data:
               failCommands: ["distinct"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: distinct
         object: *collection
         arguments:
@@ -1297,7 +1297,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1319,7 +1319,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: find
         object: *collection
         arguments:
@@ -1394,7 +1394,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1416,7 +1416,7 @@ tests:
             data:
               failCommands: ["find"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: findOne
         object: *collection
         arguments:
@@ -1491,7 +1491,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1513,7 +1513,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: listIndexes
         object: *collection
         
@@ -1584,7 +1584,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1606,7 +1606,7 @@ tests:
             data:
               failCommands: ["listIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: listIndexNames
         object: *collection
         
@@ -1677,7 +1677,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1699,7 +1699,7 @@ tests:
             data:
               failCommands: ["aggregate"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: createChangeStream
         object: *collection
         arguments:
@@ -1774,7 +1774,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1796,7 +1796,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: insertOne
         object: *collection
         arguments:
@@ -1871,7 +1871,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1893,7 +1893,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: insertMany
         object: *collection
         arguments:
@@ -1970,7 +1970,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -1992,7 +1992,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: deleteOne
         object: *collection
         arguments:
@@ -2067,7 +2067,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2089,7 +2089,7 @@ tests:
             data:
               failCommands: ["delete"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: deleteMany
         object: *collection
         arguments:
@@ -2164,7 +2164,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2186,7 +2186,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: replaceOne
         object: *collection
         arguments:
@@ -2263,7 +2263,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2285,7 +2285,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: updateOne
         object: *collection
         arguments:
@@ -2362,7 +2362,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2384,7 +2384,7 @@ tests:
             data:
               failCommands: ["update"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: updateMany
         object: *collection
         arguments:
@@ -2461,7 +2461,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2483,7 +2483,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: findOneAndDelete
         object: *collection
         arguments:
@@ -2558,7 +2558,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2580,7 +2580,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: findOneAndReplace
         object: *collection
         arguments:
@@ -2657,7 +2657,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2679,7 +2679,7 @@ tests:
             data:
               failCommands: ["findAndModify"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -2756,7 +2756,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2778,7 +2778,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: bulkWrite
         object: *collection
         arguments:
@@ -2857,7 +2857,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2879,7 +2879,7 @@ tests:
             data:
               failCommands: ["createIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: createIndex
         object: *collection
         arguments:
@@ -2956,7 +2956,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -2978,7 +2978,7 @@ tests:
             data:
               failCommands: ["dropIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: dropIndex
         object: *collection
         arguments:
@@ -3055,7 +3055,7 @@ tests:
             - client:
                 id: &client client
                 uriOptions:
-                  timeoutMS: 20
+                  timeoutMS: 50
                 useMultipleMongoses: false
                 observeEvents:
                   - commandStartedEvent
@@ -3077,7 +3077,7 @@ tests:
             data:
               failCommands: ["dropIndexes"]
               blockConnection: true
-              blockTimeMS: 25
+              blockTimeMS: 60
       - name: dropIndexes
         object: *collection
         
