@@ -1899,7 +1899,9 @@ It supports the following arguments:
   arising during sub-operation execution and append a document with error
   information to the array stored in the specified entity. If
   ``storeFailuresAsEntity`` is specified, the runner MUST NOT include
-  failures in the errors. If ``storeFailuresAsEntity`` is not specified,
+  failures in the errors, to the extent the test runner distinguishes
+  errors and failures as further described below.
+  If ``storeFailuresAsEntity`` is not specified,
   the runner MUST include failures in the errors. The error document
   MUST contain the following fields:
   
@@ -1922,6 +1924,31 @@ It supports the following arguments:
 - ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
   the number of iterations of the loop performed, and store that number
   in the specified entity.
+
+A *failure* is when an operation performed by the test runner has a
+different result from what the test expected. For example, a test
+containing an expectation that a particular document has a particular value
+in a particular field, and the actual value being different, would
+be a failure. An *error* is any other type of error. For example,
+attempting to invoke an undefined operation would be an error.
+
+This specification permits the test runner to report some failures as errors
+and some errors as failures. When the test runner stores errors and
+failures as entities it MAY classify conditions as errors and failures in
+the same way as it would when used in the driver's test suite.
+This includes reporting all errors as failures or all failures as errors.
+
+If the test runner does not distinguish errors and failures in its reporting,
+it MAY report both conditions under either category, but it MUST report
+any given condition in at most one category.
+
+The same entity name MAY be used for both ``storeErrorsAsEntity``
+and ``storeFailuresAsEntity`` options. The test runner MUST support
+writing both errors and failures to the same entity. If the same entity is
+specified, the errors and failures MUST be written in chronological order
+to the extent possible, interleaving the error and failure entries
+if necessary. Note that the textual description field for both errors
+and failures is ``error``.
 
 The following termination behavior MUST be implemented by the unified test
 runner:
