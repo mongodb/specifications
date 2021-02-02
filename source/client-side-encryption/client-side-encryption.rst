@@ -364,7 +364,8 @@ to authenticate.
 
    aws: {
       accessKeyId: String,
-      secretAccessKey: String
+      secretAccessKey: String,
+      sessionToken: Optional<String> // Required for temporary AWS credentials.
    }
 
    azure: {
@@ -1512,6 +1513,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
+| 2021-01-22 | Add sessionToken option to 'aws' KMS provider              |
 | 2020-12-12 | Add metadataClient option and internal client              |
 | 2020-10-19 | Add 'azure' and 'gcp' KMS providers                        |
 | 2019-10-11 | Add 'endpoint' to AWS masterkey                            |
