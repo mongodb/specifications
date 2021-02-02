@@ -196,7 +196,8 @@ in the map and MUST raise an error if an entity is not found for a name or is
 found but has an unexpected type.
 
 Test runners MUST provide a mechanism to retrieve entities from the entity
-map. There MUST be a way to:
+map prior to the clearing of the entity map, as discussed in
+`Executing a Test`_. There MUST be a way to:
 
 - Retrieve an entity by its name (for example, to support retrieving the
   iteration count stored by the ``storeIterationsAsEntity`` option.
@@ -2484,6 +2485,14 @@ data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
 match exactly; however, test runners MUST permit variations in document key
 order or otherwise normalize the documents before comparison. If the list of
 documents is empty, the test runner MUST assert that the collection is empty.
+
+The test runner MUST now permit the test's entity map to be accessed and
+the entities to be retrieved. The exact mechanism by which the entities are
+to be retrieved is not prescribed by this specification. As an example,
+the test runner MAY invoke an externally-provided callback with either the
+entity map as is or with only the documents. The test runner MAY also copy
+the document entities from the entity map into a data structure that can
+be later accessed to retrieve the entities.
 
 Clear the entity map for this test. For each ClientSession in the entity map,
 the test runner MUST end the session (e.g. call
