@@ -480,24 +480,25 @@ The structure of this object is as follows:
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
     
   - ``storeEventsAsEntities``: Optional map of entity names to an an array of
-    event names. If provided the test runner MUST:
+    event names.
     
-      - For each entity name, create the respective entity with a type of
-        "event list". If the entity already exists
-        (such as from a previous ``storeEventsAsEntities`` declaration from
-        another client), the test runner MUST raise an error.
-      - Set up an event subscriber for each event named. The event subscriber
-        MUST serialize the events it receives into a document, using the
-        documented properties of the event as field names, and append
-        the document to the array stored in the specified entity.
-      - Additionally, the following fields MUST be stored with each
-        event document:
-        
-        - ``name``: The name of the event, such as ``PoolCreatedEvent``.
-          The name of the event MUST be the name used in the respective
-          specification that defines the event in question.
-        - ``observedAt``: The floating-point time since the Unix epoch
-          when the event was observed by the test runner.
+    For each entity name, the test runner MUST create the respective entity
+    with a type of "event list". If the entity already exists
+    (such as from a previous ``storeEventsAsEntities`` declaration from
+    another client), the test runner MUST raise an error.
+    
+    The test runner MUST set up an event subscriber for each event named.
+    The event subscriber MUST serialize the events it receives into a document,
+    using the documented properties of the event as field names, and append
+    the document to the array stored in the specified entity.
+    Additionally, the following fields MUST be stored with each
+    event document:
+    
+    - ``name``: The name of the event, such as ``PoolCreatedEvent``.
+      The name of the event MUST be the name used in the respective
+      specification that defines the event in question.
+    - ``observedAt``: The floating-point time since the Unix epoch
+      when the event was observed by the test runner.
         
     Currently, only CMAP events MUST be supported. Other events could be
     added to the list of supported events in the future.
