@@ -1907,26 +1907,26 @@ to the extent possible, interleaving the error and failure entries
 if necessary. Note that the textual description field for both errors
 and failures is ``error``.
 
-The following termination behavior MUST be implemented by the unified test
+The following termination behavior MUST be implemented by the test
 runner:
 
-- There MUST be a way to request termination of the loops. This request
-  will be made by the Atlas testing workload executor in response to
+- The test runner MUST provide a way to request termination of loops. This
+  request will be made by the Atlas testing workload executor in response to
   receiving the termination signal from Astrolabe.
   
-- When the termination request is received, the workload executor MUST
-  stop looping. The current loop iteration SHOULD complete to its natural
-  conclusion (success or failure).
-
-- After the termination request is received, the runner MUST NOT start
-  any further loops.
+- When the termination request is received, the test runner MUST
+  stop looping. If the test runner is looping when the termination request
+  is received, the current loop iteration MUST complete to its natural
+  conclusion (success or failure). If the test runner is not looping
+  when the termination request is received, it MUST NOT start any new
+  loop iterations in either the current test or subsequent tests for the
+  lifetime of the test runner; the test runner MAY skip any non-loop
+  operations and terminate as soon as is practical, or it MAY execute
+  any non-loop operations until either a loop is encountered or the
+  list of operations to execute is exhausted.
   
-- When the termination request is received, the runner SHOULD skip
-  any non-loop operations not yet started and terminate as soon as practical.
-  
-- Termination request MUST cause a successful termination of the test
-  overall, i.e., receiving the termination request MUST NOT by itself be
-  considered an error.
+- Receiving the termination request MUST NOT by itself be considered an error
+  or a failure by the test runner.
 
 The exact mechanism by which the workload executor requests termination
 of the loop in the test runner, including the respective API, is left
