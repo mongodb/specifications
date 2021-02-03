@@ -479,89 +479,33 @@ The structure of this object is as follows:
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
     
-  - ``storeEventsAsEntities``: Optional map of event names to entity names.
-    If provided the test runner MUST:
+  - ``storeEventsAsEntities``: Optional map of entity names to an an array of
+    event names. If provided the test runner MUST:
     
       - For each entity name, create the respective entity with a type of
-        "event list". If multiple event names map to the same entity name,
-        exactly one entity MUST be created. If the entity already exists
+        "event list". If the entity already exists
         (such as from a previous ``storeEventsAsEntities`` declaration from
         another client), the test runner MUST raise an error.
       - Set up an event subscriber for each event named. The event subscriber
-        MUST serialize the events it receives into a document and append
+        MUST serialize the events it receives into a document, using the
+        documented properties of the event as field names, and append
         the document to the array stored in the specified entity.
-        The fields in the document MUST be as follows:
+      - Additionally, the following fields MUST be stored with each
+        event document:
         
-        - For ``CommandStartedEvent``:
-       
-          - ``name``: the name of the event, i.e. ``CommandStartedEvent``.
-          - ``commandName``: the name of the command, e.g. ``insert``.
-          - ``startTime``: the (floating-point) number of seconds since
-            the Unix epoch when the command began executing.
-            The ``CommandStartedEvent`` does not currently include a
-            ``startTime`` field; the start time MUST be the time when
-            the event was published, or as close to it as is reasonably
-            possible for the test runner to determine.
-          - ``address``: the address of the server to which the command
-             was sent, e.g. ``localhost:27017``.
+        - ``name``: The name of the event, such as ``PoolCreatedEvent``.
+          The name of the event MUST be the name used in the respective
+          specification that defines the event in question.
+        - ``observedAt``: The floating-point time since the Unix epoch
+          when the event was observed by the test runner.
         
-        - For ``CommandSucceededEvent``:
-       
-          - ``name``: the name of the event, i.e. ``CommandSucceededEvent``.
-          - ``commandName``: the name of the command, e.g. ``insert``.
-          - ``duration``: the time, in (floating-point) seconds, it took for
-            the command to execute.
-          - ``startTime``: the (floating-point) number of seconds since
-            the Unix epoch when the command began executing.
-            The test runner MUST correlate each ``CommandSucceededEvent`` with
-            the respective ``CommandStartedEvent`` and include the
-            ``startTime`` from the ``CommandStartedEvent`` into the
-            respective ``CommandSucceededEvent``.
-          - ``address``: the address of the server to which the command
-             was sent, e.g. ``localhost:27017``.
-        
-        - For ``CommandFailedEvent``:
-       
-          - ``name``: the name of the event, i.e. ``CommandFailedEvent``.
-          - ``commandName``: the name of the command, e.g. ``insert``.
-          - ``duration``: the time, in (floating-point) seconds, it took for
-            the command to execute.
-          - ``failure``: this field MUST contain a textual description
-             of the error encountered while executing the command.
-          - ``startTime``: the (floating-point) number of seconds since
-            the Unix epoch when the command began executing.
-            The test runner MUST correlate each ``CommandFailedEvent`` with
-            the respective ``CommandStartedEvent`` and include the
-            ``startTime`` from the ``CommandStartedEvent`` into the
-            respective ``CommandFailedEvent``.
-          - ``address``: the address of the server to which the command
-             was sent, e.g. ``localhost:27017``.
-             
-        - For connection pool events (``PoolCreatedEvent``,
-          ``PoolReadyEvent``, ``PoolClearedEvent``, ``PoolClosedEvent``):
-               
-          - ``name``: the name of the event, e.g. ``PoolCreatedEvent``.
-          - ``time``: the (floating-point) number of seconds since the
-            Unix epoch when the event was published.
-          - ``address``: the address of the server that the command was
-            published for, e.g. ``localhost:27017``.
-        
-        - For connnection events (``ConnectionCreatedEvent``,
-          ``ConnectionReadyEvent``, ``ConnectionClosedEvent``,
-          ``ConnectionCheckOutStartedEvent``, ``ConnectionCheckOutFailedEvent``,
-          ``ConnectionCheckedOutEvent``, ``ConnectionCheckedInEvent``):
-               
-          - ``name``: the name of the event, e.g. ``ConnectionCreatedEvent``.
-          - ``time``: the (floating-point) number of seconds since the
-            Unix epoch when the event was published.
-          - ``address``: the address of the server that the command was
-            published for, e.g. ``localhost:27017``.
-          - ``connectionId``: the identifier for the connection for which
-            the event was published.
-          - ``reason``: a textual reason for why the event was published
-            (if defined by the CMAP specification for the respective event;
-            ``ConnectionClosedEvent`` and ``ConnectionCheckOutFailedEvent``
-            are specified to have the ``reason`` field).
+    Currently, only CMAP events MUST be supported. Other events could be
+    added to the list of supported events in the future.
+    
+    Example option value::
+    
+      storeEventsAsEntities:
+        events: [PoolCreatedEvent, ConnectionCreatedEvent]
 
   - ``serverApi``: Optional object to declare an API version on the client
     entity. A ``version`` string is required, and test runners MUST fail if the
