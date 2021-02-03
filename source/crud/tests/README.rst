@@ -27,6 +27,7 @@ grouped in their own subdirectory:
 
 - ``v1/``: Legacy format tests
 - ``v2/``: Current format tests
+- ``unified-test-format/``: Tests using the `unified test format <../../../../unified-test-format/unified-test-format.rst>`_
 
 Since some drivers may not have a unified test runner capable of executing tests
 in both formats, segregating tests in this manner will make it easier for
