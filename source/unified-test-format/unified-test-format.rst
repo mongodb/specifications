@@ -200,7 +200,7 @@ map prior to the clearing of the entity map, as discussed in
 `Executing a Test`_. There MUST be a way to:
 
 - Retrieve an entity by its name (for example, to support retrieving the
-  iteration count stored by the ``storeIterationsAsEntity`` option.
+  iteration count stored by the ``storeIterationsAsEntity`` option).
   
 - Retrieve all entities of a particular type as a mapping of each entity name
   to the respective documents (for example, to support retrieving
