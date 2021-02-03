@@ -1879,6 +1879,12 @@ It supports the following arguments:
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the failure was encountered.
 
+- ``storeSuccessesAsEntity``: if specfied, the runner MUST keep track of
+  the number of sub-operations that completed successfully, and store
+  that number in the specified entity. For example, if the loop contains
+  two sub-operations, and they complete successfully, each loop execution
+  would increment the number of successes by 2.
+
 - ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
   the number of iterations of the loop performed, and store that number
   in the specified entity.
@@ -1940,6 +1946,7 @@ An example of this operation follows::
       arguments:
         storeErrorsAsEntity: errors
         storeFailuresAsEntity: failures
+        storeSuccessesAsEntity: successes
         storeIterationsAsEntity: iterations
         operations:
           - name: find
