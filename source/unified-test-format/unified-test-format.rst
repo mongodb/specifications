@@ -1852,6 +1852,14 @@ It supports the following arguments:
 - ``operations``: the sub-operations to run on each loop iteration.
   Each sub-operation must be a valid operation as described in this
   specification.
+  
+  If, in the course of executing sub-operations, a sub-operation produces
+  an error or a failure, the test runner MUST NOT execute subsequent
+  sub-operations in the same loop iteration. Depending on the presence of
+  ``storeErrorsAsEntity`` and ``storeFailuresAsEntity`` options, as
+  described below, either the iteration MUST complete and the next iteration
+  MUST be started, or the entire ``loop`` operation MUST complete with the
+  produced failure or error.
 
 - ``storeErrorsAsEntity``: if specified, the runner MUST handle errors
   arising during sub-operation execution and append a document with error
