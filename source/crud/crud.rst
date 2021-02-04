@@ -661,22 +661,25 @@ older sharded clusters.
 estimatedDocumentCount
 ~~~~~~~~~~~~~~~~~~~~~~
 
-On server versions greater than or equal to 4.9.0, the estimatedDocumentCount
+On wire versions greater than or equal to 4.9.0, the estimatedDocumentCount
 function is implemented using the ``$collStats`` aggregate pipeline stage with
-``$group``::
+``$group``. As documented above, the only supported option is maxTimeMS::
 
   pipeline = [{'$collStats': {'count': {}}}]
   pipeline.push({'$group': {
     '_id': {'$const': 'total'},
     'count': {'$sum': '$count'}}
   })
+  if (maxTimeMS != nil) {
+    pipeline.push({'maxTimeMS': maxTimeMS})
+  }
 
 The estimated count of documents is returned in the ``count`` field in this
 case.
 
-For server versions less than 4.9.0, the estimatedDocumentCount function
+For wire versions less than 4.9.0, the estimatedDocumentCount function
 is implemented using the ``count`` command with no query filter, skip, limit,
-or other options that would alter the results. As documented above, the only supported
+or other options that would alter the results. Once again, the only supported
 option is maxTimeMS.
 
 ~~~~~~~~~~~~~~
