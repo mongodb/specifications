@@ -2451,13 +2451,14 @@ match exactly; however, test runners MUST permit variations in document key
 order or otherwise normalize the documents before comparison. If the list of
 documents is empty, the test runner MUST assert that the collection is empty.
 
-The test runner MUST now permit the test's entity map to be accessed and
-the entities to be retrieved. The exact mechanism by which the entities are
-to be retrieved is not prescribed by this specification. As an example,
-the test runner MAY invoke an externally-provided callback with either the
-entity map as is or with only the documents. The test runner MAY also copy
-the document entities from the entity map into a data structure that can
-be later accessed to retrieve the entities.
+Before clearing the entity map at the end of each test, the test runner
+MUST allow its entities to be accessed externally. The exact mechanism for
+facilitating this access is not prescribed by this specification, but
+drivers should be mindful of concurrency if applicable. As an example,
+the test runner MAY be configured with a callback method, which will be
+invoked at the end of each test and provided with the entity map (or an
+equivalent data structure). As previously discussed in `Entity Map`_,
+test runners MAY restrict access to driver objects if necessary.
 
 Clear the entity map for this test. For each ClientSession in the entity map,
 the test runner MUST end the session (e.g. call
