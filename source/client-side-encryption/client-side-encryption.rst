@@ -262,7 +262,7 @@ AutoEncryptionOpts:
    Automatic encryption is an enterprise only feature that only applies to
    operations on a collection. Automatic encryption is not supported for
    operations on a database or view, and operations that are not bypassed
-   will result in error (see `libmongocrypt: Auto Encryption Whitelist`_).
+   will result in error (see `libmongocrypt: Auto Encryption Allow-List`_).
    To bypass automatic encryption for all operations, set
    bypassAutoEncryption=true in AutoEncryptionOpts.
 
@@ -797,7 +797,7 @@ Otherwise, an encrypted MongoClient MUST attempt to auto encrypt all
 commands. Note, the underlying implementation may determine no
 encryption is necessary, or bypass many checks if the command is deemed
 to not possibly contain any encrypted data (e.g. ping). See the appendix
-section: `libmongocrypt: Auto Encryption Whitelist`_.
+section: `libmongocrypt: Auto Encryption Allow-List`_.
 
 An encrypted MongoClient MUST attempt to auto decrypt the results of all
 commands.
@@ -1057,8 +1057,8 @@ For "randomized", libmongocrypt securely creates a random IV. For
 given encryption operation will derive the IV from the IV key and the
 field plaintext data.
 
-libmongocrypt: Auto Encryption Whitelist
-----------------------------------------
+libmongocrypt: Auto Encryption Allow-List
+-----------------------------------------
 
 libmongocrypt determines whether or not the command requires encryption
 (i.e. is sent to mongocryptd) based on the table below. Commands not
