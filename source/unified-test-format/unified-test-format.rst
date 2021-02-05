@@ -1866,27 +1866,30 @@ It supports the following arguments:
   the loop MUST terminate and raise the error/failure (i.e. the
   error/failure will interrupt the test).
 
-- ``storeErrorsAsEntity``: if specified, the runner MUST handle errors
+- ``storeErrorsAsEntity``: if specified, the runner MUST capture errors
   arising during sub-operation execution and append a document with error
   information to the array stored in the specified entity. If
   ``storeFailuresAsEntity`` is specified, the runner MUST NOT include
   failures in the errors, to the extent the test runner distinguishes
   errors and failures as further described below.
   If ``storeFailuresAsEntity`` is not specified,
-  the runner MUST include failures in the errors. The error document
-  MUST contain the following fields:
-  
+  the runner MUST include failures in the errors.
+
+  Documents appended to the array MUST contain the following fields:
+
   - ``error``: the textual description of the error encountered.
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the error was encountered.
 
-- ``storeFailuresAsEntity``: if specified, the runner MUST handle failures
+- ``storeFailuresAsEntity``: if specified, the runner MUST capture failures
   arising during sub-operation execution and append a document with failure
   information to the array stored in the specified entity. If
   not specified, the runner MUST treat failures as errors, and either
   handle them following the logic described in ``storeErrorsAsEntity``
   or cause them to terminate execution, if ``storeErrorsAsEntity`` is not
-  specified. The failure document MUST contain the following fields:
+  specified.
+
+  Documents appended to the array MUST contain the following fields:
   
   - ``error``: the textual description of the failure encountered.
   - ``time``: the number of (floating-point) seconds since the Unix epoch
