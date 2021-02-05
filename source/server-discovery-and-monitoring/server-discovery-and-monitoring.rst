@@ -1235,6 +1235,55 @@ the pool's generation number then error handling MUST continue according to
 stale and the client MUST NOT update any topology state.
 (See `Why ignore errors based on CMAP's generation number?`_)
 
+Error handling behavior
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Application operations can fail in various places, for example:
+
+- A network error, network timeout, or command error may occur while
+  establishing a new connection. Establishing a connection includes the
+  MongoDB handshake and completing authentication (if configured).
+- A network error, network timeout, or command error may occur while reading or
+  writing to an established connection.
+- A "writeConcernError" field may be included in the command response.
+
+Drivers may use the following pseudocode to guide their implementation.::
+
+    def handleError(error):
+        address = error.address
+        response = error.commandResponse
+        topologyVersion = error.topologyVersion
+
+        with client.lock:
+            # Ignore stale errors based on generation and topologyVersion.
+            if isStaleError(client.topologyDescription, error)
+                return
+
+            if isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+                # Mark the server Unknown
+                unknown = new ServerDescription(type=Unknown, error=error)
+                onServerDescriptionChanged(unknown, connection pool for server)
+                clear connection pool for server
+                # Cancel inprogress check
+                cancel monitor check
+            elif isStateChangeError(error):
+                # Mark the server Unknown
+                unknown = new ServerDescription(type=Unknown, error=response, topologyVersion=topologyVersion)
+                onServerDescriptionChanged(unknown, connection pool for server)
+                if isShutdown(code) or (error was from <4.2):
+                  # the pools must only be cleared while the lock is held.
+                  clear connection pool for server
+                if multi-threaded:
+                    request immediate check
+                else:
+                    # Check right now if this is "not master", since it might be a
+                    # useful secondary. If it's "node is recovering" leave it for the
+                    # next full scan.
+                    if isNotMaster(error):
+                        check failing server
+
+See `Why mark a server Unknown after an auth error?`_
+
 Network error when reading or writing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2172,6 +2221,27 @@ duplicate (or stale) State Change Errors can be identified (changes in
    the error's topologyVersion (tv2) is not greater than the current
    ServerDescription (tv2).**
 
+Why mark a server Unknown after an auth error?
+''''''''''''''''''''''''''''''''''''''''''''''
+
+The `Authentication spec`_ requires that when authentication fails on a server,
+the driver MUST clear the server's connection pool. Clearing the pool without
+marking the server Unknown would leave the pool in the "paused" state while
+the server is still selectable.
+
+Note that authentication may fail for a variety of reasons, for example:
+
+- A network error, or network timeout error may occur.
+- The server may return a `State Change Error`_.
+- The server may return a AuthenticationFailed command error (error code 18)
+  indicating that the provided credentials are invalid.
+
+Does this mean that authentication failures due to invalid credentials will
+manifest as server selection timeout errors? No, authentication errors are
+still returned to the application immediately. A subsequent operation will
+block until the server is rediscovered and immediately attempt
+authentication on a new connection.
+
 Clients use the hostnames listed in the replica set config, not the seed list
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -2257,12 +2327,13 @@ These errors indicate one of these:
 * A read was attempted on an unreadable server
   (arbiter, ghost, or recovering)
   or a read was attempted on a read-only server without the slaveOk bit set.
+* An operation was attempted on a server that is now shutting down.
 
 In any case the error is a symptom that
 a ServerDescription's type no longer reflects reality.
 
-A primary closes its connections when it steps down,
-so in many cases the next operation causes a network error
+On MongoDB 4.0 and earlier, a primary closes its connections when it steps
+down, so in many cases the next operation causes a network error
 rather than "not master".
 The driver can see a "not master" error in the following scenario:
 
@@ -2409,3 +2480,5 @@ check. Synchronize pool clearing with SDAM updates.
 .. _clients update the topology from each handshake: server-monitoring.rst#clients-update-the-topology-from-each-handshake
 .. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Authentication spec: /source/auth/auth.rst

@@ -561,8 +561,8 @@ WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
 If the pool is "closed" or "paused", any attempt to check out a `Connection
 <#connection>`_ MUST throw an Error. The error thrown as a result of the pool
-being "paused" MUST be considered a non-timeout network error for the purposes
-of retryability and monitoring.
+being "paused" MUST be considered a retryable error and MUST NOT be an error
+that marks the SDAM state unknown.
 
 If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
 minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
@@ -685,8 +685,8 @@ event.
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
 cleared while the checkOut was being performed. The error returned as a result
-of the pool being cleared MUST be considered a non-timeout network error for the
-purposes of retryability and monitoring. Clearing the WaitQueue MUST happen
+of the pool being cleared MUST be considered a retryable error and MUST NOT be
+an error that marks the SDAM state unknown. Clearing the WaitQueue MUST happen
 eagerly so that any operations waiting on `Connections <#connection>`_ can retry
 as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
 requests from the WaitQueue.
@@ -917,6 +917,15 @@ a manner idiomatic to the Driver and Language.
      */
     interface PoolClosedError {
       message: 'Attempted to check out a Connection from closed connection pool';
+      address: <pool address>;
+    }
+
+    /**
+     *  Thrown when the driver attempts to check out a
+     *  Connection from a paused Connection Pool
+     */
+    interface PoolClearedError extends RetryableError {
+      message: 'Attempted to check out a Connection from paused connection pool';
       address: <pool address>;
     }
 
