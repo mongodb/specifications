@@ -197,14 +197,10 @@ found but has an unexpected type.
 
 Test runners MUST provide a mechanism to retrieve entities from the entity
 map prior to the clearing of the entity map, as discussed in
-`Executing a Test`_. There MUST be a way to:
-
-- Retrieve an entity by its name (for example, to support retrieving the
-  iteration count stored by the ``storeIterationsAsEntity`` option).
-  
-- Retrieve all entities of a particular type as a mapping of each entity name
-  to the respective documents (for example, to support retrieving
-  the event documents stored by the ``storeEventsAsEntities`` option).
+`Executing a Test`_. There MUST be a way to retrieve an entity by its name
+(for example, to support retrieving the iteration count stored by the
+``storeIterationsAsEntity`` option). Test runners MAY permit or require
+constraining the entity to be retrieved with its expected type.
 
 Test runners MAY restrict access to driver objects (e.g. MongoClient,
 ChangeStream) and only allow access to BSON types (see:
