@@ -1868,12 +1868,17 @@ It supports the following arguments:
 
 - ``storeErrorsAsEntity``: if specified, the runner MUST capture errors
   arising during sub-operation execution and append a document with error
-  information to the array stored in the specified entity. If
-  ``storeFailuresAsEntity`` is specified, the runner MUST NOT include
-  failures in the errors, to the extent the test runner distinguishes
-  errors and failures as further described below.
-  If ``storeFailuresAsEntity`` is not specified,
-  the runner MUST include failures in the errors.
+  information to the array stored in the specified entity.
+  
+  If this option is specified, the test runner MUST check the existence and
+  the type of the entity with the specified name before executing the loop.
+  If the entity does not exist, the test runner MUST create it with the type
+  of BSON array. If the entity exists and is of type BSON array, the
+  test runner MUST do nothing. If the entity exists and is of a different type,
+  the test runner MUST raise an error.
+
+  If this option is specified and ``storeFailuresAsEntity`` is not,
+  failures MUST also be captured and appended to the array.
 
   Documents appended to the array MUST contain the following fields:
 
@@ -1883,11 +1888,17 @@ It supports the following arguments:
 
 - ``storeFailuresAsEntity``: if specified, the runner MUST capture failures
   arising during sub-operation execution and append a document with failure
-  information to the array stored in the specified entity. If
-  not specified, the runner MUST treat failures as errors, and either
-  handle them following the logic described in ``storeErrorsAsEntity``
-  or cause them to terminate execution, if ``storeErrorsAsEntity`` is not
-  specified.
+  information to the array stored in the specified entity.
+  
+  If this option is specified, the test runner MUST check the existence and
+  the type of the entity with the specified name before executing the loop.
+  If the entity does not exist, the test runner MUST create it with the type
+  of BSON array. If the entity exists and is of type BSON array, the
+  test runner MUST do nothing. If the entity exists and is of a different type,
+  the test runner MUST raise an error.
+  
+  If this option is specified and ``storeErrorsAsEntity`` is not, errors
+  MUST also be captured and appended to the array.
 
   Documents appended to the array MUST contain the following fields:
   
