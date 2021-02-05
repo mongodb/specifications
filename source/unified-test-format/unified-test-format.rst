@@ -1896,7 +1896,7 @@ It supports the following arguments:
   the number of sub-operations that completed successfully, and store
   that number in the specified entity. For example, if the loop contains
   two sub-operations, and they complete successfully, each loop execution
-  would increment the number of successes by 2.
+  would increment the number of successes by two.
 
 - ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
   the number of iterations of the loop performed, and store that number
