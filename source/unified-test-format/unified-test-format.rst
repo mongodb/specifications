@@ -1940,10 +1940,12 @@ runner:
   conclusion (success or failure). If the test runner is not looping
   when the termination request is received, it MUST NOT start any new
   loop iterations in either the current test or subsequent tests for the
-  lifetime of the test runner; the test runner MAY skip any non-loop
-  operations and terminate as soon as is practical, or it MAY execute
-  any non-loop operations until either a loop is encountered or the
-  list of operations to execute is exhausted.
+  lifetime of the test runner.
+
+- The termination request MUST NOT affect non-loop operations, including
+  any operations after the loop. The tests SHOULD NOT be written in such
+  a way that the success or failure of operations that follow loops
+  depends on how many loop iterations were performed.
   
 - Receiving the termination request MUST NOT by itself be considered an error
   or a failure by the test runner.
