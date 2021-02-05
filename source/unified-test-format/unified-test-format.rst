@@ -505,7 +505,9 @@ The structure of this object is as follows:
     - ``observedAt``: The floating-point time since the Unix epoch
       when the event was observed by the test runner.
         
-    Currently, only CMAP events MUST be supported. Other events could be
+    Currently, only
+    `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+    events MUST be supported. Other events could be
     added to the list of supported events in the future.
     
     Example option value::
