@@ -1856,13 +1856,15 @@ It supports the following arguments:
   Each sub-operation must be a valid operation as described in this
   specification.
   
-  If, in the course of executing sub-operations, a sub-operation produces
-  an error or a failure, the test runner MUST NOT execute subsequent
-  sub-operations in the same loop iteration. Depending on the presence of
-  ``storeErrorsAsEntity`` and ``storeFailuresAsEntity`` options, as
-  described below, either the iteration MUST complete and the next iteration
-  MUST be started, or the entire ``loop`` operation MUST complete with the
-  produced failure or error.
+  If, in the course of executing sub-operations, a sub-operation yields
+  an error or failure, the test runner MUST NOT execute subsequent
+  sub-operations in the same loop iteration. If ``storeErrorsAsEntity``
+  and/or ``storeFailuresAsEntity`` options are specified, the loop MUST
+  store the error/failure accordingly and continue to the next iteration
+  (i.e. the error/failure will not interrupt the test). If neither
+  ``storeErrorsAsEntity`` nor ``storeFailuresAsEntity`` are specified,
+  the loop MUST terminate and raise the error/failure (i.e. the
+  error/failure will interrupt the test).
 
 - ``storeErrorsAsEntity``: if specified, the runner MUST handle errors
   arising during sub-operation execution and append a document with error
