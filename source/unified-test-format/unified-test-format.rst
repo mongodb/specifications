@@ -1916,12 +1916,13 @@ It supports the following arguments:
   the number of iterations of the loop performed, and store that number
   in the specified entity.
 
-A *failure* is when an operation performed by the test runner has a
-different result from what the test expected. For example, a test
-containing an expectation that a particular document has a particular value
-in a particular field, and the actual value being different, would
-be a failure. An *error* is any other type of error. For example,
-attempting to invoke an undefined operation would be an error.
+A *failure* is when the result or outcome of an operation executed by the
+test runner differs from its expected outcome. For example, an ``expectResult``
+assertion failing to match a BSON document or an ``expectError`` assertion
+failing to match an error message would be considered a failure. An *error*
+is any other type of error raised by the test runner. For example, an
+unsupported operation or inability to resolve an entity name would be
+considered an error.
 
 This specification permits the test runner to report some failures as errors
 and some errors as failures. When the test runner stores errors and
