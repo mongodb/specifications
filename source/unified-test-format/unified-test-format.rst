@@ -1911,10 +1911,16 @@ It supports the following arguments:
   that number in the specified entity. For example, if the loop contains
   two sub-operations, and they complete successfully, each loop execution
   would increment the number of successes by two.
+  
+  If the entity of the specified name already exists, the test runner
+  MUST raise an error.
 
 - ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
   the number of iterations of the loop performed, and store that number
   in the specified entity.
+  
+  If the entity of the specified name already exists, the test runner
+  MUST raise an error.
 
 A *failure* is when the result or outcome of an operation executed by the
 test runner differs from its expected outcome. For example, an ``expectResult``
