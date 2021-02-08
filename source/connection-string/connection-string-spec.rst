@@ -290,7 +290,7 @@ Given the string ``mongodb://foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-270
 
 2. Split the string by the first, unescaped ``/`` (if any), yielding:
 
-   1. User information and host identifers: ``foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock``.
+   1. User information and host identifiers: ``foo:bar%3A@mongodb.example.com,%2Ftmp%2Fmongodb-27018.sock``.
 
    2. Auth database and connection options: ``admin?w=1``.
 
