@@ -501,10 +501,21 @@ The structure of this object is as follows:
     - ``observedAt``: The floating-point time since the Unix epoch
       when the event was observed by the test runner.
         
-    Currently, only
+    Currently, only the following
     `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
-    events MUST be supported. Other events could be
-    added to the list of supported events in the future.
+    events MUST be supported:
+    
+    - PoolCreatedEvent
+    - PoolReadyEvent
+    - PoolClearedEvent
+    - PoolClosedEvent
+    - ConnectionCreatedEvent
+    - ConnectionReadyEvent
+    - ConnectionClosedEvent
+    - ConnectionCheckOutStartedEvent
+    - ConnectionCheckOutFailedEvent
+    - ConnectionCheckedOutEvent
+    - ConnectionCheckedInEvent
     
     Example option value::
     
