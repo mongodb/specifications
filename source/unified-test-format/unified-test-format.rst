@@ -479,7 +479,7 @@ The structure of this object is as follows:
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
     
-  - ``storeEventsAsEntities``: Optional map of entity names to an an array of
+  - ``storeEventsAsEntities``: Optional map of entity names to an array of
     event names.
     
     For each entity name, the test runner MUST create the respective entity
