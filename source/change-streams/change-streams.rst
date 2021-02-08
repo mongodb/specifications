@@ -201,6 +201,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *   "truncatedArrays": [{field: "arrayField.0.nestedArrayField", newSize: 5}]
      *
      * @note The method used to report a truncation is a server implementation detail.
+     * @since 4.7.0
      */
     truncatedArrays: Array<String>;
   }
