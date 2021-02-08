@@ -197,8 +197,13 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * Truncations of arrays may be reported using one of the following methods:
      * either via this field or via the ‘updatedFields’ field. In the latter case the entire array is considered to be replaced.
      *
+     * The structure of documents in this field is
+     *   {
+     *      "field": <string>,
+     *      "newSize": <int>
+     *   }
      * Example: an `update` which shrinks the array arrayField.0.nestedArrayField from size 8 to 5 may be reported as
-     *   "truncatedArrays": [{field: "arrayField.0.nestedArrayField", newSize: 5}]
+     *   "truncatedArrays": [{"field": "arrayField.0.nestedArrayField", "newSize": 5}]
      *
      * @note The method used to report a truncation is a server implementation detail.
      * @since 4.7.0
