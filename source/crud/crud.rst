@@ -674,6 +674,9 @@ As documented above, the only supported option is maxTimeMS::
 Similar to the count command, the estimated count of documents is returned
 in the ``n`` field.
 
+In the event this aggregation is run against a non-existent namespace, a NamespaceNotFound
+error will be returned during execution. Drivers MUST interpret this result as a ``0`` count.
+
 For server versions less than 4.9.0 (wire version 11 or under), the estimatedDocumentCount
 function is implemented using the ``count`` command with no query filter, skip,
 limit, or other options that would alter the results. Once again, the only supported
