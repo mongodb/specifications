@@ -2002,12 +2002,8 @@ An example of this operation follows::
               filter: { _id: { $gt: 1 }}
               sort: { _id: 1 }
             expectResult:
-              -
-                _id: 2
-                x: 22
-              -
-                _id: 3
-                x: 33
+              - _id: 2, x: 22
+              - _id: 3, x: 33
 
 
 Evaluating Matches
