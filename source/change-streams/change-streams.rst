@@ -203,7 +203,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * @note The method used to report a truncation is a server implementation detail.
      * @since 4.7.0
      */
-    truncatedArrays: Array<String>;
+    truncatedArrays: Array<Document>;
   }
 
 The responses to a change stream aggregate or getMore have the following structures:
