@@ -14,17 +14,17 @@ Server Wire version and Feature List
      - | Aggregation cursor
        | Auth commands
 
-   * - 2.6 
+   * - 2.6
      - 2
      - | Write commands (insert/update/delete)
        | Aggregation $out pipeline operator
-  
+
    * - 3.0
      - 3
      - | listCollections
        | listIndexes
        | SCRAM-SHA-1
-       | explain command 
+       | explain command
 
    * - 3.2
      - 4
@@ -35,11 +35,11 @@ Server Wire version and Feature List
        | Commands take read concern
        | Document-level validation
        | explain command supports distinct and findAndModify
- 
+
    * - 3.4
      - 5
      - | Commands take write concern
-       | Commands take collation 
+       | Commands take collation
 
    * - 3.6
      - 6
@@ -49,7 +49,7 @@ Server Wire version and Feature List
        | Causally Consistent Reads
        | Logical Sessions
        | update "arrayFilters" option
-       
+
    * - 4.0
      - 7
      - | ReplicaSet transactions
@@ -59,5 +59,9 @@ Server Wire version and Feature List
      - 8
      - | Sharded transactions
        | Aggregation $merge pipeline operator
+
+   * - 5.0
+     - 12
+     - | Consistent $collStats count behavior on sharded and non-sharded topologies
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h

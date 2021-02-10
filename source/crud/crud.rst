@@ -661,9 +661,26 @@ older sharded clusters.
 estimatedDocumentCount
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The estimatedDocumentCount function is implemented using the `count` command
-with no query filter, skip, limit, or other options that would alter the
-results. As documented above, the only supported option is maxTimeMS.
+On server versions greater than or equal to 4.9.0 (wire version 12 or higher),
+the estimatedDocumentCount function is implemented using the ``$collStats``
+aggregate pipeline stage with ``$group`` to gather results from multiple shards.
+As documented above, the only supported option is maxTimeMS::
+
+  pipeline = [
+    { '$collStats': { 'count': {} } },
+    { '$group': { '_id': 1, 'n': { '$sum': '$count' } } }
+  ]
+
+Similar to the count command, the estimated count of documents is returned
+in the ``n`` field.
+
+In the event this aggregation is run against a non-existent namespace, a NamespaceNotFound(28)
+error will be returned during execution. Drivers MUST interpret this result as a ``0`` count.
+
+For server versions less than 4.9.0 (wire version 11 or under), the estimatedDocumentCount
+function is implemented using the ``count`` command with no query filter, skip,
+limit, or other options that would alter the results. Once again, the only supported
+option is maxTimeMS.
 
 ~~~~~~~~~~~~~~
 countDocuments
@@ -1939,6 +1956,7 @@ Q: Why are client-side errors raised when options are provided for unacknowledge
 Changes
 =======
 
+* 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
 * 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.
 * 2020-03-06: Added hint option for DeleteOne, DeleteMany, and FindOneAndDelete operations.
