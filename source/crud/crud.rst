@@ -672,8 +672,10 @@ As documented above, the only supported option is maxTimeMS::
   ]
 
 Similar to the count command, the estimated count of documents is returned
-in the ``n`` field. Drivers can assume that the first field of the first batch
-returned from the cursor contains the ``n`` field.
+in the ``n`` field. Implementations can assume that the document containing
+the single result of the aggregation pipeline is contained in the first batch of
+the server's reply to the aggregate command. It is not necessary to execute a getMore
+operation to ensure that the result is available.
 
 In the event this aggregation is run against a non-existent namespace, a NamespaceNotFound(26)
 error will be returned during execution. Drivers MUST interpret the server error code 26 as
