@@ -504,13 +504,9 @@ Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, it SHOULD be handled
+If an error is encountered while populating a connection, it MUST be handled
 via the SDAM machinery according to the `Application Errors`_ section in the
-SDAM specification, if possible in the driver's implementation. If it is not
-possible for the pool to handle the error via the SDAM machinery, then the pool
-MUST be cleared if the connection's generation is greater than or equal to the
-pool's generation. The error will then get handled later by the SDAM machinery
-next time checkOut is called.
+SDAM specification.
 
 .. code::
 
@@ -520,11 +516,8 @@ next time checkOut is called.
      establish connection
      mark connection as available
    except error:
-     if CMAP background thread/task has access to the topology:
-         topology.handle_pre_handshake_error(error) # if possible, defer error handling to SDAM
-     else:
-         if connection.generation >= pool.generation:
-             clear pool
+     # Defer error handling to SDAM.
+     topology.handle_pre_handshake_error(error)
 
 Checking Out a Connection
 -------------------------
@@ -925,7 +918,7 @@ a manner idiomatic to the Driver and Language.
      *  Connection from a paused Connection Pool
      */
     interface PoolClearedError extends RetryableError {
-      message: 'Attempted to check out a Connection from paused connection pool';
+      message: 'Connection pool for <pool address> was cleared because another operation failed with: <original error which cleared the pool>';
       address: <pool address>;
     }
 

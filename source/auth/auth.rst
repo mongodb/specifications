@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.2
+:Spec Version: 1.10.3
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -1260,6 +1260,9 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 
 Version History
 ===============
+
+Version 1.10.3 Changes
+    * Note that errors encountered during auth are handled by SDAM.
 
 Version 1.10.2 Changes
     * Add reference to the speculative authentication section of the handshake spec.
