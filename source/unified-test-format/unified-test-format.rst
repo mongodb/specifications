@@ -1979,8 +1979,9 @@ The following termination behavior MUST be implemented by the test
 runner:
 
 - The test runner MUST provide a way to request termination of loops. This
-  request will be made by the Atlas testing workload executor in response to
-  receiving the termination signal from Astrolabe.
+  request will be made by the `Atlas testing workload executor
+  <https://mongodb-labs.github.io/drivers-atlas-testing/spec-workload-executor.html>`_
+  in response to receiving the termination signal from Astrolabe.
   
 - When the termination request is received, the test runner MUST
   stop looping. If the test runner is looping when the termination request
