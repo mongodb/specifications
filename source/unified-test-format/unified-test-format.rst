@@ -491,6 +491,9 @@ The structure of this object is as follows:
     ``storeEventsAsEntities`` declaration from another client),
     the test runner MUST raise an error.
     
+    .. note: The implementation of ``storeEventsAsEntities`` is wholly
+      independent from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
+    
     The test runner MUST set up an event subscriber for each event named.
     The event subscriber MUST serialize the events it receives into a document,
     using the documented properties of the event as field names, and append
