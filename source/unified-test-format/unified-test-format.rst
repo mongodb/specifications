@@ -1888,8 +1888,8 @@ The ``loop`` operation executes sub-operations in a loop.
 It supports the following arguments:
 
 - ``operations``: the sub-operations to run on each loop iteration.
-  Each sub-operation must be a valid operation as described in this
-  specification.
+  Each sub-operation must be a valid operation as described in
+  `Entity Test Operations`_.
   
   If, in the course of executing sub-operations, a sub-operation yields
   an error or failure, the test runner MUST NOT execute subsequent
