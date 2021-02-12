@@ -503,6 +503,7 @@ The structure of this object is as follows:
         
     Currently, only the following
     `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+    and `command <../command-monitoring/command-monitoring.rst>`__
     events MUST be supported:
     
     - PoolCreatedEvent
@@ -516,11 +517,28 @@ The structure of this object is as follows:
     - ConnectionCheckOutFailedEvent
     - ConnectionCheckedOutEvent
     - ConnectionCheckedInEvent
+    - CommandStartedEvent
+    - CommandSucceededEvent
+    - CommandFailedEvent
+    
+    The test runner MAY omit the ``command`` field for CommandStartedEvent
+    and ``reply`` field for CommandSucceededEvent.
+    
+    If an event field in the driver is of a type that does not directly map to
+    a BSON type, such as ``Exception`` for the ``failure`` field of
+    CommandFailedEvent, the test runner MUST convert values of that field
+    to one of the BSON types.
+    
+    If specification defining an event permits deviation in field names,
+    such as ``connectionId`` field for CommandStartedEvent, the test runner
+    SHOULD use the field names used in the specification when serializing
+    events to documents even if the respective field name is different in the
+    driver's event object.
     
     Example option value::
     
       storeEventsAsEntities:
-        events: [PoolCreatedEvent, ConnectionCreatedEvent]
+        events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional object to declare an API version on the client
     entity. A ``version`` string is required, and test runners MUST fail if the
