@@ -1951,14 +1951,6 @@ If the test runner does not distinguish errors and failures in its reporting,
 it MAY report both conditions under either category, but it MUST report
 any given condition in at most one category.
 
-The same entity name MAY be used for both ``storeErrorsAsEntity``
-and ``storeFailuresAsEntity`` options. The test runner MUST support
-writing both errors and failures to the same entity. If the same entity is
-specified, the errors and failures MUST be written in chronological order
-to the extent possible, interleaving the error and failure entries
-if necessary. Note that the textual description field for both errors
-and failures is ``error``.
-
 The following termination behavior MUST be implemented by the test
 runner:
 
