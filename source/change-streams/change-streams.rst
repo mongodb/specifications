@@ -131,7 +131,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * Describes the type of operation represented in this change notification.
      *
      * @note: Whether a change is reported as an event of the operation type
-     *       `update` or `replace` is a server implementation detail.
+     * `update` or `replace` is a server implementation detail.
      */
     operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
 
