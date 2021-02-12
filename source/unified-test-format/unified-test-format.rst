@@ -1891,6 +1891,8 @@ It supports the following arguments:
   Each sub-operation must be a valid operation as described in
   `Entity Test Operations`_.
   
+  Sub-operations SHOULD NOT include the ``loop`` operation.
+  
   If, in the course of executing sub-operations, a sub-operation yields
   an error or failure, the test runner MUST NOT execute subsequent
   sub-operations in the same loop iteration. If ``storeErrorsAsEntity``
@@ -2002,6 +2004,8 @@ runner:
 The exact mechanism by which the workload executor requests termination
 of the loop in the test runner, including the respective API, is left
 to the driver.
+
+Tests SHOULD NOT include multiple loop operations (nested or sequential).
 
 An example of this operation follows::
 
