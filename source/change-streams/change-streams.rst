@@ -180,7 +180,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
   class UpdateDescription {
     /**
      * A document containing key:value pairs of names of the fields that were
-     * changed, and the new value for those fields.
+     * changed (excluding the fields reported via `truncatedArrays`), and the new value for those fields.
      *
      * Modifications to array elements are expressed via the dot notation (https://docs.mongodb.com/manual/core/document/#document-dot-notation).
      * Example: an `update` which sets the element with index 0 in the array field named arrayField to 7 is reported as
