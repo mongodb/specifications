@@ -61,14 +61,14 @@ tests:
           # via the updatedFields or truncatedArrays is not part of the API.
           # Alternatively, we could have used a set of possible expectations of which only one
           # must be satisfied, but the unified test format does not support this.
-"updateDescription": {
-  "updatedFields": {},
-  "removedFields": [],
-  "truncatedArrays": [
-    {
-      "field": "array",
-      "newSize": 2
-    }
-  ]
-}
+          "updateDescription": {
+            "updatedFields": {},
+            "removedFields": [],
+            "truncatedArrays": [
+              {
+                "field": "array",
+                "newSize": 2
+              }
+            ]
+          }
         }

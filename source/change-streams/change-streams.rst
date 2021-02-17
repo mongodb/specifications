@@ -190,7 +190,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *   updated field:
      *     "arrayField": ["foo", {"a": "bar", "b": 3}]
      *   a potential corresponding UpdateDescription:
-     *     "updateDescription": {
+     *     {
      *       "updatedFields": {
      *         "arrayField.1.b": 3
      *       },
