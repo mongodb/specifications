@@ -197,7 +197,7 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *       "removedFields": [],
      *       "truncatedArrays": [
      *         {
-     *           "field": "array",
+     *           "field": "arrayField",
      *           "newSize": 2
      *         }
      *       ]
