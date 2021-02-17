@@ -182,6 +182,27 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * A document containing key:value pairs of names of the fields that were
      * changed (excluding the fields reported via `truncatedArrays`), and the new value for those fields.
      *
+     * Despite array fields reported via `truncatedArrays` being excluded from this field,
+     * changes to fields of the elements of the array values may be reported via this field.
+     * Example:
+     *   original field:
+     *     "arrayField": ["foo", {"a": "bar"}, 1, 2, 3]
+     *   updated field:
+     *     "arrayField": ["foo", {"a": "bar", "b": 3}]
+     *   a potential corresponding UpdateDescription:
+     *     "updateDescription": {
+     *       "updatedFields": {
+     *         "arrayField.1.b": 3
+     *       },
+     *       "removedFields": [],
+     *       "truncatedArrays": [
+     *         {
+     *           "field": "array",
+     *           "newSize": 2
+     *         }
+     *       ]
+     *     }
+     *
      * Modifications to array elements are expressed via the dot notation (https://docs.mongodb.com/manual/core/document/#document-dot-notation).
      * Example: an `update` which sets the element with index 0 in the array field named arrayField to 7 is reported as
      *   "updatedFields": {"arrayField.0": 7}
