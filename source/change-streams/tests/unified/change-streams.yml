@@ -55,10 +55,8 @@ tests:
             "db": "database0",
             "coll": "collection0"
           },
-          # This expectation is based on the MongoDB server behavior
-          # (as opposed to be based on its API),
-          # because the algorithm of deciding whether to report a change
-          # via the updatedFields or truncatedArrays is not part of the API.
+          # It is up to the MongoDB server to decide how to report a change.
+          # This expectation is based on the current MongoDB server behavior.
           # Alternatively, we could have used a set of possible expectations of which only one
           # must be satisfied, but the unified test format does not support this.
           "updateDescription": {
