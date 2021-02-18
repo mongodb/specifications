@@ -18,6 +18,13 @@ drivers can use to prove their conformance to the Change Streams Spec.
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
 
+Subdirectories for Test Formats
+-------------------------------
+
+This document describes the legacy format for change streams tests.
+New change streams tests should be written in the `unified test format <../../unified-test-format/unified-test-format.rst>`__
+and placed under ``./unified/``.
+
 Spec Test Format
 ================
 
