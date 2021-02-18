@@ -1,0 +1,34 @@
+{
+  "description": "Load balancer servers only have an address property",
+  "uri": "mongodb://a/?loadBalanced=true",
+  "phases": [
+    {
+      "responses": [
+        [
+          "a:27017",
+          {
+            "ok": 1,
+            "ismaster": true,
+            "msg": "isdbgrid",
+            "minWireVersion": 0,
+            "maxWireVersion": 6,
+            "logicalSessionTimeoutMinutes": 1
+          }
+        ]
+      ],
+      "outcome": {
+        "servers": {
+          "a:27017": {
+            "type": "LoadBalancer",
+            "setName": null
+          }
+        },
+        "topologyType": "LoadBalanced",
+        "setName": null,
+        "logicalSessionTimeoutMinutes": null,
+        "minWireVersion": null,
+        "maxWireVersion": null
+      }
+    }
+  ]
+}
