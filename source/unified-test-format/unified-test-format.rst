@@ -195,6 +195,18 @@ error if an attempt is made to store an entity with a name that already exists
 in the map and MUST raise an error if an entity is not found for a name or is
 found but has an unexpected type.
 
+Test runners MUST provide a mechanism to retrieve entities from the entity
+map prior to the clearing of the entity map, as discussed in
+`Executing a Test`_. There MUST be a way to retrieve an entity by its name
+(for example, to support retrieving the iteration count stored by the
+``storeIterationsAsEntity`` option).
+
+Test runners MAY restrict access to driver objects (e.g. MongoClient,
+ChangeStream) and only allow access to BSON types (see:
+`Supported Entity Types`_). This restriction may be necessary if the
+test runner needs to ensure driver objects in its entity map are properly
+freed/destroyed between tests.
+
 Consider the following examples::
 
     # Error due to a duplicate name (client0 was already defined)
@@ -225,6 +237,10 @@ Test runners MUST support the following types of entities:
 - ClientSession. See `entity_session`_ and `Session Operations`_.
 - GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
 - ChangeStream. See `ChangeStream Operations`_.
+- Event list. See :ref:`storeEventsAsEntities <event-entities>`.
+  The event list MUST store BSON documents. The type of the list
+  itself is not prescribed by this specification. Test runner MAY use a
+  BSON array or a thread-safe list data structure to implement the event list.
 - All known BSON types and/or equivalent language types for the target driver.
   For the present version of the spec, the following BSON types are known:
   0x01-0x13, 0x7F, 0xFF.
@@ -462,6 +478,72 @@ The structure of this object is as follows:
 
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
+    
+  .. _event-entities:
+  
+  - ``storeEventsAsEntities``: Optional map of entity names to an array of
+    event names.
+    
+    For each entity name, the test runner MUST create the respective entity
+    with a type of "event list", as described in `Supported Entity Types`_.
+    If the entity already exists (such as from a previous
+    ``storeEventsAsEntities`` declaration from another client),
+    the test runner MUST raise an error.
+    
+    .. note: The implementation of ``storeEventsAsEntities`` is wholly
+      independent from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
+    
+    The test runner MUST set up an event subscriber for each event named.
+    The event subscriber MUST serialize the events it receives into a document,
+    using the documented properties of the event as field names, and append
+    the document to the list stored in the specified entity.
+    Additionally, the following fields MUST be stored with each
+    event document:
+    
+    - ``name``: The name of the event, such as ``PoolCreatedEvent``.
+      The name of the event MUST be the name used in the respective
+      specification that defines the event in question.
+    - ``observedAt``: The floating-point time since the Unix epoch
+      when the event was observed by the test runner.
+        
+    Currently, only the following
+    `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+    and `command <../command-monitoring/command-monitoring.rst>`__
+    events MUST be supported:
+    
+    - PoolCreatedEvent
+    - PoolReadyEvent
+    - PoolClearedEvent
+    - PoolClosedEvent
+    - ConnectionCreatedEvent
+    - ConnectionReadyEvent
+    - ConnectionClosedEvent
+    - ConnectionCheckOutStartedEvent
+    - ConnectionCheckOutFailedEvent
+    - ConnectionCheckedOutEvent
+    - ConnectionCheckedInEvent
+    - CommandStartedEvent
+    - CommandSucceededEvent
+    - CommandFailedEvent
+    
+    The test runner MAY omit the ``command`` field for CommandStartedEvent
+    and ``reply`` field for CommandSucceededEvent.
+    
+    If an event field in the driver is of a type that does not directly map to
+    a BSON type, such as ``Exception`` for the ``failure`` field of
+    CommandFailedEvent, the test runner MUST convert values of that field
+    to one of the BSON types.
+    
+    If specification defining an event permits deviation in field names,
+    such as ``connectionId`` field for CommandStartedEvent, the test runner
+    SHOULD use the field names used in the specification when serializing
+    events to documents even if the respective field name is different in the
+    driver's event object.
+    
+    Example option value::
+    
+      storeEventsAsEntities:
+        events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional object to declare an API version on the client
     entity. A ``version`` string is required, and test runners MUST fail if the
@@ -1798,6 +1880,152 @@ Use a ``listIndexes`` command to check whether the index exists. Note that it is
 currently not possible to run ``listIndexes`` from within a transaction.
 
 
+loop
+~~~~
+
+The ``loop`` operation executes sub-operations in a loop.
+It supports the following arguments:
+
+- ``operations``: the sub-operations to run on each loop iteration.
+  Each sub-operation must be a valid operation as described in
+  `Entity Test Operations`_.
+  
+  Sub-operations SHOULD NOT include the ``loop`` operation.
+  
+  If, in the course of executing sub-operations, a sub-operation yields
+  an error or failure, the test runner MUST NOT execute subsequent
+  sub-operations in the same loop iteration. If ``storeErrorsAsEntity``
+  and/or ``storeFailuresAsEntity`` options are specified, the loop MUST
+  store the error/failure accordingly and continue to the next iteration
+  (i.e. the error/failure will not interrupt the test). If neither
+  ``storeErrorsAsEntity`` nor ``storeFailuresAsEntity`` are specified,
+  the loop MUST terminate and raise the error/failure (i.e. the
+  error/failure will interrupt the test).
+
+- ``storeErrorsAsEntity``: if specified, the runner MUST capture errors
+  arising during sub-operation execution and append a document with error
+  information to the array stored in the specified entity.
+  
+  If this option is specified, the test runner MUST check the existence and
+  the type of the entity with the specified name before executing the loop.
+  If the entity does not exist, the test runner MUST create it with the type
+  of BSON array. If the entity exists and is of type BSON array, the
+  test runner MUST do nothing. If the entity exists and is of a different type,
+  the test runner MUST raise an error.
+
+  If this option is specified and ``storeFailuresAsEntity`` is not,
+  failures MUST also be captured and appended to the array.
+
+  Documents appended to the array MUST contain the following fields:
+
+  - ``error``: the textual description of the error encountered.
+  - ``time``: the number of (floating-point) seconds since the Unix epoch
+    when the error was encountered.
+
+- ``storeFailuresAsEntity``: if specified, the runner MUST capture failures
+  arising during sub-operation execution and append a document with failure
+  information to the array stored in the specified entity.
+  
+  If this option is specified, the test runner MUST check the existence and
+  the type of the entity with the specified name before executing the loop.
+  If the entity does not exist, the test runner MUST create it with the type
+  of BSON array. If the entity exists and is of type BSON array, the
+  test runner MUST do nothing. If the entity exists and is of a different type,
+  the test runner MUST raise an error.
+  
+  If this option is specified and ``storeErrorsAsEntity`` is not, errors
+  MUST also be captured and appended to the array.
+
+  Documents appended to the array MUST contain the following fields:
+  
+  - ``error``: the textual description of the failure encountered.
+  - ``time``: the number of (floating-point) seconds since the Unix epoch
+    when the failure was encountered.
+
+- ``storeSuccessesAsEntity``: if specfied, the runner MUST keep track of
+  the number of sub-operations that completed successfully, and store
+  that number in the specified entity. For example, if the loop contains
+  two sub-operations, and they complete successfully, each loop execution
+  would increment the number of successes by two.
+  
+  If the entity of the specified name already exists, the test runner
+  MUST raise an error.
+
+- ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
+  the number of iterations of the loop performed, and store that number
+  in the specified entity.
+  
+  If the entity of the specified name already exists, the test runner
+  MUST raise an error.
+
+A *failure* is when the result or outcome of an operation executed by the
+test runner differs from its expected outcome. For example, an ``expectResult``
+assertion failing to match a BSON document or an ``expectError`` assertion
+failing to match an error message would be considered a failure. An *error*
+is any other type of error raised by the test runner. For example, an
+unsupported operation or inability to resolve an entity name would be
+considered an error.
+
+This specification permits the test runner to report some failures as errors
+and some errors as failures. When the test runner stores errors and
+failures as entities it MAY classify conditions as errors and failures in
+the same way as it would when used in the driver's test suite.
+This includes reporting all errors as failures or all failures as errors.
+
+If the test runner does not distinguish errors and failures in its reporting,
+it MAY report both conditions under either category, but it MUST report
+any given condition in at most one category.
+
+The following termination behavior MUST be implemented by the test
+runner:
+
+- The test runner MUST provide a way to request termination of loops. This
+  request will be made by the `Atlas testing workload executor
+  <https://mongodb-labs.github.io/drivers-atlas-testing/spec-workload-executor.html>`_
+  in response to receiving the termination signal from Astrolabe.
+  
+- When the termination request is received, the test runner MUST
+  stop looping. If the test runner is looping when the termination request
+  is received, the current loop iteration MUST complete to its natural
+  conclusion (success or failure). If the test runner is not looping
+  when the termination request is received, it MUST NOT start any new
+  loop iterations in either the current test or subsequent tests for the
+  lifetime of the test runner.
+
+- The termination request MUST NOT affect non-loop operations, including
+  any operations after the loop. The tests SHOULD NOT be written in such
+  a way that the success or failure of operations that follow loops
+  depends on how many loop iterations were performed.
+  
+- Receiving the termination request MUST NOT by itself be considered an error
+  or a failure by the test runner.
+
+The exact mechanism by which the workload executor requests termination
+of the loop in the test runner, including the respective API, is left
+to the driver.
+
+Tests SHOULD NOT include multiple loop operations (nested or sequential).
+
+An example of this operation follows::
+
+    - name: loop
+      object: testRunner
+      arguments:
+        storeErrorsAsEntity: errors
+        storeFailuresAsEntity: failures
+        storeSuccessesAsEntity: successes
+        storeIterationsAsEntity: iterations
+        operations:
+          - name: find
+            object: *collection0
+            arguments:
+              filter: { _id: { $gt: 1 }}
+              sort: { _id: 1 }
+            expectResult:
+              - _id: 2, x: 22
+              - _id: 3, x: 33
+
+
 Evaluating Matches
 ------------------
 
@@ -2272,6 +2500,15 @@ data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
 match exactly; however, test runners MUST permit variations in document key
 order or otherwise normalize the documents before comparison. If the list of
 documents is empty, the test runner MUST assert that the collection is empty.
+
+Before clearing the entity map at the end of each test, the test runner
+MUST allow its entities to be accessed externally. The exact mechanism for
+facilitating this access is not prescribed by this specification, but
+drivers should be mindful of concurrency if applicable. As an example,
+the test runner MAY be configured with a callback method, which will be
+invoked at the end of each test and provided with the entity map (or an
+equivalent data structure). As previously discussed in `Entity Map`_,
+test runners MAY restrict access to driver objects if necessary.
 
 Clear the entity map for this test. For each ClientSession in the entity map,
 the test runner MUST end the session (e.g. call
