@@ -4,9 +4,7 @@
   "createEntities": [
     {
       "client": {
-        "id": "client0",
-        "observeEvents": [],
-        "ignoreCommandMonitoringEvents": []
+        "id": "client0"
       }
     },
     {
