@@ -31,6 +31,8 @@ tests:
           }
       - name: createChangeStream
         object: *collection0
+        arguments:
+          pipeline: []
         saveResultAsEntity: &changeStream0 changeStream0
       - name: updateOne
         object: *collection0

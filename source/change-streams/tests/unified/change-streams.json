@@ -63,6 +63,9 @@
         {
           "name": "createChangeStream",
           "object": "collection0",
+          "arguments": {
+            "pipeline": []
+          },
           "saveResultAsEntity": "changeStream0"
         },
         {
