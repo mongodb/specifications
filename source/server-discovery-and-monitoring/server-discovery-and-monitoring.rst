@@ -1243,7 +1243,7 @@ Application operations can fail in various places, for example:
 - A network error, network timeout, or command error may occur while
   establishing a new connection. Establishing a connection includes the
   MongoDB handshake and completing authentication (if configured).
-- A network error, network timeout may occur while reading or writing to an
+- A network error or network timeout may occur while reading or writing to an
   established connection.
 - A command error may be returned from the server.
 - A "writeConcernError" field may be included in the command response.
@@ -2215,7 +2215,9 @@ Why mark a server Unknown after an auth error?
 The `Authentication spec`_ requires that when authentication fails on a server,
 the driver MUST clear the server's connection pool. Clearing the pool without
 marking the server Unknown would leave the pool in the "paused" state while
-the server is still selectable.
+the server is still selectable. When auth fails due to invalid credentials,
+marking the server Unknown also serves to rate limit new connections;
+future operations will need to wait for the server to be rediscovered.
 
 Note that authentication may fail for a variety of reasons, for example:
 
