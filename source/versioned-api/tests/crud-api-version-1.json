@@ -298,6 +298,12 @@
                         "$inc": {
                           "x": 1
                         }
+                      },
+                      "multi": {
+                        "$$unsetOrMatches": false
+                      },
+                      "upsert": {
+                        "$$unsetOrMatches": false
                       }
                     }
                   ],
@@ -350,7 +356,10 @@
                           "x": 1
                         }
                       },
-                      "multi": true
+                      "multi": true,
+                      "upsert": {
+                        "$$unsetOrMatches": false
+                      }
                     }
                   ],
                   "apiVersion": "1",
@@ -393,6 +402,9 @@
                       "u": {
                         "_id": 4,
                         "x": 44
+                      },
+                      "multi": {
+                        "$$unsetOrMatches": false
                       },
                       "upsert": true
                     }
@@ -997,6 +1009,9 @@
                         "_id": 4,
                         "x": 44
                       },
+                      "multi": {
+                        "$$unsetOrMatches": false
+                      },
                       "upsert": true
                     }
                   ],
@@ -1052,7 +1067,10 @@
                           "x": 1
                         }
                       },
-                      "multi": true
+                      "multi": true,
+                      "upsert": {
+                        "$$unsetOrMatches": false
+                      }
                     }
                   ],
                   "apiVersion": "1",
@@ -1102,6 +1120,12 @@
                         "$inc": {
                           "x": 1
                         }
+                      },
+                      "multi": {
+                        "$$unsetOrMatches": false
+                      },
+                      "upsert": {
+                        "$$unsetOrMatches": false
                       }
                     }
                   ],
