@@ -1,7 +1,8 @@
 # Test SDAM error handling.
 runOn:
-    # failCommand appName requirements
+    # This test requires retryable writes and failCommand appName.
     - minServerVersion: "4.4"
+      topology: [replicaset", "sharded"]
 
 database_name: &database_name "sdam-tests"
 collection_name: &collection_name "pool-cleared-error"
