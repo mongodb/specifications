@@ -1,7 +1,8 @@
 # Test SDAM error handling.
 runOn:
-    # This test requires retryable writes and failCommand appName.
-    - minServerVersion: "4.4"
+    # This test requires retryable writes, failCommand appName, and
+    # failCommand blockConnection with closeConnection:true (SERVER-53512).
+    - minServerVersion: "4.9"
       topology: ["replicaset", "sharded"]
 
 database_name: &database_name "sdam-tests"
@@ -32,6 +33,8 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: ["insert"]
+                blockConnection: true
+                blockTimeMS: 100
                 closeConnection: true
                 appName: poolClearedErrorTest
       # Start threads.
@@ -64,10 +67,11 @@ tests:
       # and retry.
       # The other operations will either:
       # - Notice the pool is paused, fail with a PoolClearedError, and retry.
-      # - Or block waiting in server selection until the server is rediscoverd.
+      # - Or block waiting in server selection until the server is
+      #   rediscovered.
       #
-      # Note that this test does not gaurantee that a PoolClearedError will be
-      # raised but it is likely.
+      # Note that this test does not guarantee that a PoolClearedError will be
+      # raised but it is likely since the initial insert is delayed.
       - name: runOnThread
         object: testRunner
         arguments:
