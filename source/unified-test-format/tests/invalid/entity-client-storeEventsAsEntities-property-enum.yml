@@ -1,0 +1,13 @@
+description: "entity-client-storeEventsAsEntities-property-enum"
+
+schemaVersion: "1.2"
+
+createEntities:
+  - client:
+      id: &client0 "client0"
+      storeEventsAsEntities:
+        events: ["foo"]
+
+tests:
+  - description: "foo"
+    operations: []

@@ -1,0 +1,35 @@
+description: "entity-client-storeEventsAsEntity"
+
+schemaVersion: "1.2"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      storeEventsAsEntities:
+        # Note: this test does not assert that the events are actually saved to
+        # this entity since there is presently no assertion syntax to do so.
+        events: ["CommandStartedEvent", "CommandSucceededEvent", "CommandFailedEvent"]
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name test
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1, x: 11 }
+
+tests:
+  - description: "storeEventsAsEntity captures events"
+    operations:
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+        expectResult:
+          - { _id: 1, x: 11 }
