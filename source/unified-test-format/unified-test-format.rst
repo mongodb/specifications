@@ -237,10 +237,11 @@ Test runners MUST support the following types of entities:
 - ClientSession. See `entity_session`_ and `Session Operations`_.
 - GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
 - ChangeStream. See `ChangeStream Operations`_.
-- Event list. See :ref:`storeEventsAsEntities <event-entities>`.
-  The event list MUST store BSON documents. The type of the list
-  itself is not prescribed by this specification. Test runner MAY use a
-  BSON array or a thread-safe list data structure to implement the event list.
+- Event list. See
+  `storeEventsAsEntities <entity_client_storeEventsAsEntities_>`_. The event
+  list MUST store BSON documents. The type of the list itself is not prescribed
+  by this specification. Test runner MAY use a BSON array or a thread-safe list
+  data structure to implement the event list.
 - All known BSON types and/or equivalent language types for the target driver.
   For the present version of the spec, the following BSON types are known:
   0x01-0x13, 0x7F, 0xFF.
@@ -479,7 +480,7 @@ The structure of this object is as follows:
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
     
-  .. _event-entities:
+  .. _entity_client_storeEventsAsEntities:
   
   - ``storeEventsAsEntities``: Optional map of entity names to an array of
     event names.
