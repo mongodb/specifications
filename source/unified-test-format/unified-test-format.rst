@@ -2137,7 +2137,7 @@ When the expected value is an array, test runners MUST differentiate between
 an array of values, which may be documents, (e.g. ``distinct``) and an array of
 root-level documents (e.g. ``find``, ``aggregate``). For example, the following
 array of documents would not match if returned by ``distinct``, but would match
-if returned via ``find`` (after iterating the cursor):
+if returned via ``find`` (after iterating the cursor)::
 
     expected: [ { x: 1 }, { x: 2 } ]
     actual: [ { x: 1, y: 1 }, { x: 2, y: 2 } ]
@@ -2148,7 +2148,7 @@ Document Key Order Variation
 
 When matching documents, test runners MUST NOT require keys in the expected and
 actual document to appear in the same order. For example, the following
-documents would match:
+documents would match::
 
     expected: { x: 1, y: 1 }
     actual: { y: 1, x: 1 }
