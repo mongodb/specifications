@@ -98,7 +98,7 @@ Writing Documents
 -----------------
 
 Write documents using `reStructuredText`_, following the `MongoDB
-Documentation Style Guidelines <http://docs.mongodb.org/manual/meta/style-guide/>`_.
+Documentation Style Guidelines <https://docs.mongodb.com/meta/style-guide/>`_.
 
 Store all source documents in the ``source/`` directory.
 

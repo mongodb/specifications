@@ -542,7 +542,7 @@ If the list is exhausted, the total number of `Connections <#connection>`_ is
 less than maxPoolSize, and pendingConnectionCount < maxConnecting, the pool MUST
 create a `Connection`_, establish it, mark it as "in use" and return it. If
 totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting,
-then the pool MUST wait to service the request until either both of those
+then the pool MUST wait to service the request until neither of those two
 conditions are met or until a `Connection`_ becomes available, re-entering the
 checkOut loop in either case. This waiting MUST NOT prevent `Connections
 <#connection>`_ from being checked into the pool. Additionally, the Pool MUST

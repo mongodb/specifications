@@ -1,4 +1,4 @@
-SCHEMA=../schema-1.1.json
+SCHEMA=../schema-1.2.json
 
 .PHONY: all invalid valid-fail valid-pass versioned-api HAS_AJV
 

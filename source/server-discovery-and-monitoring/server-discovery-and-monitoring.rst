@@ -1456,6 +1456,8 @@ Additionally, if the response includes a write concern error, then the code
 and message of the write concern error MUST be checked the same way a response
 error is checked above.
 
+Errors contained within the writeErrors field MUST NOT be checked.
+
 See the test scenario called
 "parsing 'not master' and 'node is recovering' errors"
 for example response documents.

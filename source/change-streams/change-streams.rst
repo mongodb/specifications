@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: Febrary 10, 2020
-:Version: 1.8.0
+:Last Modified: Febrary 8, 2021
+:Version: 1.9.0
 
 .. contents::
 
@@ -129,6 +129,9 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
 
     /**
      * Describes the type of operation represented in this change notification.
+     *
+     * @note: Whether a change is reported as an event of the operation type
+     * `update` or `replace` is a server implementation detail.
      */
     operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
 
@@ -177,7 +180,32 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
   class UpdateDescription {
     /**
      * A document containing key:value pairs of names of the fields that were
-     * changed, and the new value for those fields.
+     * changed (excluding the fields reported via `truncatedArrays`), and the new value for those fields.
+     *
+     * Despite array fields reported via `truncatedArrays` being excluded from this field,
+     * changes to fields of the elements of the array values may be reported via this field.
+     * Example:
+     *   original field:
+     *     "arrayField": ["foo", {"a": "bar"}, 1, 2, 3]
+     *   updated field:
+     *     "arrayField": ["foo", {"a": "bar", "b": 3}]
+     *   a potential corresponding UpdateDescription:
+     *     {
+     *       "updatedFields": {
+     *         "arrayField.1.b": 3
+     *       },
+     *       "removedFields": [],
+     *       "truncatedArrays": [
+     *         {
+     *           "field": "arrayField",
+     *           "newSize": 2
+     *         }
+     *       ]
+     *     }
+     *
+     * Modifications to array elements are expressed via the dot notation (https://docs.mongodb.com/manual/core/document/#document-dot-notation).
+     * Example: an `update` which sets the element with index 0 in the array field named arrayField to 7 is reported as
+     *   "updatedFields": {"arrayField.0": 7}
      */
     updatedFields: Document;
 
@@ -185,6 +213,23 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * An array of field names that were removed from the document.
      */
     removedFields: Array<String>;
+
+    /**
+     * Truncations of arrays may be reported using one of the following methods:
+     * either via this field or via the ‘updatedFields’ field. In the latter case the entire array is considered to be replaced.
+     *
+     * The structure of documents in this field is
+     *   {
+     *      "field": <string>,
+     *      "newSize": <int>
+     *   }
+     * Example: an `update` which shrinks the array arrayField.0.nestedArrayField from size 8 to 5 may be reported as
+     *   "truncatedArrays": [{"field": "arrayField.0.nestedArrayField", "newSize": 5}]
+     *
+     * @note The method used to report a truncation is a server implementation detail.
+     * @since 4.7.0
+     */
+    truncatedArrays: Array<Document>;
   }
 
 The responses to a change stream aggregate or getMore have the following structures:
@@ -837,4 +882,6 @@ Changelog
 |            | the ``startAfter`` option.                                 |
 +------------+------------------------------------------------------------+
 | 2020-02-10 | Changed error handling approach to use a whitelist         |
++------------+------------------------------------------------------------+
+| 2021-02-08 | Added the ``UpdateDescription.truncatedArrays`` field      |
 +------------+------------------------------------------------------------+
