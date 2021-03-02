@@ -1,0 +1,18 @@
+description: "entity-client-storeEventsAsEntity-conflict_with_existing_id"
+
+schemaVersion: "1.2"
+
+createEntities:
+  - client:
+      id: &client0 client0
+      storeEventsAsEntities:
+        events: ["PoolCreatedEvent", "PoolReadyEvent", "PoolClearedEvent", "PoolClosedEvent"]
+  - client:
+      id: &client1 client1
+      storeEventsAsEntities:
+        # This should conflict with storeEventsAsEntities for client0
+        events: ["CommandStartedEvent", "CommandSucceededEvent", "CommandFailedEvent"]
+
+tests:
+  - description: "foo"
+    operations: []

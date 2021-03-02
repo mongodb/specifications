@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.1.1
+:Spec Version: 1.2.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-12-23
+:Last Modified: 2021-03-01
 
 .. contents::
 
@@ -2922,6 +2922,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-03-01: Added ``storeEventsAsEntities`` option for client entities and
+             ``loop`` operation, which is needed for Atlas Driver Testing.
 
 :2020-12-23: Clarify how JSON schema is renamed for new minor versions.
 

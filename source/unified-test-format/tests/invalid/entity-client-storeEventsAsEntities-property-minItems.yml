@@ -1,0 +1,13 @@
+description: "entity-client-storeEventsAsEntities-property-minItems"
+
+schemaVersion: "1.2"
+
+createEntities:
+  - client:
+      id: &client0 "client0"
+      storeEventsAsEntities:
+        events: []
+
+tests:
+  - description: "foo"
+    operations: []

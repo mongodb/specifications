@@ -89,6 +89,33 @@
               "minItems": 1,
               "items": { "type": "string" }
             },
+            "storeEventsAsEntities": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "PoolCreatedEvent",
+                    "PoolReadyEvent",
+                    "PoolClearedEvent",
+                    "PoolClosedEvent",
+                    "ConnectionCreatedEvent",
+                    "ConnectionReadyEvent",
+                    "ConnectionClosedEvent",
+                    "ConnectionCheckOutStartedEvent",
+                    "ConnectionCheckOutFailedEvent",
+                    "ConnectionCheckedOutEvent",
+                    "ConnectionCheckedInEvent",
+                    "CommandStartedEvent",
+                    "CommandSucceededEvent",
+                    "CommandFailedEvent"
+                  ]
+                }
+              }
+            },
             "serverApi": { "$ref":  "#/definitions/serverApi" }
           }
         },
