@@ -1248,7 +1248,7 @@ Application operations can fail in various places, for example:
 - A command error may be returned from the server.
 - A "writeConcernError" field may be included in the command response.
 
-Depending on the context, these errors may update update SDAM state by marking
+Depending on the context, these errors may update SDAM state by marking
 the server Unknown and may clear the server's connection pool. Some errors
 also require other side effects, like cancelling a check or requesting an
 immediate check. Drivers may use the following pseudocode to guide their
