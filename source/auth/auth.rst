@@ -6,7 +6,7 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.2
+:Spec Version: 1.10.3
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
@@ -178,8 +178,9 @@ handshake:
    #. A single invalid credential is the same as all credentials being
       invalid.
 
-If the authentication handshake fails for a socket, drivers MUST close all
-other general-use sockets connected to the same server.
+If the authentication handshake fails for a socket, drivers MUST mark the
+server Unknown and clear the server's connection pool. (See `Q & A`_ below and
+SDAM's `Why mark a server Unknown after an auth error`_ for rationale.)
 
 Mechanism Negotiation via Handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1260,6 +1261,9 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Version History
 ===============
 
+Version 1.10.3 Changes
+    * Note that errors encountered during auth are handled by SDAM.
+
 Version 1.10.2 Changes
     * Add reference to the speculative authentication section of the handshake spec.
 
@@ -1338,3 +1342,8 @@ Version 1.1 Changes
 	* Added MONGODB-X509
 	* Added PLAIN sasl mechanism
 	* Added support for GSSAPI mechanism property gssapiServiceName
+
+.. Section for links.
+
+.. _SDAM Monitoring Specification: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#why-mark-a-server-unknown-after-an-auth-error
+.. _Why mark a server Unknown after an auth error: /source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#why-mark-a-server-unknown-after-an-auth-error

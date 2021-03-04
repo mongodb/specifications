@@ -8,7 +8,7 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.20
+:Version: 2.21
 :Last Modified: 2020-06-08
 
 .. contents::
@@ -1235,6 +1235,126 @@ the pool's generation number then error handling MUST continue according to
 stale and the client MUST NOT update any topology state.
 (See `Why ignore errors based on CMAP's generation number?`_)
 
+Error handling pseudocode
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Application operations can fail in various places, for example:
+
+- A network error, network timeout, or command error may occur while
+  establishing a new connection. Establishing a connection includes the
+  MongoDB handshake and completing authentication (if configured).
+- A network error or network timeout may occur while reading or writing to an
+  established connection.
+- A command error may be returned from the server.
+- A "writeConcernError" field may be included in the command response.
+
+Depending on the context, these errors may update SDAM state by marking
+the server Unknown and may clear the server's connection pool. Some errors
+also require other side effects, like cancelling a check or requesting an
+immediate check. Drivers may use the following pseudocode to guide their
+implementation::
+
+    def handleError(error):
+        address = error.address
+        topologyVersion = error.topologyVersion
+
+        with client.lock:
+            # Ignore stale errors based on generation and topologyVersion.
+            if isStaleError(client.topologyDescription, error)
+                return
+
+            if isStateChangeError(error):
+                # Mark the server Unknown
+                unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
+                onServerDescriptionChanged(unknown, connection pool for server)
+                if isShutdown(code) or (error was from <4.2):
+                  # the pools must only be cleared while the lock is held.
+                  clear connection pool for server
+                if multi-threaded:
+                    request immediate check
+                else:
+                    # Check right now if this is "not master", since it might be a
+                    # useful secondary. If it's "node is recovering" leave it for the
+                    # next full scan.
+                    if isNotMaster(error):
+                        check failing server
+            elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+                # Mark the server Unknown
+                unknown = new ServerDescription(type=Unknown, error=error)
+                onServerDescriptionChanged(unknown, connection pool for server)
+                clear connection pool for server
+                # Cancel inprogress check
+                cancel monitor check
+
+    def isStaleError(topologyDescription, error):
+        currentServer = topologyDescription.servers[server.address]
+        currentGeneration = currentServer.pool.generation
+        generation = get connection generation from error
+        if generation < currentGeneration:
+            # Stale generation number.
+            return True
+
+        currentTopologyVersion = currentServer.topologyVersion
+        # True if the current error's topologyVersion is greater than the server's
+        # We use >= instead of > because any state change should result in a new topologyVersion
+        return compareTopologyVersion(currentTopologyVersion, error.commandResponse.get("topologyVersion")) >= 0
+
+The following pseudocode checks a response for a "not master" or "node is
+recovering" error::
+
+    recoveringCodes = [11600, 11602, 13436, 189, 91]
+    notMasterCodes = [10107, 13435, 10058]
+    shutdownCodes = [11600, 91]
+
+    def isRecovering(message, code):
+        if code:
+            if code in recoveringCodes:
+                return true
+        else:
+            # if no code, use the error message.
+            return ("not master or secondary" in message
+                or "node is recovering" in message)
+
+    def isNotMaster(message, code):
+        if code:
+            if code in notMasterCodes:
+              return true
+        else:
+          # if no code, use the error message.
+          if isRecovering(message, None):
+              return false
+          return ("not master" in message)
+
+    def isShutdown(code):
+        if code and code in shutdownCodes:
+            return true
+        return false
+
+    def isStateChangeError(error):
+        message = error.errmsg
+        code = error.code
+        return isRecovering(message, code) or isNotMaster(message, code)
+
+    def parseGle(response):
+        if "err" in response:
+            handleError(CommandError(response, response["err"], response["code"]))
+
+    # Parse response to any command besides getLastError.
+    def parseCommandResponse(response):
+        if not response["ok"]:
+            handleError(CommandError(response, response["errmsg"], response["code"]))
+        else if response["writeConcernError"]:
+            wce = response["writeConcernError"]
+            handleError(WriteConcernError(response, wce["errmsg"], wce["code"]))
+
+    def parseQueryResponse(response):
+        if the "QueryFailure" bit is set in response flags:
+            handleError(CommandError(response, response["$err"], response["code"]))
+
+The following sections describe the handling of different classes of
+application errors in detail including network errors, network timeout errors,
+state change errors, and authentication errors.
+
 Network error when reading or writing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1344,96 +1464,6 @@ error is checked above.
 
 Errors contained within the writeErrors field MUST NOT be checked.
 
-The following pseudocode checks a response for a "not master" or "node is
-recovering" error::
-
-    recoveringCodes = [11600, 11602, 13436, 189, 91]
-    notMasterCodes = [10107, 13435, 10058]
-    shutdownCodes = [11600, 91]
-
-    def isRecovering(message, code):
-        if code:
-            if code in recoveringCodes:
-                return true
-        else:
-            # if no code, use the error message.
-            return ("not master or secondary" in message
-                or "node is recovering" in message)
-
-    def isNotMaster(message, code):
-        if code:
-            if code in notMasterCodes:
-              return true
-        else:
-          # if no code, use the error message.
-          if isRecovering(message, None):
-              return false
-          return ("not master" in message)
-
-    def isShutdown(code):
-        if code and code in shutdownCodes:
-            return true
-        return false
-
-    def isStateChangeError(message, code):
-        return isRecovering(message, code) or isNotMaster(message, code)
-
-    def parseGle(response):
-        if "err" in response:
-            if isStateChangeError(response["err"], response["code"]):
-                handleStateChangeError(response, response["err"], response["code"])
-
-    # Parse response to any command besides getLastError.
-    def parseCommandResponse(response):
-        if not response["ok"]:
-            if isStateChangeError(response["errmsg"], response["code"]):
-                handleStateChangeError(response, response["errmsg"], response["code"])
-        else if response["writeConcernError"]:
-            wce = response["writeConcernError"]
-            if isStateChangeError(wce["errmsg"], wce["code"]):
-                handleStateChangeError(response, wce["errmsg"], wce["code"])
-
-    def parseQueryResponse(response):
-        if the "QueryFailure" bit is set in response flags:
-            if isStateChangeError(response["$err"], response["code"]):
-                handleStateChangeError(response, response["$err"], response["code"])
-
-    def handleStateChangeError(response, message, code):
-        with client.lock:
-            # Ignore stale errors based on generation and topologyVersion.
-            if isStaleError(client.topologyDescription, response)
-                return
-
-            # Mark the server Unknown
-            unknown = new ServerDescription(type=Unknown, error=message, code=code, topologyVersion=response["topologyVersion"])
-            onServerDescriptionChanged(unknown, connection pool for server)
-            if isShutdown(code) or (error was from <4.2):
-                # the pools must only be cleared while the lock is held.
-                clear connection pool for server
-
-        if multi-threaded:
-            request immediate check
-        else:
-            # Check right now if this is "not master", since it might be a
-            # useful secondary. If it's "node is recovering" leave it for the
-            # next full scan.
-            if isNotMaster(message):
-                check failing server
-
-
-    def isStaleError(topologyDescription, response):
-        currentServer = topologyDescription.servers[server.address]
-        currentGeneration = currentServer.pool.generation
-        generation = get connection generation from response
-        if generation < currentGeneration:
-            # Stale generation number.
-            return True
-
-        currentTopologyVersion = currentServer.topologyVersion
-        # True if the current error's topologyVersion is greater than the server's
-        # We use >= instead of > because any state change should result in a new topologyVersion
-        return compareTopologyVersion(currentTopologyVersion, response.get("topologyVersion")) >= 0
-
 See the test scenario called
 "parsing 'not master' and 'node is recovering' errors"
 for example response documents.
@@ -1481,6 +1511,13 @@ clear the server's connection pool if and only if the error is
 (See `when does a client see "not master" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_ and `Why close connections when a node is shutting down?`_.)
+
+Authentication errors
+~~~~~~~~~~~~~~~~~~~~~
+
+If the authentication handshake fails for a connection, drivers MUST mark the
+server Unknown and clear the server's connection pool. (See
+`Why mark a server Unknown after an auth error?`_)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2180,6 +2217,29 @@ duplicate (or stale) State Change Errors can be identified (changes in
    the error's topologyVersion (tv2) is not greater than the current
    ServerDescription (tv2).**
 
+Why mark a server Unknown after an auth error?
+''''''''''''''''''''''''''''''''''''''''''''''
+
+The `Authentication spec`_ requires that when authentication fails on a server,
+the driver MUST clear the server's connection pool. Clearing the pool without
+marking the server Unknown would leave the pool in the "paused" state while
+the server is still selectable. When auth fails due to invalid credentials,
+marking the server Unknown also serves to rate limit new connections;
+future operations will need to wait for the server to be rediscovered.
+
+Note that authentication may fail for a variety of reasons, for example:
+
+- A network error, or network timeout error may occur.
+- The server may return a `State Change Error`_.
+- The server may return a AuthenticationFailed command error (error code 18)
+  indicating that the provided credentials are invalid.
+
+Does this mean that authentication failures due to invalid credentials will
+manifest as server selection timeout errors? No, authentication errors are
+still returned to the application immediately. A subsequent operation will
+block until the server is rediscovered and immediately attempt
+authentication on a new connection.
+
 Clients use the hostnames listed in the replica set config, not the seed list
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -2265,12 +2325,13 @@ These errors indicate one of these:
 * A read was attempted on an unreadable server
   (arbiter, ghost, or recovering)
   or a read was attempted on a read-only server without the slaveOk bit set.
+* An operation was attempted on a server that is now shutting down.
 
 In any case the error is a symptom that
 a ServerDescription's type no longer reflects reality.
 
-A primary closes its connections when it steps down,
-so in many cases the next operation causes a network error
+On MongoDB 4.0 and earlier, a primary closes its connections when it steps
+down, so in many cases the next operation causes a network error
 rather than "not master".
 The driver can see a "not master" error in the following scenario:
 
@@ -2406,6 +2467,9 @@ stale application errors.
 2020-12-17: Mark the pool for a server as "ready" after performing a successful
 check. Synchronize pool clearing with SDAM updates.
 
+2021-2-11: Errors encountered during auth are handled by SDAM. Auth errors
+mark the server Unknown and clear the pool.
+
 .. Section for links.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
@@ -2417,3 +2481,5 @@ check. Synchronize pool clearing with SDAM updates.
 .. _clients update the topology from each handshake: server-monitoring.rst#clients-update-the-topology-from-each-handshake
 .. _single-threaded monitoring: server-monitoring.rst#single-threaded-monitoring
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Authentication spec: /source/auth/auth.rst
