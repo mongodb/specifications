@@ -160,18 +160,6 @@
             "database": { "type": "string" },
             "bucketOptions": { "type": "object" }
           }
-        },
-        "stream": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["id", "hexBytes"],
-          "properties": {
-            "id": { "type": "string" },
-            "hexBytes": {
-              "type": "string",
-              "pattern": "^([0-9A-Fa-f]{2})*$"
-            }
-          }
         }
       }
     },
