@@ -1,4 +1,4 @@
-description: "entity-client-storeEventsAsEntities-property-minItems"
+description: "storeEventsAsEntity-events-required"
 
 schemaVersion: "1.2"
 
@@ -6,7 +6,7 @@ createEntities:
   - client:
       id: &client0 "client0"
       storeEventsAsEntities:
-        events: []
+        - id: "client0_events"
 
 tests:
   - description: "foo"

@@ -1,17 +1,20 @@
 {
-  "description": "entity-client-storeEventsAsEntity",
+  "description": "entity-client-storeEventsAsEntities",
   "schemaVersion": "1.2",
   "createEntities": [
     {
       "client": {
         "id": "client0",
-        "storeEventsAsEntities": {
-          "events": [
-            "CommandStartedEvent",
-            "CommandSucceededEvent",
-            "CommandFailedEvent"
-          ]
-        }
+        "storeEventsAsEntities": [
+          {
+            "id": "client0_events",
+            "events": [
+              "CommandStartedEvent",
+              "CommandSucceededEvent",
+              "CommandFailedEvent"
+            ]
+          }
+        ]
       }
     },
     {
@@ -43,7 +46,7 @@
   ],
   "tests": [
     {
-      "description": "storeEventsAsEntity captures events",
+      "description": "storeEventsAsEntities captures events",
       "operations": [
         {
           "name": "find",

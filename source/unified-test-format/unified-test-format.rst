@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-03-01
+:Last Modified: 2021-03-04
 
 .. contents::
 
@@ -482,69 +482,19 @@ The structure of this object is as follows:
     
   .. _entity_client_storeEventsAsEntities:
   
-  - ``storeEventsAsEntities``: Optional map of entity names to an array of
-    event names.
-    
-    For each entity name, the test runner MUST create the respective entity
-    with a type of "event list", as described in `Supported Entity Types`_.
-    If the entity already exists (such as from a previous
-    ``storeEventsAsEntities`` declaration from another client),
-    the test runner MUST raise an error.
-    
+  - ``storeEventsAsEntities``: Optional array of one or more
+    `storeEventsAsEntity`_ objects. Each object denotes an entity name and one
+    or more events to be collected and stored in that entity. See
+    `storeEventsAsEntity`_ for implementation details.
+
     .. note: The implementation of ``storeEventsAsEntities`` is wholly
       independent from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
-    
-    The test runner MUST set up an event subscriber for each event named.
-    The event subscriber MUST serialize the events it receives into a document,
-    using the documented properties of the event as field names, and append
-    the document to the list stored in the specified entity.
-    Additionally, the following fields MUST be stored with each
-    event document:
-    
-    - ``name``: The name of the event, such as ``PoolCreatedEvent``.
-      The name of the event MUST be the name used in the respective
-      specification that defines the event in question.
-    - ``observedAt``: The floating-point time since the Unix epoch
-      when the event was observed by the test runner.
-        
-    Currently, only the following
-    `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
-    and `command <../command-monitoring/command-monitoring.rst>`__
-    events MUST be supported:
-    
-    - PoolCreatedEvent
-    - PoolReadyEvent
-    - PoolClearedEvent
-    - PoolClosedEvent
-    - ConnectionCreatedEvent
-    - ConnectionReadyEvent
-    - ConnectionClosedEvent
-    - ConnectionCheckOutStartedEvent
-    - ConnectionCheckOutFailedEvent
-    - ConnectionCheckedOutEvent
-    - ConnectionCheckedInEvent
-    - CommandStartedEvent
-    - CommandSucceededEvent
-    - CommandFailedEvent
-    
-    The test runner MAY omit the ``command`` field for CommandStartedEvent
-    and ``reply`` field for CommandSucceededEvent.
-    
-    If an event field in the driver is of a type that does not directly map to
-    a BSON type, such as ``Exception`` for the ``failure`` field of
-    CommandFailedEvent, the test runner MUST convert values of that field
-    to one of the BSON types.
-    
-    If specification defining an event permits deviation in field names,
-    such as ``connectionId`` field for CommandStartedEvent, the test runner
-    SHOULD use the field names used in the specification when serializing
-    events to documents even if the respective field name is different in the
-    driver's event object.
-    
+
     Example option value::
     
       storeEventsAsEntities:
-        events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
+        - id: client0_events
+          events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
   - ``serverApi``: Optional object to declare an API version on the client
     entity. A ``version`` string is required, and test runners MUST fail if the
@@ -637,6 +587,70 @@ The structure of this object is as follows:
     `GridFS <../gridfs/gridfs-spec.rst#configurable-gridfsbucket-class>`__
     specification. The ``readConcern``, ``readPreference``, and ``writeConcern``
     options use the same structure as defined in `Common Options`_.
+
+
+storeEventsAsEntity
+~~~~~~~~~~~~~~~~~~~
+
+A list of one or more events that will be observed on a client and collectively
+stored within an entity. This object is used within
+`storeEventsAsEntities <entity_client_storeEventsAsEntities_>`_.
+
+The structure of this object is as follows:
+
+  - ``id``: Required string. Unique name for this entity.
+
+  - ``events``: Required array of one or more strings, which denote the events
+    to be collected. Currently, only the following
+    `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+    and `command monitoring <../command-monitoring/command-monitoring.rst>`__
+    events MUST be supported:
+
+      - PoolCreatedEvent
+      - PoolReadyEvent
+      - PoolClearedEvent
+      - PoolClosedEvent
+      - ConnectionCreatedEvent
+      - ConnectionReadyEvent
+      - ConnectionClosedEvent
+      - ConnectionCheckOutStartedEvent
+      - ConnectionCheckOutFailedEvent
+      - ConnectionCheckedOutEvent
+      - ConnectionCheckedInEvent
+      - CommandStartedEvent
+      - CommandSucceededEvent
+      - CommandFailedEvent
+
+For the specified entity name, the test runner MUST create the respective entity
+with a type of "event list", as described in `Supported Entity Types`_. If the
+entity already exists (such as from a previous `storeEventsAsEntity`_ object)
+the test runner MUST raise an error.
+
+The test runner MUST set up an event subscriber for each event named. The event
+subscriber MUST serialize the events it receives into a document, using the
+documented properties of the event as field names, and append the document to
+the list stored in the specified entity. Additionally, the following fields MUST
+be stored with each event document:
+
+  - ``name``: The name of the event (e.g. ``PoolCreatedEvent``). The name of the
+    event MUST be the name used in the respective specification that defines the
+    event in question.
+  - ``observedAt``: The floating-point time since the Unix epoch when the event
+    was observed by the test runner.
+
+The test runner MAY omit the ``command`` field for CommandStartedEvent and
+``reply`` field for CommandSucceededEvent.
+
+If an event field in the driver is of a type that does not directly map to a
+BSON type (e.g. ``Exception`` for the ``failure`` field of CommandFailedEvent)
+the test runner MUST convert values of that field to one of the BSON types. For
+example, a test runner MAY store the exception's error message string as the
+``failure`` field of CommandFailedEvent.
+
+If the specification defining an event permits deviation in field names, such as
+``connectionId`` field for CommandStartedEvent, the test runner SHOULD use the
+field names used in the specification when serializing events to documents even
+if the respective field name is different in the driver's event object.
 
 
 collectionData
@@ -2923,6 +2937,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-03-04: Change ``storeEventsAsEntities`` from a map to an array of
+             ``storeEventsAsEntity`` objects.
 
 :2021-03-01: Added ``storeEventsAsEntities`` option for client entities and
              ``loop`` operation, which is needed for Atlas Driver Testing.
