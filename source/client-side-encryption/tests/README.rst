@@ -134,7 +134,7 @@ Then for each element in ``tests``:
 #. Create a MongoClient.
 
 #. Create a collection object from the MongoClient, using the ``database_name``
-   and ``collection_name`` fields from the YAML file. Drop the collection 
+   and ``collection_name`` fields from the YAML file. Drop the collection
    with writeConcern "majority". If a ``json_schema`` is defined in the test,
    use the ``createCollection`` command to explicitly create the collection:
 
@@ -258,7 +258,7 @@ Then for each element in ``tests``:
 #. For each element in ``outcome``:
 
    - If ``name`` is "collection", create a new MongoClient *without encryption*
-     and verify that the test collection contains exactly the documents in the 
+     and verify that the test collection contains exactly the documents in the
      ``data`` array. Ensure this find reads the latest data by using
      **primary read preference** with **local read concern** even when the
      MongoClient is configured with another read preference or read concern.
@@ -831,7 +831,7 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 
    Drivers MAY pass a different value to ``--port`` if they expect their testing infrastructure to be using port 27021. Pass a port that should be free.
 
-#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed. 
+#. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed.
 
 #. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run an ``isMaster`` command and ensure it fails with a server selection timeout.
 
@@ -1008,3 +1008,56 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
    - Expect ``client_keyvault`` to have captured one ``CommandStartedEvent``:
       - a find on "keyvault".
 - ExpectedNumberOfClients: 1
+
+KMS TLS Tests
+~~~~~~~~~~~~~
+
+.. _ca.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem
+
+The following tests that connections to KMS servers with TLS verify peer certificates.
+
+The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/mock_kms.js>`_.
+
+Setup
+`````
+
+For both tests, do the following:
+
+#. Start a ``mongod`` process with **server version 4.1.9 or later**.
+
+#. Create a ``MongoClient`` (referred to as ``client_encrypted``) for key vault operations with ``keyVaultNamespace`` set to ``keyvault.datakeys``:
+
+Invalid KMS Certificate
+```````````````````````
+
+#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem>`_ as a cert file.
+
+#. Call ``client_encrypted.createDataKey()`` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+         "region": "us-east-1",
+         "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+         "endpoint": "mongodb://127.0.0.1:8000",
+      }
+
+   Expect this to fail with an exception with a message containing the string: "expired".
+
+Invalid Hostname in KMS Certificate
+```````````````````````````````````
+
+#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `wrong-host.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/wrong-host.pem>`_ as a cert file.
+
+#. Call ``client_encrypted.createDataKey()`` with "aws" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+         "region": "us-east-1",
+         "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+         "endpoint": "mongodb://127.0.0.1:8000",
+      }
+
+   Expect this to fail with an exception with a message containing the string: "SANs". The full error message should make
+   a reference to "localhost" not being contained within the list of IP SANs, or server alternative names.
