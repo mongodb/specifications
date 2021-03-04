@@ -1294,8 +1294,8 @@ These errors are detected from a getLastError response,
 write command response, or query response. Clients MUST check if the server
 error is a "node is recovering" error or a "not master" error.
 
-If the response includes an error code, it MUST be checked first to attempt
-to determine if error is a "node is recovering" or "not master" error.
+If the response includes an error code, it MUST be solely used to determine
+if error is a "node is recovering" or "not master" error.
 Clients MUST match the errors by the numeric error code and not by the code
 name, as the code name can change from one server version to the next.
 
@@ -1329,9 +1329,11 @@ And the following error codes indicate a "not master" error:
     - 10107
   * - NotMasterNoSlaveOk
     - 13435
+  * - LegacyNotPrimary
+    - 10058
 
-If any other error code is included in the response, or an error code is
-omitted, clients MUST check the error message. The error is considered a "node
+Clients MUST fallback to checking the error message if and only if the
+response does not include an error code. The error is considered a "node
 is recovering" error if the substrings "node is recovering" or "not master or
 secondary" are anywhere in the error message. Otherwise, if the substring "not
 master" is in the error message it is a "not master" error.
@@ -1346,23 +1348,27 @@ The following pseudocode checks a response for a "not master" or "node is
 recovering" error::
 
     recoveringCodes = [11600, 11602, 13436, 189, 91]
-    notMasterCodes = [10107, 13435]
+    notMasterCodes = [10107, 13435, 10058]
     shutdownCodes = [11600, 91]
 
     def isRecovering(message, code):
-        if code and code in recoveringCodes:
-            return true
-        # if no code or an unrecognized code, use the error message.
-        return ("not master or secondary" in message
-            or "node is recovering" in message)
+        if code:
+            if code in recoveringCodes:
+                return true
+        else:
+            # if no code, use the error message.
+            return ("not master or secondary" in message
+                or "node is recovering" in message)
 
     def isNotMaster(message, code):
-        if code and code in notMasterCodes:
-            return true
-        # if no code or an unrecognized code, use the error message.
-        if isRecovering(message, None):
-            return false
-        return ("not master" in message)
+        if code:
+            if code in notMasterCodes:
+              return true
+        else:
+          # if no code, use the error message.
+          if isRecovering(message, None):
+              return false
+          return ("not master" in message)
 
     def isShutdown(code):
         if code and code in shutdownCodes:
