@@ -36,3 +36,6 @@
 # Retryability: Jeremy Mikola, Isabel Atkinson
 /source/retryable-reads/ @jmikola @isabelatkinson
 /source/retryable-writes/ @jmikola @isabelatkinson
+
+# Unified Test Format: Jeremy Mikola
+/source/unified-test-format/ @jmikola
