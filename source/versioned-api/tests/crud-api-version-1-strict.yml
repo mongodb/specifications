@@ -61,7 +61,28 @@ tests:
                 pipeline: *pipeline
                 <<: *expectedApiVersion
 
-  - description: "aggregate on database appends declared API version"
+  - description: "aggregate on database appends declared API version on servers before 4.9.0"
+    runOnRequirements:
+      - maxServerVersion: "4.8.99"
+    operations:
+      - name: aggregate
+        object: *adminDatabase
+        arguments:
+          pipeline: &pipeline
+            - $listLocalSessions: {}
+            - $limit: 1
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              command:
+                aggregate: 1
+                pipeline: *pipeline
+                <<: *expectedApiVersion
+
+  - description: "aggregate on database appends declared API version on 4.9.0 or greater"
+    runOnRequirements:
+      - minServerVersion: "4.9.0"
     operations:
       - name: aggregate
         object: *adminDatabase

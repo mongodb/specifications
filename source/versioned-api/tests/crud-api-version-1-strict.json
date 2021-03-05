@@ -140,7 +140,63 @@
       ]
     },
     {
-      "description": "aggregate on database appends declared API version",
+      "description": "aggregate on database appends declared API version on servers before 4.9.0",
+      "runOnRequirements": [
+        {
+          "maxServerVersion": "4.8.99"
+        }
+      ],
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "adminDatabase",
+          "arguments": {
+            "pipeline": [
+              {
+                "$listLocalSessions": {}
+              },
+              {
+                "$limit": 1
+              }
+            ]
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": 1,
+                  "pipeline": [
+                    {
+                      "$listLocalSessions": {}
+                    },
+                    {
+                      "$limit": 1
+                    }
+                  ],
+                  "apiVersion": "1",
+                  "apiStrict": true,
+                  "apiDeprecationErrors": {
+                    "$$unsetOrMatches": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "aggregate on database appends declared API version on 4.9.0 or greater",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.9.0"
+        }
+      ],
       "operations": [
         {
           "name": "aggregate",
