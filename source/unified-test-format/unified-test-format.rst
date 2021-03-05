@@ -485,8 +485,8 @@ The structure of this object is as follows:
     or more events to be collected and stored in that entity. See
     `storeEventsAsEntity`_ for implementation details.
 
-    .. note: The implementation of ``storeEventsAsEntities`` is wholly
-      independent from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
+    Note: the implementation of ``storeEventsAsEntities`` is wholly independent
+    from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
 
     Example option value::
 
