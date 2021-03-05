@@ -331,8 +331,6 @@ The top-level fields of a test file are as follows:
 - ``tests``: Required array of one or more `test`_ objects. List of test cases
   to be executed independently of each other.
 
-.. _yamlAnchors
-
 - ``_yamlAnchors``: Optional object containing arbitrary data. This is only used
   to define anchors within the YAML files and MUST NOT be used by test runners.
 
