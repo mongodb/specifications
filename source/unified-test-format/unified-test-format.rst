@@ -479,9 +479,9 @@ The structure of this object is as follows:
 
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
-    
+
   .. _entity_client_storeEventsAsEntities:
-  
+
   - ``storeEventsAsEntities``: Optional array of one or more
     `storeEventsAsEntity`_ objects. Each object denotes an entity name and one
     or more events to be collected and stored in that entity. See
@@ -491,7 +491,7 @@ The structure of this object is as follows:
       independent from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
 
     Example option value::
-    
+
       storeEventsAsEntities:
         - id: client0_events
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
@@ -1463,7 +1463,7 @@ openUploadStream and openUploadStreamWithId
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These operations SHOULD NOT be used in test files. See
-`IO operations for GridFS streams`_ in `Future Work`_. 
+`IO operations for GridFS streams`_ in `Future Work`_.
 
 
 .. _upload:
@@ -1910,9 +1910,9 @@ It supports the following arguments:
 - ``operations``: the sub-operations to run on each loop iteration.
   Each sub-operation must be a valid operation as described in
   `Entity Test Operations`_.
-  
+
   Sub-operations SHOULD NOT include the ``loop`` operation.
-  
+
   If, in the course of executing sub-operations, a sub-operation yields
   an error or failure, the test runner MUST NOT execute subsequent
   sub-operations in the same loop iteration. If ``storeErrorsAsEntity``
@@ -1926,7 +1926,7 @@ It supports the following arguments:
 - ``storeErrorsAsEntity``: if specified, the runner MUST capture errors
   arising during sub-operation execution and append a document with error
   information to the array stored in the specified entity.
-  
+
   If this option is specified, the test runner MUST check the existence and
   the type of the entity with the specified name before executing the loop.
   If the entity does not exist, the test runner MUST create it with the type
@@ -1946,19 +1946,19 @@ It supports the following arguments:
 - ``storeFailuresAsEntity``: if specified, the runner MUST capture failures
   arising during sub-operation execution and append a document with failure
   information to the array stored in the specified entity.
-  
+
   If this option is specified, the test runner MUST check the existence and
   the type of the entity with the specified name before executing the loop.
   If the entity does not exist, the test runner MUST create it with the type
   of BSON array. If the entity exists and is of type BSON array, the
   test runner MUST do nothing. If the entity exists and is of a different type,
   the test runner MUST raise an error.
-  
+
   If this option is specified and ``storeErrorsAsEntity`` is not, errors
   MUST also be captured and appended to the array.
 
   Documents appended to the array MUST contain the following fields:
-  
+
   - ``error``: the textual description of the failure encountered.
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the failure was encountered.
@@ -1968,14 +1968,14 @@ It supports the following arguments:
   that number in the specified entity. For example, if the loop contains
   two sub-operations, and they complete successfully, each loop execution
   would increment the number of successes by two.
-  
+
   If the entity of the specified name already exists, the test runner
   MUST raise an error.
 
 - ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
   the number of iterations of the loop performed, and store that number
   in the specified entity.
-  
+
   If the entity of the specified name already exists, the test runner
   MUST raise an error.
 
@@ -2004,7 +2004,7 @@ runner:
   request will be made by the `Atlas testing workload executor
   <https://mongodb-labs.github.io/drivers-atlas-testing/spec-workload-executor.html>`_
   in response to receiving the termination signal from Astrolabe.
-  
+
 - When the termination request is received, the test runner MUST
   stop looping. If the test runner is looping when the termination request
   is received, the current loop iteration MUST complete to its natural
@@ -2017,7 +2017,7 @@ runner:
   any operations after the loop. The tests SHOULD NOT be written in such
   a way that the success or failure of operations that follow loops
   depends on how many loop iterations were performed.
-  
+
 - Receiving the termination request MUST NOT by itself be considered an error
   or a failure by the test runner.
 
@@ -2470,7 +2470,7 @@ If the test might execute a ``configureFailPoint`` command, for each target
 client the test runner MAY specify a reduced value for ``heartbeatFrequencyMS``
 (and ``minHeartbeatFrequencyMS`` if possible) to speed up SDAM recovery time and
 server selection after a failure; however, test runners MUST NOT do so for any
-client that specifies ``heartbeatFrequencyMS`` in its ``uriOptions``. 
+client that specifies ``heartbeatFrequencyMS`` in its ``uriOptions``.
 
 For each client entity where `observeEvents <entity_client_observeEvents_>`_
 has been specified, the test runner MUST enable all event listeners necessary to
