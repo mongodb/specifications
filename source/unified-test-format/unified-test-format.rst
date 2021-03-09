@@ -1044,6 +1044,12 @@ non-negative integer:
 - ``<major>.<minor>`` (``<patch>`` is assumed to be zero)
 - ``<major>`` (``<minor>`` and ``<patch>`` are assumed to be zero)
 
+Any component other than ``major``, ``minor``, and ``patch`` MUST be discarded
+prior to comparing versions. This is necessary to ensure that spec tests run on
+pre-release versions of the MongoDB server. As an example, when checking if a
+server with the version ``4.9.0-alpha4-271-g7d5cf02`` passes the requirement for
+a test, only ``4.9.0`` is relevant for the comparison.
+
 
 Entity Test Operations
 ----------------------
@@ -2937,6 +2943,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-03-09: Clarify which components of a version string are relevant for
+             comparisons.
 
 :2021-03-04: Change ``storeEventsAsEntities`` from a map to an array of
              ``storeEventsAsEntity`` objects.
