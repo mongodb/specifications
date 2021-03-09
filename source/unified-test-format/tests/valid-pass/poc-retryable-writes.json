@@ -300,12 +300,12 @@
             "$$unsetOrMatches": {
               "insertedCount": {
                 "$$unsetOrMatches": 2
-              }
-            },
-            "insertedIds": {
-              "$$unsetOrMatches": {
-                "0": 3,
-                "1": 4
+              },
+              "insertedIds": {
+                "$$unsetOrMatches": {
+                  "0": 3,
+                  "1": 4
+                }
               }
             }
           }
