@@ -1,4 +1,4 @@
-description: "entity-client-storeEventsAsEntities-property-type"
+description: "storeEventsAsEntity-additionalProperties"
 
 schemaVersion: "1.2"
 
@@ -6,7 +6,9 @@ createEntities:
   - client:
       id: &client0 "client0"
       storeEventsAsEntities:
-        events: 0
+        - id: "client0_events"
+          events: ["CommandStartedEvent"]
+          foo: 0
 
 tests:
   - description: "foo"

@@ -1,15 +1,15 @@
 {
-  "description": "entity-client-storeEventsAsEntities-property-enum",
+  "description": "storeEventsAsEntity-events-required",
   "schemaVersion": "1.2",
   "createEntities": [
     {
       "client": {
         "id": "client0",
-        "storeEventsAsEntities": {
-          "events": [
-            "foo"
-          ]
-        }
+        "storeEventsAsEntities": [
+          {
+            "id": "client0_events"
+          }
+        ]
       }
     }
   ],
