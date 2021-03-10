@@ -635,8 +635,8 @@ be stored with each event document:
   - ``name``: The name of the event (e.g. ``PoolCreatedEvent``). The name of the
     event MUST be the name used in the respective specification that defines the
     event in question.
-  - ``observedAt``: The floating-point time since the Unix epoch when the event
-    was observed by the test runner.
+  - ``observedAt``: The time, as the floating-point number of seconds since
+    the Unix epoch, when the event was observed by the test runner.
 
 The test runner MAY omit the ``command`` field for CommandStartedEvent and
 ``reply`` field for CommandSucceededEvent.
