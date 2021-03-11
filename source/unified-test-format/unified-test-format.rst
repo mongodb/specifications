@@ -1048,7 +1048,10 @@ Any component other than ``major``, ``minor``, and ``patch`` MUST be discarded
 prior to comparing versions. This is necessary to ensure that spec tests run on
 pre-release versions of the MongoDB server. As an example, when checking if a
 server with the version ``4.9.0-alpha4-271-g7d5cf02`` passes the requirement for
-a test, only ``4.9.0`` is relevant for the comparison.
+a test, only ``4.9.0`` is relevant for the comparison. When reading the server
+version from the ``buildInfo`` command reply, the three elements of the
+``versionArray`` field MUST be used, and all other fields MUST be discarded for
+this comparison.
 
 
 Entity Test Operations
