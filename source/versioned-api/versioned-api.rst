@@ -135,12 +135,18 @@ rationale for more details.
 Sending Declared API Version to the Server
 ------------------------------------------
 
-The declared API version MUST be sent to the server with every command, with the
-exception of the cases listed below. Drivers MUST NOT use a server's reported
-``maxWireVersion`` to decide whether it supports the versioned API. The server
-will reply with an error if the declared API version is not supported. If the
+The declared API version MUST be sent to the server as part of every command
+request, with the exception of the cases listed below. Drivers MUST NOT use a
+server's reported ``maxWireVersion`` to decide whether it supports the versioned
+API. The server will reply with an error if the declared API version is not
+supported, or if the command does not support API versioning options. If the
 user does not declare an API version, the driver MUST NOT send any API
 versioning options to the server.
+
+This requirement applies to all command requests, regardless of whether they are
+sent using ``OP_MSG`` or ``OP_QUERY`` (e.g. during the initial handshake). For
+all other opcodes, including pre-command usage of ``OP_QUERY``, drivers MUST NOT
+attempt to send API version parameters to the server.
 
 
 Command Syntax
