@@ -1,4 +1,4 @@
-# The TXT record for test20.test.build.10gen.cc contains loadBalanced=true. There is corresponding test for
+# The TXT record for test20.test.build.10gen.cc contains loadBalanced=true. There is no corresponding test for
 # directConnection=true because that option is already incompatible with SRV URIs.
 uri: "mongodb+srv://test20.test.build.10gen.cc/?directConnection=false"
 seeds: []
