@@ -1,0 +1,297 @@
+description: cursors are correctly pinned to connections for load-balanced clusters
+
+schemaVersion: '1.3'
+
+runOnRequirements:
+  - loadBalanced: true
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents:
+        - commandStartedEvent
+        - commandSucceededEvent
+        - commandFailedEvent
+        - connectionReadyEvent
+        - connectionClosedEvent
+        - connectionCheckedOutEvent
+        - connectionCheckedInEvent
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name database0Name
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
+
+tests:
+  - description: no connection is pinned if all documents are returned in the initial batch
+    operations:
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+              commandName: find
+          - commandSucceededEvent:
+              reply:
+                cursor:
+                  id: 0
+                  firstBatch: { $$type: array }
+                  ns: { $$type: string }
+              commandName: find
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connections are returned to the pool when the cursor is closed
+    operations:
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+        saveResultAsEntity: &cursor0 cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: close
+        object: *cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+              commandName: find
+          - commandSucceededEvent:
+              reply:
+                cursor:
+                  id: { $$type: long }
+                  firstBatch: { $$type: array }
+                  ns: { $$type: string }
+              commandName: find
+          - commandStartedEvent:
+              commandName: killCursors
+          - commandSucceededEvent:
+              commandName: killCursors
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connections are returned to the pool when the cursor is drained
+    operations:
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+        saveResultAsEntity: &cursor0 cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 1
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 2
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 3
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+              commandName: find
+          - commandSucceededEvent:
+              reply:
+                cursor:
+                  id: { $$type: long }
+                  firstBatch: { $$type: array }
+                  ns: { $$type: string }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection0Name
+          - commandSucceededEvent:
+              commandName: getMore
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connections are returned after a network error during a getMore request
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [getMore]
+              closeConnection: true
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+        saveResultAsEntity: &cursor0 cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 1
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 2
+      # Third next() call should perform a getMore.
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectError:
+          # Network errors are considered client-side errors per the unified test format spec.
+          isClientError: true
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+        # Execute a close operation so we can assert that closing a cursor after a network error does not send a
+        # killCursors command.
+      - name: close
+        object: *cursor0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+              commandName: find
+          - commandSucceededEvent:
+              reply:
+                cursor:
+                  id: { $$type: long }
+                  firstBatch: { $$type: array }
+                  ns: { $$type: string }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection0Name
+              commandName: getMore
+          - commandFailedEvent:
+              commandName: getMore
+          # Events to set the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the find command + getMore.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+
+  - description: pinned connections are returned after a network error during a killCursors request
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [killCursors]
+              closeConnection: true
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+        saveResultAsEntity: &cursor0 cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: close
+        object: *cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+              commandName: find
+          - commandSucceededEvent:
+              reply:
+                cursor:
+                  id: { $$type: long }
+                  firstBatch: { $$type: array }
+                  ns: { $$type: string }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                killCursors: *collection0Name
+              commandName: killCursors
+          - commandFailedEvent:
+              commandName: killCursors
+          # Events to set the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the find command + killCursors.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error

@@ -1,0 +1,46 @@
+{
+  "description": "connection establishment for load-balanced clusters",
+  "schemaVersion": "1.3",
+  "runOnRequirements": [
+    {
+      "loadBalanced": true
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "uriOptions": {
+          "loadBalanced": false
+        }
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "database0"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "operations against load balancers fail if URI contains loadBalanced=false",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database0",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            }
+          },
+          "expectError": {
+            "isClientError": false
+          }
+        }
+      ]
+    }
+  ]
+}

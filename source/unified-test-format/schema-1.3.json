@@ -58,6 +58,12 @@
         "serverParameters": {
           "type": "object",
           "minProperties": 1
+        },
+        "loadBalanced": {
+          "type": "boolean"
+        },
+        "auth": {
+          "type": "boolean"
         }
       }
     },
@@ -81,7 +87,22 @@
               "minItems": 1,
               "items": {
                 "type": "string",
-                "enum": ["commandStartedEvent", "commandSucceededEvent", "commandFailedEvent"]
+                "enum": [
+                  "commandStartedEvent",
+                  "commandSucceededEvent",
+                  "commandFailedEvent",
+                  "poolCreatedEvent",
+                  "poolReadyEvent",
+                  "poolClearedEvent",
+                  "poolClosedEvent",
+                  "connectionCreatedEvent",
+                  "connectionReadyEvent",
+                  "connectionClosedEvent",
+                  "connectionCheckOutStartedEvent",
+                  "connectionCheckOutFailedEvent",
+                  "connectionCheckedOutEvent",
+                  "connectionCheckedInEvent"
+                ]
               }
             },
             "ignoreCommandMonitoringEvents": {
@@ -230,6 +251,65 @@
           "properties": {
             "commandName": { "type": "string" }
           }
+        },
+        "poolCreatedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "poolReadyEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "poolClearedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "poolClosedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionCreatedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionReadyEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionClosedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "reason": { "type": "string" }
+          }
+        },
+        "connectionCheckOutStartedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionCheckOutFailedEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "reason": { "type": "string" }
+          }
+        },
+        "connectionCheckedOutEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionCheckedInEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
         }
       }
     },
@@ -263,6 +343,7 @@
         "name": { "type": "string" },
         "object": { "type": "string" },
         "arguments": { "type": "object" },
+        "ignoreResultAndError": { "type": "boolean" },
         "expectError":  { "$ref": "#/definitions/expectedError" },
         "expectResult": {},
         "saveResultAsEntity": { "type": "string" }

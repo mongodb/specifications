@@ -236,7 +236,29 @@ Test runners MUST support the following types of entities:
 - Collection. See `entity_collection`_ and `Collection Operations`_
 - ClientSession. See `entity_session`_ and `Session Operations`_.
 - GridFS Bucket. See `entity_bucket`_ and `Bucket Operations`_.
-- ChangeStream. See `ChangeStream Operations`_.
+
+.. _entity_changestream:
+
+- ChangeStream. Change stream entities are special in that they are not
+  defined in `createEntities`_ but are instead created by using
+  `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
+  `client_createChangeStream`_, `database_createChangeStream`_, or
+  `collection_createChangeStream`_ operation.
+
+  Test files SHOULD NOT use a ``watch`` operation to create a change
+  stream, as the implementation of that method may vary among drivers. For
+  example, some implementations of ``watch`` immediately execute ``aggregate``
+  and construct the server-side cursor, while others may defer ``aggregate``
+  until the change stream object is iterated.
+
+  See `Cursor Operations`_ for a list of operations.
+
+- FindCursor. These entities are not defined in `createEntities`_ but are
+  instead created by using `operation.saveResultAsEntity
+  <operation_saveResultAsEntity_>`_ with a `collection_createFindCursor`_
+  operation.
+
+  See `Cursor Operations`_ for a list of operations.
 - Event list. See
   `storeEventsAsEntities <entity_client_storeEventsAsEntities_>`_. The event
   list MUST store BSON documents. The type of the list itself is not prescribed
@@ -380,6 +402,15 @@ The structure of this object is as follows:
   treat the comparison as not equal and skip the test. This includes errors that
   occur when fetching a single parameter using ``getParameter``.
 
+- ``loadBalanced``: Optional boolean. Specifies whether or not the tests can
+  be executed against a load-balanced cluster. If true, the relevant tests MUST
+  only be run against a load balancer. If false or omitted, the tests MUST only
+  be run against non-load balanced clusters.
+
+- ``auth``: Optional boolean. Specifies whether or not authentication must be
+  enabled for the tests to run successfully. If this field is omitted, there is
+  no authentication requirement for the tests.
+
 Test runners MUST evaluate these conditions in the order specified above.
 
 entity
@@ -406,7 +437,13 @@ The structure of this object is as follows:
 
 .. _entity_client:
 
-- ``client``: Optional object. Defines a MongoClient object.
+- ``client``: Optional object. Defines a MongoClient object. In addition to
+  the configuration defined below, test runners MUST track the number of
+  connections checked out at any given time for the constructed MongoClient.
+  This can be done using a single counter and
+  `CMAP events <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__.
+  Each ``ConnectionCheckedOutEvent`` should increment the counter and each
+  ``ConnectionCheckedInEvent`` should decrement it.
 
   The structure of this object is as follows:
 
@@ -451,11 +488,6 @@ The structure of this object is as follows:
     ignored by this client's event listeners and SHOULD NOT be included in
     `test.expectEvents <test_expectEvents_>`_ for this client.
 
-    Test files SHOULD NOT observe events from multiple specs (e.g. command
-    monitoring *and* SDAM events) for a single client. See
-    `Mixing event types in observeEvents and expectEvents`_ for more
-    information.
-
     Supported types correspond to the top-level keys (strings) documented in
     `expectedEvent`_ and are as follows:
 
@@ -464,6 +496,28 @@ The structure of this object is as follows:
     - `commandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 
     - `commandFailedEvent <expectedEvent_commandFailedEvent_>`_
+
+    - `poolCreatedEvent <expectedEvent_poolCreatedEvent_>`_
+
+    - `poolReadyEvent <expectedEvent_poolReadyEvent_>`_
+
+    - `poolClearedEvent <expectedEvent_poolClearedEvent_>`_
+
+    - `poolClosedEvent <expectedEvent_poolClosedEvent_>`_
+
+    - `connectionCreatedEvent <expectedEvent_connectionCreatedEvent_>`_
+
+    - `connectionReadyEvent <expectedEvent_connectionReadyEvent_>`_
+
+    - `connectionClosedEvent <expectedEvent_connectionClosedEvent_>`_
+
+    - `connectionCheckOutStartedEvent <expectedEvent_connectionCheckOutStartedEvent_>`_
+
+    - `connectionCheckOutFailedEvent <expectedEvent_connectionCheckOutFailedEvent_>`_
+
+    - `connectionCheckedOutEvent <expectedEvent_connectionCheckedOutEvent_>`_
+
+    - `connectionCheckedInEvent <expectedEvent_connectionCheckedInEvent_>`_
 
   .. _entity_client_ignoreCommandMonitoringEvents:
 
@@ -728,11 +782,6 @@ The structure of this object is as follows:
   clients), the test runner SHOULD associate each observed event with a client
   in order to perform these assertions.
 
-  Test files SHOULD NOT expect events from multiple specs (e.g. command
-  monitoring *and* SDAM events) for a single client. See
-  `Mixing event types in observeEvents and expectEvents`_ for more
-  information.
-
 .. _test_outcome:
 
 - ``outcome``: Optional array of one or more `collectionData`_ objects. Data
@@ -770,6 +819,18 @@ The structure of this object is as follows:
   See `Entity Test Operations`_ and `Special Test Operations`_.
 
   The ``session`` parameter is handled specially (see `commonOptions_session`_).
+
+.. _operation_ignoreResultAndError:
+
+- ``ignoreResultAndError``: Optional boolean. If true, both the error and result
+  for the operation MUST be ignored.
+
+  This field is mutally exclusive with `expectResult
+  <operation_expectResult_>`_, `expectError <operation_expectError_>`_, and
+  `saveResultAsEntity <operation_saveResultAsEntity_>`_.
+
+  This field SHOULD NOT be used for `Special Test Operations`_ (i.e.
+  ``object: testRunner``).
 
 .. _operation_expectError:
 
@@ -958,6 +1019,76 @@ The structure of this object is as follows:
 
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
+
+.. _expectedEvent_poolCreatedEvent:
+
+- ``poolCreatedEvent``: Optional object. If present, this object MUST be an
+  empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_poolReadyEvent:
+
+- ``poolReadyEvent``: Optional object. If present, this object MUST be an
+  empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_poolClearedEvent:
+
+- ``poolClearedEvent``: Optional object. If present, this object MUST be an
+  empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_poolClosedEvent:
+
+- ``poolClosedEvent``: Optional object. If present, this object MUST be an
+  empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_connectionCreatedEvent:
+
+- ``connectionCreatedEvent``: Optional object. If present, this object MUST be
+  an empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_connectionReadyEvent:
+
+- ``connectionReadyEvent``: Optional object. If present, this object MUST be an
+  empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_connectionClosedEvent:
+
+- ``connectionClosedEvent``: Optional object. Assertions for one or more
+  `ConnectionClosedEvent <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  fields.
+
+  The structure of this object is as follows:
+
+  - ``reason``: Optional string. Test runners MUST assert that the reason in the
+    published event matches this value. Valid values for this field are defined
+    in the CMAP spec.
+
+.. _expectedEvent_connectionCheckOutStartedEvent:
+
+- ``connectionCheckOutStartedEvent``: Optional object. If present, this object
+  MUST be an empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_connectionCheckOutFailedEvent:
+
+- ``connectionCheckOutFailedEvent``: Optional object. Assertions for one or more
+  `ConnectionCheckOutFailedEvent
+  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  fields.
+
+  The structure of this object is as follows:
+
+  - ``reason``: Optional string. Test runners MUST assert that the reason in the
+    published event matches this value. Valid values for this field are defined
+    in the CMAP spec.
+
+.. _expectedEvent_connectionCheckedOutEvent:
+
+- ``connectionCheckedOutEvent``: Optional object. If present, this object
+  MUST be an empty document as all fields in this event are non-deterministic.
+
+.. _expectedEvent_connectionCheckedInEvent:
+
+- ``connectionCheckedInEvent``: Optional object. If present, this object
+  MUST be an empty document as all fields in this event are non-deterministic.
 
 
 collectionOrDatabaseOptions
@@ -1156,10 +1287,10 @@ has been created.
 
 This operation proxies the client's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the client's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
+operation directly for reasons discussed in `ChangeStream
+<entity_changestream_>`_. Test runners MUST ensure that the server-side
+cursor is created (i.e. ``aggregate`` is executed) as part of this operation
+and before the resulting change stream might be saved with
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 Test runners MUST NOT iterate the change stream when executing this operation
@@ -1207,10 +1338,10 @@ has been created.
 
 This operation proxies the database's ``watch`` method and supports the same
 arguments and options. Test files SHOULD NOT use the database's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
+operation directly for reasons discussed in `ChangeStream
+<entity_changestream_>`_. Test runners MUST ensure that the server-side
+cursor is created (i.e. ``aggregate`` is executed) as part of this operation
+and before the resulting change stream might be saved with
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 Test runners MUST NOT iterate the change stream when executing this operation
@@ -1342,17 +1473,37 @@ createChangeStream
 Creates a collection-level change stream and ensures that the server-side cursor
 has been created.
 
-This operation proxies the collection's ``watch`` method and supports the same
-arguments and options. Test files SHOULD NOT use the collection's ``watch``
-operation directly for reasons discussed in `ChangeStream Operations`_. Test
-runners MUST ensure that the server-side cursor is created (i.e. ``aggregate``
-is executed) as part of this operation and before the resulting change stream
-might be saved with
+This operation proxies the collection's ``watch`` method and supports the
+same arguments and options. Test files SHOULD NOT use the collection's
+``watch`` operation directly for reasons discussed in `ChangeStream
+<entity_changestream_>`_. Test runners MUST ensure that the server-side
+cursor is created (i.e. ``aggregate`` is executed) as part of this operation
+and before the resulting change stream might be saved with
 `operation.saveResultAsEntity <operation_saveResultAsEntity_>`_.
 
 Test runners MUST NOT iterate the change stream when executing this operation
 and test files SHOULD NOT specify
 `operation.expectResult <operation_expectResult_>`_ for this operation.
+
+
+.. _collection_createFindCursor:
+
+createFindCursor
+~~~~~~~~~~~~~~~~
+
+This operation proxies the collection's ``find`` method and supports the same
+arguments and options. Test runners MUST ensure that the server-side cursor
+is created (i.e. a ``find`` command is executed) as part of this operation
+and before the resulting cursor might be saved with
+`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_. Test runners
+for drivers that lazily execute the ``find`` command on the first iteration
+of the cursor MUST iterate the resulting cursor once. The result from this
+iteration MUST be used as the result for the first iteration operation on the
+cursor.
+
+Test runners MUST NOT iterate the resulting cursor when executing this
+operation and test files SHOULD NOT specify `operation.expectResult
+<operation_expectResult_>`_ for this operation.
 
 
 find
@@ -1511,51 +1662,49 @@ These operations SHOULD NOT be used in test files. See
 `upload and uploadWithId`_.
 
 
-ChangeStream Operations
------------------------
+Cursor Operations
+-----------------
 
-Change stream entities are special in that they are not defined in
-`createEntities`_ but are instead created by using
-`operation.saveResultAsEntity <operation_saveResultAsEntity_>`_ with a
-`client_createChangeStream`_, `database_createChangeStream`_, or
-`collection_createChangeStream`_ operation.
-
-Test files SHOULD NOT use a ``watch`` operation to create a change stream, as
-the implementation of that method may vary among drivers. For example, some
-implementations of ``watch`` immediately execute ``aggregate`` and construct the
-server-side cursor, while others may defer ``aggregate`` until the change stream
-object is iterated.
-
-The `Change Streams <../change-streams/change-streams.rst>`__ spec does not
-define a consistent API for the ChangeStream class, since the mechanisms for
-iteration and capturing a resume token may differ between synchronous and
-asynchronous drivers. To account for this, this section explicitly defines the
-supported operations for change stream entities.
-
+There are no defined APIs for change streams and cursors since the
+mechanisms for iteration may differ between synchronous and asynchronous
+drivers. To account for this, this section explicitly defines the supported
+operations for the ``ChangeStream`` and ``FindCursor`` entity types.
 
 iterateUntilDocumentOrError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Iterates the change stream until either a single document is returned or an
-error is raised. This operation takes no arguments. If
-`expectResult <operation_expectResult_>`_ is specified, it SHOULD be a single
-document.
+Iterates the cursor until either a single document is returned or an error is
+raised. This operation takes no arguments. If `expectResult
+<operation_expectResult_>`_ is specified, it SHOULD be a single document.
 
-`Iterating the Change Stream <../change-streams/tests#iterating-the-change-stream>`__
-in the change stream spec cautions drivers that implement a blocking mode of
-iteration (e.g. asynchronous drivers) not to iterate the change stream
-unnecessarily, as doing so could cause the test runner to block indefinitely.
-This should not be a concern for ``iterateUntilDocumentOrError`` as iteration
-only continues until either a document or error is encountered.
+Some specification sections (e.g. `Iterating the Change Stream
+<../change-streams/tests#iterating-the-change-stream>`__) caution drivers
+that implement a blocking mode of iteration (e.g. asynchronous drivers) not
+to iterate the cursor unnecessarily, as doing so could cause the test runner
+to block indefinitely. This should not be a concern for
+``iterateUntilDocumentOrError`` as iteration only continues until either a
+document or error is encountered.
 
 Test runners MUST ensure that this operation will not inadvertently skip the
-first document in a change stream. Albeit rare, this could happen if
-``iterateUntilDocumentOrError`` were to blindly invoke ``next`` (or equivalent)
-on a change stream in a driver where newly created change streams are already
-positioned at their first element and the change stream cursor had a non-empty
+first document in a cursor. Albeit rare, this could happen if
+``iterateUntilDocumentOrError`` were to blindly invoke ``next`` (or
+equivalent) on a cursor in a driver where newly created cursors are already
+positioned at their first element and the cursor had a non-empty
 ``firstBatch`` (i.e. ``resumeAfter`` or ``startAfter`` used). Alternatively,
-some drivers may use a different iterator method for advancing a change stream
-to its first position (e.g. ``rewind`` in PHP).
+some drivers may use a different iterator method for advancing a cursor to
+its first position (e.g. ``rewind`` in PHP).
+
+close
+~~~~~
+
+Closes the cursor. Because drivers do not consistently propagate errors from
+the ``killCursors`` command, test runners MUST suppress all errors when
+closing the cursor. Test files SHOULD NOT specify `expectResult
+<operation_expectResult_>`_ or `expectError <operation_expectError_>`_ for
+this operation. To assert whether the ``killCursors`` command succeeded or
+failed, test files SHOULD use command monitoring assertions with
+`commandSucceededEvent <expectedEvent_commandSucceededEvent_>`_ and
+`commandFailedEvent <expectedEvent_commandFailedEvent_>`_ events.
 
 
 Special Test Operations
@@ -2068,6 +2217,28 @@ An example of this operation follows::
               - _id: 3, x: 33
 
 
+assertNumberConnectionsCheckedOut
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``assertNumberConnectionsCheckedOut`` operation instructs the test runner
+to assert that the given number of connections are currently checked out for
+the specified client entity.
+
+The following arguments are supported:
+
+- ``client``: Required string. See `commonOptions_client`_.
+
+- ``connections``: Required integer. The number of connections expected to be checked out.
+
+An example of this operation follows::
+
+    - name: assertNumberConnectionsCheckedOut
+      object: testRunner
+      arguments:
+        client: *client0
+        connections: 1
+
+
 Evaluating Matches
 ------------------
 
@@ -2150,7 +2321,7 @@ root-level documents include, but are not limited to:
 - ``command`` for `CommandStartedEvent <expectedEvent_commandStartedEvent_>`_
 - ``reply`` for `CommandSucceededEvent <expectedEvent_commandSucceededEvent_>`_
 - `expectResult`_ for ``findOneAndUpdate`` `Collection Operations`_
-- `expectResult`_ for `iterateUntilDocumentOrError`_ `ChangeStream Operations`_
+- `expectResult`_ for `iterateUntilDocumentOrError`_.
 - each array element in `expectResult`_ for `find`_ or `collection_aggregate`_
   `Collection Operations`_
 
@@ -2553,8 +2724,9 @@ equivalent data structure). As previously discussed in `Entity Map`_,
 test runners MAY restrict access to driver objects if necessary.
 
 Clear the entity map for this test. For each ClientSession in the entity map,
-the test runner MUST end the session (e.g. call
-`endSession <../sessions/driver-sessions.rst#endsession>`_).
+the test runner MUST end the session (e.g. call `endSession
+<../sessions/driver-sessions.rst#endsession>`_). For each ChangeStream and
+FindCursor in the entity map, the test runner MUST close the cursor.
 
 If the test started a transaction, the test runner MUST terminate any open
 transactions (see: `Terminating Open Transactions`_).
@@ -2605,6 +2777,10 @@ Note that some operations require special handling, as discussed in
 `Entity Test Operations`_. For example, model objects may need to be converted
 to documents (before matching or saving in the entity map) and returned
 iterables may need to be fully iterated.
+
+If `operation.ignoreResultAndError <operation_ignoreResultAndError_>`_ is true,
+the test runner MUST NOT make any assertions regarding the result or error of
+the operation and MUST proceed to the subsequent operation.
 
 If `operation.expectError <operation_expectError_>`_ is specified, the test
 runner MUST assert that the operation yielded an error; otherwise, the test
@@ -2841,30 +3017,6 @@ shorter description that may be added to the `Change Log`_.
 
 Future Work
 ===========
-
-
-Mixing event types in observeEvents and expectEvents
-----------------------------------------------------
-
-The test format advises against mixing events from different specs (e.g. command
-monitoring *and* SDAM) in `observeEvents`_ and `test.expectEvents`_. While
-registering event listeners is trivial, determining how to collate events of
-multiple types can be a challenge, particularly when some events may not be
-predictable (e.g. ServerHeartbeatStartedEvent, CommandStartedEvent for
-``getMore`` issued during change stream iteration). If the need arises to expect
-multiple types of events in the same test, a future version of this spec can
-define an approach for doing so.
-
-
-Support events types beyond command monitoring
-----------------------------------------------
-
-The spec currently only supports command monitoring events in `observeEvents`_
-and `test.expectEvents`_, as those are the only kind of events used in tests for
-specifications that will initially adopt the unified test format. New event
-types (e.g. SDAM) can be added in future versions of the spec as needed, which
-will also require `Mixing event types in observeEvents and expectEvents`_ to be
-addressed.
 
 
 Allow extra observed events to be ignored

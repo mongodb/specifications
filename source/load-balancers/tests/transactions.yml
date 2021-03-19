@@ -1,0 +1,447 @@
+description: transactions are correctly pinned to connections for load-balanced clusters
+
+schemaVersion: '1.3'
+
+runOnRequirements:
+  - loadBalanced: true
+
+createEntities:
+  - client:
+      id: &client0 client0
+      observeEvents:
+        # Do not observe commandSucceededEvent or commandFailedEvent because we cannot guarantee success or failure of
+        # commands like commitTransaction and abortTransaction in a multi-mongos load-balanced setup.
+        - commandStartedEvent
+        - connectionReadyEvent
+        - connectionClosedEvent
+        - connectionCheckedOutEvent
+        - connectionCheckedInEvent
+  - session:
+      id: &session0 session0
+      client: *client0
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name database0Name
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name coll0
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents:
+      - { _id: 1 }
+      - { _id: 2 }
+      - { _id: 3 }
+
+_yamlAnchors:
+  documents:
+    - &insertDocument
+      _id: 4
+
+tests:
+  - description: pinned connections are returned on commit
+    operations:
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: commitTransaction
+        object: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              commandName: commitTransaction
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connections are returned on abort
+    operations:
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: abortTransaction
+        object: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              commandName: abortTransaction
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: commitTransaction can be retried after a network error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [commitTransaction]
+              closeConnection: true
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: commitTransaction
+        object: *session0
+        ignoreResultAndError: true
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              commandName: commitTransaction
+          - commandStartedEvent:
+              commandName: commitTransaction
+          # Initial events to set the fail point.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events to run the transaction commands + initial commit attempt.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for the commit retry.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: abortTransaction can be retried after a network error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [abortTransaction]
+              closeConnection: true
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: abortTransaction
+        object: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              commandName: abortTransaction
+          - commandStartedEvent:
+              commandName: abortTransaction
+          # Initial events to set the fail point.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events to run the transaction commands + initial abort attempt.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for the abort retry.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: cursors started in a transaction should pin to the same connection as the transaction
+    operations:
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+          session: *session0
+        saveResultAsEntity: &cursor0 cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: close
+        object: *cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: commitTransaction
+        object: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+                batchSize: 2
+              commandName: find
+          - commandStartedEvent:
+              commandName: killCursors
+          - commandStartedEvent:
+              commandName: commitTransaction
+          # Only one set of events should be published because all of the operations use the connection pinned by the
+          # transaction.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connections are returned after a network error on a CRUD command
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [update]
+              closeConnection: true
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: updateOne
+        object: *collection0
+        arguments:
+          filter: *insertDocument
+          update:
+            $set:
+              x: 1
+          session: *session0
+        expectError:
+          # Network errors are considered client-side errors by the unified test format.
+          isClientError: true
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+      - name: abortTransaction
+        object: *session0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              command:
+                update: *collection0Name
+              commandName: update
+          - commandStartedEvent:
+              commandName: abortTransaction
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events to run the insert/update commands.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for the abortTransaction attempt.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  # This is similar to the previous test, but it asserts that the connection pinned by the transaction is returned to
+  # the pool immediately after a network error even if it's being pinned by a cursor in addition to the transaction.
+  - description: connections pinned by multiple resources are forcefully returned after a network error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [update]
+              closeConnection: true
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: *insertDocument
+          session: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+          session: *session0
+        saveResultAsEntity: &cursor0 cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: updateOne
+        object: *collection0
+        arguments:
+          filter: *insertDocument
+          update:
+            $set:
+              x: 1
+          session: *session0
+        expectError:
+          # Network errors are considered client-side errors by the unified test format.
+          isClientError: true
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+      - name: abortTransaction
+        object: *session0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+                documents: [*insertDocument]
+              commandName: insert
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+                batchSize: 2
+              commandName: find
+          - commandStartedEvent:
+              command:
+                update: *collection0Name
+              commandName: update
+          - commandStartedEvent:
+              commandName: abortTransaction
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events to run the insert/find/update commands.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for the abortTransaction attempt.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
