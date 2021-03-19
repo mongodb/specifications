@@ -41,6 +41,8 @@ these tests::
   _mongodb._tcp.test18.test.build.10gen.cc. 86400  IN SRV  27017  localhost.sub.test.build.10gen.cc.
   _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.evil.build.10gen.cc.
   _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test20.test.build.10gen.cc. 86400 IN SRV 27017 localhost.test.build.10gen.cc.
+  _mongodb._tcp.test21.test.build.10gen.cc. 86400 IN SRV 27017 localhost.test.build.10gen.cc.
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0&authSource=thisDB"
@@ -50,6 +52,8 @@ these tests::
   test8.test.build.10gen.cc.                86400  IN TXT  "authSource"
   test10.test.build.10gen.cc.               86400  IN TXT  "socketTimeoutMS=500"
   test11.test.build.10gen.cc.               86400  IN TXT  "replicaS" "et=rep" "l0"
+  test20.test.build.10gen.cc.               86400  IN TXT "loadBalanced=true"
+  test21.test.build.10gen.cc.               86400  IN TXT "loadBalanced=false"
 
 Note that ``test4`` is omitted deliberately to test what happens with no SRV
 record. ``test9`` is missing because it was deleted during the development of
