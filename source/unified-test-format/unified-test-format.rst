@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.2.2
+:Spec Version: 1.2.3
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-03-04
+:Last Modified: 2021-03-22
 
 .. contents::
 
@@ -331,8 +331,6 @@ The top-level fields of a test file are as follows:
 - ``tests``: Required array of one or more `test`_ objects. List of test cases
   to be executed independently of each other.
 
-.. _yamlAnchors
-
 - ``_yamlAnchors``: Optional object containing arbitrary data. This is only used
   to define anchors within the YAML files and MUST NOT be used by test runners.
 
@@ -399,7 +397,7 @@ Tests SHOULD use sequential names based on the entity type (e.g. "session0",
 When defining an entity object in YAML, a `node anchor`_ SHOULD be created on
 the entity's ``id`` key. This anchor will allow the unique name to be referenced
 with an `alias node`_ later in the file (e.g. from another entity or
-`operation`_ document) and also leverage YAML's parser for reference validation.
+`operation`_ object) and also leverage YAML's parser for reference validation.
 
 .. _node anchor: https://yaml.org/spec/1.2/spec.html#id2785586
 .. _alias node: https://yaml.org/spec/1.2/spec.html#id2786196
@@ -487,8 +485,8 @@ The structure of this object is as follows:
     or more events to be collected and stored in that entity. See
     `storeEventsAsEntity`_ for implementation details.
 
-    .. note: The implementation of ``storeEventsAsEntities`` is wholly
-      independent from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
+    Note: the implementation of ``storeEventsAsEntities`` is wholly independent
+    from ``observeEvents`` and ``ignoreCommandMonitoringEvents``.
 
     Example option value::
 
@@ -496,13 +494,7 @@ The structure of this object is as follows:
         - id: client0_events
           events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
 
-  - ``serverApi``: Optional object to declare an API version on the client
-    entity. A ``version`` string is required, and test runners MUST fail if the
-    given version string is not supported by the driver. The ``strict`` and
-    ``deprecationErrors`` members take an optional boolean that is passed to the
-    ``ServerApi`` object. See the
-    `Versioned API <../versioned-api/versioned-api.rst>`__ spec for more details
-    on these fields.
+  - ``serverApi``: Optional `serverApi`_ object.
 
 .. _entity_database:
 
@@ -651,6 +643,26 @@ If the specification defining an event permits deviation in field names, such as
 ``connectionId`` field for CommandStartedEvent, the test runner SHOULD use the
 field names used in the specification when serializing events to documents even
 if the respective field name is different in the driver's event object.
+
+
+serverApi
+~~~~~~~~~
+
+Declares an API version for a `client entity <entity_client_>`_.
+
+The structure of this object is as follows:
+
+- ``version``: Required string. Test runners MUST fail if the given version
+  string is not supported by the driver.
+
+  Note: the format of this string is unrelated to `Version String`_.
+
+- ``strict``: Optional boolean.
+
+- ``deprecationErrors``: Optional boolean.
+
+See the `Versioned API <../versioned-api/versioned-api.rst>`__ spec for more
+details on these fields.
 
 
 collectionData
@@ -1885,6 +1897,8 @@ The ``assertIndexNotExists`` operation instructs the test runner to assert that
 an index with the given name does not exist on the collection. The test runner
 MUST use the internal MongoClient for this operation.
 
+The following arguments are supported:
+
 - ``collectionName``: Required string. See `commonOptions_collectionName`_.
 
 - ``databaseName``: Required string. See `commonOptions_databaseName`_.
@@ -1908,10 +1922,12 @@ loop
 ~~~~
 
 The ``loop`` operation executes sub-operations in a loop.
-It supports the following arguments:
 
-- ``operations``: the sub-operations to run on each loop iteration.
-  Each sub-operation must be a valid operation as described in
+The following arguments are supported:
+
+- ``operations``: Required array of `operation`_ objects. List of operations
+  (henceforth referred to as sub-operations) to run on each loop iteration. Each
+  sub-operation must be a valid operation as described in
   `Entity Test Operations`_.
 
   Sub-operations SHOULD NOT include the ``loop`` operation.
@@ -1926,9 +1942,9 @@ It supports the following arguments:
   the loop MUST terminate and raise the error/failure (i.e. the
   error/failure will interrupt the test).
 
-- ``storeErrorsAsEntity``: if specified, the runner MUST capture errors
-  arising during sub-operation execution and append a document with error
-  information to the array stored in the specified entity.
+- ``storeErrorsAsEntity``: Optional string. If specified, the runner MUST
+  capture errors arising during sub-operation execution and append a document
+  with error information to the array stored in the specified entity.
 
   If this option is specified, the test runner MUST check the existence and
   the type of the entity with the specified name before executing the loop.
@@ -1946,9 +1962,9 @@ It supports the following arguments:
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the error was encountered.
 
-- ``storeFailuresAsEntity``: if specified, the runner MUST capture failures
-  arising during sub-operation execution and append a document with failure
-  information to the array stored in the specified entity.
+- ``storeFailuresAsEntity``: Optional string. If specified, the runner MUST
+  capture failures arising during sub-operation execution and append a document
+  with failure information to the array stored in the specified entity.
 
   If this option is specified, the test runner MUST check the existence and
   the type of the entity with the specified name before executing the loop.
@@ -1966,8 +1982,8 @@ It supports the following arguments:
   - ``time``: the number of (floating-point) seconds since the Unix epoch
     when the failure was encountered.
 
-- ``storeSuccessesAsEntity``: if specfied, the runner MUST keep track of
-  the number of sub-operations that completed successfully, and store
+- ``storeSuccessesAsEntity``: Optional string. If specfied, the runner MUST keep
+  track of the number of sub-operations that completed successfully, and store
   that number in the specified entity. For example, if the loop contains
   two sub-operations, and they complete successfully, each loop execution
   would increment the number of successes by two.
@@ -1975,9 +1991,10 @@ It supports the following arguments:
   If the entity of the specified name already exists, the test runner
   MUST raise an error.
 
-- ``storeIterationsAsEntity``: if specfied, the runner MUST keep track of
-  the number of iterations of the loop performed, and store that number
-  in the specified entity.
+- ``storeIterationsAsEntity``: Optional string. If specified, the runner MUST
+  keep track of the number of iterations of the loop performed, and store that
+  number in the specified entity. The number of loop iterations is counted
+  irrespective of whether sub-operations within the iteration succeed or fail.
 
   If the entity of the specified name already exists, the test runner
   MUST raise an error.
@@ -2946,6 +2963,10 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-03-22: Split ``serverApi`` into its own section. Note types for ``loop``
+             operation arguments. Clarify how ``loop`` iterations are counted
+             for ``storeIterationsAsEntity``.
 
 :2021-03-11: Clarify which components of a version string are relevant for
              comparisons.
