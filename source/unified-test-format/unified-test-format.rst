@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.2.0
+:Spec Version: 1.2.2
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -2947,8 +2947,11 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2021-03-09: Clarify which components of a version string are relevant for
+:2021-03-11: Clarify which components of a version string are relevant for
              comparisons.
+
+:2021-03-10: Clarify that ``observedAt`` field measures time in seconds for
+             ``storeEventsAsEntities``.
 
 :2021-03-04: Change ``storeEventsAsEntities`` from a map to an array of
              ``storeEventsAsEntity`` objects.
