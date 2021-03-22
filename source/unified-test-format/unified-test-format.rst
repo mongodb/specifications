@@ -1011,6 +1011,8 @@ The structure of this object is as follows:
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
 
+  - ``serverId``: Defined in `hasServerId`_.
+
 .. _expectedEvent_commandFailedEvent:
 
 - ``commandFailedEvent``: Optional object. Assertions for one or more
@@ -1021,6 +1023,8 @@ The structure of this object is as follows:
 
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
+
+  - ``serverId``: Defined in `hasServerId`_.
 
 .. _expectedEvent_poolCreatedEvent:
 
@@ -1034,8 +1038,13 @@ The structure of this object is as follows:
 
 .. _expectedEvent_poolClearedEvent:
 
-- ``poolClearedEvent``: Optional object. If present, this object MUST be an
-  empty document as all fields in this event are non-deterministic.
+- ``poolClearedEvent``: Optional object. Assertions for one or more
+  `PoolClearedEvent <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  fields.
+
+  The structure of this object is as follows:
+
+  - ``serverId``: Defined in `hasServerId`_.
 
 .. _expectedEvent_poolClosedEvent:
 
