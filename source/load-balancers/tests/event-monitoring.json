@@ -1,0 +1,175 @@
+{
+  "description": "monitoring events include correct fields",
+  "schemaVersion": "1.3",
+  "runOnRequirements": [
+    {
+      "loadBalanced": true
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "uriOptions": {
+          "retryReads": false
+        },
+        "observeEvents": [
+          "commandStartedEvent",
+          "commandSucceededEvent",
+          "commandFailedEvent",
+          "poolClearedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "database0"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection0",
+        "database": "database0",
+        "collectionName": "coll0"
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "databaseName": "database0",
+      "collectionName": "coll0",
+      "documents": []
+    }
+  ],
+  "tests": [
+    {
+      "description": "command started and succeeded events include serverId",
+      "operations": [
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "hasServerId": true
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "insert",
+                "hasServerId": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "command failed events include serverId",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "$or": true
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "hasServerId": true
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "find",
+                "hasServerId": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "poolClearedEvent events include serverId",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "find"
+                ],
+                "closeConnection": true
+              }
+            }
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isClientError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "hasServerId": true
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "find",
+                "hasServerId": true
+              }
+            },
+            {
+              "poolClearedEvent": {
+                "hasServerId": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
