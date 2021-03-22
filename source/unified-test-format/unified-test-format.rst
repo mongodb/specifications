@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.2.3
+:Spec Version: 1.3.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -3117,11 +3117,16 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
+:2021-03-29: Added a ``FindCursor`` entity type, defined a set of cursor
+             operations, added ``loadBalanced`` and ``auth`` properties to
+             ``runOnRequirements``, and added CMAP events to the possible event
+             types for ``expectedEvent``.
+
 :2021-03-22: Split ``serverApi`` into its own section. Note types for ``loop``
              operation arguments. Clarify how ``loop`` iterations are counted
              for ``storeIterationsAsEntity``.
 
-:2021-03-11: Clarify which components of a version string are relevant for
+:2021-03-09: Clarify which components of a version string are relevant for
              comparisons.
 
 :2021-03-10: Clarify that ``observedAt`` field measures time in seconds for
