@@ -994,6 +994,8 @@ The structure of this object is as follows:
     database name matches this value. The YAML file SHOULD use an `alias node`_
     for this value (e.g. ``databaseName: *database0Name``).
 
+  - ``serverId``: Defined in `hasServerId`_.
+
 .. _expectedEvent_commandSucceededEvent:
 
 - ``commandSucceededEvent``: Optional object. Assertions for one or more
@@ -1089,6 +1091,15 @@ The structure of this object is as follows:
 
 - ``connectionCheckedInEvent``: Optional object. If present, this object
   MUST be an empty document as all fields in this event are non-deterministic.
+
+
+hasServerId
+```````````
+
+This field is an optional boolean that specifies whether or not the ``serverId``
+field of an event is set. If true, test runners MUST assert that the field is
+set and is a non-empty BSON ObjectId (i.e. all values of the ObjectId are not 0).
+If false, test runners MUST assert that the field is not set.
 
 
 collectionOrDatabaseOptions
