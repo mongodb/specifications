@@ -59,12 +59,8 @@
           "type": "object",
           "minProperties": 1
         },
-        "loadBalanced": {
-          "type": "boolean"
-        },
-        "auth": {
-          "type": "boolean"
-        }
+        "loadBalanced": { "type": "boolean" },
+        "auth": { "type": "boolean" }
       }
     },
 

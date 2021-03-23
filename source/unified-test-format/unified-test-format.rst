@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-03-24
+:Last Modified: 2021-03-29
 
 .. contents::
 
@@ -438,10 +438,11 @@ The structure of this object is as follows:
 .. _entity_client:
 
 - ``client``: Optional object. Defines a MongoClient object. In addition to
-  the configuration defined below, test runners MUST track the number of
-  connections checked out at any given time for the constructed MongoClient.
-  This can be done using a single counter and
-  `CMAP events <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__.
+  the configuration defined below, test runners for drivers that implement
+  connection pooling MUST track the number of connections checked out at any
+  given time for the constructed MongoClient. This can be done using a single
+  counter and `CMAP events
+  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__.
   Each ``ConnectionCheckedOutEvent`` should increment the counter and each
   ``ConnectionCheckedInEvent`` should decrement it.
 
@@ -1107,7 +1108,7 @@ hasServerId
 
 This field is an optional boolean that specifies whether or not the ``serverId``
 field of an event is set. If true, test runners MUST assert that the field is
-set and is a non-empty BSON ObjectId (i.e. all values of the ObjectId are not 0).
+set and is a non-empty BSON ObjectId (i.e. all bytes of the ObjectId are not 0).
 If false, test runners MUST assert that the field is not set.
 
 
