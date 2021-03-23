@@ -18,6 +18,7 @@ createEntities:
 
 tests:
   - description: operations against load balancers fail if URI contains loadBalanced=false
+    skipReason: servers have not implemented LB support yet so they will not fail the connection handshake in this case
     operations:
       - name: runCommand
         object: *database0
