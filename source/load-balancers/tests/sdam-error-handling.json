@@ -244,7 +244,13 @@
       ]
     },
     {
-      "description": "errors during the initial connection hello are ignored",
+      "description": "errors during the initial connection hello are ignore",
+      "skipReason": "blocked on running against 4.9+ until SERVER-55211",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.9"
+        }
+      ],
       "operations": [
         {
           "name": "failPoint",
