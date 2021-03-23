@@ -3,7 +3,9 @@
   "schemaVersion": "1.3",
   "runOnRequirements": [
     {
-      "loadBalanced": true
+      "topologies": [
+        "load-balanced"
+      ]
     }
   ],
   "_yamlAnchors": {

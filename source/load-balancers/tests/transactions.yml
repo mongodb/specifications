@@ -3,7 +3,7 @@ description: transactions are correctly pinned to connections for load-balanced 
 schemaVersion: '1.3'
 
 runOnRequirements:
-  - loadBalanced: true
+  - topologies: [ load-balanced ]
 
 createEntities:
   - client:
@@ -138,6 +138,10 @@ tests:
           connections: 1
       - name: commitTransaction
         object: *session0
+        # Ignore the result and error because the operation might fail if it targets a new mongos that isn't aware
+        # of the transaction or the server-side reaper thread closes the transaction first. We only want to assert
+        # that the operation is retried, which is done via monitoring expectations, so the exact result/error is
+        # not necessary.
         ignoreResultAndError: true
       - name: assertNumberConnectionsCheckedOut
         object: testRunner

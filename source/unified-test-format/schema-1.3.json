@@ -52,14 +52,13 @@
           "minItems": 1,
           "items": {
             "type": "string",
-            "enum": ["single", "replicaset", "sharded", "sharded-replicaset"]
+            "enum": ["single", "replicaset", "sharded", "sharded-replicaset", "load-balanced"]
           }
         },
         "serverParameters": {
           "type": "object",
           "minProperties": 1
         },
-        "loadBalanced": { "type": "boolean" },
         "auth": { "type": "boolean" }
       }
     },

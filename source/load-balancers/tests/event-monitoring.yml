@@ -3,7 +3,7 @@ description: monitoring events include correct fields
 schemaVersion: '1.3'
 
 runOnRequirements:
-  - loadBalanced: true
+  - topologies: [ load-balanced ]
 
 createEntities:
   - client:

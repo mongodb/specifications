@@ -3,7 +3,7 @@ description: wait queue timeout errors include details about checked out connect
 schemaVersion: '1.3'
 
 runOnRequirements:
-  - loadBalanced: true
+  - topologies: [ load-balanced ]
 
 createEntities:
   - client:

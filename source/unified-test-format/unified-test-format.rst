@@ -381,9 +381,9 @@ The structure of this object is as follows:
 
 - ``topologies``: Optional array of one or more strings. Server topologies
   against which the tests can be run successfully. Valid topologies are
-  "single", "replicaset", "sharded", and "sharded-replicaset" (i.e. sharded
-  cluster backed by replica sets). If this field is omitted, there is no
-  topology requirement for the test.
+  "single", "replicaset", "sharded", "load-balanced", and
+  "sharded-replicaset" (i.e. sharded cluster backed by replica sets). If this
+  field is omitted, there is no topology requirement for the test.
 
   When matching a "sharded-replicaset" topology, test runners MUST ensure that
   all shards are backed by a replica set. The process for doing so is described
@@ -401,11 +401,6 @@ The structure of this object is as follows:
   comparing values. If a server does not support a parameter, test runners MUST
   treat the comparison as not equal and skip the test. This includes errors that
   occur when fetching a single parameter using ``getParameter``.
-
-- ``loadBalanced``: Optional boolean. Specifies whether or not the tests can
-  be executed against a load-balanced cluster. If true, the relevant tests MUST
-  only be run against a load balancer. If false or omitted, the tests MUST only
-  be run against non-load balanced clusters.
 
 - ``auth``: Optional boolean. Specifies whether or not authentication must be
   enabled for the tests to run successfully. If this field is omitted, there is
@@ -480,7 +475,14 @@ The structure of this object is as follows:
     connecting to multiple mongos servers is necessary to test session
     pinning.
 
-    This option has no effect for non-sharded topologies.
+    If this option is true or unset and the topology type is
+    ``LoadBalanced``, the test runner MUST connect the MongoClient to a load
+    balancer that is balancing multiple servers. If it is false and the
+    topology type is ``LoadBalanced``, the test runner MUST connect the
+    MongoClient to a load balancer that is only fronting a single server.
+
+    This option has no effect for topologies that are not sharded or load
+    balanced.
 
   .. _entity_client_observeEvents:
 

@@ -3,7 +3,7 @@ description: connection establishment for load-balanced clusters
 schemaVersion: '1.3'
 
 runOnRequirements:
-  - loadBalanced: true
+  - topologies: [ load-balanced ]
 
 createEntities:
   - client:
