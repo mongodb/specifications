@@ -8,15 +8,13 @@
   ],
   "_yamlAnchors": {
     "observedEvents": [
-      [
-        "connectionCreatedEvent",
-        "connectionReadyEvent",
-        "connectionCheckedOutEvent",
-        "connectionCheckOutFailedEvent",
-        "connectionCheckedInEvent",
-        "connectionClosedEvent",
-        "poolClearedEvent"
-      ]
+      "connectionCreatedEvent",
+      "connectionReadyEvent",
+      "connectionCheckedOutEvent",
+      "connectionCheckOutFailedEvent",
+      "connectionCheckedInEvent",
+      "connectionClosedEvent",
+      "poolClearedEvent"
     ]
   },
   "createEntities": [

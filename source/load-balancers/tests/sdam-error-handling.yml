@@ -6,15 +6,14 @@ runOnRequirements:
   - loadBalanced: true
 
 _yamlAnchors:
-  observedEvents:
-    - &observedEvents
-      - connectionCreatedEvent
-      - connectionReadyEvent
-      - connectionCheckedOutEvent
-      - connectionCheckOutFailedEvent
-      - connectionCheckedInEvent
-      - connectionClosedEvent
-      - poolClearedEvent
+  observedEvents: &observedEvents
+    - connectionCreatedEvent
+    - connectionReadyEvent
+    - connectionCheckedOutEvent
+    - connectionCheckOutFailedEvent
+    - connectionCheckedInEvent
+    - connectionClosedEvent
+    - poolClearedEvent
 
 createEntities:
   - client:
