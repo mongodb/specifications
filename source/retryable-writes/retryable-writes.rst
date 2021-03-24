@@ -244,7 +244,6 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   true on the client performing the relevant operation:
 
   - a server error response with any the following codes:
-
     .. list-table::
         :header-rows: 1
 
