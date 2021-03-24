@@ -60,10 +60,19 @@
       "description": "no connection is pinned if all documents are returned in the initial batch",
       "operations": [
         {
-          "name": "find",
+          "name": "createFindCursor",
           "object": "collection0",
           "arguments": {
             "filter": {}
+          },
+          "saveResultAsEntity": "cursor0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
           }
         }
       ],
