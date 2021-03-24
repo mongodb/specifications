@@ -1,0 +1,72 @@
+{
+  "description": "expectedEventsForClient-eventType",
+  "schemaVersion": "1.3",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "invalid eventType value",
+      "operations": [],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "eventType": "foo",
+          "events": [
+            {
+              "commandStartedEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "invalid event when eventType is command",
+      "operations": [],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "eventType": "command",
+          "events": [
+            {
+              "poolCreatedEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "invalid event when eventType is unset",
+      "operations": [],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "poolCreatedEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "invalid event when eventType is cmap",
+      "operations": [],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
+            {
+              "commandStartedEvent": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
