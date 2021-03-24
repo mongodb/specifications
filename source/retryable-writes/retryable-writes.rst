@@ -453,8 +453,8 @@ Consider the following pseudo-code:
      * values will be derived from the implicit or explicit session object. */
     retryableCommand = addTransactionIdToCommand(command, session);
 
-    /* If the error has a RetryableWriteError label, remember the exception,
-     * update SDAM accordingly, and proceed with retrying the operation.
+    /* If the error has a RetryableWriteError label, remember the exception
+     * and proceed with retrying the operation.
      *
      * IllegalOperation (code 20) with errmsg starting with "Transaction
      * numbers" MUST be re-raised with an actionable error message. */
