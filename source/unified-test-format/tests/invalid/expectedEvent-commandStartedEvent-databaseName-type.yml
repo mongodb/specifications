@@ -8,11 +8,9 @@ createEntities:
 
 tests:
   - description: "foo"
-    operations:
-      - name: "foo"
-        object: *client0
-        expectEvents:
-          - client: *client0
-            events:
-              - commandStartedEvent:
-                  databaseName: 0
+    operations: []
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              databaseName: 0
