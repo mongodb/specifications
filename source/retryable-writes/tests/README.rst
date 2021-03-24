@@ -327,10 +327,45 @@ and sharded clusters.
    in use MAY skip this test for sharded clusters, since ``mongos`` does not report
    this information in its ``serverStatus`` response.
 
+#. Test that drivers properly retry after encountering PoolClearedErrors. This
+   test MUST be implemented by any driver that implements the CMAP
+   specification.
+
+   1. Create a client with directConnection=true, maxPoolSize=1, and
+      retryWrites=true.
+
+   2. Enable the following failpoint::
+
+       {
+           configureFailPoint: "failCommand",
+           mode: { times: 1 },
+           data: {
+               failCommands: ["insert"],
+               errorCode: 91,
+               blockConnection: true,
+               blockTimeMS: 1000
+           }
+       }
+
+   3. Start two threads and attempt to perform an ``insertOne`` simultaneously on both.
+
+   4. Verify that both ``insertOne`` attempts succeed.
+
+   5. Via CMAP monitoring, assert that the first check out succeeds.
+
+   6. Via CMAP monitoring, assert that the second check out fails due to a
+      connection error.
+
+   7. Disable the failpoint.
+
+
 Changelog
 =========
 
-:2019-10-21: Add ``errorLabelsContain`` and ``errorLabelsContain`` fields to ``result``
+:2021-03-24: Add prose test verifying ``PoolClearedErrors`` are retried.
+
+:2019-10-21: Add ``errorLabelsContain`` and ``errorLabelsContain`` fields to
+             ``result``
 
 :2019-08-07: Add Prose Tests section
 

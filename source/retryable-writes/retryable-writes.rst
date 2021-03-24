@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.5.3
+:Spec Version: 1.6.0
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2020-09-01
+:Last Modified: 2021-03-24
 
 .. contents::
 
@@ -216,72 +216,82 @@ This error label can be found in the top-level "errorLabels" field of the error.
 In a server error response with a writeConcernError field the top level document
 or the writeConcernError document may contain the RetryableWriteError error label.
 
+RetryableWriteError Labels
+==========================
+
 The RetryableWriteError label might be added to an error in a variety of ways:
 
-When the driver encounters a network error communicating with any server version
-that supports retryable writes, it MUST add a RetryableWriteError label to that
-error if the MongoClient performing the operation has the retryWrites
-configuration option set to true.
+- When the driver encounters a network error communicating with any server
+  version that supports retryable writes, it MUST add a RetryableWriteError
+  label to that error if the MongoClient performing the operation has the
+  retryWrites configuration option set to true.
 
-For server versions 4.4 and newer, MongoDB will add a RetryableWriteError label to
-errors or server responses that it considers retryable before returning them to the
-driver. As new server versions are released, the errors that are labeled with the
-RetryableWriteError label may change. Drivers MUST NOT add a RetryableWriteError
-label to any error derived from a 4.4+ server response (i.e. any error that is not
-a network error).
+- When a CMAP-compliant driver encounters a ``PoolClearedError`` during
+  connection check out, it MUST add a RetryableWriteError label to that error if
+  the MongoClient performing the operation has the retryWrites configuration
+  option set to true.
 
-During a retryable write operation on a sharded cluster, mongos may retry the
-operation internally, in which case it will not add a RetryableWriteError label to
-any error that occurs after those internal retries to prevent excessive retrying.
+- For server versions 4.4 and newer, the server will add a RetryableWriteError
+  label to errors or server responses that it considers retryable before
+  returning them to the driver. As new server versions are released, the errors
+  that are labeled with the RetryableWriteError label may change. Drivers MUST
+  NOT add a RetryableWriteError label to any error derived from a 4.4+ server
+  response (i.e. any error that is not a network error).
 
-When receiving a command result with an error from a pre-4.4 server that supports
-retryable writes, the driver MUST add a RetryableWriteError label to errors that meet
-the following criteria if the retryWrites option is set to true on the client
-performing the relevant operation:
+- When receiving a command result with an error from a pre-4.4 server that
+  supports retryable writes, the driver MUST add a RetryableWriteError label to
+  errors that meet the following criteria if the retryWrites option is set to
+  true on the client performing the relevant operation:
 
-- a server error response with any the following codes:
+  - a server error response with any the following codes:
 
-  .. list-table::
-    :header-rows: 1
+    .. list-table::
+        :header-rows: 1
 
-    * - Error Name
-      - Error Code
-    * - InterruptedAtShutdown
-      - 11600
-    * - InterruptedDueToReplStateChange
-      - 11602
-    * - NotMaster
-      - 10107
-    * - NotMasterNoSlaveOk
-      - 13435
-    * - NotMasterOrSecondary
-      - 13436
-    * - PrimarySteppedDown
-      - 189
-    * - ShutdownInProgress
-      - 91
-    * - HostNotFound
-      - 7
-    * - HostUnreachable
-      - 6
-    * - NetworkTimeout
-      - 89
-    * - SocketException
-      - 9001
-    * - ExceededTimeLimit
-      - 262
+        * - Error Name
+        - Error Code
+        * - InterruptedAtShutdown
+        - 11600
+        * - InterruptedDueToReplStateChange
+        - 11602
+        * - NotMaster
+        - 10107
+        * - NotMasterNoSlaveOk
+        - 13435
+        * - NotMasterOrSecondary
+        - 13436
+        * - PrimarySteppedDown
+        - 189
+        * - ShutdownInProgress
+        - 91
+        * - HostNotFound
+        - 7
+        * - HostUnreachable
+        - 6
+        * - NetworkTimeout
+        - 89
+        * - SocketException
+        - 9001
+        * - ExceededTimeLimit
+        - 262
 
-- a server response with a write concern error response containing any of the previously listed codes
+   - a server response with a write concern error response containing any of the
+     previously listed codes
 
-To understand why the driver should only add the RetryableWriteError label
-to an error when the retryWrites option is true on the MongoClient performing
-the operation, see `Why does the driver only add the RetryableWriteError label
-to errors that occur on a MongoClient with retryWrites set to true?`_
+  The criteria for retryable errors is similar to the discussion in the SDAM
+  spec's section on `Error Handling`_, but includes additional error codes. See
+  `What do the additional error codes mean?`_ for the reasoning behind these
+  additional errors.
 
-The criteria for retryable errors is similar to the discussion in the SDAM
-spec's section on `Error Handling`_, but includes additional error codes. See
-`What do the additional error codes mean?`_ for the reasoning behind these
-additional errors.
+To understand why the driver should only add the RetryableWriteError label to an
+error when the retryWrites option is true on the MongoClient performing the
+operation, see `Why does the driver only add the RetryableWriteError label to
+errors that occur on a MongoClient with retryWrites set to true?`_
+
+Note: During a retryable write operation on a sharded cluster, mongos may retry
+the operation internally, in which case it will not add a RetryableWriteError
+label to any error that occurs after those internal retries to prevent excessive
+retrying.
 
 For more information about error labels, see the `Transactions specification`_.
 
@@ -449,14 +459,13 @@ Consider the following pseudo-code:
      * numbers" MUST be re-raised with an actionable error message. */
     try {
       return executeCommand(server, retryableCommand);
-    } catch (NetworkException originalError) {
-      updateTopologyDescriptionForNetworkError(server, originalError);
-    } catch (NotMasterException originalError) {
-      updateTopologyDescriptionForNotMasterError(server, originalError);
-    } catch (IllegalOperation originalError) {
-      if ( originalError.code == 20 && originalError.errmsg.startsWith("Transaction numbers") ) {
-        originalError.errmsg = "This MongoDB deployment does not support retryable...";
-        throw originalError;
+    } catch (Exception originalError) {
+      handleError(e);
+      if (!e.hasErrorLabel("RetryableWriteError")) {
+        if ( originalError.code == 20 && originalError.errmsg.startsWith("Transaction numbers") ) {
+          originalError.errmsg = "This MongoDB deployment does not support retryable...";
+        }
+        throw originalError
       }
     }
 
@@ -485,16 +494,19 @@ Consider the following pseudo-code:
      * propagate. */
     try {
       return executeCommand(server, retryableCommand);
-    } catch (NetworkException secondError) {
-      updateTopologyDescriptionForNetworkError(server, secondError);
+    } catch (Exception secondError) {
+      if (secondError instanceof DriverException) {
+        throw originalError;
+      }
+      handleError(secondError);
       throw secondError;
-    } catch (NotMasterException secondError) {
-      updateTopologyDescriptionForNotMasterError(server, secondError);
-      throw secondError;
-    } catch (DriverException ignoredError) {
-      throw originalError;
     }
   }
+
+``handleError`` in the above psuedocode refers to the function defined in the
+`Error handling psuedocode`_ section of the SDAM specification.
+
+.. _Error handling psuedocode: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling-psuedocode
 
 When retrying a write command, drivers MUST resend the command with the same
 transaction ID. Drivers MUST NOT resend the original wire protocol message if
@@ -806,6 +818,8 @@ inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
+
+2021-03-24: Require that PoolClearedErrors be retried
 
 2020-09-01: State the the driver should only add the RetryableWriteError label
 to network errors when connected to a 4.4+ server.
