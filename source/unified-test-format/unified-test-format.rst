@@ -788,7 +788,8 @@ The structure of this object is as follows:
   Tests SHOULD NOT specify multiple `expectedEventsForClient`_ objects for a
   single client entity with the same ``eventType`` field. For example, a test
   containing two `expectedEventsForClient`_ objects with the ``eventType`` set
-  to ``cmap`` for both would be invalid.
+  to ``cmap`` for both would either be redundant (if the ``events`` arrays were
+  identical) or likely to fail (if the ``events`` arrays differed).
 
 .. _test_outcome:
 
@@ -2270,7 +2271,8 @@ assertNumberConnectionsCheckedOut
 
 The ``assertNumberConnectionsCheckedOut`` operation instructs the test runner
 to assert that the given number of connections are currently checked out for
-the specified client entity.
+the specified client entity. This operation only applies to drivers that
+implement connection pooling and should be skipped for drivers that do not.
 
 The following arguments are supported:
 

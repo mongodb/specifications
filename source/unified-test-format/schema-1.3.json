@@ -392,7 +392,10 @@
       },
       "allOf": [
         { "not": { "required": ["expectError", "expectResult"] } },
-        { "not": { "required": ["expectError", "saveResultAsEntity"] } }
+        { "not": { "required": ["expectError", "saveResultAsEntity"] } },
+        { "not": { "required": ["ignoreResultAndError", "expectResult"] } },
+        { "not": { "required": ["ignoreResultAndError", "expectError"] } },
+        { "not": { "required": ["ignoreResultAndError", "saveResultAsEntity"] } }
       ]
     },
 
