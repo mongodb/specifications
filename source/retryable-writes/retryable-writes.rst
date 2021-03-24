@@ -453,9 +453,8 @@ Consider the following pseudo-code:
      * values will be derived from the implicit or explicit session object. */
     retryableCommand = addTransactionIdToCommand(command, session);
 
-    /* NetworkException and NotMasterException are both retryable errors. If
-     * caught, remember the exception, update SDAM accordingly, and proceed with
-     * retrying the operation.
+    /* If the error has a RetryableWriteError label, remember the exception,
+     * update SDAM accordingly, and proceed with retrying the operation.
      *
      * IllegalOperation (code 20) with errmsg starting with "Transaction
      * numbers" MUST be re-raised with an actionable error message. */
@@ -505,10 +504,10 @@ Consider the following pseudo-code:
     }
   }
 
-``handleError`` in the above psuedocode refers to the function defined in the
-`Error handling psuedocode`_ section of the SDAM specification.
+``handleError`` in the above pseudocode refers to the function defined in the
+`Error handling pseudocode`_ section of the SDAM specification.
 
-.. _Error handling psuedocode: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling-psuedocode
+.. _Error handling pseudocode: ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling-pseudocode
 
 When retrying a write command, drivers MUST resend the command with the same
 transaction ID. Drivers MUST NOT resend the original wire protocol message if
