@@ -246,33 +246,33 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   - a server error response with any the following codes:
 
     .. list-table::
-        :header-rows: 1
+      :header-rows: 1
 
-        * - Error Name
+      * - Error Name
         - Error Code
-        * - InterruptedAtShutdown
+      * - InterruptedAtShutdown
         - 11600
-        * - InterruptedDueToReplStateChange
+      * - InterruptedDueToReplStateChange
         - 11602
-        * - NotMaster
+      * - NotMaster
         - 10107
-        * - NotMasterNoSlaveOk
+      * - NotMasterNoSlaveOk
         - 13435
-        * - NotMasterOrSecondary
+      * - NotMasterOrSecondary
         - 13436
-        * - PrimarySteppedDown
+      * - PrimarySteppedDown
         - 189
-        * - ShutdownInProgress
+      * - ShutdownInProgress
         - 91
-        * - HostNotFound
+      * - HostNotFound
         - 7
-        * - HostUnreachable
+      * - HostUnreachable
         - 6
-        * - NetworkTimeout
+      * - NetworkTimeout
         - 89
-        * - SocketException
+      * - SocketException
         - 9001
-        * - ExceededTimeLimit
+      * - ExceededTimeLimit
         - 262
 
   - a server response with a write concern error response containing any of the
