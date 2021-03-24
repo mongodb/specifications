@@ -91,5 +91,8 @@ tests:
           - commandFailedEvent:
               commandName: find
               hasServerId: true
+      - client: *client0
+        eventType: cmap
+        events:
           - poolClearedEvent:
               hasServerId: true

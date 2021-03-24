@@ -210,14 +210,47 @@
       "required": ["client", "events"],
       "properties": {
         "client": { "type": "string" },
-        "events": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/expectedEvent" }
+        "eventType": {
+          "type": "string",
+          "enum": ["command", "cmap"]
+        },
+        "events": { "type": "array" }
+      },
+      "oneOf": [
+        {
+          "required": ["eventType"],
+          "properties": {
+            "eventType": { "const": "command" },
+            "events": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/expectedCommandEvent" }
+            }
+          }
+        },
+        {
+          "required": ["eventType"],
+          "properties": {
+            "eventType": { "const": "cmap" },
+            "events": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/expectedCmapEvent" }
+            }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "client": { "type": "string" },
+            "events": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/expectedCommandEvent" }
+            }
+          }
         }
-      }
+      ]
     },
 
-    "expectedEvent": {
+    "expectedCommandEvent": {
       "type": "object",
       "additionalProperties": false,
       "maxProperties": 1,
@@ -249,7 +282,16 @@
             "commandName": { "type": "string" },
             "hasServerId": { "type": "boolean" }
           }
-        },
+        }
+      }
+    },
+
+    "expectedCmapEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "maxProperties": 1,
+      "minProperties": 1,
+      "properties": {
         "poolCreatedEvent": {
           "type": "object",
           "additionalProperties": false,

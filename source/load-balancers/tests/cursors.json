@@ -95,7 +95,13 @@
                 },
                 "commandName": "find"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -182,7 +188,13 @@
               "commandSucceededEvent": {
                 "commandName": "killCursors"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -291,7 +303,13 @@
               "commandSucceededEvent": {
                 "commandName": "getMore"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -424,7 +442,13 @@
               "commandFailedEvent": {
                 "commandName": "getMore"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -544,7 +568,13 @@
               "commandFailedEvent": {
                 "commandName": "killCursors"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },

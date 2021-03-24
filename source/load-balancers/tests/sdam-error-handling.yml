@@ -105,6 +105,7 @@ tests:
           document: { x: 1 }
     expectEvents:
       - client: *multiClient
+        eventType: cmap
         events:
           # Create cursors.
           - connectionCreatedEvent: {}
@@ -155,6 +156,7 @@ tests:
           isClientError: true
     expectEvents:
       - client: *singleClient
+        eventType: cmap
         events:
           - connectionCreatedEvent: {}
           - connectionClosedEvent:
@@ -185,6 +187,7 @@ tests:
           isClientError: true
     expectEvents:
       - client: *singleClient
+        eventType: cmap
         events:
           - connectionCreatedEvent: {}
           - poolClearedEvent: {}

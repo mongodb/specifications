@@ -90,6 +90,7 @@
       "expectEvents": [
         {
           "client": "client0",
+          "eventType": "cmap",
           "events": [
             {
               "connectionCheckedOutEvent": {}
@@ -135,6 +136,7 @@
       "expectEvents": [
         {
           "client": "client0",
+          "eventType": "cmap",
           "events": [
             {
               "connectionCheckedOutEvent": {}

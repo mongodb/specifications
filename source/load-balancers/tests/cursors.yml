@@ -55,6 +55,9 @@ tests:
                   firstBatch: { $$type: array }
                   ns: { $$type: string }
               commandName: find
+      - client: *client0
+        eventType: cmap
+        events:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
@@ -98,6 +101,9 @@ tests:
               commandName: killCursors
           - commandSucceededEvent:
               commandName: killCursors
+      - client: *client0
+        eventType: cmap
+        events:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
@@ -153,6 +159,9 @@ tests:
                 collection: *collection0Name
           - commandSucceededEvent:
               commandName: getMore
+      - client: *client0
+        eventType: cmap
+        events:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
@@ -225,6 +234,9 @@ tests:
               commandName: getMore
           - commandFailedEvent:
               commandName: getMore
+      - client: *client0
+        eventType: cmap
+        events:
           # Events to set the failpoint.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
@@ -286,6 +298,9 @@ tests:
               commandName: killCursors
           - commandFailedEvent:
               commandName: killCursors
+      - client: *client0
+        eventType: cmap
+        events:
           # Events to set the failpoint.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}

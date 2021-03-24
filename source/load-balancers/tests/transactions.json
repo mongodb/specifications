@@ -126,7 +126,13 @@
               "commandStartedEvent": {
                 "commandName": "commitTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -199,7 +205,13 @@
               "commandStartedEvent": {
                 "commandName": "abortTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -297,7 +309,13 @@
               "commandStartedEvent": {
                 "commandName": "commitTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -414,7 +432,13 @@
               "commandStartedEvent": {
                 "commandName": "abortTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -544,7 +568,13 @@
               "commandStartedEvent": {
                 "commandName": "commitTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -662,7 +692,13 @@
               "commandStartedEvent": {
                 "commandName": "abortTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },
@@ -828,7 +864,13 @@
               "commandStartedEvent": {
                 "commandName": "abortTransaction"
               }
-            },
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
             {
               "connectionReadyEvent": {}
             },

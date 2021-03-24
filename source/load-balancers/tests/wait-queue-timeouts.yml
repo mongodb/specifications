@@ -52,6 +52,7 @@ tests:
           errorContains: 'maxPoolSize: 1, connections in use by cursors: 1, connections in use by transactions: 0, connections in use by other operations: 0'
     expectEvents:
       - client: *client0
+        eventType: cmap
         events:
           - connectionCheckedOutEvent: {}
           - connectionCheckOutFailedEvent: {}
@@ -74,6 +75,7 @@ tests:
           errorContains: 'maxPoolSize: 1, connections in use by cursors: 0, connections in use by transactions: 1, connections in use by other operations: 0'
     expectEvents:
       - client: *client0
+        eventType: cmap
         events:
           - connectionCheckedOutEvent: {}
           - connectionCheckOutFailedEvent: {}

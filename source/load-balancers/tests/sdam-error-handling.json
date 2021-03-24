@@ -188,6 +188,7 @@
       "expectEvents": [
         {
           "client": "multiClient",
+          "eventType": "cmap",
           "events": [
             {
               "connectionCreatedEvent": {}
@@ -288,6 +289,7 @@
       "expectEvents": [
         {
           "client": "singleClient",
+          "eventType": "cmap",
           "events": [
             {
               "connectionCreatedEvent": {}
@@ -350,6 +352,7 @@
       "expectEvents": [
         {
           "client": "singleClient",
+          "eventType": "cmap",
           "events": [
             {
               "connectionCreatedEvent": {}

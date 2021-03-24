@@ -73,6 +73,9 @@ tests:
               commandName: insert
           - commandStartedEvent:
               commandName: commitTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
@@ -108,6 +111,9 @@ tests:
               commandName: insert
           - commandStartedEvent:
               commandName: abortTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
@@ -160,6 +166,9 @@ tests:
               commandName: commitTransaction
           - commandStartedEvent:
               commandName: commitTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           # Initial events to set the fail point.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
@@ -217,6 +226,9 @@ tests:
               commandName: abortTransaction
           - commandStartedEvent:
               commandName: abortTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           # Initial events to set the fail point.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
@@ -284,6 +296,9 @@ tests:
               commandName: killCursors
           - commandStartedEvent:
               commandName: commitTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           # Only one set of events should be published because all of the operations use the connection pinned by the
           # transaction.
           - connectionReadyEvent: {}
@@ -346,6 +361,9 @@ tests:
               commandName: update
           - commandStartedEvent:
               commandName: abortTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           # Events for setting the failpoint.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
@@ -436,6 +454,9 @@ tests:
               commandName: update
           - commandStartedEvent:
               commandName: abortTransaction
+      - client: *client0
+        eventType: cmap
+        events:
           # Events for setting the failpoint.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}

@@ -785,6 +785,11 @@ The structure of this object is as follows:
   clients), the test runner SHOULD associate each observed event with a client
   in order to perform these assertions.
 
+  Tests MUST NOT specify multiple `expectedEventsForClient`_ objects for a
+  single client entity with the same ``eventType`` field. For example, a test
+  containing two `expectedEventsForClient`_ objects with the ``eventType`` set
+  to ``cmap`` for both would be invalid.
+
 .. _test_outcome:
 
 - ``outcome``: Optional array of one or more `collectionData`_ objects. Data
@@ -955,6 +960,13 @@ The structure of each object is as follows:
 - ``client``: Required string. Client entity on which the events are expected
   to be observed. See `commonOptions_client`_.
 
+- ``eventType``: Optional string. Specifies the type of the monitor which
+  captured the events. Valid values are ``command`` for `Command Monitoring
+  <../command-monitoring/command-monitoring.rst#api>`__ events and ``cmap``
+  for `CMAP
+  <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#events>`__
+  events. Defaults to ``command`` if omitted.
+
 - ``events``: Required array of `expectedEvent`_ objects. List of events, which
   are expected to be observed (in this order) on the corresponding client while
   executing `operations`_. If the array is empty, the test runner MUST assert
@@ -975,6 +987,16 @@ Some event properties are omitted in the following structures because they
 cannot be reliably tested. Taking command monitoring events as an example,
 ``requestId`` and ``operationId`` are nondeterministic and types for
 ``connectionId`` and ``failure`` can vary by implementation.
+
+The events allowed in an ``expectedEvent`` object depend on the value of
+``eventType`` in the corresponding `expectedEventsForClient`_ object. There
+are two possible structures. If the value is omitted or is explicitly set to
+``command``, only the event types defined in `expectedCommandEvent`_ are
+allowed. If the value is ``cmap``, only the event types defined in
+`expectedCmapEvent`_ are allowed.
+
+expectedCommandEvent
+````````````````````
 
 The structure of this object is as follows:
 
@@ -1028,6 +1050,9 @@ The structure of this object is as follows:
     name matches this value.
 
   - ``serverId``: Defined in `hasServerId`_.
+
+expectedCmapEvent
+`````````````````
 
 .. _expectedEvent_poolCreatedEvent:
 
