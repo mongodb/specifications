@@ -402,9 +402,9 @@ The structure of this object is as follows:
   treat the comparison as not equal and skip the test. This includes errors that
   occur when fetching a single parameter using ``getParameter``.
 
-- ``auth``: Optional boolean. Specifies whether or not authentication must be
-  enabled for the tests to run successfully. If this field is omitted, there is
-  no authentication requirement for the tests.
+- ``auth``: Optional boolean. If true, the tests MUST only run if authentication
+  is enabled. If false, tests MUST only run if authentication is not enabled.
+  If this field is omitted, there is no authentication requirement.
 
 Test runners MUST evaluate these conditions in the order specified above.
 
