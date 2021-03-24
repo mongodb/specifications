@@ -26,12 +26,12 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: &insertDocument { x: 1 }
+          document: &insertDocument { _id: 1 }
       - name: insertOne
         object: *collection0
         arguments:
           # Insert the same document to force a DuplicateKey error.
-          document: &insertDocument { x: 1 }
+          document: *insertDocument
         ignoreResultAndError: false
 
   - description: malformed operation fails if ignoreResultAndError is true

@@ -39,7 +39,7 @@
           "object": "collection0",
           "arguments": {
             "document": {
-              "x": 1
+              "_id": 1
             }
           }
         },
@@ -48,7 +48,7 @@
           "object": "collection0",
           "arguments": {
             "document": {
-              "x": 1
+              "_id": 1
             }
           },
           "ignoreResultAndError": true
