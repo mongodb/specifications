@@ -217,7 +217,7 @@ In a server error response with a writeConcernError field the top level document
 or the writeConcernError document may contain the RetryableWriteError error label.
 
 RetryableWriteError Labels
-==========================
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The RetryableWriteError label might be added to an error in a variety of ways:
 
@@ -275,8 +275,8 @@ The RetryableWriteError label might be added to an error in a variety of ways:
         * - ExceededTimeLimit
         - 262
 
-   - a server response with a write concern error response containing any of the
-     previously listed codes
+  - a server response with a write concern error response containing any of the
+    previously listed codes
 
   The criteria for retryable errors is similar to the discussion in the SDAM
   spec's section on `Error Handling`_, but includes additional error codes. See
