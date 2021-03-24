@@ -785,7 +785,7 @@ The structure of this object is as follows:
   clients), the test runner SHOULD associate each observed event with a client
   in order to perform these assertions.
 
-  Tests MUST NOT specify multiple `expectedEventsForClient`_ objects for a
+  Tests SHOULD NOT specify multiple `expectedEventsForClient`_ objects for a
   single client entity with the same ``eventType`` field. For example, a test
   containing two `expectedEventsForClient`_ objects with the ``eventType`` set
   to ``cmap`` for both would be invalid.
