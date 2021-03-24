@@ -171,7 +171,7 @@ PoolClearedError Retryability Test
 This test will be used to ensure drivers properly retry after encountering PoolClearedErrors.
 This test MUST be implemented by any driver that implements the CMAP specification.
 
-1. Create a client with directConnection=true and maxPoolSize=1.
+1. Create a client with directConnection=true, maxPoolSize=1, and retryReads=true.
 
 2. Enable the following failpoint::
 
@@ -192,8 +192,8 @@ This test MUST be implemented by any driver that implements the CMAP specificati
 
 5. Via CMAP monitoring, assert that the first check out succeeds.
 
-6. Via CMAP monitoring, assert that the second check out fails with a
-   ``PoolClearedError``.
+6. Via CMAP monitoring, assert that the second check out fails due to a
+   connection error.
 
 7. Disable the failpoint.
 
