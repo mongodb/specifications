@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-03-22
+:Last Modified: 2021-03-24
 
 .. contents::
 
@@ -590,28 +590,28 @@ stored within an entity. This object is used within
 
 The structure of this object is as follows:
 
-  - ``id``: Required string. Unique name for this entity.
+- ``id``: Required string. Unique name for this entity.
 
-  - ``events``: Required array of one or more strings, which denote the events
-    to be collected. Currently, only the following
-    `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
-    and `command monitoring <../command-monitoring/command-monitoring.rst>`__
-    events MUST be supported:
+- ``events``: Required array of one or more strings, which denote the events to
+  be collected. Currently, only the following
+  `CMAP <../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst>`__
+  and `command monitoring <../command-monitoring/command-monitoring.rst>`__
+  events MUST be supported:
 
-      - PoolCreatedEvent
-      - PoolReadyEvent
-      - PoolClearedEvent
-      - PoolClosedEvent
-      - ConnectionCreatedEvent
-      - ConnectionReadyEvent
-      - ConnectionClosedEvent
-      - ConnectionCheckOutStartedEvent
-      - ConnectionCheckOutFailedEvent
-      - ConnectionCheckedOutEvent
-      - ConnectionCheckedInEvent
-      - CommandStartedEvent
-      - CommandSucceededEvent
-      - CommandFailedEvent
+  - PoolCreatedEvent
+  - PoolReadyEvent
+  - PoolClearedEvent
+  - PoolClosedEvent
+  - ConnectionCreatedEvent
+  - ConnectionReadyEvent
+  - ConnectionClosedEvent
+  - ConnectionCheckOutStartedEvent
+  - ConnectionCheckOutFailedEvent
+  - ConnectionCheckedOutEvent
+  - ConnectionCheckedInEvent
+  - CommandStartedEvent
+  - CommandSucceededEvent
+  - CommandFailedEvent
 
 For the specified entity name, the test runner MUST create the respective entity
 with a type of "event list", as described in `Supported Entity Types`_. If the
@@ -624,11 +624,12 @@ documented properties of the event as field names, and append the document to
 the list stored in the specified entity. Additionally, the following fields MUST
 be stored with each event document:
 
-  - ``name``: The name of the event (e.g. ``PoolCreatedEvent``). The name of the
-    event MUST be the name used in the respective specification that defines the
-    event in question.
-  - ``observedAt``: The time, as the floating-point number of seconds since
-    the Unix epoch, when the event was observed by the test runner.
+- ``name``: The name of the event (e.g. ``PoolCreatedEvent``). The name of the
+  event MUST be the name used in the respective specification that defines the
+  event in question.
+
+- ``observedAt``: The time, as the floating-point number of seconds since the
+  Unix epoch, when the event was observed by the test runner.
 
 The test runner MAY omit the ``command`` field for CommandStartedEvent and
 ``reply`` field for CommandSucceededEvent.
@@ -966,11 +967,11 @@ Map of parameters used to construct a collection or database object.
 
 The structure of this object is as follows:
 
-  - ``readConcern``: Optional object. See `commonOptions_readConcern`_.
+- ``readConcern``: Optional object. See `commonOptions_readConcern`_.
 
-  - ``readPreference``: Optional object. See `commonOptions_readPreference`_.
+- ``readPreference``: Optional object. See `commonOptions_readPreference`_.
 
-  - ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
+- ``writeConcern``: Optional object. See `commonOptions_writeConcern`_.
 
 
 Common Options
