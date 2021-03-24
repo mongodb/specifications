@@ -8,6 +8,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      useMultipleMongoses: true
       observeEvents:
         # Do not observe commandSucceededEvent or commandFailedEvent because we cannot guarantee success or failure of
         # commands like commitTransaction and abortTransaction in a multi-mongos load-balanced setup.

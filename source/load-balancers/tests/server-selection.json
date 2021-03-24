@@ -12,6 +12,7 @@
     {
       "client": {
         "id": "client0",
+        "useMultipleMongoses": true,
         "observeEvents": [
           "commandStartedEvent"
         ]

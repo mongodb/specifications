@@ -12,6 +12,7 @@
     {
       "client": {
         "id": "client0",
+        "useMultipleMongoses": true,
         "uriOptions": {
           "maxPoolSize": 1,
           "waitQueueTimeoutMS": 5

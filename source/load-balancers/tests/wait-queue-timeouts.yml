@@ -8,6 +8,7 @@ runOnRequirements:
 createEntities:
   - client:
       id: &client0 client0
+      useMultipleMongoses: true
       uriOptions:
         maxPoolSize: 1
         waitQueueTimeoutMS: 5
