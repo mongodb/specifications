@@ -238,44 +238,45 @@ The RetryableWriteError label might be added to an error in a variety of ways:
   NOT add a RetryableWriteError label to any error derived from a 4.4+ server
   response (i.e. any error that is not a network error).
 
-- When receiving a command result with an error from a pre-4.4 server that
+- When receiving a command result with an error code from a pre-4.4 server that
   supports retryable writes, the driver MUST add a RetryableWriteError label to
-  errors that meet the following criteria if the retryWrites option is set to
-  true on the client performing the relevant operation:
+  the resulting error/exception if the result contains any the following server
+  error codes and the retryWrites option is set to true on the client performing
+  the relevant operation:
 
-  - a server error response with any the following codes:
-    .. list-table::
-        :header-rows: 1
+  .. list-table::
+      :header-rows: 1
 
-        * - Error Name
-        - Error Code
-        * - InterruptedAtShutdown
-        - 11600
-        * - InterruptedDueToReplStateChange
-        - 11602
-        * - NotMaster
-        - 10107
-        * - NotMasterNoSlaveOk
-        - 13435
-        * - NotMasterOrSecondary
-        - 13436
-        * - PrimarySteppedDown
-        - 189
-        * - ShutdownInProgress
-        - 91
-        * - HostNotFound
-        - 7
-        * - HostUnreachable
-        - 6
-        * - NetworkTimeout
-        - 89
-        * - SocketException
-        - 9001
-        * - ExceededTimeLimit
-        - 262
+      * - Error Name
+      - Error Code
+      * - InterruptedAtShutdown
+      - 11600
+      * - InterruptedDueToReplStateChange
+      - 11602
+      * - NotMaster
+      - 10107
+      * - NotMasterNoSlaveOk
+      - 13435
+      * - NotMasterOrSecondary
+      - 13436
+      * - PrimarySteppedDown
+      - 189
+      * - ShutdownInProgress
+      - 91
+      * - HostNotFound
+      - 7
+      * - HostUnreachable
+      - 6
+      * - NetworkTimeout
+      - 89
+      * - SocketException
+      - 9001
+      * - ExceededTimeLimit
+      - 262
 
-  - a server response with a write concern error response containing any of the
-    previously listed codes
+  A RetryableWriteError label MUST also be added to errors/exceptions derived
+  from server responses that have a write concern error containing any of the
+  previously listed codes.
 
   The criteria for retryable errors is similar to the discussion in the SDAM
   spec's section on `Error Handling`_, but includes additional error codes. See
