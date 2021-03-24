@@ -79,8 +79,9 @@ SocketException                 9001
   listed above, but with an error message containing the substring "not
   master" or "node is recovering"
 
-- a ``PoolClearedError`` as `defined in the CMAP specification
-  <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors>`__.
+- a `PoolClearedError`_
+
+  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
 
 MongoClient Configuration 
 --------------------------
