@@ -37,6 +37,20 @@
         "database": "database0",
         "collectionName": "coll0"
       }
+    },
+    {
+      "collection": {
+        "id": "collection1",
+        "database": "database0",
+        "collectionName": "coll1"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection2",
+        "database": "database0",
+        "collectionName": "coll2"
+      }
     }
   ],
   "initialData": [
@@ -54,6 +68,16 @@
           "_id": 3
         }
       ]
+    },
+    {
+      "collectionName": "coll1",
+      "databaseName": "database0Name",
+      "documents": []
+    },
+    {
+      "collectionName": "coll2",
+      "databaseName": "database0Name",
+      "documents": []
     }
   ],
   "tests": [
@@ -604,6 +628,288 @@
               "connectionClosedEvent": {
                 "reason": "error"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "aggregate pins the cursor to a connection",
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [],
+            "batchSize": 2
+          }
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": "coll0",
+                  "cursor": {
+                    "batchSize": 2
+                  }
+                },
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "getMore"
+              }
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionReadyEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "listCollections pins the cursor to a connection",
+      "operations": [
+        {
+          "name": "listCollections",
+          "object": "database0",
+          "arguments": {
+            "filter": {},
+            "batchSize": 2
+          }
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "listCollections": 1,
+                  "cursor": {
+                    "batchSize": 2
+                  }
+                },
+                "commandName": "listCollections",
+                "databaseName": "database0Name"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "listCollections"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "getMore"
+              }
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionReadyEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "listIndexes pins the cursor to a connection",
+      "operations": [
+        {
+          "name": "createIndex",
+          "object": "collection0",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
+          }
+        },
+        {
+          "name": "createIndex",
+          "object": "collection0",
+          "arguments": {
+            "keys": {
+              "y": 1
+            },
+            "name": "y_1"
+          }
+        },
+        {
+          "name": "listIndexes",
+          "object": "collection0",
+          "arguments": {
+            "batchSize": 2
+          }
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "createIndexes": "coll0",
+                  "indexes": [
+                    {
+                      "name": "x_1",
+                      "key": {
+                        "x": 1
+                      }
+                    }
+                  ]
+                },
+                "commandName": "createIndexes"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "createIndexes"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "createIndexes": "coll0",
+                  "indexes": [
+                    {
+                      "name": "y_1",
+                      "key": {
+                        "y": 1
+                      }
+                    }
+                  ]
+                },
+                "commandName": "createIndexes"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "createIndexes"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "listIndexes": "coll0",
+                  "cursor": {
+                    "batchSize": 2
+                  }
+                },
+                "commandName": "listIndexes",
+                "databaseName": "database0Name"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "listIndexes"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "getMore"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "getMore"
+              }
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionReadyEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
             }
           ]
         }

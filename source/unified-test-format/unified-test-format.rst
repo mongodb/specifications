@@ -1398,6 +1398,13 @@ and test files SHOULD NOT specify
 `operation.expectResult <operation_expectResult_>`_ for this operation.
 
 
+listCollections
+~~~~~~~~~~~~~~~
+
+When executing a ``listCollections`` operation, the test runner MUST fully
+iterate the resulting cursor.
+
+
 runCommand
 ~~~~~~~~~~
 

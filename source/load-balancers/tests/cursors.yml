@@ -25,6 +25,14 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: &collection1Name coll1
+  - collection:
+      id: &collection2 collection2
+      database: *database0
+      collectionName: &collection2Name coll2
 
 initialData:
   - collectionName: *collection0Name
@@ -33,6 +41,12 @@ initialData:
       - { _id: 1 }
       - { _id: 2 }
       - { _id: 3 }
+  - collectionName: *collection1Name
+    databaseName: *database0Name
+    documents: []
+  - collectionName: *collection2Name
+    databaseName: *database0Name
+    documents: []
 
 tests:
   - description: no connection is pinned if all documents are returned in the initial batch
@@ -317,3 +331,150 @@ tests:
           - connectionCheckedInEvent: {}
           - connectionClosedEvent:
               reason: error
+
+  # Basic tests for cursor-creating commands besides "find". We don't need to replicate the full set of tests defined
+  # above for each such command. Instead, only one test is needed per command to ensure that the pinned connection is
+  # correctly passed down to the server.
+  #
+  # Each test creates a cursor with a small batch size and fully iterates it. Because drivers do not publish CMAP
+  # events when using pinned connections, each test asserts that only one set of ready/checkout/checkin events are
+  # published.
+
+  - description: aggregate pins the cursor to a connection
+    operations:
+      - name: aggregate
+        object: *collection0
+        arguments:
+          pipeline: []
+          batchSize: 2
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                aggregate: *collection0Name
+                cursor:
+                  batchSize: 2
+              commandName: aggregate
+          - commandSucceededEvent:
+              commandName: aggregate
+          - commandStartedEvent:
+              commandName: getMore
+          - commandSucceededEvent:
+              commandName: getMore
+      - client: *client0
+        eventType: cmap
+        events:
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: listCollections pins the cursor to a connection
+    operations:
+      - name: listCollections
+        object: *database0
+        arguments:
+          filter: {}
+          batchSize: 2
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                listCollections: 1
+                cursor:
+                  batchSize: 2
+              commandName: listCollections
+              databaseName: *database0Name
+          - commandSucceededEvent:
+              commandName: listCollections
+          - commandStartedEvent:
+              commandName: getMore
+          - commandSucceededEvent:
+              commandName: getMore
+      - client: *client0
+        eventType: cmap
+        events:
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: listIndexes pins the cursor to a connection
+    operations:
+      # There is an automatic index on _id so we create two more indexes to force multiple batches with batchSize=2.
+      - name: createIndex
+        object: *collection0
+        arguments:
+          keys: &x1IndexSpec { x: 1 }
+          name: &x1IndexName x_1
+      - name: createIndex
+        object: *collection0
+        arguments:
+          keys: &y1IndexSpec { y: 1 }
+          name: &y1IndexName y_1
+      - name: listIndexes
+        object: *collection0
+        arguments:
+          batchSize: 2
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                createIndexes: *collection0Name
+                indexes:
+                  - name: *x1IndexName
+                    key: *x1IndexSpec
+              commandName: createIndexes
+          - commandSucceededEvent:
+              commandName: createIndexes
+          - commandStartedEvent:
+              command:
+                createIndexes: *collection0Name
+                indexes:
+                  - name: *y1IndexName
+                    key: *y1IndexSpec
+              commandName: createIndexes
+          - commandSucceededEvent:
+              commandName: createIndexes
+          - commandStartedEvent:
+              command:
+                listIndexes: *collection0Name
+                cursor:
+                  batchSize: 2
+              commandName: listIndexes
+              databaseName: *database0Name
+          - commandSucceededEvent:
+              commandName: listIndexes
+          - commandStartedEvent:
+              commandName: getMore
+          - commandSucceededEvent:
+              commandName: getMore
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for first createIndexes.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for second createIndexes.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for listIndexes and getMore.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
