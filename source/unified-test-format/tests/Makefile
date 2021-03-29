@@ -2,7 +2,7 @@ SCHEMA=../schema-1.3.json
 
 .PHONY: all invalid valid-fail valid-pass versioned-api HAS_AJV
 
-all: invalid valid-fail valid-pass versioned-api
+all: invalid valid-fail valid-pass versioned-api load-balancers
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
@@ -16,6 +16,9 @@ valid-pass: HAS_AJV
 
 versioned-api: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../versioned-api/tests/*.yml" --valid
+
+load-balancers: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../load-balancers/tests/*.yml" --valid
 
 HAS_AJV:
 	@if ! command -v ajv > /dev/null; then                \
