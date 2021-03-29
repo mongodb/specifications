@@ -1,0 +1,16 @@
+description: expectedEvent-commandStartedEvent-hasServerId-type
+
+schemaVersion: '1.3'
+
+createEntities:
+  - client:
+      id: &client0 client0
+
+tests:
+  - description: invalid type for commandStartedEvent hasServerId field
+    operations: []
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              hasServerId: foo
