@@ -332,6 +332,88 @@ tests:
           - connectionClosedEvent:
               reason: error
 
+  - description: pinned connections are not returned to the pool after a non-network error on getMore
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [getMore]
+              errorCode: &hostNotFoundCode 7 # This is not a state change error code, so it should not cause SDAM changes.
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+        saveResultAsEntity: &cursor0 cursor0
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 1
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectResult:
+          _id: 2
+      - name: iterateUntilDocumentOrError
+        object: *cursor0
+        expectError:
+          errorCode: *hostNotFoundCode
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: close
+        object: *cursor0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+                batchSize: 2
+              commandName: find
+          - commandSucceededEvent:
+              reply:
+                cursor:
+                  id: { $$type: long }
+                  firstBatch: { $$type: array }
+                  ns: { $$type: string }
+              commandName: find
+          - commandStartedEvent:
+              command:
+                getMore: { $$type: long }
+                collection: *collection0Name
+              commandName: getMore
+          - commandFailedEvent:
+              commandName: getMore
+          - commandStartedEvent:
+              command:
+                killCursors: *collection0Name
+              commandName: killCursors
+          - commandSucceededEvent:
+              commandName: killCursors
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events to set the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the find command + getMore + killCursors.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
   # Basic tests for cursor-creating commands besides "find". We don't need to replicate the full set of tests defined
   # above for each such command. Instead, only one test is needed per command to ensure that the pinned connection is
   # correctly passed down to the server.

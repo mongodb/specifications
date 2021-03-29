@@ -471,3 +471,58 @@ tests:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
+
+  - description: pinned connections are not returned after a non-network error on a CRUD command
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [insert]
+              errorCode: &hostNotFoundCode 7
+      - name: startTransaction
+        object: *session0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: { x: 1 }
+          session: *session0
+        expectError:
+          errorCode: *hostNotFoundCode
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 1
+      - name: abortTransaction
+        object: *session0
+      - name: assertNumberConnectionsCheckedOut
+        object: testRunner
+        arguments:
+          client: *client0
+          connections: 0
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection0Name
+              commandName: insert
+          - commandStartedEvent:
+              command:
+                abortTransaction: 1
+              commandName: abortTransaction
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the insert + abortTransaction.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
