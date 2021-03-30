@@ -733,7 +733,7 @@ extraOptions.mongocryptdSpawnArgs if they need to inspect mongocryptd
 logs.
 
 Upon construction, the MongoClient MUST create a MongoClient to
-mongocryptd configured with serverSelectionTimeoutMS=1000.
+mongocryptd configured with serverSelectionTimeoutMS=10000.
 
 If spawning is necessary, the driver MUST spawn mongocryptd whenever
 server selection on the MongoClient to mongocryptd fails. If the
@@ -741,7 +741,7 @@ MongoClient fails to connect after spawning, the server selection error
 is propagated to the user.
 
 Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
-, connectTimeoutMS=1000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
+, connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
 then the driver is not responsible for spawning mongocryptd. If server
