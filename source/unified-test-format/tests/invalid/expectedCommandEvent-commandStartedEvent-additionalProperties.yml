@@ -1,4 +1,4 @@
-description: "expectedEvent-commandStartedEvent-additionalProperties"
+description: "expectedCommandEvent-commandStartedEvent-additionalProperties"
 
 schemaVersion: "1.0"
 

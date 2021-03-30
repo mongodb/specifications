@@ -16,11 +16,7 @@
         {
           "client": "client0",
           "eventType": 10,
-          "events": [
-            {
-              "commandStartedEvent": {}
-            }
-          ]
+          "events": []
         }
       ]
     }

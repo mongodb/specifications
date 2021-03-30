@@ -1,5 +1,5 @@
 {
-  "description": "expectedEvent-commandSucceededEvent-hasServerId-type",
+  "description": "expectedCommandEvent-commandSucceededEvent-hasServerId-type",
   "schemaVersion": "1.3",
   "createEntities": [
     {

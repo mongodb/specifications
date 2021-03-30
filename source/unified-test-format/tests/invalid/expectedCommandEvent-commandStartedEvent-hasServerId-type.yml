@@ -1,4 +1,4 @@
-description: expectedEvent-commandStartedEvent-hasServerId-type
+description: expectedCommandEvent-commandStartedEvent-hasServerId-type
 
 schemaVersion: '1.3'
 

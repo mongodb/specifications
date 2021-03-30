@@ -12,5 +12,4 @@ tests:
     expectEvents:
       - client: *client0
         eventType: foo
-        events:
-          - commandStartedEvent: {}
+        events: []

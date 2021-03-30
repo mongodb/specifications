@@ -1,4 +1,4 @@
-description: "expectedEvent-commandStartedEvent-databaseName-type"
+description: "expectedCommandEvent-commandStartedEvent-databaseName-type"
 
 schemaVersion: "1.0"
 

@@ -1,5 +1,5 @@
 {
-  "description": "expectedEvent-minProperties",
+  "description": "expectedCommandEvent-minProperties",
   "schemaVersion": "1.0",
   "createEntities": [
     {

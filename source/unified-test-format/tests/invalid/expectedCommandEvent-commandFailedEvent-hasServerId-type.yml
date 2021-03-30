@@ -1,4 +1,4 @@
-description: expectedEvent-commandFailedEvent-hasServerId-type
+description: expectedCommandEvent-commandFailedEvent-hasServerId-type
 
 schemaVersion: '1.3'
 
