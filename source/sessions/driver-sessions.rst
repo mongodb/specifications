@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.7.2
+:Spec Version: 1.8.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2021-04-08
+:Last Modified: 2021-04-12
 
 .. contents::
 
@@ -519,6 +519,7 @@ includes at least one connected, data-bearing server.
 2. Having verified in step 1 that the ``TopologyDescription`` includes at least
 one connected server a driver can now determine whether sessions are supported
 by inspecting the ``TopologyType`` and ``logicalSessionTimeoutMinutes`` property.
+When the ``TopologyType`` is ``LoadBalanced``, sessions are always supported.
 
 Possible race conditions when checking whether a deployment supports sessions
 -----------------------------------------------------------------------------
@@ -845,8 +846,13 @@ Algorithm to acquire a ServerSession instance from the server session pool
 1. If the server session pool is empty create a new ``ServerSession`` and use it
 
 2. Otherwise remove a ``ServerSession`` from the front of the queue and examine it:
+    * If the driver is in load balancer mode, use this ``ServerSession``.
     * If it has at least one minute left before becoming stale use this ``ServerSession``
     * If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to step 1.
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#session-expiration>`__
+for details on session expiration.
+
 
 Algorithm to return a ServerSession instance to the server session pool
 -----------------------------------------------------------------------
@@ -1260,6 +1266,6 @@ Change log
 :2018-10-11: Session pools must be cleared in child process after fork
 :2019-05-15: A ServerSession that is involved in a network error MUST be discarded
 :2019-10-22: Drivers may defer checking if a deployment supports sessions until the first
-operation performed with a session
-:2020-05-26: Simplify logic for determining sessions support
 :2021-04-08: Updated to use hello and legacy hello
+:2021-04-08: Adding in behaviour for load balancer mode.
+:2020-05-26: Simplify logic for determining sessions support

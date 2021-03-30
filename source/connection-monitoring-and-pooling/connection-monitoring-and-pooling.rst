@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: September 24, 2020
-:Version: 1.4.0
+:Last Modified: 2021-04-12
+:Version: 1.5.0
 
 .. contents::
 
@@ -203,7 +203,7 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
 
       /**
        *  An integer representing the “generation” of the pool
-       *  when this Connection was created
+       *  when this Connection was created.
        */
       generation: number;
 
@@ -281,9 +281,15 @@ has the following properties:
       waitQueue: WaitQueue;
     
       /**
-       *  A generation number representing the SDAM generation of the pool
+       *  A generation number representing the SDAM generation of the pool.
        */
       generation: number;
+
+      /**
+       * A map representing the various generation numbers for various services
+       * when in load balancer mode.
+       */
+      serviceGenerations: Map<ObjectId, [number, number]>;
 
       /**
        * The state of the pool.
@@ -675,6 +681,10 @@ incrementing the generation / marking the pool as "paused". If the pool is
 already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared
 event.
 
+A Pool MUST also have a method of clearing all `Connections <#connection>`_ for a
+specific ``serviceId`` for use when in load balancer mode. This method increments
+the generation of the pool for that specific ``serviceId`` in the generation map.
+
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
 cleared while the checkOut was being performed. The error returned as a result
@@ -683,6 +693,20 @@ an error that marks the SDAM state unknown. Clearing the WaitQueue MUST happen
 eagerly so that any operations waiting on `Connections <#connection>`_ can retry
 as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
 requests from the WaitQueue.
+
+Load Balancer Mode
+------------------
+
+For load-balanced deployments, pools MUST maintain a map from ``serviceId`` to a
+tuple of (generation, connection count) where the connection count refers to the
+total number of connections that exist for a specific ``serviceId``. The pool MUST
+remove the entry for a ``serviceId`` once the connection count reaches 0.
+Once the MongoDB handshake is done, the connection MUST get the
+generation number that applies to its ``serviceId`` from the map and update the
+map to increment the connection count for this ``serviceId``.
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+
 
 Forking
 -------
@@ -729,6 +753,7 @@ All drivers that implement a connection pool MUST provide an API that allows use
 Events
 ------
 
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 
@@ -765,6 +790,12 @@ Events
        *  The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
+
+      /**
+       * The service id for which the pool was cleared for in load balancing mode.
+       * See load balancer specification for more information about this field.
+       */
+      serviceId: Optional<ObjectId>
     }
 
     /**
@@ -1077,6 +1108,8 @@ Change log
 
 :2019-06-06: Add "connectionError" as a valid reason for
              ConnectionCheckOutFailedEvent
+
+:2021-4-12: Adding in behaviour for load balancer mode.
 
 .. Section for links.
 

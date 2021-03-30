@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.21
-:Last Modified: 2020-06-08
+:Version: 2.30
+:Last Modified: 2021-04-12
 
 .. contents::
 
@@ -147,6 +147,7 @@ A server type from which a client can receive application data:
 * RSPrimary
 * RSSecondary
 * Standalone
+* LoadBalanced
 
 Round trip time
 ```````````````
@@ -280,7 +281,7 @@ ServerType
 
 Standalone, Mongos,
 PossiblePrimary, RSPrimary, RSSecondary, RSArbiter, RSOther, RSGhost,
-or Unknown.
+LoadBalancer or Unknown.
 
 See `parsing an ismaster response`_.
 
@@ -471,6 +472,8 @@ Drivers MUST enforce:
   and possibly Single,
   are allowed.
   (See `verifying setName with TopologyType Single`_.)
+* ``loadBalanced=true`` cannot be used in conjunction with
+  ``directConnection=true`` or ``replicaSet``
 
 Handling of SRV URIs resolving to single host
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -595,6 +598,8 @@ are not replica set member states at all.
 |                   | secondary, nor arbiter.                                       |
 +-------------------+---------------------------------------------------------------+
 | RSGhost           | "isreplicaset: true" in response.                             |
++-------------------+---------------------------------------------------------------+
+| LoadBalanced      | "loadBalanced=true" in URI.                                   |
 +-------------------+---------------------------------------------------------------+
 
 A server can transition from any state to any other.  For example, an
@@ -749,6 +754,12 @@ response to the current ServerDescription's topologyVersion:
 See `Replacing the TopologyDescription`_ for an example implementation of
 topologyVersion comparison.
 
+serviceId
+````````
+
+MongoDB 5.0 and later, as well as any mongos-like service, include a ``serviceId``
+field when the service is configured behind a load balancer.
+
 Other ServerDescription fields
 ``````````````````````````````
 
@@ -797,6 +808,13 @@ the ServerDescription in TopologyDescription.servers
 MUST be replaced with the new ServerDescription.
 
 .. _is compatible:
+
+
+TopologyType LoadBalanced
+`````````````````````````
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-and-monitoring>`__ for details.
+
 
 Checking wire protocol compatibility
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -908,7 +926,7 @@ TopologyType explanations
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This subsection complements the `TopologyType table`_
-with prose explanations of the TopologyTypes (besides Single).
+with prose explanations of the TopologyTypes (besides Single and LoadBalanced).
 
 TopologyType Unknown
   A starting state.
@@ -1264,12 +1282,17 @@ implementation::
                 return
 
             if isStateChangeError(error):
-                # Mark the server Unknown
-                unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
-                onServerDescriptionChanged(unknown, connection pool for server)
+                # Don't mark server unknown in load balanced mode.
+                if type != LoadBalanced
+                  # Mark the server Unknown
+                  unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
+                  onServerDescriptionChanged(unknown, connection pool for server)
                 if isShutdown(code) or (error was from <4.2):
                   # the pools must only be cleared while the lock is held.
-                  clear connection pool for server
+                  if type == LoadBalanced:
+                    clear connection pool for serviceId
+                  else:
+                    clear connection pool for server
                 if multi-threaded:
                     request immediate check
                 else:
@@ -1279,10 +1302,14 @@ implementation::
                     if isNotMaster(error):
                         check failing server
             elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
-                # Mark the server Unknown
-                unknown = new ServerDescription(type=Unknown, error=error)
-                onServerDescriptionChanged(unknown, connection pool for server)
-                clear connection pool for server
+                if type != LoadBalanced
+                  # Mark the server Unknown
+                  unknown = new ServerDescription(type=Unknown, error=error)
+                  onServerDescriptionChanged(unknown, connection pool for server)
+                  clear connection pool for server
+                else
+                  if serviceId
+                    clear connection pool for serviceId
                 # Cancel inprogress check
                 cancel monitor check
 
@@ -1369,8 +1396,12 @@ we distinguish two phases of connecting to a server and using it for application
 
 If there is a network error or timeout on the connection before the handshake completes,
 the client MUST replace the server's description
-with a default ServerDescription of type Unknown,
-and fill the ServerDescription's error field with useful information.
+with a default ServerDescription of type Unknown when the TopologyType is not
+LoadBalanced, and fill the ServerDescription's error field with useful information.
+
+If there is a network error or timeout on the connection before the handshake completes,
+and the TopologyType is LoadBalanced, the client MUST keep the ServerDescription
+as LoadBalancer.
 
 If there is a network timeout on the connection after the handshake completes,
 the client MUST NOT mark the server Unknown.
@@ -1378,8 +1409,8 @@ the client MUST NOT mark the server Unknown.
 rather than an unavailable server.)
 If, however, there is some other network error on the connection after the
 handshake completes, the client MUST replace the server's description
-with a default ServerDescription of type Unknown,
-and fill the ServerDescription's error field with useful information,
+with a default ServerDescription of type Unknown if the TopologyType is not
+LoadBalanced, and fill the ServerDescription's error field with useful information,
 the same as if an error or timeout occurred before the handshake completed.
 
 When the client marks a server Unknown due to a network error or timeout,
@@ -1516,8 +1547,8 @@ Authentication errors
 ~~~~~~~~~~~~~~~~~~~~~
 
 If the authentication handshake fails for a connection, drivers MUST mark the
-server Unknown and clear the server's connection pool. (See
-`Why mark a server Unknown after an auth error?`_)
+server Unknown and clear the server's connection pool if the TopologyType is
+not LoadBalanced. (See `Why mark a server Unknown after an auth error?`_)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -2483,3 +2514,5 @@ mark the server Unknown and clear the pool.
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Authentication spec: /source/auth/auth.rst
+
+2021-4-12: Adding in behaviour for load balancer mode.

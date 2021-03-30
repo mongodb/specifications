@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2020-03-17
-:Version: 1.12.0
+:Last Modified: 2021-04-12
+:Version: 1.13.0
 
 .. contents::
 
@@ -580,10 +580,10 @@ configuration option and a default read preference configuration option,
 passing a value for both MUST be an error. (See `Use of slaveOk`_ for the two
 uses of ``slaveOK``.)
 
-Passing read preference to mongos
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Passing read preference to mongos and load balancers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If a server of type Mongos is selected for a read operation, the read
+If a server of type Mongos or LoadBalancer is selected for a read operation, the read
 preference is passed to the selected mongos through the use of the
 ``slaveOK`` wire protocol flag, the ``$readPreference`` query
 modifier or both, according to the following rules.
@@ -594,7 +594,7 @@ older versions of mongos, drivers MUST only use the value of the ``slaveOK``
 wire protocol flag (i.e. set or unset) to indicate the desired read preference
 and MUST NOT use a ``$readPreference`` query modifier.
 
-Therefore, when sending queries to a mongos, the following rules apply:
+Therefore, when sending queries to a mongos or load balancer, the following rules apply:
 
   - For mode 'primary', drivers MUST NOT set the ``slaveOK`` wire protocol flag
     and MUST NOT use ``$readPreference``
@@ -634,7 +634,7 @@ the query MUST be provided using the ``$query`` modifier like so::
         }
     }
 
-A valid ``$readPreference`` document for mongos has the following requirements:
+A valid ``$readPreference`` document for mongos or load balancer has the following requirements:
 
 1.  The ``mode`` field MUST be present exactly once with the mode represented
     in camel case:
@@ -657,7 +657,7 @@ A valid ``$readPreference`` document for mongos has the following requirements:
 
     The ``hedge`` field MUST be either absent or be a document.
 
-Mongos receiving a query with ``$readPreference`` SHOULD validate the
+Mongos or service receiving a query with ``$readPreference`` SHOULD validate the
 ``mode``, ``tags``, ``maxStalenessSeconds``, and ``hedge`` fields according to
 rules 1 and 2 above, but SHOULD ignore unrecognized fields for
 forward-compatibility rather than throwing an error.
@@ -947,7 +947,7 @@ available.  Depending on server type, the read preference is communicated
 to the server differently:
 
 - Type Mongos: the read preference is sent to the server using the rules
-  for `Passing read preference to mongos`_.
+  for `Passing read preference to mongos and load balancers`_.
 
 - Type Standalone: clients MUST NOT send the read preference to the server
 
@@ -961,6 +961,12 @@ to the server differently:
   that any server type can handle the request.
 
 The single server is always suitable for write operations if it is available.
+
+Topology type: LoadBalanced
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__ for details.
+
 
 Topology types: ReplicaSetWithPrimary or ReplicaSetNoPrimary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1022,7 +1028,7 @@ Mongos or Unknown.
 
 For read operations, all servers of type Mongos are suitable; the ``mode``,
 ``tag_sets``, and ``maxStalenessSeconds`` read preference parameters are ignored for selecting a
-server, but are passed through to mongos. See `Passing read preference to mongos`_.
+server, but are passed through to mongos. See `Passing read preference to mongos and load balancers`_.
 
 For write operations, all servers of type Mongos are suitable.
 
@@ -1167,7 +1173,7 @@ Modes ('primary', 'secondary', ...) are constants declared in whatever way is
 idiomatic for the programming language. The constant values may be ints,
 strings, or whatever.  However, when attaching modes to ``$readPreference``
 camel case must be used as described above in `Passing read preference to
-mongos`_.
+mongos and load balancers`_.
 
 primaryPreferred and secondaryPreferred
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1529,8 +1535,8 @@ However, because topology type Single is used for direct connections, we want
 read operations to succeed even against a secondary, so the ``slaveOK`` wire
 protocol flag must be sent to mongods with topology type Single.
 
-(If the server type is Mongos, follow the rules for `passing read preference to
-mongos`_, even for topology type Single.)
+(If the server type is Mongos, follow the rules for
+`Passing read preference to mongos and load balancers`_, even for topology type Single.)
 
 General command method going to primary
 ---------------------------------------
@@ -1862,3 +1868,5 @@ window.
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.
+
+2021-4-7: Adding in behaviour for load balancer mode.

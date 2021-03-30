@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5.6
+:Spec Version: 1.6.0
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2019-10-21
+:Last Modified: 2021-04-12
 
 .. contents::
 
@@ -837,6 +837,12 @@ Drivers MUST unpin a ClientSession in the following situations:
 Note that committing a transaction on a pinned ClientSession MUST NOT unpin
 the session as ``commitTransaction`` may be called multiple times.
 
+Pinning in Load Balancer Mode
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+
+
 recoveryToken field
 ~~~~~~~~~~~~~~~~~~~
 
@@ -1424,3 +1430,4 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 :2018-06-07: The count command is not supported within transactions.
 :2018-06-14: Any retryable writes error raised by commitTransaction must be
              labelled "UnknownTransactionCommitResult".
+:2021-04-12: Adding in behaviour for load balancer mode.

@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.6.1
+:Spec Version: 1.7.0
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-04-08
+:Last Modified: 2021-4-15
 
 
 **Abstract**
@@ -76,6 +76,11 @@ Multiple seeds with directConnection URI option
 
 The driver MUST report an error if the ``directConnection=true`` URI option
 is specified with multiple seeds.
+
+Load Balancer Mode
+~~~~~~~~~~~~~~~~~~
+
+For URI option validation in Load Balancer mode, please see the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-string-options>`__ for details.
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,6 +171,12 @@ pertaining to URI options apply here.
      - no "j" field specified
      - no
      - Default write concern "j" field for the client
+
+   * - loadBalanced
+     - "true" or "false"
+     - defined in `Load Balancer spec <../load-balancers/loadbalancers.rst#connection-string-options>`_
+     - no
+     - Whether the driver is connecting to a load balancer.
 
    * - localThresholdMS
      - non-negative integer; 0 means 0 ms (i.e. the fastest eligible server
@@ -451,5 +462,6 @@ Changes
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
 - 2019-04-26 authSource and authMechanism have no default value
 - 2019-09-08 Add retryReads option
+- 2021-04-15 Adding in behaviour for load balancer mode.
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
