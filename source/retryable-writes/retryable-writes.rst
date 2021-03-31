@@ -495,10 +495,9 @@ Consider the following pseudo-code:
      * propagate. */
     try {
       return executeCommand(server, retryableCommand);
+    } catch (DriverException ignoredError) {
+      throw originalError;
     } catch (Exception secondError) {
-      if (secondError instanceof DriverException) {
-        throw originalError;
-      }
       handleError(secondError);
       throw secondError;
     }
