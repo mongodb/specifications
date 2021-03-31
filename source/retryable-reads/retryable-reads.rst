@@ -384,11 +384,10 @@ and reflects the flow described above.
       return executeCommand(server, command);
     } catch (NetworkException originalError) {
       updateTopologyDescriptionForNetworkError(server, originalError);
-      return executeRetry(command, session, originalError);
     } catch (NotMasterException originalError) {
       updateTopologyDescriptionForNotMasterError(server, originalError);
-      return executeRetry(command, session, originalError);
     }
+    return executeRetry(command, session, originalError);
   }
   
   /**
