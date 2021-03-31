@@ -353,10 +353,15 @@ and sharded clusters.
 
    5. Via CMAP monitoring, assert that the first check out succeeds.
 
-   6. Via CMAP monitoring, assert that the second check out fails due to a
+   6. Via CMAP monitoring, assert that a PoolClearedEvent is then emitted.
+
+   7. Via CMAP monitoring, assert that the second check out then fails due to a
       connection error.
 
-   7. Disable the failpoint.
+   8. Via Command Monitoring, assert that exactly three ``insert``
+      CommandStartedEvents were observed in total.
+
+   9. Disable the failpoint.
 
 
 Changelog
