@@ -58,7 +58,7 @@ Check wire version, not server version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When determining server capabilities within the driver, rely only on the
-maxWireVersion in the ismaster response, not on the X.Y.Z server version.  An
+maxWireVersion in the hello response, not on the X.Y.Z server version.  An
 exception is testing server development releases, as the server bumps wire
 version early and then continues to add features until the GA.
 
