@@ -7,7 +7,7 @@ createEntities:
       id: &client0 client0
 
 tests:
-  - description: invalid type for commandSucceededEvent hasServerId field
+  - description: foo
     operations: []
     expectEvents:
       - client: *client0

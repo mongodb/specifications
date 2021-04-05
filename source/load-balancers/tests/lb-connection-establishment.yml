@@ -11,6 +11,8 @@ createEntities:
       uriOptions:
         # Explicitly set loadBalanced to false to override the option from the global URI.
         loadBalanced: false
+      observeEvents:
+        - commandStartedEvent
   - database:
       id: &database0 database0
       client: *client0
@@ -27,3 +29,8 @@ tests:
           command: { ping: 1 }
         expectError:
           isClientError: false
+    expectEvents:
+      # No events should be published because the server fails the connection handshake, so the "ping" command is never
+      # sent.
+      - client: *client0
+        events: []
