@@ -10,7 +10,7 @@
   ],
   "tests": [
     {
-      "description": "invalid type for commandStartedEvent hasServerId field",
+      "description": "foo",
       "operations": [],
       "expectEvents": [
         {

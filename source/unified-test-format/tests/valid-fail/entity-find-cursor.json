@@ -4,12 +4,7 @@
   "createEntities": [
     {
       "client": {
-        "id": "client0",
-        "observeEvents": [
-          "commandStartedEvent",
-          "commandSucceededEvent",
-          "commandFailedEvent"
-        ]
+        "id": "client0"
       }
     },
     {

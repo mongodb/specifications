@@ -14,7 +14,10 @@
         "id": "client0",
         "uriOptions": {
           "loadBalanced": false
-        }
+        },
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
       }
     },
     {
@@ -42,6 +45,12 @@
           "expectError": {
             "isClientError": false
           }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": []
         }
       ]
     }
