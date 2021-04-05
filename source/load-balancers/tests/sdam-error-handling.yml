@@ -133,8 +133,9 @@ tests:
   # This test uses singleClient to ensure that connection attempts are routed
   # to the same mongos on which the failpoint is set.
   - description: errors during the initial connection hello are ignore 
-    skipReason: blocked on running against 4.9+ until SERVER-55211
     runOnRequirements:
+      # Server version 4.9+ is needed to set a fail point on the initial
+      # connection handshake with the appName filter due to SERVER-49336.
       - minServerVersion: '4.9'
     operations:
       - name: failPoint
