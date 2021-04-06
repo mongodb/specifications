@@ -8,7 +8,7 @@ Server Discovery And Monitoring -- Test Plan
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: September 8, 2014
+:Last Modified: April 6, 2021
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -217,7 +217,7 @@ This test will be used to ensure monitors properly create and unpause connection
 pools when they discover servers.
 
 This test requires failCommand appName support which is only available in
-MongoDB 4.2.9+.
+MongoDB 4.9.0+.
 
 1. Create a client with directConnection=true, appName="SDAMPoolManagementTest",
    and heartbeatFrequencyMS=500 (or lower if possible).
