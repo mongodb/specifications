@@ -2650,13 +2650,14 @@ to elsewhere in the specification as the internal MongoClient.
 Determine the server version and topology type using the internal MongoClient.
 This information will be used to evaluate any future `runOnRequirement`_ checks.
 
-In addition to the cluster URI, the test runner MUST also be configurable
-with two other connection strings (or equivalent configuration) that point to
-TCP load balancers: one fronting multiple servers and one fronting a single
-server. These will be used to initialize client entities when executing tests
-against a load balanced cluster. If the topology type is ``LoadBalanced``,
-the test runner MUST error if either of these URIs is not provided. For all
-other topology types, these URIs MUST be ignored.
+In addition to the aforementioned connection string, the test runner MUST
+also be configurable with two other connection strings (or equivalent
+configuration) that point to TCP load balancers: one fronting multiple
+servers and one fronting a single server. These will be used to initialize
+client entities when executing tests against a load balanced cluster. If the
+topology type is ``LoadBalanced``, the test runner MUST error if either of
+these URIs is not provided. For all other topology types, these URIs SHOULD NOT
+be provided and MUST be ignored if provided.
 
 The test runner SHOULD terminate any open transactions (see:
 `Terminating Open Transactions`_) using the internal MongoClient before
@@ -2719,6 +2720,9 @@ Create a new `Entity Map`_ that will be used for this test. If `createEntities`_
 is specified, the test runner MUST create each `entity`_ accordingly and add it
 to the map. If the topology is a sharded cluster, the test runner MUST handle
 `useMultipleMongoses`_ accordingly if it is specified for any client entities.
+If the topology type is ``LoadBalanced``, client entities MUST be initialized
+with the appropriate load balancer connection string as discussed in
+`useMultipleMongoses <entity_client_useMultipleMongoses_>`_.
 
 If the test might execute a ``distinct`` command within a sharded transaction,
 for each target collection the test runner SHOULD execute a non-transactional
@@ -3185,8 +3189,9 @@ Change Log
 ==========
 
 :2021-03-29: Added a ``FindCursor`` entity type, defined a set of cursor
-             operations, added ``loadBalanced`` and ``auth`` properties to
-             ``runOnRequirements``, and added CMAP events to the possible event
+             operations, added an ``auth`` property to ``runOnRequirements``
+             and modified the ``topologies`` property to accept
+             ``load-balanced``, and added CMAP events to the possible event
              types for ``expectedEvent``.
 
 :2021-03-22: Split ``serverApi`` into its own section. Note types for ``loop``
