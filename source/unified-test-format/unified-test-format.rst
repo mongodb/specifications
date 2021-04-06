@@ -475,11 +475,12 @@ The structure of this object is as follows:
     connecting to multiple mongos servers is necessary to test session
     pinning.
 
-    If this option is true or unset and the topology type is
-    ``LoadBalanced``, the test runner MUST connect the MongoClient to a load
-    balancer that is balancing multiple servers. If it is false and the
-    topology type is ``LoadBalanced``, the test runner MUST connect the
-    MongoClient to a load balancer that is only fronting a single server.
+    If the topology type is ``LoadBalanced``, the test runner MUST use one of
+    the two load balancer URIs described in `Initializing the Test Runner`_
+    to configure the MongoClient. If ``useMultipleMongoses`` is true or
+    unset, the test runner MUST use the URI of the load balancer fronting
+    multiple servers. Otherwise, the test runner MUST use the URI of the load
+    balancer fronting a single server.
 
     This option has no effect for topologies that are not sharded or load
     balanced.
@@ -2648,6 +2649,14 @@ to elsewhere in the specification as the internal MongoClient.
 
 Determine the server version and topology type using the internal MongoClient.
 This information will be used to evaluate any future `runOnRequirement`_ checks.
+
+In addition to the cluster URI, the test runner MUST also be configurable
+with two other connection strings (or equivalent configuration) that point to
+TCP load balancers: one fronting multiple servers and one fronting a single
+server. These will be used to initialize client entities when executing tests
+against a load balanced cluster. If the topology type is ``LoadBalanced``,
+the test runner MUST error if either of these URIs is not provided. For all
+other topology types, these URIs MUST be ignored.
 
 The test runner SHOULD terminate any open transactions (see:
 `Terminating Open Transactions`_) using the internal MongoClient before
