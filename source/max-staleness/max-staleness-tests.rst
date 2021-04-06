@@ -70,7 +70,7 @@ Configure a client with heartbeatFrequencyMS of 500 milliseconds.
 
 Connect to a MongoDB replica set member with maxWireVersion at least 5.
 (Only replica set members with maxWireVersion 5 have a lastWriteDate in
-the ismaster reply.)
+the legacy hello reply.)
 
 Insert a document and wait one second.
 
