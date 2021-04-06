@@ -13,9 +13,9 @@ Wire Compression in Drivers
             Dana Groff (2017-05-02) 
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2019-05-13
+:Last Modified: 2021-04-06
 :Minimum Server Version: 3.4
-:Version: 1.2
+:Version: 1.3
 
 
 Abstract
@@ -55,8 +55,8 @@ MongoDB Handshake Amendment
 
 The `MongoDB Handshake Protocol
 <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
-describes an argument passed to isMaster, ``client``.  This specification adds
-an additional argument, ``compression``, that SHOULD be provided to isMaster if
+describes an argument passed to the handshake command, ``client``.  This specification adds
+an additional argument, ``compression``, that SHOULD be provided to the handshake command if
 a driver supports wire compression.
 
 The value of this argument is an array of supported compressors.
@@ -64,7 +64,7 @@ The value of this argument is an array of supported compressors.
 Example::
 
     {
-        isMaster: 1,
+        hello: 1,
         client: {}, /* See MongoDB Handshake */
         compression: ["snappy", "zlib", "zstd"]
     }
@@ -75,7 +75,7 @@ compression argument.
 Example::
 
     {
-        isMaster: 1,
+        hello: 1,
         client: {}, /* See MongoDB Handshake */
         compression: []
     }
@@ -84,10 +84,10 @@ Example::
 
 Clients that want to compress their messages need to send a list of the
 algorithms - in the order they are specified in the client configuration - that
-they are willing to support to the server during the initial isMaster call. For
+they are willing to support to the server during the initial handshake call. For
 example, a client wishing to compress with the snappy algorithm, should send::
 
-    { isMaster: 1, ... , compression: [ "snappy" ] }
+    { hello: 1, ... , compression: [ "snappy" ] }
 
 The server will respond with the intersection of its list of supported
 compressors and the client's. For example, if the server had both snappy and
@@ -101,7 +101,7 @@ something like::
     { ... , compression: [ "snappy", "zlib" ], ok: 1 }
 
 If the server has no compression algorithms in common with the client, it sends
-back an isMaster response without a compression field. Clients MAY issue a log
+back a handshake response without a compression field. Clients MAY issue a log
 level event to inform the user, but MUST NOT error.
 
 When MongoDB server receives a compressor it can support it MAY reply to any
@@ -194,7 +194,7 @@ Compressor IDs
 Each compressor is assigned a predefined compressor ID.
 
 +-----------------+----------------+-------------------------------------------------------+
-| compressorId    | isMaster Value |  Description                                          |
+| compressorId    | hello Value    |  Description                                          |
 +=================+================+=======================================================+
 | 0               |  noop          | The content of the message is uncompressed.           |
 |                 |                | This is realistically only used for testing           |
@@ -246,6 +246,7 @@ MUST NOT be compressed, such as authentication requests.
 
 Messages using the following commands MUST NOT be compressed:
 
+* hello
 * isMaster
 * saslStart
 * saslContinue
@@ -341,7 +342,7 @@ Connection strings, and results
    { "ok" : { "$numberDouble" : "1.0" } }
 
 * Create example program that authenticates to the server using SCRAM-SHA-1,
-  then creates another user (MONGODB-CR), then runs isMaster followed with
+  then creates another user (MONGODB-CR), then runs hello followed with
   serverStatus.
 * Reconnect to the same server using the created MONGODB-CR credentials.
   Observe that the only command that was decompressed on the server was
@@ -423,19 +424,19 @@ Q & A
 * The server MAY reply with compressed data even if the request was not compressed?
    * Yes, and this is in fact the behaviour of MongoDB 3.4
 
-* Can drivers compress the initial MongoDB Handshake/isMaster request?
+* Can drivers compress the initial MongoDB Handshake/hello request?
    * No.
 
-* Can the server reply to the MongoDB Handshake/isMaster compressed?
+* Can the server reply to the MongoDB Handshake/hello compressed?
    * Yes, yes it can. Be aware it is completely acceptable for the server to
      use compression for any and all replies, using any supported
      compressor, when the client announced support for compression - this
-     includes the reply to the actual MongoDB Handshake/isMaster where the
+     includes the reply to the actual MongoDB Handshake/hello where the
      support was announced.
 
 * This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB3.4?
    * Yes, it does. All MongoDB versions support the ``compression`` argument
-     to ``isMaster`` and all MongoDB versions will reply with an intersection
+     to the initial handshake and all MongoDB versions will reply with an intersection
      of compressors it supports. This works even with MongoDB 3.0, as it
      will not reply with any compressors. It also works with MongoDB 3.4
      which will reply with ``snappy`` if it was part of the driver's list.
@@ -476,11 +477,13 @@ Q & A
 Changelog
 =========
 
-+------------+---------------------------------------------------+
-| 2019-05-13 | Add zstd as supported compression algorithm       |
-+------------+---------------------------------------------------+
-| 2017-06-13 | Don't require clients to implement legacy opcodes |
-+------------+---------------------------------------------------+
-| 2017-05-10 | Initial commit                                    |
-+------------+---------------------------------------------------+
++------------+--------------------------------------------------------+
+| 2021-04-06 | v1.3 Use 'hello' command                               |
++------------+--------------------------------------------------------+
+| 2019-05-13 | v1.2 Add zstd as supported compression algorithm       |
++------------+--------------------------------------------------------+
+| 2017-06-13 | v1.1 Don't require clients to implement legacy opcodes |
++------------+--------------------------------------------------------+
+| 2017-05-10 | v1.0 Initial commit                                    |
++------------+--------------------------------------------------------+
 
