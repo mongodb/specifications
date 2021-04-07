@@ -59,8 +59,6 @@ Existing Spec Tests
 Tests defined in the following specifications MUST be included in a driver's
 serverless testing suite, including prose tests:
 - CRUD, including the v1, v2, and unified tests
-- Sessions
-- Versioned API
 
 In the future, this list will be expanded to include a greater portion of the
 tests once the Serverless proxy has more robust failCommand support.
