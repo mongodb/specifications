@@ -2,8 +2,8 @@
 Write Commands Specification
 ============================
 
-:date: May 14, 2014
-:version: 0.9
+:date: April 7, 2021
+:version: 0.9.1
 :status: Approved
 
 .. contents::
@@ -136,7 +136,7 @@ Supporting unlimited batch sizes poses two problems - the BSONObj internal size 
 (for command overhead), and a small write operation may have a much larger response.  In order to
 ensure a batch can be correctly processed, two limits must be respected.
 
-Both of these limits can be found using isMaster():
+Both of these limits can be found using hello():
 
 * ``maxBsonObjectSize`` : currently 16 MiB, this is the maximum size of writes (excluding command overhead)
   that should be sent to the server.  Documents to be inserted, query documents for updates and
@@ -468,7 +468,7 @@ FAQ
 Can a driver still use the OP_INSERT, OP_DELETE, OP_UPDATE?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``isMaster.maxWireVersion`` to be less than 2 or does not include the field.
+Yes, a 2.6 server will still support those. But it is unlikely that a 2.8 server would.  Of course, when talking to older servers, the usual op codes will continue working the same. An older server is one that reports ``hello.maxWireVersion`` to be less than 2 or does not include the field.
 
 The rationale here is that we may choose to divert all the write traffic to the new
 protocol. (This depends on the having the overhead to issue a batch with one item very low.)
@@ -503,5 +503,9 @@ v0.9
 ~~~~
 * Removed text related to bulk operations; see the Bulk API spec for bulk details
 * Clarified some paragraphs; re-ordered the response field sections
+
+v0.9.1
+~~~~~~
+* Updated to use hello command
 
 ..  LocalWords:  boolean ie
