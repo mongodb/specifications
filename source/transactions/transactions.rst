@@ -1400,7 +1400,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
-:2020-04-07: Specify that servers should be unpinned once a transcation is aborted.
+:2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.
 :2019-10-21: Specify that a commit error can have two error labels
 :2019-07-30: Clarify when the cached recoveryToken should be cleared.
 :2019-06-10: Client-side errors must not change transaction state.
