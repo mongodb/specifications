@@ -824,8 +824,10 @@ error label. In cases where the UnknownTransactionCommitResult causes an
 automatic retry attempt, drivers MUST unpin the ClientSession before performing
 server selection for the retry.
 
-Starting a new transaction on a pinned ClientSession MUST unpin the
-session. Additionally, any non-transaction operation using a pinned
+Aborting a transaction or starting a new transaction on a pinned
+ClientSession MUST unpin the session. Committing a transaction on a pinned
+ClientSession MUST NOT unpin the session as transactions can be committed
+multiple times. Additionally, any non-transaction operation using a pinned
 ClientSession MUST unpin the session and the operation MUST perform normal
 server selection.
 
