@@ -369,8 +369,7 @@ The structure of this object is as follows:
   "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
   "sharded" implies "sharded-replicaset", but not vice versa).
 
-- ``serverlessMode``: Optional string, only applicable to "sharded" and
-  "sharded-replicaset" topologies. Whether or not the test should be run on
+- ``serverlessMode``: Optional string. Whether or not the test should be run on
   serverless instances imitating sharded clusters. Valid modes are
   "requireServerless", "forbidServerless", and "allowServerless". If
   "requireServerless", the test MUST only be run on serverless instances. If

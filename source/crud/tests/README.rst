@@ -61,14 +61,13 @@ Each YAML file has the following keys:
     and "sharded". If this field is omitted, the default is all topologies (i.e.
     ``["single", "replicaset", "sharded"]``).
 
-  - ``serverlessMode``: Optional string, only applicable to "sharded"
-    topologies. Whether or not the test should be run on serverless instances
-    imitating sharded clusters. Valid modes are "requireServerless",
-    "forbidServerless", and "allowServerless". If "requireServerless", the test
-    MUST only be run on serverless instances. If "forbidServerless", the test
-    MUST only be run on actual sharded deployments. If omitted or
-    "allowServerless", the test can be run on either serverless instances or on
-    real sharded deployments.
+  - ``serverlessMode``: (optional) Whether or not the test should be run on
+    serverless instances imitating sharded clusters. Valid modes are
+    "requireServerless", "forbidServerless", and "allowServerless". If
+    "requireServerless", the test MUST only be run on serverless instances. If
+    "forbidServerless", the test MUST only be run on actual sharded
+    deployments. If omitted or "allowServerless", the test can be run on either
+    serverless instances or on real sharded deployments.
 
 - ``collection_name`` (optional): The collection to use for testing.
 
