@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 2.0.0
+:Spec Version: 2.0.1
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2020-07-01
+:Last Modified: 2021-04-07
 
 .. contents::
 
@@ -394,8 +394,8 @@ enabling OCSP support will ensure that a customer’s choice in CAs is not
 limited by a driver’s lack of OCSP support.
 
 OCSP stapling will also help applications deployed behind a firewall
-with an outbound whitelist. It’s a very natural mistake to neglect to
-whitelist the CRL distribution points and the OCSP endpoints, which can
+with an outbound allowList. It’s a very natural mistake to neglect to
+allowList the CRL distribution points and the OCSP endpoints, which can
 prevent an application from connecting to a MongoDB instance if
 certificate revocation checking is enabled but the driver does not
 support OCSP stapling.
@@ -467,7 +467,7 @@ verify the revocation status of intermediate certificates.
 Backwards Compatibility
 ========================
 
-An application behind a firewall with an outbound whitelist that
+An application behind a firewall with an outbound allowList that
 upgrades to a driver implementing this specification may experience
 connectivity issues when OCSP is enabled. This is because the driver may need to contact
 OCSP endpoints or CRL distribution points [1]_ specified in the
@@ -629,7 +629,7 @@ specifically related to OCSP to the user, in accordance with the
 <https://github.com/mongodb/specifications#no-knobs>`__. However, we
 later decided that users may benefit from having the ability to
 disable OCSP endpoint checking when applications are deployed behind
-restrictive firewall with outbound whitelists, and this benefit is
+restrictive firewall with outbound allowLists, and this benefit is
 worth adding another URI option.
 
 Appendix
@@ -787,6 +787,8 @@ of checking this are:
 
 Changelog
 ==========
+
+**2021-04-07**: 2.0.1: Updated terminology to use allowList.
 
 **2020-07-01**: 2.0.0: Default tlsDisableOCSPEndpointCheck or
 tlsDisableCertificateRevocationCheck to true in the case that a driver's
