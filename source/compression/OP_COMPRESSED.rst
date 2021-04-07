@@ -247,7 +247,7 @@ MUST NOT be compressed, such as authentication requests.
 Messages using the following commands MUST NOT be compressed:
 
 * hello
-* isMaster
+* legacy hello (see `MongoDB Handshake Protocol <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_ for details)
 * saslStart
 * saslContinue
 * getnonce
