@@ -33,7 +33,9 @@ Required Variables
 
 Managing the Serverless instances and connecting to them requires a few
 variables to be specified. These are confidential and MUST be specified as
-private Evergreen variables or used only in private Evergreen projects.
+private Evergreen variables or used only in private Evergreen projects. If using
+a public Evergreen project, xtrace MUST be disabled when using these variables
+to help prevent accidental leaks.
 
 - ``${SERVERLESS_DRIVERS_GROUP}``: Contains the group ID of the Atlas group
    dedicated to drivers testing of Serverless.
