@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2020-02-13
-:Version: 1.5.4
+:Last Modified: 2021-04-07
+:Version: 1.5.5
 
 .. contents::
 
@@ -37,7 +37,7 @@ Terminology
 ===========
 
 MaxWireVersion
-    The ``maxWireVersion`` value reported by the ``ismaster`` command.
+    The ``maxWireVersion`` value reported by the ``hello`` command.
 Server Selection
     The process of selecting a server to read or write from. See
     `the server selection specification
@@ -700,3 +700,4 @@ Version History
   - 2019-06-07: Clarify language for aggregate and mapReduce commands that write.
   - 2019-10-31: Explicitly define write concern option mappings.
   - 2020-02-13: Inconsistent write concern must be considered an error.
+  - 2021-04-07: Updated to use hello command.
