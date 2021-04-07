@@ -55,6 +55,10 @@
             "enum": ["single", "replicaset", "sharded", "sharded-replicaset"]
           }
         },
+        "serverlessMode": {
+          "type": "string",
+          "enum": ["requireServerless", "forbidServerless", "allowServerless"]
+        },
         "serverParameters": {
           "type": "object",
           "minProperties": 1

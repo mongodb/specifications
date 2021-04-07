@@ -64,6 +64,8 @@ tests:
                 <<: *expectedApiVersion
 
   - description: "aggregate on database appends declared API version"
+    runOnRequirements:
+      - serverlessMode: forbidServerless
     operations:
       - name: aggregate
         object: *adminDatabase

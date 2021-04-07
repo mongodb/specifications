@@ -1,6 +1,7 @@
 runOn:
     -
         minServerVersion: "3.6.0"
+        serverlessMode: "forbidServerless"
 
 database_name: &database_name "admin"
 

@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.2.4
+:Spec Version: 1.3.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -368,6 +368,15 @@ The structure of this object is as follows:
   in `Determining if a Sharded Cluster Uses Replica Sets`_. When matching a
   "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
   "sharded" implies "sharded-replicaset", but not vice versa).
+
+- ``serverlessMode``: Optional string, only applicable to "sharded" and
+  "sharded-replicaset" topologies. Whether or not the test should be run on
+  serverless instances imitating sharded clusters. Valid modes are
+  "requireServerless", "forbidServerless", and "allowServerless". If
+  "requireServerless", the test MUST only be run on serverless instances. If
+  "forbidServerless", the test MUST only be run on actual sharded
+  deployments. If omitted or "allowServerless", the test can be run on either
+  serverless instances or on real sharded deployments.
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a

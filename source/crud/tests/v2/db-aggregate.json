@@ -1,7 +1,8 @@
 {
   "runOn": [
     {
-      "minServerVersion": "3.6.0"
+      "minServerVersion": "3.6.0",
+      "serverlessMode": "forbidServerless"
     }
   ],
   "database_name": "admin",
