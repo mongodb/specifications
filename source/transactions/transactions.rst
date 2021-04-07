@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5.4
+:Spec Version: 1.5.5
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -826,7 +826,7 @@ server selection for the retry.
 
 Aborting a transaction or starting a new transaction on a pinned
 ClientSession MUST unpin the session. Committing a transaction on a pinned
-ClientSession MUST NOT unpin the session as transactions can be committed
+ClientSession MUST NOT unpin the session as commitTransaction may be called
 multiple times. Additionally, any non-transaction operation using a pinned
 ClientSession MUST unpin the session and the operation MUST perform normal
 server selection.
@@ -1400,6 +1400,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2020-04-07: Specify that servers should be unpinned once a transcation is aborted.
 :2019-10-21: Specify that a commit error can have two error labels
 :2019-07-30: Clarify when the cached recoveryToken should be cleared.
 :2019-06-10: Client-side errors must not change transaction state.
