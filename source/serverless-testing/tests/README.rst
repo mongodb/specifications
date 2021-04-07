@@ -37,20 +37,20 @@ private Evergreen variables or used only in private Evergreen projects. If using
 a public Evergreen project, xtrace MUST be disabled when using these variables
 to help prevent accidental leaks.
 
-- ``${SERVERLESS_DRIVERS_GROUP}``: Contains the group ID of the Atlas group
-   dedicated to drivers testing of Serverless.
+- ``$SERVERLESS_DRIVERS_GROUP``: Contains the ID of the Atlas group dedicated to
+   drivers testing of Serverless.
 
-- ``${SERVERLESS_API_PUBLIC_KEY}``: The public key required to use the Atlas API
+- ``$SERVERLESS_API_PUBLIC_KEY``: The public key required to use the Atlas API
   for provisioning of Serverless instances.
 
-- ``${SERVERLESS_API_PRIVATE_KEY}``: The public key required to use the Atlas
-  API for provisioning of Serverless instances.
+- ``$SERVERLESS_API_PRIVATE_KEY``: The public key required to use the Atlas API
+  for provisioning of Serverless instances.
 
-- ``${SERVERLESS_ATLAS_USER}``: the SCRAM username used to authenticate to any
+- ``$SERVERLESS_ATLAS_USER``: the SCRAM username used to authenticate to any
   Serverless instance created in the drivers testing Atlas group.
 
-- ``${SERVERLESS_ATLAS_PASSWORD}``: the SCRAM password used to authenticate to
-  any Serverless instance created in the drivers testing Atlas group.
+- ``$SERVERLESS_ATLAS_PASSWORD``: the SCRAM password used to authenticate to any
+  Serverless instance created in the drivers testing Atlas group.
 
 
 Existing Spec Tests
@@ -58,6 +58,7 @@ Existing Spec Tests
 
 Tests defined in the following specifications MUST be included in a driver's
 serverless testing suite, including prose tests:
+
 - CRUD, including the v1, v2, and unified tests
 
 In the future, this list will be expanded to include a greater portion of the
