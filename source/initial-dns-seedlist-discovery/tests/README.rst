@@ -41,8 +41,8 @@ these tests::
   _mongodb._tcp.test18.test.build.10gen.cc. 86400  IN SRV  27017  localhost.sub.test.build.10gen.cc.
   _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.evil.build.10gen.cc.
   _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test20.test.build.10gen.cc. 86400 IN SRV 27017 localhost.test.build.10gen.cc.
-  _mongodb._tcp.test21.test.build.10gen.cc. 86400 IN SRV 27017 localhost.test.build.10gen.cc.
+  _mongodb._tcp.test20.test.build.10gen.cc. 86400  IN SRV 27017 localhost.test.build.10gen.cc.
+  _mongodb._tcp.test21.test.build.10gen.cc. 86400  IN SRV 27017 localhost.test.build.10gen.cc.
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0&authSource=thisDB"
