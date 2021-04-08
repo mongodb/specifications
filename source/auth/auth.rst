@@ -270,7 +270,7 @@ mechanism negotiation, then it MUST be inspected to select a default
 mechanism::
 
     {
-        "ismaster" : true,
+        "hello" : true,
         "saslSupportedMechs": ["SCRAM-SHA-1", "SCRAM-SHA-256"],
         ...
         "ok" : 1
@@ -1302,7 +1302,7 @@ Version 1.7.2 Changes
       auth credentials.
 
 Version 1.7.1 Changes
-    * Unknown users don't cause ismaster errors. This was changed before
+    * Unknown users don't cause handshake errors. This was changed before
       server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
       such a possibility.
 
