@@ -62,7 +62,10 @@ Server Wire version and Feature List
 
    * - 4.4
      - 9
-     - | Resumable initial sync
+     - | Streaming protocol for SDAM
+     - | ResumableChangeStreamError error label
+     - | findAndModify "hint" option
+     - | createIndexes "commitQuorum" option
 
    * - 5.0
      - 12
