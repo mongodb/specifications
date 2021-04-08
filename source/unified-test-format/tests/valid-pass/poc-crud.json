@@ -407,7 +407,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "3.6.0",
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [

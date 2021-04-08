@@ -62,7 +62,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.9.0",
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [
@@ -109,7 +109,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.9.0",
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [
@@ -160,7 +160,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.9.0",
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [
@@ -207,7 +207,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.9.0",
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [
@@ -275,7 +275,7 @@
       "runOnRequirements": [
         {
           "minServerVersion": "4.9.0",
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [

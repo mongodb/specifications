@@ -143,7 +143,7 @@
       "description": "aggregate on database appends declared API version",
       "runOnRequirements": [
         {
-          "serverlessMode": "forbidServerless"
+          "serverless": "forbid"
         }
       ],
       "operations": [
