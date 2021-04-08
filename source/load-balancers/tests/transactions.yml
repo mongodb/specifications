@@ -43,83 +43,79 @@ _yamlAnchors:
       _id: 4
 
 tests:
-  - description: pinned connections are returned on commit
+  - description: all operations go to the same mongos
     operations:
-      - name: startTransaction
+      - &startTransaction
+        name: startTransaction
         object: *session0
-      - name: insertOne
+      - &transactionalInsert
+        name: insertOne
         object: *collection0
         arguments:
-          document: *insertDocument
+          document: { x: 1 }
           session: *session0
-      - name: assertNumberConnectionsCheckedOut
+      - &assertConnectionPinned
+        name: assertNumberConnectionsCheckedOut
         object: testRunner
         arguments:
           client: *client0
           connections: 1
-      - name: commitTransaction
+      - *transactionalInsert
+      - *transactionalInsert
+      - *transactionalInsert
+      - *transactionalInsert
+      - *transactionalInsert
+      - *assertConnectionPinned
+      - &commitTransaction
+        name: commitTransaction
         object: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
     expectEvents:
       - client: *client0
         events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
+          - &insertStarted
+            commandStartedEvent:
               commandName: insert
-          - commandStartedEvent:
+          - *insertStarted
+          - *insertStarted
+          - *insertStarted
+          - *insertStarted
+          - *insertStarted
+          - &commitStarted
+            commandStartedEvent:
               commandName: commitTransaction
       - client: *client0
         eventType: cmap
         events:
+          # The connection is never checked back in.
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
 
-  - description: pinned connections are returned on abort
+  - description: transaction can be committed multiple times
     operations:
-      - name: startTransaction
-        object: *session0
-      - name: insertOne
-        object: *collection0
-        arguments:
-          document: *insertDocument
-          session: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: abortTransaction
-        object: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
+      - *startTransaction
+      - *transactionalInsert
+      - *assertConnectionPinned
+      - *commitTransaction
+      - *assertConnectionPinned
+      - *commitTransaction
+      - *commitTransaction
+      - *commitTransaction
+      - *assertConnectionPinned
     expectEvents:
       - client: *client0
         events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
-              commandName: insert
-          - commandStartedEvent:
-              commandName: abortTransaction
+          - *insertStarted
+          - *commitStarted
+          - *commitStarted
+          - *commitStarted
+          - *commitStarted
       - client: *client0
         eventType: cmap
         events:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
 
-  - description: commitTransaction can be retried after a network error
+  - description: pinned connection is not released after a non-transient CRUD error
     operations:
       - name: failPoint
         object: testRunner
@@ -129,378 +125,85 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands: [commitTransaction]
-              closeConnection: true
-      - name: startTransaction
-        object: *session0
-      - name: insertOne
-        object: *collection0
-        arguments:
-          document: *insertDocument
-          session: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: commitTransaction
-        object: *session0
-        # Ignore the result and error because the operation might fail if it targets a new mongos that isn't aware
-        # of the transaction or the server-side reaper thread closes the transaction first. We only want to assert
-        # that the operation is retried, which is done via monitoring expectations, so the exact result/error is
-        # not necessary.
-        ignoreResultAndError: true
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
-              commandName: insert
-          - commandStartedEvent:
-              commandName: commitTransaction
-          - commandStartedEvent:
-              commandName: commitTransaction
-      - client: *client0
-        eventType: cmap
-        events:
-          # Initial events to set the fail point.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          # Events to run the transaction commands + initial commit attempt.
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          - connectionClosedEvent:
-              reason: error
-          # Events for the commit retry.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-
-  - description: abortTransaction can be retried after a network error
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *client0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: [abortTransaction]
-              closeConnection: true
-      - name: startTransaction
-        object: *session0
-      - name: insertOne
-        object: *collection0
-        arguments:
-          document: *insertDocument
-          session: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: abortTransaction
-        object: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
-              commandName: insert
-          - commandStartedEvent:
-              commandName: abortTransaction
-          - commandStartedEvent:
-              commandName: abortTransaction
-      - client: *client0
-        eventType: cmap
-        events:
-          # Initial events to set the fail point.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          # Events to run the transaction commands + initial abort attempt.
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          - connectionClosedEvent:
-              reason: error
-          # Events for the abort retry.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-
-  - description: cursors started in a transaction should pin to the same connection as the transaction
-    operations:
-      - name: startTransaction
-        object: *session0
-      - name: insertOne
-        object: *collection0
-        arguments:
-          document: *insertDocument
-          session: *session0
-      - name: createFindCursor
-        object: *collection0
-        arguments:
-          filter: {}
-          batchSize: 2
-          session: *session0
-        saveResultAsEntity: &cursor0 cursor0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: close
-        object: *cursor0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: commitTransaction
-        object: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
-              commandName: insert
-          - commandStartedEvent:
-              command:
-                find: *collection0Name
-                filter: {}
-                batchSize: 2
-              commandName: find
-          - commandStartedEvent:
-              commandName: killCursors
-          - commandStartedEvent:
-              commandName: commitTransaction
-      - client: *client0
-        eventType: cmap
-        events:
-          # Only one set of events should be published because all of the operations use the connection pinned by the
-          # transaction.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-
-  - description: pinned connections are returned after a network error on a CRUD command
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *client0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: [update]
-              closeConnection: true
-      - name: startTransaction
-        object: *session0
-      - name: insertOne
-        object: *collection0
-        arguments:
-          document: *insertDocument
-          session: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: updateOne
-        object: *collection0
-        arguments:
-          filter: *insertDocument
-          update:
-            $set:
-              x: 1
-          session: *session0
-        expectError:
-          # Network errors are considered client-side errors by the unified test format.
-          isClientError: true
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
-      - name: abortTransaction
-        object: *session0
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
-              commandName: insert
-          - commandStartedEvent:
-              command:
-                update: *collection0Name
-              commandName: update
-          - commandStartedEvent:
-              commandName: abortTransaction
-      - client: *client0
-        eventType: cmap
-        events:
-          # Events for setting the failpoint.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          # Events to run the insert/update commands.
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          - connectionClosedEvent:
-              reason: error
-          # Events for the abortTransaction attempt.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-
-  # This is similar to the previous test, but it asserts that the connection pinned by the transaction is returned to
-  # the pool immediately after a network error even if it's being pinned by a cursor in addition to the transaction.
-  - description: connections pinned by multiple resources are forcefully returned after a network error
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *client0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: [update]
-              closeConnection: true
-      - name: startTransaction
-        object: *session0
-      - name: insertOne
-        object: *collection0
-        arguments:
-          document: *insertDocument
-          session: *session0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: createFindCursor
-        object: *collection0
-        arguments:
-          filter: {}
-          batchSize: 2
-          session: *session0
-        saveResultAsEntity: &cursor0 cursor0
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 1
-      - name: updateOne
-        object: *collection0
-        arguments:
-          filter: *insertDocument
-          update:
-            $set:
-              x: 1
-          session: *session0
-        expectError:
-          # Network errors are considered client-side errors by the unified test format.
-          isClientError: true
-      - name: assertNumberConnectionsCheckedOut
-        object: testRunner
-        arguments:
-          client: *client0
-          connections: 0
-      - name: abortTransaction
-        object: *session0
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-                documents: [*insertDocument]
-              commandName: insert
-          - commandStartedEvent:
-              command:
-                find: *collection0Name
-                filter: {}
-                batchSize: 2
-              commandName: find
-          - commandStartedEvent:
-              command:
-                update: *collection0Name
-              commandName: update
-          - commandStartedEvent:
-              commandName: abortTransaction
-      - client: *client0
-        eventType: cmap
-        events:
-          # Events for setting the failpoint.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          # Events to run the insert/find/update commands.
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-          - connectionClosedEvent:
-              reason: error
-          # Events for the abortTransaction attempt.
-          - connectionReadyEvent: {}
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}
-
-  - description: pinned connections are not returned after a non-network error on a CRUD command
-    operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *client0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: [insert]
-              errorCode: &hostNotFoundCode 7
-      - name: startTransaction
-        object: *session0
+              failCommands: [ insert ]
+              errorCode: &nonTransientErrorCode 51 # ManualInterventionRequired
+      - *startTransaction
       - name: insertOne
         object: *collection0
         arguments:
           document: { x: 1 }
           session: *session0
-        expectError:
-          errorCode: *hostNotFoundCode
-      - name: assertNumberConnectionsCheckedOut
+        expectError: &nonTransientExpectedError
+          errorCode: *nonTransientErrorCode
+          errorLabelsOmit: [ TransientTransactionError ]
+      - *assertConnectionPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the fail point.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the transactional insert.
+          - connectionCheckedOutEvent: {}
+
+  - description: pinned connection is not released after a non-transient commit error
+    operations:
+      - name: failPoint
         object: testRunner
         arguments:
           client: *client0
-          connections: 1
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ commitTransaction ]
+              errorCode: *nonTransientErrorCode
+      - *startTransaction
+      - *transactionalInsert
+      - name: commitTransaction
+        object: *session0
+        expectError: *nonTransientExpectedError
+      - *assertConnectionPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *commitStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the fail point.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the transactional insert and commit.
+          - connectionCheckedOutEvent: {}
+
+  # Errors during abort are different than errors during commit and CRUD operations because the pinned connection is
+  # always released after abort.
+  - description: pinned connection is released after a non-transient abort error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ abortTransaction ]
+              errorCode: &nonTransientErrorCode 51 # ManualInterventionRequired
+      - *startTransaction
+      - *transactionalInsert
       - name: abortTransaction
         object: *session0
-      - name: assertNumberConnectionsCheckedOut
+      - &assertConnectionNotPinned
+        name: assertNumberConnectionsCheckedOut
         object: testRunner
         arguments:
           client: *client0
@@ -508,14 +211,47 @@ tests:
     expectEvents:
       - client: *client0
         events:
-          - commandStartedEvent:
-              command:
-                insert: *collection0Name
-              commandName: insert
-          - commandStartedEvent:
-              command:
-                abortTransaction: 1
+          - *insertStarted
+          - &abortStarted
+            commandStartedEvent:
               commandName: abortTransaction
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the fail point.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the transactional insert and abort.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released after a transient non-network CRUD error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              errorCode: &transientErrorCode 24 # LockTimeout
+      - *startTransaction
+      - <<: *transactionalInsert
+        expectError: &transientExpectedServerError
+          errorCode: *transientErrorCode
+          errorLabelsContain: [ TransientTransactionError ]
+      - *assertConnectionNotPinned
+      - name: abortTransaction
+        object: *session0
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *abortStarted
       - client: *client0
         eventType: cmap
         events:
@@ -523,6 +259,289 @@ tests:
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
-          # Events for the insert + abortTransaction.
+          # Events for the insert.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for abortTransction.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released after a transient network CRUD error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              closeConnection: true
+      - *startTransaction
+      - <<: *transactionalInsert
+        expectError: &transientExpectedNetworkError
+          isClientError: true
+          errorLabelsContain: [ TransientTransactionError ]
+      - *assertConnectionNotPinned
+      - name: abortTransaction
+        object: *session0
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *abortStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the insert.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for abortTransaction
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released after a transient non-network commit error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ commitTransaction ]
+              errorCode: *transientErrorCode
+      - *startTransaction
+      - *transactionalInsert
+      - <<: *commitTransaction
+        expectError: *transientExpectedServerError
+      - *assertConnectionNotPinned
+      - *commitTransaction
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *commitStarted
+          - *commitStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the insert.
+          - connectionCheckedOutEvent: {}
+          # Events for first commitTransaction.
+          - connectionCheckedInEvent: {}
+          # Events for second commitTransaction.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released after a transient network commit error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ commitTransaction ]
+              closeConnection: true
+      - *startTransaction
+      - *transactionalInsert
+      - <<: *commitTransaction
+        # Ignore the result and error because the operation might fail if it targets a new mongos that isn't aware of
+        # the transaction or the server-side reaper thread closes the transaction first. We only want to assert that
+        # the operation is retried, which is done via monitoring expectations, so the exact result/error is not
+        # necessary.
+        ignoreResultAndError: true
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *commitStarted
+          # The commit will be automatically retried.
+          - *commitStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the insert.
+          - connectionCheckedOutEvent: {}
+          # Events for the first commitTransaction.
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for the commitTransaction retry.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released after a transient non-network abort error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ abortTransaction ]
+              errorCode: *transientErrorCode
+      - *startTransaction
+      - *transactionalInsert
+      - name: abortTransaction
+        object: *session0
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *abortStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the insert.
+          - connectionCheckedOutEvent: {}
+          # Events for abortTransaction.
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released after a transient network abort error
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ abortTransaction ]
+              closeConnection: true
+      - *startTransaction
+      - *transactionalInsert
+      - name: abortTransaction
+        object: *session0
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *abortStarted
+          # The abort will be automatically retried.
+          - *abortStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for setting the failpoint.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+          # Events for the insert.
+          - connectionCheckedOutEvent: {}
+          # Events for the first abortTransaction.
+          - connectionCheckedInEvent: {}
+          - connectionClosedEvent:
+              reason: error
+          # Events for the abortTransaction retry.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is released on successful abort
+    operations:
+      - *startTransaction
+      - *transactionalInsert
+      - name: abortTransaction
+        object: *session0
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *abortStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # The insert will create and pin a connection. The abort will use it and then unpin.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
+
+  - description: pinned connection is returned when a new transaction is started
+    operations:
+      - *startTransaction
+      - *transactionalInsert
+      - *commitTransaction
+      - *assertConnectionPinned
+      - *startTransaction
+      - *assertConnectionNotPinned # startTransaction will unpin the connection.
+      - *transactionalInsert
+      - *assertConnectionPinned # The first operation in the new transaction will pin the connection again.
+      - *commitTransaction
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *commitStarted
+          - *insertStarted
+          - *commitStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for the first insert and commit.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          # Events for startTransaction.
+          - connectionCheckedInEvent: {}
+          # Events for the second insert and commit.
+          - connectionCheckedOutEvent: {}
+
+  - description: pinned connection is returned when a non-transaction operation uses the session
+    operations:
+      - *startTransaction
+      - *transactionalInsert
+      - *commitTransaction
+      - *assertConnectionPinned
+      - *transactionalInsert
+      # The insert is a non-transactional operation that uses the session, so it unpins the connection.
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - *commitStarted
+          - *insertStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for the first insert and commit.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          # Events for the second insert.
+          - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}

@@ -150,100 +150,7 @@
       ]
     },
     {
-      "description": "pinned connections are returned to the pool when the cursor is closed",
-      "operations": [
-        {
-          "name": "createFindCursor",
-          "object": "collection0",
-          "arguments": {
-            "filter": {},
-            "batchSize": 2
-          },
-          "saveResultAsEntity": "cursor0"
-        },
-        {
-          "name": "assertNumberConnectionsCheckedOut",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client0",
-            "connections": 1
-          }
-        },
-        {
-          "name": "close",
-          "object": "cursor0"
-        },
-        {
-          "name": "assertNumberConnectionsCheckedOut",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client0",
-            "connections": 0
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client0",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "coll0",
-                  "filter": {}
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "reply": {
-                  "cursor": {
-                    "id": {
-                      "$$type": "long"
-                    },
-                    "firstBatch": {
-                      "$$type": "array"
-                    },
-                    "ns": {
-                      "$$type": "string"
-                    }
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "killCursors"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "killCursors"
-              }
-            }
-          ]
-        },
-        {
-          "client": "client0",
-          "eventType": "cmap",
-          "events": [
-            {
-              "connectionReadyEvent": {}
-            },
-            {
-              "connectionCheckedOutEvent": {}
-            },
-            {
-              "connectionCheckedInEvent": {}
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "pinned connections are returned to the pool when the cursor is drained",
+      "description": "pinned connections are returned when the cursor is drained",
       "operations": [
         {
           "name": "createFindCursor",
@@ -290,6 +197,10 @@
             "client": "client0",
             "connections": 0
           }
+        },
+        {
+          "name": "close",
+          "object": "cursor0"
         }
       ],
       "expectEvents": [
@@ -300,7 +211,8 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "coll0",
-                  "filter": {}
+                  "filter": {},
+                  "batchSize": 2
                 },
                 "commandName": "find"
               }
@@ -330,11 +242,23 @@
                     "$$type": "long"
                   },
                   "collection": "coll0"
-                }
+                },
+                "commandName": "getMore"
               }
             },
             {
               "commandSucceededEvent": {
+                "reply": {
+                  "cursor": {
+                    "id": 0,
+                    "ns": {
+                      "$$type": "string"
+                    },
+                    "nextBatch": {
+                      "$$type": "array"
+                    }
+                  }
+                },
                 "commandName": "getMore"
               }
             }
@@ -358,7 +282,101 @@
       ]
     },
     {
-      "description": "pinned connections are returned after a network error during a getMore request",
+      "description": "pinned connections are returned to the pool when the cursor is closed",
+      "operations": [
+        {
+          "name": "createFindCursor",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "batchSize": 2
+          },
+          "saveResultAsEntity": "cursor0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 1
+          }
+        },
+        {
+          "name": "close",
+          "object": "cursor0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "coll0",
+                  "filter": {},
+                  "batchSize": 2
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "reply": {
+                  "cursor": {
+                    "id": {
+                      "$$type": "long"
+                    },
+                    "firstBatch": {
+                      "$$type": "array"
+                    },
+                    "ns": {
+                      "$$type": "string"
+                    }
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "killCursors"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "killCursors"
+              }
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionReadyEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "pinned connections are not returned after an network error during getMore",
       "operations": [
         {
           "name": "failPoint",
@@ -422,12 +440,20 @@
           "object": "testRunner",
           "arguments": {
             "client": "client0",
-            "connections": 0
+            "connections": 1
           }
         },
         {
           "name": "close",
           "object": "cursor0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
+          }
         }
       ],
       "expectEvents": [
@@ -438,7 +464,8 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "coll0",
-                  "filter": {}
+                  "filter": {},
+                  "batchSize": 2
                 },
                 "commandName": "find"
               }
@@ -567,7 +594,8 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "coll0",
-                  "filter": {}
+                  "filter": {},
+                  "batchSize": 2
                 },
                 "commandName": "find"
               }
@@ -592,9 +620,6 @@
             },
             {
               "commandStartedEvent": {
-                "command": {
-                  "killCursors": "coll0"
-                },
                 "commandName": "killCursors"
               }
             },
@@ -756,9 +781,6 @@
             },
             {
               "commandStartedEvent": {
-                "command": {
-                  "killCursors": "coll0"
-                },
                 "commandName": "killCursors"
               }
             },
@@ -834,11 +856,28 @@
             },
             {
               "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "coll0"
+                },
                 "commandName": "getMore"
               }
             },
             {
               "commandSucceededEvent": {
+                "reply": {
+                  "cursor": {
+                    "id": 0,
+                    "ns": {
+                      "$$type": "string"
+                    },
+                    "nextBatch": {
+                      "$$type": "array"
+                    }
+                  }
+                },
                 "commandName": "getMore"
               }
             }
@@ -904,11 +943,30 @@
             },
             {
               "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": {
+                    "$$type": "string"
+                  }
+                },
                 "commandName": "getMore"
               }
             },
             {
               "commandSucceededEvent": {
+                "reply": {
+                  "cursor": {
+                    "id": 0,
+                    "ns": {
+                      "$$type": "string"
+                    },
+                    "nextBatch": {
+                      "$$type": "array"
+                    }
+                  }
+                },
                 "commandName": "getMore"
               }
             }
@@ -1035,11 +1093,28 @@
             },
             {
               "commandStartedEvent": {
+                "command": {
+                  "getMore": {
+                    "$$type": "long"
+                  },
+                  "collection": "coll0"
+                },
                 "commandName": "getMore"
               }
             },
             {
               "commandSucceededEvent": {
+                "reply": {
+                  "cursor": {
+                    "id": 0,
+                    "ns": {
+                      "$$type": "string"
+                    },
+                    "nextBatch": {
+                      "$$type": "array"
+                    }
+                  }
+                },
                 "commandName": "getMore"
               }
             }
