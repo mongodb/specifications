@@ -63,9 +63,9 @@ Server Wire version and Feature List
    * - 4.4
      - 9
      - | Streaming protocol for SDAM
-     - | ResumableChangeStreamError error label
-     - | findAndModify "hint" option
-     - | createIndexes "commitQuorum" option
+       | ResumableChangeStreamError error label
+       | findAndModify "hint" option
+       | createIndexes "commitQuorum" option
 
    * - 5.0
      - 12
