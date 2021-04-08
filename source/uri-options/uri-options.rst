@@ -147,7 +147,7 @@ pertaining to URI options apply here.
      - no
      - Amount of time to wait for a single TCP socket connection to the
        server to be established before erroring; note that this applies to
-       SDAM hello and legacy hello operations (see handshake spec for details)
+       `SDAM hello and legacy hello operations <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
 
    * - directConnection
      - "true" or "false"
