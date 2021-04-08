@@ -1483,6 +1483,117 @@
           ]
         }
       ]
+    },
+    {
+      "description": "a connection can be shared by a transaction and a cursor",
+      "operations": [
+        {
+          "name": "startTransaction",
+          "object": "session0"
+        },
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "x": 1
+            },
+            "session": "session0"
+          }
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 1
+          }
+        },
+        {
+          "name": "createFindCursor",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "batchSize": 2,
+            "session": "session0"
+          },
+          "saveResultAsEntity": "cursor0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 1
+          }
+        },
+        {
+          "name": "close",
+          "object": "cursor0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 1
+          }
+        },
+        {
+          "name": "abortTransaction",
+          "object": "session0"
+        },
+        {
+          "name": "assertNumberConnectionsCheckedOut",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "connections": 0
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "killCursors"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "abortTransaction"
+              }
+            }
+          ]
+        },
+        {
+          "client": "client0",
+          "eventType": "cmap",
+          "events": [
+            {
+              "connectionReadyEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -545,3 +545,41 @@ tests:
           - connectionCheckedInEvent: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
+
+  - description: a connection can be shared by a transaction and a cursor
+    operations:
+      - *startTransaction
+      - *transactionalInsert
+      - *assertConnectionPinned
+      - name: createFindCursor
+        object: *collection0
+        arguments:
+          filter: {}
+          batchSize: 2
+          session: *session0
+        saveResultAsEntity: &cursor0 cursor0
+      - *assertConnectionPinned
+      - name: close
+        object: *cursor0
+      - *assertConnectionPinned
+      # Abort the transaction to ensure that the connection is unpinned.
+      - name: abortTransaction
+        object: *session0
+      - *assertConnectionNotPinned
+    expectEvents:
+      - client: *client0
+        events:
+          - *insertStarted
+          - commandStartedEvent:
+              commandName: find
+          - commandStartedEvent:
+              commandName: killCursors
+          - *abortStarted
+      - client: *client0
+        eventType: cmap
+        events:
+          # Events for the insert, find, and killCursors.
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          # Events for abortTransaction.
+          - connectionCheckedInEvent: {}
