@@ -60,6 +60,10 @@ Server Wire version and Feature List
      - | Sharded transactions
        | Aggregation $merge pipeline operator
 
+   * - 4.4
+     - 9
+     - | Resumable initial sync
+
    * - 5.0
      - 12
      - | Consistent $collStats count behavior on sharded and non-sharded topologies
