@@ -37,5 +37,5 @@ phases:
     response:
       ok: 1
       writeErrors:
-      - { errmsg: NotMasterNoSlaveOk, code: 13435 }
+      - { errmsg: NotMasterNoSlaveOk, code: 13435, index: 0 }
   outcome: *outcome
