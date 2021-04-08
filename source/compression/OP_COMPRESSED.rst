@@ -193,20 +193,20 @@ Compressor IDs
 
 Each compressor is assigned a predefined compressor ID.
 
-+-----------------+----------------+-------------------------------------------------------+
-| compressorId    | hello Value    |  Description                                          |
-+=================+================+=======================================================+
-| 0               |  noop          | The content of the message is uncompressed.           |
-|                 |                | This is realistically only used for testing           |
-+-----------------+----------------+-------------------------------------------------------+
-| 1               | snappy         | The content of the message is compressed using snappy |
-+-----------------+----------------+-------------------------------------------------------+
-| 2               | zlib           | The content of the message is compressed using zlib   |
-+-----------------+----------------+-------------------------------------------------------+
-| 3               | zstd           | The content of the message is compressed using zstd   |
-+-----------------+----------------+-------------------------------------------------------+
-| 4-255           | reserved       | Reserved for future used                              |
-+-----------------+----------------+-------------------------------------------------------+
++-----------------+-----------------+--------------------------------------------------------+
+| compressorId    | Handshake Value |  Description                                           |
++=================+=================+========================================================+
+| 0               | noop            | The content of the message is uncompressed.            |
+|                 |                 | This is realistically only used for testing.           |
++-----------------+-----------------+--------------------------------------------------------+
+| 1               | snappy          | The content of the message is compressed using snappy. |
++-----------------+-----------------+--------------------------------------------------------+
+| 2               | zlib            | The content of the message is compressed using zlib.   |
++-----------------+-----------------+--------------------------------------------------------+
+| 3               | zstd            | The content of the message is compressed using zstd.   |
++-----------------+-----------------+--------------------------------------------------------+
+| 4-255           | reserved        | Reserved for future use.                               |
++-----------------+-----------------+--------------------------------------------------------+
 
 
 Compressible messages
@@ -285,61 +285,81 @@ Connection strings, and results
 
 * mongodb://localhost:27017/?compressors=snappy
 
-  mongod should have logged the following::
+  mongod should have logged the following (the exact log ouptut may differ depending on server version)::
 
-   2017-04-17T15:04:37.756-0700 I NETWORK  [thread1] connection accepted from 127.0.0.1:34294 #6 (1 connection now open)
-   2017-04-17T15:04:37.756-0700 D COMMAND  [conn6] run command admin.$cmd { isMaster: 1, client: { driver: { name: "mongoc", version: "1.7.0-dev" }, os: { type: "Linux", name: "Ubuntu", version: "16.10", architecture: "x86_64" }, platform: "cfg=0xeb8e9 posix=200809 stdc=201112 CC=GCC 6.2.0 20161005 CFLAGS="" LDFLAGS=""" }, compression: [ "snappy" ] }
-   2017-04-17T15:04:37.756-0700 I NETWORK  [conn6] received client metadata from 127.0.0.1:34294 conn6: { driver: { name: "mongoc", version: "1.7.0-dev" }, os: { type: "Linux", name: "Ubuntu", version: "16.10", architecture: "x86_64" }, platform: "cfg=0xeb8e9 posix=200809 stdc=201112 CC=GCC 6.2.0 20161005 CFLAGS="" LDFLAGS=""" }
-   2017-04-17T15:04:37.756-0700 D NETWORK  [conn6] Starting server-side compression negotiation
-   2017-04-17T15:04:37.756-0700 D NETWORK  [conn6] snappy is supported
-   2017-04-17T15:04:37.756-0700 I COMMAND  [conn6] command admin.$cmd command: isMaster { isMaster: 1, client: { driver: { name: "mongoc", version: "1.7.0-dev" }, os: { type: "Linux", name: "Ubuntu", version: "16.10", architecture: "x86_64" }, platform: "cfg=0xeb8e9 posix=200809 stdc=201112 CC=GCC 6.2.0 20161005 CFLAGS="" LDFLAGS=""" }, compression: [ "snappy" ] } numYields:0 reslen:221 locks:{} protocol:op_query 0ms
-   2017-04-17T15:04:37.756-0700 D NETWORK  [conn6] Compressing message with snappy
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] Decompressing message with snappy
-   2017-04-17T15:04:37.757-0700 D COMMAND  [conn6] run command test.$cmd { ping: 1 }
-   2017-04-17T15:04:37.757-0700 I COMMAND  [conn6] command test.$cmd command: ping { ping: 1 } numYields:0 reslen:37 locks:{} protocol:op_query 0ms
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] Compressing message with snappy
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] Socket recv() conn closed? 127.0.0.1:34294
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] SocketException: remote: 127.0.0.1:34294 error: 9001 socket exception [CLOSED] server [127.0.0.1:34294]
-   2017-04-17T15:04:37.757-0700 I -        [conn6] end connection 127.0.0.1:34294 (1 connection now open)
+   {"t":{"$date":"2021-04-08T13:28:38.885-06:00"},"s":"I",  "c":"NETWORK",  "id":22943,   "ctx":"listener","msg":"Connection accepted","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":1}}
+   {"t":{"$date":"2021-04-08T13:28:38.886-06:00"},"s":"D3", "c":"EXECUTOR", "id":22983,   "ctx":"listener","msg":"Starting new executor thread in passthrough mode"}
+   {"t":{"$date":"2021-04-08T13:28:38.887-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"thread27","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.887-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}},"compression":["snappy"],"apiVersion":"1","apiStrict":true,"$db":"admin"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.888-06:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn2","msg":"client metadata","attr":{"remote":"127.0.0.1:50635","client":"conn2","doc":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}}}}
+   {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"D3", "c":"NETWORK",  "id":22934,   "ctx":"conn2","msg":"Starting server-side compression negotiation"}
+   {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"D3", "c":"NETWORK",  "id":22937,   "ctx":"conn2","msg":"supported compressor","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"hello":1,"client":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}},"compression":["snappy"],"apiVersion":"1","apiStrict":true,"$db":"admin"},"numYields":0,"reslen":351,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_query","durationMillis":1}}
+   {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":596,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.891-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.891-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"whatsmyuri":1,"apiStrict":false,"$db":"admin","apiVersion":"1"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"whatsmyuri":1,"apiStrict":false,"$db":"admin","apiVersion":"1"},"numYields":0,"reslen":63,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":597,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.893-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.893-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.895-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.895-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"buildinfo":1.0,"apiStrict":false,"$db":"admin","apiVersion":"1"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.896-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"buildinfo":1.0,"apiStrict":false,"$db":"admin","apiVersion":"1"},"numYields":0,"reslen":2606,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.896-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":598,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.899-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"endSessions":[{"id":{"$uuid":"c4866af5-ed6b-4f01-808b-51a3f8aaaa08"}}],"$db":"admin","apiVersion":"1","apiStrict":true}}}
+   {"t":{"$date":"2021-04-08T13:28:38.899-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"endSessions":[{"id":{"$uuid":"c4866af5-ed6b-4f01-808b-51a3f8aaaa08"}}],"$db":"admin","apiVersion":"1","apiStrict":true},"numYields":0,"reslen":38,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":599,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.901-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.901-06:00"},"s":"D2", "c":"NETWORK",  "id":22986,   "ctx":"conn2","msg":"Session from remote encountered a network error during SourceMessage","attr":{"remote":"127.0.0.1:50635","error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"D1", "c":"-",        "id":23074,   "ctx":"conn2","msg":"User assertion","attr":{"error":"HostUnreachable: Connection closed by peer","file":"src/mongo/transport/service_state_machine.cpp","line":410}}
+   {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"W",  "c":"EXECUTOR", "id":4910400, "ctx":"conn2","msg":"Terminating session due to error","attr":{"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"I",  "c":"NETWORK",  "id":5127900, "ctx":"conn2","msg":"Ending session","attr":{"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.903-06:00"},"s":"I",  "c":"NETWORK",  "id":22944,   "ctx":"conn2","msg":"Connection ended","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.903-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
 
   The result of the program should have been::
 
-   { "ok" : 1.0 }
+   { "ok" : 1 }
 
 
 * mongodb://localhost:27017/?compressors=snoopy
 
-  mongod should have logged the following::
+  mongod should not have logged anything as drivers should reject invalid compressor values.
 
-   2017-02-27T04:00:00.000-0700 D COMMAND  [conn654] run command admin.$cmd { isMaster: 1, client: { ... }, compression: [] }
-
-  e.g., empty compression: [] array. No operations should have been compressed.
   The results of the program should have been::
 
-   WARNING: Unsupported compressor: 'snoopy'
-   { "ok" : { "$numberDouble" : "1.0" } }
+   Failed global initialization: BadValue Invalid network message compressor specified in configuration: snoopy
 
 
 * mongodb://localhost:27017/?compressors=snappy,zlib
 
   mongod should have logged the following::
 
-   2017-02-27T04:00:00.000-0700 D NETWORK  [conn645] Decompressing message with snappy
+   {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
 
   The results of the program should have been::
 
-   { "ok" : { "$numberDouble" : "1.0" } }
+   { "ok" : 1 }
 
 
 * mongodb://localhost:27017/?compressors=zlib,snappy
 
   mongod should have logged the following::
 
-   2017-02-27T04:00:00.000-0700 D NETWORK  [connXXX] Decompressing message with zlib
+   {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"zlib"}}
 
   The results of the program should have been::
 
-   { "ok" : { "$numberDouble" : "1.0" } }
+   { "ok" : 1 }
 
 * Create example program that authenticates to the server using SCRAM-SHA-1,
   then creates another user (MONGODB-CR), then runs hello followed with

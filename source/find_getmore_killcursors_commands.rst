@@ -468,7 +468,7 @@ getMore
 -------
 
 The **getMore** command replaces the **OP_GET_MORE** wire protocol message.
-The query flags passed to OP_QUERY for a getMore command MUST be secondary_ok=True
+The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true
 when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
 **find** and **killCursors** commands. The command takes the following object.
 
@@ -544,7 +544,7 @@ The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol messa
       ]
     }
 
-The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be secondary_ok=True when sent to a secondary.
+The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be secondaryOk=true when sent to a secondary.
 
 .. list-table:: killCursors command parameters
    :widths: 15 15 15 30
