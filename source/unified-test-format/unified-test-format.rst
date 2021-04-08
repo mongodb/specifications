@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-08
+:Last Modified: 2021-04-09
 
 .. contents::
 
@@ -2983,6 +2983,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-04-09: Introduce ``serverless`` `runOnRequirement`_.
 
 :2021-04-08: List additional error codes that may be ignored when calling
              ``killAllSessions`` and note that the command should not be called
