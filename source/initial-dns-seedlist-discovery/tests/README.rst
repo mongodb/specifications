@@ -8,9 +8,13 @@ to prove their conformance to the Initial DNS Seedlist Discovery spec.
 Test Setup
 ----------
 
-Start a three-node replica set on localhost, on ports 27017, 27018, and 27019,
-with replica set name "repl0". The replica set MUST be started with SSL
-enabled.
+The tests in the ``replica-set`` directory MUST be executed against a
+three-node replica set on localhost ports 27017, 27018, and 27019 with
+replica set name ``repl0``. The tests in ``load-balanced`` MUST be executed
+against a load-balanced sharded cluster with the mongos servers running on
+localhost ports 27017 and 27018 and load balancers, shard servers, and config
+servers running on any open ports. In both cases, the clusters MUST be
+started with SSL enabled.
 
 To run the tests that accompany this spec, you need to configure the SRV and
 TXT records with a real name server. The following records are required for
