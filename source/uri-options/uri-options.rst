@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.6.0
+:Spec Version: 1.6.1
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2020-3-3
+:Last Modified: 2021-04-08
 
 
 **Abstract**
@@ -147,7 +147,7 @@ pertaining to URI options apply here.
      - no
      - Amount of time to wait for a single TCP socket connection to the
        server to be established before erroring; note that this applies to
-       SDAM isMaster operations
+       SDAM hello and legacy hello operations (see handshake spec for details)
 
    * - directConnection
      - "true" or "false"
@@ -444,6 +444,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2021-04-08 Updated to refer to hello and legacy hello
 - 2020-03-03 Add tlsDisableCertificateRevocationCheck option
 - 2020-02-26 Add tlsDisableOCSPEndpointCheck option
 - 2019-01-25 Updated to reflect new Connection Monitoring and Pooling Spec
