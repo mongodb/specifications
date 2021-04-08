@@ -9,8 +9,8 @@ Serverless Tests
 Introduction
 ============
 
-This file describes a subset of existing spec tests as well as some new prose
-tests that drivers MUST use to assert compatibility with Serverless.
+This file describes a subset of existing tests that drivers MUST use to assert
+compatibility with Serverless.
 
 Test Configuration
 ==================
@@ -74,37 +74,6 @@ requirement and then sync the tests.
 The Serverless proxy presents itself as a mongos, so any test meant to run
 against sharded clusters will be executed by the runners, with the exception of
 the tests affected by the previously mentioned ``runOnRequirement``.
-
-Prose Tests
-===========
-
-The following tests MUST be implemented to fully test compatibility with
-Serverless.
-
-#. Test that the driver properly constructs and issues a `killCursors
-   <https://docs.mongodb.com/manual/reference/command/killCursors/>`_ command to
-   the Serverless proxy. For this test, configure an APM listener on a client
-   and execute a query on a collection that will leave a cursor open on the
-   server (e.g. specify ``batchSize=2`` for a query that would match 3+
-   documents). Drivers MAY iterate the cursor if necessary to execute the
-   initial ``find`` command but MUST NOT iterate further to avoid executing a
-   ``getMore``.
-
-   Observe the CommandSucceededEvent event for the ``find`` command and extract
-   the cursor's ID and namespace from the response document's ``cursor.id`` and
-   ``cursor.ns`` fields, respectively. Destroy the cursor object and observe
-   a CommandStartedEvent and CommandSucceededEvent for the ``killCursors``
-   command. Assert that the cursor ID and target namespace in the outgoing
-   command match the values from the ``find`` command's CommandSucceededEvent.
-   When matching the namespace, note that the ``killCursors`` field will contain
-   the collection name and the database may be inferred from either the ``$db``
-   field or accessed via the CommandStartedEvent directly. Finally, assert that
-   the ``killCursors`` CommandSucceededEvent indicates that the expected cursor
-   was killed in the ``cursorsKilled`` field.
-
-#. Repeat test 1 on a cursor that is still left open after both the initial
-   ``find`` and a single ``getMore`` (e.g. specify ``batchSize=1`` for a query
-   that would match 3+ documents).
 
 Other Tests
 ===========
