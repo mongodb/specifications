@@ -231,7 +231,7 @@ Request Size Limits
 
 Supporting unlimited batch sizes poses two problems - the BSONObj internal size limit is 16 MiB + small overhead (for commands), and a small write operation may have a much larger response.  In order to ensure a batch can be correctly processed, two limits must be respected.
 
-Both of these limits can be found using isMaster():
+Both of these limits can be found using hello or legacy hello:
 
 * ``maxBsonObjectSize`` : currently 16 MiB, this is the maximum size of writes (excepting command overhead)
   that should be sent to the server.  Documents to be inserted, query documents for updates and 
