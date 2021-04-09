@@ -170,7 +170,7 @@ tests:
   - description: "Aggregate with $listLocalSessions"
     runOnRequirements:
       - minServerVersion: "3.6.0"
-        serverless: forbid
+        serverless: forbid # serverless does not support $listLocalSessions
     operations:
       - name: aggregate
         object: *database1
