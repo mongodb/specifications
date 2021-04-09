@@ -116,6 +116,8 @@ the addition of the following fields to each test:
 - ``failPoint``: optional, a document containing a ``configureFailPoint``
   command to run against the endpoint being used for the test.
 
+- ``poolOptions.appName`` (optional): appName attribute to be set in connections, which will be affected by the fail point.
+
 Spec Test Match Function
 ========================
 

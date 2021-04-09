@@ -3,8 +3,8 @@ style: integration
 description: error during minPoolSize population clears pool
 runOn:
   -
-    # required for blockConnection in fail point
-    minServerVersion: "4.2.0"
+    # required for appName in fail point
+    minServerVersion: "4.9.0"
 failPoint:
   configureFailPoint: failCommand
   # high amount to ensure not interfered with by monitor checks.
@@ -12,8 +12,10 @@ failPoint:
   data:
     failCommands: ["isMaster"]
     closeConnection: true
+    appName: "poolCreateMinSizeErrorTest"
 poolOptions:
   minPoolSize: 1
+  appName: "poolCreateMinSizeErrorTest"
 operations:
   - name: ready
   - name: waitForEvent
