@@ -219,8 +219,8 @@ For each test file:
 
   - Activate command monitoring for ``localMongoClient`` and begin capturing
     events. Note that some events may need to be filtered out if the driver
-    uses global listeners or reports internal commands (e.g. ``isMaster``,
-    authentication).
+    uses global listeners or reports internal commands (e.g. ``hello``, legacy
+    hello, authentication).
 
   - For each element in the ``operations`` array:
 
