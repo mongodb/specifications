@@ -370,10 +370,10 @@ The structure of this object is as follows:
   "sharded" implies "sharded-replicaset", but not vice versa).
 
 - ``serverless``: Optional string. Whether or not the test should be run on
-  Serverless instances imitating sharded clusters. Valid values are "require",
-  "forbid", and "allow". If "require", the test MUST only be run on Serverless
+  serverless instances imitating sharded clusters. Valid values are "require",
+  "forbid", and "allow". If "require", the test MUST only be run on serverless
   instances. If "forbid", the test MUST only be run on actual sharded
-  deployments. If omitted or "allow", the test can be run on either Serverless
+  deployments. If omitted or "allow", the test can be run on either serverless
   instances or on real sharded deployments.
 
 - ``serverParameters``: Optional object of server parameters to check against.

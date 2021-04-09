@@ -62,10 +62,10 @@ Each YAML file has the following keys:
     ``["single", "replicaset", "sharded"]``).
 
   - ``serverless``: (optional) Whether or not the test should be run on
-    Serverless instances imitating sharded clusters. Valid values are "require",
-    "forbid", and "allow". If "require", the test MUST only be run on Serverless
+    serverless instances imitating sharded clusters. Valid values are "require",
+    "forbid", and "allow". If "require", the test MUST only be run on serverless
     instances. If "forbid", the test MUST only be run on actual sharded
-    deployments. If omitted or "allow", the test can be run on either Serverless
+    deployments. If omitted or "allow", the test can be run on either serverless
     instances or on real sharded deployments.
 
 - ``collection_name`` (optional): The collection to use for testing.
