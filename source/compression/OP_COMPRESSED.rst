@@ -285,7 +285,7 @@ Connection strings, and results
 
 * mongodb://localhost:27017/?compressors=snappy
 
-  mongod should have logged the following (the exact log ouptut may differ depending on server version)::
+  mongod should have logged the following (the exact log output may differ depending on server version)::
 
    {"t":{"$date":"2021-04-08T13:28:38.885-06:00"},"s":"I",  "c":"NETWORK",  "id":22943,   "ctx":"listener","msg":"Connection accepted","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":1}}
    {"t":{"$date":"2021-04-08T13:28:38.886-06:00"},"s":"D3", "c":"EXECUTOR", "id":22983,   "ctx":"listener","msg":"Starting new executor thread in passthrough mode"}
@@ -506,4 +506,3 @@ Changelog
 +------------+--------------------------------------------------------+
 | 2017-05-10 | v1.0 Initial commit                                    |
 +------------+--------------------------------------------------------+
-
