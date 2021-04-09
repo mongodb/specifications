@@ -15,7 +15,7 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "edc-tests"
+        "databaseName": "aggregate-tests"
       }
     },
     {
@@ -29,7 +29,7 @@
   "initialData": [
     {
       "collectionName": "coll0",
-      "databaseName": "edc-tests",
+      "databaseName": "aggregate-tests",
       "documents": [
         {
           "_id": 1,
@@ -139,7 +139,7 @@
                   }
                 },
                 "commandName": "aggregate",
-                "databaseName": "edc-tests"
+                "databaseName": "aggregate-tests"
               }
             },
             {
@@ -152,7 +152,7 @@
                   "batchSize": 2
                 },
                 "commandName": "getMore",
-                "databaseName": "edc-tests"
+                "databaseName": "aggregate-tests"
               }
             },
             {
@@ -165,7 +165,7 @@
                   "batchSize": 2
                 },
                 "commandName": "getMore",
-                "databaseName": "edc-tests"
+                "databaseName": "aggregate-tests"
               }
             },
             {
@@ -178,7 +178,7 @@
                   "batchSize": 2
                 },
                 "commandName": "getMore",
-                "databaseName": "edc-tests"
+                "databaseName": "aggregate-tests"
               }
             }
           ]

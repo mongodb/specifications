@@ -15,7 +15,7 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "edc-tests"
+        "databaseName": "find-tests"
       }
     },
     {
@@ -29,7 +29,7 @@
   "initialData": [
     {
       "collectionName": "coll0",
-      "databaseName": "edc-tests",
+      "databaseName": "find-tests",
       "documents": [
         {
           "_id": 1,
@@ -128,7 +128,7 @@
                   }
                 },
                 "commandName": "find",
-                "databaseName": "edc-tests"
+                "databaseName": "find-tests"
               }
             },
             {
@@ -141,7 +141,7 @@
                   "batchSize": 2
                 },
                 "commandName": "getMore",
-                "databaseName": "edc-tests"
+                "databaseName": "find-tests"
               }
             },
             {
@@ -154,7 +154,7 @@
                   "batchSize": 2
                 },
                 "commandName": "getMore",
-                "databaseName": "edc-tests"
+                "databaseName": "find-tests"
               }
             },
             {
@@ -167,7 +167,7 @@
                   "batchSize": 2
                 },
                 "commandName": "getMore",
-                "databaseName": "edc-tests"
+                "databaseName": "find-tests"
               }
             }
           ]

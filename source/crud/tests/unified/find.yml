@@ -10,7 +10,7 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &database0Name edc-tests
+      databaseName: &database0Name find-tests
   - collection:
       id: &collection0 collection0
       database: *database0
