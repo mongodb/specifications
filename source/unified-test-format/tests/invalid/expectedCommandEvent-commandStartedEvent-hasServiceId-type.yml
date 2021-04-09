@@ -1,4 +1,4 @@
-description: expectedCommandEvent-commandStartedEvent-hasServerId-type
+description: expectedCommandEvent-commandStartedEvent-hasServiceId-type
 
 schemaVersion: '1.3'
 
@@ -13,4 +13,4 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
-              hasServerId: foo
+              hasServiceId: foo

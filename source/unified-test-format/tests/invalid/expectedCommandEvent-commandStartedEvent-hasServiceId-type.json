@@ -1,5 +1,5 @@
 {
-  "description": "expectedCommandEvent-commandFailedEvent-hasServerId-type",
+  "description": "expectedCommandEvent-commandStartedEvent-hasServiceId-type",
   "schemaVersion": "1.3",
   "createEntities": [
     {
@@ -17,8 +17,8 @@
           "client": "client0",
           "events": [
             {
-              "commandFailedEvent": {
-                "hasServerId": "foo"
+              "commandStartedEvent": {
+                "hasServiceId": "foo"
               }
             }
           ]

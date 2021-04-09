@@ -263,7 +263,7 @@
             "command": { "type": "object" },
             "commandName": { "type": "string" },
             "databaseName": { "type": "string" },
-            "hasServerId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" }
           }
         },
         "commandSucceededEvent": {
@@ -272,7 +272,7 @@
           "properties": {
             "reply": { "type": "object" },
             "commandName": { "type": "string" },
-            "hasServerId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" }
           }
         },
         "commandFailedEvent": {
@@ -280,7 +280,7 @@
           "additionalProperties": false,
           "properties": {
             "commandName": { "type": "string" },
-            "hasServerId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" }
           }
         }
       }
@@ -306,7 +306,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "hasServerId": { "type": "boolean" }
+            "hasServiceId": { "type": "boolean" }
           }
         },
         "poolClosedEvent": {

@@ -42,10 +42,10 @@ tests:
         events:
           - commandStartedEvent:
               commandName: insert
-              hasServerId: true
+              hasServiceId: true
           - commandSucceededEvent:
               commandName: insert
-              hasServerId: true
+              hasServiceId: true
 
   - description: command failed events include serverId
     operations:
@@ -60,10 +60,10 @@ tests:
         events:
           - commandStartedEvent:
               commandName: find
-              hasServerId: true
+              hasServiceId: true
           - commandFailedEvent:
               commandName: find
-              hasServerId: true
+              hasServiceId: true
 
   - description: poolClearedEvent events include serverId
     operations:
@@ -88,12 +88,12 @@ tests:
         events:
           - commandStartedEvent:
               commandName: find
-              hasServerId: true
+              hasServiceId: true
           - commandFailedEvent:
               commandName: find
-              hasServerId: true
+              hasServiceId: true
       - client: *client0
         eventType: cmap
         events:
           - poolClearedEvent:
-              hasServerId: true
+              hasServiceId: true

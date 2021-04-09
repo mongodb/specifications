@@ -1021,7 +1021,7 @@ The structure of this object is as follows:
     database name matches this value. The YAML file SHOULD use an `alias node`_
     for this value (e.g. ``databaseName: *database0Name``).
 
-  - ``serverId``: Defined in `hasServerId`_.
+  - ``serviceId``: Defined in `hasServiceId`_.
 
 .. _expectedEvent_commandSucceededEvent:
 
@@ -1038,7 +1038,7 @@ The structure of this object is as follows:
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
 
-  - ``serverId``: Defined in `hasServerId`_.
+  - ``serviceId``: Defined in `hasServiceId`_.
 
 .. _expectedEvent_commandFailedEvent:
 
@@ -1051,7 +1051,7 @@ The structure of this object is as follows:
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
 
-  - ``serverId``: Defined in `hasServerId`_.
+  - ``serviceId``: Defined in `hasServiceId`_.
 
 expectedCmapEvent
 `````````````````
@@ -1074,7 +1074,7 @@ expectedCmapEvent
 
   The structure of this object is as follows:
 
-  - ``serverId``: Defined in `hasServerId`_.
+  - ``serviceId``: Defined in `hasServiceId`_.
 
 .. _expectedEvent_poolClosedEvent:
 
@@ -1132,14 +1132,14 @@ expectedCmapEvent
   MUST be an empty document as all fields in this event are non-deterministic.
 
 
-hasServerId
-```````````
+hasServiceId
+`````````````
 
-This field is an optional boolean that specifies whether or not the ``serverId``
-field of an event is set. If true, test runners MUST assert that the field is
-set and is a non-empty BSON ObjectId (i.e. all bytes of the ObjectId are not 0).
-If false, test runners MUST assert that the field is not set or is an empty
-BSON ObjectId.
+This field is an optional boolean that specifies whether or not the
+``serviceId`` field of an event is set. If true, test runners MUST assert
+that the field is set and is a non-empty BSON ObjectId (i.e. all bytes of the
+ObjectId are not 0). If false, test runners MUST assert that the field is not
+set or is an empty BSON ObjectId.
 
 
 collectionOrDatabaseOptions
