@@ -1,7 +1,7 @@
 runOn:
     -
         minServerVersion: "3.6.0"
-        serverless: "forbid"
+        serverless: "forbid" # serverless does not support $listLocalSessions or $currentOp
 
 database_name: &database_name "admin"
 
