@@ -372,9 +372,8 @@ The structure of this object is as follows:
 - ``serverless``: Optional string. Whether or not the test should be run on
   serverless instances imitating sharded clusters. Valid values are "require",
   "forbid", and "allow". If "require", the test MUST only be run on serverless
-  instances. If "forbid", the test MUST only be run on actual sharded
-  deployments. If omitted or "allow", the test can be run on either serverless
-  instances or on real sharded deployments.
+  instances. If "forbid", the test MUST NOT be run on Serverless instances. If
+  omitted or "allow", this option has no effect.
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a
