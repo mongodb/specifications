@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.2.3
+:Spec Version: 1.2.4
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-03-24
+:Last Modified: 2021-04-08
 
 .. contents::
 
@@ -2635,11 +2635,11 @@ sections.
 Terminating Open Transactions
 `````````````````````````````
 
-Open transactions can cause tests to block indiscriminately. Test runners SHOULD
-terminate all open transactions at the start of a test suite and after each
-failed test by killing all sessions in the cluster. Using the internal
-MongoClient, execute the ``killAllSessions`` command on either the primary or,
-if connected to a sharded cluster, all mongos servers.
+Open transactions can cause tests to block indiscriminately. When connected to
+MongoDB 3.6 or later, test runners SHOULD terminate all open transactions at the
+start of a test suite and after each failed test by killing all sessions in the
+cluster. Using the internal MongoClient, execute the ``killAllSessions`` command
+on either the primary or, if connected to a sharded cluster, all mongos servers.
 
 For example::
 
@@ -2647,10 +2647,22 @@ For example::
       killAllSessions: []
     });
 
-The test runner MAY ignore any command failure with error Interrupted(11601) to
-work around `SERVER-38335`_.
+The test runner MAY ignore the following command failures:
+
+- Interrupted(11601) to work around `SERVER-38335`_.
+- Unauthorized(13) to work around `SERVER-54216`_.
+- CommandNotFound(59) if the command is executed on a pre-3.6 server
 
 .. _SERVER-38335: https://jira.mongodb.org/browse/SERVER-38335
+.. _SERVER-54216: https://jira.mongodb.org/browse/SERVER-54216
+
+Note that Atlas, by design, does not allow database users to kill sessions
+belonging to other users. This makes it impossible to guarantee that an existing
+transaction will not block test execution. To work around this, test runners
+SHOULD either ignore Unauthorized(13) command failures or avoid calling
+``killAllSessions`` altogether when connected to Atlas (e.g. by detecting
+``mongodb.net`` in the hostname or allowing the test runner to be configured
+externally).
 
 
 StaleDbVersion Errors on Sharded Clusters
@@ -2964,6 +2976,10 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-04-08: List additional error codes that may be ignored when calling
+             ``killAllSessions`` and note that the command should not be called
+             when connected to Atlas.
 
 :2021-03-22: Split ``serverApi`` into its own section. Note types for ``loop``
              operation arguments. Clarify how ``loop`` iterations are counted
