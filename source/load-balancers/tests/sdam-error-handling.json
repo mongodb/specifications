@@ -116,7 +116,7 @@
   ],
   "tests": [
     {
-      "description": "only connections for a specific serverId are closed when pools are cleared",
+      "description": "only connections for a specific serviceId are closed when pools are cleared",
       "operations": [
         {
           "name": "createFindCursor",

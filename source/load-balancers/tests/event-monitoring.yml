@@ -31,7 +31,7 @@ initialData:
     documents: []
 
 tests:
-  - description: command started and succeeded events include serverId
+  - description: command started and succeeded events include serviceId
     operations:
       - name: insertOne
         object: *collection0
@@ -47,7 +47,7 @@ tests:
               commandName: insert
               hasServiceId: true
 
-  - description: command failed events include serverId
+  - description: command failed events include serviceId
     operations:
       - name: find
         object: *collection0
@@ -65,7 +65,7 @@ tests:
               commandName: find
               hasServiceId: true
 
-  - description: poolClearedEvent events include serverId
+  - description: poolClearedEvent events include serviceId
     operations:
       - name: failPoint
         object: testRunner

@@ -36,7 +36,7 @@ tests:
   # spec tests should cover the case where loadBalanced is unset.
 
   # If the server is not configured to be behind a load balancer and the URI contains loadBalanced=true, the driver
-  # should error during the connection handshake because the server's hello response does not contain a serverId field.
+  # should error during the connection handshake because the server's hello response does not contain a serviceId field.
   - description: operations against non-load balanced clusters fail if URI contains loadBalanced=true
     operations:
       - name: runCommand

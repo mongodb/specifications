@@ -48,7 +48,7 @@
   ],
   "tests": [
     {
-      "description": "command started and succeeded events include serverId",
+      "description": "command started and succeeded events include serviceId",
       "operations": [
         {
           "name": "insertOne",
@@ -81,7 +81,7 @@
       ]
     },
     {
-      "description": "command failed events include serverId",
+      "description": "command failed events include serviceId",
       "operations": [
         {
           "name": "find",
@@ -117,7 +117,7 @@
       ]
     },
     {
-      "description": "poolClearedEvent events include serverId",
+      "description": "poolClearedEvent events include serviceId",
       "operations": [
         {
           "name": "failPoint",
