@@ -9,7 +9,7 @@ Versioned API For Drivers
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-12-01
+:Last Modified: 2021-04-10
 
 .. contents::
 
@@ -286,3 +286,4 @@ versioned API. This is not covered in this specification.
 
 Change Log
 ==========
+* 2020-04-10: Replaced usages of ``acceptAPIVersion2`` with `acceptApiVersion2``.
