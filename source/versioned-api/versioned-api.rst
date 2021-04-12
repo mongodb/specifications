@@ -3,13 +3,13 @@ Versioned API For Drivers
 =========================
 
 :Spec Title: Versioned API For Drivers
-:Spec Version: 1.0.0
+:Spec Version: 1.0.1
 :Author: Andreas Braun
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Patrick Freed, Oleg Pudeyev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2020-12-01
+:Last Modified: 2021-04-10
 
 .. contents::
 
@@ -286,3 +286,4 @@ versioned API. This is not covered in this specification.
 
 Change Log
 ==========
+* 2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.
