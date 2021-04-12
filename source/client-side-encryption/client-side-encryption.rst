@@ -1459,12 +1459,13 @@ safeguard. A collection may not have encrypted fields, but a command on the
 collection may could have sensitive data as part of the command arguments. For
 example:
 
-```
-db.publicData.aggregate([
-    {$lookup: {from: "privateData", localField: "_id", foreignField: "_id", as: "privateData"}},
-    {$match: {"privateData.ssn": "123-45-6789"}},
-])
-```
+.. code::
+
+   db.publicData.aggregate([
+      {$lookup: {from: "privateData", localField: "_id", foreignField: "_id", as: "privateData"}},
+      {$match: {"privateData.ssn": "123-45-6789"}},
+   ])
+
 
 The ``publicData`` collection does not have encrypted fields, but the
 ``privateData`` collection does. mongocryptd rejects an aggregate with
