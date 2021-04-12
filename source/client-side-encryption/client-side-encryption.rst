@@ -1449,7 +1449,7 @@ decryption. ``listCollections`` is not run when ``bypassAutoEncryption`` is
 ``true``, making a metadataClient unnecessary.
 
 Why are commands sent to mongocryptd on collections without encrypted fields?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------------------------------
 
 If a ``MongoClient`` is configured with automatic encryption, all commands on
 collections listed as ``AUTOENCRYPT`` in `libmongocrypt: Auto Encryption
