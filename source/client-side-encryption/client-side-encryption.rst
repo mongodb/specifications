@@ -1448,6 +1448,29 @@ JSON schema data is only needed for automatic encryption but not for automatic
 decryption. ``listCollections`` is not run when ``bypassAutoEncryption`` is
 ``true``, making a metadataClient unnecessary.
 
+Why are commands sent to mongocryptd on collections without encrypted fields?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If a ``MongoClient`` is configured with automatic encryption, all commands on
+collections listed as ``AUTOENCRYPT`` in `libmongocrypt: Auto Encryption
+Allow-List`_ undergo the automatic encryption process. Even if the collection
+does not have an associated schema, the command is sent to mongocryptd as a
+safeguard. A collection may not have encrypted fields, but a command on the
+collection may could have sensitive data as part of the command arguments. For
+example:
+
+```
+db.publicData.aggregate([
+    {$lookup: {from: "privateData", localField: "_id", foreignField: "_id", as: "privateData"}},
+    {$match: {"privateData.ssn": "123-45-6789"}},
+])
+```
+
+The ``publicData`` collection does not have encrypted fields, but the
+``privateData`` collection does. mongocryptd rejects an aggregate with
+``$lookup`` since there is no mechanism to determine encrypted fields of joined
+collections.
+
 Future work
 ===========
 
