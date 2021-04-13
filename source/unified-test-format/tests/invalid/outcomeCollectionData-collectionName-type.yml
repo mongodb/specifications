@@ -1,4 +1,4 @@
-description: "collectionData-additionalProperties"
+description: "outcomeCollectionData-collectionName-type"
 
 schemaVersion: "1.0"
 
@@ -13,14 +13,11 @@ createEntities:
       id: &collection0 "collection0"
       database: *database0
       collectionName: &collection0Name "foo"
-      foo: 0
-
-initialData:
-  - collectionName: *collection0Name
-    databaseName: *database0Name
-    documents: []
-    foo: 0
 
 tests:
   - description: "foo"
     operations: []
+    outcome:
+      - collectionName: 0
+        databaseName: *database0Name
+        documents: []

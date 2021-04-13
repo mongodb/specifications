@@ -1,5 +1,5 @@
 {
-  "description": "collectionData-databaseName-required",
+  "description": "outcomeCollectionData-additionalProperties",
   "schemaVersion": "1.0",
   "createEntities": [
     {
@@ -18,21 +18,22 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "foo",
-        "foo": 0
+        "collectionName": "foo"
       }
-    }
-  ],
-  "initialData": [
-    {
-      "collectionName": "foo",
-      "documents": []
     }
   ],
   "tests": [
     {
       "description": "foo",
-      "operations": []
+      "operations": [],
+      "outcome": [
+        {
+          "collectionName": "foo",
+          "databaseName": "foo",
+          "documents": [],
+          "foo": 0
+        }
+      ]
     }
   ]
 }

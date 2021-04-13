@@ -1,0 +1,37 @@
+{
+  "description": "outcomeCollectionData-databaseName-required",
+  "schemaVersion": "1.0",
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0"
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "foo"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection0",
+        "database": "database0",
+        "collectionName": "foo"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "foo",
+      "operations": [],
+      "outcome": [
+        {
+          "collectionName": "foo",
+          "documents": []
+        }
+      ]
+    }
+  ]
+}
