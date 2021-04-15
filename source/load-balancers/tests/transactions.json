@@ -852,18 +852,6 @@
             "client": "client0",
             "connections": 0
           }
-        },
-        {
-          "name": "commitTransaction",
-          "object": "session0"
-        },
-        {
-          "name": "assertNumberConnectionsCheckedOut",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client0",
-            "connections": 0
-          }
         }
       ],
       "expectEvents": [
@@ -879,11 +867,6 @@
               "commandStartedEvent": {
                 "commandName": "commitTransaction"
               }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "commitTransaction"
-              }
             }
           ]
         },
@@ -893,12 +876,6 @@
           "events": [
             {
               "connectionReadyEvent": {}
-            },
-            {
-              "connectionCheckedOutEvent": {}
-            },
-            {
-              "connectionCheckedInEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}

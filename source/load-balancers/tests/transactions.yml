@@ -326,13 +326,10 @@ tests:
       - <<: *commitTransaction
         expectError: *transientExpectedServerError
       - *assertConnectionNotPinned
-      - *commitTransaction
-      - *assertConnectionNotPinned
     expectEvents:
       - client: *client0
         events:
           - *insertStarted
-          - *commitStarted
           - *commitStarted
       - client: *client0
         eventType: cmap
@@ -343,10 +340,7 @@ tests:
           - connectionCheckedInEvent: {}
           # Events for the insert.
           - connectionCheckedOutEvent: {}
-          # Events for first commitTransaction.
-          - connectionCheckedInEvent: {}
-          # Events for second commitTransaction.
-          - connectionCheckedOutEvent: {}
+          # Events for commitTransaction.
           - connectionCheckedInEvent: {}
 
   - description: pinned connection is released after a transient network commit error
