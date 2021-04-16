@@ -80,18 +80,6 @@
           }
         }
       }
-    },
-    {
-      "collection": {
-        "id": "collection_readConcern_invalid",
-        "database": "database0",
-        "collectionName": "test_aggregate_out_readconcern",
-        "collectionOptions": {
-          "readConcern": {
-            "level": "!invalid123"
-          }
-        }
-      }
     }
   ],
   "initialData": [
@@ -406,71 +394,6 @@
                   ],
                   "readConcern": {
                     "level": "linearizable"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "invalid readConcern with out stage",
-      "operations": [
-        {
-          "object": "collection_readConcern_invalid",
-          "name": "aggregate",
-          "arguments": {
-            "pipeline": [
-              {
-                "$sort": {
-                  "x": 1
-                }
-              },
-              {
-                "$match": {
-                  "_id": {
-                    "$gt": 1
-                  }
-                }
-              },
-              {
-                "$out": "other_test_collection"
-              }
-            ]
-          },
-          "expectError": {
-            "isError": true
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client0",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "aggregate": "test_aggregate_out_readconcern",
-                  "pipeline": [
-                    {
-                      "$sort": {
-                        "x": 1
-                      }
-                    },
-                    {
-                      "$match": {
-                        "_id": {
-                          "$gt": 1
-                        }
-                      }
-                    },
-                    {
-                      "$out": "other_test_collection"
-                    }
-                  ],
-                  "readConcern": {
-                    "level": "!invalid123"
                   }
                 }
               }

@@ -53,13 +53,6 @@ createEntities:
       collectionName: *collection_name
       collectionOptions:
         readConcern: { level: "linearizable" }
-  -
-    collection:
-      id: &collection_readConcern_invalid collection_readConcern_invalid
-      database: database0
-      collectionName: *collection_name
-      collectionOptions:
-        readConcern: { level: "!invalid123" }
 initialData:
   -
     collectionName: *collection_name
@@ -175,23 +168,3 @@ tests:
                 pipeline: *pipeline
                 readConcern:
                   level: linearizable
-  -
-    description: 'invalid readConcern with out stage'
-    operations:
-      -
-        object: *collection_readConcern_invalid
-        name: aggregate
-        arguments: *arguments
-        expectError:
-          isError: true
-    expectEvents:
-      -
-        client: *client0
-        events:
-          -
-            commandStartedEvent:
-              command:
-                aggregate: *collection_name
-                pipeline: *pipeline
-                readConcern:
-                  level: '!invalid123'
