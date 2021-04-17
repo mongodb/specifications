@@ -1,6 +1,6 @@
 SCHEMA=../schema-1.3.json
 
-.PHONY: all invalid valid-fail valid-pass versioned-api HAS_AJV
+.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers HAS_AJV
 
 all: invalid valid-fail valid-pass versioned-api load-balancers
 
