@@ -63,6 +63,8 @@ tests:
 
   - description: "aggregate on database appends declared API version"
     runOnRequirements:
+        # serverless does not support either of the current database-level aggregation stages ($listLocalSessions and
+        # $currentOp)
       - serverless: "forbid"
     operations:
       - name: aggregate
