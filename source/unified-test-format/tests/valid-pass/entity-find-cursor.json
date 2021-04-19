@@ -166,7 +166,9 @@
               "commandSucceededEvent": {
                 "reply": {
                   "cursorsKilled": {
-                    "$$type": "array"
+                    "$$unsetorMatches": {
+                      "$$type": "array"
+                    }
                   }
                 },
                 "commandName": "killCursors"

@@ -84,5 +84,5 @@ tests:
               commandName: killCursors
           - commandSucceededEvent:
               reply:
-                cursorsKilled: { $$type: array }
+                cursorsKilled: { $$unsetorMatches: { $$type: array } }
               commandName: killCursors
