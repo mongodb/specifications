@@ -3215,10 +3215,10 @@ Change Log
 :2021-04-19: Introduce ``serverless`` `runOnRequirement`_.
 
 :2021-04-12: Added a ``FindCursor`` entity type, defined a set of cursor
-             operations, added an ``auth`` property to ``runOnRequirements`` and
-             modified the ``topologies`` property to accept ``load-balanced``,
-             and added CMAP events to the possible event types for
-             ``expectedEvent``.
+             operations, added an ``auth`` property to ``runOnRequirements``
+             and modified the ``topologies`` property to accept
+             ``load-balanced``, and added CMAP events to the possible event
+             types for ``expectedEvent``.
 
 :2021-04-08: List additional error codes that may be ignored when calling
              ``killAllSessions`` and note that the command should not be called
