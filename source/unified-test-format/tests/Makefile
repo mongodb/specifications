@@ -1,4 +1,4 @@
-SCHEMA=../schema-1.3.json
+SCHEMA=../schema-1.4.json
 
 .PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions HAS_AJV
 
