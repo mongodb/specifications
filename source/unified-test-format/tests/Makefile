@@ -1,8 +1,8 @@
 SCHEMA=../schema-1.3.json
 
-.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers HAS_AJV
+.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs HAS_AJV
 
-all: invalid valid-fail valid-pass versioned-api load-balancers
+all: invalid valid-fail valid-pass versioned-api load-balancers gridfs
 
 invalid: HAS_AJV
 	@# Redirect stdout to hide expected validation errors
@@ -19,6 +19,9 @@ versioned-api: HAS_AJV
 
 load-balancers: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../load-balancers/tests/*.yml" --valid
+
+gridfs: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../gridfs/tests/*.yml" --valid
 
 HAS_AJV:
 	@if ! command -v ajv > /dev/null; then                \
