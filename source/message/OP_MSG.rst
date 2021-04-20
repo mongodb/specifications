@@ -10,9 +10,9 @@ OP_MSG
 :Informed: Bryan Reinero, Chris Hendel, drivers@
 :Status: Approved
 :Type: Standards
-:Last Modified: 2021-04-06
+:Last Modified: 2021-04-20
 :Minimum Server Version: 3.6
-:Version: 1.2
+:Version: 1.3
 
 
 
@@ -51,7 +51,9 @@ Usage
 -----
 
 ``OP_MSG`` is only available in MongoDB 3.6 (``maxWireVersion >= 6``) and later.
-MongoDB drivers MUST continue to perform the MongoDB Handshake using ``OP_QUERY``
+MongoDB drivers SHOULD perform the MongoDB handshake using ``OP_MSG`` if an API
+version was declared on the client, but MAY decide to use ``OP_QUERY``. If no
+API version was declared, drivers MUST perform the handshake using ``OP_QUERY``
 to determine if the node supports ``OP_MSG``.
 
 If the node supports ``OP_MSG``, any and all messages MUST use ``OP_MSG``,
@@ -616,6 +618,7 @@ Q & A
 Changelog
 =========
 
+- 2021-04-20 Suggest using OP_MSG for initial handshake when using versioned API
 - 2021-04-06 Updated to use hello and not writable primary
 - 2017-11-12 Specify read preferences for OP_MSG with direct connection
 - 2017-08-17 Added the ``User originating command`` section
