@@ -84,5 +84,6 @@ tests:
               commandName: killCursors
           - commandSucceededEvent:
               reply:
-                cursorsKilled: { $$type: array }
+                # No cursorsKilled field expected on pre-3.2 servers
+                cursorsKilled: { $$unsetOrMatches: { $$type: array } }
               commandName: killCursors
