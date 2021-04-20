@@ -333,11 +333,20 @@ Connection strings, and results
 
 * mongodb://localhost:27017/?compressors=snoopy
 
-  mongod should not have logged anything as drivers should reject invalid compressor values.
+  mongod should have logged the following::
+
+   {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn5","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"}}}
+   {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn5","msg":"client metadata","attr":{"remote":"127.0.0.1:54372","client":"conn5","doc":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"}}}
+   {"t":{"$date":"2021-04-20T09:57:26.824-06:00"},"s":"D3", "c":"NETWORK",  "id":22934,   "ctx":"conn5","msg":"Starting server-side compression negotiation"}
+   {"t":{"$date":"2021-04-20T09:57:26.824-06:00"},"s":"D3", "c":"NETWORK",  "id":22936,   "ctx":"conn5","msg":"No compressors provided"}
+   {"t":{"$date":"2021-04-20T09:57:26.825-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn5","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","command":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"},"numYields":0,"reslen":319,"locks":{},"remote":"127.0.0.1:54372","protocol":"op_query","durationMillis":1}}
+
+  e.g., empty compression: [] array. No operations should have been compressed.
 
   The results of the program should have been::
 
-   Failed global initialization: BadValue Invalid network message compressor specified in configuration: snoopy
+   WARNING: Unsupported compressor: 'snoopy'
+   { "ok" : 1 }
 
 
 * mongodb://localhost:27017/?compressors=snappy,zlib
