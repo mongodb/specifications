@@ -3,7 +3,7 @@ Retryable Reads
 ===============
 
 :Spec Title: Retryable Reads
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Vincent Kam 
 :Lead: Bernie Hackett
 :Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2019-05-29
+:Last Modified: 2021-03-24
    
 .. contents::
 
@@ -78,6 +78,10 @@ SocketException                 9001
 - a server error response without an error code or one different from those
   listed above, but with an error message containing the substring "not
   master" or "node is recovering"
+
+- a `PoolClearedError`_
+
+  .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
 
 MongoClient Configuration 
 --------------------------
@@ -356,15 +360,23 @@ and reflects the flow described above.
     /* Allow ServerSelectionException to propagate to our caller, which
      * can then assume that no attempts were made. */
     server = selectServer();
-    connection = server.getConnection()   
+
+    /* PoolClearedException indicates the operation did not even attempt to
+     * create a connection, let alone execute the operation. This means we
+     * are always safe to attempt a retry. We do not need to update SDAM,
+     * since whatever error caused the pool to be cleared will do so itself. */
+    try {
+      connection = server.getConnection()
+    } catch (PoolClearedException poolClearedError) {
+      return executeRetry(command, session, poolClearedError);
+    }
   
     /* If the server does not support retryable reads or if the session in a
      * transaction execute the read as if retryable reads are not enabled. */
     if ( !isRetryableReadsSupported(connection) || session.inTransaction()) {
       return executeCommand(connection, command);
     }
-  
-  
+
     /* NetworkException and NotMasterException are both retryable errors. If
      * caught, remember the exception, update SDAM accordingly, and proceed with
      * retrying the operation. */
@@ -375,7 +387,15 @@ and reflects the flow described above.
     } catch (NotMasterException originalError) {
       updateTopologyDescriptionForNotMasterError(server, originalError);
     }
+    return executeRetry(command, session, originalError);
+  }
   
+  /**
+   * Executes the second attempt of a retryable read after a retryable error
+   * was encountered. On failure, this may return the original error, depending
+   * on the type of the new error encountered.
+   */
+  function executeRetry(command, session, originalError) {
     /* If we cannot select a server, do not proceed with retrying and
      * throw the original error. The caller can then infer that an attempt was
      * made and failed. */
@@ -656,6 +676,8 @@ degraded performance can simply disable ``retryableReads``.
 
 Changelog 
 ==========
+
+2021-03-23: Require that PoolClearedErrors are retried
 
 2019-06-07: Mention $merge stage for aggregate alongside $out
 

@@ -147,6 +147,7 @@ data.
 
 .. _GridFSBucket spec: https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst#configurable-gridfsbucket-class
     
+
 Speeding Up Tests
 -----------------
 
@@ -164,6 +165,45 @@ Optional Enumeration Commands
 A driver only needs to test the optional enumeration commands it has chosen to
 implement (e.g. ``Database.listCollectionNames()``).
 
+PoolClearedError Retryability Test
+==================================
+
+This test will be used to ensure drivers properly retry after encountering PoolClearedErrors.
+This test MUST be implemented by any driver that implements the CMAP specification.
+
+1. Create a client with maxPoolSize=1 and retryReads=true. If testing against a
+   sharded deployment, be sure to connect to only a single mongos.
+
+2. Enable the following failpoint::
+
+     {
+         configureFailPoint: "failCommand",
+         mode: { times: 1 },
+         data: {
+             failCommands: ["find"],
+             errorCode: 91,
+             blockConnection: true,
+             blockTimeMS: 1000
+         }
+     }
+
+3. Start two threads and attempt to perform a ``findOne`` simultaneously on both.
+
+4. Verify that both ``findOne`` attempts succeed.
+
+5. Via CMAP monitoring, assert that the first check out succeeds.
+
+6. Via CMAP monitoring, assert that a PoolClearedEvent is then emitted.
+
+7. Via CMAP monitoring, assert that the second check out then fails due to a
+   connection error.
+
+8. Via Command Monitoring, assert that exactly three ``find`` CommandStartedEvents
+   were observed in total.
+
+9. Disable the failpoint.
+
+
 Changelog
 =========
 
@@ -175,3 +215,5 @@ Changelog
              Add test-level ``useMultipleMongoses`` field.
 
 :2020-09-16: Suggest lowering heartbeatFrequencyMS in addition to minHeartbeatFrequencyMS.
+
+:2021-03-23: Add prose test for retrying PoolClearedErrors
