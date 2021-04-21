@@ -1,6 +1,6 @@
 {
   "description": "estimatedDocumentCount",
-  "schemaVersion": "1.4",
+  "schemaVersion": "1.0",
   "createEntities": [
     {
       "client": {
@@ -61,8 +61,7 @@
       "description": "estimatedDocumentCount uses $collStats on 4.9.0 or greater",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.9.0",
-          "serverless": "forbid"
+          "minServerVersion": "4.9.0"
         }
       ],
       "operations": [
@@ -108,8 +107,7 @@
       "description": "estimatedDocumentCount with maxTimeMS on 4.9.0 or greater",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.9.0",
-          "serverless": "forbid"
+          "minServerVersion": "4.9.0"
         }
       ],
       "operations": [
@@ -159,8 +157,7 @@
       "description": "estimatedDocumentCount on non-existent collection on 4.9.0 or greater",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.9.0",
-          "serverless": "forbid"
+          "minServerVersion": "4.9.0"
         }
       ],
       "operations": [
@@ -206,8 +203,7 @@
       "description": "estimatedDocumentCount errors correctly on 4.9.0 or greater--command error",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.9.0",
-          "serverless": "forbid"
+          "minServerVersion": "4.9.0"
         }
       ],
       "operations": [
@@ -274,8 +270,7 @@
       "description": "estimatedDocumentCount errors correctly on 4.9.0 or greater--socket error",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.9.0",
-          "serverless": "forbid"
+          "minServerVersion": "4.9.0"
         }
       ],
       "operations": [

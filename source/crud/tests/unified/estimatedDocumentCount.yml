@@ -1,6 +1,6 @@
 description: "estimatedDocumentCount"
 
-schemaVersion: "1.4"
+schemaVersion: "1.0"
 
 createEntities:
   - client:
@@ -34,7 +34,6 @@ tests:
   - description: "estimatedDocumentCount uses $collStats on 4.9.0 or greater"
     runOnRequirements:
       - minServerVersion: "4.9.0"
-        serverless: forbid # serverless does not support count via $collStats yet (CLOUDP-86318)
     operations:
       - name: estimatedDocumentCount
         object: *collection0
@@ -54,7 +53,6 @@ tests:
   - description: "estimatedDocumentCount with maxTimeMS on 4.9.0 or greater"
     runOnRequirements:
       - minServerVersion: "4.9.0"
-        serverless: forbid # serverless does not support count via $collStats yet (CLOUDP-86318)
     operations:
       - name: estimatedDocumentCount
         object: *collection0
@@ -77,7 +75,6 @@ tests:
   - description: "estimatedDocumentCount on non-existent collection on 4.9.0 or greater"
     runOnRequirements:
       - minServerVersion: "4.9.0"
-        serverless: forbid # serverless does not support count via $collStats yet (CLOUDP-86318)
     operations:
       - name: estimatedDocumentCount
         object: *collection1
@@ -97,7 +94,6 @@ tests:
   - description: "estimatedDocumentCount errors correctly on 4.9.0 or greater--command error"
     runOnRequirements:
       - minServerVersion: "4.9.0"
-        serverless: forbid # serverless does not support count via $collStats yet (CLOUDP-86318)
     operations:
       - name: failPoint
         object: testRunner
@@ -128,7 +124,6 @@ tests:
   - description: "estimatedDocumentCount errors correctly on 4.9.0 or greater--socket error"
     runOnRequirements:
       - minServerVersion: "4.9.0"
-        serverless: forbid # serverless does not support count via $collStats yet (CLOUDP-86318)
     operations:
       - name: failPoint
         object: testRunner
