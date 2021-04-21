@@ -69,6 +69,36 @@
   },
   "tests": [
     {
+      "description": "sessions are reused in LB mode",
+      "operations": [
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "x": 1
+            }
+          }
+        },
+        {
+          "name": "assertSameLsidOnLastTwoCommands",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0"
+          }
+        }
+      ]
+    },
+    {
       "description": "all operations go to the same mongos",
       "operations": [
         {

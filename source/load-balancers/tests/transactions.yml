@@ -43,6 +43,19 @@ _yamlAnchors:
       _id: 4
 
 tests:
+  - description: sessions are reused in LB mode
+    operations:
+      - &nonTransactionalInsert
+        name: insertOne
+        object: *collection0
+        arguments:
+          document: { x: 1 }
+      - *nonTransactionalInsert
+      - name: assertSameLsidOnLastTwoCommands
+        object: testRunner
+        arguments:
+          client: *client0
+
   - description: all operations go to the same mongos
     operations:
       - &startTransaction
