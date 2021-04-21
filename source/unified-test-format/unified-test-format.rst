@@ -1021,7 +1021,7 @@ The structure of this object is as follows:
     database name matches this value. The YAML file SHOULD use an `alias node`_
     for this value (e.g. ``databaseName: *database0Name``).
 
-  - ``serviceId``: Defined in `hasServiceId`_.
+  - ``hasServiceId``: Defined in `hasServiceId`_.
 
 .. _expectedEvent_commandSucceededEvent:
 
@@ -1038,7 +1038,7 @@ The structure of this object is as follows:
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
 
-  - ``serviceId``: Defined in `hasServiceId`_.
+  - ``hasServiceId``: Defined in `hasServiceId`_.
 
 .. _expectedEvent_commandFailedEvent:
 
@@ -1051,7 +1051,7 @@ The structure of this object is as follows:
   - ``commandName``: Optional string. Test runners MUST assert that the command
     name matches this value.
 
-  - ``serviceId``: Defined in `hasServiceId`_.
+  - ``hasServiceId``: Defined in `hasServiceId`_.
 
 expectedCmapEvent
 `````````````````
@@ -1074,7 +1074,7 @@ expectedCmapEvent
 
   The structure of this object is as follows:
 
-  - ``serviceId``: Defined in `hasServiceId`_.
+  - ``hasServiceId``: Defined in `hasServiceId`_.
 
 .. _expectedEvent_poolClosedEvent:
 
