@@ -56,21 +56,21 @@ tests:
               databaseName: *database0Name
           - commandStartedEvent:
               command:
-                getMore: { $$exists: true }
+                getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
               commandName: getMore
               databaseName: *database0Name
           - commandStartedEvent:
               command:
-                getMore: { $$exists: true }
+                getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
               commandName: getMore
               databaseName: *database0Name
           - commandStartedEvent:
               command:
-                getMore: { $$exists: true }
+                getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
               commandName: getMore

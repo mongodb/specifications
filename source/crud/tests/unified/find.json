@@ -135,7 +135,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$exists": true
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "coll0",
                   "batchSize": 2
@@ -148,7 +151,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$exists": true
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "coll0",
                   "batchSize": 2
@@ -161,7 +167,10 @@
               "commandStartedEvent": {
                 "command": {
                   "getMore": {
-                    "$$exists": true
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   },
                   "collection": "coll0",
                   "batchSize": 2
