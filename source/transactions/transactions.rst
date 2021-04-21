@@ -810,26 +810,30 @@ certain retries of commitTransaction and abortTransaction) to the same mongos.
 When to unpin
 ^^^^^^^^^^^^^
 
-Drivers MUST unpin a ClientSession when a command within a transaction,
-including commitTransaction and abortTransaction, fails with a
-TransientTransactionError. Transient errors indicate that the transaction
-in question has already been aborted or that the pinned mongos is
+Drivers MUST unpin a ClientSession in the following situations:
+
+#. The ``abortTransaction`` command is executed. The session MUST be unpinned
+regardless of whether or the abort operation succeeds or fails. If the
+operation fails with a retryable error, the session MUST be unpinned before
+performing server selection for the retry.
+#. Any operation in the transcation, including ``commitTransaction`` fails with
+a TransientTransactionError. Transient errors indicate that the transaction
+in question has already been aborted or that the pinnned mongos is
 down/unavailable. Unpinning the session ensures that a subsequent
-abortTransaction (or commitTransaction) does not block waiting on a server
-that is unreachable.
+``abortTransaction`` (or ``commitTransaction``) does not block waiting on a
+server that is unreachable.
+#. Any ``commitTransaction`` attempt fails with an
+``UnknownTransactionCommitResult`` error label. If the error is also
+considered retryable, the session MUST be unpinned before performing server
+selection for the retry.
+#. A new transaction is started on the ClientSession after the previous
+transaction has been committed. The session MUST be unpinned before performing
+server selection for the first operation of the new transaction.
+#. A non-transactional operation is performed using the ClientSession. The
+session MUST be unpinned before performing server selection for the operation.
 
-Additionally, drivers MUST unpin a ClientSession when any individual
-commitTransaction command attempt fails with an UnknownTransactionCommitResult
-error label. In cases where the UnknownTransactionCommitResult causes an
-automatic retry attempt, drivers MUST unpin the ClientSession before performing
-server selection for the retry.
-
-Aborting a transaction or starting a new transaction on a pinned
-ClientSession MUST unpin the session. Committing a transaction on a pinned
-ClientSession MUST NOT unpin the session as commitTransaction may be called
-multiple times. Additionally, any non-transaction operation using a pinned
-ClientSession MUST unpin the session and the operation MUST perform normal
-server selection.
+Note that committing a transaction on a pinned ClientSession MUST NOT unpin
+the session as ``commitTransaction`` may be called multiple times.
 
 recoveryToken field
 ~~~~~~~~~~~~~~~~~~~
