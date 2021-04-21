@@ -812,10 +812,10 @@ When to unpin
 
 Drivers MUST unpin a ClientSession in the following situations:
 
-#. The ``abortTransaction`` command is executed. The session MUST be unpinned
-regardless of whether or the abort operation succeeds or fails. If the
-operation fails with a retryable error, the session MUST be unpinned before
-performing server selection for the retry.
+#. The transaction is aborted. The session MUST be unpinned regardless of
+whether or the abort succeeds or fails. If the operation fails with a
+retryable error, the session MUST be unpinned before performing server
+selection for the retry.
 #. Any operation in the transcation, including ``commitTransaction`` fails with
 a TransientTransactionError. Transient errors indicate that the transaction
 in question has already been aborted or that the pinnned mongos is
