@@ -46,22 +46,6 @@
         {
           "_id": 4,
           "x": 44
-        },
-        {
-          "_id": 5,
-          "x": 55
-        },
-        {
-          "_id": 6,
-          "x": 66
-        },
-        {
-          "_id": 7,
-          "x": 77
-        },
-        {
-          "_id": 8,
-          "x": 88
         }
       ]
     }
@@ -82,7 +66,7 @@
                 }
               }
             ],
-            "batchSize": 2
+            "batchSize": 1
           },
           "object": "collection0",
           "expectResult": [
@@ -97,22 +81,6 @@
             {
               "_id": 4,
               "x": 44
-            },
-            {
-              "_id": 5,
-              "x": 55
-            },
-            {
-              "_id": 6,
-              "x": 66
-            },
-            {
-              "_id": 7,
-              "x": 77
-            },
-            {
-              "_id": 8,
-              "x": 88
             }
           ]
         }
@@ -135,7 +103,7 @@
                     }
                   ],
                   "cursor": {
-                    "batchSize": 2
+                    "batchSize": 1
                   }
                 },
                 "commandName": "aggregate",
@@ -152,7 +120,7 @@
                     ]
                   },
                   "collection": "coll0",
-                  "batchSize": 2
+                  "batchSize": 1
                 },
                 "commandName": "getMore",
                 "databaseName": "aggregate-tests"
@@ -168,23 +136,7 @@
                     ]
                   },
                   "collection": "coll0",
-                  "batchSize": 2
-                },
-                "commandName": "getMore",
-                "databaseName": "aggregate-tests"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "getMore": {
-                    "$$type": [
-                      "int",
-                      "long"
-                    ]
-                  },
-                  "collection": "coll0",
-                  "batchSize": 2
+                  "batchSize": 1
                 },
                 "commandName": "getMore",
                 "databaseName": "aggregate-tests"
