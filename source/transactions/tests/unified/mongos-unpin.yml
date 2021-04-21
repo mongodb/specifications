@@ -107,7 +107,7 @@ tests:
       - *startTransaction
       - *assertNoPinnedServer
 
-  - description: unpin when a non-transaction operation uses a session
+  - description: unpin when a non-transaction write operation uses a session
     operations:
       - *startTransaction
       - *insertOne
@@ -115,4 +115,18 @@ tests:
         object: *session0
       - *assertPinnedServer
       - *insertOne
+      - *assertNoPinnedServer
+
+  - description: unpin when a non-transaction read operation uses a session
+    operations:
+      - *startTransaction
+      - *insertOne
+      - name: commitTransaction
+        object: *session0
+      - *assertPinnedServer
+      - name: find
+        object: *collection0
+        arguments:
+          filter: { x: 1 }
+          session: *session0
       - *assertNoPinnedServer
