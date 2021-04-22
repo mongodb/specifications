@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: October 19, 2020
-:Version: 1.3.0
+:Last Modified: 2021-04-08
+:Version: 1.3.1
 
 .. contents::
 
@@ -1079,7 +1079,8 @@ update                   AUTOENCRYPT
 authenticate             BYPASS
 getnonce                 BYPASS
 logout                   BYPASS
-isMaster                 BYPASS
+hello                    BYPASS
+legacy hello             BYPASS
 abortTransaction         BYPASS
 commitTransaction        BYPASS
 endSessions              BYPASS
@@ -1537,6 +1538,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
+| 2021-04-08 | Updated to use hello and legacy hello                      |
 | 2021-01-22 | Add sessionToken option to 'aws' KMS provider              |
 | 2020-12-12 | Add metadataClient option and internal client              |
 | 2020-10-19 | Add 'azure' and 'gcp' KMS providers                        |

@@ -833,7 +833,7 @@ The following tests that setting ``bypassAutoEncryption=true`` really does bypas
 
 #. Use ``client_encrypted`` to insert the document ``{"unencrypted": "test"}`` into ``db.coll``. Expect this to succeed.
 
-#. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run an ``isMaster`` command and ensure it fails with a server selection timeout.
+#. Validate that mongocryptd was not spawned. Create a MongoClient to localhost:27021 (or whatever was passed via ``--port``) with serverSelectionTimeoutMS=1000. Run a handshake command and ensure it fails with a server selection timeout.
 
 Deadlock tests
 ~~~~~~~~~~~~~~
