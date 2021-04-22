@@ -6,7 +6,7 @@ runOnRequirements:
   - minServerVersion: "4.9"
     serverParameters:
       enableTestCommands: true
-    # serverless does not support the testVersion2 command
+    # serverless gives a different error for unrecognized testVersion2 command
     serverless: "forbid"
 
 createEntities:
