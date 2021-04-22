@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.3
+:Spec Version: 1.10.4
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2020-02-27
+:Last Modified: 2021-04-08
 
 .. contents::
 
@@ -154,8 +154,9 @@ MUST support this mode.
 Authentication Handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-An authentication handshake consists of an initial ``isMaster`` command
-possibly followed by one or more authentication conversations.
+An authentication handshake consists of an initial ``hello`` or
+legacy hello command possibly followed by one or more authentication
+conversations.
 
 Drivers MUST follow the following steps for an authentication
 handshake:
@@ -163,8 +164,8 @@ handshake:
 #. Upon opening a general-use socket to a server for a given
    MongoClient, drivers MUST issue a `MongoDB Handshake
    <../mongodb-handshake/handshake.rst>`_ immediately.  This allows a
-   driver to determine the server type.  If the ``isMaster`` of the
-   MongoDB Handshake fails with an error, drivers MUST treat this as
+   driver to determine the server type.  If the ``hello`` or legacy hello
+   of the MongoDB Handshake fails with an error, drivers MUST treat this as
    an authentication error.
 
 #. If the server is of type RSArbiter, no authentication is possible and the
@@ -189,9 +190,9 @@ Mechanism Negotiation via Handshake
 
 If an application provides a username but does not provide an
 authentication mechanism, drivers MUST negotiate a mechanism via an
-``isMaster`` command requesting a user's supported SASL mechanisms::
+``hello`` or legacy hello command requesting a user's supported SASL mechanisms::
 
-    {isMaster: 1, saslSupportedMechs: "<dbname>.<username>"}
+    {hello: 1, saslSupportedMechs: "<dbname>.<username>"}
 
 In this example ``<dbname>`` is the authentication database name that
 either SCRAM-SHA-1 or SCRAM-SHA-256 would use (they are the same; either from
@@ -201,7 +202,7 @@ The username MUST NOT be modified from the form provided by the user (i.e.  do
 not normalize with SASLprep), as the server uses the raw form to look for
 conflicts with legacy credentials.
 
-If the ``isMaster`` response includes a
+If the handshake response includes a
 ``saslSupportedMechs`` field, then drivers MUST use the contents of that field
 to select a default mechanism as described later.  If the command succeeds and
 the response does not include a ``saslSupportedMechs`` field, then drivers MUST
@@ -231,13 +232,13 @@ When authenticating each credential, if the authentication mechanism is not
 specified and has not been negotiated for that credential:
 
 - If the connection handshake results indicate the server version is 4.0 or
-  later, drivers MUST send a new ``isMaster`` negotiation command for the
-  credential to determine the default authentication mechanism.
+  later, drivers MUST send a new ``hello`` or legacy hello negotiation command
+  for the credential to determine the default authentication mechanism.
 
 - Otherwise, when the server version is earlier than 4.0, the driver MUST
   select a default authentication mechanism for the credential following the
   instructions for when the ``saslSupportedMechs`` field is not present in
-  an ``isMaster`` response.
+  a legacy hello response.
 
 Caching credentials in SCRAM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -264,12 +265,12 @@ Defaults
 If the user did not provide a mechanism via the connection string or via code,
 the following logic describes how to select a default.
 
-If a ``saslSupportedMechs`` field was present in the ``isMaster`` results for
+If a ``saslSupportedMechs`` field was present in the handshake response for
 mechanism negotiation, then it MUST be inspected to select a default
 mechanism::
 
     {
-        "ismaster" : true,
+        "hello" : true,
         "saslSupportedMechs": ["SCRAM-SHA-1", "SCRAM-SHA-256"],
         ...
         "ok" : 1
@@ -280,7 +281,7 @@ used as the default; otherwise, SCRAM-SHA-1 MUST be used as the default,
 regardless of whether SCRAM-SHA-1 is in the list.  Drivers MUST NOT
 attempt to use any other mechanism (e.g. PLAIN) as the default.
 
-If ``saslSupportedMechs`` is not present in the ``isMaster`` results for
+If ``saslSupportedMechs`` is not present in the handshake response for
 mechanism negotiation, then SCRAM-SHA-1 MUST be used when talking to servers >=
 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
 
@@ -1128,10 +1129,10 @@ the other mechanism fails.
 For a non-existent username, verify that not specifying a mechanism when
 connecting fails with the same error type that would occur with a correct
 username but incorrect password or mechanism.  (Because negotiation with a
-non-existent user name at one point during server development caused an
-isMaster error, we want to verify this is seen by users as similar to other
-authentication errors, not as a network or database command error on the 'ismaster'
-command itself.)
+non-existent user name at one point during server development caused a
+handshake error, we want to verify this is seen by users as similar to other
+authentication errors, not as a network or database command error on the ``hello``
+or legacy hello commands themselves.)
 
 Step 4
 ------
@@ -1201,7 +1202,7 @@ The Java and .NET drivers currently uses eager authentication and abide by this 
 Q & A
 =====
 
-Q: According to `Authentication Handshake`_, we are calling isMaster for every socket. Isn't this a lot?
+Q: According to `Authentication Handshake`_, we are calling ``hello`` or legacy hello for every socket. Isn't this a lot?
 	Drivers should be pooling connections and, as such, new sockets getting opened should be relatively infrequent. It's simply part of the protocol for setting up a socket to be used.
 
 Q: Where is information related to user management?
@@ -1261,6 +1262,9 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 Version History
 ===============
 
+Version 1.10.4 Changes
+    * Updated to use hello and legacy hello.
+
 Version 1.10.3 Changes
     * Note that errors encountered during auth are handled by SDAM.
 
@@ -1298,7 +1302,7 @@ Version 1.7.2 Changes
       auth credentials.
 
 Version 1.7.1 Changes
-    * Unknown users don't cause ismaster errors. This was changed before
+    * Unknown users don't cause handshake errors. This was changed before
       server 4.0 GA in SERVER-34421, so the auth spec no longer refers to
       such a possibility.
 
