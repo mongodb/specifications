@@ -5,7 +5,6 @@
     {
       "topologies": [
         "single",
-        "replicaset",
         "sharded"
       ]
     }
@@ -14,6 +13,7 @@
     {
       "client": {
         "id": "lbTrueClient",
+        "useMultipleMongoses": false,
         "uriOptions": {
           "loadBalanced": true
         }
