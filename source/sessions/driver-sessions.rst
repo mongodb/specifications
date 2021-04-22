@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.7.1
+:Spec Version: 1.7.2
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2019-10-22
+:Last Modified: 2021-04-08
 
 .. contents::
 
@@ -540,11 +540,11 @@ to the server:
 
 * The server might have supported sessions at the time the connection was first
   opened (and reported a value for logicalSessionTimeoutMinutes in the initial
-  response to ismaster), but have subsequently been downgraded to not support
-  sessions. The server does not close the socket in this scenario, and the driver
-  will forever conclude that the server at the other end of this connection
-  supports sessions. This scenario will only be a problem until the next heartbeat
-  against that server.
+  response to the `handshake <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_),
+  but have subsequently been downgraded to not support sessions. The server does
+  not close the socket in this scenario, and the driver will forever conclude that
+  the server at the other end of this connection supports sessions. This scenario
+  will only be a problem until the next heartbeat against that server.
 
 These race conditions are particulary insidious when the driver decides to
 start an implicit session based on the conclusion that sessions are supported.
@@ -587,8 +587,8 @@ opening and authenticating a connection.
 When monitoring the state of a deployment
 -----------------------------------------
 
-A driver MAY omit a session ID in isMaster commands sent solely for the purposes
-of monitoring the state of a deployment.
+A driver MAY omit a session ID in hello and legacy hello commands sent solely
+for the purposes of monitoring the state of a deployment.
 
 When sending a parallelCollectionScan command
 ---------------------------------------------
@@ -788,7 +788,7 @@ A server session is considered stale by the server when it has not been used
 for a certain amount of time. The default amount of time is 30 minutes, but
 this value is configurable on the server. Servers that support sessions will
 report this value in the ``logicalSessionTimeoutMinutes`` field of the reply
-to the ``ismaster`` command. The smallest reported timeout is recorded in the
+to the hello and legacy hello commands. The smallest reported timeout is recorded in the
 ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription``. See the
 Server Discovery And Monitoring specification for details.
 
@@ -1262,3 +1262,4 @@ Change log
 :2019-10-22: Drivers may defer checking if a deployment supports sessions until the first
 operation performed with a session
 :2020-05-26: Simplify logic for determining sessions support
+:2021-04-08: Updated to use hello and legacy hello
