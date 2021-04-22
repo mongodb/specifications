@@ -238,7 +238,7 @@ specified and has not been negotiated for that credential:
 - Otherwise, when the server version is earlier than 4.0, the driver MUST
   select a default authentication mechanism for the credential following the
   instructions for when the ``saslSupportedMechs`` field is not present in
-  an legacy hello response.
+  a legacy hello response.
 
 Caching credentials in SCRAM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1129,7 +1129,7 @@ the other mechanism fails.
 For a non-existent username, verify that not specifying a mechanism when
 connecting fails with the same error type that would occur with a correct
 username but incorrect password or mechanism.  (Because negotiation with a
-non-existent user name at one point during server development caused an
+non-existent user name at one point during server development caused a
 handshake error, we want to verify this is seen by users as similar to other
 authentication errors, not as a network or database command error on the ``hello``
 or legacy hello commands themselves.)
