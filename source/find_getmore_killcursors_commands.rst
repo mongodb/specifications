@@ -6,7 +6,7 @@ Find, getMore and killCursors commands.
 =======================================
 
 :Spec: 137
-:Version: 1.3
+:Version: 1.4
 :Title: Find, getMore and killCursors commands
 :Author: Christian Kvalheim
 :Lead: Christian Kvalheim
@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: October 21, 2015
+:Last Modified: April 6, 2021
 
 .. contents::
 
@@ -71,7 +71,7 @@ The documentation provided in code below is merely for driver authors and SHOULD
 Implementation
 --------------
 
-If the **isMaster** command returns **maxWireVersion >= 4**, drivers:
+If the **hello** command returns **maxWireVersion >= 4**, drivers:
 
 * MUST implement queries with the ``find`` command instead of ``OP_QUERY``.
 
@@ -320,7 +320,7 @@ Special Collection names
 
 The find command **does not support querying on system collections**, so if drivers are using any system collections instead of the inprog, killop, unlock, etc. commands they SHOULD default to using the old-style OP_QUERY.
 
-Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if **ismaster.maxWireVersion >= 4** or higher.
+Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if **hello.maxWireVersion >= 4** or higher.
 
 .. list-table:: Special Collection Names
    :widths: 15 30
@@ -348,17 +348,17 @@ Interactions with OP_QUERY
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When sending a find operation as a find command rather than a legacy
-**OP_QUERY** find only the **slaveOk** flag is honored of the flags available
+**OP_QUERY** find only the **secondaryOk** flag is honored of the flags available
 in the **flag** field on the wire protocol.
 
 For the **find**, **getMore** and **killCursors** commands the
 **numberToReturn** field SHOULD be -1. To execute **find** commands against
-a secondary the driver MUST set the **slaveOk** bit for the **find** command
+a secondary the driver MUST set the **secondaryOk** bit for the **find** command
 to successfully execute.
 
-The **slaveOk** flag SHOULD not be set for all follow-up **getMore** and **killCursors** commands. The cursor on the server keeps the original **slaveOk** value first set on the **find** command.
+The **secondaryOk** flag SHOULD not be set for all follow-up **getMore** and **killCursors** commands. The cursor on the server keeps the original **secondaryOk** value first set on the **find** command.
 
-More detailed information about the interaction of the **slaveOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
+More detailed information about the interaction of the **secondaryOk** with **OP_QUERY** can be found in the Server Selection Spec `Passing a Read Preference`_.
 
 .. _Passing a Read Preference: https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#passing-read-preference-to-mongos
 
@@ -468,7 +468,7 @@ getMore
 -------
 
 The **getMore** command replaces the **OP_GET_MORE** wire protocol message.
-The query flags passed to OP_QUERY for a getMore command MUST be slave_ok=True
+The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true
 when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
 **find** and **killCursors** commands. The command takes the following object.
 
@@ -544,7 +544,7 @@ The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol messa
       ]
     }
 
-The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be slave_ok=True when sent to a secondary.
+The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be secondaryOk=true when sent to a secondary.
 
 .. list-table:: killCursors command parameters
    :widths: 15 15 15 30
@@ -707,8 +707,10 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
-2015-09-30 slaveOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
+2021-04-06 Updated to use hello and secondaryOk.
 
-2015-10-13 added guidance on batchSize values as related to the **getMore** command. SlaveOk flag SHOULD not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore commands when the cursor is a tailable cursor with awaitData set.
+2015-09-30 Legacy secondaryOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
+
+2015-10-13 added guidance on batchSize values as related to the **getMore** command. Legacy secondaryOk flag SHOULD not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore commands when the cursor is a tailable cursor with awaitData set.
 
 2015-10-21 If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command. 

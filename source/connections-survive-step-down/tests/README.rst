@@ -3,7 +3,7 @@ Connections Survive Primary Step Down Tests
 ===========================================
 
 These tests can be used to verify a driver's compliance with server discovery
-and monitoring requirements with respect to handling "not master" and
+and monitoring requirements with respect to handling "not primary" and
 "node is shutting down" error responses from the server.
 
 .. contents::
@@ -75,8 +75,8 @@ Perform the following operations:
   published. Otherwise verify that `connections.totalCreated`_ in `serverStatus`_ has not changed.
 
 
-Not Master - Keep Connection Pool
-`````````````````````````````````
+Not Primary - Keep Connection Pool
+``````````````````````````````````
 
 This test requires a replica set with server version 4.2 or higher.
 
@@ -92,8 +92,8 @@ This test requires a replica set with server version 4.2 or higher.
 
 
 
-Not Master - Reset Connection Pool
-``````````````````````````````````
+Not Primary - Reset Connection Pool
+```````````````````````````````````
 
 This test requires a replica set with server version 4.0.
 

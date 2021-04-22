@@ -5,8 +5,8 @@ MongoDB Driver Performance Benchmarking
 :Title: MongoDB Driver Performance Benchmarking
 :Author: David Golden
 :Minimum Server Version: N/A
-:Last Modified: Aug 13, 2016
-:Version: 1.3
+:Last Modified: April 6, 2021
+:Version: 1.4
 
 .. contents::
 
@@ -489,10 +489,10 @@ the database and reading a response.
 Dataset:  n/a
 
 Dataset size: While there is no external dataset, for score calculation
-purposes use 160,000 bytes (10,000 x the size of a BSON {ismaster:true}
+purposes use 130,000 bytes (10,000 x the size of a BSON {hello:true}
 command).
 
-*N.B. We use {ismaster:true} rather than {ismaster:1}
+*N.B. We use {hello:true} rather than {hello:1}
 to ensure a consistent command size.*
 
 Phases:
@@ -506,7 +506,7 @@ Phases:
 +--------------------------------------+--------------------------------------+
 | Before task                          | n/a                                  |
 +--------------------------------------+--------------------------------------+
-| Do task                              | Run the command {ismaster:true}      |
+| Do task                              | Run the command {hello:true}         |
 |                                      | 10,000 times, reading (and           |
 |                                      | discarding) the result each time.    |
 +--------------------------------------+--------------------------------------+
@@ -1135,6 +1135,10 @@ Answer.
 
 Change log
 ==========
+
+v1.4 (Apr 6, 2021)
+
+-  Update run command test to use 'hello' command
 
 V1.3 (Aug 13, 2016)
 

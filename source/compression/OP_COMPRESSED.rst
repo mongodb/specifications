@@ -13,9 +13,9 @@ Wire Compression in Drivers
             Dana Groff (2017-05-02) 
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2019-05-13
+:Last Modified: 2021-04-06
 :Minimum Server Version: 3.4
-:Version: 1.2
+:Version: 1.3
 
 
 Abstract
@@ -55,8 +55,8 @@ MongoDB Handshake Amendment
 
 The `MongoDB Handshake Protocol
 <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
-describes an argument passed to isMaster, ``client``.  This specification adds
-an additional argument, ``compression``, that SHOULD be provided to isMaster if
+describes an argument passed to the handshake command, ``client``.  This specification adds
+an additional argument, ``compression``, that SHOULD be provided to the handshake command if
 a driver supports wire compression.
 
 The value of this argument is an array of supported compressors.
@@ -64,7 +64,7 @@ The value of this argument is an array of supported compressors.
 Example::
 
     {
-        isMaster: 1,
+        hello: 1,
         client: {}, /* See MongoDB Handshake */
         compression: ["snappy", "zlib", "zstd"]
     }
@@ -75,7 +75,7 @@ compression argument.
 Example::
 
     {
-        isMaster: 1,
+        hello: 1,
         client: {}, /* See MongoDB Handshake */
         compression: []
     }
@@ -84,10 +84,10 @@ Example::
 
 Clients that want to compress their messages need to send a list of the
 algorithms - in the order they are specified in the client configuration - that
-they are willing to support to the server during the initial isMaster call. For
+they are willing to support to the server during the initial handshake call. For
 example, a client wishing to compress with the snappy algorithm, should send::
 
-    { isMaster: 1, ... , compression: [ "snappy" ] }
+    { hello: 1, ... , compression: [ "snappy" ] }
 
 The server will respond with the intersection of its list of supported
 compressors and the client's. For example, if the server had both snappy and
@@ -101,7 +101,7 @@ something like::
     { ... , compression: [ "snappy", "zlib" ], ok: 1 }
 
 If the server has no compression algorithms in common with the client, it sends
-back an isMaster response without a compression field. Clients MAY issue a log
+back a handshake response without a compression field. Clients MAY issue a log
 level event to inform the user, but MUST NOT error.
 
 When MongoDB server receives a compressor it can support it MAY reply to any
@@ -193,20 +193,20 @@ Compressor IDs
 
 Each compressor is assigned a predefined compressor ID.
 
-+-----------------+----------------+-------------------------------------------------------+
-| compressorId    | isMaster Value |  Description                                          |
-+=================+================+=======================================================+
-| 0               |  noop          | The content of the message is uncompressed.           |
-|                 |                | This is realistically only used for testing           |
-+-----------------+----------------+-------------------------------------------------------+
-| 1               | snappy         | The content of the message is compressed using snappy |
-+-----------------+----------------+-------------------------------------------------------+
-| 2               | zlib           | The content of the message is compressed using zlib   |
-+-----------------+----------------+-------------------------------------------------------+
-| 3               | zstd           | The content of the message is compressed using zstd   |
-+-----------------+----------------+-------------------------------------------------------+
-| 4-255           | reserved       | Reserved for future used                              |
-+-----------------+----------------+-------------------------------------------------------+
++-----------------+-----------------+--------------------------------------------------------+
+| compressorId    | Handshake Value |  Description                                           |
++=================+=================+========================================================+
+| 0               | noop            | The content of the message is uncompressed.            |
+|                 |                 | This is realistically only used for testing.           |
++-----------------+-----------------+--------------------------------------------------------+
+| 1               | snappy          | The content of the message is compressed using snappy. |
++-----------------+-----------------+--------------------------------------------------------+
+| 2               | zlib            | The content of the message is compressed using zlib.   |
++-----------------+-----------------+--------------------------------------------------------+
+| 3               | zstd            | The content of the message is compressed using zstd.   |
++-----------------+-----------------+--------------------------------------------------------+
+| 4-255           | reserved        | Reserved for future use.                               |
++-----------------+-----------------+--------------------------------------------------------+
 
 
 Compressible messages
@@ -246,7 +246,8 @@ MUST NOT be compressed, such as authentication requests.
 
 Messages using the following commands MUST NOT be compressed:
 
-* isMaster
+* hello
+* legacy hello (see `MongoDB Handshake Protocol <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_ for details)
 * saslStart
 * saslContinue
 * getnonce
@@ -284,64 +285,93 @@ Connection strings, and results
 
 * mongodb://localhost:27017/?compressors=snappy
 
-  mongod should have logged the following::
+  mongod should have logged the following (the exact log output may differ depending on server version)::
 
-   2017-04-17T15:04:37.756-0700 I NETWORK  [thread1] connection accepted from 127.0.0.1:34294 #6 (1 connection now open)
-   2017-04-17T15:04:37.756-0700 D COMMAND  [conn6] run command admin.$cmd { isMaster: 1, client: { driver: { name: "mongoc", version: "1.7.0-dev" }, os: { type: "Linux", name: "Ubuntu", version: "16.10", architecture: "x86_64" }, platform: "cfg=0xeb8e9 posix=200809 stdc=201112 CC=GCC 6.2.0 20161005 CFLAGS="" LDFLAGS=""" }, compression: [ "snappy" ] }
-   2017-04-17T15:04:37.756-0700 I NETWORK  [conn6] received client metadata from 127.0.0.1:34294 conn6: { driver: { name: "mongoc", version: "1.7.0-dev" }, os: { type: "Linux", name: "Ubuntu", version: "16.10", architecture: "x86_64" }, platform: "cfg=0xeb8e9 posix=200809 stdc=201112 CC=GCC 6.2.0 20161005 CFLAGS="" LDFLAGS=""" }
-   2017-04-17T15:04:37.756-0700 D NETWORK  [conn6] Starting server-side compression negotiation
-   2017-04-17T15:04:37.756-0700 D NETWORK  [conn6] snappy is supported
-   2017-04-17T15:04:37.756-0700 I COMMAND  [conn6] command admin.$cmd command: isMaster { isMaster: 1, client: { driver: { name: "mongoc", version: "1.7.0-dev" }, os: { type: "Linux", name: "Ubuntu", version: "16.10", architecture: "x86_64" }, platform: "cfg=0xeb8e9 posix=200809 stdc=201112 CC=GCC 6.2.0 20161005 CFLAGS="" LDFLAGS=""" }, compression: [ "snappy" ] } numYields:0 reslen:221 locks:{} protocol:op_query 0ms
-   2017-04-17T15:04:37.756-0700 D NETWORK  [conn6] Compressing message with snappy
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] Decompressing message with snappy
-   2017-04-17T15:04:37.757-0700 D COMMAND  [conn6] run command test.$cmd { ping: 1 }
-   2017-04-17T15:04:37.757-0700 I COMMAND  [conn6] command test.$cmd command: ping { ping: 1 } numYields:0 reslen:37 locks:{} protocol:op_query 0ms
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] Compressing message with snappy
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] Socket recv() conn closed? 127.0.0.1:34294
-   2017-04-17T15:04:37.757-0700 D NETWORK  [conn6] SocketException: remote: 127.0.0.1:34294 error: 9001 socket exception [CLOSED] server [127.0.0.1:34294]
-   2017-04-17T15:04:37.757-0700 I -        [conn6] end connection 127.0.0.1:34294 (1 connection now open)
+   {"t":{"$date":"2021-04-08T13:28:38.885-06:00"},"s":"I",  "c":"NETWORK",  "id":22943,   "ctx":"listener","msg":"Connection accepted","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":1}}
+   {"t":{"$date":"2021-04-08T13:28:38.886-06:00"},"s":"D3", "c":"EXECUTOR", "id":22983,   "ctx":"listener","msg":"Starting new executor thread in passthrough mode"}
+   {"t":{"$date":"2021-04-08T13:28:38.887-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"thread27","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.887-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}},"compression":["snappy"],"apiVersion":"1","apiStrict":true,"$db":"admin"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.888-06:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn2","msg":"client metadata","attr":{"remote":"127.0.0.1:50635","client":"conn2","doc":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}}}}
+   {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"D3", "c":"NETWORK",  "id":22934,   "ctx":"conn2","msg":"Starting server-side compression negotiation"}
+   {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"D3", "c":"NETWORK",  "id":22937,   "ctx":"conn2","msg":"supported compressor","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.889-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"hello":1,"client":{"application":{"name":"MongoDB Shell"},"driver":{"name":"MongoDB Internal Client","version":"4.9.0-alpha7-555-g623aa8f"},"os":{"type":"Darwin","name":"Mac OS X","architecture":"x86_64","version":"19.6.0"}},"compression":["snappy"],"apiVersion":"1","apiStrict":true,"$db":"admin"},"numYields":0,"reslen":351,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_query","durationMillis":1}}
+   {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":596,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.890-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.891-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.891-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"whatsmyuri":1,"apiStrict":false,"$db":"admin","apiVersion":"1"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"whatsmyuri":1,"apiStrict":false,"$db":"admin","apiVersion":"1"},"numYields":0,"reslen":63,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":597,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.892-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.893-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.893-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.895-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.895-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"buildinfo":1.0,"apiStrict":false,"$db":"admin","apiVersion":"1"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.896-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"buildinfo":1.0,"apiStrict":false,"$db":"admin","apiVersion":"1"},"numYields":0,"reslen":2606,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.896-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":598,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.897-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.899-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn2","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"endSessions":[{"id":{"$uuid":"c4866af5-ed6b-4f01-808b-51a3f8aaaa08"}}],"$db":"admin","apiVersion":"1","apiStrict":true}}}
+   {"t":{"$date":"2021-04-08T13:28:38.899-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn2","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","appName":"MongoDB Shell","command":{"endSessions":[{"id":{"$uuid":"c4866af5-ed6b-4f01-808b-51a3f8aaaa08"}}],"$db":"admin","apiVersion":"1","apiStrict":true},"numYields":0,"reslen":38,"locks":{},"remote":"127.0.0.1:50635","protocol":"op_msg","durationMillis":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D2", "c":"QUERY",    "id":22783,   "ctx":"conn2","msg":"Received interrupt request for unknown op","attr":{"opId":599,"knownOps":[]}}
+   {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D3", "c":"NETWORK",  "id":22925,   "ctx":"conn2","msg":"Compressing message","attr":{"compressor":"snappy"}}
+   {"t":{"$date":"2021-04-08T13:28:38.900-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.901-06:00"},"s":"D3", "c":"-",        "id":5127801, "ctx":"conn2","msg":"Setting the Client","attr":{"client":"conn2"}}
+   {"t":{"$date":"2021-04-08T13:28:38.901-06:00"},"s":"D2", "c":"NETWORK",  "id":22986,   "ctx":"conn2","msg":"Session from remote encountered a network error during SourceMessage","attr":{"remote":"127.0.0.1:50635","error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"D1", "c":"-",        "id":23074,   "ctx":"conn2","msg":"User assertion","attr":{"error":"HostUnreachable: Connection closed by peer","file":"src/mongo/transport/service_state_machine.cpp","line":410}}
+   {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"W",  "c":"EXECUTOR", "id":4910400, "ctx":"conn2","msg":"Terminating session due to error","attr":{"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.902-06:00"},"s":"I",  "c":"NETWORK",  "id":5127900, "ctx":"conn2","msg":"Ending session","attr":{"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Connection closed by peer"}}}
+   {"t":{"$date":"2021-04-08T13:28:38.903-06:00"},"s":"I",  "c":"NETWORK",  "id":22944,   "ctx":"conn2","msg":"Connection ended","attr":{"remote":"127.0.0.1:50635","uuid":"03961627-aec7-4543-8a17-9690f87273a6","connectionId":2,"connectionCount":0}}
+   {"t":{"$date":"2021-04-08T13:28:38.903-06:00"},"s":"D3", "c":"-",        "id":5127803, "ctx":"conn2","msg":"Released the Client","attr":{"client":"conn2"}}
 
   The result of the program should have been::
 
-   { "ok" : 1.0 }
+   { "ok" : 1 }
 
 
 * mongodb://localhost:27017/?compressors=snoopy
 
   mongod should have logged the following::
 
-   2017-02-27T04:00:00.000-0700 D COMMAND  [conn654] run command admin.$cmd { isMaster: 1, client: { ... }, compression: [] }
+   {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"D2", "c":"COMMAND",  "id":21965,   "ctx":"conn5","msg":"About to run the command","attr":{"db":"admin","commandArgs":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"}}}
+   {"t":{"$date":"2021-04-20T09:57:26.823-06:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn5","msg":"client metadata","attr":{"remote":"127.0.0.1:54372","client":"conn5","doc":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"}}}
+   {"t":{"$date":"2021-04-20T09:57:26.824-06:00"},"s":"D3", "c":"NETWORK",  "id":22934,   "ctx":"conn5","msg":"Starting server-side compression negotiation"}
+   {"t":{"$date":"2021-04-20T09:57:26.824-06:00"},"s":"D3", "c":"NETWORK",  "id":22936,   "ctx":"conn5","msg":"No compressors provided"}
+   {"t":{"$date":"2021-04-20T09:57:26.825-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn5","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","command":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"},"numYields":0,"reslen":319,"locks":{},"remote":"127.0.0.1:54372","protocol":"op_query","durationMillis":1}}
 
   e.g., empty compression: [] array. No operations should have been compressed.
+
   The results of the program should have been::
 
    WARNING: Unsupported compressor: 'snoopy'
-   { "ok" : { "$numberDouble" : "1.0" } }
+   { "ok" : 1 }
 
 
 * mongodb://localhost:27017/?compressors=snappy,zlib
 
   mongod should have logged the following::
 
-   2017-02-27T04:00:00.000-0700 D NETWORK  [conn645] Decompressing message with snappy
+   {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"snappy"}}
 
   The results of the program should have been::
 
-   { "ok" : { "$numberDouble" : "1.0" } }
+   { "ok" : 1 }
 
 
 * mongodb://localhost:27017/?compressors=zlib,snappy
 
   mongod should have logged the following::
 
-   2017-02-27T04:00:00.000-0700 D NETWORK  [connXXX] Decompressing message with zlib
+   {"t":{"$date":"2021-04-08T13:28:38.898-06:00"},"s":"D3", "c":"NETWORK",  "id":22927,   "ctx":"conn2","msg":"Decompressing message","attr":{"compressor":"zlib"}}
 
   The results of the program should have been::
 
-   { "ok" : { "$numberDouble" : "1.0" } }
+   { "ok" : 1 }
 
 * Create example program that authenticates to the server using SCRAM-SHA-1,
-  then creates another user (MONGODB-CR), then runs isMaster followed with
+  then creates another user (MONGODB-CR), then runs hello followed with
   serverStatus.
 * Reconnect to the same server using the created MONGODB-CR credentials.
   Observe that the only command that was decompressed on the server was
@@ -423,19 +453,19 @@ Q & A
 * The server MAY reply with compressed data even if the request was not compressed?
    * Yes, and this is in fact the behaviour of MongoDB 3.4
 
-* Can drivers compress the initial MongoDB Handshake/isMaster request?
+* Can drivers compress the initial MongoDB Handshake/hello request?
    * No.
 
-* Can the server reply to the MongoDB Handshake/isMaster compressed?
+* Can the server reply to the MongoDB Handshake/hello compressed?
    * Yes, yes it can. Be aware it is completely acceptable for the server to
      use compression for any and all replies, using any supported
      compressor, when the client announced support for compression - this
-     includes the reply to the actual MongoDB Handshake/isMaster where the
+     includes the reply to the actual MongoDB Handshake/hello where the
      support was announced.
 
 * This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB3.4?
    * Yes, it does. All MongoDB versions support the ``compression`` argument
-     to ``isMaster`` and all MongoDB versions will reply with an intersection
+     to the initial handshake and all MongoDB versions will reply with an intersection
      of compressors it supports. This works even with MongoDB 3.0, as it
      will not reply with any compressors. It also works with MongoDB 3.4
      which will reply with ``snappy`` if it was part of the driver's list.
@@ -476,11 +506,12 @@ Q & A
 Changelog
 =========
 
-+------------+---------------------------------------------------+
-| 2019-05-13 | Add zstd as supported compression algorithm       |
-+------------+---------------------------------------------------+
-| 2017-06-13 | Don't require clients to implement legacy opcodes |
-+------------+---------------------------------------------------+
-| 2017-05-10 | Initial commit                                    |
-+------------+---------------------------------------------------+
-
++------------+--------------------------------------------------------+
+| 2021-04-06 | v1.3 Use 'hello' command                               |
++------------+--------------------------------------------------------+
+| 2019-05-13 | v1.2 Add zstd as supported compression algorithm       |
++------------+--------------------------------------------------------+
+| 2017-06-13 | v1.1 Don't require clients to implement legacy opcodes |
++------------+--------------------------------------------------------+
+| 2017-05-10 | v1.0 Initial commit                                    |
++------------+--------------------------------------------------------+

@@ -10,9 +10,9 @@ OP_MSG
 :Informed: Bryan Reinero, Chris Hendel, drivers@
 :Status: Approved
 :Type: Standards
-:Last Modified: 2017-11-12
+:Last Modified: 2021-04-06
 :Minimum Server Version: 3.6
-:Version: 1.1
+:Version: 1.2
 
 
 
@@ -250,13 +250,13 @@ responses will have the ``moreToCome`` bit set.
 MongoDB server only handles the ``exhaustAllowed`` bit on the following
 operations. A driver MUST NOT set the ``exhaustAllowed`` bit on other operations.
 
-============== ============================================================
-Operation      Minimum MongoDB Version
-============== ============================================================
-getMore        4.2
--------------- ------------------------------------------------------------
-isMaster       4.4 (discoverable via topologyVersion)
-============== ============================================================
+============================== ============================================
+Operation                      Minimum MongoDB Version
+============================== ============================================
+getMore                        4.2
+------------------------------ --------------------------------------------
+hello (including legacy hello) 4.4 (discoverable via topologyVersion)
+============================== ============================================
 
 
 .. This RST artwork improves the readability of the rendered document
@@ -377,10 +377,11 @@ $db                                       The database name to execute the
 $readPreference ``{ "mode": "primary" }`` Determines server selection, and
                                           also whether a secondary server
                                           permits reads or responds "not
-                                          master". See Server Selection Spec
-                                          for rules about when read preference
-                                          must or must not be included, and for
-                                          rules about when read preference
+                                          writable primary". See Server
+                                          Selection Spec for rules about
+                                          when read preference must or must
+                                          not be included, and for rules
+                                          about when read preference
                                           "primaryPreferred" must be added
                                           automatically.
 =============== ========================= =================================
@@ -532,7 +533,7 @@ Test Plan
 - Create a single document and insert it over ``OP_MSG``, ensure it works
 - Create two documents and insert them over ``OP_MSG``, ensure each document is
   pulled out and presented as document sequence.
-- ismaster.maxWriteBatchSize might change and be bumped to 100,000
+- hello.maxWriteBatchSize might change and be bumped to 100,000
 - Repeat the previous 5 tests as updates, and then deletes.
 - Create one small document, and one large 16mb document. Ensure they are
   inserted, updated and deleted in one roundtrip.
@@ -554,7 +555,7 @@ Backwards Compatibility
 =======================
 
 
-The isMaster.maxWriteBatchSize is being bumped, which also affects ``OP_QUERY``,
+The hello.maxWriteBatchSize is being bumped, which also affects ``OP_QUERY``,
 not only ``OP_MSG``. As a sideeffect, write errors will now have the message
 truncated, instead of overflowing the maxMessageSize, if the server determines
 it would overflow the allowed size. This applies to all commands that write.
@@ -615,6 +616,7 @@ Q & A
 Changelog
 =========
 
+- 2021-04-06 Updated to use hello and not writable primary
 - 2017-11-12 Specify read preferences for OP_MSG with direct connection
 - 2017-08-17 Added the ``User originating command`` section
 - 2017-07-18 Published 1.0.0

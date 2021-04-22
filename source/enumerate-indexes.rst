@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2020-01-14
-:Version: 0.5.0
+:Last Modified: 2021-04-06
+:Version: 0.5.1
 
 .. contents::
 
@@ -324,7 +324,7 @@ Replica Sets
 ~~~~~~~~~~~~
 
 - ``listIndexes`` can be run on a secondary node.
-- Querying ``system.indexes`` on a secondary node requires slaveOkay to be set.
+- Querying ``system.indexes`` on a secondary node requires secondaryOk to be set.
 - Drivers MUST run ``listIndexes`` on the primary node when in a replica set
   topology, unless directly connected to a secondary node in Single topology.
 
@@ -386,6 +386,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+0.5.1 - 2021-04-06
+    Changed to secondaryOk.
+
 0.5.0 - 2020-01-14
     MongoDB 4.4 no longer includes ``ns`` field in ``listIndexes`` responses.
 

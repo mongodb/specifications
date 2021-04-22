@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: March 17, 2020
-:Version: 0.6.0
+:Last Modified: April 6, 2021
+:Version: 0.6.1
 
 .. contents::
 
@@ -220,7 +220,7 @@ filter out all return documents that contain a ``$`` in the ``name`` field.
 
 When falling back to querying ``system.namespaces`` you will also need to filter
 out all the documents that contain ``".oplog.$"`` as this collection is used for
-master/slave replication within the local database.
+legacy replication within the local database.
 
 Alternatively, and if a driver already implements checking MongoDB versions, a
 driver MAY alternatively implement it as::
@@ -369,7 +369,7 @@ Replica Sets
 ~~~~~~~~~~~~
 
 - ``listCollections`` can be run on a secondary node.
-- Querying ``system.indexes`` on a secondary node requires slaveOkay to be set.
+- Querying ``system.indexes`` on a secondary node requires secondaryOk to be set.
 - Drivers MUST run ``listCollections`` on the primary node when in a replica set
   topology, unless directly connected to a secondary node in Single topology.
 
@@ -433,6 +433,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.6.1 Changes
+    - Update to use secondaryOk.
+
 Version 0.6.0 Changes
     - MongoDB 4.4 no longer includes ``ns`` field in ``idIndex`` field for
       ``listCollections`` responses.

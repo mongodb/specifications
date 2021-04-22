@@ -9,8 +9,8 @@ Max Staleness
 :Advisors: Christian Kvalheim, Jeff Yemin, Eric Milkie
 :Status: Accepted
 :Type: Standards
-:Last Modified: November 21, 2016
-:Version: 1.3
+:Last Modified: April 6, 2021
+:Version: 1.4
 
 .. contents::
 
@@ -20,7 +20,7 @@ Abstract
 Read preference gains a new option, "maxStalenessSeconds".
 
 A client (driver or mongos) MUST estimate the staleness of each secondary,
-based on lastWriteDate values provided in server isMaster responses, and select only
+based on lastWriteDate values provided in server hello responses, and select only
 those secondaries whose staleness is less than or equal to maxStalenessSeconds.
 
 Most of the implementation of the maxStalenessSeconds option is specified in the
@@ -116,7 +116,7 @@ value 10,000.
 lastWrite
 ~~~~~~~~~
 
-A primary's or secondary's isMaster response contains a "lastWrite" subdocument
+A primary's or secondary's hello response contains a "lastWrite" subdocument
 with these fields (SERVER-8858):
 
 * lastWriteDate: a BSON UTC datetime,
@@ -136,7 +136,7 @@ Client
 ------
 
 A client (driver or mongos) MUST estimate the staleness of each secondary,
-based on lastWriteDate values provided in server isMaster responses, and select for
+based on lastWriteDate values provided in server hello responses, and select for
 reads only those secondaries whose estimated staleness is less than or equal to
 maxStalenessSeconds.
 
@@ -497,22 +497,22 @@ maxStalenessSeconds cannot be supported.
 Rejected ideas
 --------------
 
-Add all secondaries' opTimes to primary's isMaster response
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Add all secondaries' opTimes to primary's hello response
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Not needed; each secondary's self-report of its opTime is just as good as the
 primary's.
 
-Use opTimes from command responses besides isMaster
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use opTimes from command responses besides hello
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An idea was to add opTime to command responses that don't already include it
 (e.g., "find"), and use these opTimes to update ServerDescriptions more
-frequently than the periodic isMaster calls.
+frequently than the periodic hello calls.
 
 But while a server is not being used (e.g., while it is too stale, or while it
 does not match some other part of the Read Preference), only its periodic
-isMaster responses can update its opTime. Therefore, heartbeatFrequencyMS
+hello responses can update its opTime. Therefore, heartbeatFrequencyMS
 sets a lower bound on maxStalenessSeconds, so there is no benefit in recording
 each server's opTime more frequently. On the other hand there would be
 costs: effort adding opTime to all command responses, lock contention
@@ -545,7 +545,7 @@ Server-side Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We considered a deployment-wide "max staleness" setting that servers
-communicate to clients in isMaster, e.g., "120 seconds is the max staleness."
+communicate to clients in hello, e.g., "120 seconds is the max staleness."
 The read preference config is simplified: "maxStalenessSeconds" is gone, instead we
 have "staleOk: true" (the default?) and "staleOk: false".
 
@@ -582,9 +582,9 @@ A future spec could allow database administrators to configure from the server
 side how much replication lag makes a secondary too stale to read from.
 (See `Server-side Configuration`_ above.) This could be implemented atop the
 current feature: if a server communicates is staleness configuration in its
-ismaster response like::
+hello response like::
 
-    { ismaster: true, maxStalenessSeconds: 30 }
+    { hello: true, maxStalenessSeconds: 30 }
 
 ... then a future client can use the value from the server as its default
 maxStalenessSeconds when there is no client-side setting.
@@ -592,6 +592,7 @@ maxStalenessSeconds when there is no client-side setting.
 Changes
 =======
 
+2021-04-06: Updated to use hello command.
 2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
 instead of "maxStalenessMS=0".
 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
