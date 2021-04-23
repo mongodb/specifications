@@ -1,6 +1,6 @@
 SCHEMA=../schema-1.3.json
 
-.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transcations HAS_AJV
+.PHONY: all invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions HAS_AJV
 
 all: invalid valid-fail valid-pass versioned-api load-balancers gridfs transactions
 
