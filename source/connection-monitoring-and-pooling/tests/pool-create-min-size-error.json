@@ -30,7 +30,7 @@
     },
     {
       "name": "waitForEvent",
-      "event": "ConnectionClosed",
+      "event": "ConnectionPoolCleared",
       "count": 1
     },
     {

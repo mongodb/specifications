@@ -19,7 +19,7 @@ poolOptions:
 operations:
   - name: ready
   - name: waitForEvent
-    event: ConnectionClosed
+    event: ConnectionPoolCleared
     count: 1
   # ensure pool doesn't start making new connections
   - name: wait
