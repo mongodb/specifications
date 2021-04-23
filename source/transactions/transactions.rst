@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.5.5
+:Spec Version: 1.5.6
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -810,26 +810,32 @@ certain retries of commitTransaction and abortTransaction) to the same mongos.
 When to unpin
 ^^^^^^^^^^^^^
 
-Drivers MUST unpin a ClientSession when a command within a transaction,
-including commitTransaction and abortTransaction, fails with a
-TransientTransactionError. Transient errors indicate that the transaction
-in question has already been aborted or that the pinned mongos is
-down/unavailable. Unpinning the session ensures that a subsequent
-abortTransaction (or commitTransaction) does not block waiting on a server
-that is unreachable.
+Drivers MUST unpin a ClientSession in the following situations:
 
-Additionally, drivers MUST unpin a ClientSession when any individual
-commitTransaction command attempt fails with an UnknownTransactionCommitResult
-error label. In cases where the UnknownTransactionCommitResult causes an
-automatic retry attempt, drivers MUST unpin the ClientSession before performing
-server selection for the retry.
+#. The transaction is aborted. The session MUST be unpinned regardless of
+   whether or the ``abortTransaction`` command succeeds or fails, or was
+   executed at all. If the operation fails with a retryable error, the
+   session MUST be unpinned before performing server selection for the retry.
+#. Any operation in the transcation, including ``commitTransaction`` fails with
+   a TransientTransactionError. Transient errors indicate that the
+   transaction in question has already been aborted or that the pinnned
+   mongos is down/unavailable. Unpinning the session ensures that a
+   subsequent ``abortTransaction`` (or ``commitTransaction``) does not block
+   waiting on a server that is unreachable.
+#. Any ``commitTransaction`` attempt fails with an
+   ``UnknownTransactionCommitResult`` error label. If the error is also
+   considered retryable, the session MUST be unpinned before performing
+   server selection for the retry.
+#. A new transaction is started on the ClientSession after the previous
+   transaction has been committed. The session MUST be unpinned before
+   performing server selection for the first operation of the new
+   transaction.
+#. A non-transactional operation is performed using the ClientSession. The
+   session MUST be unpinned before performing server selection for the
+   operation.
 
-Aborting a transaction or starting a new transaction on a pinned
-ClientSession MUST unpin the session. Committing a transaction on a pinned
-ClientSession MUST NOT unpin the session as commitTransaction may be called
-multiple times. Additionally, any non-transaction operation using a pinned
-ClientSession MUST unpin the session and the operation MUST perform normal
-server selection.
+Note that committing a transaction on a pinned ClientSession MUST NOT unpin
+the session as ``commitTransaction`` may be called multiple times.
 
 recoveryToken field
 ~~~~~~~~~~~~~~~~~~~
@@ -1400,6 +1406,8 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2020-04-07: Clarify that all abortTransaction attempts should unpin the session,
+             even if the command is not executed.
 :2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.
 :2019-10-21: Specify that a commit error can have two error labels
 :2019-07-30: Clarify when the cached recoveryToken should be cleared.
