@@ -44,7 +44,7 @@ add the relevant TLS options to both ``SINGLE_MONGOS_LB_URI`` and
 cluster. Drivers MUST use the final URI stored in ``SINGLE_MONGOS_LB_URI``
 (with additional TLS options if required) to configure internal clients for
 test runners (e.g. the internal MongoClient described by the `Unified Test
-Format spec <../unified-test-format/unified-test-format.rst`_).
+Format spec <../../unified-test-format/unified-test-format.rst>`__).
 
 Tests
 ======
