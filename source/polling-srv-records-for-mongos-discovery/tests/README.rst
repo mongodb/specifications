@@ -72,8 +72,8 @@ The following tests MUST setup a MongoClient using the
 situation and make the specified assertions.
 
 - Test that SRV polling is not done for load balalanced clusters. Connect to
-``mongodb+srv://test3.test.build.10gen.cc/?loadBalanced=true``, mock the addition of the following DNS record, wait
-until ``2*rescanSRVIntervalMS``, and assert that the final topology description only contains one server
-(``localhost.test.build.10gen.cc.`` at port ``27017``).
+  ``mongodb+srv://test3.test.build.10gen.cc/?loadBalanced=true``, mock the addition of the following DNS record, wait
+  until ``2*rescanSRVIntervalMS``, and assert that the final topology description only contains one server
+  (``localhost.test.build.10gen.cc.`` at port ``27017``).
 
     _mongodb._tcp.test3.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
