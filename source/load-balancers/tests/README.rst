@@ -58,7 +58,7 @@ Tests
 
 The YAML and JSON files in this directory contain platform-independent tests
 written in the `Unified Test Format
-<../unified-test-format/unified-test-format.rst>`_. Drivers MUST run the
+<../../unified-test-format/unified-test-format.rst>`_. Drivers MUST run the
 following test suites against a load balanced cluster:
 
 #. All test suites written in the Unified Test Format
