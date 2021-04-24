@@ -46,6 +46,13 @@ cluster. Drivers MUST use the final URI stored in ``SINGLE_MONGOS_LB_URI``
 test runners (e.g. the internal MongoClient described by the `Unified Test
 Format spec <../../unified-test-format/unified-test-format.rst>`__).
 
+In addition to modifying load balancer URIs, drivers MUST also mock server
+support for returning a ``serviceId`` field in ``hello`` or legacy ``hello``
+command responses when running tests against a load-balanced cluster. This
+can be done by using the value of ``topologyVersion.processId`` to set
+``serviceId``. This MUST be done for all connections established by the test
+runner, including those made by any internal clients.
+
 Tests
 ======
 
