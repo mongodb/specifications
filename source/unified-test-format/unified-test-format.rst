@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.3.0
+:Spec Version: 1.4.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-12
+:Last Modified: 2021-04-19
 
 .. contents::
 
@@ -390,6 +390,18 @@ The structure of this object is as follows:
   in `Determining if a Sharded Cluster Uses Replica Sets`_. When matching a
   "sharded" topology, test runners MUST accept any type of sharded cluster (i.e.
   "sharded" implies "sharded-replicaset", but not vice versa).
+
+- ``serverless``: Optional string. Whether or not the test should be run on
+  serverless instances imitating sharded clusters. Valid values are "require",
+  "forbid", and "allow". If "require", the test MUST only be run on serverless
+  instances. If "forbid", the test MUST NOT be run on serverless instances. If
+  omitted or "allow", this option has no effect.
+
+  The test runner MUST be informed whether or not serverless is being used in
+  order to determine if this requirement is met (e.g. through an environment
+  variable or configuration option). Since the serverless proxy imitates a
+  mongos, the runner is not capable of determining this by issuing a server
+  command such as ``buildInfo`` or ``hello``.
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a
@@ -3199,6 +3211,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-04-19: Introduce ``serverless`` `runOnRequirement`_.
 
 :2021-04-12: Added a ``FindCursor`` entity type, defined a set of cursor
              operations, added an ``auth`` property to ``runOnRequirements``
