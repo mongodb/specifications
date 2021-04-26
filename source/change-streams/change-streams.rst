@@ -748,9 +748,9 @@ It was decided to remove this example from the specification for the following r
 - There are considerations to be made for languages that do not permit interruptible I/O (such as Java), where a change stream which blocks forever in a separate thread would necessitate killing the thread.
 - There is something to be said for an API that allows cooperation by default. The model in which a call to next only blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g. interaction with other event loops).
 
-----------------------------------------
+--------------------------------------------------------------
 Why is an allow list of error codes preferable to a deny list?
-----------------------------------------
+--------------------------------------------------------------
 
 Change streams originally used a deny list of error codes to determine which errors were not resumable. However, this
 allowed for the possibility of infinite resume loops if an error was not correctly deny listed. Due to the fact that
