@@ -250,10 +250,11 @@ value MUST be replaced with an empty BSON document. The list is as follows:
    * - ``copydbgetnonce``
    * - ``copydbsaslstart``
    * - ``copydb``
-   * - ``hello`` or legacy hello, regardless of whether ``speculativeAuthenticate`` is present
+   * - ``hello`` (or legacy hello) when ``speculativeAuthenticate`` is present
 
 See the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
-for more information on ``hello`` and legacy hello.
+for more information on ``hello`` and legacy hello. Note that legacy hello has two different letter casings that must be taken
+into account. See the previously mentioned MongoDB Handshake spec for details.
 
 ---
 API
