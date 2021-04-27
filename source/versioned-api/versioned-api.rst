@@ -172,11 +172,10 @@ API versioning options if the user did not specify them.
 Handshake behavior
 ~~~~~~~~~~~~~~~~~~
 
-Since the legacy hello command is not part of the versioned API, drivers MUST
-NOT use this command during the initial handshake or afterwards. Instead,
-drivers MUST use the ``hello`` command exclusively. If the server does not
-support ``hello``, the server description MUST reflect this with an ``unknown``
-server type.
+if an API version was declared, drivers MUST NOT use the legacy hello command
+during the initial handshake or afterwards. Instead, drivers MUST use the
+``hello`` command exclusively. If the server does not support ``hello``, the
+server description MUST reflect this with an ``Unknown`` server type.
 
 
 Cursors
