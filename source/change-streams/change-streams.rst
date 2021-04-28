@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: Febrary 8, 2021
-:Version: 1.9.0
+:Last Modified: April 23, 2021
+:Version: 1.9.1
 
 .. contents::
 
@@ -76,15 +76,15 @@ executed when checking these constraints.
       - 262
     * - SocketException
       - 9001
-    * - NotMaster
+    * - NotWritablePrimary
       - 10107
     * - InterruptedAtShutdown
       - 11600
     * - InterruptedDueToReplStateChange
       - 11602
-    * - NotMasterNoSlaveOk
+    * - NotPrimaryNoSecondaryOk
       - 13435
-    * - NotMasterOrSecondary
+    * - NotPrimaryOrSecondary
       - 13436
     * - StaleShardVersion
       - 63
@@ -404,7 +404,7 @@ Driver API
      * The server will report an error if `startAfter` and `resumeAfter` are both specified.
      *
      * @since 4.1.1
-     * @see https://docs.mongodb.com/master/changeStreams/#change-stream-start-after
+     * @see https://docs.mongodb.com/manual/changeStreams/#change-stream-start-after
      * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
@@ -748,15 +748,15 @@ It was decided to remove this example from the specification for the following r
 - There are considerations to be made for languages that do not permit interruptible I/O (such as Java), where a change stream which blocks forever in a separate thread would necessitate killing the thread.
 - There is something to be said for an API that allows cooperation by default. The model in which a call to next only blocks until any response is returned (even an empty batch), allows for interruption and cooperation (e.g. interaction with other event loops).
 
-----------------------------------------
-Why is a whitelist of error codes preferable to a blacklist?
-----------------------------------------
+--------------------------------------------------------------
+Why is an allow list of error codes preferable to a deny list?
+--------------------------------------------------------------
 
-Change streams originally used a blacklist of error codes to determine which errors were not resumable. However, this
-allowed for the possibility of infinite resume loops if an error was not correctly blacklisted. Due to the fact that
-all errors aside from transient issues such as failovers are not resumable, the resume behavior was changed to use a
-whitelist. Part of this change was to introduce the ``ResumableChangeStreamError`` label so the server can add new error
-codes to the whitelist without requiring changes to drivers.
+Change streams originally used a deny list of error codes to determine which errors were not resumable. However, this
+allowed for the possibility of infinite resume loops if an error was not correctly deny listed. Due to the fact that
+all errors aside from transient issues such as failovers are not resumable, the resume behavior was changed to use an
+allow list. Part of this change was to introduce the ``ResumableChangeStreamError`` label so the server can add new error
+codes to the allow list without requiring changes to drivers.
 
 ----------------------------------------------------------------------
 Why is ``CursorNotFound`` special-cased when determining resumability?
@@ -881,7 +881,9 @@ Changelog
 | 2019-07-15 | Clarify resume process for change streams started with     |
 |            | the ``startAfter`` option.                                 |
 +------------+------------------------------------------------------------+
-| 2020-02-10 | Changed error handling approach to use a whitelist         |
+| 2020-02-10 | Changed error handling approach to use an allow list       |
 +------------+------------------------------------------------------------+
 | 2021-02-08 | Added the ``UpdateDescription.truncatedArrays`` field      |
++------------+------------------------------------------------------------+
+| 2021-04-23 | Updated to use modern terminology                          |
 +------------+------------------------------------------------------------+

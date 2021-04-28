@@ -777,7 +777,7 @@
       }
     },
     {
-      "description": "change stream resumes after NotMaster",
+      "description": "change stream resumes after NotWritablePrimary",
       "minServerVersion": "4.2",
       "maxServerVersion": "4.2.99",
       "failPoint": {
@@ -1068,7 +1068,7 @@
       }
     },
     {
-      "description": "change stream resumes after NotMasterNoSlaveOk",
+      "description": "change stream resumes after NotPrimaryNoSecondaryOk",
       "minServerVersion": "4.2",
       "maxServerVersion": "4.2.99",
       "failPoint": {
@@ -1165,7 +1165,7 @@
       }
     },
     {
-      "description": "change stream resumes after NotMasterOrSecondary",
+      "description": "change stream resumes after NotPrimaryOrSecondary",
       "minServerVersion": "4.2",
       "maxServerVersion": "4.2.99",
       "failPoint": {

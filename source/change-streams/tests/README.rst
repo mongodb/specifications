@@ -121,7 +121,7 @@ For each YAML file, for each element in ``tests``:
     Transactions spec test documentation for more information.
 
 - Create a new MongoClient ``client``
-- Begin monitoring all APM events for ``client``. (If the driver uses global listeners, filter out all events that do not originate with ``client``). Filter out any "internal" commands (e.g. ``isMaster``)
+- Begin monitoring all APM events for ``client``. (If the driver uses global listeners, filter out all events that do not originate with ``client``). Filter out any "internal" commands (e.g. ``hello`` or legacy hello)
 - Using ``client``, create a changeStream ``changeStream`` against the specified ``target``. Use ``changeStreamPipeline`` and ``changeStreamOptions`` if they are non-empty. Capture any error.
 - If there was no error, use ``globalClient`` and run every operation in ``operations`` in serial against the server until all operations have been executed or an error is thrown. Capture any error.
 - If there was no error and ``result.error`` is set, iterate ``changeStream`` once and capture any error.
