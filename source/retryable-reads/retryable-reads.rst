@@ -3,16 +3,16 @@ Retryable Reads
 ===============
 
 :Spec Title: Retryable Reads
-:Spec Version: 1.2
-:Author: Vincent Kam 
+:Spec Version: 1.2.1
+:Author: Vincent Kam
 :Lead: Bernie Hackett
 :Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
 :Approvers: Jason Carey, Bernie Hackett, Shane Harvey, Eliot Horowitz, Scott L’Hommedieu, Jeremy Mikola, Dan Pasette, Jeff Yemin
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-03-24
-   
+:Last Modified: 2021-04-26
+
 .. contents::
 
 --------
@@ -22,7 +22,7 @@ Abstract
 
 This specification is about the ability for drivers to automatically retry any
 read operation that has not yet received any results—due to a transient network
-error, a "not master" error after a replica set failover, etc.—exactly once.
+error, a "not writable primary" error after a replica set failover, etc.—exactly once.
 
 This specification will
 
@@ -36,7 +36,7 @@ META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.  
+interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
 Specification
 =============
@@ -64,9 +64,9 @@ An error is considered retryable if it meets any of the following criteria:
 =============================== ==============
 InterruptedAtShutdown           11600
 InterruptedDueToReplStateChange 11602
-NotMaster                       10107
-NotMasterNoSlaveOk              13435
-NotMasterOrSecondary            13436
+NotWritablePrimary              10107
+NotPrimaryNoSecondaryOk         13435
+NotPrimaryOrSecondary           13436
 PrimarySteppedDown              189
 ShutdownInProgress              91
 HostNotFound                    7
@@ -74,10 +74,6 @@ HostUnreachable                 6
 NetworkTimeout                  89
 SocketException                 9001
 =============================== ==============
-
-- a server error response without an error code or one different from those
-  listed above, but with an error message containing the substring "not
-  master" or "node is recovering"
 
 - a `PoolClearedError`_
 
@@ -377,15 +373,15 @@ and reflects the flow described above.
       return executeCommand(connection, command);
     }
 
-    /* NetworkException and NotMasterException are both retryable errors. If
+    /* NetworkException and NotWritablePrimaryException are both retryable errors. If
      * caught, remember the exception, update SDAM accordingly, and proceed with
      * retrying the operation. */
     try {
       return executeCommand(server, command);
     } catch (NetworkException originalError) {
       updateTopologyDescriptionForNetworkError(server, originalError);
-    } catch (NotMasterException originalError) {
-      updateTopologyDescriptionForNotMasterError(server, originalError);
+    } catch (NotWritablePrimaryException originalError) {
+      updateTopologyDescriptionForNotWritablePrimaryError(server, originalError);
     }
     return executeRetry(command, session, originalError);
   }
@@ -430,8 +426,8 @@ and reflects the flow described above.
     } catch (NetworkException secondError) {
       updateTopologyDescriptionForNetworkError(server, secondError);
       throw secondError;
-    } catch (NotMasterException secondError) {
-      updateTopologyDescriptionForNotMasterError(server, secondError);
+    } catch (NotWritablePrimaryException secondError) {
+      updateTopologyDescriptionForNotWritabelPrimaryError(server, secondError);
       throw secondError;
     } catch (DriverException ignoredError) {
       throw originalError;
@@ -676,6 +672,8 @@ degraded performance can simply disable ``retryableReads``.
 
 Changelog 
 ==========
+
+2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
 
 2021-03-23: Require that PoolClearedErrors are retried
 

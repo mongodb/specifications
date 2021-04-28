@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.6.0
+:Spec Version: 1.6.1
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-03-24
+:Last Modified: 2021-04-26
 
 .. contents::
 
@@ -28,9 +28,9 @@ executed within the context of a server session.
 Additionally, MongoDB 3.6 will utilize server sessions to allow some write
 commands to specify a transaction ID to enforce at-most-once semantics for the
 write operation(s) and allow for retrying the operation if the driver fails to
-obtain a write result (e.g. network error or "not master" error after a replica
-set failover). This specification will outline how an API for retryable write
-operations will be implemented in drivers. The specification will define an
+obtain a write result (e.g. network error or "not writable primary" error after
+a replica set failover). This specification will outline how an API for retryable
+write operations will be implemented in drivers. The specification will define an
 option to enable retryable writes for an application and describe how a
 transaction ID will be provided to write commands executed therein.
 
@@ -114,8 +114,8 @@ cluster operating with feature compatibility version 3.6 (i.e. the
 ``{setFeatureCompatibilityVersion: 3.6}`` administrative command has been run on
 the cluster). Drivers MUST verify server eligibility by ensuring that
 ``maxWireVersion`` is at least six, the ``logicalSessionTimeoutMinutes``
-field is present in the server's ``isMaster`` response, and the server type is
-not standalone.
+field is present in the server's ``hello`` or legacy hello response, and the server
+type is not standalone.
 
 Retryable writes are only supported by storage engines that support document-
 level locking. Notably, that excludes the MMAPv1 storage engine which is
@@ -256,11 +256,11 @@ The RetryableWriteError label might be added to an error in a variety of ways:
         - 11600
       * - InterruptedDueToReplStateChange
         - 11602
-      * - NotMaster
+      * - NotWritablePrimary
         - 10107
-      * - NotMasterNoSlaveOk
+      * - NotPrimaryNoSecondaryOk
         - 13435
-      * - NotMasterOrSecondary
+      * - NotPrimaryOrSecondary
         - 13436
       * - PrimarySteppedDown
         - 189
@@ -594,9 +594,9 @@ executed within the scope of a MongoClient where retryable writes have been
 enabled.
 
 Drivers expect the server to yield an error if a transaction ID is included in
-an unsupported write command. This requires drivers to maintain a whitelist and
+an unsupported write command. This requires drivers to maintain an allow list and
 track which write operations support retryable behavior for a given server
-version (see: `Why must drivers maintain a whitelist of supported
+version (see: `Why must drivers maintain an allow list of supported
 operations?`_).
 
 While this approach will allow applications to take advantage of retryable write
@@ -682,8 +682,8 @@ concerns.
 When using ``OP_QUERY`` to issue a write command to the server, a command
 response is always returned. A write command with an unacknowledged write
 concern (i.e. ``{w: 0}``) will return a response of ``{ok: 1}``. If a retryable
-error is encountered (either a network error or "not master" response), the
-driver could attempt to retry the operation by executing it again with the same
+error is encountered (either a network error or "not writeable primary" response),
+the driver could attempt to retry the operation by executing it again with the same
 transaction ID.
 
 Some drivers fall back to legacy opcodes (e.g. ``OP_INSERT``) to execute write
@@ -698,10 +698,10 @@ behavior might apply, the spec has chosen to not support retryable behavior
 for unacknowledged write concerns and guarantee a consistent user experience
 across all drivers.
 
-Why must drivers maintain a whitelist of supported operations?
---------------------------------------------------------------
+Why must drivers maintain an allow list of supported operations?
+----------------------------------------------------------------
 
-Requiring that drivers maintain a whitelist of supported write operations is
+Requiring that drivers maintain an allow list of supported write operations is
 unfortunate. It both adds complexity to the driver's implementation and limits
 the driver's ability to immediately take advantage of new server functionality
 (i.e. the driver must be upgraded to support additional write operations).
@@ -709,9 +709,9 @@ the driver's ability to immediately take advantage of new server functionality
 Several other alternatives were discussed:
 
 * The server could inform drivers which write operations support retryable
-  behavior in its ``isMaster`` response. This would be a form of feature
-  discovery, for which there is no established protocol. It would also add
-  complexity to the connection handshake.
+  behavior in its ``hello`` or legacy hello response. This would be a form of
+  feature discovery, for which there is no established protocol. It would also
+  add complexity to the connection handshake.
 * The server could ignore a transaction ID on the first observed attempt of an
   unsupported write command and only yield an error on subsequent attempts. This
   would require the server to create a transaction record for unsupported writes
@@ -788,24 +788,6 @@ way to differentiate this error case from any other. The error code and errmsg
 are the same in MongoDB 3.6 and 4.0, and the same from a replica set or sharded
 cluster (mongos just forwards the error from the shard's replica set).
 
-Why did an earlier version of the spec require the driver to parse the error message to categorize retryable errors?
---------------------------------------------------------------------------------------------------------------------
-
-Earlier versions of the spec defined retryable errors to include any error with
-the substring "not master" or "node is recovering" in its error messages.
-This was copied over from the definitions of NotMaster and NodeIsRecovering
-errors in the SDAM specification, which was written before MongoDB reliably
-used error codes to communicate error categories to the driver (see
-`Use error messages to detect "not master" and "node is recovering"`_).
-
-Retryable writes are only available on MongoDB versions 3.6 and newer. These
-server versions can be relied on to consistently return the proper error codes.
-Thus, it is sufficient that the driver check errors for the appropriate
-error codes or error labels to determine whether they are retryable without
-performing any error message parsing.
-
-.. _Use error messages to detect "not master" and "node is recovering": ../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#use-error-messages-to-detect-not-master-and-node-is-recovering
-
 Why does the driver only add the RetryableWriteError label to errors that occur on a MongoClient with retryWrites set to true?
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -818,6 +800,8 @@ inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
+
+2021-04-26: Replaced deprecated terminology
 
 2021-03-24: Require that PoolClearedErrors be retried
 
@@ -871,12 +855,12 @@ intermediary write results after an unrecoverable failure during a bulk write.
 
 2017-10-18: Standalone servers do not support retryable writes.
 
-2017-10-18: Also retry writes after a "not master" error.
+2017-10-18: Also retry writes after a "not writable primary" error.
 
 2017-10-08: Renamed ``txnNum`` to ``txnNumber`` and noted that it must be a
 64-bit integer (BSON type 0x12).
 
-2017-08-25: Drivers will maintain a whitelist so that only supported write
+2017-08-25: Drivers will maintain an allow list so that only supported write
 operations may be retried. Transaction IDs will not be included in unsupported
 write commands, irrespective of the ``retryWrites`` option.
 
