@@ -56,7 +56,7 @@ Terms
     The command named ``isMaster``. It is the deprecated equivalent of the
     ``hello`` command. It was deprecated in MongoDB 5.0.
 
-**``isMaster``/``ismaster``**
+**isMaster/ismaster**
     The correct casing is ``isMaster``, but servers will accept the alternate
     casing ``ismaster``. Other case variations result in ``CommandNotFound``.
     Drivers MUST take this case variation into account when determining which
@@ -83,7 +83,7 @@ ASIDE: If the legacy handshake response includes ``helloOk: true``, then
 subsequent topology monitoring commands MUST use the ``hello`` command. If the
 legacy handshake response does not include ``helloOk: true``, then subsequent
 topology monitoring commands MUST use the legacy hello command. See the
-`SDAM spec <../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.rst>`__
+`Server Discovery and Monitoring spec <../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.rst>`__
 for further information.
 
 The initial handshake MUST be performed on every socket to any and all servers
