@@ -56,7 +56,7 @@ Terms
     The command named ``isMaster``. It is the deprecated equivalent of the
     ``hello`` command. It was deprecated in MongoDB 5.0.
 
-**isMaster/ismaster**
+**isMaster / ismaster**
     The correct casing is ``isMaster``, but servers will accept the alternate
     casing ``ismaster``. Other case variations result in ``CommandNotFound``.
     Drivers MUST take this case variation into account when determining which
