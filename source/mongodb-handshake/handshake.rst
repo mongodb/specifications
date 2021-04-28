@@ -63,7 +63,7 @@ alternate casing ``ismaster``. Other case variations result in ``CommandNotFound
 Drivers MUST take this case variation into account when determining which commands
 to encrypt, redact, or otherwise treat specially.
 
-If Versioned API is requested, drivers MUST use the ``hello`` command for the
+If a `server API version <../versioned-api/versioned-api.rst>`__ is requested, drivers MUST use the ``hello`` command for the
 initial handshake. If Versioned API is not requested, drivers MUST use legacy
 hello (``isMaster``) for the initial handshake and include ``helloOk: true``
 in the handshake request.
