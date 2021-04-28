@@ -31,7 +31,7 @@ will also be queryable through aggregation pipeline, to enable collecting and
 analyzing driver trends.
 
 After connecting to a MongoDB node a hello command (if Versioned API is requested)
-or an isMaster command is issued, followed by authentication, if appropriate.
+or a legacy hello command is issued, followed by authentication, if appropriate.
 This specification augments this handshake and defines certain arguments that
 clients provide as part of the handshake.
 
