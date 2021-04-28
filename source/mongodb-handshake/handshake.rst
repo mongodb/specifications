@@ -45,6 +45,22 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
+Terms
+=====
+
+**hello command**
+    The command named ``hello``. It is the preferred and modern command for
+    handshakes and topology monitoring.
+
+**legacy hello command**
+    The command named ``isMaster``. It is the deprecated equivalent of the
+    ``hello`` command. It was deprecated in MongoDB 5.0.
+
+**``isMaster``/``ismaster``**
+    The correct casing is ``isMaster``, but servers will accept the alternate
+    casing ``ismaster``. Other case variations result in ``CommandNotFound``.
+    Drivers MUST take this case variation into account when determining which
+    commands to encrypt, redact, or otherwise treat specially.
 
 Specification
 =============
@@ -58,20 +74,17 @@ monitoring. ``hello`` is the modern and preferred command. ``isMaster`` is refer
 to as "legacy hello" and is maintained for backwards compatibility with servers
 that do not support the ``hello`` command.
 
-NOTE: The legacy hello command name is ``isMaster``, but servers will accept the
-alternate casing ``ismaster``. Other case variations result in ``CommandNotFound``.
-Drivers MUST take this case variation into account when determining which commands
-to encrypt, redact, or otherwise treat specially.
-
-If a `server API version <../versioned-api/versioned-api.rst>`__ is requested, drivers MUST use the ``hello`` command for the
-initial handshake. If Versioned API is not requested, drivers MUST use legacy
-hello (``isMaster``) for the initial handshake and include ``helloOk: true``
-in the handshake request.
+If a `server API version <../versioned-api/versioned-api.rst>`__ is requested,
+drivers MUST use the ``hello`` command for the initial handshake. If server API
+version is not requested, drivers MUST use legacy hello for the initial handshake
+and include ``helloOk: true`` in the handshake request.
 
 ASIDE: If the legacy handshake response includes ``helloOk: true``, then
 subsequent topology monitoring commands MUST use the ``hello`` command. If the
 legacy handshake response does not include ``helloOk: true``, then subsequent
-topology monitoring commands MUST use the legacy hello (``isMaster``) command.
+topology monitoring commands MUST use the legacy hello command. See the
+`SDAM spec <../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.rst>`__
+for further information.
 
 The initial handshake MUST be performed on every socket to any and all servers
 upon establishing the connection to MongoDB, including reconnects of dropped
