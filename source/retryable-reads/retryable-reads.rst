@@ -673,9 +673,7 @@ degraded performance can simply disable ``retryableReads``.
 Changelog 
 ==========
 
-2021-04-26: Replaced deprecated terminology
-            Removed requirement to parse error message text as MongoDB 3.6+ servers
-            will always return an error code
+2021-04-26: Replaced deprecated terminology; Removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
 
 2021-03-23: Require that PoolClearedErrors are retried
 
