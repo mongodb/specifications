@@ -414,15 +414,15 @@ that can be formatted and value extracted from.
 Backwards Compatibility
 =======================
 
-The ``isMaster`` command currently ignores arguments. (i.e. If arguments are
-provided the ``isMaster`` command discards them without erroring out). Adding
+The legacy hello command currently ignores arguments. (i.e. If arguments are
+provided the legacy hello command discards them without erroring out). Adding
 client metadata functionality has therefore no backwards compatibility concerns.
 
 This also allows a driver to determine if the ``hello`` command is supported. On
-server versions that support the ``hello`` command, ``isMaster`` with
+server versions that support the ``hello`` command, the legacy hello command with
 ``helloOk: true`` will respond with ``helloOk: true``. On server versions that do
 not support the ``hello`` command, the ``helloOk: true`` argument is ignored and
-the ``isMaster`` response will not contain ``helloOk: true``.
+the legacy hello response will not contain ``helloOk: true``.
 
 Reference Implementation
 ========================
@@ -440,8 +440,8 @@ Q&A
    * Just the subdocument
 * Should I really try to fill the 512 bytes with data?
    * Not really. The server does not attempt to normalize or compress this data in anyway, so it will hold it in memory as-is per connection. 512 bytes for 20,000 connections is ~ 10mb of memory the server will need.
-* What happens if I pass this new ``isMaster`` argument to previous MongoDB versions?
-   * Nothing. Arguments passed to ``isMaster`` prior to MongoDB 3.4 are not treated in any special way and have no effect one way or other
+* What happens if I pass new arguments in the legacy hello command to previous MongoDB versions?
+   * Nothing. Arguments passed to the legacy hello command to prior versions of MongoDB are not treated in any special way and have no effect one way or another.
 * Are there wire version bumps or anything accompanying this specification?
    * No
 * Is establishing the handshake required for connecting to MongoDB 3.4?
@@ -453,7 +453,7 @@ Q&A
         initial handshake. This means that the connection pool cannot be established until
         the first user initiated command, or else some connections will have the
         application name while other won’t
-      * The initial handshake must be called on all sockets, including administrative background 
+      * The initial handshake must be called on all sockets, including administrative background
         sockets to MongoDB
 * My language doesn't have ``uname``, but does instead provide its own variation of these values, is that OK?
    * Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this specification
@@ -463,4 +463,4 @@ Changes
 
 * 2019-11-13: Added section about supporting wrapping libraries
 * 2020-02-12: Added section about speculative authentication
-* 2021-04-27: Updated to define ``hello`` and legacy hello (aka ``isMaster``)
+* 2021-04-27: Updated to define ``hello`` and legacy hello
