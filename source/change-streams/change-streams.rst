@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: April 23, 2021
-:Version: 1.9.1
+:Version: 1.9.2
 
 .. contents::
 
@@ -886,4 +886,6 @@ Changelog
 | 2021-02-08 | Added the ``UpdateDescription.truncatedArrays`` field      |
 +------------+------------------------------------------------------------+
 | 2021-04-23 | Updated to use modern terminology                          |
++------------+------------------------------------------------------------+
+| 2021-04-29 | Added ``load-balanced`` to test topology requirements      |
 +------------+------------------------------------------------------------+

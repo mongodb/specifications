@@ -159,9 +159,10 @@ Each YAML file has the following keys:
     version.
 
   - ``topology`` (optional): An array of server topologies against which the
-    tests can be run successfully. Valid topologies are "single", "replicaset",
-    and "sharded". If this field is omitted, the default is all topologies (i.e.
-    ``["single", "replicaset", "sharded"]``).
+    tests can be run successfully. Valid topologies are "single",
+    "replicaset", "sharded", and "load-balanced". If this field is omitted,
+    the default is all topologies (i.e. ``["single", "replicaset", "sharded",
+    "load-balanced"]``).
 
 - ``data``: The data that should exist in the collection under test before each
   test run.
@@ -366,6 +367,8 @@ and sharded clusters.
 
 Changelog
 =========
+
+:2021-04-23: Add ``load-balanced`` to test topology requirements.
 
 :2021-03-24: Add prose test verifying ``PoolClearedErrors`` are retried.
 
