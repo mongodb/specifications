@@ -196,8 +196,8 @@ should be checked:
    the retry timeout has been exceeded, ``withTransaction`` should propagate the
    error to its caller.
  * If committing raises an error with the UnknownTransactionCommitResult label,
-   the error is not a write concern timeout, and the retry timeout has been
-   exceeded, ``withTransaction`` should propagate the error to its caller.
+   and the retry timeout has been exceeded, ``withTransaction`` should
+   propagate the error to its caller.
  * If committing raises an error with the TransientTransactionError label and
    the retry timeout has been exceeded, ``withTransaction`` should propagate the
    error to its caller. This case may occur if the commit was internally retried
@@ -211,6 +211,8 @@ should be checked:
 
 Changelog
 =========
+
+:2021-04-29: Remove text about write concern timeouts from prose test.
 
 :2019-03-01: Add top-level ``runOn`` field to denote server version and/or
              topology requirements requirements for the test file. Removes the

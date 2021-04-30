@@ -1,0 +1,136 @@
+# Tests in this file are generated from override-collection-timeoutMS.yml.template.
+
+description: "timeoutMS can be overriden for a MongoCollection"
+
+schemaVersion: "1.5"
+
+runOnRequirements:
+  - minServerVersion: "4.4"
+    topologies: ["replicaset", "sharded-replicaset"]
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        timeoutMS: 10
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+
+initialData:
+  - collectionName: &collectionName coll
+    databaseName: *databaseName
+    documents: []
+
+tests:
+  # For each collection-level operation, we execute two tests:
+  #
+  # 1. timeoutMS can be overridden to a non-zero value for a MongoCollection. Each test uses the client entity defined
+  # above to construct a collection entity with timeoutMS=1000 and configures a fail point to block the operation for
+  # 15ms so the operation succeeds.
+  #
+  # 2. timeoutMS can be overridden to 0 for a MongoCollection. Each test constructs a collection entity with
+  # timeoutMS=0 using the global client entity and configures a fail point to block the operation for 15ms. The
+  # operation should succeed and the command sent to the server should not contain a maxTimeMS field.
+
+  {% for operation in operations -%}
+  - description: "timeoutMS can be configured on a MongoCollection - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+                collectionOptions:
+                  timeoutMS: 1000
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$type: ["int", "long"] }
+  - description: "timeoutMS can be set to 0 on a MongoCollection - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - collection:
+                id: &collection collection
+                database: *database
+                collectionName: *collectionName
+                collectionOptions:
+                  timeoutMS: 0
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 15
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        {% if operation.operation_name == "dropIndex" -%}
+        expectError:
+          isClientError: false
+          isTimeoutError: false
+        {%- endif %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$exists: false }
+  {% endfor %}

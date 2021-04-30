@@ -1,0 +1,175 @@
+# Tests in this file are generated from retryability-timeoutMS.yml.template.
+
+description: "timeoutMS behaves correctly for retryable operations"
+
+schemaVersion: "1.5"
+
+# failCommand is available on 4.0+ replica sets and 4.2+ sharded clusters.
+runOnRequirements:
+  - minServerVersion: "4.0"
+    topologies: ["replicaset"]
+  - minServerVersion: "4.2"
+    topologies: ["replicaset", "sharded-replicaset"]
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - client:
+      id: &client client
+      uriOptions:
+        timeoutMS: 50
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+      ignoreCommandMonitoringEvents:
+        - killCursors
+  - database:
+      id: &database database
+      client: *client
+      databaseName: &databaseName test
+  - collection:
+      id: &collection collection
+      database: *database
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents: []
+
+tests:
+  # For each retryable operation, run three tests:
+  #
+  # 1. timeoutMS applies to the whole operation, not to individual attempts - Client timeoutMS=50 and the operation is
+  # fails with a retryable error after being blocked server-side for 30ms. The operation should fail with a timeout error
+  # because the second attempt should take it over the 50ms limit. This test only runs on 4.4+ because it uses the
+  # blockConnection option in failCommand.
+  #
+  # 2. operation is retried multiple times if timeoutMS is set to a non-zero value - Client timeoutMS=20 and the
+  # operation fails with a retryable error twice. Drivers should send the original operation and two retries, the
+  # second of which should succeed.
+  #
+  # 3. operation is retried multiple times if timeoutMS is set to a zero - Override timeoutMS to zero for the operation
+  # and set a fail point to force a retryable error twice. Drivers should send the original operation and two retries,
+  # the second of which should succeed.
+  #
+  # The fail points in these tests use error code 7 (HostNotFound) because it is a retryable error but does not trigger
+  # an SDAM state change so we don't lose any time to server rediscovery. The tests also explicitly specify an
+  # errorLabels array in the fail point to avoid behavioral differences among server types and ensure that the error
+  # will be considered retryable.
+
+  {% for operation in operations -%}
+  - description: "timeoutMS applies to whole operation, not individual attempts - {{operation.operation_name}} on {{operation.object}}"
+    runOnRequirements:
+      - minServerVersion: "4.4"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              blockConnection: true
+              blockTimeMS: 30
+              errorCode: 7
+              errorLabels: ["RetryableWriteError"]
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+        expectError:
+          isTimeoutError: true
+  - description: "operation is retried multiple times for non-zero timeoutMS - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              errorCode: 7
+              closeConnection: false
+              errorLabels: ["RetryableWriteError"]
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        {% if operation.arguments|length > 0 -%}
+        arguments:
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+        {%- endif %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$type: ["int", "long"] }
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$type: ["int", "long"] }
+  - description: "operation is retried multiple times if timeoutMS is zero - {{operation.operation_name}} on {{operation.object}}"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 2 }
+            data:
+              failCommands: ["{{operation.command_name}}"]
+              errorCode: 7
+              closeConnection: false
+              errorLabels: ["RetryableWriteError"]
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}
+        arguments:
+          timeoutMS: 0
+          {% for arg in operation.arguments -%}
+          {{arg}}
+          {% endfor %}
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+              databaseName: {{ "admin" if operation.object == "client" else "*databaseName" }}
+              command:
+                {{operation.command_name}}: {{get_command_object(operation.object)}}
+                maxTimeMS: { $$exists: false }
+  {% endfor %}

@@ -570,7 +570,7 @@
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 2
+          "times": 1
         },
         "data": {
           "failCommands": [
@@ -592,7 +592,11 @@
               }
             ]
           },
-          "error": true
+          "result": [
+            {
+              "_id": 1
+            }
+          ]
         },
         {
           "name": "find",
@@ -607,6 +611,52 @@
         {
           "name": "assertDifferentLsidOnLastTwoCommands",
           "object": "testRunner"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "pipeline": [
+                {
+                  "$project": {
+                    "_id": 1
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test",
+              "pipeline": [
+                {
+                  "$project": {
+                    "_id": 1
+                  }
+                }
+              ]
+            },
+            "command_name": "aggregate",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "filter": {
+                "_id": -1
+              }
+            },
+            "command_name": "find",
+            "database_name": "session-tests"
+          }
         }
       ],
       "outcome": {
@@ -624,7 +674,7 @@
       "failPoint": {
         "configureFailPoint": "failCommand",
         "mode": {
-          "times": 2
+          "times": 1
         },
         "data": {
           "failCommands": [
@@ -640,7 +690,7 @@
           "arguments": {
             "filter": {}
           },
-          "error": true
+          "result": 1
         },
         {
           "name": "find",
@@ -655,6 +705,38 @@
         {
           "name": "assertDifferentLsidOnLastTwoCommands",
           "object": "testRunner"
+        }
+      ],
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test"
+            },
+            "command_name": "aggregate",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": "test"
+            },
+            "command_name": "aggregate",
+            "database_name": "session-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "test",
+              "filter": {
+                "_id": -1
+              }
+            },
+            "command_name": "find",
+            "database_name": "session-tests"
+          }
         }
       ],
       "outcome": {

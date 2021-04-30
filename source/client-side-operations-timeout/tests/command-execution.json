@@ -1,0 +1,256 @@
+{
+  "description": "timeoutMS behaves correctly during command execution",
+  "schemaVersion": "1.5",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "4.9"
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "failPointClient",
+        "useMultipleMongoses": false
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "coll",
+      "databaseName": "test",
+      "documents": []
+    },
+    {
+      "collectionName": "timeoutColl",
+      "databaseName": "test",
+      "documents": []
+    }
+  ],
+  "tests": [
+    {
+      "description": "maxTimeMS value in the command is less than timeoutMS",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": "alwaysOn",
+              "data": {
+                "failCommands": [
+                  "isMaster"
+                ],
+                "appName": "reduceMaxTimeMSTest",
+                "blockConnection": true,
+                "blockTimeMS": 10
+              }
+            }
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "uriOptions": {
+                    "appName": "reduceMaxTimeMSTest"
+                  },
+                  "observeEvents": [
+                    "commandStartedEvent"
+                  ]
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "test"
+                }
+              },
+              {
+                "collection": {
+                  "id": "regularCollection",
+                  "database": "database",
+                  "collectionName": "coll"
+                }
+              },
+              {
+                "collection": {
+                  "id": "timeoutCollection",
+                  "database": "database",
+                  "collectionName": "timeoutColl",
+                  "collectionOptions": {
+                    "timeoutMS": 20
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "regularCollection",
+          "arguments": {
+            "document": {
+              "_id": 1
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
+              "_id": 2
+            }
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "coll",
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "timeoutColl",
+                  "maxTimeMS": {
+                    "$$lte": 20
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "command is not sent if RTT is greater than timeoutMS",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": "alwaysOn",
+              "data": {
+                "failCommands": [
+                  "isMaster"
+                ],
+                "appName": "rttTooHighTest",
+                "blockConnection": true,
+                "blockTimeMS": 10
+              }
+            }
+          }
+        },
+        {
+          "name": "createEntities",
+          "object": "testRunner",
+          "arguments": {
+            "entities": [
+              {
+                "client": {
+                  "id": "client",
+                  "useMultipleMongoses": false,
+                  "uriOptions": {
+                    "appName": "rttTooHighTest"
+                  },
+                  "observeEvents": [
+                    "commandStartedEvent"
+                  ]
+                }
+              },
+              {
+                "database": {
+                  "id": "database",
+                  "client": "client",
+                  "databaseName": "test"
+                }
+              },
+              {
+                "collection": {
+                  "id": "regularCollection",
+                  "database": "database",
+                  "collectionName": "coll"
+                }
+              },
+              {
+                "collection": {
+                  "id": "timeoutCollection",
+                  "database": "database",
+                  "collectionName": "timeoutColl",
+                  "collectionOptions": {
+                    "timeoutMS": 2
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "regularCollection",
+          "arguments": {
+            "document": {
+              "_id": 1
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "timeoutCollection",
+          "arguments": {
+            "document": {
+              "_id": 2
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "insert",
+                "databaseName": "test",
+                "command": {
+                  "insert": "coll",
+                  "maxTimeMS": {
+                    "$$exists": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

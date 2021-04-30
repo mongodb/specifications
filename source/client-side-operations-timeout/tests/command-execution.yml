@@ -1,0 +1,162 @@
+description: "timeoutMS behaves correctly during command execution"
+
+schemaVersion: "1.5"
+
+runOnRequirements:
+  # The appName filter cannot be used to set a fail point on connection handshakes until server version 4.9 due to
+  # SERVER-49220/SERVER-49336.
+  - minServerVersion: "4.9"
+
+createEntities:
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+
+initialData:
+  # The corresponding entities for the collections defined here are created in test-level createEntities operations.
+  # This is done so that tests can set fail points that will affect all of the handshakes and heartbeats done by a
+  # client. The collection and database names are listed here so that the collections will be dropped and re-created at
+  # the beginning of each test.
+  - collectionName: &regularCollectionName coll
+    databaseName: &databaseName test
+    documents: []
+  - collectionName: &timeoutCollectionName timeoutColl
+    databaseName: &databaseName test
+    documents: []
+
+tests:
+  - description: "maxTimeMS value in the command is less than timeoutMS"
+    operations:
+      # Artificially increase the server RTT to ~10ms.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: "alwaysOn"
+            data:
+              failCommands: ["isMaster"]
+              appName: &appName reduceMaxTimeMSTest
+              blockConnection: true
+              blockTimeMS: 10
+      # Create a client with the app name specified in the fail point. Also create database and collection entities
+      # derived from the new client. There are two collection entities: one with no timeoutMS, which is used to run
+      # an initial operation, and one with a timeoutMS higher than the fail point's blockTimeMS value.
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                uriOptions:
+                  appName: *appName
+                observeEvents:
+                  - commandStartedEvent
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &regularCollection regularCollection
+                database: *database
+                collectionName: *regularCollectionName
+            - collection:
+                id: &timeoutCollection timeoutCollection
+                database: *database
+                collectionName: *timeoutCollectionName
+                collectionOptions:
+                  timeoutMS: &timeoutMS 20
+      # Do an operation with regularCollection to ensure the servers are discovered.
+      - name: insertOne
+        object: *regularCollection
+        arguments:
+          document: { _id : 1 }
+      # Do an operation with timeoutCollection so the event will include a maxTimeMS field.
+      - name: insertOne
+        object: *timeoutCollection
+        arguments:
+          document: { _id: 2 }
+    expectEvents:
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *regularCollectionName
+                maxTimeMS: { $$exists: false }
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *timeoutCollectionName
+                maxTimeMS: { $$lte: *timeoutMS }
+
+  - description: "command is not sent if RTT is greater than timeoutMS"
+    operations:
+      # Artificially increase the server RTT to ~10ms.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: "alwaysOn"
+            data:
+              failCommands: ["isMaster"]
+              appName: &appName rttTooHighTest
+              blockConnection: true
+              blockTimeMS: 10
+      # Create a client with the app name specified in the fail point. Also create database and collection entities
+      # derived from the new client. There is one collection entity with no timeoutMS and another with a timeoutMS
+      # that's lower than the fail point's blockTimeMS value.
+      - name: createEntities
+        object: testRunner
+        arguments:
+          entities:
+            - client:
+                id: &client client
+                useMultipleMongoses: false
+                uriOptions:
+                  appName: *appName
+                observeEvents:
+                  - commandStartedEvent
+            - database:
+                id: &database database
+                client: *client
+                databaseName: *databaseName
+            - collection:
+                id: &regularCollection regularCollection
+                database: *database
+                collectionName: *regularCollectionName
+            - collection:
+                id: &timeoutCollection timeoutCollection
+                database: *database
+                collectionName: *timeoutCollectionName
+                collectionOptions:
+                  timeoutMS: 2
+      # Do an operation with regularCollection to ensure the servers are discovered.
+      - name: insertOne
+        object: *regularCollection
+        arguments:
+          document: { _id : 1 }
+      # Do an operation with timeoutCollection which will error.
+      - name: insertOne
+        object: *timeoutCollection
+        arguments:
+          document: { _id: 2 }
+        expectError:
+          isTimeoutError: true
+    expectEvents:
+      # There should only be one event, which corresponds to the first insertOne call. For the second insertOne call,
+      # drivers should fail client-side.
+      - client: *client
+        events:
+          - commandStartedEvent:
+              commandName: insert
+              databaseName: *databaseName
+              command:
+                insert: *regularCollectionName
+                maxTimeMS: { $$exists: false }

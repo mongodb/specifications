@@ -9,8 +9,14 @@ Client Side Encryption Tests
 Introduction
 ============
 
-This document describes the format of the driver spec tests included in the JSON
-and YAML files included in this directory.
+This document describes the format of the driver spec tests included in the
+JSON and YAML files included in this directory. The
+``timeoutMS.yml``/``timeoutMS.json`` files in this directory contain tests
+for the ``timeoutMS`` option and its application to the client-side
+encryption feature. Drivers MUST only run these tests after implementing the
+`Client Side Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
 
 Additional prose tests, that are not represented in the spec tests, are described
 and MUST be implemented by all drivers.
@@ -30,7 +36,8 @@ The spec tests format is an extension of `transactions spec tests <https://githu
 
 - Addition of `$$type` to command_started_event and outcome.
 
-The semantics of `$$type` is that any actual value matching the BSON type indicated by the BSON type string is considered a match.
+The semantics of `$$type` is that any actual value matching one of the types indicated by either a BSON type string
+or an array of BSON type strings is considered a match.
 
 For example, the following matches a command_started_event for an insert of a document where `random` must be of type ``binData``::
 
@@ -42,6 +49,16 @@ For example, the following matches a command_started_event for an insert of a do
         ordered: true
       command_name: insert
 
+The following matches a command_started_event for an insert of a document where ``random`` must be of type
+``binData`` or ``string``::
+
+  - command_started_event:
+      command:
+        insert: *collection_name
+        documents:
+          - { random: { $$type: ["binData", "string"] } }
+        ordered: true
+      command_name: insert
 
 The values of `$$type` correspond to `these documented string representations of BSON types <https://docs.mongodb.com/manual/reference/bson-types/>`_.
 
@@ -68,6 +85,10 @@ Each YAML file has the following keys:
   - ``description``: |txn|
 
   - ``skipReason``: |txn|
+
+  - ``useMultipleMongoses``: |txn|
+
+  - ``failPoint``: |txn|
 
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
@@ -104,7 +125,10 @@ Each YAML file has the following keys:
 
     - ``arguments``: |txn|
 
-    - ``result``: |txn|
+    - ``result``: Same as the Transactions spec test format with one addition: if the operation is expected to return
+      an error, the ``result`` document may contain an ``isTimeoutError`` boolean field. If ``true``, the test runner
+      MUST assert that the error represents a timeout due to the use of the ``timeoutMS`` option. If ``false``, the
+      test runner MUST assert that the error does not represent a timeout.
 
   - ``expectations``: |txn|
 
