@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2021-04-07
-:Version: 1.5.5
+:Last Modified: 2021-04-30
+:Version: 1.6.0
 
 .. contents::
 
@@ -301,6 +301,8 @@ deviation guidance, see the `CRUD specification
     /**
      * Corresponds to the "wtimeout" field in the WriteConcern document sent to
      * the server.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     wtimeoutMS: Optional<Int64>
   }
@@ -313,6 +315,13 @@ FSync SHOULD be considered deprecated.  Those drivers supporting the deprecated
 ``fsync`` option SHOULD treat ``fsync`` identically to ``journal`` in terms of
 consistency with ``w`` and whether a ``WriteConcern`` that specifies ``fsync``
 is acknowledged or unacknowledged.
+
+
+wtimeoutMS
+----------
+
+``wtimeoutMS`` MUST be considered deprecated in favor of `timeoutMS
+<client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`__.
 
 
 Server’s Default WriteConcern
@@ -701,3 +710,4 @@ Version History
   - 2019-10-31: Explicitly define write concern option mappings.
   - 2020-02-13: Inconsistent write concern must be considered an error.
   - 2021-04-07: Updated to use hello command.
+  - 2021-04-30: Deprecate wTimeoutMS in favor of timeoutMS.

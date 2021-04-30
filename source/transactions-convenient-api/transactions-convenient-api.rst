@@ -3,14 +3,14 @@ Convenient API for Transactions
 ===============================
 
 :Spec Title: Convenient API for Transactions
-:Spec Version: 1.2
+:Spec Version: 1.3
 :Author: Jeremy Mikola
 :Lead: Jeff Yemin
 :Advisors: A\. Jesse Jiryu Davis, Kris Brandow, Oleg Pudeyev, Sam Ritter, Tess Avitabile
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 2019-04-24
+:Last Modified: 2021-04-30
 
 .. contents::
 
@@ -119,9 +119,13 @@ operations with the transaction; however, that is not enforced. The callback is
 allowed to execute other operations not associated with the transaction.
 
 Since ``withTransaction`` includes logic to retry transactions and commits,
-drivers MUST enforce a 120-second timeout to limit retry behavior and safeguard
-applications from long-running (or infinite) retry loops. Drivers SHOULD use a
-monotonic clock to determine elapsed time.
+drivers MUST apply timeouts per `Client Side Operations Timeout: Convenient
+Transactions API
+<../client-side-operations-timeout/client-side-operations-timeout.rst#convenient-transactions-api>`__.
+If ``timeoutMS`` is unset for a ``withTransaction`` call, drivers MUST
+enforce a 120-second timeout to limit retry behavior and safeguard
+applications from long-running (or infinite) retry loops. Drivers SHOULD use
+a monotonic clock to determine elapsed time.
 
 If an UnknownTransactionCommitResult error is encountered for a commit, the
 driver MUST retry the commit if and only if the error is not MaxTimeMSExpired
@@ -496,6 +500,9 @@ client-side operation timeout, withTransaction can continue to use the
 
 Changes
 =======
+
+2021-04-30: withTransaction applies timeouts per the client-side
+            operations timeout specification.
 
 2019-04-24: withTransaction does not retry when commit fails with
             MaxTimeMSExpired.

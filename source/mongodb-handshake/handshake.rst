@@ -3,14 +3,14 @@ MongoDB Handshake
 =================
 
 :Spec Title: MongoDB Handshake
-:Spec Version: 1.2.0
+:Spec Version: 1.3.0
 :Author: Hannes Magnusson
 :Kernel Advisory: Mark Benvenuto
 :Driver Advisory: Anna Herlihy, Justin Lee
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 3.4
-:Last Modified: 2020-02-12
+:Last Modified: 2021-04-30
 
 
 .. contents::
@@ -56,7 +56,10 @@ The ``isMaster`` handshake MUST be performed on every socket to any and all serv
 upon establishing the connection to MongoDB, including reconnects of dropped
 connections and newly discovered members of a cluster. It MUST be the first
 command sent over the respective socket. If the command fails the client MUST
-disconnect.
+disconnect. Timeouts MUST be applied to this command per the `Client Side
+Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
 
 ``isMaster`` commands issued after the initial connection handshake MUST NOT
 contain handshake arguments. Any subsequent ``isMaster`` calls, such as the ones
@@ -422,3 +425,4 @@ Changes
 
 * 2019-11-13: Added section about supporting wrapping libraries
 * 2020-02-12: Added section about speculative authentication
+* 2021-04-30: Require that timeouts be applied per the client-side operations timeout spec.

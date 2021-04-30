@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.4
+:Spec Version: 1.11.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2021-04-08
+:Last Modified: 2021-04-30
 
 .. contents::
 
@@ -182,6 +182,11 @@ handshake:
 If the authentication handshake fails for a socket, drivers MUST mark the
 server Unknown and clear the server's connection pool. (See `Q & A`_ below and
 SDAM's `Why mark a server Unknown after an auth error`_ for rationale.)
+
+All blocking operations executed as part of the authentication handshake MUST
+apply timeouts per the `Client Side Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
 
 Mechanism Negotiation via Handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1261,6 +1266,9 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 
 Version History
 ===============
+
+Version 1.11.0 Changes
+    * Require that timeouts be applied per the client-side operations timeout spec.
 
 Version 1.10.4 Changes
     * Updated to use hello and legacy hello.

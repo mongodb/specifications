@@ -3,14 +3,14 @@ OCSP Support
 ============
 
 :Spec Title: OCSP Support
-:Spec Version: 2.0.1
+:Spec Version: 2.1.0
 :Author: Vincent Kam
 :Lead: Jeremy Mikola
 :Advisory Group: Divjot Arora *(POC author)*, Clyde Bazile *(POC author)*, Esha Bhargava *(Program Manager)*, Matt Broadstone, Bernie Hackett *(POC author)*, Shreyas Kaylan *(Server Project Lead)*, Jeremy Mikola *(Spec Lead)*
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2021-04-07
+:Last Modified: 2021-04-30
 
 .. contents::
 
@@ -107,13 +107,15 @@ invalid, the driver SHOULD end the connection.
     has a list of OCSP responder endpoints, and
     ``tlsDisableOCSPEndpointCheck`` or
     ``tlsDisableCertificateRevocationCheck`` is false (`if the driver
-    supports these options <MongoClient Configuration>`_), the driver
-    SHOULD send HTTP requests to the responders in parallel. The first
-    valid response that concretely marks the certificate status as
-    good or revoked should be used. A five-second timeout SHOULD be
-    used for the requests.  The status for a response should only be
-    checked if the response is valid per `RFC 6960 Section 3.2
-    <https://tools.ietf.org/html/rfc6960#section-3.2>`_
+    supports these options <MongoClient Configuration>`_), the driver SHOULD
+    send HTTP requests to the responders in parallel. The first valid
+    response that concretely marks the certificate status as good or revoked
+    should be used. A timeout should be applied to requests per the `Client
+    Side Operations Timeout
+    <../client-side-operations-timeout/client-side-operations-timeout>`__
+    specification, with a default timeout of five seconds. The status for a
+    response should only be checked if the response is valid per `RFC 6960
+    Section 3.2 <https://tools.ietf.org/html/rfc6960#section-3.2>`_
 
 8.  If any unvalidated intermediate certificates remain and those
     certificates have OCSP endpoints, for each certificate, the
@@ -787,6 +789,9 @@ of checking this are:
 
 Changelog
 ==========
+
+**2021-04-30**: 2.1.0: Require that timeouts be applied per the client-side
+operations timeout spec.
 
 **2021-04-07**: 2.0.1: Updated terminology to use allowList.
 

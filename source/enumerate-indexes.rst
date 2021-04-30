@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2021-04-06
-:Version: 0.5.1
+:Last Modified: 2021-04-30
+:Version: 0.6.0
 
 .. contents::
 
@@ -255,6 +255,13 @@ All methods:
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MAY emulate returning a cursor for pre-2.8.0-rc3 servers.
+- MUST apply timeouts per the `Client Side Operations Timeout
+  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  specification.
+
+All methods that return cursors MUST support the timeout options documented
+in `Client Side Operations Timeout: Cursors
+<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
 
 Getting Index Names
 ~~~~~~~~~~~~~~~~~~~
@@ -386,6 +393,10 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+0.6.0 - 2021-04-30
+    Require that timeouts be applied per the client-side operations timeout spec.
+
 0.5.1 - 2021-04-06
     Changed to secondaryOk.
 

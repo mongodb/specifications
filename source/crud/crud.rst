@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: April 17, 2020
+:Last Modified: April 30, 2021
 
 .. contents::
 
@@ -113,6 +113,17 @@ A non-exhaustive list of acceptable naming deviations are as follows:
 * Using "FindOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call it "FindArgs" or "FindParams". However, calling it "QueryOptions" would not be acceptable.
 * Using "isOrdered" rather than "ordered". Some languages idioms prefer the use of "is", "has", or "was" and this is acceptable.
 
+
+Timeouts
+--------
+
+Drivers MUST enforce timeouts for all operations per the `Client Side
+Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification. All operations that return cursors MUST support the timeout
+options documented in the `Cursors
+<../client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__
+section of that specification.
 
 ---
 API
@@ -271,6 +282,8 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     maxTimeMS: Optional<Int64>;
@@ -335,8 +348,10 @@ Read
 
     /**
      * The maximum amount of time to allow the operation to run.
-
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
 
@@ -354,6 +369,8 @@ Read
      * The maximum amount of time to allow the operation to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
   }
@@ -374,6 +391,8 @@ Read
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
@@ -538,6 +557,8 @@ Read
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
@@ -1650,6 +1671,8 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     maxTimeMS: Optional<Int64>;
@@ -1712,6 +1735,8 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1804,6 +1829,8 @@ Find And Modify
 
     /**
      * The maximum amount of time to allow the query to run.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1960,6 +1987,7 @@ Q: Why are client-side errors raised when options are provided for unacknowledge
 Changes
 =======
 
+* 2021-04-30: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
 * 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.

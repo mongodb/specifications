@@ -9,7 +9,7 @@ Enumerating Databases
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.7
-:Last Modified: 2019-11-20
+:Last Modified: 2021-04-30
 
 .. contents::
 
@@ -104,6 +104,10 @@ If a driver already has a method to perform one of the listed tasks, there is no
 need to change it. Do not break backwards compatibility when adding new methods.
 
 All methods SHOULD be implemented on the MongoClient object.
+
+All methods MUST apply timeouts per the `Client Side Operations Timeout
+<client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
 
 Enumerating Full Database Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -282,3 +286,4 @@ Changes
 
 * 2017-10-30: Support filter option in listDatabases command
 * 2019-11-20: Support authorizedDatabases option in listDatabases command
+* 2021-04-30: Require that timeouts be applied per the client-side operations timeout spec.

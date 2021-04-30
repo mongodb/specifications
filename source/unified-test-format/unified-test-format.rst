@@ -625,6 +625,7 @@ The structure of this object is as follows:
 
     - `Causal Consistency <../causal-consistency/causal-consistency.rst#sessionoptions-changes>`__
     - `Transactions <../transactions/transactions.rst#sessionoptions-changes>`__
+    - `Client Side Operations Timeout <../client-side-operations-timeout/client-side-operations-timeout.rst#sessions>`__
 
     When specifying TransactionOptions for ``defaultTransactionOptions``, the
     transaction options MUST remain nested under ``defaultTransactionOptions``

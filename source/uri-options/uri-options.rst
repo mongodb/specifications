@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.7.0
+:Spec Version: 1.8.0
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-4-15
+:Last Modified: 2021-04-30
 
 
 **Abstract**
@@ -267,13 +267,22 @@ pertaining to URI options apply here.
      - non-negative integer; 0 means no timeout
      - no timeout
      - no
-     - Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
+
+       Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM.
 
    * - ssl
      - "true" or "false"
      - same as "tls"
      - no
      - alias of "tls"; required to ensure that Atlas connection strings continue to work
+
+   *
+     - timeoutMS
+     - non-negative integer; 0 or unset means no timeout
+     - Defined in `Client Side Operations Timeout: timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_.
+     - no
+     - Time limit for the full execution of an operation
 
    * - tls
      - "true" or "false"
@@ -350,14 +359,18 @@ pertaining to URI options apply here.
      - positive number
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools, with exceptions described in the `Connection Pooling spec`_
-     - Amount of time spent attempting to check out a connection from a server's
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
+
+       Amount of time spent attempting to check out a connection from a server's
        connection pool before timing out
 
    * - wTimeoutMS
      - non-negative 64-bit integer; 0 means no timeout
      - no timeout
      - no
-     - Default write concern "wtimeout" field for the client
+     - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
+
+       Default write concern "wtimeout" field for the client
 
    * - zlibCompressionLevel
      - integer between -1 and 9 (inclusive)
@@ -455,6 +468,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2021-04-30 Add the timeoutMS option and deprecate some existing timeout options
 - 2021-04-08 Updated to refer to hello and legacy hello
 - 2020-03-03 Add tlsDisableCertificateRevocationCheck option
 - 2020-02-26 Add tlsDisableOCSPEndpointCheck option

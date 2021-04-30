@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.30
-:Last Modified: 2021-04-12
+:Version: 2.31
+:Last Modified: 2021-04-30
 
 .. contents::
 
@@ -336,6 +336,7 @@ Fields:
   from the address the client uses.
 * (=) error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the ismaster call. Default null.
+* ninetiethPercentileRoundTripTime: the 90th percentile RTT for the server. Default null.
 * lastWriteDate: a 64-bit BSON datetime or null.
   The "lastWriteDate" from the server's most recent ismaster response.
 * opTime: an opTime or null.
@@ -367,6 +368,9 @@ Fields:
 * (=) topologyVersion: A topologyVersion or null. Default null.
   The "topologyVersion" from the server's most recent ismaster response or
   `State Change Error`_.
+* (=) iscryptd: boolean indicating if the server is a
+  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -664,9 +668,10 @@ it stores error information in the ServerDescription's error field.
 roundTripTime
 `````````````
 
-Drivers MUST record the server's `round trip time`_ (RTT)
-after each successful call to ismaster. The Server Selection Spec describes how
-RTT is averaged and how it is used in server selection.
+Drivers MUST record the server's `round trip time`_ (RTT) after each
+successful call to ismaster. The Server Selection Spec describes how RTT is
+averaged and how it is used in server selection. Drivers MUST also record the
+server's 90th percentile RTT per `Server Monitoring (Measuring RTT)`_.
 
 If an ismaster call fails, the RTT is not updated.
 Furthermore, while a server's type is Unknown its RTT is null,
@@ -2501,6 +2506,10 @@ check. Synchronize pool clearing with SDAM updates.
 2021-2-11: Errors encountered during auth are handled by SDAM. Auth errors
 mark the server Unknown and clear the pool.
 
+2021-4-12: Adding in behaviour for load balancer mode.
+
+2020-04-30: Add iscryptd and 90th percentile RTT fields to ServerDescription.
+
 .. Section for links.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
@@ -2514,5 +2523,4 @@ mark the server Unknown and clear the pool.
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Authentication spec: /source/auth/auth.rst
-
-2021-4-12: Adding in behaviour for load balancer mode.
+.. _Server Monitoring (Measuring RTT): server-monitoring.rst#measuring-rtt

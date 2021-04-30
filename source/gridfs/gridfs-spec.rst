@@ -9,8 +9,8 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: January 17, 2020
-:Version: 1.4
+:Last Modified: April 30, 2021
+:Version: 1.5
 
 .. contents::
 
@@ -199,6 +199,13 @@ When using a fluent-style builder, all options should be named
 rather than inventing a new word to include in the pipeline (like
 options). Required parameters are still required to be on the
 initiating constructor.
+
+Timeouts
+~~~~~~~~
+
+Drivers MUST enforce timeouts for all operations per `Client Side Operations
+Timeout: GridFS API
+<../client-side-operations-timeout/client-side-operations-timeout.rst#gridfs-api>`__.
 
 Naming
 ------
@@ -1211,3 +1218,4 @@ Changes
 - 2018-01-31 Deprecated MD5, and specified an option to disable MD5 until removed
 - 2018-07-05 Must not use 'filemd5'
 - 2020-01-17 Added allowDiskUse to GridFSFindOptions
+- 2021-04-30 Require that timeouts be applied per the client-side operations timeout spec
