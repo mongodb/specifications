@@ -14,7 +14,8 @@
     },
     "data": {
       "failCommands": [
-        "isMaster"
+        "isMaster",
+        "hello"
       ],
       "appName": "poolCreateMinSizeErrorTest",
       "closeConnection": true
