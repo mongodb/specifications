@@ -6,9 +6,9 @@ Server Selection -- Test Plan
 :Title: Server Selection
 :Author: Samantha Ritter
 :Advisors: David Golden
-:Status: Draft
+:Status: Accepted
 :Type: Standards
-:Last Modified: November 12, 2020
+:Last Modified: April 30, 2021
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -41,8 +41,8 @@ they test for correctness in the following scenarios:
 Additionally, drivers SHOULD ensure that their implementations reject negative RTT values.
 
 Lastly, drivers SHOULD ensure that average RTT for a given ServerDescription is reset to 0 if that
-server is disconnected (ie a network error occurs during an ``ismaster`` call). Upon reconnect,
-the first new RTT value should become the average RTT for this server.
+server is disconnected (ie a network error occurs during a ``hello`` or legacy hello call). Upon
+reconnect, the first new RTT value should become the average RTT for this server.
 
 The RTT tests are intentionally simplified to test the implementation of the
 EWMA algorithm without imposing any additional conditions on drivers that might
@@ -193,27 +193,27 @@ correctly passed to Mongos in the following scenarios:
 
 - PRIMARY
 
-  - the slaveOK wire protocol flag is NOT set
+  - the SecondaryOk wire protocol flag is NOT set
   - $readPreference is NOT used
 
 - PRIMARY_PREFERRED
 
-  - the slaveOK wire protocol flag is set
+  - the SecondaryOk wire protocol flag is set
   - $readPreference is used
 
 - SECONDARY
 
-  - the slaveOK wire protocol flag is set
+  - the SecondaryOk wire protocol flag is set
   - $readPreference is used
 
 - SECONDARY_PREFERRED
 
-  - the slaveOK wire protocol flag is set
+  - the SecondaryOk wire protocol flag is set
   - if ``tag_sets`` or ``hedge`` are specified $readPreference is used, otherwise $readPreference is NOT used
 
 - NEAREST
 
-  - the slaveOK wire protocol flag is set
+  - the SecondaryOk wire protocol flag is set
   - $readPreference is used
 
 

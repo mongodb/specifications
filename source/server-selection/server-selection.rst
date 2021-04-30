@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-05-12
-:Version: 1.13.1
+:Last Modified: 2021-05-13
+:Version: 1.13.2
 
 .. contents::
 
@@ -167,10 +167,10 @@ Terms
     Abbreviation for "round trip time".
 
 **Round trip time**
-    The time in milliseconds to execute an ``ismaster`` command and
+    The time in milliseconds to execute a ``hello`` or legacy hello command and
     receive a response for a given server.  This spec differentiates between
-    the RTT of a single ``ismaster`` command and a server's *average* RTT over
-    several such commands.
+    the RTT of a single ``hello`` or legacy hello command and a server's *average*
+    RTT over several such commands.
 
 **Secondary**
     A server of type RSSecondary.
@@ -580,33 +580,33 @@ Passing read preference to mongos and load balancers
 
 If a server of type Mongos or LoadBalancer is selected for a read operation, the read
 preference is passed to the selected mongos through the use of the
-``slaveOK`` wire protocol flag, the ``$readPreference`` query
+``SecondaryOk`` wire protocol flag, the ``$readPreference`` query
 modifier or both, according to the following rules.
 
 If the read preference contains **only** a ``mode`` parameter and the mode is
 'primary' or 'secondaryPreferred', for maximum backwards compatibility with
-older versions of mongos, drivers MUST only use the value of the ``slaveOK``
+older versions of mongos, drivers MUST only use the value of the ``SecondaryOk``
 wire protocol flag (i.e. set or unset) to indicate the desired read preference
 and MUST NOT use a ``$readPreference`` query modifier.
 
 Therefore, when sending queries to a mongos or load balancer, the following rules apply:
 
-  - For mode 'primary', drivers MUST NOT set the ``slaveOK`` wire protocol flag
+  - For mode 'primary', drivers MUST NOT set the ``SecondaryOk`` wire protocol flag
     and MUST NOT use ``$readPreference``
 
-  - For mode 'secondary', drivers MUST set the ``slaveOK`` wire protocol flag
+  - For mode 'secondary', drivers MUST set the ``SecondaryOk`` wire protocol flag
     and MUST also use ``$readPreference``
 
-  - For mode 'primaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag
+  - For mode 'primaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag
     and MUST also use ``$readPreference``
 
-  - For mode 'secondaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag.
+  - For mode 'secondaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag.
     If the read preference contains a non-empty ``tag_sets`` parameter,
     ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
     non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
     use ``$readPreference``
 
-  - For mode 'nearest', drivers MUST set the ``slaveOK`` wire protocol flag
+  - For mode 'nearest', drivers MUST set the ``SecondaryOk`` wire protocol flag
     and MUST also use ``$readPreference``
 
 The ``$readPreference`` query modifier sends the read preference as part of the
@@ -705,12 +705,12 @@ the command and how it is invoked:
       configuration.  Languages with dynamic argument lists MUST throw an error
       if a read preference is provided as an argument.
 
-      Clients SHOULD rely on the server to return a "not master" or other error
-      if the command is "must-use-primary".  Clients MAY raise an exception
-      before sending the command if the topology type is Single and the server
-      type is not "Standalone", "RSPrimary" or "Mongos", but the identification
-      of the set of 'must-use-primary' commands is out of scope for this
-      specification.
+      Clients SHOULD rely on the server to return a "not writable primary" or
+      other error if the command is "must-use-primary".  Clients MAY raise an
+      exception before sending the command if the topology type is Single and
+      the server type is not "Standalone", "RSPrimary" or "Mongos", but the
+      identification of the set of 'must-use-primary' commands is out of scope
+      for this specification.
 
     - "should-use-primary": these commands are intended to be run on a primary,
       but would succeed -- albeit with possibly stale data -- when run against
@@ -946,7 +946,7 @@ to the server differently:
 
 - Type Standalone: clients MUST NOT send the read preference to the server
 
-- For all other types, using OP_QUERY: clients MUST always set the ``slaveOK`` wire
+- For all other types, using OP_QUERY: clients MUST always set the ``SecondaryOk`` wire
   protocol flag on reads to ensure that any server type can handle the
   request.
 
@@ -1001,9 +1001,9 @@ If ``mode`` is 'primaryPreferred', select the primary if it is known, otherwise
 attempt the selection algorithm with ``mode`` 'secondary' and the user's
 ``maxStalenessSeconds`` and ``tag_sets``.
 
-For all read preferences modes except 'primary', clients MUST set the ``slaveOK`` wire
-protocol flag to ensure that any suitable server can handle the request.  Clients
-MUST NOT set the ``slaveOK`` wire protocol flag if the read preference mode is
+For all read preferences modes except 'primary', clients MUST set the ``SecondaryOk``
+wire protocol flag to ensure that any suitable server can handle the request.  Clients
+MUST NOT set the ``SecondaryOk`` wire protocol flag if the read preference mode is
 'primary'.
 
 Write operations
@@ -1038,15 +1038,15 @@ Calculation of Average Round Trip Times
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For every available server, clients MUST track the average RTT of server
-monitoring ``ismaster`` commands.
+monitoring ``hello`` or legacy hello commands.
 
 An Unknown server has no average RTT.  When a server becomes unavailable, its
 average RTT MUST be cleared.  Clients MAY implement this idiomatically (e.g
 nil, -1, etc.).
 
 When there is no average RTT for a server, the average RTT MUST be set equal to
-the first RTT measurement (i.e. the first ``ismaster`` command after the
-server becomes available).
+the first RTT measurement (i.e. the first ``hello`` or legacy hello command after
+the server becomes available).
 
 After the first measurement, average RTT MUST be computed using an
 exponentially-weighted moving average formula, with a weighting factor
@@ -1496,19 +1496,19 @@ servers or of preferring newly introduced servers. Additionally, that approach
 could lead to the same node being selected repeatedly rather than spreading the
 load out among all suitable servers.
 
-The slaveOK wire protocol flag
-------------------------------
+The SecondaryOk wire protocol flag
+----------------------------------
 
 In server selection, there is a race condition that could exist between what
 a selected server type is believed to be and what it actually is.
 
-The ``slaveOK`` wire protocol flag solves the race problem by communicating
+The ``SecondaryOk`` wire protocol flag solves the race problem by communicating
 to the server whether a secondary is acceptable.  The server knows its type
-and can return a "not master" error if ``slaveOK`` is false and the server
-is a secondary.
+and can return a "not writable primary" error if ``SecondaryOk`` is false and
+the server is a secondary.
 
 However, because topology type Single is used for direct connections, we want
-read operations to succeed even against a secondary, so the ``slaveOK`` wire
+read operations to succeed even against a secondary, so the ``SecondaryOk`` wire
 protocol flag must be sent to mongods with topology type Single.
 
 (If the server type is Mongos, follow the rules for
@@ -1593,8 +1593,8 @@ that have not been used in the last `socketCheckIntervalMS`_, which is more
 frequent by default than `heartbeatFrequencyMS` defined in the Server Discovery
 and Monitoring Spec.
 
-The client checks the socket with a "ping" command, rather than "ismaster",
-because it is not checking the server's full state as in the Server Discovery
+The client checks the socket with a "ping" command, rather than "hello" or legacy
+hello, because it is not checking the server's full state as in the Server Discovery
 and Monitoring Spec, it is only verifying that the connection is still open. We
 might also consider a `select` or `poll` call to check if the socket layer
 considers the socket closed, without requiring a round-trip to the server.
@@ -1654,8 +1654,7 @@ but had the following surprising consequence:
 
 The old spec also had the swapped problem, reading from the primary with
 'secondaryPreferred', except for mongos which was changed at the last minute
-before release with SERVER-6565_ ("Do not use primary if secondaries are
-available for slaveOk").
+before release with SERVER-6565_.
 
 This left application developers with two problems:
 
@@ -1727,7 +1726,7 @@ could occur, such as:
 
     - the server might send an RST packet, indicating the socket was already closed
 
-    - for write operations, the server might return a "not master" error
+    - for write operations, the server might return a "not writable primary" error
 
 This specification does not require nor prohibit drivers from attempting
 automatic recovery for various cases where it might be considered reasonable to
@@ -1739,8 +1738,8 @@ do so, such as:
     - for a read operation, after a socket error, selecting a new server
       meeting the read preference and resending the query
 
-    - for a write operation, after a "not master" error, selecting a new server
-      (to locate the primary) and resending the write operation
+    - for a write operation, after a "not writable primary" error, selecting a new
+      server (to locate the primary) and resending the write operation
 
 Driver-common rules for retrying operations (and configuring such retries)
 could be the topic of a different, future specification.
@@ -1820,8 +1819,8 @@ must retry selection after checking an idle socket and discovering it is broken.
 2017-11-10: Added application-configurated server selector.
 
 2017-11-12: Specify read preferences for OP_MSG with direct connection, and
-delete obsolete comment direct connections to secondaries getting "not master"
-errors by design.
+delete obsolete comment direct connections to secondaries getting "not writable
+primary" errors by design.
 
 2018-01-22: Clarify that $query wrapping is only for OP_QUERY
 
@@ -1848,3 +1847,5 @@ window.
 2021-4-7: Adding in behaviour for load balancer mode.
 
 2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
+
+2021-05-13: Updated to use modern terminology.
