@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2019-03-07
-:Version: 1.3.2
+:Last Modified: 2019-04-15
+:Version: 1.4.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -122,8 +122,8 @@ raise an error when multiple TXT records are encountered.
 Information returned within a TXT record is a simple URI string, just like
 the ``{options}`` in a connection string.
 
-A Client MUST only support the ``authSource`` and ``replicaSet`` options
-through a TXT record, and MUST raise an error if any other option is
+A Client MUST only support the ``authSource``, ``replicaSet``, and ``loadBalanced``
+options through a TXT record, and MUST raise an error if any other option is
 encountered. Although using ``mongodb+srv://`` implicitly enables TLS, a
 Client MUST NOT allow the ``ssl`` option to be set through a TXT record
 option.
@@ -273,6 +273,9 @@ SRV records.
 
 ChangeLog
 =========
+
+2021-04-15 - 1.4.0
+    Adding in behaviour for load balancer mode.
 
 2019-03-07 - 1.3.2
     Clarify that CNAME is not supported

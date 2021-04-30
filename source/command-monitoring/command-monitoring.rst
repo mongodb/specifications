@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Apr 16, 2018
-:Version: 1.8
+:Last Modified: Apr 15, 2021
+:Version: 1.9
 
 .. contents::
 
@@ -256,6 +256,8 @@ value MUST be replaced with an empty BSON document. The list is as follows:
 API
 ---
 
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
+
 .. code:: typescript
 
   interface CommandStartedEvent {
@@ -292,6 +294,13 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the service id for the command when the driver is in load balancer mode.
+     * For drivers that wish to include this in their ConnectionId object, this field is
+     * optional.
+     */
+    serviceId: Optional<ObjectId>;
   }
 
   interface CommandSucceededEvent {
@@ -331,6 +340,13 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the service id for the command when the driver is in load balancer mode.
+     * For drivers that wish to include this in their ConnectionId object, this field is
+     * optional.
+     */
+    serviceId: Optional<ObjectId>;
   }
 
   interface CommandFailedEvent {
@@ -371,6 +387,13 @@ API
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the service id for the command when the driver is in load balancer mode.
+     * For drivers that wish to include this in their ConnectionId object, this field is
+     * optional.
+     */
+    serviceId: Optional<ObjectId>;
   }
 
 
@@ -450,3 +473,6 @@ Changelog
 
 12 FEB 2020:
   - Added ``isMaster.speculativeAuthenticate`` to the list of values that should be redacted.
+
+15 APR 2021:
+  - Added ``serviceId`` field to events.
