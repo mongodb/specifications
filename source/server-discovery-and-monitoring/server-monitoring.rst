@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2020-06-11
+:Last Modified: 2021-06-21
 
 .. contents::
 
@@ -18,8 +18,8 @@ Abstract
 
 This spec defines how a driver monitors a MongoDB server. In summary, the
 client monitors each server in the topology. The scope of server monitoring is
-to provide the topology with updated ServerDescriptions based on isMaster
-command responses.
+to provide the topology with updated ServerDescriptions based on hello or
+legacy hello command responses.
 
 META
 ----
@@ -42,7 +42,7 @@ See the terms in the `main SDAM spec`_.
 check
 `````
 
-The client checks a server by attempting to call ismaster on it,
+The client checks a server by attempting to call hello or legacy hello on it,
 and recording the outcome.
 
 client
@@ -64,9 +64,7 @@ suitable
 
 A server is judged "suitable" for an operation if the client can use it
 for a particular operation.
-For example, a write requires a standalone
-(or the master of a master-slave set),
-primary, or mongos.
+For example, a write requires a standalone, primary, or mongos.
 Suitability is fully specified in the `Server Selection Spec`_.
 
 significant topology change
@@ -78,33 +76,39 @@ set tags. In SDAM terms, a significant topology change on the server means the
 client's ServerDescription is out of date. Standalones and mongos do not
 currently experience significant topology changes but they may in the future.
 
-regular isMaster command
-````````````````````````
+regular hello or legacy hello command
+`````````````````````````````````````
 
-A default ``{isMaster: 1}`` command where the server responds immediately.
+A default ``{hello: 1}`` or legacy hello command where the server responds immediately.
 
 
-streamable isMaster command
-```````````````````````````
+streamable hello or legacy hello command
+````````````````````````````````````````
 
-The isMaster command feature which allows the server to stream multiple
+The hello or legacy hello command feature which allows the server to stream multiple
 replies back to the client.
 
 RTT
 ```
 
-Round trip time. The client's measurement of the duration of one isMaster call.
+Round trip time. The client's measurement of the duration of one hello or legacy hello call.
 The RTT is used to support `localThresholdMS`_ from the Server Selection spec.
 
 
 Monitoring
 ''''''''''
 
-The client monitors servers using the isMaster command. In MongoDB 4.4+, a
-monitor uses the `Streaming Protocol`_ to continuously stream isMaster
+The client monitors servers using the hello or legacy hello commands. In MongoDB 4.4+, a
+monitor uses the `Streaming Protocol`_ to continuously stream hello or legacy hello
 responses from the server. In MongoDB <= 4.2, a monitor uses the
 `Polling Protocol`_ pausing heartbeatFrequencyMS between `checks`_.
 Clients check servers sooner in response to certain events.
+
+If a `server API version`_ is requested, then the driver must use hello for monitoring.
+If a server API version is not requested, the initial handshake using the legacy hello
+command must include `helloOk: true`. If the response contains `helloOk: true`, then the
+driver must use the `hello` command for monitoring. If the response does not contain
+`helloOk: true`, then the driver must use the legacy hello command for monitoring.
 
 The socket used to check a server MUST use the same
 `connectTimeoutMS <http://docs.mongodb.org/manual/reference/connection-string/>`_
@@ -135,7 +139,7 @@ Servers are monitored in parallel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All servers' monitors run independently, in parallel:
-If some monitors block calling ismaster over slow connections,
+If some monitors block calling hello or legacy hello over slow connections,
 other monitors MUST proceed unimpeded.
 
 The natural implementation is a thread per server,
@@ -169,10 +173,10 @@ Requesting an immediate check
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 At any time, the client can request that a monitor check its server immediately.
-(For example, after a "not master" error. See `error handling`_.)
+(For example, after a "not writable primary" error. See `error handling`_.)
 If the monitor is sleeping when this request arrives,
 it MUST wake and check as soon as possible.
-If an ismaster call is already in progress,
+If a hello or legacy hello call is already in progress,
 the request MUST be ignored.
 If the previous check ended less than `minHeartbeatFrequencyMS`_ ago,
 the monitor MUST sleep until the minimum delay has passed,
@@ -196,17 +200,17 @@ Clients update the topology from each handshake
 When a monitor check creates a new connection, the `connection handshake`_
 response MUST be used to satisfy the check and update the topology.
 
-When a client successfully calls ismaster to handshake a new connection for application
-operations, it SHOULD use the ismaster reply to update the ServerDescription
-and TopologyDescription, the same as with an ismaster reply on a monitoring
-socket. If the ismaster call fails, the client SHOULD mark the server Unknown
+When a client successfully calls hello or legacy hello to handshake a new connection for application
+operations, it SHOULD use the hello or legacy hello reply to update the ServerDescription
+and TopologyDescription, the same as with a hello or legacy hello reply on a monitoring
+socket. If the hello or legacy hello call fails, the client SHOULD mark the server Unknown
 and update its TopologyDescription, the same as a failed server check on
 monitoring socket.
 
 Clients use the streaming protocol when supported
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When a monitor discovers that the server supports the streamable isMaster
+When a monitor discovers that the server supports the streamable hello or legacy hello
 command, it MUST use the `streaming protocol`_.
 
 Single-threaded monitoring
@@ -286,7 +290,7 @@ This algorithm might be better understood with an example:
 #. The client is configured with one seed and TopologyType Unknown.
    It begins a scan.
 #. When it checks the seed, it discovers a secondary.
-#. The secondary's ismaster response includes the "primary" field
+#. The secondary's hello or legacy hello response includes the "primary" field
    with the address of the server that the secondary thinks is primary.
 #. The client creates a ServerDescription with that address,
    type PossiblePrimary, and lastUpdateTime "infinity ago".
@@ -336,25 +340,25 @@ the driver MUST NOT permit users to configure it less than minHeartbeatFrequency
 
 (See `heartbeatFrequencyMS in the main SDAM spec`_.)
 
-Awaitable isMaster Server Specification
-'''''''''''''''''''''''''''''''''''''''
+Awaitable hello or legacy hello Server Specification
+''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-As of MongoDB 4.4 the isMaster command can wait to reply until there is a
-topology change or a maximum time has elapsed. Clients opt in to this
-"awaitable isMaster" feature by passing new isMaster parameters
-"topologyVersion" and "maxAwaitTimeMS". Exhaust support has also been added,
-which clients can enable in the usual manner by setting the
-`OP_MSG exhaustAllowed flag`_.
+As of MongoDB 4.4 the hello or legacy hello command can wait to reply until
+there is a topology change or a maximum time has elapsed. Clients opt in to
+this "awaitable hello" feature by passing new parameters "topologyVersion"
+and "maxAwaitTimeMS" to the hello or legacy hello commands. Exhaust support
+has also been added, which clients can enable in the usual manner by
+setting the `OP_MSG exhaustAllowed flag`_.
 
-Clients use the awaitable isMaster feature as the basis of the streaming
+Clients use the awaitable hello feature as the basis of the streaming
 heartbeat protocol to learn much sooner about stepdowns, elections, reconfigs,
 and other events.
 
 topologyVersion
 ```````````````
 
-A server that supports awaitable isMaster includes a "topologyVersion"
-field in all isMaster replies and State Change Error replies.
+A server that supports awaitable hello or legacy hello includes a "topologyVersion"
+field in all hello or legacy hello replies and State Change Error replies.
 The topologyVersion is a subdocument with two fields, "processId" and
 "counter":
 
@@ -381,40 +385,40 @@ significant topology change.
 maxAwaitTimeMS
 ``````````````
 
-To enable awaitable isMaster, the client includes a new int64 field
-"maxAwaitTimeMS" in the isMaster request. This field determines the maximum
+To enable awaitable hello or legacy hello, the client includes a new int64 field
+"maxAwaitTimeMS" in the hello or legacy hello request. This field determines the maximum
 duration in milliseconds a server will wait for a significant topology change
 before replying.
 
 Feature Discovery
 `````````````````
 
-To discover if the connected server supports awaitable isMaster, a client
-checks the most recent isMaster command reply. If the reply includes
-"topologyVersion" then the server supports awaitable isMaster.
+To discover if the connected server supports awaitable hello or legacy hello, a client
+checks the most recent hello or legacy hello command reply. If the reply includes
+"topologyVersion" then the server supports awaitable hello or legacy hello.
 
-Awaitable isMaster Protocol
-```````````````````````````
+Awaitable hello or legacy hello Protocol
+````````````````````````````````````````
 
-To initiate an awaitable isMaster command, the client includes both
+To initiate an awaitable hello or legacy hello command, the client includes both
 maxAwaitTimeMS and topologyVersion in the request, for example:
 
 .. code:: typescript
 
     {
-        isMaster: 1,
+        hello: 1,
         maxAwaitTimeMS: 10000,
         topologyVersion: {processId: <ObjectId>, counter: <int64>},
         ( ... other fields ...)
     }
 
 Clients MAY additionally set the `OP_MSG exhaustAllowed flag`_ to enable
-streaming isMaster. With streaming isMaster, the server MAY send multiple
-isMaster responds without waiting for further requests.
+streaming hello or legacy hello. With streaming hello or legacy hello, the server
+MAY send multiple hello or legacy hello responses without waiting for further requests.
 
 A server that implements the new protocol follows these rules:
 
-- Always include the server's topologyVersion in isMaster and State Change
+- Always include the server's topologyVersion in hello, legacy hello, and State Change
   Error replies.
 - If the request includes topologyVersion without maxAwaitTimeMS or vice versa,
   return an error.
@@ -435,16 +439,16 @@ A server that implements the new protocol follows these rules:
   close all application connections.
 
 
-Example awaitable isMaster conversation:
+Example awaitable hello conversation:
 
 +---------------------------------------+--------------------------------+
 | Client                                | Server                         |
 +=======================================+================================+
-| isMaster handshake ->                 |                                |
+| hello handshake ->                    |                                |
 +---------------------------------------+--------------------------------+
 |                                       | <- reply with topologyVersion  |
 +---------------------------------------+--------------------------------+
-| isMaster as OP_MSG with               |                                |
+| hello as OP_MSG with                  |                                |
 | maxAwaitTimeMS and topologyVersion -> |                                |
 +---------------------------------------+--------------------------------+
 |                                       | wait for change or timeout     |
@@ -454,16 +458,16 @@ Example awaitable isMaster conversation:
 | ...                                   |                                |
 +---------------------------------------+--------------------------------+
 
-Example streaming isMaster conversation (awaitable isMaster with exhaust):
+Example streaming hello conversation (awaitable hello with exhaust):
 
 +---------------------------------------+--------------------------------+
 | Client                                | Server                         |
 +=======================================+================================+
-| isMaster handshake ->                 |                                |
+| hello handshake ->                    |                                |
 +---------------------------------------+--------------------------------+
 |                                       | <- reply with topologyVersion  |
 +---------------------------------------+--------------------------------+
-| isMaster as OP_MSG with               |                                |
+| hello as OP_MSG with                  |                                |
 | exhaustAllowed, maxAwaitTimeMS,       |                                |
 | and topologyVersion ->                |                                |
 +---------------------------------------+--------------------------------+
@@ -491,20 +495,22 @@ Streaming Protocol
 The streaming protocol is used to monitor MongoDB 4.4+ servers and optimally
 reduces the time it takes for a client to discover server state changes.
 Multi-threaded or asynchronous drivers MUST use the streaming protocol when
-connected to a server that supports the awaitable isMaster command. This
-protocol requires an extra thread and an extra socket for
+connected to a server that supports the awaitable hello or legacy hello commands.
+This protocol requires an extra thread and an extra socket for
 each monitor to perform RTT calculations.
 
-Streaming isMaster
-``````````````````
+Streaming hello or legacy hello
+```````````````````````````````
 
-The streaming isMaster protocol uses awaitable isMaster with the OP_MSG
-exhaustAllowed flag to continuously stream isMaster responses from the server.
-Drivers MUST set the OP_MSG exhaustAllowed flag with the awaitable isMaster
-command and MUST process each isMaster response. (I.e., they MUST process
-responses strictly in the order they were received.)
+The streaming hello or legacy hello protocol uses awaitable hello or legacy hello
+with the OP_MSG exhaustAllowed flag to continuously stream hello or legacy hello
+responses from the server. Drivers MUST set the OP_MSG exhaustAllowed flag
+with the awaitable hello or legacy hello command and MUST process each
+hello or legacy hello response. (I.e., they MUST process responses strictly
+in the order they were received.)
 
-A client follows these rules when processing the isMaster exhaust response:
+A client follows these rules when processing the hello or legacy hello
+exhaust response:
 
 - If the response indicates a command error, or a network error or timeout
   occurs, the client MUST close the connection and restart the monitoring
@@ -513,37 +519,37 @@ A client follows these rules when processing the isMaster exhaust response:
 - If the response is successful (includes "ok:1") and includes the OP_MSG
   moreToCome flag, then the client begins reading the next response.
 - If the response is successful (includes "ok:1") and does not include the
-  OP_MSG moreToCome flag, then the client initiates a new awaitable isMaster
-  with the topologyVersion field from the previous response.
+  OP_MSG moreToCome flag, then the client initiates a new awaitable hello
+  or legacy hello with the topologyVersion field from the previous response.
 
 Socket timeout
 ``````````````
 
 Clients MUST use connectTimeoutMS as the timeout for the connection handshake.
 When connectTimeoutMS=0, the timeout is unlimited and MUST remain unlimited
-for awaitable isMaster replies. Otherwise, connectTimeoutMS is non-zero and
-clients MUST use connectTimeoutMS + heartbeatFrequencyMS as the timeout for
-awaitable isMaster replies.
+for awaitable hello and legacy hello replies. Otherwise, connectTimeoutMS is
+non-zero and clients MUST use connectTimeoutMS + heartbeatFrequencyMS as the
+timeout for awaitable hello and legacy hello replies.
 
 Measuring RTT
 `````````````
 
-When using the streaming protocol, clients MUST issue an isMaster command to
-each server to measure RTT every heartbeatFrequencyMS. The RTT command
+When using the streaming protocol, clients MUST issue a hello or legacy hello
+command to each server to measure RTT every heartbeatFrequencyMS. The RTT command
 MUST be run on a dedicated connection to each server. For consistency,
 clients MAY use dedicated connections to measure RTT for all servers, even
-those that do not support awaitable isMaster. (See
+those that do not support awaitable hello or legacy hello. (See
 `Monitors MUST use a dedicated connection for RTT commands`_.)
 
-Clients MUST update the RTT from the isMaster duration of the initial
-connection handshake. Clients MUST NOT update RTT based on streaming isMaster
-responses.
+Clients MUST update the RTT from the hello or legacy hello duration of the initial
+connection handshake. Clients MUST NOT update RTT based on streaming hello or
+legacy hello responses.
 
-Clients MUST ignore the response to the isMaster command when measuring RTT.
-Errors encountered when running a isMaster command MUST NOT update the topology.
+Clients MUST ignore the response to the hello or legacy hello command when measuring RTT.
+Errors encountered when running a hello or legacy hello command MUST NOT update the topology.
 (See `Why don't clients mark a server unknown when an RTT command fails?`_)
 
-When constructing a ServerDescription from a streaming isMaster response,
+When constructing a ServerDescription from a streaming hello or legacy hello response,
 clients MUST use the current roundTripTime from the RTT task.
 
 See the pseudocode in the `RTT thread`_ section for an example implementation.
@@ -552,39 +558,38 @@ SDAM Monitoring
 ```````````````
 
 Clients MUST publish a ServerHeartbeatStartedEvent before attempting to
-read the next isMaster exhaust response. (See
-`Why must streaming isMaster clients publish ServerHeartbeatStartedEvents?`_)
+read the next hello or legacy hello exhaust response. (See
+`Why must streaming hello or legacy hello clients publish ServerHeartbeatStartedEvents?`_)
 
 Clients MUST NOT publish any events when running an RTT command. (See
-`Why don't streaming isMaster clients publish events for RTT commands?`_)
+`Why don't streaming hello or legacy hello clients publish events for RTT commands?`_)
 
 Heartbeat frequency
 ```````````````````
 
-In the polling protocol, a client sleeps between each isMaster check (for at
+In the polling protocol, a client sleeps between each hello or legacy hello check (for at
 least minHeartbeatFrequencyMS and up to heartbeatFrequencyMS). In the
-streaming protocol, after processing an "ok:1" isMaster response, the client
+streaming protocol, after processing an "ok:1" hello or legacy hello response, the client
 MUST NOT sleep and MUST begin the next check immediately.
 
 Clients MUST set `maxAwaitTimeMS`_ to heartbeatFrequencyMS.
 
-isMaster Cancellation
-`````````````````````
+hello or legacy hello Cancellation
+``````````````````````````````````
 
-When a client is closed, clients MUST cancel all isMaster checks; a monitor
-blocked waiting for the next streaming isMaster response MUST be interrupted
+When a client is closed, clients MUST cancel all hello and legacy hello checks; a monitor
+blocked waiting for the next streaming hello or legacy hello response MUST be interrupted
 such that threads may exit promptly without waiting maxAwaitTimeMS.
 
-When a client marks a server Unknown from `Network error when reading or
-writing`_, clients MUST cancel the isMaster check on that server and close the
-current monitoring connection. (See
-`Drivers cancel in-progress monitor checks`_.)
+When a client marks a server Unknown from `Network error when reading or writing`_,
+clients MUST cancel the hello or legacy hello check on that server and close the
+current monitoring connection. (See `Drivers cancel in-progress monitor checks`_.)
 
 Polling Protocol
 ''''''''''''''''
 
 The polling protocol is used to monitor MongoDB <= 4.4 servers. The client
-`checks`_ a server with an isMaster command and then sleeps for
+`checks`_ a server with a hello or legacy hello command and then sleeps for
 heartbeatFrequencyMS before running another check.
 
 Marking the connection pool as ready (CMAP only)
@@ -614,7 +619,7 @@ timeout) or a command error (``ok: 0``), the client MUST follow these steps:
    synchronize clearing a server's pool with updating the topology?`_).
 #. If this was a network error and the server was in a known state before the
    error, the client MUST NOT sleep and MUST begin the next check immediately.
-   (See `retry ismaster calls once`_ and
+   (See `retry hello or legacy hello calls once`_ and
    `JAVA-1159 <https://jira.mongodb.org/browse/JAVA-1159>`_.)
 #. Otherwise, wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a
    check is requested) before restarting the monitoring protocol on a new
@@ -656,12 +661,15 @@ The event API here is assumed to be like the standard `Python Event
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
         minHeartbeatFrequencyMS = 500
+        versionedApi = versionedApi
 
         # Internal Monitor state:
         connection = Null
+        # Server API versioning implies that the server supports hello.
+        helloOk = versionedApi != Null
         description = default ServerDescription
         lock = Mutex()
-        rttMonitor = RttMonitor(serverAddress)
+        rttMonitor = RttMonitor(serverAddress, versionedApi)
 
     def run():
         # Start the RttMonitor.
@@ -702,6 +710,8 @@ The event API here is assumed to be like the standard `Python Event
         # Take the mutex to avoid a data race becauase this code writes to the connection field and a concurrent
         # cancelCheck call could be reading from it.
         with lock:
+            # Server API versioning implies that the server supports hello.
+            helloOk = versionedApi != Null
             connection = new Connection(serverAddress)
             set connection timeout to connectTimeoutMS
 
@@ -712,20 +722,32 @@ The event API here is assumed to be like the standard `Python Event
         try:
             # The connection is null if this is the first check. It's closed if there was an error during the previous
             # check or the previous check was cancelled.
+
+            if helloOk:
+                helloCommand = hello
+            else
+                helloCommand = legacy hello
+
             if not connection or connection.isClosed():
                 setUpConnection()
                 rttMonitor.addSample(connection.handshakeDuration)
                 response = connection.handshakeResponse
             elif connection.moreToCome:
-                response = read next isMaster exhaust response
+                response = read next helloCommand exhaust response
             elif previousDescription.topologyVersion:
-                # Initiate streaming isMaster
+                # Initiate streaming hello or legacy hello
                 if connectTimeoutMS != 0:
                     set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
-                response = call {isMaster: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
+                response = call {helloCommand: 1, helloOk: True, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
             else:
                 # The server does not support topologyVersion.
-                response = call {isMaster: 1}
+                response = call {helloCommand: 1, helloOk: True}
+
+            # If the server supports hello, then response.helloOk will be true
+            # and hello will be used for subsequent monitoring commands.
+            # If the server does not support hello, then response.helloOk will be undefined
+            # and legacy hello will be used for subsequent monitoring commands.
+            helloOk = response.helloOk
 
             return ServerDescription(response, rtt=rttMonitor.average())
         except Exception as exc:
@@ -754,7 +776,7 @@ The event API here is assumed to be like the standard `Python Event
         event.set()
 
 
-`isMaster Cancellation`_:
+`hello or legacy hello Cancellation`_:
 
 .. code-block:: python
 
@@ -772,8 +794,8 @@ RTT thread
 ``````````
 
 The requirements in the `Measuring RTT`_ section can be satisfied with an
-addtional thread that periodically runs the isMaster command on a dedicated
-connection, for example:
+additional thread that periodically runs the hello or legacy hello command
+on a dedicated connection, for example:
 
 .. code-block:: python
 
@@ -783,8 +805,12 @@ connection, for example:
         serverAddress = serverAddress
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
+        versionedApi = versionedApi
+
         # Internal state:
         connection = Null
+        # Server API versioning implies that the server supports hello.
+        helloOk = versionedApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
 
@@ -810,58 +836,67 @@ connection, for example:
                 # for resetting the average RTT.
                 close connection
                 connection = Null
+                helloOk = versionedApi != Null
 
             # Can be awakened when the client is closed.
             event.wait(heartbeatFrequencyMS)
             event.clear()
 
     def setUpConnection():
+        # Server API versioning implies that the server supports hello.
+        helloOk = versionedApi != Null
         connection = new Connection(serverAddress)
         set connection timeout to connectTimeoutMS
         perform connection handshake
 
     def pingServer():
+        if helloOk:
+            helloCommand = hello
+        else
+            helloCommand = legacy hello
+
         if not connection:
             setUpConnection()
             return RTT of the connection handshake
 
         start = time()
-        call {isMaster: 1}
+        response = call {helloCommand: 1, helloOk: True}
         rtt = time() - start
+        helloOk = response.helloOk
         return rtt
 
 
 Design Alternatives
 -------------------
 
-Alternating isMaster to check servers and RTT without adding an extra connection
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Alternating hello or legacy hello to check servers and RTT without adding an extra connection
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-The streaming isMaster protocol is optimal in terms of latency; clients
-are always blocked waiting for the server to stream updated isMaster
-information, they learn of server state changes as soon as possible.
-However, streaming isMaster has two downsides:
+The streaming hello or legacy hello protocol is optimal in terms of latency;
+clients are always blocked waiting for the server to stream updated hello or
+legacy hello information, they learn of server state changes as soon as possible.
+However, streaming hello or legacy hello has two downsides:
 
-1. Streaming isMaster requires a new connection to each server to
+1. Streaming hello or legacy hello requires a new connection to each server to
    calculate the RTT.
-2. Streaming isMaster requires a new thread (or threads) to calculate
+2. Streaming hello or legacy hello requires a new thread (or threads) to calculate
    the RTT of each server.
 
-To address these concerns we designed the alternating isMaster protocol.
-This protocol would have alternated between awaitable isMaster and regular
-isMaster. The awaitable isMaster replaces the polling protocol's
-client side sleep and allows the client to receive updated isMaster
-responses sooner. The regular isMaster allows the client to maintain
+To address these concerns we designed the alternating hello or legacy hello protocol.
+This protocol would have alternated between awaitable hello or legacy hello and regular
+hello or legacy hello. The awaitable hello or legacy hello replaces the polling protocol's
+client side sleep and allows the client to receive updated hello or legacy hello
+responses sooner. The regular hello or legacy hello allows the client to maintain
 accurate RTT calculations without requiring any extra threads or
 sockets.
 
-We reject this design because streaming isMaster is strictly better at
+We reject this design because streaming hello or legacy hello is strictly better at
 reducing the client's time-to-recovery. We determined that one extra
 connection per server per MongoClient is reasonable for all drivers.
 Applications that upgrade may see a modest increase in connections and
 memory usage on the server. We don't expect this increase to be
 problematic; however, we have several projects planned for future
-MongoDB releases to make the streaming isMaster protocol cheaper
+MongoDB releases to make the streaming hello or legacy hello protocol cheaper
 server-side which should mitigate the cost of the extra monitoring
 connections.
 
@@ -869,8 +904,8 @@ Use TCP smoothed round-trip time instead of measuring RTT explicitly
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 TCP sockets internally maintain a "smoothed round-trip time" or SRTT. Drivers
-could use this SRTT instead of measuring RTT explicitly via isMaster commands.
-The server could even include this value on all ismaster responses. We reject
+could use this SRTT instead of measuring RTT explicitly via hello or legacy hello commands.
+The server could even include this value on all hello or legacy hello responses. We reject
 this idea for a few reasons:
 
 - Not all programming languages have an API to access the TCP socket's RTT.
@@ -916,7 +951,7 @@ so they can wait for long-running MongoDB operations.
 
 Multi-threaded clients use distinct sockets for monitoring and for application
 operations.
-A socket used for monitoring does two things: it connects and calls ismaster.
+A socket used for monitoring does two things: it connects and calls hello or legacy hello.
 Both operations are fast on the server, so only network latency matters.
 Thus both operations SHOULD use connectTimeoutMS, since that is the value
 users supply to help the client guess if a server is down,
@@ -968,22 +1003,22 @@ Instead, the client must use a dedicated connection reserved for RTT commands.
 Despite the cost of the additional connection per server, we chose this option
 as the safest and least likely to result in surprising behavior under load.
 
-Monitors MUST use the isMaster command to measure RTT
-'''''''''''''''''''''''''''''''''''''''''''''''''''''
+Monitors MUST use the hello or legacy hello command to measure RTT
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-In the streaming protocol, clients could use either the "ping" or "isMaster"
-command to measure RTT. This spec chooses "isMaster" for consistency with the
-polling protocol as well as consistency with the initial RTT provided the
-connection handshake which also uses the isMaster command. Additionally,
-mongocryptd does not allow the ping command but does allow isMaster.
+In the streaming protocol, clients could use the "ping", "hello", or legacy hello
+commands to measure RTT. This spec chooses "hello" or legacy hello for consistency
+with the polling protocol as well as consistency with the initial RTT provided the
+connection handshake which also uses the hello or legacy hello commands. Additionally,
+mongocryptd does not allow the ping command but does allow hello or legacy hello.
 
 Why not use `awaitedTimeMS` in the server response to calculate RTT in the streaming protocol?
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 One approach to calculating RTT in the streaming protocol would be to have the server
-return an ``awaitedTimeMS`` in its ``isMaster`` response. A driver could then determine the
-RTT by calculating the difference between the initial request, or last response, and the
-``awaitedTimeMS``.
+return an ``awaitedTimeMS`` in its ``hello`` or legacy hello response. A driver could then
+determine the RTT by calculating the difference between the initial request, or last response,
+and the ``awaitedTimeMS``.
 
 We rejected this design because of a number of issue with the unreliability of clocks in
 distributed sytems. Clocks skew between local and remote system clocks. This approach mixes
@@ -1007,7 +1042,7 @@ solution, and mitigates the above mentioned concerns.
 Why don't clients mark a server unknown when an RTT command fails?
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-In the streaming protocol, clients use the isMaster command on a dedicated
+In the streaming protocol, clients use the hello or legacy hello command on a dedicated
 connection to measure a server's RTT. However, errors encountered when running
 the RTT command MUST NOT mark a server Unknown. We reached this decision
 because the dedicate RTT connection does not come from a connection pool and
@@ -1036,14 +1071,14 @@ connection is only closed once.
 This approach also handles the rare case where the client sees a network error
 on an application connection but the monitoring connection is still healthy.
 If we did not cancel the monitor check in this scenario, then the server would
-remain in the Unknown state until the next isMaster response (up to
+remain in the Unknown state until the next hello or legacy hello response (up to
 maxAwaitTimeMS). A potential real world example of this behavior is when
 Azure closes an idle connection in the application pool.
 
-Retry ismaster calls once
-'''''''''''''''''''''''''
+Retry hello or legacy hello calls once
+''''''''''''''''''''''''''''''''''''''
 
-A monitor's connection to a server is long-lived and used only for ismaster
+A monitor's connection to a server is long-lived and used only for hello or legacy hello
 calls. So if a server has responded in the past, a network error on the
 monitor's connection means that there was a network glitch, or a server restart
 since the last check, or that the server is truly down. To handle the case
@@ -1060,13 +1095,13 @@ When the check fails with a network error it is likely that all connections
 to that server are also closed.
 (See `JAVA-1252 <https://jira.mongodb.org/browse/JAVA-1252>`_).
 
-When the server is shutting down, it may respond to isMaster commands with
+When the server is shutting down, it may respond to hello or legacy hello commands with
 ShutdownInProgress errors before closing connections. In this case, the
 monitor clears the connection pool because all connections will be closed soon.
 Other command errors are unexpected but are handled identically.
 
-Why must streaming isMaster clients publish ServerHeartbeatStartedEvents?
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Why must streaming hello or legacy hello clients publish ServerHeartbeatStartedEvents?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 The `SDAM Monitoring spec`_ guarantees that every ServerHeartbeatStartedEvent
 has either a correlating ServerHeartbeatSucceededEvent or
@@ -1074,8 +1109,8 @@ ServerHeartbeatFailedEvent. This is consistent with Command Monitoring on
 exhaust cursors where the driver publishes a fake CommandStartedEvent before
 reading the next getMore response.
 
-Why don't streaming isMaster clients publish events for RTT commands?
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Why don't streaming hello or legacy hello clients publish events for RTT commands?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 In the streaming protocol, clients MUST NOT publish any events
 (server, topology, command, CMAP, etc..) when running an RTT command. We
@@ -1087,15 +1122,17 @@ server's RTT by listening to TopologyDescriptionChangedEvents.
 What is the purpose of the "awaited" field on server heartbeat events?
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-ServerHeartbeatSucceededEvents published from awaitable isMaster
+ServerHeartbeatSucceededEvents published from awaitable hello or legacy hello
 responses will regularly have 10 second durations. The spec introduces
 the "awaited" field on server heartbeat events so that applications can
 differentiate a slow heartbeat in the polling protocol from a normal
-awaitable isMaster heartbeat in the new protocol.
+awaitable hello or legacy hello heartbeat in the new protocol.
 
 
 Changelog
 ---------
+
+- 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
 
 - 2020-12-17: Mark the pool for a server as "ready" after performing a successful
   check. Synchronize pool clearing with SDAM updates.
@@ -1116,13 +1153,13 @@ Changelog
 .. _Server Selection Spec: /source/server-selection/server-selection.rst
 .. _main SDAM spec: server-discovery-and-monitoring.rst
 .. _Server Discovery And Monitoring: server-discovery-and-monitoring.rst
+.. _server API version: /source/versioned-api/versioned-api.rst
 .. _heartbeatFrequencyMS in the main SDAM spec: server-discovery-and-monitoring.rst#heartbeatFrequencyMS
 .. _error handling: server-discovery-and-monitoring.rst#error-handling
 .. _initial servers: server-discovery-and-monitoring.rst#initial-servers
 .. _updateRSWithoutPrimary: server-discovery-and-monitoring.rst#updateRSWithoutPrimary
 .. _updateRSFromPrimary: server-discovery-and-monitoring.rst#updateRSFromPrimary
 .. _Network error when reading or writing: server-discovery-and-monitoring.rst#network-error-when-reading-or-writing
-.. _"not master" and "node is recovering": server-discovery-and-monitoring.rst#not-master-and-node-is-recovering
 .. _connection handshake: mongodb-handshake/handshake.rst
 .. _localThresholdMS: /source/server-selection/server-selection.rst#localThresholdMS
 .. _SDAM Monitoring spec: server-discovery-and-monitoring-monitoring.rst#heartbeats
