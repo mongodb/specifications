@@ -7,7 +7,7 @@ phases:
         - "a:27017"
         - 
           ok: 1
-          ismaster: false
+          isWritablePrimary: false
           secondary: true
           setName: "rs"
           setVersion: 1

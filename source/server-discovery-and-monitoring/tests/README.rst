@@ -42,12 +42,12 @@ Each phase object has the following keys:
 A response is a pair of values:
 
 - The source, for example "a:27017".
-  This is the address the client sent the "ismaster" command to.
-- An ismaster response, for example ``{ok: 1, ismaster: true}``.
+  This is the address the client sent the "hello" or legacy hello command to.
+- A hello or legacy hello response, for example ``{ok: 1, isWritablePrimary: true}``.
   If the response includes an electionId it is shown in extended JSON like
   ``{"$oid": "000000000000000000000002"}``.
   The empty response `{}` indicates a network error
-  when attempting to call "ismaster".
+  when attempting to call "hello" or legacy hello.
 
 An "applicationError" object has the following keys:
 
@@ -55,7 +55,7 @@ An "applicationError" object has the following keys:
 - generation: (optional) The error's generation number, for example ``1``.
   When absent this value defaults to the pool's current generation number.
 - maxWireVersion: The ``maxWireVersion`` of the connection the error occurs
-  on, for example ``9``. Added to support testing the behavior of "not master"
+  on, for example ``9``. Added to support testing the behavior of "not writable primary"
   errors on <4.2 and >=4.2 servers.
 - when: A string describing when this mock error should occur. Supported
   values are:
@@ -73,7 +73,7 @@ An "applicationError" object has the following keys:
   - "timeout": A network timeout error.
 
 - response: (optional) A command error response, for example
-  ``{ok: 0, errmsg: "not master"}``. Present if and only if ``type`` is
+  ``{ok: 0, errmsg: "not writable primary"}``. Present if and only if ``type`` is
   "command".
 
 In non-monitoring tests, an "outcome" represents the correct
@@ -108,12 +108,12 @@ It has the following keys:
 - generation: This server's expected pool generation, like ``0``.
 
 In monitoring tests, an "outcome" contains a list of SDAM events that should
-have been published by the client as a result of processing ismaster responses
-in the current phase. Any SDAM events published by the client during its
+have been published by the client as a result of processing hello or legacy hello
+responses in the current phase. Any SDAM events published by the client during its
 construction (that is, prior to processing any of the responses) should be
-combined with the events published during processing of ismaster responses
-of the first phase of the test. A test MAY explicitly verify events published
-during client construction by providing an empty responses array for the
+combined with the events published during processing of hello or legacy hello
+responses of the first phase of the test. A test MAY explicitly verify events
+published during client construction by providing an empty responses array for the
 first phase.
 
 
@@ -123,8 +123,8 @@ Use as unittests
 Mocking
 ~~~~~~~
 
-Drivers should be able to test their server discovery and monitoring logic
-without any network I/O, by parsing ismaster and application error from the
+Drivers should be able to test their server discovery and monitoring logic without
+any network I/O, by parsing hello (or legacy hello) and application error from the
 test file and passing them into the driver code. Parts of the client and
 monitoring code may need to be mocked or subclassed to achieve this.
 `A reference implementation for PyMongo 3.10.1 is available here
@@ -397,7 +397,7 @@ that case just verify the test cases succeed with the new protocol.
 
 1.  Configure the client with heartbeatFrequencyMS set to 500,
     overriding the default of 10000. Assert the client processes
-    isMaster replies more frequently (approximately every 500ms).
+    hello and legacy hello replies more frequently (approximately every 500ms).
 
 RTT Tests
 ~~~~~~~~~
@@ -417,14 +417,14 @@ Run the following test(s) on MongoDB 4.4+.
     #. Assert that each ``ServerDescriptionChangedEvent`` includes a non-zero
        RTT.
 
-    #. Configure the following failpoint to block isMaster commands for 250ms
-       which should add extra latency to each RTT check::
+    #. Configure the following failpoint to block hello or legacy hello commands
+       for 250ms which should add extra latency to each RTT check::
 
          db.adminCommand({
              configureFailPoint: "failCommand",
              mode: {times: 1000},
              data: {
-               failCommands: ["isMaster", "hello"],
+               failCommands: ["hello"], // or the legacy hello command
                blockConnection: true,
                blockTimeMS: 500,
                appName: "streamingRttTest",

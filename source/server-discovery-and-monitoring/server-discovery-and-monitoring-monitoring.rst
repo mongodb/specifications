@@ -14,7 +14,7 @@ SDAM Monitoring Specification
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 20-April-2020
+:Last Modified: 06-May-2021
 
 .. contents::
 
@@ -78,11 +78,11 @@ Events that MUST be published (with their conditions) are as follows.
    * - ``TopologyClosedEvent``
      - When a topology is shut down - this MUST be the last SDAM event fired.
    * - ``ServerHeartbeatStartedEvent``
-     - Published when the server monitor sends its ismaster call to the server.
+     - Published when the server monitor sends its ``hello`` or legacy hello call to the server.
    * - ``ServerHeartbeatSucceededEvent``
-     - Published on successful completion of the server monitor’s ismaster call.
+     - Published on successful completion of the server monitor’s ``hello`` or legacy hello call.
    * - ``ServerHeartbeatFailedEvent``
-     - Published on failure of the server monitor’s ismaster call, either with an ok: 0 result or a socket exception from the connection.
+     - Published on failure of the server monitor’s ``hello`` or legacy hello call, either with an ok: 0 result or a socket exception from the connection.
 
 
 Operations
@@ -121,12 +121,12 @@ Heartbeats
 
 The driver MUST guarantee that every ServerHeartbeatStartedEvent has either a correlating ServerHeartbeatSucceededEvent or ServerHeartbeatFailedEvent.
 
-Drivers that use the streaming heartbeat protocol MUST publish a ServerHeartbeatStartedEvent before attempting to read the next isMaster exhaust response.
+Drivers that use the streaming heartbeat protocol MUST publish a ServerHeartbeatStartedEvent before attempting to read the next ``hello`` or legacy hello exhaust response.
 
 Error Handling
 --------------
 
-If an exception occurs while sending the ismaster operation to the server, the driver MUST generate a ServerHeartbeatFailedEvent with the exception or message and re-raise the exception. The SDAM mandated retry of the ismaster call should be visible to consumers.
+If an exception occurs while sending the ``hello`` or legacy hello operation to the server, the driver MUST generate a ServerHeartbeatFailedEvent with the exception or message and re-raise the exception. The SDAM mandated retry of the ``hello`` or legacy hello call should be visible to consumers.
 
 Topology Ids
 ------------
@@ -253,8 +253,8 @@ API
   }
 
   /**
-   * Fired when the server monitor’s ismaster command is started - immediately before
-   * the ismaster command is serialized into raw BSON and written to the socket.
+   * Fired when the server monitor’s ``hello`` or legacy hello command is started - immediately before
+   * the ``hello`` or legacy hello command is serialized into raw BSON and written to the socket.
    */
   interface ServerHeartbeatStartedEvent {
 
@@ -270,14 +270,14 @@ API
     connectionId: ConnectionId;
 
    /**
-     * Determines if this heartbeat event is for an awaitable isMaster.
+     * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello.
      */
     awaited: Boolean;
 
   }
 
   /**
-   * Fired when the server monitor’s ismaster succeeds.
+   * Fired when the server monitor’s ``hello`` or legacy hello succeeds.
    */
   interface ServerHeartbeatSucceededEvent {
 
@@ -306,7 +306,7 @@ API
     connectionId: ConnectionId;
 
    /**
-     * Determines if this heartbeat event is for an awaitable isMaster. If
+     * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello. If
      * true, then the duration field cannot be used for RTT calculation
      * because the command blocks on the server.
      */
@@ -315,7 +315,7 @@ API
   }
 
   /**
-   * Fired when the server monitor’s ismaster fails, either with an “ok: 0” or a socket exception.
+   * Fired when the server monitor’s ``hello`` or legacy hello fails, either with an “ok: 0” or a socket exception.
    */
   interface ServerHeartbeatFailedEvent {
 
@@ -341,7 +341,7 @@ API
     connectionId: ConnectionId;
 
    /**
-     * Determines if this heartbeat event is for an awaitable isMaster. If
+     * Determines if this heartbeat event is for an awaitable ``hello`` or legacy hello. If
      * true, then the duration field cannot be used for RTT calculation
      * because the command blocks on the server.
      */
@@ -427,6 +427,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
+- 30 APR 2021: Updated to use modern terminology.
 - 20 APR 2020: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
 - 12 DEC 2018: Clarified table of rules for readable/writable servers
 - 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.

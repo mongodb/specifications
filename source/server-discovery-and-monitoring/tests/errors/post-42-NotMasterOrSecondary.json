@@ -1,5 +1,5 @@
 {
-  "description": "Post-4.2 NotMasterOrSecondary error",
+  "description": "Post-4.2 NotPrimaryOrSecondary error",
   "uri": "mongodb://a/?replicaSet=rs",
   "phases": [
     {
@@ -9,7 +9,7 @@
           "a:27017",
           {
             "ok": 1,
-            "ismaster": true,
+            "isWritablePrimary": true,
             "hosts": [
               "a:27017"
             ],
@@ -36,7 +36,7 @@
       }
     },
     {
-      "description": "Post-4.2 NotMasterOrSecondary error marks server Unknown",
+      "description": "Post-4.2 NotPrimaryOrSecondary error marks server Unknown",
       "applicationErrors": [
         {
           "address": "a:27017",
@@ -45,7 +45,7 @@
           "type": "command",
           "response": {
             "ok": 0,
-            "errmsg": "NotMasterOrSecondary",
+            "errmsg": "NotPrimaryOrSecondary",
             "code": 13436
           }
         }
