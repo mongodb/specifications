@@ -16,8 +16,8 @@
       "failCommands": [
         "isMaster"
       ],
-      "appName": "poolCreateMinSizeErrorTest",
-      "closeConnection": true
+      "closeConnection": true,
+      "appName": "poolCreateMinSizeErrorTest"
     }
   },
   "poolOptions": {
