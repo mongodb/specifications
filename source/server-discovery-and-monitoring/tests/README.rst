@@ -424,7 +424,7 @@ Run the following test(s) on MongoDB 4.4+.
              configureFailPoint: "failCommand",
              mode: {times: 1000},
              data: {
-               failCommands: ["isMaster"],
+               failCommands: ["isMaster", "hello"],
                blockConnection: true,
                blockTimeMS: 500,
                appName: "streamingRttTest",

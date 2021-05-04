@@ -3,13 +3,13 @@ Versioned API For Drivers
 =========================
 
 :Spec Title: Versioned API For Drivers
-:Spec Version: 1.0.1
+:Spec Version: 1.1.0
 :Author: Andreas Braun
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Patrick Freed, Oleg Pudeyev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-10
+:Last Modified: 2021-04-20
 
 .. contents::
 
@@ -169,6 +169,15 @@ the specified value is equal to the server default. Drivers MUST NOT add any
 API versioning options if the user did not specify them.
 
 
+Handshake behavior
+~~~~~~~~~~~~~~~~~~
+
+If an API version was declared, drivers MUST NOT use the legacy hello command
+during the initial handshake or afterwards. Instead, drivers MUST use the
+``hello`` command exclusively. If the server does not support ``hello``, the
+server description MUST reflect this with an ``Unknown`` server type.
+
+
 Cursors
 ~~~~~~~
 
@@ -286,4 +295,6 @@ versioned API. This is not covered in this specification.
 
 Change Log
 ==========
+
+* 2021-04-20: Require using ``hello`` when using the versioned API
 * 2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.

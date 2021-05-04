@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.30
-:Last Modified: 2021-04-12
+:Version: 2.31
+:Last Modified: 2021-05-03
 
 .. contents::
 
@@ -562,6 +562,11 @@ This replacement MUST happen even if the new server description compares equal
 to the previous one, in order to keep client-tracked attributes like last
 update time and round trip time up to date.
 
+Drivers MUST be able to handle responses to both ``hello`` and legacy hello
+commands. When checking results, drivers MUST first check for the
+``isWritablePrimary`` field and fall back to checking for an ``ismaster`` field
+if ``isWritablePrimary`` was not found.
+
 ServerDescriptions are created from ismaster outcomes as follows:
 
 type
@@ -588,7 +593,7 @@ are not replica set member states at all.
 +-------------------+---------------------------------------------------------------+
 | PossiblePrimary   | Not yet checked, but another member thinks it is the primary. |
 +-------------------+---------------------------------------------------------------+
-| RSPrimary         | "ismaster: true", "setName" in response.                      |
+| RSPrimary         | "isWritablePrimary: true", "setName" in response.             |
 +-------------------+---------------------------------------------------------------+
 | RSSecondary       | "secondary: true", "setName" in response.                     |
 +-------------------+---------------------------------------------------------------+
@@ -2501,6 +2506,10 @@ check. Synchronize pool clearing with SDAM updates.
 2021-2-11: Errors encountered during auth are handled by SDAM. Auth errors
 mark the server Unknown and clear the pool.
 
+2021-4-12: Adding in behaviour for load balancer mode.
+
+2021-05-03: Require parsing "isWritablePrimary" field in responses.
+
 .. Section for links.
 
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
@@ -2514,5 +2523,3 @@ mark the server Unknown and clear the pool.
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Authentication spec: /source/auth/auth.rst
-
-2021-4-12: Adding in behaviour for load balancer mode.

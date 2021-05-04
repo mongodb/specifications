@@ -194,7 +194,7 @@ This test requires MongoDB 4.9.0+.
          configureFailPoint: "failCommand",
          mode: { times: 5 },
          data: {
-             failCommands: ["isMaster"],
+             failCommands: ["isMaster", "hello"],
              errorCode: 1234,
              appName: "SDAMMinHeartbeatFrequencyTest"
          }
@@ -231,7 +231,7 @@ MongoDB 4.2.9+.
          configureFailPoint: "failCommand",
          mode: { times: 2 },
          data: {
-             failCommands: ["isMaster"],
+             failCommands: ["isMaster", "hello"],
              errorCode: 1234,
              appName: "SDAMPoolManagementTest"
          }
