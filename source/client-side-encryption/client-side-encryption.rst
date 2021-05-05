@@ -1254,10 +1254,6 @@ Why require including a C library?
 
 -  libmongocrypt deduplicates a lot of the work: JSONSchema cache, KMS
    message construction/parsing, key caching, and encryption/decryption.
--  We are convinced that the next version of field-level encryption will
-   remove mongocryptd in place of a C library to do query parsing. That
-   will necessitate drivers using a C library. If we use libmongocrypt
-   now, that upgrade path is much easier.
 -  Our "best-effort" of storing decrypted key material securely is best
    accomplished with a C library.
 -  Having crypto done in one centralized C library makes it much easier
