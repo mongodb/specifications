@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Apr 15, 2021
-:Version: 1.9
+:Last Modified: 2021-05-05
+:Version: 1.9.1
 
 .. contents::
 
@@ -250,7 +250,11 @@ value MUST be replaced with an empty BSON document. The list is as follows:
    * - ``copydbgetnonce``
    * - ``copydbsaslstart``
    * - ``copydb``
-   * - ``isMaster`` or ``ismaster`` when ``speculativeAuthenticate`` is present
+   * - ``hello`` (or legacy hello) when ``speculativeAuthenticate`` is present
+
+See the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_
+for more information on ``hello`` and legacy hello. Note that legacy hello has two different letter casings that must be taken
+into account. See the previously mentioned MongoDB Handshake spec for details.
 
 ---
 API
@@ -472,7 +476,11 @@ Changelog
     to be optional.
 
 12 FEB 2020:
-  - Added ``isMaster.speculativeAuthenticate`` to the list of values that should be redacted.
+  - Added legacy hello ``speculativeAuthenticate`` to the list of values that should be redacted.
 
 15 APR 2021:
   - Added ``serviceId`` field to events.
+
+5 MAY 2021
+  - Updated to use hello and legacy hello.
+
