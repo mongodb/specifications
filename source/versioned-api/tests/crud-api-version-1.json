@@ -709,15 +709,11 @@
                       "long"
                     ]
                   },
-                  "apiVersion": {
-                    "$$exists": false
-                  },
+                  "apiVersion": "1",
                   "apiStrict": {
-                    "$$exists": false
+                    "$$unsetOrMatches": false
                   },
-                  "apiDeprecationErrors": {
-                    "$$exists": false
-                  }
+                  "apiDeprecationErrors": true
                 }
               }
             }

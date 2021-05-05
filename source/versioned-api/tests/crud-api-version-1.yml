@@ -262,9 +262,7 @@ tests:
           - commandStartedEvent:
               command:
                 getMore: { $$type: [ int, long ] }
-                apiVersion: { $$exists: false }
-                apiStrict: { $$exists: false }
-                apiDeprecationErrors: { $$exists: false }
+                <<: *expectedApiVersion
 
   - description: "findOneAndDelete appends declared API version"
     operations:
