@@ -208,6 +208,13 @@ Drivers may wish to use a smaller value for ``serverSelectionTimeoutMS`` to
 speed up tests (otherwise server selection will spin for the entire
 duration even after a driver encounters a TLS error early).
 
+Testing on Linux
+----------------
+
+Drivers MUST test OCSP stapling behavior on a Linux platform other than Ubuntu
+18.04. `SERVER-51364 <https://jira.mongodb.org/browse/SERVER-51364>`__ disables
+OCSP stapling on the server for Ubuntu 18.04.
+
 Testing on Windows and macOS
 -----------------------------
 
