@@ -192,8 +192,9 @@ reply with an error.
 Transactions
 ~~~~~~~~~~~~
 
-When running commands as part of a transaction, drivers MUST send API parameters
-with all commands that are part of a transaction. If the API parameters for a
+When running commands as part of a transaction, drivers MUST send API
+parameters with all commands that are part of a transaction, including
+``commitTransaction`` and ``abortTransaction``. If the API parameters for a
 command in a transaction do not match those of the transaction-starting command,
 the server will reply with an error.
 
