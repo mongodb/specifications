@@ -8,6 +8,7 @@
   ],
   "options": {
     "loadBalanced": true,
-    "ssl": true
+    "ssl": true,
+    "directConnection": false
   }
 }
