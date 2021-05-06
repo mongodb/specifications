@@ -194,7 +194,7 @@ tests:
         result:
           insertedId: 1
       # Enable the fail point only on the Mongos that session0 is pinned to.
-      # Fail isMaster/hello to prevent the heartbeat requested directly after the
+      # Fail hello/legacy hello to prevent the heartbeat requested directly after the
       # retryable commit error from racing with server selection for the retry.
       # Note: times: 7 is slightly artbitrary but it accounts for one failed
       # commit and some SDAM heartbeats. A test runner will have multiple
