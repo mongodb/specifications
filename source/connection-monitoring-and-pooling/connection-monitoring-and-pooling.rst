@@ -416,8 +416,12 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
 .. code::
 
    mark pool as "ready"
-   resume background thread
    emit PoolReadyEvent
+   resume background thread
+
+Note that resuming the background thread after emitting PoolReadyEvent is of the essence,
+and it must be the case that no observer is able to observe actions of the background thread
+related to creating new connections before observing the PoolReadyEvent event.
 
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
