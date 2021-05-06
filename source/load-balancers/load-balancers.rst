@@ -67,7 +67,7 @@ MUST throw an exception in the following cases:
 
 - The connection string contains more than one host/port.
 - The connection string contains a replicaSet option.
-- The connection string contains a directConnection option.
+- The connection string contains a directConnection option with a value of true.
 
 If a URI is provided with the ``mongodb+srv`` scheme, the driver MUST first do the
 SRV and TXT lookup and then perform the validation. For drivers that do SRV
