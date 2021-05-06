@@ -44,7 +44,7 @@ initialData:
       - { _id: 5, x: 55 }
 
 tests:
-  - description: "All commands in a transaction declares an API version"
+  - description: "All commands in a transaction declare an API version"
     runOnRequirements:
       - topologies: [ replicaset, sharded-replicaset, load-balanced ]
     operations:

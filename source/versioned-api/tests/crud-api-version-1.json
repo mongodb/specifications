@@ -648,7 +648,7 @@
       ]
     },
     {
-      "description": "find command with declared API version appends to the command, but getMore does not",
+      "description": "find and getMore append API version",
       "operations": [
         {
           "name": "find",

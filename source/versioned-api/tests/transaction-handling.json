@@ -87,7 +87,7 @@
   ],
   "tests": [
     {
-      "description": "All commands in a transaction declares an API version",
+      "description": "All commands in a transaction declare an API version",
       "runOnRequirements": [
         {
           "topologies": [
