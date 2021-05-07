@@ -1,3 +1,6 @@
+# Unowned specs
+/ @mongodb/dbx-spec-reviewers-unowned
+
 # APM
 /source/command-monitoring/ @mongodb/dbx-spec-owners-apm
 
@@ -39,11 +42,6 @@
 
 # URI Options
 /source/uri-options/ @mongodb/dbx-spec-owners-uri-options
-
-###
-
-# Unowned specs
-/ @mongodb/dbx-spec-reviewers-unowned
 
 # Workflows and code ownership file
 /.github/ @mongodb/dbx-leadership
