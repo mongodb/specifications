@@ -1,47 +1,49 @@
-# SDAM
-/source/server-discovery-and-monitoring/ @mongodb/dbx-spec-owners-sdam
-
-# CRUD
-/source/crud/ @mongodb/dbx-spec-owners-crud
-/source/driver-bulk-update.rst @mongodb/dbx-spec-owners-crud
-
-# Transactions
-/source/transactions/ @mongodb/dbx-spec-owners-transactions
-/source/transactions-convenient-api/ @mongodb/dbx-spec-owners-transactions
-
-# Client Side Encryption
-/source/client-side-encryption/ @mongodb/dbx-spec-owners-fle
-
-# Server Selection
-/source/server-selection/ @mongodb/dbx-spec-owners-server-selection
-
-# Change Streams
-/source/change-streams/ @mongodb/dbx-spec-owners-change-streams
-
-# Sessions
-/source/sessions/ @mongodb/dbx-spec-owners-sessions
-
 # APM
 /source/command-monitoring/ @mongodb/dbx-spec-owners-apm
 
 # Authentication
 /source/auth/ @mongodb/dbx-spec-owners-auth
 
+# Change Streams
+/source/change-streams/ @mongodb/dbx-spec-owners-change-streams
+
+# Client Side Encryption
+/source/client-side-encryption/ @mongodb/dbx-spec-owners-fle
+
 # CMAP
 /source/connection-monitoring-and-pooling/ @mongodb/dbx-spec-owners-cmap
 
-# URI Options
-/source/uri-options/ @mongodb/dbx-spec-owners-uri-options
+# CRUD
+/source/crud/ @mongodb/dbx-spec-owners-crud
+/source/driver-bulk-update.rst @mongodb/dbx-spec-owners-crud
 
 # Retryability
 /source/retryable-reads/ @mongodb/dbx-spec-owners-retryability
 /source/retryable-writes/ @mongodb/dbx-spec-owners-retryability
 
+# SDAM
+/source/server-discovery-and-monitoring/ @mongodb/dbx-spec-owners-sdam
+
+# Server Selection
+/source/server-selection/ @mongodb/dbx-spec-owners-server-selection
+
+# Sessions
+/source/sessions/ @mongodb/dbx-spec-owners-sessions
+
+# Transactions
+/source/transactions/ @mongodb/dbx-spec-owners-transactions
+/source/transactions-convenient-api/ @mongodb/dbx-spec-owners-transactions
+
 # Unified Test Format
 /source/unified-test-format/ @mongodb/dbx-spec-owners-unified-test-format
+
+# URI Options
+/source/uri-options/ @mongodb/dbx-spec-owners-uri-options
+
+###
 
 # Unowned specs
 / @mongodb/dbx-spec-reviewers-unowned
 
-# Workflows and code ownership
+# Workflows and code ownership file
 /.github/ @mongodb/dbx-leadership
