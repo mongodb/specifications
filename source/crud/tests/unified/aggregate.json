@@ -42,6 +42,18 @@
         {
           "_id": 3,
           "x": 33
+        },
+        {
+          "_id": 4,
+          "x": 44
+        },
+        {
+          "_id": 5,
+          "x": 55
+        },
+        {
+          "_id": 6,
+          "x": 66
         }
       ]
     }
@@ -62,7 +74,7 @@
                 }
               }
             ],
-            "batchSize": 1
+            "batchSize": 2
           },
           "object": "collection0",
           "expectResult": [
@@ -73,6 +85,18 @@
             {
               "_id": 3,
               "x": 33
+            },
+            {
+              "_id": 4,
+              "x": 44
+            },
+            {
+              "_id": 5,
+              "x": 55
+            },
+            {
+              "_id": 6,
+              "x": 66
             }
           ]
         }
@@ -95,7 +119,7 @@
                     }
                   ],
                   "cursor": {
-                    "batchSize": 1
+                    "batchSize": 2
                   }
                 },
                 "commandName": "aggregate",
@@ -112,7 +136,7 @@
                     ]
                   },
                   "collection": "coll0",
-                  "batchSize": 1
+                  "batchSize": 2
                 },
                 "commandName": "getMore",
                 "databaseName": "aggregate-tests"
@@ -128,7 +152,7 @@
                     ]
                   },
                   "collection": "coll0",
-                  "batchSize": 1
+                  "batchSize": 2
                 },
                 "commandName": "getMore",
                 "databaseName": "aggregate-tests"
