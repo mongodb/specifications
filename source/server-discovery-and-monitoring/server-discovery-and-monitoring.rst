@@ -1350,7 +1350,7 @@ recovering" error::
           # if no code, use the error message.
           if isRecovering(message, None):
               return false
-          return ("not writable primary" in message)
+          return ("not master" in message)
 
     def isShutdown(code):
         if code and code in shutdownCodes:
@@ -2121,11 +2121,11 @@ it would trust whichever config it received first.
 mongos 2.6 ignores setVersion and only trusts the primary.
 This spec requires all clients to ignore setVersion from non-primaries.
 
-Use error messages to detect "not writable primary" and "node is recovering"
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Use error messages to detect "not master" and "node is recovering"
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 When error codes are not available, error messages are checked for the
-substrings "not writable primary" and "node is recovering". This is because older server
+substrings "not master" and "node is recovering". This is because older server
 versions returned unstable error codes or no error codes in many
 circumstances.
 
