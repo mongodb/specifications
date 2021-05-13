@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-04-12
-:Version: 1.13.0
+:Last Modified: 2021-05-12
+:Version: 1.13.1
 
 .. contents::
 
@@ -574,11 +574,6 @@ basis similar to how ``hint`` or ``batchSize`` are set. E.g., in Python::
         tag_sets=[{'dc': 'ny'}],
         maxStalenessSeconds=120,
         hedge={'enabled': true})
-
-If a driver API allows users to potentially set both the legacy ``slaveOK``
-configuration option and a default read preference configuration option,
-passing a value for both MUST be an error. (See `Use of slaveOk`_ for the two
-uses of ``slaveOK``.)
 
 Passing read preference to mongos and load balancers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1377,25 +1372,6 @@ could be different across servers::
     else:
         error_message = ', '.join(all ServerDescriptions' errors)
 
-Use of slaveOk
---------------
-
-There are two usages of ``slaveOK``:
-
-1.  A driver query parameter that predated read preference modes and tag
-    set lists.
-
-2.  A wire protocol flag on OP_QUERY operations
-
-
-Using ``slaveOk`` as a query parameter is deprecated. Until it is removed,
-``slaveOk`` used as a method argument or query option is considered
-equivalent to a read preference ``mode`` of 'secondaryPreferred'
-
-The ``slaveOk`` wire protocol flag remains in the wire protocol and drivers
-set this bit for each topology type as described in the specification
-above.
-
 Cursors
 -------
 
@@ -1870,3 +1846,5 @@ window.
    so it does no additional wire version checks related to maxStalenessSeconds.
 
 2021-4-7: Adding in behaviour for load balancer mode.
+
+2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
