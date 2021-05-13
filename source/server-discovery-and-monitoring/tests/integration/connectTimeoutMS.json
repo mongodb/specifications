@@ -42,7 +42,8 @@
               },
               "data": {
                 "failCommands": [
-                  "hello"
+                  "hello",
+                  "isMaster"
                 ],
                 "appName": "connectTimeoutMS=0",
                 "blockConnection": true,

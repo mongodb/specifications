@@ -16,7 +16,7 @@ tests:
       configureFailPoint: failCommand
       mode: { times: 2 }
       data:
-          failCommands: ["hello"]
+          failCommands: ["hello", "isMaster"]
           appName: networkErrorHandshakeTest
           closeConnection: true
     clientOptions:

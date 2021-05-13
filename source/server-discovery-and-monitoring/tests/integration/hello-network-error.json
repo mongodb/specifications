@@ -17,7 +17,8 @@
         },
         "data": {
           "failCommands": [
-            "hello"
+            "hello",
+            "isMaster"
           ],
           "appName": "networkErrorHandshakeTest",
           "closeConnection": true
