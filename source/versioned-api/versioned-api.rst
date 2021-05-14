@@ -3,13 +3,13 @@ Versioned API For Drivers
 =========================
 
 :Spec Title: Versioned API For Drivers
-:Spec Version: 1.1.0
+:Spec Version: 1.2.0
 :Author: Andreas Braun
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Patrick Freed, Oleg Pudeyev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-20
+:Last Modified: 2021-05-05
 
 .. contents::
 
@@ -167,6 +167,9 @@ every command that is sent to a server. Drivers MUST add the ``apiStrict`` and
 ``apiDeprecationErrors`` options if they were specified by the user, even when
 the specified value is equal to the server default. Drivers MUST NOT add any
 API versioning options if the user did not specify them.
+This includes the ``getMore`` command as well as all commands that are part of a
+transaction. A previous version of this specification excluded those commands,
+but that has since changed in the server.
 
 
 Handshake behavior
@@ -181,20 +184,19 @@ server description MUST reflect this with an ``Unknown`` server type.
 Cursors
 ~~~~~~~
 
-The ``getMore`` command does not accept API parameters; cursors inherit their
-API parameters from the initiating command. Drivers MUST NOT include API
-parameters when sending ``getMore`` commands to the server.
-
-In contrast, the ``killCursors`` command accepts API parameters and drivers MUST
-include them as they would with all other commands.
+For ``getMore``, drivers MUST submit API parameters. If the values given do not
+match the API parameters given in the cursor-initiating command, the server will
+reply with an error.
 
 
 Transactions
 ~~~~~~~~~~~~
 
-When running commands as part of a transaction, drivers MUST NOT send API
-parameters after the initial command that includes the ``startTransaction``
-option.
+When running commands as part of a transaction, drivers MUST send API
+parameters with all commands that are part of a transaction, including
+``commitTransaction`` and ``abortTransaction``. If the API parameters for a
+command in a transaction do not match those of the transaction-starting command,
+the server will reply with an error.
 
 
 Generic command helper
@@ -296,5 +298,7 @@ versioned API. This is not covered in this specification.
 Change Log
 ==========
 
-* 2021-04-20: Require using ``hello`` when using the versioned API
+* 2021-05-05: Require sending versioned API parameters with ``getMore`` and
+  transaction-continuing commands.
+* 2021-04-20: Require using ``hello`` when using the versioned API.
 * 2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.
