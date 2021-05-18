@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.4.0
+:Spec Version: 1.4.1
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-19
+:Last Modified: 2021-05-17
 
 .. contents::
 
@@ -99,12 +99,13 @@ they specify (as noted in `schemaVersion`_).
 JSON Schema Validation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Each major version of this specification SHALL have one JSON schema, which will
-correspond to its most recent minor version. When a new minor version is
-introduced, the previous schema file for that major version SHALL be renamed.
-For example: if an additive change is made to version 1.0 of the spec, the
-``schema-1.0.json`` file will be renamed to ``schema-1.1.json`` and modified
-accordingly.
+Each major or minor version that changes the `Test Format`_ SHALL have a
+corresponding JSON schema. When a new schema file is introduced, any existing
+schema files MUST remain in place since they may be needed for validation. For
+example: if an additive change is made to version 1.0 of the spec, the
+``schema-1.0.json`` file will be copied to ``schema-1.1.json`` and modified
+accordingly. A new or existing test file using `schemaVersion`_ "1.0" would then
+be expected to validate against both schema files.
 
 A particular minor version MUST be capable of validating any and all test files
 in that major version series up to and including the minor version. For example,
@@ -114,8 +115,7 @@ in that major version series up to and including the minor version. For example,
 
 The JSON schema MUST remain consistent with the `Test Format`_ section. If and
 when a new major version is introduced, the `Breaking Changes`_ section MUST be
-updated and any JSON schema(s) for a previous major version(s) MUST remain
-available so that older test files can still be validated.
+updated.
 
 `Ajv <https://ajv.js.org/>`__ MAY be used to programmatically validate both YAML
 and JSON files using the JSON schema. The JSON schema MUST NOT use syntax that
@@ -3211,6 +3211,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-05-17: Ensure old JSON schema files remain in place
 
 :2021-04-19: Introduce ``serverless`` `runOnRequirement`_.
 
