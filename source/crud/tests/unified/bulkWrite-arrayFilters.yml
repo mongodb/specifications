@@ -63,7 +63,7 @@ tests:
         expectResult:
           deletedCount: 0
           insertedCount: 0
-          insertedIds: {  }
+          insertedIds: { $$unsetOrMatches: {} }
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
@@ -128,7 +128,7 @@ tests:
         expectResult:
           deletedCount: 0
           insertedCount: 0
-          insertedIds: {  }
+          insertedIds: { $$unsetOrMatches: {} }
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 0
