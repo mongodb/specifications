@@ -14,6 +14,12 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: &collection1Name coll1
+      collectionOptions:
+        writeConcern: { w: 0 }
 
 initialData: &initialData
   - collectionName: *collection0Name
@@ -146,4 +152,29 @@ tests:
         expectError:
           isClientError: false
     expectEvents: *expectEventsDottedKeyInEmbedded
+    outcome: *initialData
+
+  - description: "Unacknowledged write using dollar-prefixed or dotted keys may be silently rejected on pre-5.0 server"
+    runOnRequirements:
+      - maxServerVersion: "4.99"
+    operations:
+      - name: replaceOne
+        object: *collection1
+        arguments:
+          filter: { _id: 1 }
+          replacement: *dollarPrefixedKeyInEmbedded
+        expectResult:
+          acknowledged: { $$unsetOrMatches: false }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                update: *collection1Name
+                updates:
+                  - q: { _id: 1 }
+                    u: *dollarPrefixedKeyInEmbedded
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                writeConcern: { w: 0 }
     outcome: *initialData

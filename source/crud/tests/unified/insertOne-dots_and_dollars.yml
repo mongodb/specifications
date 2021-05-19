@@ -14,6 +14,12 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: &collection1Name coll1
+      collectionOptions:
+        writeConcern: { w: 0 }
 
 initialData: &initialData
   - collectionName: *collection0Name
@@ -208,3 +214,28 @@ tests:
         databaseName: *database0Name
         documents:
           - *dbrefLikeKey
+
+  # Note: the description refers to "pre-5.0" purely for consistency with the
+  # related replaceOne test. Document validation on [3.6, 5.0) server versions
+  # is less strict for insert than it is for replacement documents so this test
+  # actually requires a pre 3.6-server.
+  - description: "Unacknowledged write using dollar-prefixed or dotted keys may be silently rejected on pre-5.0 server"
+    runOnRequirements:
+      - maxServerVersion: "3.4.99"
+    operations:
+      - name: insertOne
+        object: *collection1
+        arguments:
+          document: *dottedKeyInId
+        expectResult:
+          acknowledged: { $$unsetOrMatches: false }
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection1Name
+                documents:
+                  - *dottedKeyInId
+                writeConcern: { w: 0 }
+    outcome: *initialData
