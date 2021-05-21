@@ -36,7 +36,21 @@ Unit Test Format:
 
 All Unit Tests have some of the following fields:
 
-- ``poolOptions``: if present, connection pool options to use when creating a pool
+- ``poolOptions``: If present, connection pool options to use when creating a pool;
+  both `standard ConnectionPoolOptions <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1>`__
+  and the following test-specific options are allowed:
+
+  - ``backgroundThreadDelayMS``: An artificial delay before starting observable activities in a
+    `Background Thread <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__.
+    The Test Runner / Connection Pool MUST try to start counting time towards this delay
+    at an instant as close to starting executing ``operations`` as reasonably possible.
+    If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option.
+    Possible values:
+
+    - 0 (default)—no delay;
+    - a negative value—an infinite delay;
+    - a positive value—a finite delay in milliseconds.
+
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
   - ``name``: A string describing which operation to issue.
