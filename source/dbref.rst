@@ -46,7 +46,7 @@ A DBRef is an embedded document with the following fields:
 
 - ``$ref``: required string field. Contains the name of the collection where
   the referenced document resides. This MUST be the first field in the DBRef.
-- ``$id``: required field. Contians the value of the ``_id`` field of the
+- ``$id``: required field. Contains the value of the ``_id`` field of the
   referenced document. This MUST be the second field in the DBRef.
 - ``$db``: optional string field. Contains the name of the database where the
   referenced document resides. If specified, this MUST be the third field in the
