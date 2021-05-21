@@ -126,7 +126,7 @@ constituent parts. If so:
 
 - Drivers SHOULD solicit an optional string value for ``$db``.
 
-- Drivers MUST require ``$ref`` and ``$db`` (if specfied) to be strings but
+- Drivers MUST require ``$ref`` and ``$db`` (if specified) to be strings but
   MUST NOT enforce any `naming restrictions`_ on the string values.
 
 - Drivers MAY solicit extra, optional fields.
