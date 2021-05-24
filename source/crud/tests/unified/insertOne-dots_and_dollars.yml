@@ -215,18 +215,14 @@ tests:
         documents:
           - *dbrefLikeKey
 
-  # Note: the description refers to "pre-5.0" purely for consistency with the
-  # related replaceOne test. Document validation on [3.6, 5.0) server versions
-  # is less strict for insert than it is for replacement documents so this test
-  # actually requires a pre 3.6-server.
   - description: "Unacknowledged write using dollar-prefixed or dotted keys may be silently rejected on pre-5.0 server"
     runOnRequirements:
-      - maxServerVersion: "3.4.99"
+      - maxServerVersion: "4.99"
     operations:
       - name: insertOne
         object: *collection1
         arguments:
-          document: *dottedKeyInId
+          document: *dollarPrefixedKeyInId
         expectResult:
           acknowledged: { $$unsetOrMatches: false }
     expectEvents:
@@ -236,6 +232,6 @@ tests:
               command:
                 insert: *collection1Name
                 documents:
-                  - *dottedKeyInId
+                  - *dollarPrefixedKeyInId
                 writeConcern: { w: 0 }
     outcome: *initialData
