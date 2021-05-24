@@ -33,7 +33,7 @@ _yamlAnchors:
     &lockTimeoutErrorCode 24
 
 tests:
-  - description: unpin after TransientTransctionError error on commit
+  - description: unpin after TransientTransactionError error on commit
     runOnRequirements:
         # serverless proxy doesn't append error labels to errors in transactions
         # caused by failpoints (CLOUDP-88216)
@@ -80,7 +80,7 @@ tests:
         object: *session0
       - *assertNoPinnedServer
 
-  - description: unpin after TransientTransctionError error on abort
+  - description: unpin after TransientTransactionError error on abort
     runOnRequirements:
         # serverless proxy doesn't append error labels to errors in transactions
         # caused by failpoints (CLOUDP-88216)
