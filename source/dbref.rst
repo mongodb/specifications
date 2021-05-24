@@ -266,8 +266,9 @@ code paths as needed.
    c. ``{ "$db": "db0" }``
 
    Assert that each document is not decoded to a DBRef model. In the context of
-   implicit decoding, the document MUST be left as-is. In the context of
-   explicit decoding, the DBRef decoding method MUST raise an error.
+   implicit decoding, the document MUST be decoded like any other embedded
+   document. In the context of explicit decoding, the DBRef decoding method MUST
+   raise an error.
 
 5. Documents with invalid types for ``$ref`` or ``$db`` MUST NOT be decoded to a
    DBRef model. For each of the following:
@@ -276,8 +277,9 @@ code paths as needed.
    b. ``{ "$ref": "coll0", "$id": 1, "$db": 1 }``
 
    Assert that each document is not decoded to a DBRef model. In the context of
-   implicit decoding, the document MUST be left as-is. In the context of
-   explicit decoding, the DBRef decoding method MUST raise an error.
+   implicit decoding, the document MUST be decoded like any other embedded
+   document. In the context of explicit decoding, the DBRef decoding method MUST
+   raise an error.
 
 
 Encoding
