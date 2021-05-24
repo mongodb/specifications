@@ -165,6 +165,13 @@ If a BSON document cannot be implicitly decoded to a DBRef model, it MUST be
 left as-is (like any other embedded document). If a BSON document cannot be
 explicitly decoded to a DBRef model, the driver MUST raise an error.
 
+Since DBRefs are a special type of embedded document, a DBRef model class used
+for decoding SHOULD inherit the class used to represent an embedded document
+(e.g. Hash in Ruby). This will allow applications to always expect an instance
+of a common class when decoding an embedded document (if desired) and should
+also support the requirement for DBRef models to provide access to any extra,
+optional fields.
+
 
 Encoding a DBRef model to a BSON document
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
