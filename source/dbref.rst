@@ -30,9 +30,10 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`__.
 
-This specification presents documents as Extended JSON. Although JSON fields are
-unordered, the order of fields presented herein should be considered pertinent.
-This is especially relevant for the `Test Plan`_.
+This specification presents documents as Extended JSON for readability and
+expressing special types (e.g. ObjectId). Although JSON fields are unordered,
+the order of fields presented herein should be considered pertinent. This is
+especially relevant for the `Test Plan`_.
 
 
 Specification
@@ -199,7 +200,9 @@ to drivers that provide a DBRef model class.
 
 The documents in these tests are presented as Extended JSON for readability;
 however, readers should consider the field order pertinent when translating to
-BSON (or their language equivalent).
+BSON (or their language equivalent). These tests are not intended to exercise a
+driver's Extended JSON parser. Implementations SHOULD construct the documents
+directly using native BSON types (e.g. Document, ObjectId).
 
 
 Decoding
