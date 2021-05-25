@@ -143,8 +143,8 @@ example of implicit decoding might be configuring the driver's BSON codec to
 automatically convert embedded documents that comply with the `DBRef Structure`_
 into a DBRef model.
 
-Drivers that provide implicit decoding MUST provide some way for applications to
-opt out and allow DBRefs to be decoded like any other embedded document.
+Drivers that provide implicit decoding SHOULD provide some way for applications
+to opt out and allow DBRefs to be decoded like any other embedded document.
 
 When decoding a BSON document to a DBRef model:
 
