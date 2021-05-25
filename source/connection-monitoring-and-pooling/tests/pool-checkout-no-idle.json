@@ -4,7 +4,7 @@
   "description": "must destroy and must not check out an idle connection if found while iterating available connections",
   "poolOptions": {
     "maxIdleTimeMS": 10,
-    "backgroundThreadDelayMS": -1
+    "backgroundThread": false
   },
   "operations": [
     {

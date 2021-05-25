@@ -40,16 +40,15 @@ All Unit Tests have some of the following fields:
   both `standard ConnectionPoolOptions <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1>`__
   and the following test-specific options are allowed:
 
-  - ``backgroundThreadDelayMS``: An artificial delay before starting observable activities in a
+  - ``backgroundThread``: Whether or not to start activities of a
     `Background Thread <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__.
-    The Test Runner / Connection Pool MUST try to start counting time towards this delay
-    at an instant as close to starting executing ``operations`` as reasonably possible.
     If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option.
+    This option affects only preemptive population of a Connection Pool and preemptive removal of perished available connections,
+    as specified `here <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`.
     Possible values:
 
-    - 0 (default)—no delay;
-    - a negative value—an infinite delay;
-    - a positive value—a finite delay in milliseconds.
+    - true (default)—start;
+    - false—do not start.
 
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
