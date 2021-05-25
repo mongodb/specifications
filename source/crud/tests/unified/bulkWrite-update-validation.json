@@ -1,6 +1,6 @@
 {
   "description": "bulkWrite-update-validation",
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.0",
   "createEntities": [
     {
       "client": {
