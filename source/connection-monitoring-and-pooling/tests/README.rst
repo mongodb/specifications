@@ -40,15 +40,20 @@ All Unit Tests have some of the following fields:
   both `standard ConnectionPoolOptions <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1>`__
   and the following test-specific options are allowed:
 
-  - ``backgroundThread``: Whether or not to start activities of a
-    `Background Thread <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__.
+  - ``backgroundThreadPeriodMS`` (50 by default): The desired period of
+    `Background Thread Runs <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__.
     If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option.
-    This option affects only preemptive population of a Connection Pool and preemptive removal of perished available connections,
-    as specified `here <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`.
+
+    Note that this period may be overestimated by an implementation because it is impossible to guarantee otherwise.
+    This period is also allowed to be underestimated by an implementation: if the beginning of a Run is delayed as a result of previous Runs
+    taking too much time to complete, then the duration between the beginning of the previous Run and the beginning of the delayed Run
+    may be made smaller than the desired period to achieve the number of Runs beginning within a time interval ``t``
+    (``t ≫ backgroundThreadPeriodMS``) being as close to ``t / backgroundThreadPeriodMS`` as possible.
+
     Possible values:
 
-    - true (default)—start;
-    - false—do not start.
+    - a negative value—never begin a Run;
+    - a positive value—the desired period of Runs in milliseconds.
 
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
@@ -168,8 +173,6 @@ For each YAML file with ``style: unit``:
 
   - If ``poolOptions`` is specified, use those options to initialize both pools
   - The returned pool must have an ``address`` set as a string value.
-  - If the pool uses a background thread to satisfy ``minPoolSize``, ensure it
-    attempts to create a new connection every 50ms.
 
 - Process each ``operation`` in ``operations`` (on the main thread)
 

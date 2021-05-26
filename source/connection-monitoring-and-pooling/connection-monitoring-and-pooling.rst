@@ -742,6 +742,22 @@ thread SHOULD
       minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
 
+Conceptually, the aforementioned activities are organized into sequential Background Thread Runs of unspecified finite duration.
+Each Run MUST do as much work as possible, for example
+
+-  if at the beginning of the Run the Connection Pool needed three more Connections to satisfy minPoolSize, then the Run MUST try to populate
+   the Connection Pool with three more connections instead of populating it with only one,
+   unless it encounters a situation preventing it from continuing;
+-  if at the beginning of the Run the Connection Pool had three perished available connections, the Run MUST try to close all of them
+   instead of closing only one.
+
+The first Run MUST start as soon after a Connection Pool becomes `ready <#marking-a-connection-pool-as-ready>`__ as practically possible.
+Neither the minimum delay between Runs (the minimum interval between the end of a Run and the beginning of the next Run)
+nor the desired period of Runs (the desired interval between the beginning of a Run and the beginning of the next Run) is specified.
+The
+`Test Format and Runner specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
+may change the specified restrictions or introduce new ones to facilitate testing.
+
 withConnection
 ^^^^^^^^^^^^^^
 
