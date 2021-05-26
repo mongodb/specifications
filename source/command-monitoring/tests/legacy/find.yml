@@ -314,7 +314,7 @@ tests:
           reply:
             ok: 1.0
             cursor:
-              id: { $numberLong: "42" }
+              id: { $numberLong: "0" }
               ns: *namespace
               nextBatch: []
           command_name: "getMore"
