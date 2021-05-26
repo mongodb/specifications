@@ -365,18 +365,35 @@ More detailed information about the interaction of the **secondaryOk** with **OP
 Behavior of Limit, skip and batchSize
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The new **find** command has different semantics to the existing 3.0 and earlier **OP_QUERY** wire protocol message. The **limit** field is a hard limit on the total number of documents returned by the cursor no matter what **batchSize** is provided.
+The new **find** command has different semantics to the existing 3.0 and earlier
+**OP_QUERY** wire protocol message. The **limit** field is a hard limit on the
+total number of documents returned by the cursor no matter what **batchSize** is
+provided. This includes other limiting operations, such as the **$limit**
+aggregation pipeline stage. This differs from existing **OP_QUERY** behavior
+where there is no server side concept of limit and where the driver **MUST**
+keep track of the limit on the client side and **MUST** send a
+**OP_KILL_CURSORS** wire protocol message when it limit is reached.
 
-Once the limit on the cursor has been reached the server will destroy the cursor and return a **cursorId** of **0** in the **OP_REPLY**. This differs from existing **OP_QUERY** behavior where there is no server side concept of limit and where the driver **MUST** keep track of the limit on the client side and **MUST** send a **OP_KILL_CURSORS** wire protocol message when it limit is reached.
+When setting the **batchSize** on the **find** and **getMore** command the value
+MUST be based on the cursor limit calculations specified in the `CRUD`_
+specification.
 
-When setting the **batchSize** on the **find** and **getMore** command the value MUST be based on the cursor limit calculations specified in the `CRUD`_ specification. 
+Note that with 5.0, the server-side handling of cursors with a limit has
+changed. Before 5.0, some cursors were automatically closed when the limit was
+reached (e.g. when running **find** with **limit**), and the reply document did
+not include a cursor ID. Starting with 5.0, all cursor-producing operations will
+return a cursor ID if the end of the batch being returned lines up with the
+limit on the cursor. In this case, drivers MUST send an additional **getMore**
+request with **batchSize** 1 to have the cursor closed on the server side.
 
-In the following example the **limit** is set to **4** and the **batchSize** is set to **3** the following commands are executed.
+In the following example the **limit** is set to **4** and the **batchSize** is
+set to **3** the following commands are executed.
 
 .. code:: javascript
 
     {find: ..., batchSize:3}
-    {getMore: ..., batchSize:1}
+    {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0
+    {getMore: ..., batchSize:1} // Returns empty batch and closes cursor on the server. Not necessary on 5.0
 
 .. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
@@ -462,7 +479,7 @@ Semantics of maxTimeMS for a Driver
 
 In the case of  a **non-tailable cursor query** OR **a tailable cursor query with awaitData == false**, the driver MUST set maxTimeMS on the **find** command and MUST NOT set maxTimeMS on the **getMore** command.
 
-In the case of **a tailable cursor with awaitData == true** the driver MUST provide a Cursor level option named **maxAwaitTimeMS** (See CRUD specification for details). The **maxTimeMS** option on the **getMore** command MUST be set to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command. 
+In the case of **a tailable cursor with awaitData == true** the driver MUST provide a Cursor level option named **maxAwaitTimeMS** (See CRUD specification for details). The **maxTimeMS** option on the **getMore** command MUST be set to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command.
 
 getMore
 -------
@@ -632,7 +649,7 @@ MongoDB 3.0 and earlier where a **OP_QUERY** query will set **numberReturned**
 to >= 0.
 
 A driver MUST deserialize the command result and extract the **firstBatch**
-and **nextBatch** arrays for the **find** and **getMore** commands to access 
+and **nextBatch** arrays for the **find** and **getMore** commands to access
 the returned documents.
 
 The result from the **killCursors** command MAY be safely ignored.
@@ -713,4 +730,4 @@ Changes
 
 2015-10-13 added guidance on batchSize values as related to the **getMore** command. Legacy secondaryOk flag SHOULD not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore commands when the cursor is a tailable cursor with awaitData set.
 
-2015-10-21 If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command. 
+2015-10-21 If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command.

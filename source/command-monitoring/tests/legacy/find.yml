@@ -195,8 +195,9 @@ tests:
               - { $numberLong: "42" }
           command_name: "killCursors"
   -
-    description: "A successful find event with a getmore and the server kills the cursor"
+    description: "A successful find event with a getmore and the server kills the cursor (<= 4.4)"
     ignore_if_server_version_less_than: "3.1"
+    ignore_if_server_version_greater_than: "4.4"
     ignore_if_topology_type:
       - "sharded"
     operation:
@@ -246,6 +247,76 @@ tests:
               ns: *namespace
               nextBatch:
                 - { _id: 4, x: 44 }
+          command_name: "getMore"
+  -
+    description: "A successful find event with a multiple getMore (>= 5.0)"
+    ignore_if_server_version_less_than: "5.0"
+    ignore_if_topology_type:
+      - "sharded"
+    operation:
+      name: "find"
+      arguments:
+        filter: { _id: { $gte: 1 }}
+        sort: { _id: 1 }
+        batchSize: {"$numberLong": "3"}
+        limit: {"$numberLong": "4"}
+    expectations:
+      -
+        command_started_event:
+          command:
+            find: *collection_name
+            filter: { _id: { $gte : 1 }}
+            sort: { _id: 1 }
+            batchSize: {"$numberLong": "3"}
+            limit: {"$numberLong": "4"}
+          command_name: "find"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          reply:
+            ok: 1.0
+            cursor:
+              id: { $numberLong: "42" }
+              ns: *namespace
+              firstBatch:
+                - { _id: 1, x: 11 }
+                - { _id: 2, x: 22 }
+                - { _id: 3, x: 33 }
+          command_name: "find"
+      -
+        command_started_event:
+          command:
+            getMore: { $numberLong: "42" }
+            collection: *collection_name
+            batchSize: { $numberLong: "1" }
+          command_name: "getMore"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          reply:
+            ok: 1.0
+            cursor:
+              id: { $numberLong: "42" }
+              ns: *namespace
+              nextBatch:
+                - { _id: 4, x: 44 }
+          command_name: "getMore"
+      -
+        command_started_event:
+          command:
+            getMore: { $numberLong: "42" }
+            collection: *collection_name
+            batchSize: { $numberLong: "1" }
+          command_name: "getMore"
+          database_name: *database_name
+      -
+        command_succeeded_event:
+          reply:
+            ok: 1.0
+            cursor:
+              id: { $numberLong: "42" }
+              ns: *namespace
+              nextBatch: []
           command_name: "getMore"
   -
     description: "A failed find event"
