@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-12
-:Version: 1.5.0
+:Last Modified: 2021-05-26
+:Version: 1.5.1
 
 .. contents::
 
@@ -745,17 +745,17 @@ thread SHOULD
 Conceptually, the aforementioned activities are organized into sequential Background Thread Runs of unspecified finite duration.
 Each Run MUST do as much work as possible, for example
 
--  if at the beginning of the Run the Connection Pool needed three more Connections to satisfy minPoolSize, then the Run MUST try to populate
-   the Connection Pool with three more connections instead of populating it with only one,
+-  if at the beginning of a Run a Connection Pool needed three more Connections to satisfy minPoolSize, then the Run MUST try to populate
+   the Connection Pool with three more connections instead of populating it with only one and ending,
    unless it encounters a situation preventing it from continuing;
--  if at the beginning of the Run the Connection Pool had three perished available connections, the Run MUST try to close all of them
-   instead of closing only one.
+-  if at the beginning of a Run a Connection Pool had three perished available connections, the Run MUST try to close all of them
+   instead of closing only one and ending.
 
 The first Run MUST start as soon after a Connection Pool becomes `ready <#marking-a-connection-pool-as-ready>`__ as practically possible.
 Neither the minimum delay between Runs (the minimum interval between the end of a Run and the beginning of the next Run)
 nor the desired period of Runs (the desired interval between the beginning of a Run and the beginning of the next Run) is specified.
 The
-`Test Format and Runner specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
+`Test Format and Runner Specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
 may change the specified restrictions or introduce new ones to facilitate testing.
 
 withConnection
@@ -1130,6 +1130,8 @@ Change log
              ConnectionCheckOutFailedEvent
 
 :2021-4-12: Adding in behaviour for load balancer mode.
+
+:2021-05-26: Formalize the behavior of a `Background Thread <#background-thread>`__.
 
 .. Section for links.
 
