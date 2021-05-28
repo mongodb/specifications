@@ -128,7 +128,7 @@ tests:
           - poolClearedEvent: {}
           - connectionCheckedInEvent: {}
           - connectionClosedEvent:
-              reason: stale
+              reason: error
           # Second insertOne.
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}

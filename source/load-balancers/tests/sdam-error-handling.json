@@ -241,7 +241,7 @@
             },
             {
               "connectionClosedEvent": {
-                "reason": "stale"
+                "reason": "error"
               }
             },
             {
