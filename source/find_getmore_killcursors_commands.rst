@@ -370,30 +370,49 @@ The new **find** command has different semantics to the existing 3.0 and earlier
 total number of documents returned by the cursor no matter what **batchSize** is
 provided. This includes other limiting operations, such as the **$limit**
 aggregation pipeline stage. This differs from existing **OP_QUERY** behavior
-where there is no server side concept of limit and where the driver **MUST**
+where there is no server-side concept of limit and where the driver **MUST**
 keep track of the limit on the client side and **MUST** send a
 **OP_KILL_CURSORS** wire protocol message when it limit is reached.
 
-When setting the **batchSize** on the **find** and **getMore** command the value
-MUST be based on the cursor limit calculations specified in the `CRUD`_
-specification.
+When setting the **batchSize** on the **find** and **getMore** commands the
+value of **batchSize** **MUST** be based on the cursor limit calculations
+specified in the `CRUD`_ specification.
 
 Note that with 5.0, the server-side handling of cursors with a limit has
 changed. Before 5.0, some cursors were automatically closed when the limit was
 reached (e.g. when running **find** with **limit**), and the reply document did
-not include a cursor ID. Starting with 5.0, all cursor-producing operations will
-return a cursor ID if the end of the batch being returned lines up with the
-limit on the cursor. In this case, drivers MUST send an additional **getMore**
-request with **batchSize** 1 to have the cursor closed on the server side.
+not include a cursor ID (i.e. ``cursor.id`` was ``0`). Starting with 5.0, all
+cursor-producing operations will return a cursor ID if the end of the batch
+being returned lines up with the limit on the cursor. In this case, drivers
+**MUST** ensure the cursor is closed on the server. To do this, drivers **MUST**
+use one of the options provided below:
+
+* send an additional **getMore** command with **batchSize** 1. Since the limit
+  has been reached, the **getMore** response is expected to contain neither a
+  cursor ID, nor any elements in the batch. If results are returned in the
+  **getMore** call, these **MUST** be discarded. If the result contains a cursor
+  ID, the driver **MUST NOT** attempt another **getMore**, but **MUST** use
+  **killCursors** as prescribed below.
+
+* send a **killCursors** command to close the open cursor.
 
 In the following example the **limit** is set to **4** and the **batchSize** is
 set to **3** the following commands are executed.
 
 .. code:: javascript
 
-    {find: ..., batchSize:3}
+    {find: ..., batchSize:3, limit:4}
     {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0
-    {getMore: ..., batchSize:1} // Returns empty batch and closes cursor on the server. Not necessary on 5.0
+    {killCursors: ...}          // Kills server-side cursor. Required starting with 5.0
+
+For drivers that choose to use **getMore** to exhaust the cursor, the following
+commands would be executed.
+
+.. code:: javascript
+
+    {find: ..., batchSize:3, limit:4}
+    {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0
+    {getMore: ..., batchSize:1} // Returns no documents, no cursor ID and closes the cursor. Required starting with 5.0
 
 .. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
