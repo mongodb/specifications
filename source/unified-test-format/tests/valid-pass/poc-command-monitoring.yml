@@ -32,7 +32,7 @@ tests:
   - description: "A successful find event with a getmore and the server kills the cursor (<= 4.4)"
     runOnRequirements:
       - minServerVersion: "3.1"
-        maxServerVersion: "4.8.99"
+        maxServerVersion: "4.4.99"
         topologies: [ single, replicaset ]
     operations:
       - name: find
