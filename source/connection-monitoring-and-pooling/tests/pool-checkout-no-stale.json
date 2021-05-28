@@ -3,7 +3,7 @@
   "style": "unit",
   "description": "must destroy and must not check out a stale connection if found while iterating available connections",
   "poolOptions": {
-    "backgroundThreadPeriodMS": -1
+    "backgroundThreadIntervalMS": -1
   },
   "operations": [
     {

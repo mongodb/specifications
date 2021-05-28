@@ -40,20 +40,17 @@ All Unit Tests have some of the following fields:
   both `standard ConnectionPoolOptions <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1>`__
   and the following test-specific options are allowed:
 
-  - ``backgroundThreadPeriodMS`` (50 by default): The desired period of
-    `Background Thread Runs <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__.
-    If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option.
+  - ``backgroundThreadIntervalMS``: A desired time interval between the end of a
+    `Background Thread Run <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__
+    and the beginning of the next Run. If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option.
+    If the option is not specified, an implementation is free to use any value it finds reasonable.
+    An implementation is also free to use an interval smaller than the desired one. Once the specified time interval since the end of a Run passes,
+    an implementation MUST begin the next Run as soon as possible.
 
-    Note that this period may be overestimated by an implementation because it is impossible to guarantee otherwise.
-    This period is also allowed to be underestimated by an implementation: if the beginning of a Run is delayed as a result of previous Runs
-    taking too much time to complete, then the duration between the beginning of the previous Run and the beginning of the delayed Run
-    may be made smaller than the desired period to achieve the number of Runs beginning within a time interval ``t``
-    (``t ≫ backgroundThreadPeriodMS``) being as close to ``t / backgroundThreadPeriodMS`` as possible.
-
-    Possible values:
+    Possible values (0 is not allowed):
 
     - a negative value—never begin a Run;
-    - a positive value—the desired period of Runs in milliseconds.
+    - a positive value—the minimal interval between Runs in milliseconds.
 
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
