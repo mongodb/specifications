@@ -381,7 +381,7 @@ specified in the `CRUD`_ specification.
 Note that with 5.0, the server-side handling of cursors with a limit has
 changed. Before 5.0, some cursors were automatically closed when the limit was
 reached (e.g. when running **find** with **limit**), and the reply document did
-not include a cursor ID (i.e. ``cursor.id`` was ``0`). Starting with 5.0, all
+not include a cursor ID (i.e. ``cursor.id`` was ``0``). Starting with 5.0, all
 cursor-producing operations will return a cursor ID if the end of the batch
 being returned lines up with the limit on the cursor. In this case, drivers
 **MUST** ensure the cursor is closed on the server. To do this, drivers **MUST**
