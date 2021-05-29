@@ -760,7 +760,7 @@ See `Replacing the TopologyDescription`_ for an example implementation of
 topologyVersion comparison.
 
 serviceId
-````````
+`````````
 
 MongoDB 5.0 and later, as well as any mongos-like service, include a ``serviceId``
 field when the service is configured behind a load balancer.
