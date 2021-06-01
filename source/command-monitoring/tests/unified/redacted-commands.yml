@@ -1,4 +1,4 @@
-description: "runCommand"
+description: "redacted-commands"
 
 schemaVersion: "1.0"
 
@@ -16,142 +16,128 @@ createEntities:
       databaseName: &databaseName command-monitoring-tests
 
 tests:
-  - description: "authenticate is redacted"
+  - description: "authenticate"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: authenticate
           command:
-            otherField: "public"
             authenticate: "private"
         # Malformed authentication commands will fail against the server, but we
-        # just want to assert that security-related keys and fields are redacted
+        # just want to assert that security-related commands are redacted
         # in command monitoring.
         expectError:
           isError: true
     expectEvents: &redacted-event
       - client: *client
         events:
-          - commandStartedEvent:
-              command:
-                otherField: "public"
-              databaseName: *databaseName
+          # Expect empty (redacted) event.
+          - commandStartedEvent: {}
 
-  - description: "saslStart is redacted"
+  - description: "saslStart"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: saslStart
           command:
-            otherField: "public"
             saslStart: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "saslContinue is redacted"
+  - description: "saslContinue"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: saslContinue
           command:
-            otherField: "public"
             saslContinue: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "getnonce is redacted"
+  - description: "getnonce"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: getnonce
           command:
-            otherField: "public"
             getnonce: "private"
-        expectError:
-          isError: true
     expectEvents: *redacted-event
 
-  - description: "createUser is redacted"
+  - description: "createUser"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: createUser
           command:
-            otherField: "public"
             createUser: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "updateUser is redacted"
+  - description: "updateUser"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: updateUser
           command:
-            otherField: "public"
             updateUser: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "copydbgetnonce is redacted"
+  - description: "copydbgetnonce"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: copydbgetnonce
           command:
-            otherField: "public"
             copydbgetnonce: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "copydbsaslstart is redacted"
+  - description: "copydbsaslstart"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: copydbsaslstart
           command:
-            otherField: "public"
             copydbsaslstart: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "copydb is redacted"
+  - description: "copydb"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: copydb
           command:
-            otherField: "public"
             copydb: "private"
         expectError:
           isError: true
     expectEvents: *redacted-event
 
-  - description: "hello with speculativeAuth is redacted"
+  - description: "hello with speculativeAuth"
     operations:
       - name: runCommand
         object: *database
         arguments:
           commandName: hello
           command:
-            otherField: "public"
-            speculativeAuth: true
             hello: "private"
+            speculativeAuthenticate: "foo"
         expectError:
           isError: true
       - name: runCommand
@@ -159,9 +145,8 @@ tests:
         arguments:
           commandName: ismaster
           command:
-            otherField: "public"
-            speculativeAuth: true
             ismaster: "private"
+            speculativeAuthenticate: "foo"
         expectError:
           isError: true
       - name: runCommand
@@ -169,18 +154,13 @@ tests:
         arguments:
           commandName: isMaster
           command:
-            otherField: "public"
-            speculativeAuth: true
             isMaster: "private"
+            speculativeAuthenticate: "foo"
         expectError:
           isError: true
     expectEvents:
       - client: *client
         events:
-          - commandStartedEvent: &redacted-hello
-              command:
-                otherField: "public"
-                speculativeAuth: true
-              databaseName: *databaseName
-          - commandStartedEvent: *redacted-hello
-          - commandStartedEvent: *redacted-hello
+          - commandStartedEvent: {}
+          - commandStartedEvent: {}
+          - commandStartedEvent: {}

@@ -1,5 +1,5 @@
 {
-  "description": "runCommand",
+  "description": "redacted-commands",
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
@@ -25,7 +25,7 @@
   ],
   "tests": [
     {
-      "description": "authenticate is redacted",
+      "description": "authenticate",
       "operations": [
         {
           "name": "runCommand",
@@ -33,7 +33,6 @@
           "arguments": {
             "commandName": "authenticate",
             "command": {
-              "otherField": "public",
               "authenticate": "private"
             }
           },
@@ -47,19 +46,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "saslStart is redacted",
+      "description": "saslStart",
       "operations": [
         {
           "name": "runCommand",
@@ -67,7 +61,6 @@
           "arguments": {
             "commandName": "saslStart",
             "command": {
-              "otherField": "public",
               "saslStart": "private"
             }
           },
@@ -81,19 +74,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "saslContinue is redacted",
+      "description": "saslContinue",
       "operations": [
         {
           "name": "runCommand",
@@ -101,7 +89,6 @@
           "arguments": {
             "commandName": "saslContinue",
             "command": {
-              "otherField": "public",
               "saslContinue": "private"
             }
           },
@@ -115,19 +102,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "getnonce is redacted",
+      "description": "getnonce",
       "operations": [
         {
           "name": "runCommand",
@@ -135,12 +117,8 @@
           "arguments": {
             "commandName": "getnonce",
             "command": {
-              "otherField": "public",
               "getnonce": "private"
             }
-          },
-          "expectError": {
-            "isError": true
           }
         }
       ],
@@ -149,19 +127,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "createUser is redacted",
+      "description": "createUser",
       "operations": [
         {
           "name": "runCommand",
@@ -169,7 +142,6 @@
           "arguments": {
             "commandName": "createUser",
             "command": {
-              "otherField": "public",
               "createUser": "private"
             }
           },
@@ -183,19 +155,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "updateUser is redacted",
+      "description": "updateUser",
       "operations": [
         {
           "name": "runCommand",
@@ -203,7 +170,6 @@
           "arguments": {
             "commandName": "updateUser",
             "command": {
-              "otherField": "public",
               "updateUser": "private"
             }
           },
@@ -217,19 +183,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "copydbgetnonce is redacted",
+      "description": "copydbgetnonce",
       "operations": [
         {
           "name": "runCommand",
@@ -237,7 +198,6 @@
           "arguments": {
             "commandName": "copydbgetnonce",
             "command": {
-              "otherField": "public",
               "copydbgetnonce": "private"
             }
           },
@@ -251,19 +211,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "copydbsaslstart is redacted",
+      "description": "copydbsaslstart",
       "operations": [
         {
           "name": "runCommand",
@@ -271,7 +226,6 @@
           "arguments": {
             "commandName": "copydbsaslstart",
             "command": {
-              "otherField": "public",
               "copydbsaslstart": "private"
             }
           },
@@ -285,19 +239,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "copydb is redacted",
+      "description": "copydb",
       "operations": [
         {
           "name": "runCommand",
@@ -305,7 +254,6 @@
           "arguments": {
             "commandName": "copydb",
             "command": {
-              "otherField": "public",
               "copydb": "private"
             }
           },
@@ -319,19 +267,14 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public"
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "hello with speculativeAuth is redacted",
+      "description": "hello with speculativeAuth",
       "operations": [
         {
           "name": "runCommand",
@@ -339,9 +282,8 @@
           "arguments": {
             "commandName": "hello",
             "command": {
-              "otherField": "public",
-              "speculativeAuth": true,
-              "hello": "private"
+              "hello": "private",
+              "speculativeAuthenticate": "foo"
             }
           },
           "expectError": {
@@ -354,9 +296,8 @@
           "arguments": {
             "commandName": "ismaster",
             "command": {
-              "otherField": "public",
-              "speculativeAuth": true,
-              "ismaster": "private"
+              "ismaster": "private",
+              "speculativeAuthenticate": "foo"
             }
           },
           "expectError": {
@@ -369,9 +310,8 @@
           "arguments": {
             "commandName": "isMaster",
             "command": {
-              "otherField": "public",
-              "speculativeAuth": true,
-              "isMaster": "private"
+              "isMaster": "private",
+              "speculativeAuthenticate": "foo"
             }
           },
           "expectError": {
@@ -384,31 +324,13 @@
           "client": "client",
           "events": [
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public",
-                  "speculativeAuth": true
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             },
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public",
-                  "speculativeAuth": true
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             },
             {
-              "commandStartedEvent": {
-                "command": {
-                  "otherField": "public",
-                  "speculativeAuth": true
-                },
-                "databaseName": "command-monitoring-tests"
-              }
+              "commandStartedEvent": {}
             }
           ]
         }
