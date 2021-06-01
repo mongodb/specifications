@@ -745,9 +745,11 @@ For example, instead of waiting for pendingConnectionCount to become less than m
 a Run MUST either proceed with the rest of its duties, e.g., closing available perished connections, or end.
 
 Marking a pool as `ready <#marking-a-connection-pool-as-ready>`__ MUST start a new Run as soon as possible.
-The
+
+The duration of intervals between the end of one Run and the beginning of the next Run is not specified,
+but the
 `Test Format and Runner Specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
-may change the specified restrictions or introduce new ones to facilitate testing.
+may restrict this duration, or introduce other restrictions to facilitate testing.
 
 withConnection
 ^^^^^^^^^^^^^^
