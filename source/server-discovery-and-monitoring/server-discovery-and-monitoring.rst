@@ -610,10 +610,6 @@ are not replica set member states at all.
 A server can transition from any state to any other.  For example, an
 administrator could shut down a secondary and bring up a mongos in its place.
 
-When a server transitions to data-bearing type, the driver MUST
-ensure the server's connection pool is set up (if the driver implements
-connection pooling). See `Connection Pool Management`_ for more information.
-
 .. _RSGhost: #RSGhost-and-RSOther
 
 RSGhost and RSOther
