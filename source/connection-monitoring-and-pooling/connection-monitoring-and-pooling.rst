@@ -417,7 +417,7 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
 
    mark pool as "ready"
    emit PoolReadyEvent
-   resume background thread
+   allow background thread to create connections
 
 Note that resuming the background thread after emitting PoolReadyEvent is of the essence,
 and it must be the case that no observer is able to observe actions of the background thread
@@ -743,8 +743,6 @@ Conceptually, the aforementioned activities are organized into sequential Backgr
 A Run MUST do as much work as readily available and then end instead of waiting for more work.
 For example, instead of waiting for pendingConnectionCount to become less than maxConnecting when satisfying minPoolSize,
 a Run MUST either proceed with the rest of its duties, e.g., closing available perished connections, or end.
-
-Marking a pool as `ready <#marking-a-connection-pool-as-ready>`__ MUST start a new Run as soon as possible.
 
 The duration of intervals between the end of one Run and the beginning of the next Run is not specified,
 but the
