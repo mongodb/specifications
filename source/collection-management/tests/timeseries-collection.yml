@@ -34,10 +34,11 @@ tests:
         object: *database0
         arguments:
           collection: *collection0Name
+          # expireAfterSeconds should be an int64 (as it is stored on the server).
+          expireAfterSeconds: 604800
           timeseries: &timeseries0
             timeField: "time"
             metaField: "meta"
-            expireAfterSeconds: 604800
       - name: assertCollectionExists
         object: testRunner
         arguments:
@@ -53,6 +54,7 @@ tests:
           - commandStartedEvent:
               command:
                 create: *collection0Name
+                expireAfterSeconds: 604800
                 timeseries: *timeseries0
               databaseName: *database0Name
 
@@ -67,6 +69,8 @@ tests:
         object: *database0
         arguments:
           collection: *collection0Name
+          # expireAfterSeconds should be an int64 (as it is stored on the server).
+          expireAfterSeconds: 604800
           timeseries: *timeseries0
       - name: assertCollectionExists
         object: testRunner
@@ -93,6 +97,12 @@ tests:
                   }
                 }
               }
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          sort: { time: 1 }
+        expectResult: *docs
     expectEvents:
       - client: *client0
         events:
@@ -103,13 +113,16 @@ tests:
           - commandStartedEvent:
               command:
                 create: *collection0Name
+                expireAfterSeconds: 604800
                 timeseries: *timeseries0
               databaseName: *database0Name
           - commandStartedEvent:
               command:
                 insert: *collection0Name
                 documents: *docs
-    outcome:
-    - collectionName: *collection0Name
-      databaseName: *database0Name
-      documents: *docs
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: {}
+                sort: { time: 1 }
+              databaseName: *database0Name

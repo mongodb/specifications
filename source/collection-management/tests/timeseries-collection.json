@@ -53,10 +53,10 @@
           "object": "database0",
           "arguments": {
             "collection": "test",
+            "expireAfterSeconds": 604800,
             "timeseries": {
               "timeField": "time",
-              "metaField": "meta",
-              "expireAfterSeconds": 604800
+              "metaField": "meta"
             }
           }
         },
@@ -85,10 +85,10 @@
               "commandStartedEvent": {
                 "command": {
                   "create": "test",
+                  "expireAfterSeconds": 604800,
                   "timeseries": {
                     "timeField": "time",
-                    "metaField": "meta",
-                    "expireAfterSeconds": 604800
+                    "metaField": "meta"
                   }
                 },
                 "databaseName": "ts-tests"
@@ -113,10 +113,10 @@
           "object": "database0",
           "arguments": {
             "collection": "test",
+            "expireAfterSeconds": 604800,
             "timeseries": {
               "timeField": "time",
-              "metaField": "meta",
-              "expireAfterSeconds": 604800
+              "metaField": "meta"
             }
           }
         },
@@ -151,6 +151,34 @@
               }
             ]
           }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "sort": {
+              "time": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "time": {
+                "$date": {
+                  "$numberLong": "1552949630482"
+                }
+              }
+            },
+            {
+              "_id": 1,
+              "time": {
+                "$date": {
+                  "$numberLong": "1552949630483"
+                }
+              }
+            }
+          ]
         }
       ],
       "expectEvents": [
@@ -169,10 +197,10 @@
               "commandStartedEvent": {
                 "command": {
                   "create": "test",
+                  "expireAfterSeconds": 604800,
                   "timeseries": {
                     "timeField": "time",
-                    "metaField": "meta",
-                    "expireAfterSeconds": 604800
+                    "metaField": "meta"
                   }
                 },
                 "databaseName": "ts-tests"
@@ -202,29 +230,17 @@
                   ]
                 }
               }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "test",
-          "databaseName": "ts-tests",
-          "documents": [
-            {
-              "_id": 1,
-              "time": {
-                "$date": {
-                  "$numberLong": "1552949630482"
-                }
-              }
             },
             {
-              "_id": 1,
-              "time": {
-                "$date": {
-                  "$numberLong": "1552949630483"
-                }
+              "commandStartedEvent": {
+                "command": {
+                  "find": "test",
+                  "filter": {},
+                  "sort": {
+                    "time": 1
+                  }
+                },
+                "databaseName": "ts-tests"
               }
             }
           ]
