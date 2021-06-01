@@ -40,17 +40,18 @@ All Unit Tests have some of the following fields:
   both `standard ConnectionPoolOptions <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1>`__
   and the following test-specific options are allowed:
 
-  - ``backgroundThreadIntervalMS``: A desired time interval between the end of a
+  - ``backgroundThreadIntervalMS``: A desired minimal time interval between the end of a
     `Background Thread Run <https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#background-thread>`__
     and the beginning of the next Run. If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option.
     If the option is not specified, an implementation is free to use any value it finds reasonable.
-    An implementation is also free to use an interval smaller than the desired one. Once the specified time interval since the end of a Run passes,
-    an implementation MUST begin the next Run as soon as possible.
+    An implementation SHOULD respect the lower bound restriction,
+    but MAY violate it for example as a result of the Connection Pool paused/ready state changes.
+    Once the specified time interval since the end of a Run passes, an implementation MUST begin the next Run as soon as possible.
 
     Possible values (0 is not allowed):
 
-    - a negative value—never begin a Run;
-    - a positive value—the desired interval between Runs in milliseconds.
+    - A negative value: never begin a Run.
+    - A positive value: the desired interval between Runs in milliseconds.
 
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
