@@ -50,7 +50,7 @@ All Unit Tests have some of the following fields:
     Possible values (0 is not allowed):
 
     - a negative value—never begin a Run;
-    - a positive value—the minimal interval between Runs in milliseconds.
+    - a positive value—the desired interval between Runs in milliseconds.
 
 - ``operations``: A list of operations to perform. All operations support the following fields:
 
