@@ -1,0 +1,418 @@
+{
+  "description": "runCommand",
+  "schemaVersion": "1.0",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "5.0"
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client",
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "database",
+        "client": "client",
+        "databaseName": "command-monitoring-tests"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "authenticate is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "authenticate",
+            "command": {
+              "otherField": "public",
+              "authenticate": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "saslStart is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "saslStart",
+            "command": {
+              "otherField": "public",
+              "saslStart": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "saslContinue is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "saslContinue",
+            "command": {
+              "otherField": "public",
+              "saslContinue": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "getnonce is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "getnonce",
+            "command": {
+              "otherField": "public",
+              "getnonce": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "createUser is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "createUser",
+            "command": {
+              "otherField": "public",
+              "createUser": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "updateUser is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "updateUser",
+            "command": {
+              "otherField": "public",
+              "updateUser": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "copydbgetnonce is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "copydbgetnonce",
+            "command": {
+              "otherField": "public",
+              "copydbgetnonce": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "copydbsaslstart is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "copydbsaslstart",
+            "command": {
+              "otherField": "public",
+              "copydbsaslstart": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "copydb is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "copydb",
+            "command": {
+              "otherField": "public",
+              "copydb": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public"
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "hello with speculativeAuth is redacted",
+      "operations": [
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "hello",
+            "command": {
+              "otherField": "public",
+              "speculativeAuth": true,
+              "hello": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "ismaster",
+            "command": {
+              "otherField": "public",
+              "speculativeAuth": true,
+              "ismaster": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "database",
+          "arguments": {
+            "commandName": "isMaster",
+            "command": {
+              "otherField": "public",
+              "speculativeAuth": true,
+              "isMaster": "private"
+            }
+          },
+          "expectError": {
+            "isError": true
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public",
+                  "speculativeAuth": true
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public",
+                  "speculativeAuth": true
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "otherField": "public",
+                  "speculativeAuth": true
+                },
+                "databaseName": "command-monitoring-tests"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
