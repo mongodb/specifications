@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: April 17, 2020
+:Last Modified: June 1, 2021
 
 .. contents::
 
@@ -306,6 +306,18 @@ Read
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     */
+    let: Optional<Document>;
   }
 
   class CountOptions {
@@ -1960,6 +1972,7 @@ Q: Why are client-side errors raised when options are provided for unacknowledge
 Changes
 =======
 
+* 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
 * 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.
