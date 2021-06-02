@@ -372,7 +372,7 @@ provided. This includes other limiting operations, such as the **$limit**
 aggregation pipeline stage. This differs from existing **OP_QUERY** behavior
 where there is no server-side concept of limit and where the driver **MUST**
 keep track of the limit on the client side and **MUST** send a
-**OP_KILL_CURSORS** wire protocol message when it limit is reached.
+**OP_KILL_CURSORS** wire protocol message when the limit is reached.
 
 When setting the **batchSize** on the **find** and **getMore** commands the
 value of **batchSize** **MUST** be based on the cursor limit calculations
