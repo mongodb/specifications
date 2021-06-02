@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: April 17, 2020
+:Last Modified: June 1, 2021
 
 .. contents::
 
@@ -283,8 +283,8 @@ Read
      * SHOULD always send this value, if the cursor is not a TAILABLE_AWAIT cursor the server will
      * ignore it.
      *
-     * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
-     * @note this option is not set on the `aggregate` command
+     * @note this option is an alias for maxTimeMS, used on getMore commands
+     * @note this option is not set on the aggregate command
      */
     maxAwaitTimeMS: Optional<Int64>;
 
@@ -306,6 +306,18 @@ Read
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     */
+    let: Optional<Document>;
   }
 
   class CountOptions {
@@ -647,14 +659,14 @@ documents or consulting an index. The countDocuments helper counts the
 documents that match the provided query filter using an aggregation pipeline.
 
 The count() helper is deprecated. It has always been implemented using the
-`count` command. The behavior of the count command differs depending on the
+``count`` command. The behavior of the count command differs depending on the
 options passed to it and may or may not provide an accurate count. When
 no query filter is provided the count command provides an estimate using
 collection metadata. Even when provided with a query filter the count
 command can return inaccurate results with a sharded cluster `if orphaned
 documents exist or if a chunk migration is in progress <https://docs.mongodb.com/manual/reference/command/count/#behavior>`_.
 The countDocuments helper avoids these sharded cluster problems entirely
-when used with MongoDB 3.6+, and when using `Primary` read preference with
+when used with MongoDB 3.6+, and when using ``Primary`` read preference with
 older sharded clusters.
 
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -690,8 +702,8 @@ option is maxTimeMS.
 countDocuments
 ~~~~~~~~~~~~~~
 
-The countDocuments function is implemented using the `$group` aggregate
-pipeline stage with `$sum`. Applications must be required to pass a value
+The countDocuments function is implemented using the ``$group`` aggregate
+pipeline stage with ``$sum``. Applications must be required to pass a value
 for filter, but an empty document is supported::
 
   pipeline = [{'$match': filter}]
@@ -703,9 +715,9 @@ for filter, but an empty document is supported::
   }
   pipeline.push({'$group': {'_id': 1, 'n': {'$sum': 1}}})
 
-The count of documents is returned in the 'n' field, similar to the `count`
+The count of documents is returned in the ``n`` field, similar to the ``count``
 command. countDocuments options other than filter, skip, and limit are added as
-options to the `aggregate` command.
+options to the ``aggregate`` command.
 
 In the event this aggregation is run against an empty collection, an empty
 array will be returned with no ``n`` field. Drivers MUST interpret this result
@@ -1960,6 +1972,7 @@ Q: Why are client-side errors raised when options are provided for unacknowledge
 Changes
 =======
 
+* 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
 * 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.
@@ -1973,8 +1986,8 @@ Changes
 * 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages
 * 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
-* 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
-* 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions
+* 2019-02-20: Mark the request field of BulkWriteError as NOT REQUIRED
+* 2018-11-30: Specify maxAwaitTimeMS in AggregateOptions
 * 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
 * 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
 * 2018-07-25: Added upsertedCount to UpdateResult.
