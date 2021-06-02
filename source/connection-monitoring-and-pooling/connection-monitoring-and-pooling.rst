@@ -736,7 +736,7 @@ A Pool SHOULD have a background Thread that is responsible for
 monitoring the state of all available `Connections <#connection>`_. This background
 thread SHOULD
 
--  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize
+-  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
 
 Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
