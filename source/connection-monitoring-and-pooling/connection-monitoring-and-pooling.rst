@@ -419,7 +419,7 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
    emit PoolReadyEvent
    allow background thread to create connections
 
-Note that resuming the background thread after emitting PoolReadyEvent is of the essence,
+Note that the PoolReadyEvent MUST be emitted before the background thread is allowed to resume creating new connections,
 and it must be the case that no observer is able to observe actions of the background thread
 related to creating new connections before observing the PoolReadyEvent event.
 
