@@ -610,10 +610,6 @@ are not replica set member states at all.
 A server can transition from any state to any other.  For example, an
 administrator could shut down a secondary and bring up a mongos in its place.
 
-When a server transitions from Unknown to data-bearing type, the driver MUST
-ensure the server's connection pool is set up (if the driver implements
-connection pooling). See `Connection Pool Management`_ for more information.
-
 .. _RSGhost: #RSGhost-and-RSOther
 
 RSGhost and RSOther
@@ -1703,8 +1699,8 @@ must do no I/O::
         newTopologyDescription.servers[address] = server
 
         # for drivers that implement CMAP, mark the connection pool as ready after
-        # a successful check.
-        if server.type != Unknown:
+        # a successful check on a data bearing server.
+        if server.type in (Mongos, RSPrimary, RSSecondary, Standalone, LoadBalanced):
             pool.ready()
 
         take any additional actions,
