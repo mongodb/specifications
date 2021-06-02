@@ -9,7 +9,7 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-05-26
+:Last Modified: 2021-06-02
 :Version: 1.5.1
 
 .. contents::
@@ -739,7 +739,7 @@ thread SHOULD
 -  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize
 -  Remove and close perished available `Connections <#connection>`_.
 
-Conceptually, the aforementioned activities are organized into sequential Background Thread Runs of unspecified duration.
+Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
 A Run MUST do as much work as readily available and then end instead of waiting for more work.
 For example, instead of waiting for pendingConnectionCount to become less than maxConnecting when satisfying minPoolSize,
 a Run MUST either proceed with the rest of its duties, e.g., closing available perished connections, or end.
@@ -1122,7 +1122,7 @@ Change log
 
 :2021-4-12: Adding in behaviour for load balancer mode.
 
-:2021-05-26: Formalize the behavior of a `Background Thread <#background-thread>`__.
+:2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
 
 .. Section for links.
 
