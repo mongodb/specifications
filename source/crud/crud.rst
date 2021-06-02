@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: May 27, 2021
+:Last Modified: June 2, 2021
 
 .. contents::
 
@@ -766,9 +766,9 @@ The server supports several collection-less aggregation source stages like ``$cu
 Write
 -----
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Insert, Update, Delete, and Bulk Writes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Insert, Update, Replace, Delete, and Bulk Writes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: typescript
 
@@ -1501,7 +1501,7 @@ WriteConcernError
 Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
 
 - Set ``code`` to ``writeConcernError.code``.
-- Set ``message`` to ``writeConcernError.errmsg``.
+- Set ``message`` to ``writeConcernError.errmsg`` if available.
 - Set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
 
 See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
