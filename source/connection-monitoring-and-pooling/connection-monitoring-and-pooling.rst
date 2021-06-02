@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-12
-:Version: 1.5.0
+:Last Modified: 2021-06-02
+:Version: 1.5.1
 
 .. contents::
 
@@ -417,9 +417,9 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
 
    mark pool as "ready"
    emit PoolReadyEvent
-   resume background thread
+   allow background thread to create connections
 
-Note that resuming the background thread after emitting PoolReadyEvent is of the essence,
+Note that the PoolReadyEvent MUST be emitted before the background thread is allowed to resume creating new connections,
 and it must be the case that no observer is able to observe actions of the background thread
 related to creating new connections before observing the PoolReadyEvent event.
 
@@ -736,11 +736,18 @@ A Pool SHOULD have a background Thread that is responsible for
 monitoring the state of all available `Connections <#connection>`_. This background
 thread SHOULD
 
--  Populate `Connections <#connection>`_ to ensure that the pool always satisfies **minPoolSize**
-    - The background thread SHOULD just go back to sleep instead of waiting for
-      pendingConnectionCount to become less than maxConnecting when satisfying
-      minPoolSize.
+-  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
+
+Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
+A Run MUST do as much work as readily available and then end instead of waiting for more work.
+For example, instead of waiting for pendingConnectionCount to become less than maxConnecting when satisfying minPoolSize,
+a Run MUST either proceed with the rest of its duties, e.g., closing available perished connections, or end.
+
+The duration of intervals between the end of one Run and the beginning of the next Run is not specified,
+but the
+`Test Format and Runner Specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
+may restrict this duration, or introduce other restrictions to facilitate testing.
 
 withConnection
 ^^^^^^^^^^^^^^
@@ -1114,6 +1121,8 @@ Change log
              ConnectionCheckOutFailedEvent
 
 :2021-4-12: Adding in behaviour for load balancer mode.
+
+:2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
 
 .. Section for links.
 
