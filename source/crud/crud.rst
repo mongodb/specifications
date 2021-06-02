@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: June 1, 2021
+:Last Modified: June 2, 2021
 
 .. contents::
 
@@ -766,9 +766,9 @@ The server supports several collection-less aggregation source stages like ``$cu
 Write
 -----
 
-~~~~~
-Basic
-~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Insert, Update, Replace, Delete, and Bulk Writes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: typescript
 
@@ -1295,8 +1295,8 @@ Bulk Write Models
   }
 
 
-Results
-~~~~~~~
+Write Results
+~~~~~~~~~~~~~
 
 The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value.
 
@@ -1450,21 +1450,30 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 
   }
 
-
+~~~~~~~~~~~~~~
 Error Handling
 ~~~~~~~~~~~~~~
 
-Defined below are error and exception types that should be reported from the various write methods. Since error types across languages would be impossible to reconcile, the below definitions represent the fields and names for the information that should be present. Structure isn't important as long as the information is available.
+Defined below are error and exception types that should be reported from the
+various write methods. Since error types across languages would be impossible to
+reconcile, the below definitions represent the fields and names for the
+information that should be present. Structure isn't important as long as the
+information is available.
 
-Drivers SHOULD report errors however they report other server errors: by raising an exception, returning "false", or another idiom that is consistent with other server errors.
+Drivers SHOULD report errors however they report other server errors: by raising
+an exception, returning "false" and populating an error struct, or another idiom
+that is consistent with other server errors.
 
+WriteConcernError
+~~~~~~~~~~~~~~~~~
 
 .. code:: typescript
 
   class WriteConcernError {
 
     /**
-     * An integer value identifying the write concern error.
+     * An integer value identifying the write concern error. Corresponds to the
+     * "writeConcernError.code" field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
@@ -1472,13 +1481,16 @@ Drivers SHOULD report errors however they report other server errors: by raising
 
     /**
      * A document identifying the write concern setting related to the error.
+     * Corresponds to the "writeConcernError.errInfo" field in the command
+     * response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
     details: Document;
 
     /**
-     * A description of the error.
+     * A description of the error. Corresponds to the
+     * "writeConcernError.errmsg" field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
@@ -1488,25 +1500,58 @@ Drivers SHOULD report errors however they report other server errors: by raising
 
 Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
 
-- set ``code`` to ``writeConcernError.code``.
-- set ``message`` to ``writeConcernError.errmsg`` if available.
-- set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
+- Set ``code`` to ``writeConcernError.code``.
+- Set ``message`` to ``writeConcernError.errmsg`` if available.
+- Set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
 
-See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#Errors>`_ for examples of how a server represents write concern errors in replies.
+See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
+for examples of how a server represents write concern errors in replies.
+
+WriteError
+~~~~~~~~~~
+
+Write errors for ``insert``, ``update``, and ``delete`` commands are reported as
+objects within a ``writeErrors`` array field in the command response. Drivers
+MUST construct a ``WriteError`` from a server reply as follows (where
+``writeErrors[]`` refers to a particular element in the array):
+
+- Set ``code`` to ``writeErrors[].code``.
+- Set ``message`` to ``writeErrors[].errmsg`` if available.
+- Set ``details`` to ``writeErrors[].errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
+
+For single-statement writes (i.e. ``insertOne``, ``updateOne``, ``updateMany``,
+``replaceOne``, ``deleteOne``, and ``deleteMany``), a single write error may be
+reported in the array and ``writeErrors[0].index`` will be zero.
+
+For multi-statement writes (i.e. ``insertMany`` and ``bulkWrite``), potentially
+many write errors may be reported in the array and the ``index`` property will
+be set accordingly. Since the reported ``index`` is specific to each command,
+drivers MUST adjust the index accordingly for ``BulkWriteError.index``.
 
 .. code:: typescript
 
   class WriteError {
 
     /**
-     * An integer value identifying the error.
+     * An integer value identifying the write error. Corresponds to the
+     * "writeErrors[].code" field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
     code: Int32;
 
     /**
-     * A description of the error.
+     * A document providing more information about the write error (e.g. details
+     * pertaining to document validation). Corresponds to the
+     * "writeErrors[].errInfo" field in the command response.
+     *
+     * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
+     */
+    details: Document;
+
+    /**
+     * A description of the error. Corresponds to the "writeErrors[].errmsg"
+     * field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
@@ -1517,7 +1562,10 @@ See the `Read/Write Concern specification </source/read-write-concern/read-write
   class BulkWriteError : WriteError {
 
     /**
-     * The index of the request that errored.
+     * The index of the request that errored. This is derived in part from the
+     * "writeErrors[].index" field in the command response; however, drivers
+     * MUST adjust the index accordingly for bulk writes that execute multiple
+     * writes commands.
      */
     index: Int32;
 
@@ -1972,6 +2020,7 @@ Q: Why are client-side errors raised when options are provided for unacknowledge
 Changes
 =======
 
+* 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
