@@ -2020,7 +2020,7 @@ Q: Why are client-side errors raised when options are provided for unacknowledge
 Changes
 =======
 
-* 2021-05-27: Introduce WriteError.details and clarify how WriteError construction
+* 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
