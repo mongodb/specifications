@@ -35,7 +35,7 @@
         {
             "description": "Sub-document resembles DBRef but $id is missing",
             "canonical_bson": "26000000036462726566001a0000000224726566000b000000636f6c6c656374696f6e000000",
-            "canonical_extjson": "{\"dbref\": {\"$ref\": collection\"}}"
+            "canonical_extjson": "{\"dbref\": {\"$ref\": \"collection\"}}"
         },
         {
             "description": "Sub-document resembles DBRef but $ref is not a string",
