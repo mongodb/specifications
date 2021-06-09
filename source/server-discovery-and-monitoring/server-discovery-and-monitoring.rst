@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.31
-:Last Modified: 2021-05-03
+:Version: 2.32
+:Last Modified: 2021-06-09
 
 .. contents::
 
@@ -1220,8 +1220,11 @@ Connection Pool Management
 ''''''''''''''''''''''''''
 
 For drivers that support connection pools, after a server check is
-complete, if the server is determined to be `data-bearing
-<https://github.com/mongodb/specifications/blob/masterserver-discovery-and-monitoring.rst#data-bearing-server-type>`_
+completed successfully, if the server is determined to be
+`data-bearing <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_
+or a
+`direct connection <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#general-requirements>`__
+to the server is requested,
 and does not already have a connection pool, the driver MUST create
 the connection pool for the server. Additionally, if a driver
 implements a CMAP compliant connection pool, the server's pool (even
@@ -1698,9 +1701,9 @@ must do no I/O::
         address = server.address
         newTopologyDescription.servers[address] = server
 
-        # for drivers that implement CMAP, mark the connection pool as ready after
-        # a successful check on a data bearing server.
-        if server.type in (Mongos, RSPrimary, RSSecondary, Standalone, LoadBalanced):
+        # for drivers that implement CMAP, mark the connection pool as ready after a successful check
+        if (server.type in (Mongos, RSPrimary, RSSecondary, Standalone, LoadBalanced))
+                or (server.type != Unknown and directConnection):
             pool.ready()
 
         take any additional actions,
@@ -2505,6 +2508,8 @@ mark the server Unknown and clear the pool.
 2021-4-12: Adding in behaviour for load balancer mode.
 
 2021-05-03: Require parsing "isWritablePrimary" field in responses.
+
+2021-06-09: Connection pools must be created and eventually marked ready for any server if a direct connection is used.
 
 .. Section for links.
 
