@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.4.1
+:Spec Version: 1.5.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -543,10 +543,16 @@ The structure of this object is as follows:
     ``configureFailPoint`` and any commands containing sensitive information
     (per the
     `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
-    spec).
+    spec) unless ``observeSensitiveCommands`` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
+
+  - ``observeSensitiveCommands``: Optional boolean. If true, events associated
+    with sensitive commands (per the
+    `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+    spec) will be observed for this client. If false or not specified, events for
+    commands containing sensitive information MUST be ignored.
 
   .. _entity_client_storeEventsAsEntities:
 
@@ -3211,6 +3217,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-06-09: Added an ``observeSensitiveCommands`` property to the ``client``
+             entity type.
 
 :2021-05-17: Ensure old JSON schema files remain in place
 

@@ -1,6 +1,6 @@
 {
   "description": "redacted-commands",
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.5",
   "runOnRequirements": [
     {
       "minServerVersion": "5.0"
@@ -12,7 +12,8 @@
         "id": "client",
         "observeEvents": [
           "commandStartedEvent"
-        ]
+        ],
+        "observeSensitiveCommands": true
       }
     },
     {
