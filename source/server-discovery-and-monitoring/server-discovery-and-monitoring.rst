@@ -1703,7 +1703,7 @@ must do no I/O::
 
         # for drivers that implement CMAP, mark the connection pool as ready after a successful check
         if (server.type in (Mongos, RSPrimary, RSSecondary, Standalone, LoadBalanced))
-                or (server.type != Unknown and directConnection):
+                or (server.type != Unknown and newTopologyDescription.type == Single):
             pool.ready()
 
         take any additional actions,
