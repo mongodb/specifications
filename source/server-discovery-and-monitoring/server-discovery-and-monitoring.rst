@@ -811,12 +811,6 @@ MUST be replaced with the new ServerDescription.
 .. _is compatible:
 
 
-TopologyType LoadBalanced
-`````````````````````````
-
-See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-and-monitoring>`__ for details.
-
-
 Checking wire protocol compatibility
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -857,6 +851,12 @@ A client MAY allow the user to supply a setName with an initial TopologyType
 of Single. In this case, if the ServerDescription's setName is null or wrong,
 the ServerDescription MUST be replaced with a default ServerDescription of
 type Unknown.
+
+
+TopologyType LoadBalanced
+`````````````````````````
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-and-monitoring>`__ for details.
 
 Other TopologyTypes
 ```````````````````
