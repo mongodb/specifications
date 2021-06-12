@@ -211,6 +211,11 @@ invoked, either explicitly or via an implicit resource cleanup mechanism, the dr
 MUST use the same connection to execute a :code:`killCursors` command if necessary
 and then check the connection back into the pool regardless of the result.
 
+For multi-threaded drivers, cursors with pinned connections MUST either document to the user
+that calling :code:`next()` and :code:`close()` operations on the cursor concurrently
+is not permitted, or explicitly prevent cursors from executing those operations
+simultaneously.
+
 If a :code:`getMore` fails with a network error, drivers MUST leave the connection pinned
 to the cursor. When the cursor's :code:`close` method is invoked, drivers MUST NOT execute
 a :code:`killCursors` command because the pinned connection is no longer valid and MUST
