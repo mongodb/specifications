@@ -272,7 +272,7 @@ Enums
 TopologyType
 ~~~~~~~~~~~~
 
-Single, ReplicaSetNoPrimary, ReplicaSetWithPrimary, Sharded, or Unknown.
+Single, ReplicaSetNoPrimary, ReplicaSetWithPrimary, Sharded, LoadBalanced, or Unknown.
 
 See `updating the TopologyDescription`_.
 
