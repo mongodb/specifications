@@ -384,35 +384,19 @@ reached (e.g. when running **find** with **limit**), and the reply document did
 not include a cursor ID (i.e. ``cursor.id`` was ``0``). Starting with 5.0, all
 cursor-producing operations will return a cursor ID if the end of the batch
 being returned lines up with the limit on the cursor. In this case, drivers
-**MUST** ensure the cursor is closed on the server. To do this, drivers **MUST**
-use one of the options provided below:
-
-* send an additional **getMore** command with **batchSize** 1. Since the limit
-  has been reached, the **getMore** response is expected to contain neither a
-  cursor ID, nor any elements in the batch. If results are returned in the
-  **getMore** call, these **MUST** be discarded. If the result contains a cursor
-  ID, the driver **MUST NOT** attempt another **getMore**, but **MUST** use
-  **killCursors** as prescribed below.
-
-* send a **killCursors** command to close the open cursor.
+**MUST** ensure the cursor is closed on the server, either by exhausting the
+cursor or by using **killCursors** to kill it.
 
 In the following example the **limit** is set to **4** and the **batchSize** is
-set to **3** the following commands are executed.
+set to **3** the following commands are executed. The last command is either
+**killCursors** or **getMore**, depending on how a driver ensures the cursor is
+closed on 5.0:
 
 .. code:: javascript
 
     {find: ..., batchSize:3, limit:4}
     {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0
-    {killCursors: ...}          // Kills server-side cursor. Required starting with 5.0
-
-For drivers that choose to use **getMore** to exhaust the cursor, the following
-commands would be executed.
-
-.. code:: javascript
-
-    {find: ..., batchSize:3, limit:4}
-    {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0
-    {getMore: ..., batchSize:1} // Returns no documents, no cursor ID and closes the cursor. Required starting with 5.0
+    {...}          // Kills server-side cursor. Necessary on
 
 .. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
