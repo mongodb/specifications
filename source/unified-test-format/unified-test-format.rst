@@ -414,6 +414,8 @@ The structure of this object is as follows:
   treat the comparison as not equal and skip the test. This includes errors that
   occur when fetching a single parameter using ``getParameter``.
 
+.. _runOnRequirement_auth:
+
 - ``auth``: Optional boolean. If true, the tests MUST only run if authentication
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
@@ -553,8 +555,9 @@ The structure of this object is as follows:
     `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
     spec) will be observed for this client. If false or not specified, events for
     commands containing sensitive information MUST be ignored.
-    ``runOnRequirements.auth`` MUST be false when this property is true. Test
-    runners MUST fail if ``observeSensitiveCommands`` is true and
+    Authentication SHOULD be disabled when this property is true, i.e.
+    `auth <runOnRequirement_auth_>`_ should be false for each ``runOnRequirement``.
+    Test runners MUST fail if ``observeSensitiveCommands`` is true and
     authentication is enabled. See `rationale_observeSensitiveCommands`_.
 
   .. _entity_client_storeEventsAsEntities:
@@ -3112,7 +3115,6 @@ runner implementation.
 
 .. _rationale_observeSensitiveCommands:
 
-------------------------------------------------------------------------------
 Why can't ``observeSensitiveCommands`` be true when authentication is enabled?
 ------------------------------------------------------------------------------
 
