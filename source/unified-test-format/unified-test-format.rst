@@ -3,7 +3,7 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.4.1
+:Spec Version: 1.5.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
@@ -414,6 +414,8 @@ The structure of this object is as follows:
   treat the comparison as not equal and skip the test. This includes errors that
   occur when fetching a single parameter using ``getParameter``.
 
+.. _runOnRequirement_auth:
+
 - ``auth``: Optional boolean. If true, the tests MUST only run if authentication
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
@@ -543,10 +545,20 @@ The structure of this object is as follows:
     ``configureFailPoint`` and any commands containing sensitive information
     (per the
     `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
-    spec).
+    spec) unless ``observeSensitiveCommands`` is true.
 
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
+
+  - ``observeSensitiveCommands``: Optional boolean. If true, events associated
+    with sensitive commands (per the
+    `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
+    spec) will be observed for this client. If false or not specified, events for
+    commands containing sensitive information MUST be ignored.
+    Authentication SHOULD be disabled when this property is true, i.e.
+    `auth <runOnRequirement_auth_>`_ should be false for each ``runOnRequirement``.
+    Test runners MUST fail if ``observeSensitiveCommands`` is true and
+    authentication is enabled. See `rationale_observeSensitiveCommands`_.
 
   .. _entity_client_storeEventsAsEntities:
 
@@ -3101,6 +3113,22 @@ The specification does prefer "MUST" in other contexts, such as discussing parts
 of the test file format that *are* enforceable by the JSON schema or the test
 runner implementation.
 
+.. _rationale_observeSensitiveCommands:
+
+Why can't ``observeSensitiveCommands`` be true when authentication is enabled?
+------------------------------------------------------------------------------
+
+When running against authentication-enabled clusters, the events observed by a
+client will always begin with auth-related commands (e.g. ``authenticate``,
+``saslStart``, ``saslContinue``) because the MongoClient will need to
+authenticate a connection before issuing the first command in the test
+specification. Since the exact form of the authentication command event will
+depend on whether authentication is enabled, as well as, the auth mechanism in
+use, it is not possible to anticipate the command monitoring output and perform
+the appropriate assertions. Consequently, we have restricted use of this property
+to situations where authentication is disabled on the server. This allows
+tests to explicitly test sensitive commands via the ``runCommand`` helper.
+
 
 Breaking Changes
 ================
@@ -3211,6 +3239,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-06-09: Added an ``observeSensitiveCommands`` property to the ``client``
+             entity type.
 
 :2021-05-17: Ensure old JSON schema files remain in place
 
