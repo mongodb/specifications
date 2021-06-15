@@ -553,6 +553,9 @@ The structure of this object is as follows:
     `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
     spec) will be observed for this client. If false or not specified, events for
     commands containing sensitive information MUST be ignored.
+    ``runOnRequirements.auth`` MUST be false when this property is true. Test
+    runners MUST fail if ``observeSensitiveCommands`` is true and
+    authentication is enabled. See `rationale_observeSensitiveCommands`_
 
   .. _entity_client_storeEventsAsEntities:
 
@@ -3106,6 +3109,23 @@ implementation (e.g. defining entities out of order to trigger runtime errors).
 The specification does prefer "MUST" in other contexts, such as discussing parts
 of the test file format that *are* enforceable by the JSON schema or the test
 runner implementation.
+
+.. _rationale_observeSensitiveCommands:
+
+------------------------------------------------------------------------------
+Why can't ``observeSensitiveCommands`` be true when authentication is enabled?
+------------------------------------------------------------------------------
+
+When running against authentication-enabled clusters, the events observed by a
+client will always begin with auth-related commands (e.g. ``authenticate``,
+``saslStart``, ``saslContinue``) because the MongoClient will need to
+authenticate a connection before issuing the first command in the test
+specification. Since the exact form of the authentication command event will
+depend on whether authentication is enabled, as well as, the auth mechanism in
+use, it is not possible to anticipate the command monitoring output and perform
+the appropriate assertions. Consequently, we have restricted use of this property
+to situations where authentication is disabled on the server. This allows
+tests to explicitly test sensitive commands via the ``runCommand`` helper.
 
 
 Breaking Changes
