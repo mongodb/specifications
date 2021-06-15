@@ -557,8 +557,7 @@ The structure of this object is as follows:
     commands containing sensitive information MUST be ignored.
     Authentication SHOULD be disabled when this property is true, i.e.
     `auth <runOnRequirement_auth_>`_ should be false for each ``runOnRequirement``.
-    Test runners MUST fail if ``observeSensitiveCommands`` is true and
-    authentication is enabled. See `rationale_observeSensitiveCommands`_.
+    See `rationale_observeSensitiveCommands`_.
 
   .. _entity_client_storeEventsAsEntities:
 
