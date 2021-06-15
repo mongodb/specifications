@@ -3,7 +3,8 @@
   "schemaVersion": "1.5",
   "runOnRequirements": [
     {
-      "minServerVersion": "5.0"
+      "minServerVersion": "5.0",
+      "auth": false
     }
   ],
   "createEntities": [
