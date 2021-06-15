@@ -1,0 +1,706 @@
+{
+  "description": "snapshot-sessions",
+  "schemaVersion": "1.0",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "4.9.0",
+      "topologies": [
+        "sharded-replicaset"
+      ]
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "database0"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection0",
+        "database": "database0",
+        "collectionName": "collection0",
+        "collectionOptions": {
+          "readPreference": {
+            "mode": "secondary"
+          }
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_find0",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_find1",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_distinct0",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_distinct1",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_aggregate0",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_aggregate1",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_mixed",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_first_read",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true
+        }
+      }
+    },
+    {
+      "session": {
+        "id": "session_invalid_snapshot",
+        "client": "client0",
+        "sessionOptions": {
+          "isSnapshot": true,
+          "snapshotClusterTime": 0
+        }
+      }
+    }
+  ],
+  "initialData": [
+    {
+      "collectionName": "collection0",
+      "databaseName": "database0",
+      "documents": [
+        {
+          "_id": 1,
+          "x": 11
+        },
+        {
+          "_id": 2,
+          "x": 11
+        },
+        {
+          "_id": 3,
+          "x": 11
+        },
+        {
+          "_id": 4,
+          "x": 11
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "Find operation with snapshot",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "session": "session_find0",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 1,
+            "x": 12
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "session": "session_find1",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 12
+            }
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 1,
+            "x": 13
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "session": "session_find0",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "session": "session_find1",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 12
+            }
+          ]
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 13
+            }
+          ]
+        }
+      ],
+      "outcome": [
+      ]
+    },
+    {
+      "description": "Distinct operations with snapshot",
+      "operations": [
+        {
+          "name": "distinct",
+          "object": "collection0",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            },
+            "session": "session_distinct0"
+          },
+          "expectResult": [
+            11
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 2
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 2,
+            "x": 12
+          }
+        },
+        {
+          "name": "distinct",
+          "object": "collection0",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            },
+            "session": "session_distinct1"
+          },
+          "expectResult": [
+            11,
+            12
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 2
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 2,
+            "x": 13
+          }
+        },
+        {
+          "name": "distinct",
+          "object": "collection0",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            }
+          },
+          "expectResult": [
+            11,
+            13
+          ]
+        },
+        {
+          "name": "distinct",
+          "object": "collection0",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            },
+            "session": "session_distinct0"
+          },
+          "expectResult": [
+            11
+          ]
+        },
+        {
+          "name": "distinct",
+          "object": "collection0",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 1
+              }
+            },
+            "session": "session_distinct1"
+          },
+          "expectResult": [
+            11,
+            12
+          ]
+        }
+      ],
+      "outcome": [
+      ]
+    },
+    {
+      "description": "Aggregate operation with snapshot",
+      "operations": [
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": 3
+                }
+              }
+            ],
+            "session": "session_aggregate0"
+          },
+          "expectResult": [
+            {
+              "_id": 3,
+              "x": 11
+            }
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 3
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 3,
+            "x": 12
+          }
+        },
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": 3
+                }
+              }
+            ],
+            "session": "session_aggregate1"
+          },
+          "expectResult": [
+            {
+              "_id": 3,
+              "x": 12
+            }
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 3
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 3,
+            "x": 13
+          }
+        },
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": 3
+                }
+              }
+            ]
+          },
+          "expectResult": [
+            {
+              "_id": 3,
+              "x": 13
+            }
+          ]
+        },
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": 3
+                }
+              }
+            ],
+            "session": "session_aggregate0"
+          },
+          "expectResult": [
+            {
+              "_id": 3,
+              "x": 11
+            }
+          ]
+        },
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": 3
+                }
+              }
+            ],
+            "session": "session_aggregate1"
+          },
+          "expectResult": [
+            {
+              "_id": 3,
+              "x": 12
+            }
+          ]
+        }
+      ],
+      "outcome": [
+      ]
+    },
+    {
+      "description": "Mixed operations with snapshot",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "session": "session_mixed",
+            "filter": {
+              "_id": 4
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 4,
+              "x": 11
+            }
+          ]
+        },
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 4
+            },
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            },
+            "returnDocument": "After"
+          },
+          "expectResult": {
+            "_id": 4,
+            "x": 12
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 4
+            }
+          },
+          "expectResult": [
+            {
+              "_id": 4,
+              "x": 12
+            }
+          ]
+        },
+        {
+          "name": "aggregate",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": 4
+                }
+              }
+            ],
+            "session": "session_mixed"
+          },
+          "expectResult": [
+            {
+              "_id": 4,
+              "x": 11
+            }
+          ]
+        },
+        {
+          "name": "distinct",
+          "object": "collection0",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {
+              "_id": {
+                "$gt": 3
+              }
+            },
+            "session": "session_mixed"
+          },
+          "expectResult": [
+            11
+          ]
+        }
+      ],
+      "outcome": [
+      ]
+    },
+    {
+      "description": "Snapshot error is not retried",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 3
+            },
+            "session": "session_invalid_snapshot"
+          },
+          "expectError": {
+            "errorCode": 72
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection0",
+                  "filter": {
+                    "_id": 3
+                  }
+                },
+                "commandName": "find",
+                "databaseName": "database0"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "First snapshot read does send atClusterTime",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "session": "session_first_read"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "collection0",
+                  "readConcern": {
+                    "level": "snapshot"
+                  }
+                },
+                "commandName": "find",
+                "databaseName": "database0"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

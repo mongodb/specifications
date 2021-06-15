@@ -1,5 +1,5 @@
 =======================
-Connection String Tests
+Read and Write Concern Tests
 =======================
 
 The YAML and JSON files in this directory tree are platform-independent tests
