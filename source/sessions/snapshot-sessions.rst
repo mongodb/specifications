@@ -64,8 +64,8 @@ Snapshot reads
     Reads with readconcern level ``snapshot`` that occur outside of transactions on
     both the primary and secondary nodes, including in sharded clusters.
 
-Snapshot cluster time
-    Snapshot cluster time, representing timestamp of the first read (find/aggregate operations) in the session.
+Snapshot timestamp
+    Snapshot timestamp, representing timestamp of the first read (find/aggregate operations) in the session.
     The server creates a cursor in response to a snapshot read command and 
     reports ``atClusterTime`` field in the cursor response. ``atClusterTime`` field represents the timestamp
     of the read and is guaranteed to be majority committed.
@@ -146,17 +146,17 @@ ClientSession changes
 .. code:: typescript
 
     interface ClientSession {
-        Optional<BsonTimestamp> snapshotClusterTime;
+        Optional<BsonTimestamp> snapshotTimestamp;
 
         // other members as defined in other specs
     }
 
 Each new member is documented below.
 
-snapshotClusterTime
+snapshotTimestamp
 -------------------
 
-This property returns the cluster time of the first find/aggregate operation performed
+This property returns the timestamp the first find/aggregate/distinct operation performed
 using this session. If no operations that support the snapshot read concern have been performed
 using this session the value will be null.
 
@@ -181,7 +181,7 @@ session will share the same snapshot.
 ReadConcern changes
 ===================
 
-``shapshot`` added to `ReadConcernLevel enumeration <../read-write-concern/read-write-concern.rst#read-concern>`_.`.
+``snapshot`` added to `ReadConcernLevel enumeration <../read-write-concern/read-write-concern.rst#read-concern>`_.`.
 
 Server Commands
 ===============
@@ -190,10 +190,10 @@ There are no new server commands related to snapshot reads. Instead,
 snapshot reads are implemented by:
 
 1. Saving the ``atClusterTime`` returned by 5.0+ servers for the first find/aggregate operation in a
-   property ``snapshotClusterTime`` of the ``ClientSession`` object. Drivers MUST save the ``atClusterTime``
+   property ``snapshotTimestamp`` of the ``ClientSession`` object. Drivers MUST save the ``atClusterTime``
    in the ``ClientSession`` object.
 
-2. Passing that ``snapshotClusterTime`` in the ``atClusterTime`` field of the ``readConcern`` field
+2. Passing that ``snapshotTimestamp`` in the ``atClusterTime`` field of the ``readConcern`` field
    for subsequent snapshot read operations (for find/aggregate/distinct commands).
 
 Server Command Responses
@@ -225,7 +225,7 @@ Snapshot read commands
 ======================
 
 For snapshot reads the driver MUST first obtain ``atClusterTime`` from cursor response of find/aggregate command,
-by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotClusterTime`` in 
+by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotTimestamp`` in 
 ``ClientSession`` object.
 
 .. code:: typescript
@@ -239,7 +239,7 @@ by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``s
         }
     }
 
-For subsequent reads from same snapshot driver MUST send the ``snapshotClusterTime`` saved in
+For subsequent reads from same snapshot driver MUST send the ``snapshotTimestamp`` saved in
 the ``ClientSession`` as the value of the ``atClusterTime`` field of the
 ``readConcern`` with ``snapshot`` level field:
 
@@ -297,11 +297,11 @@ The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured 
       | `readBeforeUpdateSession2` to `readAfterUpdateSession2`.
 
 3.  | Snapshot reads that fail with ``SnapshotError`` are not retried.
-    | This test is OPTIONAL as it requires setting ``session.snapshotClusterTime``
+    | This test is OPTIONAL as it requires setting ``session.snapshotTimestamp``
     | which is not part of the public API
 
     * ``session = client.startSession(isSnapshot = true)``
-    * ``session.snapshotClusterTime = 0``
+    * ``session.snapshotTimestamp = 0``
     * ``collection.anyReadOrOperation(session1, ...)``
     * Assert that only single read command was issued.
 

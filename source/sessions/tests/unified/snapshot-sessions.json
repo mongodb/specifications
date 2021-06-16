@@ -115,7 +115,7 @@
         "client": "client0",
         "sessionOptions": {
           "isSnapshot": true,
-          "snapshotClusterTime": 0
+          "snapshotTimestamp": 0
         }
       }
     }
