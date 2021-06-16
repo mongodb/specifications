@@ -365,7 +365,7 @@ More detailed information about the interaction of the **secondaryOk** with **OP
 Behavior of Limit, skip and batchSize
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The new **find** command has different semantics to the existing 3.0 and earlier
+The **find** command has different semantics to the existing 3.0 and earlier
 **OP_QUERY** wire protocol message. The **limit** field is a hard limit on the
 total number of documents returned by the cursor no matter what **batchSize** is
 provided. This includes other limiting operations, such as the **$limit**
@@ -395,8 +395,8 @@ closed on 5.0:
 .. code:: javascript
 
     {find: ..., batchSize:3, limit:4}
-    {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0
-    {...}          // Kills server-side cursor. Necessary on
+    {getMore: ..., batchSize:1} // Returns remaining items but leaves cursor open on 5.0+
+    {...}          // Kills server-side cursor. Necessary on 5.0+
 
 .. _CRUD: https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#id16
 
