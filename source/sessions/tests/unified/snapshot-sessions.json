@@ -5,6 +5,7 @@
     {
       "minServerVersion": "5.0",
       "topologies": [
+        "replicaset",
         "sharded-replicaset"
       ]
     }
