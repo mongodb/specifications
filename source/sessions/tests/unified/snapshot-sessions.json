@@ -30,17 +30,12 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "collection0",
-        "collectionOptions": {
-          "readPreference": {
-            "mode": "secondary"
-          }
-        }
+        "collectionName": "collection0"
       }
     },
     {
       "session": {
-        "id": "session_find0",
+        "id": "session0",
         "client": "client0",
         "sessionOptions": {
           "isSnapshot": true
@@ -49,74 +44,10 @@
     },
     {
       "session": {
-        "id": "session_find1",
+        "id": "session1",
         "client": "client0",
         "sessionOptions": {
           "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_distinct0",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_distinct1",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_aggregate0",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_aggregate1",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_mixed",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_first_read",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true
-        }
-      }
-    },
-    {
-      "session": {
-        "id": "session_invalid_snapshot",
-        "client": "client0",
-        "sessionOptions": {
-          "isSnapshot": true,
-          "snapshotTimestamp": 0
         }
       }
     }
@@ -133,14 +64,6 @@
         {
           "_id": 2,
           "x": 11
-        },
-        {
-          "_id": 3,
-          "x": 11
-        },
-        {
-          "_id": 4,
-          "x": 11
         }
       ]
     }
@@ -153,7 +76,7 @@
           "name": "find",
           "object": "collection0",
           "arguments": {
-            "session": "session_find0",
+            "session": "session0",
             "filter": {
               "_id": 1
             }
@@ -188,7 +111,7 @@
           "name": "find",
           "object": "collection0",
           "arguments": {
-            "session": "session_find1",
+            "session": "session1",
             "filter": {
               "_id": 1
             }
@@ -223,7 +146,7 @@
           "name": "find",
           "object": "collection0",
           "arguments": {
-            "session": "session_find0",
+            "session": "session0",
             "filter": {
               "_id": 1
             }
@@ -239,7 +162,7 @@
           "name": "find",
           "object": "collection0",
           "arguments": {
-            "session": "session_find1",
+            "session": "session1",
             "filter": {
               "_id": 1
             }
@@ -269,19 +192,15 @@
       ]
     },
     {
-      "description": "Distinct operations with snapshot",
+      "description": "Distinct operation with snapshot",
       "operations": [
         {
           "name": "distinct",
           "object": "collection0",
           "arguments": {
             "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 1
-              }
-            },
-            "session": "session_distinct0"
+            "filter": {},
+            "session": "session0"
           },
           "expectResult": [
             11
@@ -311,12 +230,8 @@
           "object": "collection0",
           "arguments": {
             "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 1
-              }
-            },
-            "session": "session_distinct1"
+            "filter": {},
+            "session": "session1"
           },
           "expectResult": [
             11,
@@ -347,11 +262,7 @@
           "object": "collection0",
           "arguments": {
             "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 1
-              }
-            }
+            "filter": {}
           },
           "expectResult": [
             11,
@@ -363,12 +274,8 @@
           "object": "collection0",
           "arguments": {
             "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 1
-              }
-            },
-            "session": "session_distinct0"
+            "filter": {},
+            "session": "session0"
           },
           "expectResult": [
             11
@@ -379,12 +286,8 @@
           "object": "collection0",
           "arguments": {
             "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 1
-              }
-            },
-            "session": "session_distinct1"
+            "filter": {},
+            "session": "session1"
           },
           "expectResult": [
             11,
@@ -403,15 +306,15 @@
             "pipeline": [
               {
                 "$match": {
-                  "_id": 3
+                  "_id": 1
                 }
               }
             ],
-            "session": "session_aggregate0"
+            "session": "session0"
           },
           "expectResult": [
             {
-              "_id": 3,
+              "_id": 1,
               "x": 11
             }
           ]
@@ -421,7 +324,7 @@
           "object": "collection0",
           "arguments": {
             "filter": {
-              "_id": 3
+              "_id": 1
             },
             "update": {
               "$inc": {
@@ -431,7 +334,7 @@
             "returnDocument": "After"
           },
           "expectResult": {
-            "_id": 3,
+            "_id": 1,
             "x": 12
           }
         },
@@ -442,15 +345,15 @@
             "pipeline": [
               {
                 "$match": {
-                  "_id": 3
+                  "_id": 1
                 }
               }
             ],
-            "session": "session_aggregate1"
+            "session": "session1"
           },
           "expectResult": [
             {
-              "_id": 3,
+              "_id": 1,
               "x": 12
             }
           ]
@@ -460,7 +363,7 @@
           "object": "collection0",
           "arguments": {
             "filter": {
-              "_id": 3
+              "_id": 1
             },
             "update": {
               "$inc": {
@@ -470,7 +373,7 @@
             "returnDocument": "After"
           },
           "expectResult": {
-            "_id": 3,
+            "_id": 1,
             "x": 13
           }
         },
@@ -481,14 +384,14 @@
             "pipeline": [
               {
                 "$match": {
-                  "_id": 3
+                  "_id": 1
                 }
               }
             ]
           },
           "expectResult": [
             {
-              "_id": 3,
+              "_id": 1,
               "x": 13
             }
           ]
@@ -500,15 +403,15 @@
             "pipeline": [
               {
                 "$match": {
-                  "_id": 3
+                  "_id": 1
                 }
               }
             ],
-            "session": "session_aggregate0"
+            "session": "session0"
           },
           "expectResult": [
             {
-              "_id": 3,
+              "_id": 1,
               "x": 11
             }
           ]
@@ -520,15 +423,15 @@
             "pipeline": [
               {
                 "$match": {
-                  "_id": 3
+                  "_id": 1
                 }
               }
             ],
-            "session": "session_aggregate1"
+            "session": "session1"
           },
           "expectResult": [
             {
-              "_id": 3,
+              "_id": 1,
               "x": 12
             }
           ]
@@ -536,20 +439,20 @@
       ]
     },
     {
-      "description": "Mixed operations with snapshot",
+      "description": "Mixed operation with snapshot",
       "operations": [
         {
           "name": "find",
           "object": "collection0",
           "arguments": {
-            "session": "session_mixed",
+            "session": "session0",
             "filter": {
-              "_id": 4
+              "_id": 1
             }
           },
           "expectResult": [
             {
-              "_id": 4,
+              "_id": 1,
               "x": 11
             }
           ]
@@ -559,7 +462,7 @@
           "object": "collection0",
           "arguments": {
             "filter": {
-              "_id": 4
+              "_id": 1
             },
             "update": {
               "$inc": {
@@ -569,7 +472,7 @@
             "returnDocument": "After"
           },
           "expectResult": {
-            "_id": 4,
+            "_id": 1,
             "x": 12
           }
         },
@@ -578,12 +481,12 @@
           "object": "collection0",
           "arguments": {
             "filter": {
-              "_id": 4
+              "_id": 1
             }
           },
           "expectResult": [
             {
-              "_id": 4,
+              "_id": 1,
               "x": 12
             }
           ]
@@ -595,15 +498,15 @@
             "pipeline": [
               {
                 "$match": {
-                  "_id": 4
+                  "_id": 1
                 }
               }
             ],
-            "session": "session_mixed"
+            "session": "session0"
           },
           "expectResult": [
             {
-              "_id": 4,
+              "_id": 1,
               "x": 11
             }
           ]
@@ -613,12 +516,8 @@
           "object": "collection0",
           "arguments": {
             "fieldName": "x",
-            "filter": {
-              "_id": {
-                "$gt": 3
-              }
-            },
-            "session": "session_mixed"
+            "filter": {},
+            "session": "session0"
           },
           "expectResult": [
             11
@@ -627,51 +526,69 @@
       ]
     },
     {
-      "description": "Snapshot error is not retried",
-      "operations": [
-        {
-          "name": "find",
-          "object": "collection0",
-          "arguments": {
-            "filter": {
-              "_id": 3
-            },
-            "session": "session_invalid_snapshot"
-          },
-          "expectError": {
-            "errorCode": 72
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client0",
-          "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "collection0",
-                  "filter": {
-                    "_id": 3
-                  }
-                },
-                "commandName": "find",
-                "databaseName": "database0"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "First snapshot read does send atClusterTime",
+      "description": "Write commands with snapshot session do not affect snapshot reads",
       "operations": [
         {
           "name": "find",
           "object": "collection0",
           "arguments": {
             "filter": {},
-            "session": "session_first_read"
+            "session": "session0"
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0",
+            "document": {
+              "_id": 22,
+              "x": 33
+            }
+          }
+        },
+        {
+          "name": "updateOne",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            },
+            "session": "session0",
+            "update": {
+              "$inc": {
+                "x": 1
+              }
+            }
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            },
+            "session": "session0"
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "First snapshot read does not send atClusterTime",
+      "operations": [
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "session": "session0"
           }
         }
       ],

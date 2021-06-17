@@ -65,9 +65,9 @@ Snapshot reads
     both the primary and secondary nodes, including in sharded clusters.
 
 Snapshot timestamp
-    Snapshot timestamp, representing timestamp of the first read (find/aggregate operations) in the session.
-    The server creates a cursor in response to a snapshot read command and 
-    reports ``atClusterTime`` field in the cursor response. ``atClusterTime`` field represents the timestamp
+    Snapshot timestamp, representing timestamp of the first read (find/aggregate/distinct operation) in the session.
+    The server creates a cursor in response to a snapshot find/aggregate command and 
+    reports ``atClusterTime`` field in the cursor response. For distinct command server adds ``atClusterTime`` field to the distinct response object. ``atClusterTime`` field represents the timestamp
     of the read and is guaranteed to be majority committed.
 
 Specification
@@ -213,6 +213,17 @@ cursor object it sends to the driver (for both find/aggregate commands).
         }
     }
 
+For distinct commands server returns the ``atClusterTime`` in
+distinct response object it sends to the driver.
+
+.. code:: typescript
+
+    {
+        ok : 1 or 0,
+        ... // the rest of the command reply
+        atClusterTime : <BsonTimestamp>
+    }
+
 The ``atClusterTime`` MUST be stored in the ``ClientSession`` to later be passed as the
 ``atClusterTime`` field of the ``readConcern`` with ``snapshot`` level field  in subsequent read operations.
 
@@ -295,16 +306,7 @@ The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured 
     * | Assert that `readBeforeUpdateSession1` is equivalent to `readAfterUpdateSession1` and 
       | `readBeforeUpdateSession2` to `readAfterUpdateSession2`.
 
-3.  | Snapshot reads that fail with ``SnapshotError`` are not retried.
-    | This test is OPTIONAL as it requires setting ``session.snapshotTimestamp``
-    | which is not part of the public API
-
-    * ``session = client.startSession(isSnapshot = true)``
-    * ``session.snapshotTimestamp = 0``
-    * ``collection.anyReadOrOperation(session1, ...)``
-    * Assert that only single read command was issued.
-
-4.  | A read operation in a ``ClientSession`` that is not snapshot read
+3.  | A read operation in a ``ClientSession`` that is not snapshot read
     | should not include the ``atClusterTime`` parameter in the command sent to the server
 
     * ``session = client.startSession(isSnapshot = false)``
@@ -313,6 +315,13 @@ The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured 
     * capture the command sent to the server (using APM or other mechanism).
     * assert that the command does not have an ``atClusterTime`` field.
 
+4.  Write operations with snapshot ``ClientSession`` do not affect snapshot reads with that session
+
+    * ``session = client.startSession(isSnapshot = true)``
+    * ``read1 = collection.anyReadOperation(session, {})``
+    * ``collection.anyWriteOperation(session, {})``
+    * ``read2 = collection.anyReadOperation(session, {})``
+    * Assert that ``read1`` is equivalent to ``read2``
 Motivation 
 ==========
 
