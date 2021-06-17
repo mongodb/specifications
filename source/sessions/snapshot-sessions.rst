@@ -339,14 +339,8 @@ snapshot reads continue to compile and run correctly.
 Reference Implementation
 ========================
 
-A reference implementation must be completed before any spec is given status
-"Final", but it need not be completed before the spec is “Accepted”. C# driver will 
-provide the reference implementation.
-While there is merit to the approach of reaching consensus on the specification and
-rationale before writing code, the principle of "rough consensus and running
-code" is still useful when it comes to resolving many discussions of spec
-details. A final reference implementation must include test code and
-documentation.
+C# driver will provide the reference implementation.
+The corresponding ticket is `CSHARP-3668 <https://jira.mongodb.org/browse/CSHARP-3668>`_.
 
 Q&A
 ===

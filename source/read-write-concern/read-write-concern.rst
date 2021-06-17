@@ -139,7 +139,7 @@ default ``ReadConcern`` while the latter is the user explicitly specifying a
 Snapshot Read Concern
 ---------------------
 
-When a ``ReadConcern`` ``level`` ``snapshot`` is used, ``atClusterTime`` MAY be specified to indicate
+When a ``ReadConcern`` ``level`` ``snapshot`` is used, ``atClusterTime`` may be specified to indicate
 the desired point in time for reading. ``find`` and ``aggregate`` operations executed with ``ReadConcern`` ``snapshot`` but without ``atClusterTime``
 will return ``atClusterTime`` timestamp in resulting cursor. The obtained ``atClusterTime`` timestamp can be used for subsequent
 read operations.
