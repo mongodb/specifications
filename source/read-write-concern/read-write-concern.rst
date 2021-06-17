@@ -13,7 +13,7 @@ Read and Write Concern
 :Type: Standards
 :Server Versions: 2.4+
 :Last Modified: 2021-06-15
-:Version: 1.5.6
+:Version: 1.6
 
 .. contents::
 

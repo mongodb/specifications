@@ -1,6 +1,6 @@
-================================
+============================
 Snapshot Reads Specification
-================================
+============================
 
 :Spec Title: Snapshot Reads Specification (See the registry of specs)
 :Spec Version: 1.0
@@ -8,7 +8,7 @@ Snapshot Reads Specification
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Judah Schvimer
 :Status: Draft (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Minimum Server Version: 5.0 (The minimum server version this spec applies to)
+:Minimum Server Version: 5.0
 :Last Modified: 15-Jun-2021
 
 .. contents::
@@ -283,7 +283,6 @@ The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured 
     * assert that the command does not have an ``atClusterTime``.
 
 2.  | Subsequent snapshot reads on a ``ClientSession`` should read from the snapshot of the first read in that session.
-    | Test SHOULD introduce two variations one for primaries and additional for secondary reads
 
     * ``session1 = client.startSession(isSnapshot = true)``
     * ``session2 = client.startSession(isSnapshot = true)``
