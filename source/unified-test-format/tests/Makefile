@@ -30,7 +30,7 @@ crud: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../crud/tests/unified/*.yml" --valid
 
 collection-management: HAS_AJV
-	@ajv test -s $(SCHEMA) -d "../../collection-management/tests/*.yml" --valid
+	@ajv test -s $(SCHEMA) -d "../../collection-management/tests/unified/*.yml" --valid
 
 sessions: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../sessions/tests/*.yml" --valid
