@@ -32,6 +32,9 @@ crud: HAS_AJV
 collection-management: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../collection-management/tests/*.yml" --valid
 
+sessions: HAS_AJV
+	@ajv test -s $(SCHEMA) -d "../../sessions/tests/*.yml" --valid
+
 HAS_AJV:
 	@if ! command -v ajv > /dev/null; then                \
 	    echo 'Error: need "npm install -g ajv-cli"' 1>&2; \
