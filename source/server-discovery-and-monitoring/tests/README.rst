@@ -73,8 +73,9 @@ An "applicationError" object has the following keys:
   - "timeout": A network timeout error.
 
 - response: (optional) A command error response, for example
-  ``{ok: 0, errmsg: "not writable primary"}``. Present if and only if ``type`` is
-  "command".
+  ``{ok: 0, errmsg: "not primary"}``. Present if and only if ``type`` is
+  "command". Note the server only returns "not primary" if the "hello" command
+  has been run on this connection. Otherwise the legacy error message is returned.
 
 In non-monitoring tests, an "outcome" represents the correct
 TopologyDescription that results from processing the responses in the phases

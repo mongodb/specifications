@@ -8,7 +8,7 @@ Server Discovery And Monitoring -- Test Plan
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: May 6, 2021
+:Last Modified: June 21, 2021
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.
@@ -39,9 +39,7 @@ The client MUST NOT immediately re-check the former primary.
 Scenario: With TopologyType ReplicaSetWithPrimary, we read from a server we
 thought was RSPrimary. Thus the SecondaryOk bit is not set.
 
-The response's QueryFailure bit is set and the response document is:
-
-    {$err: "not writable primary and SecondaryOk=false"}
+The server response should indicate an error due to the server not being a primary.
 
 Outcome: The former primary's ServerType MUST become Unknown.
 The TopologyType MUST change to ReplicaSetNoPrimary.
@@ -53,9 +51,7 @@ The client MUST NOT immediately re-check the former primary.
 Scenario: With TopologyType ReplicaSetWithPrimary, we read from a server we
 thought was RSSecondary. Thus the SecondaryOk bit *is* set.
 
-The response's QueryFailure bit is set and the response document is:
-
-    {$err: "not primary or secondary; cannot currently read from this replSet member"}
+The server response should indicate an error due to the server being in recovering state.
 
 Outcome: The former secondary's ServerType MUST become Unknown.
 The TopologyType MUST remain ReplicaSetWithPrimary.

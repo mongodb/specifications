@@ -427,7 +427,7 @@ See the `README <https://github.com/mongodb/specifications/server-discovery-and-
 Changelog
 =========
 
-- 30 APR 2021: Updated to use modern terminology.
+- 06 MAY 2021: Updated to use modern terminology.
 - 20 APR 2020: Add rules for streaming heartbeat protocol and add "awaited" field to heartbeat events.
 - 12 DEC 2018: Clarified table of rules for readable/writable servers
 - 31 AUG 2016: Added table of rules for determining if topology has readable/writable servers.

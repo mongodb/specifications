@@ -361,6 +361,8 @@ Fields:
 * (=) topologyVersion: A topologyVersion or null. Default null.
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
+* helloOk: indicates whether the hello or legacy hello should be used for initial handshake
+  and monitoring commands. Default true if server API version requested, otherwise false.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -2504,6 +2506,8 @@ mark the server Unknown and clear the pool.
 2021-4-12: Adding in behaviour for load balancer mode.
 
 2021-05-03: Require parsing "isWritablePrimary" field in responses.
+
+2021-05-06: Updated to use modern terminology.
 
 .. Section for links.
 

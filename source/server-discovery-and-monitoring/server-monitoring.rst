@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2021-05-06
+:Last Modified: 2021-06-21
 
 .. contents::
 
@@ -662,17 +662,12 @@ The event API here is assumed to be like the standard `Python Event
         heartbeatFrequencyMS = heartbeatFrequencyMS
         minHeartbeatFrequencyMS = 500
 
-        # Heartbeat command
-        if versionedApi or handshakeResponse.helloOk:
-            helloCommand = hello
-        else
-            helloCommand = legacy hello
-
         # Internal Monitor state:
         connection = Null
-        description = default ServerDescription
+        # server API versioning implies that the server supports hello
+        description = default ServerDescription(helloOk=versionedApi)
         lock = Mutex()
-        rttMonitor = RttMonitor(serverAddress)
+        rttMonitor = RttMonitor(serverAddress, helloOk=description.helloOk)
 
     def run():
         # Start the RttMonitor.
@@ -723,7 +718,12 @@ The event API here is assumed to be like the standard `Python Event
         try:
             # The connection is null if this is the first check. It's closed if there was an error during the previous
             # check or the previous check was cancelled.
-            # NOTE: helloCommand is defined in __init__() above
+
+            if previousDescription.helloOk:
+                helloCommand = hello
+            else
+                helloCommand = legacy hello
+
             if not connection or connection.isClosed():
                 setUpConnection()
                 rttMonitor.addSample(connection.handshakeDuration)
@@ -734,11 +734,15 @@ The event API here is assumed to be like the standard `Python Event
                 # Initiate streaming hello or legacy hello
                 if connectTimeoutMS != 0:
                     set connection timeout to connectTimeoutMS+heartbeatFrequencyMS
-                response = call {helloCommand: 1, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
+                response = call {helloCommand: 1, helloOk: True, topologyVersion: previousDescription.topologyVersion, maxAwaitTimeMS: heartbeatFrequencyMS}
             else:
                 # The server does not support topologyVersion.
-                response = call {helloCommand: 1}
+                response = call {helloCommand: 1, helloOk: True}
 
+            # if server supports hello, then response.helloOk will be true
+            # and hello will be used for subsequent monitoring commands.
+            # if server does not support hello, then response.helloOk will be undefined
+            # and legacy hello will be used for subsequent monitoring commands.
             return ServerDescription(response, rtt=rttMonitor.average())
         except Exception as exc:
             close connection
@@ -784,7 +788,7 @@ RTT thread
 ``````````
 
 The requirements in the `Measuring RTT`_ section can be satisfied with an
-addtional thread that periodically runs the hello or legacy hello command
+additional thread that periodically runs the hello or legacy hello command
 on a dedicated connection, for example:
 
 .. code-block:: python
@@ -795,12 +799,6 @@ on a dedicated connection, for example:
         serverAddress = serverAddress
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
-
-        # Heartbeat command
-        if versionedApi or handshakeResponse.helloOk:
-            helloCommand = hello
-        else
-            helloCommand = legacy hello
 
         # Internal state:
         connection = Null
@@ -844,10 +842,15 @@ on a dedicated connection, for example:
             setUpConnection()
             return RTT of the connection handshake
 
+        if helloOk:
+            helloCommand = hello
+        else
+            helloCommand = legacy hello
+
         start = time()
-        # NOTE: helloCommand is defined in __init__() above
-        call {helloCommand: 1}
+        response = call {helloCommand: 1, helloOk: True}
         rtt = time() - start
+        helloOk = response.helloOk
         return rtt
 
 
@@ -1116,6 +1119,8 @@ awaitable hello or legacy hello heartbeat in the new protocol.
 
 Changelog
 ---------
+
+- 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
 
 - 2020-12-17: Mark the pool for a server as "ready" after performing a successful
   check. Synchronize pool clearing with SDAM updates.

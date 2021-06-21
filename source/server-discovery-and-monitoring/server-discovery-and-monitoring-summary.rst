@@ -8,7 +8,7 @@ Server Discovery And Monitoring -- Summary
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: May 6, 2021
+:Last Modified: June 21, 2021
 
 .. contents::
 
@@ -213,7 +213,7 @@ In either case the client MUST clear its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
 An algorithm is specified for inspecting error codes (MongoDB 3.6+) and
-falling back to parsing "not master" and "node is recovering" errors (MongoDB 3.4 and earlier).
+falling back to parsing errors when error codes are unavailable (MongoDB 3.4 and earlier).
 When the client sees such an error it knows its topology view is out of date.
 It MUST mark the server type "unknown."
 Multi-threaded and asynchronous clients MUST re-check the server soon,
