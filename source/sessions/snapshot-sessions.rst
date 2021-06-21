@@ -138,28 +138,6 @@ Snapshot reads and causal consistency are mutually exclusive. Therefore if ``isS
 ``causalConsistency`` property is set to false. Client MUST throw an Error if both ``isSnapshot`` and ``causalConsistency`` are set to true.
 Snapshot reads are supported both on primaries and secondaries.
 
-ClientSession changes
-=====================
-
-``ClientSession`` changes summary
-
-.. code:: typescript
-
-    interface ClientSession {
-        Optional<BsonTimestamp> snapshotTimestamp;
-
-        // other members as defined in other specs
-    }
-
-Each new member is documented below.
-
-snapshotTimestamp
--------------------
-
-This property returns the timestamp the first find/aggregate/distinct operation performed
-using this session. If no operations that support the snapshot read concern have been performed
-using this session the value will be null.
-
 MongoDatabase changes
 =====================
 
@@ -272,11 +250,6 @@ Lists of commands that support snapshot reads:
 2. aggregate
 3. distinct
 
-Snapshot read commands errors
-=============================
-
-Drivers MUST NOT retry errors in SnapshotError category for snapshot reads if ``atClusterTime`` is supplied.
-
 Test Plan
 =========
 
@@ -322,6 +295,12 @@ The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured 
     * ``collection.anyWriteOperation(session, {})``
     * ``read2 = collection.anyReadOperation(session, {})``
     * Assert that ``read1`` is equivalent to ``read2``
+
+5.  Setting both ``isSnapshot`` and ``causalConsistency`` is not allowed
+
+    * ``client.startSession(isSnapshot = true, causalConsistency = true)``
+    * Assert that an error was raised by driver
+
 Motivation 
 ==========
 
