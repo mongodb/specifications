@@ -330,7 +330,7 @@ and sharded clusters.
 
 #. Test that drivers properly retry after encountering PoolClearedErrors. This
    test MUST be implemented by any driver that implements the CMAP
-   specification. This test requires MongoDB 4.2.9+ for `blockConnection` support in the failpoint.
+   specification. This test requires MongoDB 4.2.9+ for ``blockConnection`` support in the failpoint.
 
    1. Create a client with maxPoolSize=1 and retryWrites=true. If testing
       against a sharded deployment, be sure to connect to only a single mongos.
