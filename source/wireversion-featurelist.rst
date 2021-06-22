@@ -68,7 +68,7 @@ Server Wire version and Feature List
        | createIndexes "commitQuorum" option
 
    * - 5.0
-     - 12
+     - 13
      - | Consistent $collStats count behavior on sharded and non-sharded topologies
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h
