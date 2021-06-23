@@ -81,7 +81,7 @@ the given session is *not* marked dirty::
 
 Snapshot session tests
 ======================
-Snapshot sessions tests require server version of version 5.0 or higher and 
+Snapshot sessions tests require server of version 5.0 or higher and 
 replica set or a sharded cluster deployment.
 The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured to match the test execution time.
 
