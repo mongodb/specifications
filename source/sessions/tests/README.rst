@@ -79,6 +79,19 @@ the given session is *not* marked dirty::
         arguments:
           session: session0
 
+Snapshot session tests
+======================
+Snapshot sessions tests require server version of version 5.0 or higher and 
+replica set or a sharded cluster deployment.
+The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured to match the test execution time.
+
+Prose tests
+```````````
+-  Setting both ``isSnapshot`` and ``causalConsistency`` is not allowed
+
+    * ``client.startSession(isSnapshot = true, causalConsistency = true)``
+    * Assert that an error was raised by driver
+
 Changelog
 =========
 

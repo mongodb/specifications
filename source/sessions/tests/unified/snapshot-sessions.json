@@ -35,7 +35,12 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "collection0"
+        "collectionName": "collection0",
+        "collectionOptions": {
+          "writeConcern": {
+            "w": "majority"
+          }
+        }
       }
     },
     {

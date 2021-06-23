@@ -20,7 +20,7 @@ Abstract
 
 Version 5.0 of the server introduces support for readConcern level "snapshot" (non-speculative)
 for read commands outside of transactions, including on secondaries.
-This spec builds upon the Sessions Specification to define how an application
+This spec builds upon the `Sessions Specification <../driver-sessions.rst>`_ to define how an application
 requests "snapshot" level readConcern and how a driver interacts with the server
 to implement snapshot reads.
 
@@ -63,12 +63,13 @@ Session
 Snapshot reads
     Reads with readconcern level ``snapshot`` that occur outside of transactions on
     both the primary and secondary nodes, including in sharded clusters.
+    Snapshots reads are majority committed reads.
 
 Snapshot timestamp
     Snapshot timestamp, representing timestamp of the first read (find/aggregate/distinct operation) in the session.
     The server creates a cursor in response to a snapshot find/aggregate command and 
-    reports ``atClusterTime`` field in the cursor response. For distinct command server adds ``atClusterTime`` field to the distinct response object. ``atClusterTime`` field represents the timestamp
-    of the read and is guaranteed to be majority committed.
+    reports ``atClusterTime`` field in the cursor response. For distinct command server adds ``atClusterTime`` field to the distinct response object.
+    ``atClusterTime`` field represents the timestamp of the read and is guaranteed to be majority committed.
 
 Specification
 =============
@@ -92,7 +93,7 @@ this:
     options = new SessionOptions(isSnapshot = true);
     session = client.startSession(options);
 
-All read operations performed using this session will be read from same snapshot.
+All read operations performed using this session will be read from the same snapshot.
 
 If no value is provided for ``isSnapshot`` a value of false is
 implied.
@@ -126,7 +127,7 @@ using that client session will share the same snapshot.
 Each new member is documented below.
 
 isSnapshot
----------
+----------
 
 Applications set ``isSnapshot`` when starting a session to
 indicate whether they want snapshot reads.
@@ -167,7 +168,7 @@ Server Commands
 There are no new server commands related to snapshot reads. Instead,
 snapshot reads are implemented by:
 
-1. Saving the ``atClusterTime`` returned by 5.0+ servers for the first find/aggregate operation in a
+1. Saving the ``atClusterTime`` returned by 5.0+ servers for the first find/aggregate/distinct operation in a
    property ``snapshotTimestamp`` of the ``ClientSession`` object. Drivers MUST save the ``atClusterTime``
    in the ``ClientSession`` object.
 
@@ -213,7 +214,7 @@ Server Errors
 Snapshot read commands
 ======================
 
-For snapshot reads the driver MUST first obtain ``atClusterTime`` from cursor response of find/aggregate command,
+For snapshot reads the driver MUST first obtain ``atClusterTime`` from the server response of find/aggregate/distinct command,
 by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotTimestamp`` in 
 ``ClientSession`` object.
 
@@ -240,7 +241,7 @@ the ``ClientSession`` as the value of the ``atClusterTime`` field of the
         readConcern :
         {
             level : "snapshot",
-            afterClusterTime : <BsonTimestamp>
+            atClusterTime : <BsonTimestamp>
         }
     }
 
@@ -250,58 +251,7 @@ Lists of commands that support snapshot reads:
 2. aggregate
 3. distinct
 
-Test Plan
-=========
-
-Note: some tests are only relevant to certain deployments. For the purpose of deciding
-which tests to run assume that any deployment that is version 5.0 or higher and is either a
-replica set or a sharded cluster supports snapshot reads.
-The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured to match the test execution time.
-
-1.  | The first read in a snapshot session must not send ``atClusterTime``
-    | to the server (because the ``atClusterTime`` has not yet been determined)
-
-    * ``session = client.startSession(isSnapshot = true)``
-    * ``document = collection.anyReadOperation(session, ...)``
-    * capture the command sent to the server (using APM or other mechanism).
-    * assert that the command does not have an ``atClusterTime``.
-
-2.  | Subsequent snapshot reads on a ``ClientSession`` should read from the snapshot of the first read in that session.
-
-    * ``session1 = client.startSession(isSnapshot = true)``
-    * ``session2 = client.startSession(isSnapshot = true)``
-    * ``readBeforeUpdateSession1 = collection.anyReadOrOperation(session1, ...)``
-    * ``collection.anyUpdateOpertation(...)``
-    * ``readBeforeUpdateSession2 = collection.anyReadOrOperation(session2, ...)``
-    * ``collection.anyUpdateOpertation(...)``
-    * ``readAfterUpdateSession1 = collection.anyReadOrOperation(session1, ...)``
-    * ``readAfterUpdateSession2 = collection.anyReadOrOperation(session2, ...)``
-    * | Assert that `readBeforeUpdateSession1` is equivalent to `readAfterUpdateSession1` and 
-      | `readBeforeUpdateSession2` to `readAfterUpdateSession2`.
-
-3.  | A read operation in a ``ClientSession`` that is not snapshot read
-    | should not include the ``atClusterTime`` parameter in the command sent to the server
-
-    * ``session = client.startSession(isSnapshot = false)``
-    * ``collection.anyReadOperation(session, {})``
-    * ``operationTime = session.operationTime``
-    * capture the command sent to the server (using APM or other mechanism).
-    * assert that the command does not have an ``atClusterTime`` field.
-
-4.  Write operations with snapshot ``ClientSession`` do not affect snapshot reads with that session
-
-    * ``session = client.startSession(isSnapshot = true)``
-    * ``read1 = collection.anyReadOperation(session, {})``
-    * ``collection.anyWriteOperation(session, {})``
-    * ``read2 = collection.anyReadOperation(session, {})``
-    * Assert that ``read1`` is equivalent to ``read2``
-
-5.  Setting both ``isSnapshot`` and ``causalConsistency`` is not allowed
-
-    * ``client.startSession(isSnapshot = true, causalConsistency = true)``
-    * Assert that an error was raised by driver
-
-Motivation 
+Motivation
 ==========
 
 To support snapshot reads. Only supported with server version 5.0+ or newer.

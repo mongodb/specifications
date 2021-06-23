@@ -140,8 +140,8 @@ Snapshot Read Concern
 ---------------------
 
 When a ``ReadConcern`` ``level`` ``snapshot`` is used, ``atClusterTime`` may be specified to indicate
-the desired point in time for reading. ``find`` and ``aggregate`` operations executed with ``ReadConcern`` ``snapshot`` but without ``atClusterTime``
-will return ``atClusterTime`` timestamp in resulting cursor. The obtained ``atClusterTime`` timestamp can be used for subsequent
+the desired point in time for reading. ``find``, ``aggregate`` and ``distinct`` operations executed with ``ReadConcern`` ``snapshot`` but without ``atClusterTime``
+will return ``atClusterTime`` timestamp in the server response. The obtained ``atClusterTime`` timestamp can be used for subsequent
 read operations.
 ``ReadConcern`` ``level`` ``snapshot`` with ``clusterTime`` is supported in ``find``, ``aggregate`` and ``distinct`` operations.
 
