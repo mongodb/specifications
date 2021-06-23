@@ -665,8 +665,8 @@ The event API here is assumed to be like the standard `Python Event
 
         # Internal Monitor state:
         connection = Null
-        # Initialized/reset in setupConnection.
-        helloOk = False
+        # Server API versioning implies that the server supports hello.
+        helloOk = versionedApi != Null
         description = default ServerDescription
         lock = Mutex()
         rttMonitor = RttMonitor(serverAddress, versionedApi)
@@ -711,7 +711,7 @@ The event API here is assumed to be like the standard `Python Event
         # cancelCheck call could be reading from it.
         with lock:
             # Server API versioning implies that the server supports hello.
-            helloOk = versionedApi != null
+            helloOk = versionedApi != Null
             connection = new Connection(serverAddress)
             set connection timeout to connectTimeoutMS
 
@@ -809,8 +809,8 @@ on a dedicated connection, for example:
 
         # Internal state:
         connection = Null
-        # Initialized/reset in setupConnection.
-        helloOk = False
+        # Server API versioning implies that the server supports hello.
+        helloOk = versionedApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
 
@@ -836,6 +836,7 @@ on a dedicated connection, for example:
                 # for resetting the average RTT.
                 close connection
                 connection = Null
+                helloOk = versionedApi != Null
 
             # Can be awakened when the client is closed.
             event.wait(heartbeatFrequencyMS)
@@ -849,14 +850,14 @@ on a dedicated connection, for example:
         perform connection handshake
 
     def pingServer():
-        if not connection:
-            setUpConnection()
-            return RTT of the connection handshake
-
         if helloOk:
             helloCommand = hello
         else
             helloCommand = legacy hello
+
+        if not connection:
+            setUpConnection()
+            return RTT of the connection handshake
 
         start = time()
         response = call {helloCommand: 1, helloOk: True}
