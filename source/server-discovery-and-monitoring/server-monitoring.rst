@@ -661,13 +661,15 @@ The event API here is assumed to be like the standard `Python Event
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
         minHeartbeatFrequencyMS = 500
+        versionedApi = versionedApi
 
         # Internal Monitor state:
         connection = Null
-        # server API versioning implies that the server supports hello
-        description = default ServerDescription(helloOk=versionedApi)
+        # Initialized/reset in setupConnection.
+        helloOk = False
+        description = default ServerDescription
         lock = Mutex()
-        rttMonitor = RttMonitor(serverAddress, helloOk=description.helloOk)
+        rttMonitor = RttMonitor(serverAddress, versionedApi)
 
     def run():
         # Start the RttMonitor.
@@ -708,6 +710,8 @@ The event API here is assumed to be like the standard `Python Event
         # Take the mutex to avoid a data race becauase this code writes to the connection field and a concurrent
         # cancelCheck call could be reading from it.
         with lock:
+            # Server API versioning implies that the server supports hello.
+            helloOk = versionedApi != null
             connection = new Connection(serverAddress)
             set connection timeout to connectTimeoutMS
 
@@ -719,7 +723,7 @@ The event API here is assumed to be like the standard `Python Event
             # The connection is null if this is the first check. It's closed if there was an error during the previous
             # check or the previous check was cancelled.
 
-            if previousDescription.helloOk:
+            if helloOk:
                 helloCommand = hello
             else
                 helloCommand = legacy hello
@@ -739,10 +743,12 @@ The event API here is assumed to be like the standard `Python Event
                 # The server does not support topologyVersion.
                 response = call {helloCommand: 1, helloOk: True}
 
-            # if server supports hello, then response.helloOk will be true
+            # If the server supports hello, then response.helloOk will be true
             # and hello will be used for subsequent monitoring commands.
-            # if server does not support hello, then response.helloOk will be undefined
+            # If the server does not support hello, then response.helloOk will be undefined
             # and legacy hello will be used for subsequent monitoring commands.
+            helloOk = response.helloOk
+
             return ServerDescription(response, rtt=rttMonitor.average())
         except Exception as exc:
             close connection
@@ -799,9 +805,12 @@ on a dedicated connection, for example:
         serverAddress = serverAddress
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
+        versionedApi = versionedApi
 
         # Internal state:
         connection = Null
+        # Initialized/reset in setupConnection.
+        helloOk = False
         lock = Mutex()
         movingAverage = MovingAverage()
 
@@ -833,6 +842,8 @@ on a dedicated connection, for example:
             event.clear()
 
     def setUpConnection():
+        # Server API versioning implies that the server supports hello.
+        helloOk = versionedApi != Null
         connection = new Connection(serverAddress)
         set connection timeout to connectTimeoutMS
         perform connection handshake

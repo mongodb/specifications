@@ -361,8 +361,6 @@ Fields:
 * (=) topologyVersion: A topologyVersion or null. Default null.
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
-* helloOk: indicates whether the hello or legacy hello should be used for initial handshake
-  and monitoring commands. Default true if server API version requested, otherwise false.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
