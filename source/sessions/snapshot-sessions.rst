@@ -18,10 +18,10 @@ Snapshot Reads Specification
 Abstract
 ========
 
-Version 5.0 of the server introduces support for readConcern level "snapshot" (non-speculative)
+Version 5.0 of the server introduces support for read concern level "snapshot" (non-speculative)
 for read commands outside of transactions, including on secondaries.
 This spec builds upon the `Sessions Specification <../driver-sessions.rst>`_ to define how an application
-requests "snapshot" level readConcern and how a driver interacts with the server
+requests "snapshot" level read concern and how a driver interacts with the server
 to implement snapshot reads.
 
 Definitions
@@ -61,7 +61,7 @@ Session
     specification defines how sessions are used to implement snapshot reads.
 
 Snapshot reads
-    Reads with readconcern level ``snapshot`` that occur outside of transactions on
+    Reads with read concern level ``snapshot`` that occur outside of transactions on
     both the primary and secondary nodes, including in sharded clusters.
     Snapshots reads are majority committed reads.
 
@@ -263,7 +263,7 @@ The goal is to modify the driver API as little as possible so that existing
 programs that don't need snapshot reads don't have to be changed.
 This goal is met by defining a ``SessionOptions`` field that applications use to
 start a ``ClientSession`` that can be used for snapshot reads. Alternative explicit approach of
-obtaining ``atClusterTime`` from ``cursor`` object and passing it to readconcern object was considered initially.
+obtaining ``atClusterTime`` from ``cursor`` object and passing it to read concern object was considered initially.
 Session based approach was chosen as it aligns better with the existing API, and requires minimal API changes.
 Future extensibility for snapshot reads would be better served by session based approach, as no API changes will be required.
 
