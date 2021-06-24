@@ -94,7 +94,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 2 }
             data:
-                failCommands: ["hello"]
+                failCommands: ["hello", "isMaster"]
                 appName: commandErrorCheckTest
                 closeConnection: false
                 blockConnection: true

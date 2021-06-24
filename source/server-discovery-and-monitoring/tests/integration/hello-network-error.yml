@@ -93,7 +93,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 2 }
             data:
-                failCommands: ["hello"]
+                failCommands: ["hello", "isMaster"]
                 appName: networkErrorCheckTest
                 closeConnection: true
       # The network error on the next check should mark the server Unknown and
