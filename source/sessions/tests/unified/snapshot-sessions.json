@@ -48,7 +48,7 @@
         "id": "session0",
         "client": "client0",
         "sessionOptions": {
-          "isSnapshot": true
+          "snapshot": true
         }
       }
     },
@@ -57,7 +57,7 @@
         "id": "session1",
         "client": "client0",
         "sessionOptions": {
-          "isSnapshot": true
+          "snapshot": true
         }
       }
     }

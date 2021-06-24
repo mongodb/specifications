@@ -87,9 +87,9 @@ The server ``minSnapshotHistoryWindowInSeconds`` parameter SHOULD be configured 
 
 Prose tests
 ```````````
--  Setting both ``isSnapshot`` and ``causalConsistency`` is not allowed
+-  Setting both ``snapshot`` and ``causalConsistency`` is not allowed
 
-    * ``client.startSession(isSnapshot = true, causalConsistency = true)``
+    * ``client.startSession(snapshot = true, causalConsistency = true)``
     * Assert that an error was raised by driver
 
 Changelog

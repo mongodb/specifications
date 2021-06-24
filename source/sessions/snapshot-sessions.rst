@@ -90,12 +90,12 @@ this:
 
 .. code:: typescript
 
-    options = new SessionOptions(isSnapshot = true);
+    options = new SessionOptions(snapshot = true);
     session = client.startSession(options);
 
 All read operations performed using this session will be read from the same snapshot.
 
-If no value is provided for ``isSnapshot`` a value of false is
+If no value is provided for ``snapshot`` a value of false is
 implied.
 
 MongoClient changes
@@ -103,7 +103,7 @@ MongoClient changes
 
 There are no API changes to ``MongoClient`` to support snapshot reads.
 Applications indicate whether they want snapshot reads by setting the
-``isSnapshot`` field in the options passed to the ``startSession`` method.
+``snapshot`` field in the options passed to the ``startSession`` method.
 
 SessionOptions changes
 ======================
@@ -113,30 +113,30 @@ SessionOptions changes
 .. code:: typescript
 
     class SessionOptions {
-        Optional<bool> isSnapshot;
+        Optional<bool> snapshot;
 
         // other options defined by other specs
     }
 
 In order to support snapshot reads a new property named
-``isSnapshot`` is added to ``SessionOptions``. Applications set
-``isSnapshot`` when starting a client session to indicate
+``snapshot`` is added to ``SessionOptions``. Applications set
+``snapshot`` when starting a client session to indicate
 whether they want snapshot reads. All read operations performed
 using that client session will share the same snapshot.
 
 Each new member is documented below.
 
-isSnapshot
-----------
+snapshot
+--------
 
-Applications set ``isSnapshot`` when starting a session to
+Applications set ``snapshot`` when starting a session to
 indicate whether they want snapshot reads.
 
-Note that the ``isSnapshot`` property is optional. The default value of
+Note that the ``snapshot`` property is optional. The default value of
 this property is false.
 
-Snapshot reads and causal consistency are mutually exclusive. Therefore if ``isSnapshot`` is set to true,
-``causalConsistency`` property is set to false. Client MUST throw an Error if both ``isSnapshot`` and ``causalConsistency`` are set to true.
+Snapshot reads and causal consistency are mutually exclusive. Therefore if ``snapshot`` is set to true,
+``causalConsistency`` property is set to false. Client MUST throw an Error if both ``snapshot`` and ``causalConsistency`` are set to true.
 Snapshot reads are supported both on primaries and secondaries.
 
 MongoDatabase changes
@@ -145,7 +145,7 @@ MongoDatabase changes
 There are no additional API changes to ``MongoDatabase`` beyond those specified in
 the Sessions Specification. All ``MongoDatabase`` methods that talk to the server
 have been overloaded to take a session parameter. If that session was started
-with ``isSnapshot = true`` then all read operations using that session will
+with ``snapshot = true`` then all read operations using that session will
 will share the same snapshot.
 
 MongoCollection changes
@@ -154,7 +154,7 @@ MongoCollection changes
 There are no additional API changes to ``MongoCollection`` beyond those specified
 in the Sessions Specification. All ``MongoCollection`` methods that talk to the
 server have been overloaded to take a session parameter. If that session was
-started with ``isSnapshot = true`` then all operations using that
+started with ``snapshot = true`` then all operations using that
 session will share the same snapshot.
 
 ReadConcern changes
@@ -169,10 +169,10 @@ There are no new server commands related to snapshot reads. Instead,
 snapshot reads are implemented by:
 
 1. Saving the ``atClusterTime`` returned by 5.0+ servers for the first find/aggregate/distinct operation in a
-   property ``snapshotTimestamp`` of the ``ClientSession`` object. Drivers MUST save the ``atClusterTime``
+   private property ``snapshotTime`` of the ``ClientSession`` object. Drivers MUST save the ``atClusterTime``
    in the ``ClientSession`` object.
 
-2. Passing that ``snapshotTimestamp`` in the ``atClusterTime`` field of the ``readConcern`` field
+2. Passing that ``snapshotTime`` in the ``atClusterTime`` field of the ``readConcern`` field
    for subsequent snapshot read operations (for find/aggregate/distinct commands).
 
 Server Command Responses
@@ -215,7 +215,7 @@ Snapshot read commands
 ======================
 
 For snapshot reads the driver MUST first obtain ``atClusterTime`` from the server response of find/aggregate/distinct command,
-by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotTimestamp`` in 
+by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotTime`` in 
 ``ClientSession`` object.
 
 .. code:: typescript
@@ -229,7 +229,7 @@ by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``s
         }
     }
 
-For subsequent reads from same snapshot driver MUST send the ``snapshotTimestamp`` saved in
+For subsequent reads from same snapshot driver MUST send the ``snapshotTime`` saved in
 the ``ClientSession`` as the value of the ``atClusterTime`` field of the
 ``readConcern`` with ``snapshot`` level field:
 
