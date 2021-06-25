@@ -10,6 +10,7 @@ phases: [
                 ["a:27017", {
 
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     hosts: ["a:27017"],
                     setName: "rs",
@@ -38,6 +39,7 @@ phases: [
         responses: [
                 ["a:27017", {
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     msg: "isdbgrid",
                     minWireVersion: 0,

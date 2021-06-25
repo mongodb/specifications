@@ -4,6 +4,7 @@ phases:
 - responses:
   - - a:27017
     - ok: 1
+      helloOk: true
       isWritablePrimary: true
       hosts:
       - a:27017
@@ -21,6 +22,7 @@ phases:
 - responses:
   - - a:27017
     - ok: 1
+      helloOk: true
       isWritablePrimary: true
       hosts:
       - a:27017

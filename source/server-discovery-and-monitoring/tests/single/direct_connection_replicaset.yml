@@ -8,6 +8,7 @@ phases:
     -
       - "a:27017"
       - ok: 1
+        helloOk: true
         isWritablePrimary: true
         setName: rs
         minWireVersion: 0

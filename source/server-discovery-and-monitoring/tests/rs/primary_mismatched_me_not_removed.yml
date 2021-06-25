@@ -10,6 +10,7 @@ phases: [
           "localhost:27017",
           "localhost:27018"
         ],
+        helloOk: true,
         isWritablePrimary: true,
         setName: "rs",
         primary: "localhost:27017",
@@ -45,6 +46,7 @@ phases: [
           "localhost:27017",
           "localhost:27018"
         ],
+        helloOk: true,
         isWritablePrimary: false,
         secondary: true,
         setName: "rs",

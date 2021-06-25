@@ -43,7 +43,7 @@ A response is a pair of values:
 
 - The source, for example "a:27017".
   This is the address the client sent the "hello" or legacy hello command to.
-- A hello or legacy hello response, for example ``{ok: 1, isWritablePrimary: true}``.
+- A hello or legacy hello response, for example ``{ok: 1, helloOk: true, isWritablePrimary: true}``.
   If the response includes an electionId it is shown in extended JSON like
   ``{"$oid": "000000000000000000000002"}``.
   The empty response `{}` indicates a network error

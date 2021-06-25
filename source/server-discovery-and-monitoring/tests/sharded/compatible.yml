@@ -5,6 +5,7 @@ phases: [
         responses: [
                 ["a:27017", {
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     msg: "isdbgrid",
                     minWireVersion: 0,
@@ -12,6 +13,7 @@ phases: [
                 }],
                 ["b:27017", {
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     msg: "isdbgrid",
                     minWireVersion: 0,

@@ -10,6 +10,7 @@ phases: [
                 ["a:27017", {
 
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     setName: "rs",
                     hosts: ["a:27017", "b:27017"],
@@ -46,6 +47,7 @@ phases: [
                 ["a:27017", {
 
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     setName: "rs",
                     hosts: ["a:27017"],

@@ -10,6 +10,7 @@ phases: [
                 ["a:27017", {
 
                     ok: 1,
+                    helloOk: true,
                     isWritablePrimary: true,
                     minWireVersion: 0,
                     maxWireVersion: 6
