@@ -211,7 +211,7 @@ tests:
 
   - description: "hello with speculative authenticate"
     runOnRequirements:
-      - minServerVersion: 4.9
+      - minServerVersion: "4.9"
     operations:
       - name: runCommand
         object: *database
@@ -285,7 +285,7 @@ tests:
 
   - description: "hello without speculative authenticate is not redacted"
     runOnRequirements:
-      - minServerVersion: 4.9
+      - minServerVersion: "4.9"
     operations:
       - name: runCommand
         object: *database
