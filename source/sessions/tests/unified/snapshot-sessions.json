@@ -931,6 +931,7 @@
 
           "expectError": {
             "isError": true,
+            "isClientError": true,
             "errorContains": "Transactions are not supported in snapshot sessions"
           }
         }
