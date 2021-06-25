@@ -921,6 +921,20 @@
           ]
         }
       ]
+    },
+    {
+      "description": "StartTransaction fails in snapshot session",
+      "operations": [
+        {
+          "name": "startTransaction",
+          "object": "session0",
+
+          "expectError": {
+            "isError": true,
+            "errorContains": "Transactions are not supported in snapshot sessions"
+          }
+        }
+      ]
     }
   ]
 }

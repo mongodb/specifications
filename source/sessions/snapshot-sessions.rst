@@ -133,6 +133,12 @@ Snapshot reads and causal consistency are mutually exclusive. Therefore if ``sna
 ``causalConsistency`` property is set to false. Client MUST throw an Error if both ``snapshot`` and ``causalConsistency`` are set to true.
 Snapshot reads are supported both on primaries and secondaries.
 
+ClientSession changes
+=====================
+
+Transaction are not allowed with snapshot sessions.
+Calling ``session.startTransaction(options)`` on snapshot session should raise an error.
+
 ReadConcern changes
 ===================
 
