@@ -234,8 +234,10 @@ tests:
               reply:
                 # We expect the reply not to be redacted, as the server can't
                 # successfully authenticate us, which means the reply does not
-                # need to be redacted
-                isWritablePrimary: { $$exists: true }
+                # need to be redacted. However, drivers may still choose to
+                # redact the reply based on the fact that the command contained
+                # sensitive information
+                isWritablePrimary: { $$unsetOrMatches: true }
                 # This assertion will currently always hold true since we're
                 # not expecting successful authentication, in which case this
                 # field is missing anyways.
@@ -270,7 +272,7 @@ tests:
           - commandSucceededEvent:
               commandName: ismaster
               reply:
-                ismaster: { $$exists: true }
+                ismaster: { $$unsetOrMatches: true }
                 speculativeAuthenticate: { $$exists: false }
           - commandStartedEvent:
               commandName: isMaster
@@ -280,7 +282,7 @@ tests:
           - commandSucceededEvent:
               commandName: isMaster
               reply:
-                ismaster: { $$exists: true }
+                ismaster: { $$unsetOrMatches: true }
                 speculativeAuthenticate: { $$exists: false }
 
   - description: "hello without speculative authenticate is not redacted"
