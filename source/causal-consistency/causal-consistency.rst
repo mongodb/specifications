@@ -130,8 +130,8 @@ this:
 All read operations performed using this session will now be causally
 consistent.
 
-If no value is provided for ``causalConsistency`` a value of true is
-implied. See the ``causalConsistency`` section.
+If no value is provided for ``causalConsistency`` and snapshot reads are not requested
+a value of true is implied. See the ``causalConsistency`` section.
 
 MongoClient changes
 ===================

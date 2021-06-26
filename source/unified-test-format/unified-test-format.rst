@@ -635,6 +635,7 @@ The structure of this object is as follows:
     specifications:
 
     - `Causal Consistency <../causal-consistency/causal-consistency.rst#sessionoptions-changes>`__
+    - `Snapshot Reads <../sessions/snapshot-sessions.rst#sessionoptions-changes>`__
     - `Transactions <../transactions/transactions.rst#sessionoptions-changes>`__
 
     When specifying TransactionOptions for ``defaultTransactionOptions``, the
