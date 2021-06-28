@@ -18,14 +18,6 @@ createEntities:
       id: &collection0Name collection0
       database: *database0Name
       collectionName: *collection0Name
-  - database:
-      id: &missingDbName missingDB
-      client: *client0
-      databaseName: *missingDbName
-  - collection:
-      id: &missingCollName missingColl
-      database: *missingDbName
-      collectionName: *missingCollName
   - session:
       id: session0
       client: client0
@@ -62,29 +54,6 @@ tests:
     - commandFailedEvent:
         commandName: find
 
-- description: Server returns an error on find with snapshot on missing database
-  operations:
-  - name: find
-    object: *missingCollName
-    arguments:
-      session: session0
-      filter: {}
-    expectError:
-      isError: true
-      isClientError: false
-  expectEvents:
-  - client: client0
-    events:
-    - commandStartedEvent:
-        command:
-          find: *missingCollName
-          readConcern:
-            level: snapshot
-            atClusterTime:
-              "$$exists": false
-    - commandFailedEvent:
-        commandName: find
-
 - description: Server returns an error on aggregate with snapshot
   operations:
   - name: aggregate
@@ -101,29 +70,6 @@ tests:
     - commandStartedEvent:
         command:
           aggregate: collection0
-          readConcern:
-            level: snapshot
-            atClusterTime:
-              "$$exists": false
-    - commandFailedEvent:
-        commandName: aggregate
-
-- description: Server returns an error on aggregate with snapshot on missing database
-  operations:
-  - name: aggregate
-    object: *missingCollName
-    arguments:
-      session: session0
-      pipeline: []
-    expectError:
-      isError: true
-      isClientError: false
-  expectEvents:
-  - client: client0
-    events:
-    - commandStartedEvent:
-        command:
-          aggregate: *missingCollName
           readConcern:
             level: snapshot
             atClusterTime:
@@ -148,30 +94,6 @@ tests:
     - commandStartedEvent:
         command:
           distinct: collection0
-          readConcern:
-            level: snapshot
-            atClusterTime:
-              "$$exists": false
-    - commandFailedEvent:
-        commandName: distinct
-
-- description: Server returns an error on distinct with snapshot on missing database
-  operations:
-  - name: distinct
-    object: *missingCollName
-    arguments:
-      fieldName: x
-      filter: {}
-      session: session0
-    expectError:
-      isError: true
-      isClientError: false
-  expectEvents:
-  - client: client0
-    events:
-    - commandStartedEvent:
-        command:
-          distinct: *missingCollName
           readConcern:
             level: snapshot
             atClusterTime:
