@@ -3,11 +3,7 @@
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
-      "minServerVersion": "3.6",
-      "maxServerVersion": "4.4.99"
-    },
-    {
-      "minServerVersion": "3.6",
+      "minServerVersion": "5.0",
       "topologies": [
         "single"
       ]
@@ -20,11 +16,6 @@
         "observeEvents": [
           "commandStartedEvent",
           "commandFailedEvent"
-        ],
-        "ignoreCommandMonitoringEvents": [
-          "findAndModify",
-          "insert",
-          "update"
         ]
       }
     },
