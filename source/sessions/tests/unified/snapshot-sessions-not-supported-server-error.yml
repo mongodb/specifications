@@ -5,7 +5,6 @@ schemaVersion: "1.0"
 runOnRequirements:
   - minServerVersion: "3.6"
     maxServerVersion: "4.4.99"
-    topologies: [replicaset, sharded-replicaset]
 
 createEntities:
   - client:
