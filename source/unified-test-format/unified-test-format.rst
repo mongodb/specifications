@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.5.0
+:Spec Version: 1.5.1
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-05-17
+:Last Modified: 2021-06-28
 
 .. contents::
 
@@ -3247,11 +3247,12 @@ Change Log
 
 :2021-04-19: Introduce ``serverless`` `runOnRequirement`_.
 
-:2021-04-12: Added a ``FindCursor`` entity type, defined a set of cursor
-             operations, added an ``auth`` property to ``runOnRequirements``
+:2021-04-12: Added a ``FindCursor`` entity type. Defined a set of cursor
+             operations. Added an ``auth`` property to ``runOnRequirements``
              and modified the ``topologies`` property to accept
-             ``load-balanced``, and added CMAP events to the possible event
-             types for ``expectedEvent``.
+             ``load-balanced``. Added CMAP events to the possible event types
+             for ``expectedEvent``. Add ``assertNumberConnectionsCheckedOut``
+             operation. Add ``ignoreResultAndError`` operation option.
 
 :2021-04-08: List additional error codes that may be ignored when calling
              ``killAllSessions`` and note that the command should not be called
@@ -3261,11 +3262,11 @@ Change Log
              operation arguments. Clarify how ``loop`` iterations are counted
              for ``storeIterationsAsEntity``.
 
-:2021-03-09: Clarify which components of a version string are relevant for
-             comparisons.
-
 :2021-03-10: Clarify that ``observedAt`` field measures time in seconds for
              ``storeEventsAsEntities``.
+
+:2021-03-09: Clarify which components of a version string are relevant for
+             comparisons.
 
 :2021-03-04: Change ``storeEventsAsEntities`` from a map to an array of
              ``storeEventsAsEntity`` objects.
