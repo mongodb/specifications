@@ -1540,7 +1540,7 @@ clear the server's connection pool if and only if the error is
 "node is shutting down" or the error originated from server version < 4.2.
 
 (See `when does a client see "not writable primary" or "node is recovering"?`_, `use
-error messages to detect "not writable primary" and "node is recovering"`_, and `other
+error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_ and `Why close connections when a node is shutting down?`_.)
 
 Authentication errors
