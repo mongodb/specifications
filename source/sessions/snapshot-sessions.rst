@@ -3,7 +3,7 @@ Snapshot Reads Specification
 ============================
 
 :Spec Title: Snapshot Reads Specification (See the registry of specs)
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Boris Dogadov
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Judah Schvimer
 :Status: Draft (Could be Draft, Accepted, Rejected, Final, or Replaced)
@@ -233,6 +233,13 @@ Lists of commands that support snapshot reads:
 2. aggregate
 3. distinct
 
+Requires MongoDB 5.0+
+=====================
+
+Snapshot reads require MongoDB 5.0+. When the connected server's
+maxWireVersion is less than 13, drivers MUST throw an exception with the
+message "snapshot reads require MongoDB 5.0 or later".
+
 Motivation
 ==========
 
@@ -269,3 +276,4 @@ Changelog
 =========
 
 :2021-06-15: Initial version.
+:2021-06-28: Raise client side error on < 5.0.
