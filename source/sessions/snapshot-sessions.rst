@@ -238,7 +238,7 @@ Requires MongoDB 5.0+
 
 Snapshot reads require MongoDB 5.0+. When the connected server's
 maxWireVersion is less than 13, drivers MUST throw an exception with the
-message "snapshot reads require MongoDB 5.0 or later".
+message "Snapshot reads require MongoDB 5.0 or later".
 
 Motivation
 ==========

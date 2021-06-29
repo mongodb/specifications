@@ -40,7 +40,7 @@ tests:
       filter: {}
     expectError:
       isClientError: true
-      errorContains: snapshot reads require MongoDB 5.0 or later
+      errorContains: Snapshot reads require MongoDB 5.0 or later
   expectEvents: []
 
 - description: Client error on aggregate with snapshot
@@ -52,7 +52,7 @@ tests:
       pipeline: []
     expectError:
       isClientError: true
-      errorContains: snapshot reads require MongoDB 5.0 or later
+      errorContains: Snapshot reads require MongoDB 5.0 or later
   expectEvents: []
 
 - description: Client error on distinct with snapshot
@@ -65,5 +65,5 @@ tests:
       session: session0
     expectError:
       isClientError: true
-      errorContains: snapshot reads require MongoDB 5.0 or later
+      errorContains: Snapshot reads require MongoDB 5.0 or later
   expectEvents: []
