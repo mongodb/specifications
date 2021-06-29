@@ -440,7 +440,7 @@
                 "commandName": "hello",
                 "reply": {
                   "isWritablePrimary": {
-                    "$$unsetOrMatches": true
+                    "$$exists": false
                   },
                   "speculativeAuthenticate": {
                     "$$exists": false
@@ -504,7 +504,7 @@
                 "commandName": "ismaster",
                 "reply": {
                   "ismaster": {
-                    "$$unsetOrMatches": true
+                    "$$exists": false
                   },
                   "speculativeAuthenticate": {
                     "$$exists": false
@@ -530,7 +530,7 @@
                 "commandName": "isMaster",
                 "reply": {
                   "ismaster": {
-                    "$$unsetOrMatches": true
+                    "$$exists": false
                   },
                   "speculativeAuthenticate": {
                     "$$exists": false
