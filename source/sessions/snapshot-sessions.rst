@@ -3,13 +3,13 @@ Snapshot Reads Specification
 ============================
 
 :Spec Title: Snapshot Reads Specification (See the registry of specs)
-:Spec Version: 1.1
+:Spec Version: 1.2
 :Author: Boris Dogadov
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Judah Schvimer
 :Status: Draft (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 15-Jun-2021
+:Last Modified: 29-Jun-2021
 
 .. contents::
 
@@ -192,6 +192,7 @@ Server Errors
 =============
 1. The server may reply to read commands with a ``SnapshotTooOld`` error if the client's ``atClusterTime`` value is not available in the server's history.
 2. The server will return ``InvalidOptions`` error if both ``atClusterTime`` and ``afterClusterTime`` options are set to true.
+3. The server will return ``InvalidOptions`` error if the command does not support readConcern.level "snapshot".
 
 Snapshot read commands
 ======================
@@ -211,7 +212,7 @@ by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``s
         }
     }
 
-For subsequent reads from same snapshot driver MUST send the ``snapshotTime`` saved in
+For subsequent reads in the same session, the driver MUST send the ``snapshotTime`` saved in
 the ``ClientSession`` as the value of the ``atClusterTime`` field of the
 ``readConcern`` with ``snapshot`` level field:
 
@@ -232,6 +233,15 @@ Lists of commands that support snapshot reads:
 1. find
 2. aggregate
 3. distinct
+
+Sending readConcern to the server on all commands
+=================================================
+
+Drivers MUST set the readConcern ``level`` and ``atClusterTime`` fields (as
+outlined above) on all commands in a snapshot session even commands like
+insert and update that do not accept a readConcern. This ensures the server
+will return an error for invalid operations, such as writes, within a session
+configured for snapshot reads.
 
 Requires MongoDB 5.0+
 =====================
@@ -277,3 +287,4 @@ Changelog
 
 :2021-06-15: Initial version.
 :2021-06-28: Raise client side error on < 5.0.
+:2021-06-29: Send readConcern with all snapshot session commands.
