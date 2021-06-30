@@ -220,7 +220,7 @@ tests:
     - commandFailedEvent:
         commandName: listIndexes
 
-- description: Server returns an error on runComand with snapshot
+- description: Server returns an error on runCommand with snapshot
   operations:
   - name: runCommand
     object: database0
