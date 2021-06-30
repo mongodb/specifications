@@ -238,7 +238,10 @@ Sending readConcern to the server on all commands
 =================================================
 
 Drivers MUST set the readConcern ``level`` and ``atClusterTime`` fields (as
-outlined above) on all commands in a snapshot session.
+outlined above) on all commands in a snapshot session even commands like
+insert and update that do not accept a readConcern. This ensures the server
+will return an error for invalid operations, such as writes, within a session
+configured for snapshot reads.
 
 Requires MongoDB 5.0+
 =====================
