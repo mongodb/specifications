@@ -32,6 +32,9 @@ initialData:
 
 tests:
 - description: Server returns an error on insertOne with snapshot
+  # Skip on sharded clusters due to SERVER-58176.
+  runOnRequirements:
+    - topologies: [replicaset]
   operations:
   - name: insertOne
     object: collection0
@@ -57,6 +60,9 @@ tests:
         commandName: insert
 
 - description: Server returns an error on insertMany with snapshot
+  # Skip on sharded clusters due to SERVER-58176.
+  runOnRequirements:
+    - topologies: [replicaset]
   operations:
   - name: insertMany
     object: collection0
@@ -84,6 +90,9 @@ tests:
         commandName: insert
 
 - description: Server returns an error on deleteOne with snapshot
+  # Skip on sharded clusters due to SERVER-58176.
+  runOnRequirements:
+    - topologies: [replicaset]
   operations:
   - name: deleteOne
     object: collection0
@@ -107,6 +116,9 @@ tests:
         commandName: delete
 
 - description: Server returns an error on updateOne with snapshot
+  # Skip on sharded clusters due to SERVER-58176.
+  runOnRequirements:
+    - topologies: [replicaset]
   operations:
   - name: updateOne
     object: collection0
@@ -226,10 +238,9 @@ tests:
     object: database0
     arguments:
       session: session0
-      commandName: insert
+      commandName: listCollections
       command:
-        insert: collection0
-        documents: [{}]
+        listIndexes: collection0
     expectError:
       isError: true
       isClientError: false
@@ -238,10 +249,10 @@ tests:
     events:
     - commandStartedEvent:
         command:
-          insert: collection0
+          listCollections: 1
           readConcern:
             level: snapshot
             atClusterTime:
               "$$exists": false
     - commandFailedEvent:
-        commandName: insert
+        listCollections: insert
