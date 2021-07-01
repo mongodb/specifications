@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.5.1
+:Spec Version: 1.5.2
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-06-28
+:Last Modified: 2021-07-01
 
 .. contents::
 
@@ -972,7 +972,9 @@ The structure of this object is as follows:
   `operation.expectResult <operation_expectResult_>`_ and is only used in cases
   where the error includes a result (e.g. `bulkWrite`_). If specified, the test
   runner MUST assert that the error includes a result and that it matches this
-  value.
+  value. If the result is optional (e.g. BulkWriteResult reported through the
+  ``writeResult`` property of a BulkWriteException), this assertion SHOULD
+  utilize the `$$unsetOrMatches`_ operator.
 
 
 expectedEventsForClient
@@ -3239,6 +3241,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-07-01: Note that ``expectError.expectResult`` should use
+             ``$$unsetOrMatches`` when the result is optional.
 
 :2021-06-09: Added an ``observeSensitiveCommands`` property to the ``client``
              entity type.
