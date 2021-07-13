@@ -2,14 +2,14 @@
 Snapshot Reads Specification
 ============================
 
-:Spec Title: Snapshot Reads Specification (See the registry of specs)
-:Spec Version: 1.2
+:Spec Title: Snapshot Reads Specification
+:Spec Version: 1.2.1
 :Author: Boris Dogadov
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Judah Schvimer
-:Status: Draft (Could be Draft, Accepted, Rejected, Final, or Replaced)
+:Status: Accepted
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 29-Jun-2021
+:Last Modified: 12-Jul-2021
 
 .. contents::
 
@@ -66,10 +66,10 @@ Snapshot reads
     Snapshots reads are majority committed reads.
 
 Snapshot timestamp
-    Snapshot timestamp, representing timestamp of the first read (find/aggregate/distinct operation) in the session.
+    Snapshot timestamp, representing timestamp of the first supported read operation (i.e. find/aggregate/distinct) in the session.
     The server creates a cursor in response to a snapshot find/aggregate command and 
-    reports ``atClusterTime`` field in the cursor response. For distinct command server adds ``atClusterTime`` field to the distinct response object.
-    ``atClusterTime`` field represents the timestamp of the read and is guaranteed to be majority committed.
+    reports ``atClusterTime`` within the ``cursor`` field in the response. For distinct commands the server adds a top-level ``atClusterTime`` field to the response.
+    The ``atClusterTime`` field represents the timestamp of the read and is guaranteed to be majority committed.
 
 Specification
 =============
@@ -97,9 +97,9 @@ All read operations performed using this session will be read from the same snap
 
 If no value is provided for ``snapshot`` a value of false is
 implied.
-There are no MongoDatabase, MongoClient or MongoCollection API changes.
+There are no MongoDatabase, MongoClient, or MongoCollection API changes.
 
-SessionOptions changes
+SessionOptions Changes
 ======================
 
 ``SessionOptions`` change summary
@@ -130,19 +130,19 @@ Note that the ``snapshot`` property is optional. The default value of
 this property is false.
 
 Snapshot reads and causal consistency are mutually exclusive. Therefore if ``snapshot`` is set to true,
-``causalConsistency`` property is set to false. Client MUST throw an Error if both ``snapshot`` and ``causalConsistency`` are set to true.
-Snapshot reads are supported both on primaries and secondaries.
+``causalConsistency`` must be false. Client MUST throw an error if both ``snapshot`` and ``causalConsistency`` are set to true.
+Snapshot reads are supported on both primaries and secondaries.
 
-ClientSession changes
+ClientSession Changes
 =====================
 
 Transaction are not allowed with snapshot sessions.
-Calling ``session.startTransaction(options)`` on snapshot session should raise an error.
+Calling ``session.startTransaction(options)`` on a snapshot session SHOULD raise an error.
 
-ReadConcern changes
+ReadConcern Changes
 ===================
 
-``snapshot`` added to `ReadConcernLevel enumeration <../read-write-concern/read-write-concern.rst#read-concern>`_.`.
+``snapshot`` added to `ReadConcernLevel enumeration <../read-write-concern/read-write-concern.rst#read-concern>`_.
 
 Server Commands
 ===============
@@ -151,17 +151,17 @@ There are no new server commands related to snapshot reads. Instead,
 snapshot reads are implemented by:
 
 1. Saving the ``atClusterTime`` returned by 5.0+ servers for the first find/aggregate/distinct operation in a
-   private property ``snapshotTime`` of the ``ClientSession`` object. Drivers MUST save the ``atClusterTime``
+   private ``snapshotTime`` property of the ``ClientSession`` object. Drivers MUST save ``atClusterTime``
    in the ``ClientSession`` object.
 
 2. Passing that ``snapshotTime`` in the ``atClusterTime`` field of the ``readConcern`` field
-   for subsequent snapshot read operations (for find/aggregate/distinct commands).
+   for subsequent snapshot read operations (i.e. find/aggregate/distinct commands).
 
 Server Command Responses
 ========================
 
-To support snapshot reads the server returns the ``atClusterTime`` in
-cursor object it sends to the driver (for both find/aggregate commands).
+For find/aggregate commands the server returns ``atClusterTime`` within the ``cursor``
+field of the response.
 
 .. code:: typescript
 
@@ -174,8 +174,8 @@ cursor object it sends to the driver (for both find/aggregate commands).
         }
     }
 
-For distinct commands server returns the ``atClusterTime`` in
-distinct response object it sends to the driver.
+For distinct commands the server returns ``atClusterTime`` as a top-level field in the
+response.
 
 .. code:: typescript
 
@@ -185,20 +185,20 @@ distinct response object it sends to the driver.
         atClusterTime : <BsonTimestamp>
     }
 
-The ``atClusterTime`` MUST be stored in the ``ClientSession`` to later be passed as the
-``atClusterTime`` field of the ``readConcern`` with ``snapshot`` level field  in subsequent read operations.
+The ``atClusterTime`` timestamp MUST be stored in the ``ClientSession`` to later be passed as the
+``atClusterTime`` field of a ``readConcern`` with a ``snapshot`` level in subsequent read operations.
 
 Server Errors
 =============
-1. The server may reply to read commands with a ``SnapshotTooOld`` error if the client's ``atClusterTime`` value is not available in the server's history.
-2. The server will return ``InvalidOptions`` error if both ``atClusterTime`` and ``afterClusterTime`` options are set to true.
-3. The server will return ``InvalidOptions`` error if the command does not support readConcern.level "snapshot".
+1. The server may reply to read commands with a ``SnapshotTooOld(239)`` error if the client's ``atClusterTime`` value is not available in the server's history.
+2. The server will return ``InvalidOptions(72)`` error if both ``atClusterTime`` and ``afterClusterTime`` options are set to true.
+3. The server will return ``InvalidOptions(72)`` error if the command does not support readConcern.level "snapshot".
 
-Snapshot read commands
+Snapshot Read Commands
 ======================
 
-For snapshot reads the driver MUST first obtain ``atClusterTime`` from the server response of find/aggregate/distinct command,
-by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotTime`` in 
+For snapshot reads the driver MUST first obtain ``atClusterTime`` from the server response of a find/aggregate/distinct command,
+by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``snapshotTime`` in the
 ``ClientSession`` object.
 
 .. code:: typescript
@@ -214,7 +214,7 @@ by specifying ``readConcern`` with ``snapshot`` level field, and store it as ``s
 
 For subsequent reads in the same session, the driver MUST send the ``snapshotTime`` saved in
 the ``ClientSession`` as the value of the ``atClusterTime`` field of the
-``readConcern`` with ``snapshot`` level field:
+``readConcern`` with a ``snapshot`` level:
 
 .. code:: typescript
 
@@ -238,8 +238,8 @@ Sending readConcern to the server on all commands
 =================================================
 
 Drivers MUST set the readConcern ``level`` and ``atClusterTime`` fields (as
-outlined above) on all commands in a snapshot session even commands like
-insert and update that do not accept a readConcern. This ensures the server
+outlined above) on all commands in a snapshot session, including commands that
+do not accept a readConcern (e.g. insert, update). This ensures that the server
 will return an error for invalid operations, such as writes, within a session
 configured for snapshot reads.
 
@@ -263,13 +263,13 @@ programs that don't need snapshot reads don't have to be changed.
 This goal is met by defining a ``SessionOptions`` field that applications use to
 start a ``ClientSession`` that can be used for snapshot reads. Alternative explicit approach of
 obtaining ``atClusterTime`` from ``cursor`` object and passing it to read concern object was considered initially.
-Session based approach was chosen as it aligns better with the existing API, and requires minimal API changes.
-Future extensibility for snapshot reads would be better served by session based approach, as no API changes will be required.
+A session-based approach was chosen as it aligns better with the existing API, and requires minimal API changes.
+Future extensibility for snapshot reads would be best served by a session-based approach, as no API changes will be required.
 
 Backwards Compatibility
 =======================
 
-The API changes to support sessions extend the existing API but do not
+The API changes to support snapshot reads extends the existing API but does not
 introduce any backward breaking changes. Existing programs that don't use
 snapshot reads continue to compile and run correctly.
 
@@ -288,3 +288,4 @@ Changelog
 :2021-06-15: Initial version.
 :2021-06-28: Raise client side error on < 5.0.
 :2021-06-29: Send readConcern with all snapshot session commands.
+:2021-07-12: Grammar and formatting revisions
