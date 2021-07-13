@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2021-06-15
-:Version: 1.6
+:Last Modified: 2021-07-12
+:Version: 1.6.1
 
 .. contents::
 
@@ -75,12 +75,12 @@ Defined below are the constructs for drivers.
       /**
        * This is rendered as "linearizable" (lower-case) on the wire.
        */
-      linearizable
+      linearizable,
 
       /**
        * This is rendered as "available" (lower-case) on the wire.
        */
-      available
+      available,
 
       /**
        * This is rendered as "snapshot" (lower-case) on the wire.
@@ -715,3 +715,4 @@ Version History
   - 2020-02-13: Inconsistent write concern must be considered an error.
   - 2021-04-07: Updated to use hello command.
   - 2021-06-15: Added "snapshot" to Readconcern level
+  - 2021-07-12: Add missing commas after ReadConcernLevel enum values
