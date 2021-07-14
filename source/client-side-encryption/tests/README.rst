@@ -1013,10 +1013,25 @@ KMS TLS Tests
 ~~~~~~~~~~~~~
 
 .. _ca.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem
+.. _expired.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem
+.. _wrong-host.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/wrong-host.pem
 
 The following tests that connections to KMS servers with TLS verify peer certificates.
 
 The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/mock_kms.js>`_.
+
+To start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, run the following bash snippet from the ``.evergreen/csfle`` directory.
+
+.. code:: bash
+
+   cat <<EOF > kms_setup.json
+   {
+      "kms_ca_file": "ca.pem",
+      "kms_cert_file": "expired.pem",
+      "port": "8000"
+   }
+   EOF
+   mongo --nodb mock_kms.js
 
 Setup
 `````
@@ -1030,7 +1045,7 @@ For both tests, do the following:
 Invalid KMS Certificate
 ```````````````````````
 
-#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem>`_ as a cert file.
+#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
 
 #. Call ``client_encrypted.createDataKey()`` with "aws" as the provider and the following masterKey:
 
@@ -1039,15 +1054,15 @@ Invalid KMS Certificate
       {
          "region": "us-east-1",
          "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-         "endpoint": "mongodb://127.0.0.1:8000",
+         "endpoint": "127.0.0.1:8000",
       }
 
-   Expect this to fail with an exception with a message containing the string: "expired".
+   Expect this to fail with an exception with a message referencing an expired certificate. This message will be language dependent.
 
 Invalid Hostname in KMS Certificate
 ```````````````````````````````````
 
-#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `wrong-host.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/wrong-host.pem>`_ as a cert file.
+#. Start a mock KMS server on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
 
 #. Call ``client_encrypted.createDataKey()`` with "aws" as the provider and the following masterKey:
 
@@ -1056,8 +1071,7 @@ Invalid Hostname in KMS Certificate
       {
          "region": "us-east-1",
          "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-         "endpoint": "mongodb://127.0.0.1:8000",
+         "endpoint": "127.0.0.1:8001",
       }
 
-   Expect this to fail with an exception with a message containing the string: "SANs". The full error message should make
-   a reference to "localhost" not being contained within the list of IP SANs, or server alternative names.
+   Expect this to fail with an exception with a message referencing an incorrect or unexpected host. This message will be language dependent.
