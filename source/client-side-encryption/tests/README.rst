@@ -1051,6 +1051,8 @@ Invalid KMS Certificate
       }
 
    Expect this to fail with an exception with a message referencing an expired certificate. This message will be language dependent.
+   In Python, this message is "certificate verify failed: certificate has expired". In Go, this message is
+   "certificate has expired or is not yet valid".
 
 Invalid Hostname in KMS Certificate
 ```````````````````````````````````
@@ -1068,3 +1070,5 @@ Invalid Hostname in KMS Certificate
       }
 
    Expect this to fail with an exception with a message referencing an incorrect or unexpected host. This message will be language dependent.
+   In Python, this message is "certificate verify failed: IP address mismatch, certificate is not valid for '127.0.0.1'". In Go, this message
+   is "cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs".
