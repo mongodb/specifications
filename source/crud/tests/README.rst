@@ -52,11 +52,14 @@ single operation. Notable differences from the legacy-v2 format are as follows:
   fields.
 
 - Instead of a top-level ``runOn`` field, server requirements are denoted by
-  separate top-level ``minServerVersion`` and ``maxServerVersion`` fields. The
-  minimum server version is an inclusive lower bound for running the test. The
-  maximum server version is an exclusive upper bound for running the test. If a
-  field is not present, it should be assumed that there is no corresponding bound
-  on the required server version.
+  separate top-level ``minServerVersion``, ``maxServerVersion``, and
+  ``serverless`` fields. The minimum server version is an inclusive lower bound
+  for running the test. The maximum server version is an exclusive upper bound
+  for running the test. If a field is not present, it should be assumed that
+  there is no corresponding bound on the required server version. The
+  ``serverless`` requirement behaves the same as the ``serverless`` field of the
+  `unified test format's runOnRequirement
+  <../../../../unified-test-format/unified-test-format.rst#runonrequirement>`_.
 
 The legacy-v1 format should not conflict with the newer, multi-operation format
 used by other specs (e.g. Transactions). It is possible to create a unified test
