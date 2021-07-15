@@ -1018,20 +1018,13 @@ KMS TLS Tests
 
 The following tests that connections to KMS servers with TLS verify peer certificates.
 
-The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/mock_kms.js>`_.
+The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
 
-To start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, run the following bash snippet from the ``.evergreen/csfle`` directory.
+To start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, run the following Python command from the ``.evergreen/csfle`` directory.
 
-.. code:: bash
+.. code:: python
 
-   cat <<EOF > kms_setup.json
-   {
-      "kms_ca_file": "ca.pem",
-      "kms_cert_file": "expired.pem",
-      "port": "8000"
-   }
-   EOF
-   mongo --nodb mock_kms.js
+   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 8000
 
 Setup
 `````
