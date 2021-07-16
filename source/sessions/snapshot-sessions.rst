@@ -136,7 +136,7 @@ Snapshot reads are supported on both primaries and secondaries.
 ClientSession changes
 =====================
 
-Transaction are not allowed with snapshot sessions.
+Transactions are not allowed with snapshot sessions.
 Calling ``session.startTransaction(options)`` on a snapshot session MUST raise an error.
 
 ReadConcern changes
