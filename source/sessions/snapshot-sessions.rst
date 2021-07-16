@@ -9,7 +9,7 @@ Snapshot Reads Specification
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 12-Jul-2021
+:Last Modified: 15-Jul-2021
 
 .. contents::
 
@@ -68,7 +68,7 @@ Snapshot reads
 Snapshot timestamp
     Snapshot timestamp, representing timestamp of the first supported read operation (i.e. find/aggregate/distinct) in the session.
     The server creates a cursor in response to a snapshot find/aggregate command and 
-    reports ``atClusterTime`` within the ``cursor`` field in the response. For distinct commands the server adds a top-level ``atClusterTime`` field to the response.
+    reports ``atClusterTime`` within the ``cursor`` field in the response. For the distinct command the server adds a top-level ``atClusterTime`` field to the response.
     The ``atClusterTime`` field represents the timestamp of the read and is guaranteed to be majority committed.
 
 Specification
@@ -99,7 +99,7 @@ If no value is provided for ``snapshot`` a value of false is
 implied.
 There are no MongoDatabase, MongoClient, or MongoCollection API changes.
 
-SessionOptions Changes
+SessionOptions changes
 ======================
 
 ``SessionOptions`` change summary
@@ -133,13 +133,13 @@ Snapshot reads and causal consistency are mutually exclusive. Therefore if ``sna
 ``causalConsistency`` must be false. Client MUST throw an error if both ``snapshot`` and ``causalConsistency`` are set to true.
 Snapshot reads are supported on both primaries and secondaries.
 
-ClientSession Changes
+ClientSession changes
 =====================
 
 Transaction are not allowed with snapshot sessions.
-Calling ``session.startTransaction(options)`` on a snapshot session SHOULD raise an error.
+Calling ``session.startTransaction(options)`` on a snapshot session MUST raise an error.
 
-ReadConcern Changes
+ReadConcern changes
 ===================
 
 ``snapshot`` added to `ReadConcernLevel enumeration <../read-write-concern/read-write-concern.rst#read-concern>`_.
@@ -269,7 +269,7 @@ Future extensibility for snapshot reads would be best served by a session-based 
 Backwards Compatibility
 =======================
 
-The API changes to support snapshot reads extends the existing API but does not
+The API changes to support snapshot reads extend the existing API but do not
 introduce any backward breaking changes. Existing programs that don't use
 snapshot reads continue to compile and run correctly.
 
@@ -288,4 +288,4 @@ Changelog
 :2021-06-15: Initial version.
 :2021-06-28: Raise client side error on < 5.0.
 :2021-06-29: Send readConcern with all snapshot session commands.
-:2021-07-12: Grammar and formatting revisions
+:2021-07-15: Grammar revisions. Change SHOULD to MUST for startTransaction error to comply with existing tests.
