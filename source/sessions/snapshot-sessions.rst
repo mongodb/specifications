@@ -9,7 +9,7 @@ Snapshot Reads Specification
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 15-Jul-2021
+:Last Modified: 16-Jul-2021
 
 .. contents::
 
@@ -288,4 +288,4 @@ Changelog
 :2021-06-15: Initial version.
 :2021-06-28: Raise client side error on < 5.0.
 :2021-06-29: Send readConcern with all snapshot session commands.
-:2021-07-15: Grammar revisions. Change SHOULD to MUST for startTransaction error to comply with existing tests.
+:2021-07-16: Grammar revisions. Change SHOULD to MUST for startTransaction error to comply with existing tests.
