@@ -186,7 +186,7 @@ response.
     }
 
 The ``atClusterTime`` timestamp MUST be stored in the ``ClientSession`` to later be passed as the
-``atClusterTime`` field of a ``readConcern`` with a ``snapshot`` level in subsequent read operations.
+``atClusterTime`` field of the ``readConcern`` with a ``snapshot`` level in subsequent read operations.
 
 Server Errors
 =============
