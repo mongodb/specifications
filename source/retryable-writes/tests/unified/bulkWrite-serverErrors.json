@@ -122,7 +122,9 @@
             "modifiedCount": 0,
             "upsertedCount": 0,
             "insertedIds": {
-              "0": 3
+              "$$unsetOrMatches": {
+                "0": 3
+              }
             },
             "upsertedIds": {}
           }

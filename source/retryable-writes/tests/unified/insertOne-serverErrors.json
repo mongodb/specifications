@@ -103,7 +103,11 @@
             }
           },
           "expectResult": {
-            "insertedId": 3
+            "$$unsetOrMatches": {
+              "insertedId": {
+                "$$unsetOrMatches": 3
+              }
+            }
           }
         }
       ],

@@ -62,7 +62,7 @@ tests:
           matchedCount: 0
           modifiedCount: 0
           upsertedCount: 0
-          insertedIds: { "0": 3 }
+          insertedIds: { $$unsetOrMatches: { 0: 3 } }
           upsertedIds: { }
     expectEvents:
       - client: *client0

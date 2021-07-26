@@ -53,7 +53,7 @@ tests:
         arguments:
           document: { _id: 3, x: 33 }
         expectResult:
-          insertedId: 3
+          $$unsetOrMatches: { insertedId: { $$unsetOrMatches: 3 } }
     expectEvents:
       - client: *client0
         events:
