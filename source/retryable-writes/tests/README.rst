@@ -13,8 +13,7 @@ Tests in this directory are platform-independent tests that drivers can use to
 prove their conformance to the Retryable Writes specification.
 
 Tests in the ``unified`` directory are implemented in the
-`Unified Test Format <../../unified-test-format/unified-test-format.rst>`__
-and require schema version 1.0.
+`Unified Test Format <../../unified-test-format/unified-test-format.rst>`__.
 
 Tests in the ``legacy`` directory should be executed as described below.
 
