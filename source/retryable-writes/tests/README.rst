@@ -9,8 +9,13 @@ Retryable Write Tests
 Introduction
 ============
 
-The YAML and JSON files in this directory tree are platform-independent tests
-that drivers can use to prove their conformance to the Retryable Writes spec.
+Tests in this directory are platform-independent tests that drivers can use to
+prove their conformance to the Retryable Writes specification.
+
+Tests in the ``unified`` directory are implemented in the
+`Unified Test Format <../../unified-test-format/unified-test-format.rst>`__.
+
+Tests in the ``legacy`` directory should be executed as described below.
 
 Several prose tests, which are not easily expressed in YAML, are also presented
 in this file. Those tests will need to be manually implemented by each driver.
