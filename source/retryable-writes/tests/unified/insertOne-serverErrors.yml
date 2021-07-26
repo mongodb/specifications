@@ -33,8 +33,6 @@ tests:
       - minServerVersion: "4.0"
         topologies: [ replicaset ]
       - minServerVersion: "4.1.7"
-        # Original test uses "sharded", but retryable writes requires a sharded
-        # cluster backed by replica sets
         topologies: [ sharded-replicaset ]
     operations:
       - name: failPoint
