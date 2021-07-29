@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.5.2
+:Spec Version: 1.5.3
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-07-01
+:Last Modified: 2021-07-29
 
 .. contents::
 
@@ -550,14 +550,17 @@ The structure of this object is as follows:
     Test files SHOULD NOT use this option unless one or more command monitoring
     events are specified in `observeEvents <entity_client_observeEvents_>`_.
 
+  .. _entity_client_observeSensitiveCommands:
+
   - ``observeSensitiveCommands``: Optional boolean. If true, events associated
     with sensitive commands (per the
     `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
-    spec) will be observed for this client. If false or not specified, events for
-    commands containing sensitive information MUST be ignored.
-    Authentication SHOULD be disabled when this property is true, i.e.
-    `auth <runOnRequirement_auth_>`_ should be false for each ``runOnRequirement``.
-    See `rationale_observeSensitiveCommands`_.
+    spec) will be observed for this client. Note that the command and replies
+    for such events will already have been redacted by the driver. If false or
+    not specified, events for commands containing sensitive information MUST be
+    ignored. Authentication SHOULD be disabled when this property is true, i.e.
+    `auth <runOnRequirement_auth_>`_ should be false for each
+    ``runOnRequirement``. See `rationale_observeSensitiveCommands`_.
 
   .. _entity_client_storeEventsAsEntities:
 
@@ -2779,7 +2782,13 @@ events for the following:
 
 - Any commands containing sensitive information (per the
   `Command Monitoring <../command-monitoring/command-monitoring.rst#security>`__
-  spec).
+  spec) unless
+  `observeSensitiveCommands <entity_client_observeSensitiveCommands_>`_ is true.
+  Note that drivers will redact commands and replies for sensitive commands. For
+  ``hello`` and legacy hello, which are conditionally sensistive based on the
+  presence of a ``speculativeAuthenticate`` field, the test runner may need to
+  infer that the events are sensitive based on whether or not the command and
+  reply documents are redacted (i.e. empty documents).
 
 For each element in `test.operations <test_operations_>`_, follow the process
 in `Executing an Operation`_. If an unexpected error is encountered or an
@@ -3241,6 +3250,11 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-07-29: Note that events for sensitive commands will have redacted
+             commands and replies when using ``observeSensitiveCommands``, and
+             how that affects conditionally sensitive commands such as ``hello``
+             and legacy hello.
 
 :2021-07-01: Note that ``expectError.expectResult`` should use
              ``$$unsetOrMatches`` when the result is optional.
