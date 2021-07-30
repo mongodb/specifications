@@ -92,13 +92,16 @@ may lead to `SnapshotTooOld` errors. Drivers can work around this issue by incre
 
 Prose tests
 ```````````
--  Setting both ``snapshot`` and ``causalConsistency`` is not allowed
 
-    * ``client.startSession(snapshot = true, causalConsistency = true)``
-    * Assert that an error was raised by driver
+1. Setting both ``snapshot`` and ``causalConsistency`` to true is not allowed
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* ``client.startSession(snapshot = true, causalConsistency = true)``
+* Assert that an error was raised by driver
 
 Changelog
 =========
 
 :2019-05-15: Initial version.
 :2021-06-15: Added snapshot-session tests. Introduced legacy and unified folders.
+:2021-07-30: Use numbering for prose test
