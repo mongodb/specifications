@@ -3,13 +3,13 @@ Snapshot Reads Specification
 ============================
 
 :Spec Title: Snapshot Reads Specification
-:Spec Version: 1.2.1
+:Spec Version: 1.2.2
 :Author: Boris Dogadov
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Judah Schvimer
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 16-Jul-2021
+:Last Modified: 06-Aug-2021
 
 .. contents::
 
@@ -289,3 +289,4 @@ Changelog
 :2021-06-28: Raise client side error on < 5.0.
 :2021-06-29: Send readConcern with all snapshot session commands.
 :2021-07-16: Grammar revisions. Change SHOULD to MUST for startTransaction error to comply with existing tests.
+:2021-08-06: Updated client-side error spec tests to use correct syntax for ``test.expectEvents``
