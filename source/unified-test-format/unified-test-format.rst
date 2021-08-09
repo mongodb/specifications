@@ -9,7 +9,7 @@ Unified Test Format
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-08-06
+:Last Modified: 2021-08-09
 
 .. contents::
 
@@ -3251,7 +3251,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2021-08-06: Updated all existing schema files to require at least one element
+:2021-08-09: Updated all existing schema files to require at least one element
              in ``test.expectEvents`` if specified.
 
 :2021-07-29: Note that events for sensitive commands will have redacted
