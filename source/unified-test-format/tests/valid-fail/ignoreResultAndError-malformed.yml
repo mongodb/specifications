@@ -21,15 +21,10 @@ initialData:
     documents: []
 
 tests:
-  - description: operation errors are not ignored if ignoreResultAndError is false
+  - description: malformed operation fails if ignoreResultAndError is true
     operations:
       - name: insertOne
         object: *collection0
         arguments:
-          document: &insertDocument { _id: 1 }
-      - name: insertOne
-        object: *collection0
-        arguments:
-          # Insert the same document to force a DuplicateKey error.
-          document: *insertDocument
-        ignoreResultAndError: false
+          foo: bar
+        ignoreResultAndError: true
