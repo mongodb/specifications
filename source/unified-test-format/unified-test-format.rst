@@ -1052,6 +1052,8 @@ The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
 
+  - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
+
 .. _expectedEvent_commandSucceededEvent:
 
 - ``commandSucceededEvent``: Optional object. Assertions for one or more
@@ -1069,6 +1071,8 @@ The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
 
+  - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
+
 .. _expectedEvent_commandFailedEvent:
 
 - ``commandFailedEvent``: Optional object. Assertions for one or more
@@ -1081,6 +1085,8 @@ The structure of this object is as follows:
     name matches this value.
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
+
+  - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
 
 expectedCmapEvent
 `````````````````
@@ -1169,6 +1175,14 @@ This field is an optional boolean that specifies whether or not the
 that the field is set and is a non-empty BSON ObjectId (i.e. all bytes of the
 ObjectId are not 0). If false, test runners MUST assert that the field is not
 set or is an empty BSON ObjectId.
+
+hasServerConnectionId
+`````````````````````
+
+This field is an optional boolean that specifies whether or not the
+``serverConnectionId`` field of an event is set. If true, test runners MUST
+assert that the field is set and is an Int64. If false, test runners MUST assert
+that the field is not set.
 
 
 collectionOrDatabaseOptions
