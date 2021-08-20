@@ -304,7 +304,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
      * from the server on 4.2+.
      */
-    serverConnectionId: Int64;
+    serverConnectionId: Optional<Int64>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
@@ -357,7 +357,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
      * from the server on 4.2+.
      */
-    serverConnectionId: Int64;
+    serverConnectionId: Optional<Int64>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
