@@ -1181,8 +1181,8 @@ hasServerConnectionId
 
 This field is an optional boolean that specifies whether or not the
 ``serverConnectionId`` field of an event is set. If true, test runners MUST
-assert that the field is set and is a positive Int64. If false, test runners
-MUST assert that the field is not set or is a nonpositive Int64.
+assert that the field is set and is a positive Int32. If false, test runners
+MUST assert that the field is not set or is a nonpositive Int32.
 
 
 collectionOrDatabaseOptions
