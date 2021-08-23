@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.5.4
+:Spec Version: 1.5.5
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-08-09
+:Last Modified: 2021-08-23
 
 .. contents::
 
@@ -420,7 +420,9 @@ The structure of this object is as follows:
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
 
-Test runners MUST evaluate these conditions in the order specified above.
+Test runners MAY evaluate these conditions in any order. For example, it may be
+more efficient to evaluate ``serverless`` or ``auth`` before communicating with
+a server to check its version.
 
 entity
 ~~~~~~
@@ -3250,6 +3252,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-08-23: Allow ``runOnRequirement`` conditions to be evaluated in any order.
 
 :2021-08-09: Updated all existing schema files to require at least one element
              in ``test.expectEvents`` if specified.
