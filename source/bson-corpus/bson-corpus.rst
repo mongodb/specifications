@@ -9,8 +9,8 @@ BSON Corpus
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: July 20, 2017
-:Version: 2.0
+:Last Modified: August 26, 2021
+:Version: 2.1
 
 .. contents::
 
@@ -338,6 +338,27 @@ Implementations MAY ignore or modify them to match legacy treatment of
 deprecated types.  The ``converted_bson`` and ``converted_extjson`` fields MAY
 be used to test conversion to a standard type or MAY be ignored.
 
+Prose Tests
+===========
+
+The following tests have not yet been automated, but MUST still be tested.
+
+1. Prohibit null bytes in null-terminated strings when encoding BSON
+--------------------------------------------------------------------
+
+The BSON spec uses null-terminated strings to represent document field names and
+regex components (i.e. pattern and flags/options). Drivers MUST assert that null
+bytes are prohibited in the following contexts when encoding BSON.
+
+* Field name within a root document
+* Field name within a sub-document
+* Pattern for a regular expression
+* Flags/options for a regular expression
+
+Depending on how drivers implement BSON encoding, they MAY expect an error when
+constructing a type class (e.g. Document, RegularExpression) or when encoding a
+language representation to BSON.
+
 Implementation Notes
 ====================
 
@@ -455,6 +476,11 @@ assertions.  This makes for easier and safer test case development.
 
 Changes
 =======
+
+Version 2.1 - August 26, 2021
+
+* Add spec and prose tests for prohibiting null bytes in null-terminated strings
+  within document field names and regular expressions.
 
 Version 2.0 - May 26, 2017
 
