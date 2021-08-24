@@ -335,8 +335,8 @@ Driver API
     /**
      * Allowed values: ‘updateLookup’.  When set to ‘updateLookup’, the change notification
      * for partial updates will include both a delta describing the changes to the document,
-     * as well as a copy of the entire document that was changed from some time after the 
-     * change occurred. The default is to not send a value. 
+     * as well as a copy of the entire document that was changed from some time after the
+     * change occurred. The default is to not send a value.
      * For forward compatibility, a driver MUST NOT raise an error when a user provides an
      * unknown value. The driver relies on the server to validate this option.
      * @note this is an option of the `$changeStream` pipeline stage.
@@ -506,7 +506,7 @@ Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``c
 ChangeStream
 ------------
 
-A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method. 
+A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method.
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
@@ -514,7 +514,7 @@ Drivers MUST raise an error on the first document received without a resume toke
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error per `Resumable Error`_.  A change stream MUST NOT attempt to resume on any other type of error.
 
-In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
+In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference using the `rules for server selection <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#rules-for-server-selection>`_ before attempting to resume.
 
 Single Server Topologies
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -888,4 +888,7 @@ Changelog
 | 2021-04-23 | Updated to use modern terminology                          |
 +------------+------------------------------------------------------------+
 | 2021-04-29 | Added ``load-balanced`` to test topology requirements      |
++------------+------------------------------------------------------------+
+| 2021-08-24 | Clarified that server selection during resumption should   |
+|            | respect normal server selection rules.                     |
 +------------+------------------------------------------------------------+
