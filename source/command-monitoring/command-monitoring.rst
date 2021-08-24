@@ -302,7 +302,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     /**
      * Returns the server connection id for the command. The server connection id is distinct from
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
-     * from the server on 4.2+.
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
      */
     serverConnectionId: Optional<Int32>;
 
@@ -355,7 +356,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     /**
      * Returns the server connection id for the command. The server connection id is distinct from
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
-     * from the server on 4.2+.
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
      */
     serverConnectionId: Optional<Int32>;
 
@@ -409,7 +411,8 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     /**
      * Returns the server connection id for the command. The server connection id is distinct from
      * the connection id and is returned by the hello or legacy hello response as "connectionId"
-     * from the server on 4.2+.
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
      */
     serverConnectionId: Optional<Int32>;
 
