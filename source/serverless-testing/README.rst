@@ -65,17 +65,18 @@ Tests defined in the following specifications MUST be included in a driver's
 Atlas Serverless testing suite, including prose tests:
 
 - CRUD, including the v1 and unified tests
-- Retryable Writes
-- Retryable Reads
 - Versioned API
 - Driver Sessions
 - Transactions (excluding convenient API)
     - Note: the killAllSessions command is not supported on Serverless, so the
     transactions tests may hang if an individual test leaves a transaction open
     when it finishes (CLOUDP-84298)
+- Load Balancer unified tests
 
-In the future, this list will be expanded to include a greater portion of the
-tests once the Atlas Serverless proxy has more robust failCommand support.
+Serverless instances run behind a load balancer. The test topology MUST be
+"load-balanced" when comparing a test's ``runOnRequirement`` topology. The
+``SINGLE_MONGOS_LB_URI`` and ``MULTI_MONGOS_LB_URI`` must both be set to the
+same URI for the serverless instance.
 
 Note that the formats for the JSON/YAML tests of these specifications were
 updated to include a new ``runOnRequirement`` specifically for Atlas Serverless
@@ -84,10 +85,6 @@ requirement and then sync the tests. To ensure these requirements are enforced
 properly, the runner MUST be informed that it is running against an Atlas
 Serverless instance through some indicator (e.g. an environment variable).
 
-The Atlas Serverless proxy presents itself as a mongos, so any test meant to run
-against sharded clusters will be executed by the runners, with the exception of
-the tests affected by the previously mentioned ``runOnRequirement``.
-
 Other Tests
 ===========
 
@@ -95,4 +92,9 @@ Any other existing tests for cursor behavior that a driver may have implemented
 independently of any spec requirements SHOULD also be included in the driver's
 Atlas Serverless testing suite. Note that ChangeStreams are not supported by the
 proxy, so tests for them cannot be included.
+
+
+Changelog
+========
+8/23 Note that serverless instances now run behind a load balancer.
 
