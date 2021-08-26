@@ -420,7 +420,9 @@ The structure of this object is as follows:
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
 
-Test runners MUST evaluate these conditions in the order specified above.
+Test runners MAY evaluate these conditions in any order. For example, it may be
+more efficient to evaluate ``serverless`` or ``auth`` before communicating with
+a server to check its version.
 
 entity
 ~~~~~~
@@ -3261,6 +3263,8 @@ Change Log
 
 :2021-08-24: Test runners may create an internal MongoClient for each mongos.
              Better clarify how internal MongoClients may be used.
+
+:2021-08-23: Allow ``runOnRequirement`` conditions to be evaluated in any order.
 
 :2021-08-09: Updated all existing schema files to require at least one element
              in ``test.expectEvents`` if specified.
