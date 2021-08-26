@@ -96,5 +96,5 @@ proxy, so tests for them cannot be included.
 
 Changelog
 ========
-8/23 Note that serverless instances now run behind a load balancer.
+:2021-08-25: Update tests for load balanced serverless instances.
 
