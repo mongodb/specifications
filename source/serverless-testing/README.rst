@@ -72,8 +72,8 @@ Atlas Serverless testing suite, including prose tests:
 - Transactions (excluding convenient API)
 
     - Note: the killAllSessions command is not supported on Serverless, so the
-    transactions tests may hang if an individual test leaves a transaction open
-    when it finishes (`CLOUDP-84298 <https://jira.mongodb.org/browse/CLOUDP-84298>`_)
+      transactions tests may hang if an individual test leaves a transaction open
+      when it finishes (`CLOUDP-84298 <https://jira.mongodb.org/browse/CLOUDP-84298>`_)
 - Load Balancer unified tests
 
 Serverless instances run behind a load balancer. The test topology MUST be
