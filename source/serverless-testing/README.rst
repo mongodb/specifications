@@ -12,8 +12,8 @@ Introduction
 This file describes a subset of existing tests that drivers MUST use to assert
 compatibility with Atlas Serverless.
 
-Test Configuration
-==================
+Serverless Configuration
+========================
 
 These tests MUST be run against a live Atlas Serverless instance. A new instance
 MUST be created each time the test suite is run, and that instance MUST be used
@@ -27,10 +27,34 @@ Serverless instance, so it is recommended to create one manually via the scripts
 in drivers-evergreen-tools that can be reused for the initial implementation of
 the tests before moving to Evergreen patches.
 
+Drivers MUST use the `create-instance.sh`_ script in ``drivers-evergreen-tools``
+to create a new Atlas Serverless instance for Evergreen tasks. The script writes
+two URIs to a YAML expansions file:
+
+- ``MULTI_ATLASPROXY_SERVERLESS_URI`` A URI to the load balancer fronting
+  multiple Atlas Proxy processes.
+
+- ``SINGLE_ATLASPROXY_SERVERLESS_URI`` A URI to one of the Atlas Proxy
+  processes.
+
+The URIs can be read by drivers via the ``expansions.update`` Evergreen command.
+This will store the URIs into the ``SINGLE_ATLASPROXY_SERVERLESS_URI`` and
+``MULTI_ATLASPROXY_SERVERLESS_URI`` Evergreen expansions.
+
 .. _serverless directory in the drivers-evergreen-tools repository: https://github.com/mongodb-labs/drivers-evergreen-tools/tree/1ca6209825b6ed07ce90e24cda659143443709c8/.evergreen/serverless
 
 All tests MUST be run with wire protocol compression and authentication
 enabled.
+
+Test Runner Configuration
+=========================
+
+Drivers MUST add the username and password to both
+``SINGLE_ATLASPROXY_SERVERLESS_URI`` and ``MULTI_ATLASPROXY_SERVERLESS_URI`` to
+ensure that test clients can connect to the cluster. Drivers MUST use the final
+URI stored in ``SINGLE_ATLASPROXY_SERVERLESS_URI`` to configure internal clients
+for test runners (e.g. the internal MongoClient described by the `Unified Test
+Format spec <../../unified-test-format/unified-test-format.rst>`__).
 
 Required Variables
 ~~~~~~~~~~~~~~~~~~
@@ -75,20 +99,6 @@ Atlas Serverless testing suite, including prose tests:
       transactions tests may hang if an individual test leaves a transaction open
       when it finishes (`CLOUDP-84298 <https://jira.mongodb.org/browse/CLOUDP-84298>`_)
 - Load Balancer unified tests
-
-Serverless instances run behind a load balancer. The test topology MUST be
-"load-balanced" when comparing a test's ``runOnRequirement`` topology.
-The `create-instance.sh`_ script outputs two URIs for the serverless instance:
-
-- ``MULTI_ATLASPROXY_SERVERLESS_URI`` A URI to the load balancer fronting
-  multiple Atlas Proxy processes.
-
-- ``SINGLE_ATLASPROXY_SERVERLESS_URI`` A URI to one of the Atlas Proxy
-  processes.
-
-``MULTI_ATLASPROXY_SERVERLESS_URI`` and ``SINGLE_ATLASPROXY_SERVERLESS_URI``
-MUST be used in place of ``SINGLE_MONGOS_LB_URI`` and ``MULTI_MONGOS_LB_URI``
-respectively.
 
 .. _create-instance.sh: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/1ca6209825b6ed07ce90e24cda659143443709c8/.evergreen/serverless/create-instance.sh
 
