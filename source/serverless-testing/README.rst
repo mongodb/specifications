@@ -27,7 +27,7 @@ Serverless instance, so it is recommended to create one manually via the scripts
 in drivers-evergreen-tools that can be reused for the initial implementation of
 the tests before moving to Evergreen patches.
 
-.. _serverless directory in the drivers-evergreen-tools repository: https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/serverless
+.. _serverless directory in the drivers-evergreen-tools repository: https://github.com/mongodb-labs/drivers-evergreen-tools/tree/1ca6209825b6ed07ce90e24cda659143443709c8/.evergreen/serverless
 
 All tests MUST be run with wire protocol compression and authentication
 enabled.
@@ -65,18 +65,31 @@ Tests defined in the following specifications MUST be included in a driver's
 Atlas Serverless testing suite, including prose tests:
 
 - CRUD, including the v1 and unified tests
+- Retryable Reads
+- Retryable Writes
 - Versioned API
 - Driver Sessions
 - Transactions (excluding convenient API)
     - Note: the killAllSessions command is not supported on Serverless, so the
     transactions tests may hang if an individual test leaves a transaction open
-    when it finishes (CLOUDP-84298)
+    when it finishes (`CLOUDP-84298 <https://jira.mongodb.org/browse/CLOUDP-84298>`_)
 - Load Balancer unified tests
 
 Serverless instances run behind a load balancer. The test topology MUST be
-"load-balanced" when comparing a test's ``runOnRequirement`` topology. The
-``SINGLE_MONGOS_LB_URI`` and ``MULTI_MONGOS_LB_URI`` environment variables must both be set to the
-same URI for the serverless instance.
+"load-balanced" when comparing a test's ``runOnRequirement`` topology.
+The `create-instance.sh`_ script outputs two URIs for the serverless instance:
+
+- ``MULTI_ATLASPROXY_SERVERLESS_URI`` A URI to the load balancer fronting
+  multiple Atlas Proxy processes.
+
+- ``SINGLE_ATLASPROXY_SERVERLESS_URI`` A URI to one of the Atlas Proxy
+  processes.
+
+``MULTI_ATLASPROXY_SERVERLESS_URI`` and ``SINGLE_ATLASPROXY_SERVERLESS_URI``
+MUST be used in place of ``SINGLE_MONGOS_LB_URI`` and ``MULTI_MONGOS_LB_URI``
+respectively.
+
+.. _create-instance.sh: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/1ca6209825b6ed07ce90e24cda659143443709c8/.evergreen/serverless/create-instance.sh
 
 Note that the formats for the JSON/YAML tests of these specifications were
 updated to include a new ``runOnRequirement`` specifically for Atlas Serverless
