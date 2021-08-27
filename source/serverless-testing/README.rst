@@ -21,11 +21,11 @@ for all of the tests required by this specification. Once the tests are
 finished, the instance MUST be deleted regardless of the outcome of the tests.
 The `serverless directory in the drivers-evergreen-tools repository`_ contains
 scripts for creating and deleting Atlas Serverless instances, and the
-``config.yml`` contains an example evergreen configuration that uses them to run
+``config.yml`` contains an example Evergreen configuration that uses them to run
 the tests. It can take up to 15 minutes or so to provision a new Atlas
 Serverless instance, so it is recommended to create one manually via the scripts
 in drivers-evergreen-tools that can be reused for the initial implementation of
-the tests before moving to evergreen patches.
+the tests before moving to Evergreen patches.
 
 .. _serverless directory in the drivers-evergreen-tools repository: https://github.com/mongodb-labs/drivers-evergreen-tools/tree/master/.evergreen/serverless
 
@@ -75,7 +75,7 @@ Atlas Serverless testing suite, including prose tests:
 
 Serverless instances run behind a load balancer. The test topology MUST be
 "load-balanced" when comparing a test's ``runOnRequirement`` topology. The
-``SINGLE_MONGOS_LB_URI`` and ``MULTI_MONGOS_LB_URI`` must both be set to the
+``SINGLE_MONGOS_LB_URI`` and ``MULTI_MONGOS_LB_URI`` environment variables must both be set to the
 same URI for the serverless instance.
 
 Note that the formats for the JSON/YAML tests of these specifications were
@@ -96,5 +96,6 @@ proxy, so tests for them cannot be included.
 
 Changelog
 ========
+
 :2021-08-25: Update tests for load balanced serverless instances.
 
