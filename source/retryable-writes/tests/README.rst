@@ -169,6 +169,18 @@ Each YAML file has the following keys:
     the default is all topologies (i.e. ``["single", "replicaset", "sharded",
     "load-balanced"]``).
 
+  - ``serverless``: Optional string. Whether or not the test should be run on
+    serverless instances imitating sharded clusters. Valid values are "require",
+    "forbid", and "allow". If "require", the test MUST only be run on serverless
+    instances. If "forbid", the test MUST NOT be run on serverless instances. If
+    omitted or "allow", this option has no effect.
+
+    The test runner MUST be informed whether or not serverless is being used in
+    order to determine if this requirement is met (e.g. through an environment
+    variable or configuration option). Since the serverless proxy imitates a
+    mongos, the runner is not capable of determining this by issuing a server
+    command such as ``buildInfo`` or ``hello``.
+
 - ``data``: The data that should exist in the collection under test before each
   test run.
 
@@ -373,6 +385,8 @@ and sharded clusters.
 
 Changelog
 =========
+
+:2021-08-27: Add ``serverless`` to ``runOn``
 
 :2021-04-23: Add ``load-balanced`` to test topology requirements.
 
