@@ -17,6 +17,10 @@ createEntities:
       collectionName: &collection0Name coll0
       collectionOptions:
         writeConcern: { w: 0 }
+  - collection:
+      id: &collection1 collection1
+      database: *database0
+      collectionName: *collection0Name
 
 initialData:
   - collectionName: *collection0Name
@@ -71,11 +75,34 @@ tests:
           filter: *filter
           update: *update
           hint: _id_
-        expectResult: &result { $$unsetOrMatches: { acknowledged: { $$unsetOrMatches: false } } }
+        expectResult: &unacknowledgedResult { $$unsetOrMatches: { acknowledged: { $$unsetOrMatches: false } } }
+      # Execute a subsequent, acknowledged write to ensure the unacknowledged
+      # write is applied before the outcome assertion.
+      - &acknowledgedWrite
+        object: *collection1
+        name: insertOne
+        arguments:
+          document: { _id: 0 }
+    expectEvents: &events
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                update: *collection0Name
+                updates:
+                  - q: *filter
+                    u: *update
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
+                    hint: { $$type: [ string, object ]}
+                writeConcern: { w: 0 }
+          - commandStartedEvent:
+              commandName: insert
     outcome: &outcomeChanged
       - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
+          - { _id: 0 }
           - { _id: 1, x: 11 }
           - { _id: 2, x: 23 }
 
@@ -89,5 +116,7 @@ tests:
           filter: *filter
           update: *update
           hint: { _id: 1 }
-        expectResult: *result
+        expectResult: *unacknowledgedResult
+      - *acknowledgedWrite
+    expectEvents: *events
     outcome: *outcomeChanged
