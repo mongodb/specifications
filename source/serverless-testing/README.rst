@@ -56,6 +56,19 @@ URI stored in ``SINGLE_ATLASPROXY_SERVERLESS_URI`` to configure internal clients
 for test runners (e.g. the internal MongoClient described by the `Unified Test
 Format spec <../../unified-test-format/unified-test-format.rst>`__).
 
+The ``SINGLE_ATLASPROXY_SERVERLESS_URI`` and ``MULTI_ATLASPROXY_SERVERLESS_URI``
+URIs both contain ``loadBalanced=true`` as a URI option.
+
+.. _Load Balancer testing README: https://github.com/mongodb/specifications/blob/5fad2773960d63d46b7738dde8d7b1aca0ceaac9/source/load-balancers/tests/README.rst#load-balancer-configuration
+
+``SINGLE_ATLASPROXY_SERVERLESS_URI`` MUST be used in test runners where a load
+balancer fronting a single server is required. It is analogous to the
+``SINGLE_LB_MONGOS_URI`` in the `Load Balancer testing README`_.
+
+``MULTI_ATLASPROXY_SERVERLESS_URI`` MUST be used in test runners where a load
+balancer fronting multiple servers is required. It is analogous to the
+``MULTI_LB_MONGOS_URI`` in the `Load Balancer testing README`_.
+
 Required Variables
 ~~~~~~~~~~~~~~~~~~
 
