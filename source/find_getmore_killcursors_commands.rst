@@ -340,9 +340,13 @@ Any driver that provides helpers for any of the special collections below SHOULD
 Exhaust
 ^^^^^^^
 
-The **find** command does not support the exhaust flag from **OP_QUERY**.
-Drivers that support exhaust MUST fallback to existing **OP_QUERY** wire
-protocol messages.
+This section only applies to drivers that support exhaust cursors.
+
+On server versions 3.6 and later drivers MUST use **OP_MSG** for exhaust cursors.
+
+On server versions prior to 3.6, drivers MUST fallback to the legacy **OP_QUERY**
+wire protocol messages. The **find** command does not support the exhaust flag
+from **OP_QUERY**.
 
 Interactions with OP_QUERY
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -727,6 +731,8 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
+2021-08-27 Exhaust cursors must use OP_MSG on 3.6+ servers.
+
 2021-04-06 Updated to use hello and secondaryOk.
 
 2015-09-30 Legacy secondaryOk flag must be set to true on **getMore** and **killCursors** commands to make drivers have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
