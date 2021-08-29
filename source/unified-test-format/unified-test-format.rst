@@ -1893,7 +1893,10 @@ test runner SHOULD use the client entity associated with the session
 to execute the ``configureFailPoint`` command. In this case, the test runner
 MUST also ensure that this command is excluded from the list of observed
 command monitoring events for this client (if applicable). If such an API is
-not available, test runners MUST create a new MongoClient that is directly
+not available, but the test runner creates an internal MongoClient for each
+mongos, the test runner MAY use the internal MongoClient corresponding to
+the session's pinned server for this operation.
+Otherwise, test runners MUST create a new MongoClient that is directly
 connected to the session's pinned server for this operation. The new
 MongoClient instance MUST be closed once the command has finished executing.
 
