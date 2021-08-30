@@ -2024,7 +2024,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2020-08-26: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
+* 2021-08-26: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
