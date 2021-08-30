@@ -300,6 +300,14 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
     connectionId: ConnectionId;
 
     /**
+     * Returns the server connection id for the command. The server connection id is distinct from
+     * the connection id and is returned by the hello or legacy hello response as "connectionId"
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
+     */
+    serverConnectionId: Optional<Int32>;
+
+    /**
      * Returns the service id for the command when the driver is in load balancer mode.
      * For drivers that wish to include this in their ConnectionId object, this field is
      * optional.
@@ -344,6 +352,14 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the server connection id for the command. The server connection id is distinct from
+     * the connection id and is returned by the hello or legacy hello response as "connectionId"
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
+     */
+    serverConnectionId: Optional<Int32>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
@@ -391,6 +407,14 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
      * The name of this field is flexible to match the object that is returned from the driver.
      */
     connectionId: ConnectionId;
+
+    /**
+     * Returns the server connection id for the command. The server connection id is distinct from
+     * the connection id and is returned by the hello or legacy hello response as "connectionId"
+     * from the server on 4.2+. Drivers MAY use a wider type to represent the server connection ID
+     * value, but the server's behavior is to return an Int32.
+     */
+    serverConnectionId: Optional<Int32>;
 
     /**
      * Returns the service id for the command when the driver is in load balancer mode.
