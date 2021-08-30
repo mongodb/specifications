@@ -11,8 +11,8 @@ Command Monitoring
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 2021-05-05
-:Version: 1.9.1
+:Last Modified: 2021-08-30
+:Version: 1.10.0
 
 .. contents::
 
@@ -508,3 +508,6 @@ Changelog
 5 MAY 2021
   - Updated to use hello and legacy hello.
 
+30 AUG 2021:
+  - Added ``serverConnectionId`` field to ``CommandStartedEvent``, ``CommandSucceededEvent`` and
+    ``CommandFailedEvent``.
