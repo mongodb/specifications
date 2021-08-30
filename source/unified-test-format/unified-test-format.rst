@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.5.6
+:Spec Version: 1.5.7
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-08-24
+:Last Modified: 2021-08-30
 
 .. contents::
 
@@ -3276,6 +3276,9 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-08-30: Add ``hasServerConnectionId`` field to ``commandStartedEvent``,
+             ``commandSuccededEvent`` and ``commandFailedEvent``.
 
 :2021-08-24: Test runners may create an internal MongoClient for each mongos.
              Better clarify how internal MongoClients may be used.
