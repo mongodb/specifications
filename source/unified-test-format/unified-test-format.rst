@@ -1894,7 +1894,7 @@ to execute the ``configureFailPoint`` command. In this case, the test runner
 MUST also ensure that this command is excluded from the list of observed
 command monitoring events for this client (if applicable). If such an API is
 not available, but the test runner creates an internal MongoClient for each
-mongos, the test runner MAY use the internal MongoClient corresponding to
+mongos, the test runner SHOULD use the internal MongoClient corresponding to
 the session's pinned server for this operation.
 Otherwise, test runners MUST create a new MongoClient that is directly
 connected to the session's pinned server for this operation. The new
@@ -3283,8 +3283,10 @@ Change Log
 :2021-08-30: Add ``hasServerConnectionId`` field to ``commandStartedEvent``,
              ``commandSuccededEvent`` and ``commandFailedEvent``.
 
-:2021-08-24: Test runners may create an internal MongoClient for each mongos.
+:2021-08-30: Test runners may create an internal MongoClient for each mongos.
              Better clarify how internal MongoClients may be used.
+             Clarify that drivers creating an internal MongoClient for each
+             mongos should use clients for ``targetedFailPoint`` operations.
 
 :2021-08-23: Allow ``runOnRequirement`` conditions to be evaluated in any order.
 
