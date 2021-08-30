@@ -17,10 +17,6 @@ createEntities:
       collectionName: &collection0Name coll0
       collectionOptions:
         writeConcern: { w: 0 }
-  - collection:
-      id: &collection1 collection1
-      database: *database0
-      collectionName: *collection0Name
 
 initialData:
   - collectionName: *collection0Name
@@ -47,10 +43,6 @@ tests:
     expectEvents: &noEvents
       - client: *client0
         events: []
-    outcome: &outcomeUnchanged
-      - collectionName: *collection0Name
-        databaseName: *database0Name
-        documents: *documents
 
   - description: "Unacknowledged deleteMany with hint document fails with client-side error on pre-4.4 server"
     runOnRequirements:
@@ -66,7 +58,6 @@ tests:
         expectError:
           isClientError: true
     expectEvents: *noEvents
-    outcome: *outcomeUnchanged
 
   - description: "Unacknowledged deleteMany with hint string on 4.4+ server"
     runOnRequirements:
@@ -80,13 +71,6 @@ tests:
                 filter: *filter
                 hint: _id_
         expectResult: &unacknowledgedResult { $$unsetOrMatches: { acknowledged: { $$unsetOrMatches: false } } }
-      # Execute a subsequent, acknowledged write to ensure the unacknowledged
-      # write is applied before the outcome assertion.
-      - &acknowledgedWrite
-        object: *collection1
-        name: insertOne
-        arguments:
-          document: { _id: 0 }
     expectEvents: &events
       - client: *client0
         events:
@@ -98,14 +82,6 @@ tests:
                     hint: { $$type: [ string, object ]}
                     limit: 0
                 writeConcern: { w: 0 }
-          - commandStartedEvent:
-              commandName: insert
-    outcome: &outcomeChanged
-      - collectionName: *collection0Name
-        databaseName: *database0Name
-        documents:
-          - { _id: 0 }
-          - { _id: 1, x: 11 }
 
   - description: "Unacknowledged deleteMany with hint document on 4.4+ server"
     runOnRequirements:
@@ -119,6 +95,4 @@ tests:
                 filter: *filter
                 hint: { _id: 1 }
         expectResult: *unacknowledgedResult
-      - *acknowledgedWrite
     expectEvents: *events
-    outcome: *outcomeChanged

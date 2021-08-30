@@ -86,22 +86,6 @@
           "client": "client0",
           "events": []
         }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
       ]
     },
     {
@@ -138,22 +122,6 @@
           "client": "client0",
           "events": []
         }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 22
-            }
-          ]
-        }
       ]
     },
     {
@@ -180,15 +148,6 @@
           },
           "expectResult": {
             "$$unsetOrMatches": null
-          }
-        },
-        {
-          "object": "collection1",
-          "name": "insertOne",
-          "arguments": {
-            "document": {
-              "_id": 0
-            }
           }
         }
       ],
@@ -219,30 +178,6 @@
                   }
                 }
               }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "insert"
-              }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 0
-            },
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 111
             }
           ]
         }
@@ -275,15 +210,6 @@
           "expectResult": {
             "$$unsetOrMatches": null
           }
-        },
-        {
-          "object": "collection1",
-          "name": "insertOne",
-          "arguments": {
-            "document": {
-              "_id": 0
-            }
-          }
         }
       ],
       "expectEvents": [
@@ -313,30 +239,6 @@
                   }
                 }
               }
-            },
-            {
-              "commandStartedEvent": {
-                "commandName": "insert"
-              }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "coll0",
-          "databaseName": "db0",
-          "documents": [
-            {
-              "_id": 0
-            },
-            {
-              "_id": 1,
-              "x": 11
-            },
-            {
-              "_id": 2,
-              "x": 111
             }
           ]
         }
