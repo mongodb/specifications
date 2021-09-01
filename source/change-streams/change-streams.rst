@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: April 23, 2021
-:Version: 1.9.2
+:Last Modified: September 1, 2021
+:Version: 1.9.3
 
 .. contents::
 
@@ -889,6 +889,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2021-04-29 | Added ``load-balanced`` to test topology requirements      |
 +------------+------------------------------------------------------------+
-| 2021-08-24 | Clarified that server selection during resumption should   |
+| 2021-09-01 | Clarified that server selection during resumption should   |
 |            | respect normal server selection rules.                     |
 +------------+------------------------------------------------------------+
