@@ -1511,8 +1511,9 @@ Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
 - Set ``message`` to ``writeConcernError.errmsg`` if available.
 - Set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
 
-See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
-for examples of how a server represents write concern errors in replies.
+See `writeConcernError Examples </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
+in the Read/Write Concern spec for examples of how a server represents write
+concern errors in replies.
 
 WriteError
 ~~~~~~~~~~
@@ -1928,7 +1929,7 @@ The ``replace`` family of operations require that the replacement document param
 
 
 Test Plan
-======================================
+=========
 
 See the `README <tests/README.rst>`_ for tests.
 
