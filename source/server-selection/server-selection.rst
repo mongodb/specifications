@@ -730,21 +730,21 @@ the command and how it is invoked:
 
       The current list of "may-use-secondary" commands includes:
 
-        - aggregate without a write stage (e.g. ``$out``, ``$merge``)
-        - collStats
-        - count
-        - dbStats
-        - distinct
-        - find
-        - geoNear
-        - geoSearch
-        - group
-        - mapReduce where the ``out`` option is ``{ inline: 1 }``
-        - parallelCollectionScan
+      - aggregate without a write stage (e.g. ``$out``, ``$merge``)
+      - collStats
+      - count
+      - dbStats
+      - distinct
+      - find
+      - geoNear
+      - geoSearch
+      - group
+      - mapReduce where the ``out`` option is ``{ inline: 1 }``
+      - parallelCollectionScan
 
       Associated command-specific helpers SHOULD take a read preference
       argument and otherwise MUST use the default read preference from client,
-      database or collection configuration.
+      database, or collection configuration.
 
       The aggregate command succeeds on a secondary unless a write stage (e.g.
       ``$out``, ``$merge``) is specified. When a write stage is specified, the
@@ -752,11 +752,11 @@ the command and how it is invoked:
       'primary', the driver SHOULD warn if a write stage is included in the
       pipeline.
 
-      If a client provides a specific helper for inline mapreduce, then it is
-      "may-use-secondary" and the *regular* mapreduce helper is "must use
-      primary". Otherwise mapreduce behaves like the aggregate helper: it is the
-      user's responsibility to specify {inline: 1} when running mapreduce on a
-      secondary.
+      If a client provides a specific helper for inline mapReduce, then it is
+      "may-use-secondary" and the *regular* mapReduce helper is
+      "must-use-primary". Otherwise, the mapReduce helper is "may-use-secondary"
+      and it is the user's responsibility to specify ``{inline: 1}`` when
+      running mapReduce on a secondary.
 
     New command-specific helpers implemented in the future will be considered
     "must-use-primary", "should-use-primary" or "may-use-secondary" according
