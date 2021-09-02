@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-09-03
-:Version: 1.13.3
+:Last Modified: 2021-09-XX
+:Version: 1.13.4
 
 .. contents::
 
@@ -746,11 +746,13 @@ the command and how it is invoked:
       argument and otherwise MUST use the default read preference from client,
       database, or collection configuration.
 
-      The aggregate command succeeds on a secondary unless a write stage (e.g.
-      ``$out``, ``$merge``) is specified. When a write stage is specified, the
-      command must be treated as a write command. If the read preference is not
-      'primary', the driver SHOULD warn if a write stage is included in the
-      pipeline.
+      For pre-5.0 servers, an aggregate command is "must-use-primary" if its
+      pipeline contains a write stage (e.g. ``$out``, ``$merge``); otherwise, it
+      is "may-use-secondary". For 5.0+ servers, secondaries can execute an
+      aggregate command with a write stage and all aggregate commands are
+      "may-use-secondary". This is discussed in more detail in
+      `Read preferences and server selection <../crud/crud.rst#read-preferences-and-server-selection>`_
+      in the CRUD spec.
 
       If a client provides a specific helper for inline mapReduce, then it is
       "may-use-secondary" and the *regular* mapReduce helper is
@@ -1851,3 +1853,6 @@ window.
 2021-05-13: Updated to use modern terminology.
 
 2021-09-03: Clarify that wire version check only applies to available servers.
+
+2021-09-XX: Note that 5.0+ secondaries support aggregate with write stages (e.g.
+``$out`` and ``$merge``)

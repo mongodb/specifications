@@ -72,5 +72,6 @@ Server Wire version and Feature List
    * - 5.0
      - 13
      - | Consistent $collStats count behavior on sharded and non-sharded topologies
+       | $out and $merge on secondaries (technically FCV 4.4+)
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h

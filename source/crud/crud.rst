@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: August 31, 2021
+:Last Modified: September XX, 2021
 
 .. contents::
 
@@ -1928,6 +1928,61 @@ The ``update`` family of operations require that the update document parameter M
 The ``replace`` family of operations require that the replacement document parameter MUST NOT begin with an atomic modifier. In practice, this means that introspection needs to happen on that document to enforce this. However, it is enough to only check the first element in the document. If it does not begin with a ``$`` sign but an element later on does, the server will throw an error.
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Aggregation Pipelines with Write Stages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section discusses special considerations for aggregation pipelines that
+contain write stages (e.g. ``$out``, ``$merge``).
+
+
+Returning a cursor on the output collection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As noted in the documentation for the ``aggregate`` helper earlier in this
+document, ``$out`` and ``$merge`` are special pipeline stages that cause no
+results to be returned from the server. As such, drivers MAY setup a cursor to
+be executed upon iteration against the output collection and return that instead
+of an iterable that would otherwise have no results.
+
+
+Read preferences and server selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Historically, only primaries could execute an aggregation pipeline with ``$out``
+or ``$merge``. As of ``featureCompatibilityVersion`` 4.4, secondaries can now
+execute such pipelines; however, since drivers do not track
+``featureCompatibilityVersion``, executing an aggregation pipeline with ``$out``
+or ``$merge`` on a secondary will require a 5.0+ server (i.e. wire version >=
+13).
+
+Drivers MUST guarantee the following:
+
+- If an explicit (i.e. per-operation) read preference is specified for an
+  aggregation with a write stage, drivers MUST attempt to use it. If that would
+  result in a pre-5.0, secondary server being selected, drivers MUST instead
+  select a server using a primary read preference.
+- If no explicit read preference is specified but a default read preference is
+  available to inherit (e.g. from the Collection), drivers MUST attempt to use
+  it. If that would result in a pre-5.0, secondary server being selected,
+  drivers MUST instead select a server using a primary read preference.
+
+Since the server version may not be known prior to server selection, this
+specification is not prescriptive about how drivers should select a server for
+an ``aggregate`` command including a write stage. For example, drivers MAY use a
+custom server selector to consider server/wire version when matching a read
+preference and fall back to selecting a primary. Alternatively, drivers MAY
+invoke server selection an additional time if necessary.
+
+Drivers MUST follow the rules for
+`Passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_.
+If an explicit or inherited read preference was used and the selected server is
+a pre-5.0 mongos or a load balancer backing a pre-5.0 mongos, drivers MUST
+behave as if a primary read preference was used. This is especially important if
+drivers utilize a custom server selector, since they may need to infer whether a
+primary read preference was used as a fall back.
+
+
 Test Plan
 =========
 
@@ -2025,6 +2080,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2021-09-XX: Support aggregations with $out and $merge on 5.0+ secondaries
 * 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
