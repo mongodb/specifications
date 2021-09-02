@@ -140,7 +140,7 @@ additional assertions.  For each case, keys include:
   JSON document.  Because this is itself embedded as a *string* inside a JSON
   document, characters like quote and backslash are escaped.  It may be
   present for deprecated types and is the Canonical Extended JSON
-  representation of ``converted_bson`.
+  representation of ``converted_bson``.
 
 * ``lossy`` (optional) -- boolean; present (and true) iff ``canonical_bson``
   can't be represented exactly with extended JSON (e.g. NaN with a payload).
