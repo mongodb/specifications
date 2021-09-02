@@ -167,15 +167,6 @@ be encoded to the ``bson_type`` under test.  For each case, keys include:
 * ``string``: a text or numeric representation of an input that can't be
   parsed to a valid value of the given type.
 
-Drivers MUST parse the extended JSON input using a regular JSON parser
-(not an extended JSON one) and verify the input is parsed successfully.
-This serves to verify that the parse error test cases test extended
-JSON-specific error conditions and that they do not have,
-for example, unintended spelling errors.
-
-Drivers SHOULD parse the extended JSON input using the extended JSON parser
-and verify the parsing produces an extended JSON parse error.
-
 Extended JSON encoding, escaping and ordering
 ---------------------------------------------
 
@@ -314,21 +305,48 @@ manner.
 Testing parsing errors
 ----------------------
 
-The interpretation of ``parseErrors`` is type-specific.  For example,
-helpers for creating Decimal128 values may parse strings to convert them
-to binary Decimal128 values.  The ``parseErrors`` cases are strings that
-will *not* convert correctly.
+The interpretation of ``parseErrors`` is type-specific. The structure of test
+cases within ``parseErrors`` is described in `Parse error case keys`_.
 
-The documentation for a type (if any) will specify how to use these
-cases for testing.
+Drivers SHOULD test that each case results in a parsing error (e.g. parsing
+Extended JSON, constructing a language type). Implementations MAY test
+assertions in an implementation-specific manner.
 
-For type "0x00" (i.e. top-level documents), the ``parseErrors`` entries have a
-``description`` field and an ``string`` field.  Parsing the ``string`` field
-as Extended JSON MUST result in an error.
 
-Drivers SHOULD test that each case results in a parse error.
-Implementations MAY test assertions in an implementation-specific
-manner.
+Top-level Document (type 0x00)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For type "0x00" (i.e. top-level documents), the ``string`` field contains input
+for an Extended JSON parser. Drivers MUST parse the Extended JSON input using an
+Extended JSON parser and verify that doing so yields an Extended JSON parsing
+error.
+
+Drivers MUST also parse the Extended JSON input using a regular JSON parser (not
+an Extended JSON one) and verify the input is parsed successfully. This serves
+to verify that the ``parseErrors`` test cases are testing Extended JSON-specific
+error conditions and that they do not have, for example, unintended syntax
+errors.
+
+Note: due to the generic nature of these tests, they may also be used to test
+Extended JSON parsing errors for various BSON types appearing within a document.
+
+
+Binary (type 0x05)
+~~~~~~~~~~~~~~~~~~
+
+For type "0x05" (i.e. binary), the rules for handling ``parseErrors`` are the
+same as those for `Top-level Document (type 0x00)`_.
+
+
+Decimal128 (type 0x13)
+~~~~~~~~~~~~~~~~~~~~~~
+
+For type "0x13" (i.e. Decimal128), the ``string`` field contains input for a
+Decimal128 parser that converts string input to a binary Decimal128 value (e.g.
+Decimal128 constructor). Drivers MUST assert that these strings cannot be
+successfully converted to a binary Decimal128 value and that parsing the string
+produces an error.
+
 
 Deprecated types
 ----------------
@@ -483,6 +501,8 @@ Version 2.1 - September 2, 2021
 
 * Add spec and prose tests for prohibiting null bytes in null-terminated strings
   within document field names and regular expressions.
+
+* Clarify type-specific rules for ``parseErrors``.
 
 Version 2.0 - May 26, 2017
 
