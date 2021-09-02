@@ -9,7 +9,7 @@ BSON Corpus
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: August 26, 2021
+:Last Modified: September 2, 2021
 :Version: 2.1
 
 .. contents::
@@ -348,7 +348,8 @@ The following tests have not yet been automated, but MUST still be tested.
 
 The BSON spec uses null-terminated strings to represent document field names and
 regex components (i.e. pattern and flags/options). Drivers MUST assert that null
-bytes are prohibited in the following contexts when encoding BSON.
+bytes are prohibited in the following contexts when encoding BSON (i.e. creating
+raw BSON bytes or constructing BSON-specific type classes):
 
 * Field name within a root document
 * Field name within a sub-document
@@ -356,8 +357,9 @@ bytes are prohibited in the following contexts when encoding BSON.
 * Flags/options for a regular expression
 
 Depending on how drivers implement BSON encoding, they MAY expect an error when
-constructing a type class (e.g. Document, RegularExpression) or when encoding a
-language representation to BSON.
+constructing a type class (e.g. BSON Document or Regex class) or when encoding a
+language representation to BSON (e.g. converting a dictionary, which might allow
+null bytes in its keys, to raw BSON bytes).
 
 Implementation Notes
 ====================
@@ -477,7 +479,7 @@ assertions.  This makes for easier and safer test case development.
 Changes
 =======
 
-Version 2.1 - August 26, 2021
+Version 2.1 - September 2, 2021
 
 * Add spec and prose tests for prohibiting null bytes in null-terminated strings
   within document field names and regular expressions.
