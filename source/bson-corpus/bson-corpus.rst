@@ -321,7 +321,7 @@ for an Extended JSON parser. Drivers MUST parse the Extended JSON input using an
 Extended JSON parser and verify that doing so yields an Extended JSON parsing
 error.
 
-Drivers MUST also parse the Extended JSON input using a regular JSON parser (not
+Drivers SHOULD also parse the Extended JSON input using a regular JSON parser (not
 an Extended JSON one) and verify the input is parsed successfully. This serves
 to verify that the ``parseErrors`` test cases are testing Extended JSON-specific
 error conditions and that they do not have, for example, unintended syntax
