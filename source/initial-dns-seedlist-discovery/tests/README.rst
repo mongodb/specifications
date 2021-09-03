@@ -76,7 +76,7 @@ Test Format and Use
 
 These YAML and JSON files contain the following fields:
 
-- ``uri``: a mongodb+srv connection string
+- ``uri``: a mongodb+srv or mongodb+rawsrv connection string
 - ``seeds``: the expected set of initial seeds discovered from the SRV record
 - ``hosts``: the discovered topology's list of hosts once SDAM completes a scan
 - ``options``: the parsed connection string options as discovered from URI and
@@ -90,9 +90,9 @@ These YAML and JSON files contain the following fields:
 
 .. _`Connection String`: ../../connection-string/connection-string-spec.rst
 
-For each file, create MongoClient initialized with the mongodb+srv connection
-string. You SHOULD verify that the client's initial seed list matches the list of
-seeds. You MUST verify that the set of ServerDescriptions in the client's
+For each file, create MongoClient initialized with the mongodb+srv or mongodb+rawsrv
+connection string. You SHOULD verify that the client's initial seed list matches
+the list of seeds. You MUST verify that the set of ServerDescriptions in the client's
 TopologyDescription eventually matches the list of hosts. You MUST verify that
 each of the values of the Connection String Options under ``options`` match the
 Client's parsed value for that option. There may be other options parsed by

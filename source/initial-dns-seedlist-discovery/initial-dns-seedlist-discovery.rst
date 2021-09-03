@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2019-04-15
-:Version: 1.4.0
+:Last Modified: 2021-09-01
+:Version: 1.5.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -32,8 +32,8 @@ domain to return a list of host names. Supporting this feature would assist
 our users by decreasing maintenance load, primarily by removing the need to
 maintain seed lists at an application level.
 
-This specification builds on the `Connection String`_ specification. It adds a
-new protocol scheme and modifies how the `Host Information`_ is interpreted.
+This specification builds on the `Connection String`_ specification. It adds
+new protocol schemes and modifies how the `Host Information`_ is interpreted.
 
 .. _`Connection String`: ../connection-string/connection-string-spec.rst
 .. _`Host Information`: ../connection-string/connection-string-spec.rst#host-information
@@ -48,14 +48,15 @@ interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 Specification
 =============
 
-The connection string parser in the driver is extended with a new protocol
-``mongodb+srv`` as a logical pre-processing step before it considers the
-connection string and SDAM specifications. In this protocol, the comma
-separated list of host names is replaced with a single host name. The
-format is::
+The connection string parser in the driver is extended with two new protocols,
+``mongodb+srv`` and ``mongodb+rawsrv``, as logical pre-processing steps before
+considering the connection string and SDAM specifications.
+
+In both protocols, the comma separated list of host names is replaced with a
+single host name. The formats are::
 
     mongodb+srv://{hostname}.{domainname}/{options}
-
+    mongodb+rawsrv://_{servicename}._{protocol}.{hostname}.{domainname}/{options}
 
 ``{options}`` refers to the optional elements from the `Connection String`_
 specification following the ``Host Information``. This includes the ``Auth
@@ -65,16 +66,22 @@ Seedlist Discovery
 ------------------
 
 In this preprocessing step, the driver will query the DNS server for SRV
-records on ``{hostname}.{domainname}``, prefixed with ``_mongodb._tcp.``:
-``_mongodb._tcp.{hostname}.{domainname}``. This DNS query is expected to
-respond with one or more SRV records. From the DNS result, the driver now MUST
-behave the same as if an ``mongodb://`` URI was provided with all the host
+records on ``{hostname}.{domainname}``.
+
+If ``mongodb+srv`` is used, ``{hostname}.{domainname}`` MUST be prefixed with
+``_mongodb._tcp.``: ``_mongodb._tcp.{hostname}.{domainname}``. If ``mongodb+rawsrv``
+is used, the user has supplied their own service name and protocol in the URI, and
+``_mongodb._tcp`` SHALL NOT be prepended. If the ``mongodb+rawsrv`` scheme is used
+and no service name has been provided in the URI, the driver MUST raise a parse error.
+
+The DNS query is expected to respond with one or more SRV records. From the DNS result,
+the driver now MUST behave the same as if a ``mongodb://`` URI was provided with all the host
 names and port numbers that were returned as part of the DNS SRV query result.
 
 The priority and weight fields in returned SRV records MUST be ignored.
 
-If ``mongodb+srv`` is used, a driver MUST implicitly also enable TLS. Clients
-can turn this off by passing ``ssl=false`` in either the Connection String,
+If ``mongodb+srv`` or ``mongodb+rawsrv`` are used, a driver MUST implicitly also enable TLS.
+Clients can turn this off by passing ``ssl=false`` in either the Connection String,
 or options passed in as parameters in code to the MongoClient constructor (or
 equivalent API for each driver), but not through a TXT record (discussed in
 the next section).
@@ -90,12 +97,12 @@ initiate a connection to any returned host name which does not share the same
 ``{domainname}``.
 
 It is an error to specify a port in a connection string with the
-``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST NOT
-do DNS resolution or contact hosts.
+``mongodb+srv`` or ``mongodb+rawsrv`` protocols, and the driver MUST raise a
+parse error and MUST NOT do DNS resolution or contact hosts.
 
 It is an error to specify more than one host name in a connection string with
-the ``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST
-NOT do DNS resolution or contact hosts.
+the ``mongodb+srv`` or ``mongodb+rawsrv`` protocols, and the driver MUST raise
+a parse error and MUST NOT do DNS resolution or contact hosts.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has
 returned its results.
@@ -124,8 +131,8 @@ the ``{options}`` in a connection string.
 
 A Client MUST only support the ``authSource``, ``replicaSet``, and ``loadBalanced``
 options through a TXT record, and MUST raise an error if any other option is
-encountered. Although using ``mongodb+srv://`` implicitly enables TLS, a
-Client MUST NOT allow the ``ssl`` option to be set through a TXT record
+encountered. Although using ``mongodb+srv://`` or ``mongodb+rawsrv://`` implicitly
+enables TLS, a Client MUST NOT allow the ``ssl`` option to be set through a TXT record
 option.
 
 TXT records MAY be queried either before, in parallel, or after SRV records.
@@ -162,9 +169,10 @@ concert with SRV or TXT records.
 Example
 =======
 
-If we provide the following URI::
+If we provide either of the following URIs::
 
     mongodb+srv://server.mongodb.com/
+    mongodb+rawsrv://_mongodb._tcp.server.mongodb.com/
 
 The driver needs to request the DNS server for the SRV record
 ``_mongodb._tcp.server.mongodb.com``. This could return::
@@ -205,8 +213,8 @@ See README.rst in the accompanying `test directory`_.
 
 .. _`test directory`: tests
 
-Additionally, see the ``mongodb+srv`` test ``invalid-uris.yml`` in the `Connection
-String Spec tests`_.
+Additionally, see the ``mongodb+srv`` and ``mongodb+rawsrv`` tests in
+``invalid-uris.yml`` in the `Connection String Spec tests`_.
 
 .. _`Connection String Spec tests`: ../connection-string/tests
 
@@ -273,6 +281,11 @@ SRV records.
 
 ChangeLog
 =========
+
+2021-09-01 - 1.5.0
+    Add a new protocol ``mongodb+rawsrv`` that functions identically to
+    ``mongodb+srv`` but does not preprend a ``_mongodb._tcp.`` service
+    name to the DNS query.
 
 2021-04-15 - 1.4.0
     Adding in behaviour for load balancer mode.

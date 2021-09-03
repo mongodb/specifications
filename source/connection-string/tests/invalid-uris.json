@@ -287,6 +287,15 @@
       "hosts": null,
       "auth": null,
       "options": null
+    },
+    {
+      "description": "mongodb+rawsrv without service name",
+      "uri": "mongodb+rawsrv://tcp.test7.test.mongodb.com",
+      "valid": false,
+      "warning": null,
+      "hosts": null,
+      "auth": null,
+      "options": null
     }
   ]
 }

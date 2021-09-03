@@ -9,8 +9,8 @@ Polling SRV Records for mongos Discovery
 :Author: Derick Rethans
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2018-11-29
-:Version: 1.0
+:Last Modified: 2021-09-03
+:Version: 1.1
 :Spec Lead: David Golden
 
 .. contents::
@@ -61,8 +61,8 @@ for.
 Implementation
 --------------
 
-If the initial topology was created through a ``mongodb+srv://`` URI, then
-drivers MUST implement this specification by periodically rescanning the SRV
+If the initial topology was created through a ``mongodb+srv://`` or ``mongodb+rawsrv://`
+URI, then drivers MUST implement this specification by periodically rescanning the SRV
 DNS records. There MUST NOT be an option to turn this behaviour off.
 
 Drivers MUST NOT implement this specification if they do not adhere fully to
@@ -78,9 +78,14 @@ discovery section of the original specification. The behaviour of the periodic
 rescan is similar, but not identical to the behaviour of initial seedlist
 discovery.  Periodic scan MUST follow these rules:
 
-- The driver will query the DNS server for SRV records on
+- If the initial topology was created through a ``mongodb+srv://`` URI,
+  the driver will query the DNS server for SRV records on
   ``{hostname}.{domainname}``, prefixed with ``_mongodb._tcp.``:
   ``_mongodb._tcp.{hostname}.{domainname}``.
+
+- If the initial topology was created through a ``mongodb+rawsrv://`` URI,
+  the driver will query the DNS server for SRV records using the original
+  URI without the scheme: ``_{servicename}._{protocol}.{hostname}.{domainname}``.
 
 - A driver MUST verify that the host names returned through SRV records have
   the same parent ``{domainname}``. When this verification fails, a driver:
@@ -201,9 +206,9 @@ Backwards Compatibility
 
 This specification changes the behaviour of server monitoring by introducing a
 repeating DNS lookup of the SRV records. Although this is an improvement in
-the ``mongodb+srv://`` scheme it can nonetheless break expectations with users
-that were familiar with the old behaviour. We do not expect this to negatively
-impact users.
+the ``mongodb+srv://`` and ``mongodb+rawsrv://`` schemes, it can nonetheless break
+expectations with users that were familiar with the old behaviour. We do not expect
+this to negatively impact users.
 
 Reference Implementation
 ========================
@@ -227,4 +232,6 @@ No future work is expected.
 Changelog
 =========
 
-No changes yet.
+2021-09-03
+    Add guidance for new ``mongodb+rawsrv`` URI scheme: drivers should use
+    the original URI for SRV polling without prepending ``_mongodb._tcp``.

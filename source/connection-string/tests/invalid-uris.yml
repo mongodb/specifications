@@ -258,4 +258,13 @@ tests:
         auth: ~
         options: ~
 
-    
+    -
+        description: "mongodb+rawsrv without service name"
+        uri: "mongodb+rawsrv://tcp.test7.test.mongodb.com"
+        valid: false
+        warning: ~
+        hosts: ~
+        auth: ~
+        options: ~
+
+

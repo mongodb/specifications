@@ -116,8 +116,8 @@ The following tests MUST setup a MongoClient using the
 ``test3.test.build.10gen.cc`` SRV record. Each test MUST mock the described
 situation and make the specified assertions.
 
-9. Test that SRV polling is not done for load balalanced clusters
------------------------------------------------------------------
+9. Test that SRV polling is not done for load balanced clusters
+---------------------------------------------------------------
 
 Connect to ``mongodb+srv://test3.test.build.10gen.cc/?loadBalanced=true``,
 mock the addition of the following DNS record::
@@ -126,3 +126,14 @@ mock the addition of the following DNS record::
 
 Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
 only contains one server: ``localhost.test.build.10gen.cc.`` at port ``27017``.
+
+10. Test that SRV polling is done correctly for rawsrv URIs
+-----------------------------------------------------------
+
+Connect to ``mongodb+rawsrv://_customname._tcp.test3.test.build.10gen.cc/``,
+mock the addition of the following DNS record::
+
+    _customname._tcp.test3.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
+
+Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
+contains two servers: ``localhost.test.build.10gen.cc.`` at port ``27017`` and port ``27018``.
