@@ -10,7 +10,7 @@ Max Staleness
 :Status: Accepted
 :Type: Standards
 :Last Modified: April 6, 2021
-:Version: 1.4
+:Version: 1.4.1
 
 .. contents::
 
@@ -485,7 +485,11 @@ All servers must have wire version 5 to support maxStalenessSeconds
 -------------------------------------------------------------------
 
 Clients are required to throw an error if maxStalenessSeconds is set,
-and any server in the topology has maxWireVersion less than 5.
+and any available server in the topology has maxWireVersion less than 5.
+
+An available server is defined in the `Server Selection
+<https://github.com/mongodb/specifications/blob/8b20d86adb36d0d35c19004b156a410b5daf33e3/source/server-selection/server-selection.rst#terms>`_
+specification.
 
 Servers began reporting lastWriteDate in wire protocol version 5,
 and clients require some or all servers' lastWriteDate in order to
@@ -592,6 +596,7 @@ maxStalenessSeconds when there is no client-side setting.
 Changes
 =======
 
+2021-09-03: Clarify that wire version check only applies to available servers.
 2021-04-06: Updated to use hello command.
 2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
 instead of "maxStalenessMS=0".

@@ -10,7 +10,7 @@ Server Selection
 :Status: Accepted
 :Type: Standards
 :Last Modified: 2021-05-13
-:Version: 1.13.2
+:Version: 1.13.3
 
 .. contents::
 
@@ -458,7 +458,7 @@ with error code 160 (SERVER-24421).
 
 During server selection,
 drivers (but not mongos) MUST raise an error if ``maxStalenessSeconds`` is a positive number,
-and any server's ``maxWireVersion`` is less than 5. [#]_
+and any available server's ``maxWireVersion`` is less than 5. [#]_
 
 After filtering servers according to ``mode``, and before filtering with ``tag_sets``,
 eligibility MUST be determined from ``maxStalenessSeconds`` as follows:
@@ -1232,7 +1232,7 @@ selection`_::
                 throw invalid wire protocol range error with details
 
             if maxStalenessSeconds is set:
-                if any server's maxWireVersion < 5:
+                if any available server's maxWireVersion < 5:
                     client.lock.release()
                     throw error
 
@@ -1317,7 +1317,7 @@ The following is pseudocode for `single-threaded server selection`_::
                 throw invalid wire version range error with details
 
             if maxStalenessSeconds is set:
-                if any server's maxWireVersion < 5:
+                if any available server's maxWireVersion < 5:
                     throw error
 
                 if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
@@ -1788,6 +1788,8 @@ References
 
 Changes
 =======
+
+2021-09-03: Clarify that wire version check only applies to available servers.
 
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
