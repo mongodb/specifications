@@ -592,6 +592,7 @@ maxStalenessSeconds when there is no client-side setting.
 Changes
 =======
 
+2021-09-08: Updated tests to support driver removal of support for server versions older than 3.6.
 2021-04-06: Updated to use hello command.
 2016-09-29: Specify "no max staleness" in the URI with "maxStalenessMS=-1"
 instead of "maxStalenessMS=0".
