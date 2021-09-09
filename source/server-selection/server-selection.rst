@@ -1003,10 +1003,12 @@ If ``mode`` is 'primaryPreferred', select the primary if it is known, otherwise
 attempt the selection algorithm with ``mode`` 'secondary' and the user's
 ``maxStalenessSeconds`` and ``tag_sets``.
 
-For all read preferences modes except 'primary', clients MUST set the ``SecondaryOk``
-wire protocol flag to ensure that any suitable server can handle the request.  Clients
-MUST NOT set the ``SecondaryOk`` wire protocol flag if the read preference mode is
-'primary'.
+For all read preferences modes except 'primary', clients MUST set the
+``SecondaryOk`` wire protocol flag (OP_QUERY) or ``$readPreference`` global
+command argument (OP_MSG) to ensure that any suitable server can handle the
+request. If the read preference mode is 'primary', clients MUST NOT set the
+``SecondaryOk`` wire protocol flag (OP_QUERY) or ``$readPreference`` global
+command argument (OP_MSG).
 
 Write operations
 ````````````````
@@ -1855,4 +1857,5 @@ window.
 2021-09-03: Clarify that wire version check only applies to available servers.
 
 2021-09-XX: Note that 5.0+ secondaries support aggregate with write stages (e.g.
-``$out`` and ``$merge``)
+``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire protocol flag or
+``$readPreference`` global command argument for replica set topology.
