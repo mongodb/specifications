@@ -1945,6 +1945,10 @@ results to be returned from the server. As such, drivers MAY setup a cursor to
 be executed upon iteration against the output collection and return that instead
 of an iterable that would otherwise have no results.
 
+Drivers that do so for ``$merge`` MAY remind users that such a cursor may return
+more documents than were written by the aggregation (e.g. documents that existed
+in the collection prior to ``$merge`` being executed).
+
 
 Read preferences and server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
