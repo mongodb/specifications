@@ -93,7 +93,7 @@ so far. It has the following keys:
 A "server" object represents a correct ServerDescription within the client's
 current TopologyDescription. It has the following keys:
 
-- type: A ServerType name, like "RSSecondary".
+- type: A ServerType name, like "RSSecondary". See `ServerType <../server-discovery-and-monitoring.rst#servertype>`_ for details pertaining to async and multi-threaded drivers.
 - setName: A string with the expected replica set name, or null.
 - setVersion: absent or an integer.
 - electionId: absent, null, or an ObjectId.
