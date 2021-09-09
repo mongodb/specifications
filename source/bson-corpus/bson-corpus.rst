@@ -9,8 +9,8 @@ BSON Corpus
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: September 2, 2021
-:Version: 2.1
+:Last Modified: September 9, 2021
+:Version: 2.1.1
 
 .. contents::
 
@@ -318,8 +318,9 @@ Top-level Document (type 0x00)
 
 For type "0x00" (i.e. top-level documents), the ``string`` field contains input
 for an Extended JSON parser. Drivers MUST parse the Extended JSON input using an
-Extended JSON parser and verify that doing so yields an Extended JSON parsing
-error.
+Extended JSON parser and verify that doing so yields an error. Drivers that parse
+Extended JSON into language types instead of directly to BSON MAY need to
+additionally convert the resulting language type(s) to BSON to expect an error.
 
 Drivers SHOULD also parse the Extended JSON input using a regular JSON parser (not
 an Extended JSON one) and verify the input is parsed successfully. This serves
@@ -496,6 +497,10 @@ assertions.  This makes for easier and safer test case development.
 
 Changes
 =======
+
+Version 2.1.1 - September 9, 2021
+
+* Clarify error expectation rules for ``parseErrors``.
 
 Version 2.1 - September 2, 2021
 
