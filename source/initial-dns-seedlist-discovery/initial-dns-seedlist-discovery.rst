@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2019-04-15
-:Version: 1.4.0
+:Last Modified: 2021-09-xx
+:Version: 1.4.1
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -65,11 +65,13 @@ Seedlist Discovery
 ------------------
 
 In this preprocessing step, the driver will query the DNS server for SRV
-records on ``{hostname}.{domainname}``, prefixed with ``_mongodb._tcp.``:
-``_mongodb._tcp.{hostname}.{domainname}``. This DNS query is expected to
-respond with one or more SRV records. From the DNS result, the driver now MUST
-behave the same as if an ``mongodb://`` URI was provided with all the host
-names and port numbers that were returned as part of the DNS SRV query result.
+records on ``{hostname}.{domainname}``, prefixed with the SRV service name
+and protocol. The SRV service name is provided in the ``srvServiceName`` URI option and
+defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the URI
+should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``. This DNS query
+is expected to respond with one or more SRV records. From the DNS result, the driver
+now MUST behave the same as if an ``mongodb://`` URI was provided with all the host names
+and port numbers that were returned as part of the DNS SRV query result.
 
 The priority and weight fields in returned SRV records MUST be ignored.
 
@@ -273,6 +275,10 @@ SRV records.
 
 ChangeLog
 =========
+
+2021-09-xx - 1.4.1
+    Clarify that service name only defaults to ``mongodb``, and should be
+    defined by the ``srvServiceName`` URI option.
 
 2021-04-15 - 1.4.0
     Adding in behaviour for load balancer mode.

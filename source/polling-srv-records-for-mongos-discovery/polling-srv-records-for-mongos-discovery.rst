@@ -9,8 +9,8 @@ Polling SRV Records for mongos Discovery
 :Author: Derick Rethans
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2018-11-29
-:Version: 1.0
+:Last Modified: 2021-09-xx
+:Version: 1.0.1
 :Spec Lead: David Golden
 
 .. contents::
@@ -79,8 +79,10 @@ rescan is similar, but not identical to the behaviour of initial seedlist
 discovery.  Periodic scan MUST follow these rules:
 
 - The driver will query the DNS server for SRV records on
-  ``{hostname}.{domainname}``, prefixed with ``_mongodb._tcp.``:
-  ``_mongodb._tcp.{hostname}.{domainname}``.
+  ``{hostname}.{domainname}``, prefixed with the SRV service name
+  and protocol. The SRV service name is provided in the ``srvServiceName`` URI option and
+  defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the URI
+  should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``..
 
 - A driver MUST verify that the host names returned through SRV records have
   the same parent ``{domainname}``. When this verification fails, a driver:
@@ -227,4 +229,6 @@ No future work is expected.
 Changelog
 =========
 
-No changes yet.
+2021-09-xx - 1.0.1
+    Clarify that service name only defaults to ``mongodb``, and should be
+    defined by the ``srvServiceName`` URI option.
