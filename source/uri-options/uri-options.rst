@@ -80,7 +80,7 @@ is specified with multiple seeds.
 Load Balancer Mode
 ~~~~~~~~~~~~~~~~~~
 
-For URI option validation in Load Balancer mode, please see the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-string-options>`__ for details.
+For URI option validation in Load Balancer mode, please see the `Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for details.
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
