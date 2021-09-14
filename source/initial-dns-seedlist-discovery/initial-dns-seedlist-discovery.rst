@@ -69,9 +69,9 @@ records on ``{hostname}.{domainname}``, prefixed with the SRV service name
 and protocol. The SRV service name is provided in the ``srvServiceName`` URI option and
 defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the URI
 should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``. This DNS query
-is expected to respond with one or more SRV records. From the DNS result, the driver
-now MUST behave the same as if an ``mongodb://`` URI was provided with all the host names
-and port numbers that were returned as part of the DNS SRV query result.
+is expected to respond with one or more SRV records. The driver MUST use all the host
+names and port numbers that were returned as part of the DNS SRV query result in the same
+way as a ``mongodb://`` URI.
 
 The priority and weight fields in returned SRV records MUST be ignored.
 
