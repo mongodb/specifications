@@ -484,11 +484,11 @@ Therefore, this spec *also* requires that maxStalenessSeconds is at least 90:
 All servers must have wire version 5 to support maxStalenessSeconds
 -------------------------------------------------------------------
 
-Clients are required to throw an error if maxStalenessSeconds is set,
+Clients with minWireVersion < 5 MUST throw an error if maxStalenessSeconds is set,
 and any available server in the topology has maxWireVersion less than 5.
 
 An available server is defined in the `Server Selection
-<https://github.com/mongodb/specifications/blob/8b20d86adb36d0d35c19004b156a410b5daf33e3/source/server-selection/server-selection.rst#terms>`_
+<../server-selection/server-selection.rst#terms>`_
 specification.
 
 Servers began reporting lastWriteDate in wire protocol version 5,

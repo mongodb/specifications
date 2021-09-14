@@ -1,7 +1,4 @@
-# Clients check the topology description for support of maxStalenessSeconds
-# and throw an error if any available server reports maxWireVersion < 5.
-# Unavailable servers (type Unknown or PossiblePrimary) must be ignored.
----
+# Clients ignore Unknown/PossiblePrimary servers even when read preference has maxStalenessSeconds
 topology_description:
   type: ReplicaSetNoPrimary
   servers:
@@ -18,7 +15,7 @@ topology_description:
   - &3
     address: c:27017
     type: RSSecondary
-    maxWireVersion: 5
+    maxWireVersion: 6
     avg_rtt_ms: 5
     lastWrite: {lastWriteDate: {$numberLong: "1"}}
 read_preference:
