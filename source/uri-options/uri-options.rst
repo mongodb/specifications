@@ -278,7 +278,8 @@ pertaining to URI options apply here.
      - Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM
 
    * - srvServiceName
-     - any string
+     - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_; can be longer than 15 characters as long as the 63 character DNS query limit is
+       not surpassed
      - "mongodb"
      - no
      - the service name to use for SRV lookup in `initial DNS seedlist discovery <https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_

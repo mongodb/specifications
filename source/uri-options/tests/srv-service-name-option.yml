@@ -2,7 +2,7 @@ tests:
     - description: "SRV URI with custom srvServiceName"
       uri: "mongodb+srv://test3.test.build.10gen.cc/?srvServiceName=customname"
       valid: true
-      warning: false
+      warning: ~
       hosts: ~
       auth: ~
       options:
