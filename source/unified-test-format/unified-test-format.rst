@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.5.3
+:Spec Version: 1.6.0
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-07-29
+:Last Modified: 2021-08-30
 
 .. contents::
 
@@ -405,7 +405,7 @@ The structure of this object is as follows:
 
 - ``serverParameters``: Optional object of server parameters to check against.
   To check server parameters, drivers send a
-  ``{ getParameter: 1, <parameter>: 1 }`` command to the server using the
+  ``{ getParameter: 1, <parameter>: 1 }`` command to the server using an
   internal MongoClient. Drivers MAY also choose to send a
   ``{ getParameter: '*' }`` command and fetch all parameters at once. The result
   SHOULD be cached to avoid repeated calls to fetch the same parameter. Test
@@ -420,7 +420,9 @@ The structure of this object is as follows:
   is enabled. If false, tests MUST only run if authentication is not enabled.
   If this field is omitted, there is no authentication requirement.
 
-Test runners MUST evaluate these conditions in the order specified above.
+Test runners MAY evaluate these conditions in any order. For example, it may be
+more efficient to evaluate ``serverless`` or ``auth`` before communicating with
+a server to check its version.
 
 entity
 ~~~~~~
@@ -1052,6 +1054,8 @@ The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
 
+  - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
+
 .. _expectedEvent_commandSucceededEvent:
 
 - ``commandSucceededEvent``: Optional object. Assertions for one or more
@@ -1069,6 +1073,8 @@ The structure of this object is as follows:
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
 
+  - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
+
 .. _expectedEvent_commandFailedEvent:
 
 - ``commandFailedEvent``: Optional object. Assertions for one or more
@@ -1081,6 +1087,8 @@ The structure of this object is as follows:
     name matches this value.
 
   - ``hasServiceId``: Defined in `hasServiceId`_.
+
+  - ``hasServerConnectionId``: Defined in `hasServerConnectionId`_.
 
 expectedCmapEvent
 `````````````````
@@ -1169,6 +1177,16 @@ This field is an optional boolean that specifies whether or not the
 that the field is set and is a non-empty BSON ObjectId (i.e. all bytes of the
 ObjectId are not 0). If false, test runners MUST assert that the field is not
 set or is an empty BSON ObjectId.
+
+hasServerConnectionId
+`````````````````````
+
+This field is an optional boolean that specifies whether or not the
+``serverConnectionId`` field of an event is set. If true, test runners MUST
+assert that the field is set and is a positive Int32. If false, test runners
+MUST assert that the field is not set, or, if the driver uses a nonpositive Int32
+value to indicate the field being unset, MUST assert that ``serverConnectionId``
+is a nonpositive Int32.
 
 
 collectionOrDatabaseOptions
@@ -1815,7 +1833,7 @@ failPoint
 
 The ``failPoint`` operation instructs the test runner to configure a fail point
 using a "primary" read preference using the specified client entity (fail points
-are not configured using the internal MongoClient).
+are not configured using an internal MongoClient).
 
 The following arguments are supported:
 
@@ -1875,7 +1893,10 @@ test runner SHOULD use the client entity associated with the session
 to execute the ``configureFailPoint`` command. In this case, the test runner
 MUST also ensure that this command is excluded from the list of observed
 command monitoring events for this client (if applicable). If such an API is
-not available, test runners MUST create a new MongoClient that is directly
+not available, but the test runner creates an internal MongoClient for each
+mongos, the test runner SHOULD use the internal MongoClient corresponding to
+the session's pinned server for this operation.
+Otherwise, test runners MUST create a new MongoClient that is directly
 connected to the session's pinned server for this operation. The new
 MongoClient instance MUST be closed once the command has finished executing.
 
@@ -2051,7 +2072,7 @@ assertCollectionExists
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The ``assertCollectionExists`` operation instructs the test runner to assert
-that the given collection exists in the database. The test runner MUST use the
+that the given collection exists in the database. The test runner MUST use an
 internal MongoClient for this operation.
 
 The following arguments are supported:
@@ -2078,7 +2099,7 @@ assertCollectionNotExists
 
 The ``assertCollectionNotExists`` operation instructs the test runner to assert
 that the given collection does not exist in the database. The test runner MUST
-use the internal MongoClient for this operation.
+use an internal MongoClient for this operation.
 
 The following arguments are supported:
 
@@ -2103,7 +2124,7 @@ assertIndexExists
 ~~~~~~~~~~~~~~~~~
 
 The ``assertIndexExists`` operation instructs the test runner to assert that an
-index with the given name exists on the collection. The test runner MUST use the
+index with the given name exists on the collection. The test runner MUST use an
 internal MongoClient for this operation.
 
 The following arguments are supported:
@@ -2132,7 +2153,7 @@ assertIndexNotExists
 
 The ``assertIndexNotExists`` operation instructs the test runner to assert that
 an index with the given name does not exist on the collection. The test runner
-MUST use the internal MongoClient for this operation.
+MUST use an internal MongoClient for this operation.
 
 The following arguments are supported:
 
@@ -2667,17 +2688,22 @@ Initializing the Test Runner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The test runner MUST be configurable with a connection string (or equivalent
-configuration), which will be used to initialize the internal MongoClient and
+configuration), which will be used to initialize any internal MongoClient(s) and
 any `client entities <entity_client_>`_ (in combination with other URI options).
 This specification is not prescriptive about how this information is provided.
 For example, it may be read from an environment variable or configuration file.
 
 Create a new MongoClient, which will be used for internal operations (e.g.
 processing `initialData`_ and `test.outcome <test_outcome_>`_). This is referred
-to elsewhere in the specification as the internal MongoClient.
+to elsewhere in the specification as the internal MongoClient. If this
+MongoClient would connect multiple mongos nodes and the driver does not provide
+a way to target operations to specific servers, the test runner MAY construct
+internal MongoClients for each mongos.
 
-Determine the server version and topology type using the internal MongoClient.
+Determine the server version and topology type using an internal MongoClient.
 This information will be used to evaluate any future `runOnRequirement`_ checks.
+Test environments SHOULD NOT use mixed version clusters, so it is not necessary
+to check multiple servers.
 
 In addition to the aforementioned connection string, the test runner MUST
 also be configurable with two other connection strings (or equivalent
@@ -2689,7 +2715,7 @@ these URIs is not provided. For all other topology types, these URIs SHOULD NOT
 be provided and MUST be ignored if provided.
 
 The test runner SHOULD terminate any open transactions (see:
-`Terminating Open Transactions`_) using the internal MongoClient before
+`Terminating Open Transactions`_) using the internal MongoClient(s) before
 executing any tests.
 
 
@@ -2743,7 +2769,9 @@ If `initialData`_ is specified, for each `collectionData`_ therein the test
 runner MUST drop the collection and insert the specified documents (if any)
 using a "majority" write concern. If no documents are specified, the test runner
 MUST create the collection with a "majority" write concern. The test runner
-MUST use the internal MongoClient for these operations.
+MUST use an internal MongoClient for these operations. If the topology is
+sharded, the test runner SHOULD use a single mongos for handling `initialData`_
+to avoid possible runtime errors.
 
 Create a new `Entity Map`_ that will be used for this test. If `createEntities`_
 is specified, the test runner MUST create each `entity`_ accordingly and add it
@@ -2755,7 +2783,7 @@ with the appropriate load balancer connection string as discussed in
 
 If the test might execute a ``distinct`` command within a sharded transaction,
 for each target collection the test runner SHOULD execute a non-transactional
-``distinct`` command on each mongos server using the internal MongoClient. See
+``distinct`` command on each mongos server using an internal MongoClient. See
 `StaleDbVersion Errors on Sharded Clusters`_ for more information.
 
 If the test might execute a ``configureFailPoint`` command, for each target
@@ -2812,7 +2840,7 @@ described in `expectedEvent`_.
 
 If `test.outcome <test_outcome_>`_ is specified, for each `collectionData`_
 therein the test runner MUST assert that the collection contains exactly the
-expected data. The test runner MUST query each collection using the internal
+expected data. The test runner MUST query each collection using an internal
 MongoClient, an ascending sort order on the ``_id`` field (i.e. ``{ _id: 1 }``),
 a "primary" read preference, a "local" read concern. When comparing collection
 data, the rules in `Evaluating Matches`_ do not apply and the documents MUST
@@ -2920,8 +2948,9 @@ Terminating Open Transactions
 Open transactions can cause tests to block indiscriminately. When connected to
 MongoDB 3.6 or later, test runners SHOULD terminate all open transactions at the
 start of a test suite and after each failed test by killing all sessions in the
-cluster. Using the internal MongoClient, execute the ``killAllSessions`` command
-on either the primary or, if connected to a sharded cluster, all mongos servers.
+cluster. Using the internal MongoClient(s), execute the ``killAllSessions``
+command on either the primary or, if connected to a sharded cluster, each mongos
+server.
 
 For example::
 
@@ -3250,6 +3279,20 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2021-08-30: Add ``hasServerConnectionId`` field to ``commandStartedEvent``,
+             ``commandSuccededEvent`` and ``commandFailedEvent``.
+
+:2021-08-30: Test runners may create an internal MongoClient for each mongos.
+             Better clarify how internal MongoClients may be used.
+             Clarify that drivers creating an internal MongoClient for each
+             mongos should use those clients for ``targetedFailPoint``
+             operations.
+
+:2021-08-23: Allow ``runOnRequirement`` conditions to be evaluated in any order.
+
+:2021-08-09: Updated all existing schema files to require at least one element
+             in ``test.expectEvents`` if specified.
 
 :2021-07-29: Note that events for sensitive commands will have redacted
              commands and replies when using ``observeSensitiveCommands``, and

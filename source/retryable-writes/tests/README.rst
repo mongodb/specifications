@@ -169,6 +169,18 @@ Each YAML file has the following keys:
     the default is all topologies (i.e. ``["single", "replicaset", "sharded",
     "load-balanced"]``).
 
+  - ``serverless``: Optional string. Whether or not the test should be run on
+    serverless instances imitating sharded clusters. Valid values are "require",
+    "forbid", and "allow". If "require", the test MUST only be run on serverless
+    instances. If "forbid", the test MUST NOT be run on serverless instances. If
+    omitted or "allow", this option has no effect.
+
+    The test runner MUST be informed whether or not serverless is being used in
+    order to determine if this requirement is met (e.g. through an environment
+    variable or configuration option). Since the serverless proxy imitates a
+    mongos, the runner is not capable of determining this by issuing a server
+    command such as ``buildInfo`` or ``hello``.
+
 - ``data``: The data that should exist in the collection under test before each
   test run.
 
@@ -179,10 +191,18 @@ Each YAML file has the following keys:
 
   - ``clientOptions``: Parameters to pass to MongoClient().
 
-  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
-    test should be initialized with multiple mongos seed addresses. If ``false``
-    or omitted, only a single mongos address should be specified. This field has
-    no effect for non-sharded topologies.
+  - ``useMultipleMongoses`` (optional): If ``true``, and the topology type is
+    ``Sharded``, the MongoClient for this test should be initialized with multiple
+    mongos seed addresses. If ``false`` or omitted, only a single mongos address
+    should be specified.
+
+    If ``true``, and the topology type is ``LoadBalanced``, the MongoClient for
+    this test should be initialized with the URI of the load balancer fronting
+    multiple servers. If ``false`` or omitted, the MongoClient for this test
+    should be initialized with the URI of the load balancer fronting a single
+    server.
+
+    ``useMultipleMongoses`` only affects ``Sharded`` and ``LoadBalanced`` topologies.
 
   - ``failPoint`` (optional): The ``configureFailPoint`` command document to run
     to configure a fail point on the primary server. Drivers must ensure that
@@ -373,6 +393,11 @@ and sharded clusters.
 
 Changelog
 =========
+
+
+
+:2021-08-27: Add ``serverless`` to ``runOn``. Clarify behavior of
+             ``useMultipleMongoses`` for ``LoadBalanced`` topologies.
 
 :2021-04-23: Add ``load-balanced`` to test topology requirements.
 

@@ -59,11 +59,13 @@ Server Wire version and Feature List
      - 8
      - | Sharded transactions
        | Aggregation $merge pipeline operator
+       | update "hint" option
 
    * - 4.4
      - 9
      - | Streaming protocol for SDAM
        | ResumableChangeStreamError error label
+       | delete "hint" option
        | findAndModify "hint" option
        | createIndexes "commitQuorum" option
 
