@@ -10,8 +10,8 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2021-09-15
-:Version: 1.5.0
+:Last Modified: 2019-09-XX
+:Version: 1.6.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
 :Approver(s): Bernie Hackett, David Golden, Jeff Yemin, Matt Broadstone, A. Jesse Jiryu Davis
@@ -48,6 +48,9 @@ interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 Specification
 =============
 
+Connection String Format
+------------------------
+
 The connection string parser in the driver is extended with a new protocol
 ``mongodb+srv`` as a logical pre-processing step before it considers the
 connection string and SDAM specifications. In this protocol, the comma
@@ -61,35 +64,40 @@ format is::
 specification following the ``Host Information``. This includes the ``Auth
 database`` and ``Connection Options``.
 
+
+MongoClient Configuration
+-------------------------
+
+srvMaxHosts
+~~~~~~~~~~~
+
+This option may be used to limit the number of SRV records used to populate the
+seedlist during initial discovery. It is also used to limit the number of
+additional hosts that may be added during
+`SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_.
+This option requires a non-negative integer and defaults to zero (i.e. no
+limit). This option MUST only be configurable at the level of a ``MongoClient``.
+
+This option is primarily used to limit the number of mongos connections that may
+be created for sharded topologies.
+
+
+srvServiceName
+~~~~~~~~~~~~~~
+
+This option specifies a valid SRV service name according to
+`RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_, with
+the exception that it may exceed 15 characters as long as the 63 (62 with
+prepended underscore) character DNS query limit is not surpassed. This option
+requires a string value is defaults to "mongodb". This option MUST only be
+configurable at the level of a ``MongoClient``.
+
+
 Seedlist Discovery
 ------------------
 
-In this preprocessing step, the driver will query the DNS server for SRV
-records on ``{hostname}.{domainname}``, prefixed with the SRV service name
-and protocol. The SRV service name is provided in the ``srvServiceName`` URI option and
-defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the URI
-should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``. This DNS query
-is expected to respond with one or more SRV records. The driver MUST add all the host
-names and port numbers that were returned as part of the DNS SRV query result to the
-seedlist.
-
-The priority and weight fields in returned SRV records MUST be ignored.
-
-If ``mongodb+srv`` is used, a driver MUST implicitly also enable TLS. Clients
-can turn this off by passing ``ssl=false`` in either the Connection String,
-or options passed in as parameters in code to the MongoClient constructor (or
-equivalent API for each driver), but not through a TXT record (discussed in
-the next section).
-
-A driver MUST verify that in addition to the ``{hostname}``, the
-``{domainname}`` consists of at least two parts: the domain name, and a TLD.
-Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV
-(or TXT records) if the full URI does not consists of at least three parts.
-
-A driver MUST verify that the host names returned through SRV records have the
-same parent ``{domainname}``. Drivers MUST raise an error and MUST NOT
-initiate a connection to any returned host name which does not share the same
-``{domainname}``.
+Validation Before Querying DNS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is an error to specify a port in a connection string with the
 ``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST NOT
@@ -99,13 +107,50 @@ It is an error to specify more than one host name in a connection string with
 the ``mongodb+srv`` protocol, and the driver MUST raise a parse error and MUST
 NOT do DNS resolution or contact hosts.
 
-The driver MUST NOT attempt to connect to any hosts until the DNS query has
-returned its results.
+A driver MUST verify that in addition to the ``{hostname}``, the
+``{domainname}`` consists of at least two parts: the domain name, and a TLD.
+Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV
+(or TXT records) if the full URI does not consists of at least three parts.
+
+If ``mongodb+srv`` is used, a driver MUST implicitly also enable TLS. Clients
+can turn this off by passing ``ssl=false`` in either the Connection String,
+or options passed in as parameters in code to the MongoClient constructor (or
+equivalent API for each driver), but not through a TXT record (discussed in a
+later section).
+
+
+Querying DNS
+~~~~~~~~~~~~
+
+In this preprocessing step, the driver will query the DNS server for SRV records
+on ``{hostname}.{domainname}``, prefixed with the SRV service name and protocol.
+The SRV service name is provided in the ``srvServiceName`` URI option and
+defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the
+URI should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``. This
+DNS query is expected to respond with one or more SRV records.
+
+The priority and weight fields in returned SRV records MUST be ignored.
 
 If the DNS result returns no SRV records, or no records at all, or a DNS error
 happens, an error MUST be raised indicating that the URI could not be used to
 find hostnames. The error SHALL include the reason why they could not be
 found.
+
+A driver MUST verify that the host names returned through SRV records have the
+same parent ``{domainname}``. Drivers MUST raise an error and MUST NOT
+initiate a connection to any returned host name which does not share the same
+``{domainname}``.
+
+The driver MUST NOT attempt to connect to any hosts until the DNS query has
+returned its results.
+
+If ``srvMaxHosts`` is zero or greater than or equal to the number of hosts in
+the DNS result, the driver MUST populate the seedlist with all hosts.
+
+If ``srvMaxHosts`` is greater than zero and less than the number of hosts in the
+DNS result, the driver MUST randomly select that many hosts and use them to
+populate the seedlist.
+
 
 Default Connection String Options
 ---------------------------------
@@ -275,6 +320,10 @@ SRV records.
 
 ChangeLog
 =========
+
+2021-09-XX - 1.6.0
+    Add ``srvMaxHosts`` MongoClient option and restructure Seedlist Discovery.
+    Improve documentation for the ``srvServiceName`` MongoClient option.
 
 2021-09-15 - 1.5.0
     Clarify that service name only defaults to ``mongodb``, and should be

@@ -126,3 +126,67 @@ mock the addition of the following DNS record::
 
 Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
 only contains one server: ``localhost.test.build.10gen.cc.`` at port ``27017``.
+
+
+SRV polling with srvMaxHosts MongoClient option
+```````````````````````````````````````````````
+
+The following tests MUST setup a MongoClient using the ``srvMaxHosts`` option
+and ``test1.test.build.10gen.cc`` SRV record. Each test MUST mock the described
+DNS changes and then verify the the new list of hosts is present.
+
+
+10. All DNS records are selected (srvMaxHosts = 0)
+--------------------------------------------------
+
+Configure the MongoClient with ``srvMaxHosts=0``.
+
+Replace the following record::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
+
+with::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Assert that the topology ultimately contains the following hosts:
+
+- localhost.test.build.10gen.cc:27017
+- localhost.test.build.10gen.cc:27019
+- localhost.test.build.10gen.cc:27020
+
+
+11. All DNS records are selected (srvMaxHosts >= records)
+---------------------------------------------------------
+
+Configure the MongoClient with ``srvMaxHosts=2``.
+
+Replace both records with::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Assert that the topology ultimately contains the following hosts:
+
+- localhost.test.build.10gen.cc:27019
+- localhost.test.build.10gen.cc:27020
+
+
+12. New DNS records are randomly selected (srvMaxHosts > 0)
+-----------------------------------------------------------
+
+Configure the MongoClient with ``srvMaxHosts=2``.
+
+Replace the following record::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
+
+with::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Assert that the topology ultimately has two hosts present and that one of the
+hosts is ``localhost.test.build.10gen.cc:27017``. The second, new host will have
+been randomly selected and cannot be deterministically asserted.
