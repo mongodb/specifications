@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.7.0
+:Spec Version: 1.7.1
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-4-15
+:Last Modified: 2021-09-13
 
 
 **Abstract**
@@ -80,7 +80,7 @@ is specified with multiple seeds.
 Load Balancer Mode
 ~~~~~~~~~~~~~~~~~~
 
-For URI option validation in Load Balancer mode, please see the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-string-options>`__ for details.
+For URI option validation in Load Balancer mode, please see the `Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for details.
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +174,7 @@ pertaining to URI options apply here.
 
    * - loadBalanced
      - "true" or "false"
-     - defined in `Load Balancer spec <../load-balancers/loadbalancers.rst#connection-string-options>`_
+     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`_
      - no
      - Whether the driver is connecting to a load balancer.
 
@@ -455,6 +455,8 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2021-09-13 Fix link to load balancer spec
+- 2021-04-15 Adding in behaviour for load balancer mode.
 - 2021-04-08 Updated to refer to hello and legacy hello
 - 2020-03-03 Add tlsDisableCertificateRevocationCheck option
 - 2020-02-26 Add tlsDisableOCSPEndpointCheck option
@@ -462,6 +464,5 @@ Changes
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
 - 2019-04-26 authSource and authMechanism have no default value
 - 2019-09-08 Add retryReads option
-- 2021-04-15 Adding in behaviour for load balancer mode.
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
