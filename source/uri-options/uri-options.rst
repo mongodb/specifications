@@ -282,8 +282,8 @@ pertaining to URI options apply here.
        character DNS query limit is not surpassed
      - "mongodb"
      - no
-     - the service name to use for SRV lookup in `initial DNS seedlist discovery <https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
-       and `SRV polling <https://github.com/mongodb/specifications/blob/master/source/polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+       and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl
      - "true" or "false"
