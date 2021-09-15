@@ -10,7 +10,7 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2021-09-xx
+:Last Modified: 2021-09-15
 :Version: 1.5.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
@@ -276,7 +276,7 @@ SRV records.
 ChangeLog
 =========
 
-2021-09-xx - 1.5.0
+2021-09-15 - 1.5.0
     Clarify that service name only defaults to ``mongodb``, and should be
     defined by the ``srvServiceName`` URI option.
 

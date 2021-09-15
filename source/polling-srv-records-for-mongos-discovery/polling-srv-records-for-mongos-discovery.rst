@@ -9,7 +9,7 @@ Polling SRV Records for mongos Discovery
 :Author: Derick Rethans
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-09-xx
+:Last Modified: 2021-09-15
 :Version: 1.1.0
 :Spec Lead: David Golden
 
@@ -229,6 +229,6 @@ No future work is expected.
 Changelog
 =========
 
-2021-09-xx - 1.1.0
+2021-09-15 - 1.1.0
     Clarify that service name only defaults to ``mongodb``, and should be
     defined by the ``srvServiceName`` URI option.
