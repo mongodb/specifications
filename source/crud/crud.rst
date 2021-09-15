@@ -1971,12 +1971,17 @@ Drivers MUST guarantee the following:
   it. If that would result in a pre-5.0, secondary server being selected,
   drivers MUST instead select a server using a primary read preference.
 
-Since the server version may not be known prior to server selection, this
-specification is not prescriptive about how drivers should select a server for
-an ``aggregate`` command including a write stage. For example, drivers MAY use a
-custom server selector to consider server/wire version when matching a read
-preference and fall back to selecting a primary. Alternatively, drivers MAY
-invoke server selection an additional time if necessary.
+Drivers SHOULD use a custom server selector to consider server/wire version when
+matching a read preference and, if a pre-5.0 secondary would be selected, fall
+back to selecting a primary. With this approach, only a single server selection
+attempt is needed.
+
+If it is not possible to augment the server selector and a pre-5.0 secondary is
+selected, drivers MAY invoke server selection a second time to obtain a primary.
+However, if the first attempt results in a server selection timeout, drivers
+MUST NOT make a second attempt and MUST propagate the original timeout error. If
+the topology type is Single, Sharded, or LoadBalanced, drivers MUST NOT make a
+second attempt (there is no benefit in doing so).
 
 Drivers MUST follow the rules for
 `Passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_.
