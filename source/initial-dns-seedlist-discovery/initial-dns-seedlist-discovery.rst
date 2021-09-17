@@ -89,7 +89,7 @@ This option specifies a valid SRV service name according to
 `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_, with
 the exception that it may exceed 15 characters as long as the 63 (62 with
 prepended underscore) character DNS query limit is not surpassed. This option
-requires a string value is defaults to "mongodb". This option MUST only be
+requires a string value and defaults to "mongodb". This option MUST only be
 configurable at the level of a ``MongoClient``.
 
 
