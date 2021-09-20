@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-05-13
+:Last Modified: 2021-09-03
 :Version: 1.13.3
 
 .. contents::
@@ -1789,8 +1789,6 @@ References
 Changes
 =======
 
-2021-09-03: Clarify that wire version check only applies to available servers.
-
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
 2015-08-10: Updated single-threaded selection logic to ensure a scan always
@@ -1851,3 +1849,5 @@ window.
 2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
 
 2021-05-13: Updated to use modern terminology.
+
+2021-09-03: Clarify that wire version check only applies to available servers.
