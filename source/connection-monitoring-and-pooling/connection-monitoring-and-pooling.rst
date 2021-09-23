@@ -574,7 +574,7 @@ that marks the SDAM state unknown.
 
 If the pool does not implement a background thread, the checkOut method is
 responsible for ensuring that the pool is `populated
-<#populating-the-pool-with-a-connection>`_ with at least minPoolSize
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with at least minPoolSize
 `Connections <#connection>`_.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is
