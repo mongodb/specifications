@@ -24,29 +24,30 @@ these tests::
   localhost.test.build.10gen.cc.            86400  IN A    127.0.0.1
   localhost.sub.test.build.10gen.cc.        86400  IN A    127.0.0.1
 
-  Record                                    TTL    Class   Port   Target
-  _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test2.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test2.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test3.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test5.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test6.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test7.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test8.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test10.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test11.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test12.test.build.10gen.cc. 86400  IN SRV  27017  localhost.build.10gen.cc.
-  _mongodb._tcp.test13.test.build.10gen.cc. 86400  IN SRV  27017  test.build.10gen.cc.
-  _mongodb._tcp.test14.test.build.10gen.cc. 86400  IN SRV  27017  localhost.not-test.build.10gen.cc.
-  _mongodb._tcp.test15.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.not-build.10gen.cc.
-  _mongodb._tcp.test16.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.not-10gen.cc.
-  _mongodb._tcp.test17.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.not-cc.
-  _mongodb._tcp.test18.test.build.10gen.cc. 86400  IN SRV  27017  localhost.sub.test.build.10gen.cc.
-  _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.evil.build.10gen.cc.
-  _mongodb._tcp.test19.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test20.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _mongodb._tcp.test21.test.build.10gen.cc. 86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  Record                                      TTL    Class   Port   Target
+  _mongodb._tcp.test1.test.build.10gen.cc.    86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test1.test.build.10gen.cc.    86400  IN SRV  27018  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test2.test.build.10gen.cc.    86400  IN SRV  27018  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test2.test.build.10gen.cc.    86400  IN SRV  27019  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test3.test.build.10gen.cc.    86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test5.test.build.10gen.cc.    86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test6.test.build.10gen.cc.    86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test7.test.build.10gen.cc.    86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test8.test.build.10gen.cc.    86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test10.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test11.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test12.test.build.10gen.cc.   86400  IN SRV  27017  localhost.build.10gen.cc.
+  _mongodb._tcp.test13.test.build.10gen.cc.   86400  IN SRV  27017  test.build.10gen.cc.
+  _mongodb._tcp.test14.test.build.10gen.cc.   86400  IN SRV  27017  localhost.not-test.build.10gen.cc.
+  _mongodb._tcp.test15.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.not-build.10gen.cc.
+  _mongodb._tcp.test16.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.not-10gen.cc.
+  _mongodb._tcp.test17.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.not-cc.
+  _mongodb._tcp.test18.test.build.10gen.cc.   86400  IN SRV  27017  localhost.sub.test.build.10gen.cc.
+  _mongodb._tcp.test19.test.build.10gen.cc.   86400  IN SRV  27017  localhost.evil.build.10gen.cc.
+  _mongodb._tcp.test19.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test20.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test21.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _customname._tcp.test22.test.build.10gen.cc 86400  IN SRV  27017  localhost.test.build.10gen.cc
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0&authSource=thisDB"
@@ -62,7 +63,8 @@ these tests::
 Note that ``test4`` is omitted deliberately to test what happens with no SRV
 record. ``test9`` is missing because it was deleted during the development of
 the tests. The missing ``test.`` sub-domain in the SRV record target for
-``test12`` is deliberate.
+``test12`` is deliberate. ``test22`` is used to test a custom service name
+(``customname``).
 
 In our tests we have used ``localhost.test.build.10gen.cc`` as the domain, and
 then configured ``localhost.test.build.10gen.cc`` to resolve to 127.0.0.1.
