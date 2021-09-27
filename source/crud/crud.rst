@@ -1983,13 +1983,24 @@ MUST NOT make a second attempt and MUST propagate the original timeout error. If
 the topology type is Single, Sharded, or LoadBalanced, drivers MUST NOT make a
 second attempt (there is no benefit in doing so).
 
-Drivers MUST follow the rules for
-`Passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_.
-If an explicit or inherited read preference was used and the selected server is
-a pre-5.0 mongos or a load balancer backing a pre-5.0 mongos, drivers MUST
-behave as if a primary read preference was used. This is especially important if
-drivers utilize a custom server selector, since they may need to infer whether a
-primary read preference was used as a fall back.
+Regardless of whether drivers employ a custom server selector or two-attempt
+approach, they MUST discern the *effective* read preference for the operation,
+which SHALL be be used for specifying the
+`$readPreference global command argument <../message/OP_MSG.rst#global-command-arguments>`_
+and
+`passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_
+(if applicable). The effective read preference SHALL be discerned as follows:
+
+- In the absence of an explicit or inherited read preference, the effective read
+  preference is ``{ "mode": "primary" }``.
+- If an explicit or inherited read preference results in selection of an
+  ineligible server and selection falls back to a primary, the effective read
+  preference is ``{ "mode": "primary" }``.
+- If a pre-5.0 mongos or a load balancer backing a pre-5.0 mongos is selected,
+  the effective read preference is ``{ "mode": "primary" }``.
+- If an explicit or inherited read preference is used and results in selection
+  of an eligible server (excluding a pre-5.0 mongos as discussed above), that is
+  the effective read preference.
 
 
 Test Plan
