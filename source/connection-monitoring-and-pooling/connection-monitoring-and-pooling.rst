@@ -507,16 +507,21 @@ Populating the Pool with a Connection (Internal Implementation)
 
 "Populating" the pool involves preemptively creating and establishing a
 `Connection <#connection>`_ which is marked as "available" for use in future
-operations. This process is used to help ensure the number of established
-connections managed by the pool is at least minPoolSize.
+operations.
 
 Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, it MUST be handled
-via the SDAM machinery according to the `Application Errors`_ section in the
-SDAM specification.
+If an error is encountered while populating a connection, it MUST be handled via
+the SDAM machinery according to the `Application Errors`_ section in the SDAM
+specification.
+
+If minPoolSize is set, the `Connection <#connection>`_ Pool MUST be populated
+until it has at least minPoolSize total `Connections <#connection>`_. This MUST
+occur only while the pool is "ready". If the pool implements a background
+thread, it can be used for this. If the pool does not implement a background
+thread, the checkOut method is responsible for ensuring this requirement is met.
 
 .. code::
 
@@ -567,12 +572,10 @@ If the pool is "closed" or "paused", any attempt to check out a `Connection
 being "paused" MUST be considered a retryable error and MUST NOT be an error
 that marks the SDAM state unknown.
 
-If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
-minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
-not implement a background thread, the checkOut method is responsible for
-`populating the pool
-<#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
-`Connections <#connection>`_ such that this requirement is met.
+If the pool does not implement a background thread, the checkOut method is
+responsible for ensuring that the pool is `populated
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with at least minPoolSize
+`Connections <#connection>`_.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is
 established. In addition, the Pool MUST NOT prevent other threads from checking
