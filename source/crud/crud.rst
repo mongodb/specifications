@@ -1985,7 +1985,7 @@ second attempt (there is no benefit in doing so).
 
 Regardless of whether drivers employ a custom server selector or two-attempt
 approach, they MUST discern the *effective* read preference for the operation,
-which SHALL be be used for specifying the
+which SHALL be used for specifying the
 `$readPreference global command argument <../message/OP_MSG.rst#global-command-arguments>`_
 and
 `passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_
