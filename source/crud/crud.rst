@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: August 31, 2021
+:Last Modified: September 28, 2021
 
 .. contents::
 
@@ -1511,8 +1511,9 @@ Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
 - Set ``message`` to ``writeConcernError.errmsg`` if available.
 - Set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
 
-See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
-for examples of how a server represents write concern errors in replies.
+See `writeConcernError Examples </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
+in the Read/Write Concern spec for examples of how a server represents write
+concern errors in replies.
 
 WriteError
 ~~~~~~~~~~
@@ -1927,8 +1928,83 @@ The ``update`` family of operations require that the update document parameter M
 The ``replace`` family of operations require that the replacement document parameter MUST NOT begin with an atomic modifier. In practice, this means that introspection needs to happen on that document to enforce this. However, it is enough to only check the first element in the document. If it does not begin with a ``$`` sign but an element later on does, the server will throw an error.
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Aggregation Pipelines with Write Stages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section discusses special considerations for aggregation pipelines that
+contain write stages (e.g. ``$out``, ``$merge``).
+
+
+Returning a cursor on the output collection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As noted in the documentation for the ``aggregate`` helper earlier in this
+document, ``$out`` and ``$merge`` are special pipeline stages that cause no
+results to be returned from the server. As such, drivers MAY setup a cursor to
+be executed upon iteration against the output collection and return that instead
+of an iterable that would otherwise have no results.
+
+Drivers that do so for ``$merge`` MAY remind users that such a cursor may return
+more documents than were written by the aggregation (e.g. documents that existed
+in the collection prior to ``$merge`` being executed).
+
+
+Read preferences and server selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Historically, only primaries could execute an aggregation pipeline with ``$out``
+or ``$merge``. As of ``featureCompatibilityVersion`` 4.4, secondaries can now
+execute such pipelines; however, since drivers do not track
+``featureCompatibilityVersion``, executing an aggregation pipeline with ``$out``
+or ``$merge`` on a secondary will require a 5.0+ server (i.e. wire version >=
+13).
+
+Drivers MUST guarantee the following:
+
+- If an explicit (i.e. per-operation) read preference is specified for an
+  aggregation with a write stage, drivers MUST attempt to use it. If that would
+  result in a pre-5.0, secondary server being selected, drivers MUST instead
+  select a server using a primary read preference.
+- If no explicit read preference is specified but a default read preference is
+  available to inherit (e.g. from the Collection), drivers MUST attempt to use
+  it. If that would result in a pre-5.0, secondary server being selected,
+  drivers MUST instead select a server using a primary read preference.
+
+Drivers SHOULD use a custom server selector to consider server/wire version when
+matching a read preference and, if a pre-5.0 secondary would be selected, fall
+back to selecting a primary. With this approach, only a single server selection
+attempt is needed.
+
+If it is not possible to augment the server selector and a pre-5.0 secondary is
+selected, drivers MAY invoke server selection a second time to obtain a primary.
+However, if the first attempt results in a server selection timeout, drivers
+MUST NOT make a second attempt and MUST propagate the original timeout error. If
+the topology type is Single, Sharded, or LoadBalanced, drivers MUST NOT make a
+second attempt (there is no benefit in doing so).
+
+Regardless of whether drivers employ a custom server selector or two-attempt
+approach, they MUST discern the *effective* read preference for the operation,
+which SHALL be used for specifying the
+`$readPreference global command argument <../message/OP_MSG.rst#global-command-arguments>`_
+and
+`passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_
+(if applicable). The effective read preference SHALL be discerned as follows:
+
+- In the absence of an explicit or inherited read preference, the effective read
+  preference is ``{ "mode": "primary" }``.
+- If an explicit or inherited read preference results in selection of an
+  ineligible server and selection falls back to a primary, the effective read
+  preference is ``{ "mode": "primary" }``.
+- If a pre-5.0 mongos or a load balancer backing a pre-5.0 mongos is selected,
+  the effective read preference is ``{ "mode": "primary" }``.
+- If an explicit or inherited read preference is used and results in selection
+  of an eligible server (excluding a pre-5.0 mongos as discussed above), that is
+  the effective read preference.
+
+
 Test Plan
-======================================
+=========
 
 See the `README <tests/README.rst>`_ for tests.
 
@@ -2024,6 +2100,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
 * 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
