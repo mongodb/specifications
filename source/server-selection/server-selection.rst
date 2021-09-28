@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-09-XX
+:Last Modified: 2021-09-28
 :Version: 1.13.4
 
 .. contents::
@@ -1856,6 +1856,6 @@ window.
 
 2021-09-03: Clarify that wire version check only applies to available servers.
 
-2021-09-XX: Note that 5.0+ secondaries support aggregate with write stages (e.g.
+2021-09-28: Note that 5.0+ secondaries support aggregate with write stages (e.g.
 ``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire protocol flag or
 ``$readPreference`` global command argument for replica set topology.

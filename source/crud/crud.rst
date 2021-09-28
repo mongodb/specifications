@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: September XX, 2021
+:Last Modified: September 28, 2021
 
 .. contents::
 
@@ -2100,7 +2100,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2021-09-XX: Support aggregations with $out and $merge on 5.0+ secondaries
+* 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
 * 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
 * 2021-06-01: Add let to AggregateOptions
