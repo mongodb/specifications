@@ -119,7 +119,7 @@ specified, drivers SHOULD verify that the size of that set matches ``numSeeds``.
 If ``hosts`` is specified, drivers MUST verify that the set of
 ServerDescriptions in the client's TopologyDescription eventually matches the
 list in ``hosts``. If ``numHosts`` is specified, drivers MUST verify that the
-size of that set matches ``numHosts`..
+size of that set matches ``numHosts``.
 
 If ``options`` is specified, drivers MUST verify each of the values under
 ``options`` match the MongoClient's parsed value for that option. There may be

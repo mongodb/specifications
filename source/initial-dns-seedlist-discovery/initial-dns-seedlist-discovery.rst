@@ -110,7 +110,7 @@ NOT do DNS resolution or contact hosts.
 A driver MUST verify that in addition to the ``{hostname}``, the
 ``{domainname}`` consists of at least two parts: the domain name, and a TLD.
 Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV
-(or TXT records) if the full URI does not consists of at least three parts.
+(or TXT records) if the full URI does not consist of at least three parts.
 
 If ``mongodb+srv`` is used, a driver MUST implicitly also enable TLS. Clients
 can turn this off by passing ``ssl=false`` in either the Connection String,

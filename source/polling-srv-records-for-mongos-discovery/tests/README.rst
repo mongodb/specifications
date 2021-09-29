@@ -133,7 +133,7 @@ SRV polling with srvMaxHosts MongoClient option
 
 The following tests MUST setup a MongoClient using the ``srvMaxHosts`` option
 and ``test1.test.build.10gen.cc`` SRV record. Each test MUST mock the described
-DNS changes and then verify the the new list of hosts is present.
+DNS changes and then verify that the new list of hosts is present.
 
 
 10. All DNS records are selected (srvMaxHosts = 0)
