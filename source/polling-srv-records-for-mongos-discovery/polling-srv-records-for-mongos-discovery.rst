@@ -113,7 +113,8 @@ discovery.  Periodic scan MUST follow these rules:
     hosts, each valid new host MUST be added to the topology as Unknown.
   - If srvMaxHosts_ is greater than zero and less than the number of valid
     hosts, valid new hosts MUST be randomly selected and added to the topology
-    as Unknown until the topology has ``srvMaxHosts`` hosts.
+    as Unknown until the topology has ``srvMaxHosts`` hosts. Drivers MUST use
+    the same randomization algorithm as they do for `initial selection`_.
 
 - Priorities and weights in SRV records MUST continue to be ignored, and MUST
   NOT dictate which mongos server is used for new connections.
@@ -134,6 +135,7 @@ initial DNS seedlist discovery scan).
 .. _seedlist: https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#seedlist-discovery
 .. _srvMaxHosts: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts
 .. _srvServiceName: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename
+.. _`initial selection`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#querying-dns
 
 Multi-Threaded Drivers
 ----------------------

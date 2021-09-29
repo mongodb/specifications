@@ -149,7 +149,10 @@ the DNS result, the driver MUST populate the seedlist with all hosts.
 
 If ``srvMaxHosts`` is greater than zero and less than the number of hosts in the
 DNS result, the driver MUST randomly select that many hosts and use them to
-populate the seedlist.
+populate the seedlist. Drivers SHOULD use the `Fisher-Yates shuffle`_ for
+randomization.
+
+.. _`Fisher-Yates shuffle`: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
 
 
 Default Connection String Options
