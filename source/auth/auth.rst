@@ -946,6 +946,16 @@ Environment variables
 _____________________
 AWS Lambda runtimes set several `environment variables <https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime>`_ during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e., ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_SESSION_TOKEN``, for the access key ID, secret access key and session token, respectively if AWS credentials are not explicitly provided in the URI. The ``AWS_SESSION_TOKEN`` may or may not be set. However, if ``AWS_SESSION_TOKEN`` is set Drivers MUST use its value as the session token.
 
+EKS Service Account
+___________________
+Pods running in AWS EKS which are configured to `associate an IAM Role to a service account <https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html>`_ will use a Web Identity to authenticate with AWS. If a username and password are not provided and the aforementioned environment variables are not set, drivers MUST check for the presence of the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and ``AWS_ROLE_ARN`` variables.
+
+If both variables are provided, drivers MUST perform an STS Assume Role with the Web Identity provided by the ``AWS_WEB_IDENTITY_TOKEN_FILE`` and ``AWS_ROLE_ARN`` values. If the ``AWS_DEFAULT_REGION`` environment variable is present, drivers MUST use it to configure the region to use for STS. If ``AWS_DEFAULT_REGION`` is not present, the global STS endpoint MUST be used.
+
+When performing the Assume Role, drivers SHOULD enforce a 10 second timeout while waiting for STS token assumption. If temporary credentials cannot be obtained then drivers MUST fail authentication and raise an error.
+
+On successful token assumption, the resulting credential values ``AccessKeyID``, ``SecretAccessKey`` and ``SessionToken`` contain the credentials to be used.
+
 ECS endpoint
 ____________
 If a username and password are not provided and the aforementioned enviornment variables are not set, drivers MUST query a link-local AWS address for temporary credentials.
