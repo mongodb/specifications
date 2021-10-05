@@ -579,55 +579,13 @@ Passing read preference to mongos and load balancers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a server of type Mongos or LoadBalancer is selected for a read operation, the read
-preference is passed to the selected mongos through the use of the
-``SecondaryOk`` wire protocol flag, the ``$readPreference`` query
-modifier or both, according to the following rules.
+preference is passed to the selected mongos through the use of the ``$readPreference``
+`Global Command Argument`_ according to the following rules:
 
-If the read preference contains **only** a ``mode`` parameter and the mode is
-'primary' or 'secondaryPreferred', for maximum backwards compatibility with
-older versions of mongos, drivers MUST only use the value of the ``SecondaryOk``
-wire protocol flag (i.e. set or unset) to indicate the desired read preference
-and MUST NOT use a ``$readPreference`` query modifier.
+  - For mode 'primary', drivers MUST NOT set ``$readPreference``
 
-Therefore, when sending queries to a mongos or load balancer, the following rules apply:
-
-  - For mode 'primary', drivers MUST NOT set the ``SecondaryOk`` wire protocol flag
-    and MUST NOT use ``$readPreference``
-
-  - For mode 'secondary', drivers MUST set the ``SecondaryOk`` wire protocol flag
-    and MUST also use ``$readPreference``
-
-  - For mode 'primaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag
-    and MUST also use ``$readPreference``
-
-  - For mode 'secondaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag.
-    If the read preference contains a non-empty ``tag_sets`` parameter,
-    ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
-    non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
-    use ``$readPreference``
-
-  - For mode 'nearest', drivers MUST set the ``SecondaryOk`` wire protocol flag
-    and MUST also use ``$readPreference``
-
-The ``$readPreference`` query modifier sends the read preference as part of the
-query.  The read preference fields ``tag_sets`` is represented in a ``$readPreference``
-document using the field name ``tags``.
-
-When sending a read operation via OP_QUERY and any ``$`` modifier is used, including the ``$readPreference`` modifier,
-the query MUST be provided using the ``$query`` modifier like so::
-
-    {
-        $query: {
-            field1: 'query_value',
-            field2: 'another_query_value'
-        },
-        $readPreference: {
-            mode: 'secondary',
-            tags: [ { 'dc': 'ny' } ],
-            maxStalenessSeconds: 120,
-            hedge: { enabled: true }
-        }
-    }
+  - For modes 'secondary', 'primaryPreferred', 'secondaryPreferred', and 'nearest', drivers
+    MUST set ``$readPreference``
 
 A valid ``$readPreference`` document for mongos or load balancer has the following requirements:
 
@@ -1789,6 +1747,7 @@ References
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 .. _maxConnecting: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool
 .. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Global Command Argument: source/message/OP_MSG.rst#global-command-arguments
 
 Changes
 =======
