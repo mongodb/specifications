@@ -1747,10 +1747,12 @@ References
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 .. _maxConnecting: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool
 .. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
-.. _Global Command Argument: source/message/OP_MSG.rst#global-command-arguments
+.. _Global Command Argument: /source/message/OP_MSG.rst#global-command-arguments
 
 Changes
 =======
+
+2021-08-05: Updated $readPreference logic to describe OP_MSG behavior.
 
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
