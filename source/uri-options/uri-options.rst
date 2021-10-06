@@ -286,7 +286,7 @@ pertaining to URI options apply here.
        topology.
 
    * - srvServiceName
-     - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_; can be longer than 15 characters as long as the 63 (62 with prepended underscore)
+     - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
      - "mongodb"
      - no
      - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`_
