@@ -80,8 +80,8 @@ limit). This option MUST only be configurable at the level of a ``MongoClient``.
 Drivers MUST report an error if this option is specified and the scheme is not
 ``mongodb+srv``.
 
-This option is primarily used to limit the number of mongos connections that may
-be created for sharded topologies.
+This option is used to limit the number of mongos connections that may be
+created for sharded topologies.
 
 
 srvServiceName
