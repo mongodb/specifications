@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-09-XX
+:Last Modified: 2021-10-XX
 
 
 **Abstract**
@@ -478,7 +478,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
-- 2021-09-XX Add srvMaxHosts option.
+- 2021-10-XX Add srvMaxHosts option.
 - 2021-09-15 Add srvServiceName option
 - 2021-09-13 Fix link to load balancer spec
 - 2021-04-15 Adding in behaviour for load balancer mode.
