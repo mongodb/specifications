@@ -77,6 +77,8 @@ additional hosts that may be added during
 `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_.
 This option requires a non-negative integer and defaults to zero (i.e. no
 limit). This option MUST only be configurable at the level of a ``MongoClient``.
+Drivers MUST report an error if this option is specified and the scheme is not
+``mongodb+srv``.
 
 This option is primarily used to limit the number of mongos connections that may
 be created for sharded topologies.
@@ -90,7 +92,8 @@ This option specifies a valid SRV service name according to
 the exception that it may exceed 15 characters as long as the 63rd (62nd with
 prepended underscore) character DNS query limit is not surpassed. This option
 requires a string value and defaults to "mongodb". This option MUST only be
-configurable at the level of a ``MongoClient``.
+configurable at the level of a ``MongoClient``. Drivers MUST report an error if
+this option is specified and the scheme is not ``mongodb+srv``.
 
 
 Seedlist Discovery

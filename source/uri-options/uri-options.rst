@@ -71,13 +71,13 @@ is specified with an SRV URI, because the URI may resolve to multiple
 hosts. The driver MUST allow specifying ``directConnection=false`` URI
 option with an SRV URI.
 
-Non-SRV URI with srvServiceName URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-SRV URI with srvServiceName or srvMaxHosts URI options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The driver MUST report an error if the ``srvServiceName`` URI option is
-specified with a non-SRV URI (i.e. ``mongodb://``) because SRV lookup only
-occurs with SRV URIs. The driver MUST allow specifying the ``srvServiceName``
-URI option with an SRV URI.
+The driver MUST report an error if either the ``srvServiceName`` or
+``srvMaxHosts`` URI options are specified with a non-SRV URI (i.e. scheme other
+than ``mongodb+srv``). The driver MUST allow specifying the ``srvServiceName``
+and ``srvMaxHosts`` URI options with an SRV URI (i.e. ``mongodb+srv`` scheme).
 
 Multiple seeds with directConnection URI option
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
