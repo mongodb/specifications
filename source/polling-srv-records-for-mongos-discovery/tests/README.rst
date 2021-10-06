@@ -150,7 +150,8 @@ with::
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 
-Assert that the topology ultimately contains the following hosts:
+Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
+contains the following hosts:
 
 - localhost.test.build.10gen.cc:27017
 - localhost.test.build.10gen.cc:27019
@@ -167,7 +168,8 @@ Replace both records with::
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 
-Assert that the topology ultimately contains the following hosts:
+Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
+contains the following hosts:
 
 - localhost.test.build.10gen.cc:27019
 - localhost.test.build.10gen.cc:27020
@@ -187,6 +189,7 @@ with::
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
     _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
 
-Assert that the topology ultimately has two hosts present and that one of the
-hosts is ``localhost.test.build.10gen.cc:27017``. The second, new host will have
-been randomly selected and cannot be deterministically asserted.
+Wait until ``2*rescanSRVIntervalMS`` and assert that the topology has two hosts
+present and that one of the hosts is ``localhost.test.build.10gen.cc:27017``.
+The second, new host will have been randomly selected and cannot be
+deterministically asserted.
