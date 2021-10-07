@@ -10,7 +10,7 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2019-10-XX
+:Last Modified: 2021-10-XX
 :Version: 1.6.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
