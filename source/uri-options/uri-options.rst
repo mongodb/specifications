@@ -63,32 +63,36 @@ occur:
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
-SRV URI with directConnection URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The driver MUST report an error if the ``directConnection=true`` URI option
-is specified with an SRV URI, because the URI may resolve to multiple
-hosts. The driver MUST allow specifying ``directConnection=false`` URI
-option with an SRV URI.
-
-Non-SRV URI with srvServiceName or srvMaxHosts URI options
+directConnection URI option with multiple seeds or SRV URI 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The driver MUST report an error if either the ``srvServiceName`` or
-``srvMaxHosts`` URI options are specified with a non-SRV URI (i.e. scheme other
-than ``mongodb+srv``). The driver MUST allow specifying the ``srvServiceName``
-and ``srvMaxHosts`` URI options with an SRV URI (i.e. ``mongodb+srv`` scheme).
-
-Multiple seeds with directConnection URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The driver MUST report an error if the ``directConnection=true`` URI option
 is specified with multiple seeds.
 
+The driver MUST report an error if the ``directConnection=true`` URI option
+is specified with an SRV URI, because the URI may resolve to multiple
+hosts. The driver MUST allow specifying ``directConnection=false`` URI option
+with an SRV URI.
+
+
+srvServiceName and srvMaxHosts URI options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For URI option validation pertaining to ``srvServiceName`` and ``srvMaxHosts``,
+please see the
+`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#uri-validation>`_
+for details.
+
+
 Load Balancer Mode
 ~~~~~~~~~~~~~~~~~~
 
-For URI option validation in Load Balancer mode, please see the `Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for details.
+For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
+please see the
+`Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
+details.
+
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,7 +482,8 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
-- 2021-10-XX Add srvMaxHosts option.
+- 2021-10-XX Add srvMaxHosts option. Merge headings discussing URI validation
+  for directConnection option.
 - 2021-09-15 Add srvServiceName option
 - 2021-09-13 Fix link to load balancer spec
 - 2021-04-15 Adding in behaviour for load balancer mode.

@@ -71,17 +71,13 @@ MongoClient Configuration
 srvMaxHosts
 ~~~~~~~~~~~
 
-This option may be used to limit the number of SRV records used to populate the
-seedlist during initial discovery. It is also used to limit the number of
+This option is used to limit the number of mongos connections that may be
+created for sharded topologies. This option limits the number of SRV records
+used to populate the seedlist during initial discovery, as well as the number of
 additional hosts that may be added during
 `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_.
 This option requires a non-negative integer and defaults to zero (i.e. no
 limit). This option MUST only be configurable at the level of a ``MongoClient``.
-Drivers MUST report an error if this option is specified and the scheme is not
-``mongodb+srv``.
-
-This option is used to limit the number of mongos connections that may be
-created for sharded topologies.
 
 
 srvServiceName
@@ -92,8 +88,28 @@ This option specifies a valid SRV service name according to
 the exception that it may exceed 15 characters as long as the 63rd (62nd with
 prepended underscore) character DNS query limit is not surpassed. This option
 requires a string value and defaults to "mongodb". This option MUST only be
-configurable at the level of a ``MongoClient``. Drivers MUST report an error if
-this option is specified and the scheme is not ``mongodb+srv``.
+configurable at the level of a ``MongoClient``.
+
+
+URI Validation
+~~~~~~~~~~~~~~
+
+The driver MUST report an error if either the ``srvServiceName`` or
+``srvMaxHosts`` URI options are specified with a non-SRV URI (i.e. scheme other
+than ``mongodb+srv``). The driver MUST allow specifying the ``srvServiceName``
+and ``srvMaxHosts`` URI options with an SRV URI (i.e. ``mongodb+srv`` scheme).
+
+If ``srvMaxHosts`` is a positive integer, the driver MUST throw an error in the
+following cases:
+
+- The connection string contains a ``replicaSet`` option.
+- The connection string contains a ``loadBalanced`` option with a value of
+  ``true``.
+
+When validating URI options, the driver MUST first do the SRV and TXT lookup and
+then perform the validation. For drivers that do SRV lookup asynchrounously this
+may result in a ``MongoClient`` being instantiated but erroring later during
+operation execution.
 
 
 Seedlist Discovery
@@ -328,8 +344,9 @@ ChangeLog
 =========
 
 2021-10-XX - 1.6.0
-    Add ``srvMaxHosts`` MongoClient option and restructure Seedlist Discovery.
-    Improve documentation for the ``srvServiceName`` MongoClient option.
+    Add ``srvMaxHosts`` MongoClient option and restructure Seedlist Discovery
+    section. Improve documentation for the ``srvServiceName`` MongoClient
+    option and add a new URI Validation section.
 
 2021-09-15 - 1.5.0
     Clarify that service name only defaults to ``mongodb``, and should be
