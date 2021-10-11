@@ -98,7 +98,7 @@ These YAML and JSON files contain the following fields:
   hosts cannot be deterministically asserted.
 - ``options``: the parsed `URI options`_ as discovered from the
   `Connection String`_'s "Connection Options" component and SRV resolution
-  (e.g. TXT records, implicit ``ssl`` default).
+  (e.g. TXT records, implicit ``tls`` default).
 - ``parsed_options``: additional, parsed options from other `Connection String`_
   components. This is mainly used for asserting ``UserInfo`` (as ``user`` and
   ``password``) and ``Auth database`` (as ``auth_database``).

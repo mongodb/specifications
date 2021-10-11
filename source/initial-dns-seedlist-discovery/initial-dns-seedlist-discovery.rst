@@ -116,7 +116,7 @@ Drivers MUST raise an error and MUST NOT contact the DNS server to obtain SRV
 (or TXT records) if the full URI does not consist of at least three parts.
 
 If ``mongodb+srv`` is used, a driver MUST implicitly also enable TLS. Clients
-can turn this off by passing ``ssl=false`` in either the Connection String,
+can turn this off by passing ``tls=false`` in either the Connection String,
 or options passed in as parameters in code to the MongoClient constructor (or
 equivalent API for each driver), but not through a TXT record (discussed in a
 later section).
