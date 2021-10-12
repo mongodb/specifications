@@ -107,7 +107,7 @@ following cases:
   ``true``.
 
 When validating URI options, the driver MUST first do the SRV and TXT lookup and
-then perform the validation. For drivers that do SRV lookup asynchrounously this
+then perform the validation. For drivers that do SRV lookup asynchronously this
 may result in a ``MongoClient`` being instantiated but erroring later during
 operation execution.
 
