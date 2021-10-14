@@ -423,4 +423,4 @@ be supported.
 Change Log
 ==========
 
-- 2021-10-XX: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.
+- 2021-10-14: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.

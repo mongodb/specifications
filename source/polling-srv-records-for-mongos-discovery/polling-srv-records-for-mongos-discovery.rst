@@ -9,7 +9,7 @@ Polling SRV Records for mongos Discovery
 :Author: Derick Rethans
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2020-09-XX
+:Last Modified: 2020-10-14
 :Version: 1.2.0
 :Spec Lead: David Golden
 
@@ -237,7 +237,7 @@ No future work is expected.
 Changelog
 =========
 
-2021-09-XX - 1.2.0
+2021-10-14 - 1.2.0
     Specify behavior for ``srvMaxHosts`` MongoClient option.
 
 2021-09-15 - 1.1.0

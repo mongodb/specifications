@@ -10,7 +10,7 @@ Initial DNS Seedlist Discovery
 :Authors: Derick Rethans
 :Status: Draft
 :Type: Standards
-:Last Modified: 2021-10-XX
+:Last Modified: 2021-10-14
 :Version: 1.6.0
 :Spec Lead: Matt Broadstone
 :Advisory Group: \A. Jesse Jiryu Davis
@@ -343,7 +343,7 @@ SRV records.
 ChangeLog
 =========
 
-2021-10-XX - 1.6.0
+2021-10-14 - 1.6.0
     Add ``srvMaxHosts`` MongoClient option and restructure Seedlist Discovery
     section. Improve documentation for the ``srvServiceName`` MongoClient
     option and add a new URI Validation section.
