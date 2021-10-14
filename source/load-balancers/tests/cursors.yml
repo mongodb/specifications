@@ -398,8 +398,6 @@ tests:
           - connectionCheckedInEvent: {}
 
   - description: listIndexes pins the cursor to a connection
-    runOnRequirements:
-      - serverless: forbid
     operations:
       # There is an automatic index on _id so we create two more indexes to force multiple batches with batchSize=2.
       - name: createIndex

@@ -996,11 +996,6 @@
     },
     {
       "description": "listIndexes pins the cursor to a connection",
-      "runOnRequirements": [
-        {
-          "serverless": "forbid"
-        }
-      ],
       "operations": [
         {
           "name": "createIndex",
