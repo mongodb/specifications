@@ -584,13 +584,15 @@ preference is passed to the selected mongos through the use of ``$readPreference
 OP_QUERY only, the ``SecondaryOk`` wire protocol flag, according to the following rules.
 
 For OP_MSG:
+```````````
 
-  - For mode 'primary', drivers MUST NOT set ``$readPreference``
+- For mode 'primary', drivers MUST NOT set ``$readPreference``
 
-  - For modes 'secondary', 'primaryPreferred', 'secondaryPreferred', and 'nearest', drivers
-    MUST set ``$readPreference``
+- For modes 'secondary', 'primaryPreferred', 'secondaryPreferred', and 'nearest', drivers
+  MUST set ``$readPreference``
 
 For OP_QUERY:
+`````````````
 
 If the read preference contains **only** a ``mode`` parameter and the mode is
 'primary' or 'secondaryPreferred', for maximum backwards compatibility with
@@ -600,23 +602,23 @@ and MUST NOT use a ``$readPreference`` query modifier.
 
 Therefore, when sending queries to a mongos or load balancer, the following rules apply:
 
-  - For mode 'primary', drivers MUST NOT set the ``SecondaryOk`` wire protocol flag
-    and MUST NOT use ``$readPreference``
+- For mode 'primary', drivers MUST NOT set the ``SecondaryOk`` wire protocol flag
+  and MUST NOT use ``$readPreference``
 
-  - For mode 'secondary', drivers MUST set the ``SecondaryOk`` wire protocol flag
-    and MUST also use ``$readPreference``
+- For mode 'secondary', drivers MUST set the ``SecondaryOk`` wire protocol flag
+  and MUST also use ``$readPreference``
 
-  - For mode 'primaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag
-    and MUST also use ``$readPreference``
+- For mode 'primaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag
+  and MUST also use ``$readPreference``
 
-  - For mode 'secondaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag.
-    If the read preference contains a non-empty ``tag_sets`` parameter,
-    ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
-    non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
-    use ``$readPreference``
+- For mode 'secondaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag.
+  If the read preference contains a non-empty ``tag_sets`` parameter,
+  ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
+  non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
+  use ``$readPreference``
 
-  - For mode 'nearest', drivers MUST set the ``SecondaryOk`` wire protocol flag
-    and MUST also use ``$readPreference``
+- For mode 'nearest', drivers MUST set the ``SecondaryOk`` wire protocol flag
+  and MUST also use ``$readPreference``
 
 The ``$readPreference`` query modifier sends the read preference as part of the
 query.  The read preference fields ``tag_sets`` is represented in a ``$readPreference``
@@ -967,17 +969,19 @@ to the server differently:
 - For all other types, using OP_MSG: If no read preference is configured by the
   application, or if the application read preference is Primary, then
   $readPreference MUST be set to ``{ "mode": "primaryPreferred" }`` to ensure
-  that any server type can handle the request.
+  that any server type can handle the request.  If the application read
+  preference is set otherwise, $readPreference MUST be set following
+  `Document structure`_.
 
 The single server is always suitable for write operations if it is available.
 
 Topology type: LoadBalanced
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-During command construction, the LoadBalancer server MUST be treated like a
-mongos and drivers MUST add a $readPreference field to the command when
-required by `Passing read preference to mongos and load balancers`_; see the
-`Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__ for details.
+During command construction, drivers MUST add a $readPreference field to the
+command when required by `Passing read preference to mongos and load balancers`_;
+see the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__
+for details.
 
 
 Topology types: ReplicaSetWithPrimary or ReplicaSetNoPrimary
