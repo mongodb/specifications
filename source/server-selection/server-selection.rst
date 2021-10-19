@@ -588,8 +588,8 @@ For OP_MSG:
 
 - For mode 'primary', drivers MUST NOT set ``$readPreference``
 
-- For modes 'secondary', 'primaryPreferred', 'secondaryPreferred', and 'nearest', drivers
-  MUST set ``$readPreference``
+- For all other read preference modes (i.e. 'secondary', 'primaryPreferred',
+  ...), drivers MUST set ``$readPreference``
 
 For OP_QUERY:
 `````````````
