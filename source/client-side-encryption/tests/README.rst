@@ -519,14 +519,14 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 2. Using ``client``, drop and create the collection ``db.coll`` configured with the included JSON schema `corpus/corpus-schema.json <../corpus/corpus-schema.json>`_.
 
-3. Using ``client``, drop the collection ``keyvault.datakeys``. Insert the documents `corpus/corpus-key-local.json <../corpus/corpus-key-local.json>`_, `corpus/corpus-key-aws.json <../corpus/corpus-key-aws.json>`_, `corpus/corpus-key-azure.json <../corpus/corpus-key-azure.json>`_, and `corpus/corpus-key-gcp.json <../corpus/corpus-key-gcp.json>`_.
+3. Using ``client``, drop the collection ``keyvault.datakeys``. Insert the documents `corpus/corpus-key-local.json <../corpus/corpus-key-local.json>`_, `corpus/corpus-key-aws.json <../corpus/corpus-key-aws.json>`_, `corpus/corpus-key-azure.json <../corpus/corpus-key-azure.json>`_, `corpus/corpus-key-gcp.json <../corpus/corpus-key-gcp.json>`_, and `corpus/corpus-key-gcp.json <../corpus/corpus-key-kmip.json>`_.
 
 4. Create the following:
 
    - A MongoClient configured with auto encryption (referred to as ``client_encrypted``)
    - A ``ClientEncryption`` object (referred to as ``client_encryption``)
 
-   Configure both objects with ``aws``, ``azure``, ``gcp``, and ``local`` KMS providers as follows:
+   Configure both objects with ``aws``, ``azure``, ``gcp``, ``local``, and ``kmip`` KMS providers as follows:
 
    .. code:: javascript
 
@@ -534,8 +534,14 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
           "aws": { <AWS credentials> },
           "azure": { <Azure credentials> },
           "gcp": { <GCP credentials> },
-          "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
+          "local": { "key": <base64 decoding of LOCAL_MASTERKEY> },
+          "kmip": { "endpoint": "localhost:5698" } }
       }
+
+   Configure KMIP TLS connections to use the following options:
+   - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_
+   - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_ .
+   The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    Where LOCAL_MASTERKEY is the following base64:
 
@@ -547,7 +553,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
 
 5. Load `corpus/corpus.json <../corpus/corpus.json>`_ to a variable named ``corpus``. The corpus contains subdocuments with the following fields:
 
-   - ``kms`` is either ``aws``, ``azure``, ``gcp``, or ``local``
+   - ``kms`` is ``aws``, ``azure``, ``gcp``, ``local``, or ``kmip``
    - ``type`` is a BSON type string `names coming from here <https://docs.mongodb.com/manual/reference/operator/query/type/>`_)
    - ``algo`` is either ``rand`` or ``det`` for random or deterministic encryption
    - ``method`` is either ``auto``, for automatic encryption or ``explicit`` for  explicit encryption
@@ -558,7 +564,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
    Create a new BSON document, named ``corpus_copied``.
    Iterate over each field of ``corpus``.
 
-   - If the field name is ``_id``, ``altname_aws``, ``altname_local``, ``altname_azure``, or ``altname_gcp``, copy the field to ``corpus_copied``.
+   - If the field name is ``_id``, ``altname_aws``, ``altname_local``, ``altname_azure``, ``altname_gcp``, or ``altname_kmip`` copy the field to ``corpus_copied``.
    - If ``method`` is ``auto``, copy the field to ``corpus_copied``.
    - If ``method`` is ``explicit``, use ``client_encryption`` to explicitly encrypt the value.
 
@@ -569,6 +575,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
        - If ``kms`` is ``aws`` set the key_id to the UUID with base64 value ``AWSAAAAAAAAAAAAAAAAAAA==``.
        - If ``kms`` is ``azure`` set the key_id to the UUID with base64 value ``AZUREAAAAAAAAAAAAAAAAA==``.
        - If ``kms`` is ``gcp`` set the key_id to the UUID with base64 value ``GCPAAAAAAAAAAAAAAAAAAA==``.
+       - If ``kms`` is ``kmip`` set the key_id to the UUID with base64 value ``KMIPAAAAAAAAAAAAAAAAAA==``.
 
      - If ``identifier`` is ``altname``
 
@@ -576,6 +583,7 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
        - If ``kms`` is ``aws`` set the key_alt_name to "aws".
        - If ``kms`` is ``azure`` set the key_alt_name to "azure".
        - If ``kms`` is ``gcp`` set the key_alt_name to "gcp".
+       - If ``kms`` is ``kmip`` set the key_alt_name to "kmip".
 
      If ``allowed`` is true, copy the field and encrypted value to ``corpus_copied``.
      If ``allowed`` is false. verify that an exception is thrown. Copy the unencrypted value to to ``corpus_copied``.
