@@ -394,8 +394,7 @@ See `Why are extraOptions and kmsProviders maps?`_
 kmip provider TLS options
 `````````````````````````
 
-If the driver language/runtime allows non-global configuration of TLS options,
-the driver MUST provide TLS options to configure TLS connections for the "kmip"
+Drivers MUST provide TLS options to configure TLS connections for the "kmip"
 provider.
 
 The TLS options MUST be equivalent to the existing TLS options for MongoDB
@@ -412,10 +411,6 @@ example:
       // setTLSOptions throws an exception if kmsProvider is not "kmip".
       setTLSOptions (kmsProvider String, tlsOptions TLSOptions)
    }
-
-If the driver language/runtime does not allow non-global configuration of TLS
-options, the driver MUST support configuration of the equivalent of
-``tlsCAFile`` and ``tlsCertificateKeyFile``.
 
 See `Why does the KMIP provider require TLS configuration?`_
 
