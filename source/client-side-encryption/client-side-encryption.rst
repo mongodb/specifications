@@ -566,8 +566,8 @@ If the kmsProvider is "kmip" the masterKey is required and has the following fie
 .. code-block:: javascript
 
    {
-      keyId: Optional<String>, // keyId is the unique identifier to a 96 byte KMIP SecretData managed object.
-                               // If keyId is omitted, the driver creates a random 96 byte KMIP SecretData managed object.
+      keyId: Optional<String>, // keyId is the KMIP Unique Identifier to a 96 byte KMIP Secret Data managed object.
+                               // If keyId is omitted, the driver creates a random 96 byte KMIP Secret Data managed object.
       endpoint: Optional<String> // Host with optional port.
    }
 
@@ -944,8 +944,8 @@ provider "local"
 **Name**          **Type** **Description**
 provider          "kmip"
 endpoint          String   Optional. Defaults to kmip.endpoint from KMS providers.
-keyId             String   Required. keyId is the unique identifier to a 96 byte KMIP
-                           SecretData managed object.
+keyId             String   Required. keyId is the Unique Identifier to a 96 byte KMIP
+                           Secret Data managed object.
 ================= ======== ===============================================================
 
 Data keys are needed for encryption and decryption. They are identified
