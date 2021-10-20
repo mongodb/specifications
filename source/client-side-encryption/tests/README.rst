@@ -84,6 +84,8 @@ Each YAML file has the following keys:
         - ``local`` The local KMS provider.
 
           - ``key`` A 96 byte local key.
+         
+        - ``kmip`` The KMIP KMS provider credentials. An empty object. Drivers MUST fill in KMIP credentials (`endpoint`, and TLS options).
 
       - ``schemaMap``: Optional, a map from namespaces to local JSON schemas.
 
@@ -120,6 +122,7 @@ Do the following before running spec tests:
 - Start the mongocryptd process.
 - Start a mongod process with **server version 4.1.9 or later**.
 - Place credentials to an AWS IAM user (access key ID + secret access key) somewhere in the environment outside of tracked code. (If testing on evergreen, project variables are a good place).
+- Start a KMIP test server on port 5698 by running `drivers-evergreen-tools/.evergreen/csfle/kms_kmip_server.py <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
 Load each YAML (or JSON) file using a Canonical Extended JSON parser.
 
@@ -148,7 +151,7 @@ Then for each element in ``tests``:
 #. Create a **new** MongoClient using ``clientOptions``.
 
    #. If ``autoEncryptOpts`` includes ``aws``, ``awsTemporary``, ``awsTemporaryNoSessionToken``,
-      ``azure``, and/or ``gcp`` as a KMS provider, pass in credentials from the environment.
+      ``azure``, ``gcp``, and/or ``kmip`` as a KMS provider, pass in credentials from the environment.
 
       - ``awsTemporary``, and ``awsTemporaryNoSessionToken`` require temporary
         AWS credentials. These can be retrieved using the csfle `set-temp-creds.sh
@@ -210,6 +213,17 @@ Then for each element in ``tests``:
         .. code:: javascript
 
            "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
+
+        ``kmip`` should be substituted with:
+
+        .. code:: javascript
+
+           "kmip": { "endpoint": "localhost:5698" }
+
+        Configure KMIP TLS connections to use the following options:
+        - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_
+        - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_ .
+        The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it
       to ``keyvault.datakeys``.
@@ -310,8 +324,14 @@ First, perform the setup.
             "email": <set from environment>,
             "privateKey": <set from environment>,
          }
-         "local": { "key": <base64 decoding of LOCAL_MASTERKEY> }
+         "local": { "key": <base64 decoding of LOCAL_MASTERKEY> },
+         "kmip": { "endpoint": "localhost:5698" }
       }
+
+   Configure KMIP TLS connections to use the following options:
+   - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_
+   - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_ .
+   The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    Configure both objects with ``keyVaultNamespace`` set to ``keyvault.datakeys``.
 
@@ -336,7 +356,7 @@ First, perform the setup.
 
    Configure ``client_encryption`` with the ``keyVaultClient`` of the previously created ``client``.
 
-For each KMS provider (``aws``, ``azure``, ``gcp``, and ``local``), referred to as ``provider_name``, run the following test.
+For each KMS provider (``aws``, ``azure``, ``gcp``, ``local``, and ``kmip``), referred to as ``provider_name``, run the following test.
 
 #. Call ``client_encryption.createDataKey()``.
 
@@ -371,6 +391,12 @@ For each KMS provider (``aws``, ``azure``, ``gcp``, and ``local``), referred to 
           "keyRing": "key-ring-csfle",
           "keyName": "key-name-csfle"
         }
+
+      For "kmip":
+
+      .. code:: javascript
+
+         {}
 
      For "local", do not set a masterKey document.
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``datakey_id``.
@@ -632,10 +658,13 @@ Configure with KMS providers as follows:
             "clientSecret": <set from environment>,
             "identityPlatformEndpoint": "login.microsoftonline.com:443"
          },
-            "gcp": {
+         "gcp": {
             "email": <set from environment>,
             "privateKey": <set from environment>,
             "endpoint": "oauth2.googleapis.com:443"
+         },
+         "kmip" {
+            "endpoint": "localhost:5698"
          }
    }
 
@@ -654,12 +683,20 @@ Configure with KMS providers as follows:
             "clientSecret": <set from environment>,
             "identityPlatformEndpoint": "example.com:443"
          },
-            "gcp": {
+         "gcp": {
             "email": <set from environment>,
             "privateKey": <set from environment>,
             "endpoint": "example.com:443"
+         },
+         "kmip": {
+            "endpoint": "doesnotexist.local:5698"
          }
    }
+
+Configure KMIP TLS connections to use the following options:
+- ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_
+- ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_ .
+The method of passing TLS options for KMIP TLS connections is driver dependent.
 
 Test cases
 ``````````
@@ -777,6 +814,29 @@ Test cases
       }
 
    Expect this to fail with an exception with a message containing the string: "Invalid KMS response".
+
+10. Call `client_encryption.createDataKey()` with "kmip" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "keyId": "1"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with an network exception indicating failure to resolve "doesnotexist.local".
+
+11. Call ``client_encryption_invalid.createDataKey()`` with "kmip" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "keyId": "1",
+        "endpoint": "localhost:5698"
+      }
+
+   Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
 Bypass spawning mongocryptd
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
