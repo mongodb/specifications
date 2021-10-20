@@ -407,6 +407,7 @@ independent of the KMS provider to permit future extension. The following is an
 example:
 
 .. code:: typescript
+
    class AutoEncryptionOpts {
       // setTLSOptions throws an exception if kmsProvider is not "kmip".
       setTLSOptions (kmsProvider String, tlsOptions TLSOptions)
