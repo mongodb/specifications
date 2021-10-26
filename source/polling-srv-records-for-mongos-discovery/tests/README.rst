@@ -22,7 +22,7 @@ Configuring the Test Environment
 To test, start a sharded cluster with mongos servers on ports 27017, 27018,
 27019, and 27020.
 
-For each test, take as a starting point the test1, test3 and test22 SRV records from
+For each test, take as a starting point the test1, test3, and test22 SRV records from
 the `test set-up`_ from the `Initial DNS Seedlist Discovery`_ specification::
 
     Record                                    TTL    Class   Address
@@ -207,11 +207,7 @@ DNS changes and then verify that the new list of hosts is present.
 
 Configure the MongoClient with ``srvServiceName=customname``.
 
-Replace the following record::
-
-    _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
-
-with::
+Replace both records with::
 
     _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
     _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
@@ -219,6 +215,5 @@ with::
 Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
 contains the following hosts:
 
-- localhost.test.build.10gen.cc:27017
 - localhost.test.build.10gen.cc:27019
 - localhost.test.build.10gen.cc:27020
