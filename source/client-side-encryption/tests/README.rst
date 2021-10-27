@@ -1028,14 +1028,14 @@ run the following commands from the ``.evergreen/csfle`` directory:
 
    . ./activate_venv.sh
    python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 8000 &
-      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8001
+   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8001 &
 
 Setup
 `````
 
 For both tests, do the following:
 
-#. Start a ``mongod`` process with **server version 4.1.9 or later** with TLS disabled (we are not concerned with TLS interactions between the driver and the ``mongod`` process).
+#. Start a ``mongod`` process with **server version 4.1.9 or later**.
 
 #. Create a ``MongoClient`` for key vault operations.
 
