@@ -1037,16 +1037,16 @@ For both tests, do the following:
 
 #. Start a ``mongod`` process with **server version 4.1.9 or later** with TLS disabled (we are not concerned with TLS interactions between the driver and the ``mongod`` process).
 
-#. Create a ``MongoClient`` (referred to as ``client_encrypted``) for key vault operations.
+#. Create a ``MongoClient`` for key vault operations.
 
-#. Configure ``client_encrypted`` with ``keyVaultNamespace`` set to ``keyvault.datakeys``.
+#. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``keyVaultNamespace`` set to ``keyvault.datakeys``.
 
 Invalid KMS Certificate
 ```````````````````````
 
 #. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
 
-#. Call ``client_encrypted.createDataKey()`` with "aws" as the provider and the following masterKey:
+#. Call ``client_encryption.createDataKey()`` with "aws" as the provider and the following masterKey:
 
    .. code:: javascript
 
@@ -1066,7 +1066,7 @@ Invalid Hostname in KMS Certificate
 
 #. Start a mock KMS server on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
 
-#. Call ``client_encrypted.createDataKey()`` with "aws" as the provider and the following masterKey:
+#. Call ``client_encryption.createDataKey()`` with "aws" as the provider and the following masterKey:
 
    .. code:: javascript
 
