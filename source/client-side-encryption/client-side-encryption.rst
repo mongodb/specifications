@@ -418,7 +418,7 @@ Drivers MUST enable TLS for KMIP connections.
 Drivers MUST raise an error if the TLS options are set to disable TLS.
 The error MUST contain the message "TLS is required".
 
-Drivers MUST raise an error if insecure TLS options are set.
+Drivers SHOULD raise an error if insecure TLS options are set.
 The error MUST contain the message "Insecure TLS options prohibited".
 This includes options equivalent to the following URI options:
 
