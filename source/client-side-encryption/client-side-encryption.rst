@@ -391,6 +391,8 @@ credentials to authenticate.
 
 See `Why are extraOptions and kmsProviders maps?`_
 
+Drivers MUST enable TLS for all KMS connections.
+
 kmip provider TLS options
 `````````````````````````
 
@@ -412,8 +414,6 @@ example:
       // setTLSOptions throws an exception if kmsProvider is not "kmip".
       setTLSOptions (kmsProvider String, tlsOptions TLSOptions)
    }
-
-Drivers MUST enable TLS for KMIP connections.
 
 Drivers MUST raise an error if the TLS options are set to disable TLS.
 The error MUST contain the message "TLS is required".
