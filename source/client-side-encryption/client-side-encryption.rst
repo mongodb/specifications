@@ -397,8 +397,9 @@ kmip provider TLS options
 Drivers MUST provide TLS options to configure TLS connections for the "kmip"
 provider.
 
-The TLS options MUST be equivalent to the existing TLS options for MongoDB
-server TLS connections.
+The TLS options SHOULD be consistent with the existing TLS options for MongoDB
+server TLS connections. The TLS options MUST enable setting a custom client
+certificate, equivalent to the `tlsCertificateKeyFile` URI option.
 
 Drivers SHOULD provide API that is consistent with configuring TLS options for
 MongoDB server TLS connections. New API to support the options MUST be
@@ -411,6 +412,21 @@ example:
       // setTLSOptions throws an exception if kmsProvider is not "kmip".
       setTLSOptions (kmsProvider String, tlsOptions TLSOptions)
    }
+
+Drivers MUST enable TLS for KMIP connections.
+
+Drivers MUST raise an error if the TLS options are set to disable TLS.
+The error MUST contain the message "TLS is required".
+
+Drivers MUST raise an error if insecure TLS options are set.
+The error MUST contain the message "Insecure TLS options prohibited".
+This includes options equivalent to the following URI options:
+
+- `tlsInsecure`
+- `tlsAllowInvalidCertificates`
+- `tlsAllowInvalidHostnames`
+- `tlsDisableOCSPEndpointCheck`
+- `tlsDisableCertificateRevocationCheck`
 
 See `Why does the KMIP provider require TLS configuration?`_
 
