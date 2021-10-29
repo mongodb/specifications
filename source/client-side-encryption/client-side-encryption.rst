@@ -249,6 +249,7 @@ MongoClient Changes
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
+      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options. Only "kmip" is supported.
    }
 
 A MongoClient can be configured to automatically encrypt collection
@@ -411,12 +412,22 @@ example:
 .. code:: typescript
 
    class AutoEncryptionOpts {
-      // setTLSOptions throws an exception if kmsProvider is not "kmip".
-      setTLSOptions (kmsProvider String, tlsOptions TLSOptions)
+      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // Throws an exception if the KMS provider name is not "kmip".
+      setTLSOptions (opts Map<String, TLSOptions>)
+   }
+
+   class ClientEncryptionOpts {
+      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // Throws an exception if the KMS provider name is not "kmip".
+      setTLSOptions (opts Map<String, TLSOptions>)
    }
 
 Drivers MUST raise an error if the TLS options are set to disable TLS.
 The error MUST contain the message "TLS is required".
+
+Drivers MUST raise an error if TLS options are set for any KMS provider other
+than "kmip".
 
 Drivers SHOULD raise an error if insecure TLS options are set.
 The error MUST contain the message "Insecure TLS options prohibited".
@@ -516,13 +527,14 @@ ClientEncryption
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
       kmsProviders: Map<String, Map<String, Value>>;
+      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options. Only "kmip" is supported.
    }
 
 The ClientEncryption encapsulates explicit operations on a key vault
 collection that cannot be done directly on a MongoClient. Similar to
 configuring auto encryption on a MongoClient, it is
 constructed with a MongoClient (to a MongoDB cluster containing the key
-vault collection), KMS provider configuration, and keyVaultNamespace. It
+vault collection), KMS provider configuration, keyVaultNamespace, and tlsOptions. It
 provides an API for explicitly encrypting and decrypting values, and
 creating data keys. It does not provide an API to query keys from the key
 vault collection, as this can be done directly on the MongoClient.
