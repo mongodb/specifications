@@ -825,7 +825,7 @@ Test cases
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
-   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with an network exception indicating failure to resolve "doesnotexist.local".
+   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with a network exception indicating failure to resolve "doesnotexist.local".
 
 11. Call ``client_encryption_invalid.createDataKey()`` with "kmip" as the provider and the following masterKey:
 
