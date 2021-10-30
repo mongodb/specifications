@@ -827,7 +827,7 @@ Test cases
 
    Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with a network exception indicating failure to resolve "doesnotexist.local".
 
-11. Call ``client_encryption_invalid.createDataKey()`` with "kmip" as the provider and the following masterKey:
+11. Call ``client_encryption.createDataKey()`` with "kmip" as the provider and the following masterKey:
 
    .. code:: javascript
 
@@ -837,6 +837,17 @@ Test cases
       }
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
+
+12. Call ``client_encryption.createDataKey()`` with "kmip" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "keyId": "1",
+        "endpoint": "doesnotexist.local:5698"
+      }
+
+   Expect this to fail with a network exception indicating failure to resolve "doesnotexist.local".
 
 Bypass spawning mongocryptd
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
