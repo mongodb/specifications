@@ -1153,3 +1153,36 @@ Invalid Hostname in KMS Certificate
    Expect this to fail with an exception with a message referencing an incorrect or unexpected host. This message will be language dependent.
    In Python, this message is "certificate verify failed: IP address mismatch, certificate is not valid for '127.0.0.1'". In Go, this message
    is "cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs".
+
+KMIP TLS Options Test
+~~~~~~~~~~~~~~~~~~~~~
+
+Create a ``ClientEncryption`` object (referred to as ``client_encryption``)
+
+Configure with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
+
+Configure with KMS providers as follows:
+
+.. code:: javascript
+
+   {
+         "kmip" {
+            "endpoint": "localhost:5698"
+         }
+   }
+
+
+Configure KMIP TLS connections to use the following options:
+- ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_
+- ``tlsCertificateKeyFile`` (or equivalent) unset.
+The method of passing TLS options for KMIP TLS connections is driver dependent.
+
+Call ``client_encryption.createDataKey()`` with "kmip" as the provider and the following masterKey:
+
+   .. code:: javascript
+
+      {
+        "keyId": "1",
+      }
+
+   Expect this to fail with a error indicating a failure to establish a TLS connection.
