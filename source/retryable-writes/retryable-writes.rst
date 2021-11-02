@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.6.1
+:Spec Version: 1.6.2
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-04-26
+:Last Modified: 2021-11-02
 
 .. contents::
 
@@ -798,6 +798,9 @@ inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
+
+2021-11-02: Clarify that error labels are only specified in a top-level field of
+an error.
 
 2021-04-26: Replaced deprecated terminology
 
