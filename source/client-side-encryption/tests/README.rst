@@ -1094,6 +1094,8 @@ KMS TLS Tests
 .. _ca.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem
 .. _expired.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem
 .. _wrong-host.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/wrong-host.pem
+.. _server.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/server.pem
+.. _client.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem
 
 The following tests that connections to KMS servers with TLS verify peer certificates.
 
@@ -1154,8 +1156,26 @@ Invalid Hostname in KMS Certificate
    In Python, this message is "certificate verify failed: IP address mismatch, certificate is not valid for '127.0.0.1'". In Go, this message
    is "cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs".
 
-KMIP TLS Options Test
-~~~~~~~~~~~~~~~~~~~~~
+KMS TLS Options Test
+~~~~~~~~~~~~~~~~~~~~
+
+Two mock KMS server processes must be running:
+
+1. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
+
+   Run on port 8002 with `ca.pem`_ as a CA file and `server.pem`_ as a cert file.
+
+   Run with the ``--require_client_cert`` option.
+   
+   Example:
+
+   .. code::
+
+      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 8002 --require_client_cert
+   
+
+2. The mock `KMS KMIP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
+
 
 Create a ``ClientEncryption`` object (referred to as ``client_encryption``)
 
@@ -1166,23 +1186,112 @@ Configure with KMS providers as follows:
 .. code:: javascript
 
    {
+         "aws": {
+            "accessKeyId": <set from environment>,
+            "secretAccessKey": <set from environment>
+         },
+         "azure": {
+            "tenantId": <set from environment>,
+            "clientId": <set from environment>,
+            "clientSecret": <set from environment>,
+            "identityPlatformEndpoint": "127.0.0.1:8002"
+         },
+         "gcp": {
+            "email": <set from environment>,
+            "privateKey": <set from environment>,
+            "endpoint": "127.0.0.1:8002"
+         },
          "kmip" {
             "endpoint": "localhost:5698"
          }
    }
 
+Create a ``ClientEncryption`` object (referred to as ``client_encryption_with_tls``).
 
-Configure KMIP TLS connections to use the following options:
-- ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_
-- ``tlsCertificateKeyFile`` (or equivalent) unset.
-The method of passing TLS options for KMIP TLS connections is driver dependent.
+Configure ``client_encryption_with_tls`` with the same options as
+``client_encryption``. Add TLS options for the ``aws``, ``azure``, ``gcp``, and
+``kmip`` providers to use the following options:
 
-Call ``client_encryption.createDataKey()`` with "kmip" as the provider and the following masterKey:
+- ``tlsCAFile`` (or equivalent) set to `ca.pem`_
+- ``tlsCertificateKeyFile`` (or equivalent) set to `client.pem`_
 
-   .. code:: javascript
+Case 1: AWS
+```````````
 
-      {
-        "keyId": "1",
-      }
+Call `client_encryption.createDataKey()` with "aws" as the provider and the
+following masterKey:
 
-   Expect this to fail with a error indicating a failure to establish a TLS connection.
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      endpoint: "127.0.0.1:8002"
+   }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_tls.createDataKey()` with "aws" as the provider and
+the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "parse
+error". This implies TLS handshake succeeded.
+
+Case 2: Azure
+`````````````
+
+Call `client_encryption.createDataKey()` with "azure" as the provider and the
+following masterKey:
+
+.. code:: javascript
+
+   { 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_tls.createDataKey()` with "azure" as the provider
+and the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP
+status=404". This implies TLS handshake succeeded.
+
+Case 3: GCP
+```````````
+
+Call `client_encryption.createDataKey()` with "gcp" as the provider and the
+following masterKey:
+
+.. code:: javascript
+
+   { 'projectId': 'foo', 'location': 'bar', 'keyRing': 'baz', 'keyName': 'foo' }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_tls.createDataKey()` with "gcp" as the provider and
+the same masterKey.
+
+Expect an error from libmongocrypt with a message containing the string: "HTTP
+status=404". This implies TLS handshake succeeded.
+
+Case 4: KMIP
+````````````
+
+Call `client_encryption.createDataKey()` with "kmip" as the provider and the
+following masterKey:
+
+.. code:: javascript
+
+   { }
+
+Expect an error indicating TLS handshake failed.
+
+Call `client_encryption_with_tls.createDataKey()` with "kmip" as the provider
+and the same masterKey.
+
+Expect success.
+
+Case 5: Local
+`````````````
+
+Expect an exception when a ``ClientEncryption`` is created with TLS options set
+on the ``local`` provider.
