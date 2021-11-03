@@ -249,7 +249,7 @@ MongoClient Changes
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
-      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options. Only "kmip" is supported.
+      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options. Only "aws", "azure", "gcp", and "kmip" are supported.
    }
 
 A MongoClient can be configured to automatically encrypt collection
@@ -394,11 +394,11 @@ See `Why are extraOptions and kmsProviders maps?`_
 
 Drivers MUST enable TLS for all KMS connections.
 
-kmip provider TLS options
-`````````````````````````
+KMS provider TLS options
+````````````````````````
 
-Drivers MUST provide TLS options to configure TLS connections for the "kmip"
-provider.
+Drivers MUST provide TLS options to configure TLS connections for the "aws",
+"azure", "gcp", and "kmip" providers.
 
 The TLS options SHOULD be consistent with the existing TLS options for MongoDB
 server TLS connections. The TLS options MUST enable setting a custom client
@@ -413,13 +413,15 @@ example:
 
    class AutoEncryptionOpts {
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
-      // Throws an exception if the KMS provider name is not "kmip".
+      // Throws an exception if TLS options are set for a provider other
+      // than "aws", "azure", "gcp", or "kmip".
       setTLSOptions (opts Map<String, TLSOptions>)
    }
 
    class ClientEncryptionOpts {
       // setTLSOptions accepts a map of KMS provider names to TLSOptions.
-      // Throws an exception if the KMS provider name is not "kmip".
+      // Throws an exception if TLS options are set for a provider other
+      // than "aws", "azure", "gcp", or "kmip".
       setTLSOptions (opts Map<String, TLSOptions>)
    }
 
@@ -427,7 +429,7 @@ Drivers MUST raise an error if the TLS options are set to disable TLS.
 The error MUST contain the message "TLS is required".
 
 Drivers MUST raise an error if TLS options are set for any KMS provider other
-than "kmip".
+than "aws", "azure", "gcp", or "kmip".
 
 Drivers SHOULD raise an error if insecure TLS options are set.
 The error MUST contain the message "Insecure TLS options prohibited".
@@ -439,7 +441,7 @@ This includes options equivalent to the following URI options:
 - `tlsDisableOCSPEndpointCheck`
 - `tlsDisableCertificateRevocationCheck`
 
-See `Why does the KMIP provider require TLS configuration?`_
+See `Why do KMS providers require TLS options?`_
 
 schemaMap
 ^^^^^^^^^
@@ -527,7 +529,7 @@ ClientEncryption
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
       kmsProviders: Map<String, Map<String, Value>>;
-      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options. Only "kmip" is supported.
+      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options. Only "aws", "azure", "gcp", and "kmip" are supported.
    }
 
 The ClientEncryption encapsulates explicit operations on a key vault
@@ -1542,8 +1544,8 @@ The ``publicData`` collection does not have encrypted fields, but the
 ``$lookup`` since there is no mechanism to determine encrypted fields of joined
 collections.
 
-Why does the KMIP provider require TLS configuration?
------------------------------------------------------
+Why do KMS providers require TLS options?
+-----------------------------------------
 
 Drivers authenticate to KMIP servers with the client certificate presented in
 TLS connections.
@@ -1555,6 +1557,10 @@ KMIP support in the MongoDB server is a precedent. The server supports
 ``--kmipServerCAFile`` and ``--kmipClientCertificateFile`` to configure the
 encrypted storage engine KMIP. See
 https://docs.mongodb.com/manual/tutorial/configure-encryption/.
+
+TLS options may be useful for the AWS, Azure, and GCP KMS providers in
+a case where the default trust store does not include the needed CA
+certificates.
 
 Future work
 ===========
