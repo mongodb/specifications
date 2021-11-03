@@ -523,6 +523,13 @@ occur only while the pool is "ready". If the pool implements a background
 thread, it can be used for this. If the pool does not implement a background
 thread, the checkOut method is responsible for ensuring this requirement is met.
 
+When populating the Pool, pendingConnectionCount has to be decremented after
+establishing a connection similarly to how it is done in
+`Checking Out a Connection <#checking-out-a-connection>`_ to signal that
+another `Connection`_ is allowed to be established. Such a signal must become
+observable to any `Thread`_ after the state of the established `Connection`_
+becomes observable to the `Thread`_ as anything but "pending".
+
 .. code::
 
    wait until pendingConnectionCount < maxConnecting and pool is "ready"
