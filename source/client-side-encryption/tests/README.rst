@@ -1295,9 +1295,3 @@ Call `client_encryption_with_tls.createDataKey()` with "kmip" as the provider
 and the same masterKey.
 
 Expect success.
-
-Case 5: Local
-`````````````
-
-Expect an exception when a ``ClientEncryption`` is created with TLS options set
-on the ``local`` provider.
