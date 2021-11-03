@@ -66,11 +66,14 @@ When :code:`loadBalanced=true` is provided in the connection string, the driver
 MUST throw an exception in the following cases:
 
 - The connection string contains more than one host/port.
-- The connection string contains a replicaSet option.
-- The connection string contains a directConnection option with a value of true.
+- The connection string contains a ``replicaSet`` option.
+- The connection string contains a ``directConnection`` option with a value of
+  ``true``.
+- The connection string contains an ``srvMaxHosts`` option with a positive
+  integer value.
 
-If a URI is provided with the ``mongodb+srv`` scheme, the driver MUST first do the
-SRV and TXT lookup and then perform the validation. For drivers that do SRV
+If a URI is provided with the ``mongodb+srv`` scheme, the driver MUST first do
+the SRV and TXT lookup and then perform the validation. For drivers that do SRV
 lookup asynchrounously this may result in a ``MongoClient`` being instantiated
 but erroring later during operation execution.
 
@@ -419,3 +422,5 @@ be supported.
 
 Change Log
 ==========
+
+- 2021-10-14: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.

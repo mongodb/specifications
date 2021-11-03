@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.8.0
+:Spec Version: 1.9.0
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-09-15
+:Last Modified: 2021-10-14
 
 
 **Abstract**
@@ -63,32 +63,36 @@ occur:
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
-SRV URI with directConnection URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The driver MUST report an error if the ``directConnection=true`` URI option
-is specified with an SRV URI, because the URI may resolve to multiple
-hosts. The driver MUST allow specifying ``directConnection=false`` URI
-option with an SRV URI.
-
-Non-SRV URI with srvServiceName URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The driver MUST report an error if the ``srvServiceName`` URI option is
-specified with a non-SRV URI (i.e. ``mongodb://``) because SRV lookup
-only occurs with SRV URIs. The driver MUST allow specifying the ``srvServiceName``
-URI option with an SRV URI.
-
-Multiple seeds with directConnection URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+directConnection URI option with multiple seeds or SRV URI 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The driver MUST report an error if the ``directConnection=true`` URI option
 is specified with multiple seeds.
 
+The driver MUST report an error if the ``directConnection=true`` URI option
+is specified with an SRV URI, because the URI may resolve to multiple
+hosts. The driver MUST allow specifying ``directConnection=false`` URI option
+with an SRV URI.
+
+
+srvServiceName and srvMaxHosts URI options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For URI option validation pertaining to ``srvServiceName`` and ``srvMaxHosts``,
+please see the
+`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#uri-validation>`_
+for details.
+
+
 Load Balancer Mode
 ~~~~~~~~~~~~~~~~~~
 
-For URI option validation in Load Balancer mode, please see the `Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for details.
+For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
+please see the
+`Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
+details.
+
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -277,12 +281,19 @@ pertaining to URI options apply here.
      - no
      - Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM
 
+   * - srvMaxHosts
+     - non-negative integer; 0 means no maximum
+     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`_
+     - no
+     - The maximum number of SRV results to randomly select when initially
+       populating the seedlist or, during SRV polling, adding new hosts to the
+       topology.
+
    * - srvServiceName
-     - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_; can be longer than 15 characters as long as the 63 (62 with prepended underscore)
-       character DNS query limit is not surpassed
+     - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
      - "mongodb"
      - no
-     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst>`_
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`_
        and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl
@@ -471,6 +482,8 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation
+  for directConnection option.
 - 2021-09-15 Add srvServiceName option
 - 2021-09-13 Fix link to load balancer spec
 - 2021-04-15 Adding in behaviour for load balancer mode.

@@ -22,16 +22,17 @@ Configuring the Test Environment
 To test, start a sharded cluster with mongos servers on ports 27017, 27018,
 27019, and 27020.
 
-For each test, take as starting point the test1 and test3 SRV records from
+For each test, take as a starting point the test1, test3, and test22 SRV records from
 the `test set-up`_ from the `Initial DNS Seedlist Discovery`_ specification::
 
     Record                                    TTL    Class   Address
     localhost.test.test.build.10gen.cc.        86400  IN A    127.0.0.1
 
     Record                                    TTL    Class   Port   Target
-    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
-    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
-    _mongodb._tcp.test3.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.      86400  IN SRV  27017  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.      86400  IN SRV  27018  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test3.test.build.10gen.cc.      86400  IN SRV  27017  localhost.test.build.10gen.cc.
+    _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27017  localhost.test.build.10gen.cc.
 
 .. _`test set-up`: https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/tests/README.rst
 .. _`Initial DNS Seedlist Discovery`: ../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst
@@ -126,3 +127,93 @@ mock the addition of the following DNS record::
 
 Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
 only contains one server: ``localhost.test.build.10gen.cc.`` at port ``27017``.
+
+
+SRV polling with srvMaxHosts MongoClient option
+```````````````````````````````````````````````
+
+The following tests MUST setup a MongoClient using the ``srvMaxHosts`` option
+and ``test1.test.build.10gen.cc`` SRV record. Each test MUST mock the described
+DNS changes and then verify that the new list of hosts is present.
+
+
+10. All DNS records are selected (srvMaxHosts = 0)
+--------------------------------------------------
+
+Configure the MongoClient with ``srvMaxHosts=0``.
+
+Replace the following record::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
+
+with::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
+contains the following hosts:
+
+- localhost.test.build.10gen.cc:27017
+- localhost.test.build.10gen.cc:27019
+- localhost.test.build.10gen.cc:27020
+
+
+11. All DNS records are selected (srvMaxHosts >= records)
+---------------------------------------------------------
+
+Configure the MongoClient with ``srvMaxHosts=2``.
+
+Replace both records with::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
+contains the following hosts:
+
+- localhost.test.build.10gen.cc:27019
+- localhost.test.build.10gen.cc:27020
+
+
+12. New DNS records are randomly selected (srvMaxHosts > 0)
+-----------------------------------------------------------
+
+Configure the MongoClient with ``srvMaxHosts=2``.
+
+Replace the following record::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27018  localhost.test.build.10gen.cc.
+
+with::
+
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Wait until ``2*rescanSRVIntervalMS`` and assert that the topology has two hosts
+present and that one of the hosts is ``localhost.test.build.10gen.cc:27017``.
+The second, new host will have been randomly selected and cannot be
+deterministically asserted.
+
+SRV polling with srvServiceName MongoClient option
+``````````````````````````````````````````````````
+
+The following test MUST setup a MongoClient using the ``srvServiceName`` option
+and the ``test22.test.build.10gen.cc`` SRV record. The test MUST mock the described
+DNS changes and then verify that the new list of hosts is present.
+
+13. DNS record with custom service name can be found
+----------------------------------------------------
+
+Configure the MongoClient with ``srvServiceName=customname``.
+
+Replace both records with::
+
+    _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+    _customname._tcp.test22.test.build.10gen.cc.  86400  IN SRV  27020  localhost.test.build.10gen.cc.
+
+Wait until ``2*rescanSRVIntervalMS`` and assert that the final topology description
+contains the following hosts:
+
+- localhost.test.build.10gen.cc:27019
+- localhost.test.build.10gen.cc:27020
