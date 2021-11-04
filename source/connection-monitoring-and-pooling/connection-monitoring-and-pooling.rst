@@ -529,6 +529,9 @@ establishing a connection similarly to how it is done in
 another `Connection`_ is allowed to be established. Such a signal must become
 observable to any `Thread`_ after the state of the established `Connection`_
 becomes observable to the `Thread`_ as anything but "pending".
+Informally, this order guarantees that no `Thread`_ tries to start
+establishing a `Connection`_ when there is an "available" `Connection`_
+established as a result of populating the Pool.
 
 .. code::
 
