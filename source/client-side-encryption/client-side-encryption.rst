@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2021-10-??
+:Last Modified: 2021-11-04
 :Version: 1.4.0
 
 .. contents::
@@ -1623,7 +1623,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
-| 2021-10-?? | Add 'kmip' KMS provider                                    |
+| 2021-11-04 | Add 'kmip' KMS provider                                    |
 | 2021-04-08 | Updated to use hello and legacy hello                      |
 | 2021-01-22 | Add sessionToken option to 'aws' KMS provider              |
 | 2020-12-12 | Add metadataClient option and internal client              |
