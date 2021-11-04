@@ -1088,82 +1088,14 @@ Drivers that do not support an unlimited maximum pool size MUST skip this test.
       - a find on "keyvault".
 - ExpectedNumberOfClients: 1
 
-KMS TLS Tests
-~~~~~~~~~~~~~
+KMS TLS Options Tests
+~~~~~~~~~~~~~~~~~~~~~
 
 .. _ca.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem
 .. _expired.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/expired.pem
 .. _wrong-host.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/wrong-host.pem
 .. _server.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/server.pem
 .. _client.pem: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem
-
-The following tests that connections to KMS servers with TLS verify peer certificates.
-
-The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
-Drivers can set up their local Python enviroment for the mock KMS server by running `the virtualenv activation script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/activate_venv.sh>`_.
-
-To start two mock KMS servers, one on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, and one on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file,
-run the following commands from the ``.evergreen/csfle`` directory:
-
-.. code::
-
-   . ./activate_venv.sh
-   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 8000 &
-   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8001 &
-
-Setup
-`````
-
-For both tests, do the following:
-
-#. Start a ``mongod`` process with **server version 4.1.9 or later**.
-
-#. Create a ``MongoClient`` for key vault operations.
-
-#. Create a ``ClientEncryption`` object (referred to as ``client_encryption``) with ``keyVaultNamespace`` set to ``keyvault.datakeys``.
-
-Invalid KMS Certificate
-```````````````````````
-
-#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
-
-#. Call ``client_encryption.createDataKey()`` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-         "region": "us-east-1",
-         "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-         "endpoint": "127.0.0.1:8000",
-      }
-
-   Expect this to fail with an exception with a message referencing an expired certificate. This message will be language dependent.
-   In Python, this message is "certificate verify failed: certificate has expired". In Go, this message is
-   "certificate has expired or is not yet valid". If the language of implementation has a single, generic error message for
-   all certificate validation errors, drivers may inspect other fields of the error to verify its meaning.
-
-Invalid Hostname in KMS Certificate
-```````````````````````````````````
-
-#. Start a mock KMS server on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
-
-#. Call ``client_encryption.createDataKey()`` with "aws" as the provider and the following masterKey:
-
-   .. code:: javascript
-
-      {
-         "region": "us-east-1",
-         "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-         "endpoint": "127.0.0.1:8001",
-      }
-
-   Expect this to fail with an exception with a message referencing an incorrect or unexpected host. This message will be language dependent.
-   In Python, this message is "certificate verify failed: IP address mismatch, certificate is not valid for '127.0.0.1'". In Go, this message
-   is "cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs". If the language of implementation has a single, generic
-   error message for all certificate validation errors, drivers may inspect other fields of the error to verify its meaning.
-
-KMS TLS Options Tests
-~~~~~~~~~~~~~~~~~~~~~
 
 Setup
 `````
