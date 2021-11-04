@@ -1165,9 +1165,34 @@ Invalid Hostname in KMS Certificate
 KMS TLS Options Test
 ~~~~~~~~~~~~~~~~~~~~
 
-Two mock KMS server processes must be running:
+Setup
+`````
+
+Start a ``mongod`` process with **server version 4.1.9 or later**.
+
+Four mock KMS server processes must be running:
 
 1. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
+
+   Run on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
+   
+   Example:
+
+   .. code::
+
+      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8000
+
+2. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
+
+   Run on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
+   
+   Example:
+
+   .. code::
+
+      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8001
+
+3. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
 
    Run on port 8002 with `ca.pem`_ as a CA file and `server.pem`_ as a cert file.
 
@@ -1180,51 +1205,132 @@ Two mock KMS server processes must be running:
       python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 8002 --require_client_cert
    
 
-2. The mock `KMS KMIP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
+4. The mock `KMS KMIP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
+Create the following four ``ClientEncryption`` objects.
 
-Create a ``ClientEncryption`` object (referred to as ``client_encryption``)
+Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
 
-Configure with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
+1. Create a ``ClientEncryption`` object named ``client_encryption_no_tls`` with the following KMS providers:
 
-Configure with KMS providers as follows:
+   .. code:: javascript
 
-.. code:: javascript
+      {
+            "aws": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:8002"
+            },
+            "gcp": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:8002"
+            },
+            "kmip" {
+               "endpoint": "127.0.0.1:5698"
+            }
+      }
 
-   {
-         "aws": {
-            "accessKeyId": <set from environment>,
-            "secretAccessKey": <set from environment>
-         },
-         "azure": {
-            "tenantId": <set from environment>,
-            "clientId": <set from environment>,
-            "clientSecret": <set from environment>,
-            "identityPlatformEndpoint": "127.0.0.1:8002"
-         },
-         "gcp": {
-            "email": <set from environment>,
-            "privateKey": <set from environment>,
-            "endpoint": "127.0.0.1:8002"
-         },
-         "kmip" {
-            "endpoint": "127.0.0.1:5698"
-         }
-   }
+2. Create a ``ClientEncryption`` object named ``client_encryption_with_tls`` with the following KMS providers:
 
-Create a ``ClientEncryption`` object (referred to as ``client_encryption_with_tls``).
+   .. code:: javascript
 
-Configure ``client_encryption_with_tls`` with the same options as
-``client_encryption``. Add TLS options for the ``aws``, ``azure``, ``gcp``, and
-``kmip`` providers to use the following options:
+      {
+            "aws": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:8002"
+            },
+            "gcp": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:8002"
+            },
+            "kmip" {
+               "endpoint": "127.0.0.1:5698"
+            }
+      }
 
-- ``tlsCAFile`` (or equivalent) set to `ca.pem`_
-- ``tlsCertificateKeyFile`` (or equivalent) set to `client.pem`_
+   Add TLS options for the ``aws``, ``azure``, ``gcp``, and
+   ``kmip`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide. 
+   - ``tlsCertificateKeyFile`` (or equivalent) set to `client.pem`_
+
+3. Create a ``ClientEncryption`` object named ``client_encryption_expired`` with the following KMS providers:
+
+   .. code:: javascript
+
+      {
+            "aws": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:8000"
+            },
+            "gcp": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:8000"
+            },
+            "kmip" {
+               "endpoint": "127.0.0.1:8000"
+            }
+      }
+
+   Add TLS options for the ``aws``, ``azure``, ``gcp``, and
+   ``kmip`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+
+4. Create a ``ClientEncryption`` object named ``client_encryption_invalid_hostname`` with the following KMS providers:
+
+   .. code:: javascript
+
+      {
+            "aws": {
+               "accessKeyId": <set from environment>,
+               "secretAccessKey": <set from environment>
+            },
+            "azure": {
+               "tenantId": <set from environment>,
+               "clientId": <set from environment>,
+               "clientSecret": <set from environment>,
+               "identityPlatformEndpoint": "127.0.0.1:8001"
+            },
+            "gcp": {
+               "email": <set from environment>,
+               "privateKey": <set from environment>,
+               "endpoint": "127.0.0.1:8001"
+            },
+            "kmip" {
+               "endpoint": "127.0.0.1:8001"
+            }
+      }
+
+   Add TLS options for the ``aws``, ``azure``, ``gcp``, and
+   ``kmip`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide. 
 
 Case 1: AWS
 ```````````
 
-Call `client_encryption.createDataKey()` with "aws" as the provider and the
+Call `client_encryption_no_tls.createDataKey()` with "aws" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1243,10 +1349,20 @@ the same masterKey.
 Expect an error from libmongocrypt with a message containing the string: "parse
 error". This implies TLS handshake succeeded.
 
+Call `client_encryption_expired.createDataKey()` with "aws" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an expired certificate.
+
+Call `client_encryption_invalid_hostname.createDataKey()` with "aws" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an invalid hostname.
+
 Case 2: Azure
 `````````````
 
-Call `client_encryption.createDataKey()` with "azure" as the provider and the
+Call `client_encryption_no_tls.createDataKey()` with "azure" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1261,10 +1377,20 @@ and the same masterKey.
 Expect an error from libmongocrypt with a message containing the string: "HTTP
 status=404". This implies TLS handshake succeeded.
 
+Call `client_encryption_expired.createDataKey()` with "azure" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an expired certificate.
+
+Call `client_encryption_invalid_hostname.createDataKey()` with "azure" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an invalid hostname.
+
 Case 3: GCP
 ```````````
 
-Call `client_encryption.createDataKey()` with "gcp" as the provider and the
+Call `client_encryption_no_tls.createDataKey()` with "gcp" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1279,10 +1405,20 @@ the same masterKey.
 Expect an error from libmongocrypt with a message containing the string: "HTTP
 status=404". This implies TLS handshake succeeded.
 
+Call `client_encryption_expired.createDataKey()` with "gcp" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an expired certificate.
+
+Call `client_encryption_invalid_hostname.createDataKey()` with "gcp" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an invalid hostname.
+
 Case 4: KMIP
 ````````````
 
-Call `client_encryption.createDataKey()` with "kmip" as the provider and the
+Call `client_encryption_no_tls.createDataKey()` with "kmip" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1295,3 +1431,13 @@ Call `client_encryption_with_tls.createDataKey()` with "kmip" as the provider
 and the same masterKey.
 
 Expect success.
+
+Call `client_encryption_expired.createDataKey()` with "kmip" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an expired certificate.
+
+Call `client_encryption_invalid_hostname.createDataKey()` with "kmip" as the provider and
+the same masterKey.
+
+Expect an error indicating TLS handshake failed due to an invalid hostname.
