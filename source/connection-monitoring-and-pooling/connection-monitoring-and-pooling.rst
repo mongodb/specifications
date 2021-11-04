@@ -526,7 +526,7 @@ thread, the checkOut method is responsible for ensuring this requirement is met.
 When populating the Pool, pendingConnectionCount has to be decremented after
 establishing a `Connection`_ similarly to how it is done in
 `Checking Out a Connection <#checking-out-a-connection>`_ to signal that
-another `Connection`_ is allowed to be established. Such a signal must become
+another `Connection`_ is allowed to be established. Such a signal MUST become
 observable to any `Thread`_ after the action that
 `marks the established Connection as "available" <#marking-a-connection-as-available-internal-implementation>`_
 becomes observable to the `Thread`_.
