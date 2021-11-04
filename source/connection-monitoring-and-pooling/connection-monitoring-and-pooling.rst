@@ -524,7 +524,7 @@ thread, it can be used for this. If the pool does not implement a background
 thread, the checkOut method is responsible for ensuring this requirement is met.
 
 When populating the Pool, pendingConnectionCount has to be decremented after
-establishing a connection similarly to how it is done in
+establishing a `Connection`_ similarly to how it is done in
 `Checking Out a Connection <#checking-out-a-connection>`_ to signal that
 another `Connection`_ is allowed to be established. Such a signal must become
 observable to any `Thread`_ after the state of the established `Connection`_
