@@ -527,8 +527,9 @@ When populating the Pool, pendingConnectionCount has to be decremented after
 establishing a `Connection`_ similarly to how it is done in
 `Checking Out a Connection <#checking-out-a-connection>`_ to signal that
 another `Connection`_ is allowed to be established. Such a signal must become
-observable to any `Thread`_ after the state of the established `Connection`_
-becomes observable to the `Thread`_ as anything but "pending".
+observable to any `Thread`_ after the action that
+`marks the established Connection as "available" <#marking-a-connection-as-available-internal-implementation>`_
+becomes observable to the `Thread`_.
 Informally, this order guarantees that no `Thread`_ tries to start
 establishing a `Connection`_ when there is an "available" `Connection`_
 established as a result of populating the Pool.
