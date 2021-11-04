@@ -1162,8 +1162,8 @@ Invalid Hostname in KMS Certificate
    is "cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs". If the language of implementation has a single, generic
    error message for all certificate validation errors, drivers may inspect other fields of the error to verify its meaning.
 
-KMS TLS Options Test
-~~~~~~~~~~~~~~~~~~~~
+KMS TLS Options Tests
+~~~~~~~~~~~~~~~~~~~~~
 
 Setup
 `````
