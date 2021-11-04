@@ -1208,7 +1208,7 @@ Configure with KMS providers as follows:
             "endpoint": "127.0.0.1:8002"
          },
          "kmip" {
-            "endpoint": "localhost:5698"
+            "endpoint": "127.0.0.1:5698"
          }
    }
 
