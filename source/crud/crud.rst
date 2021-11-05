@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: September 28, 2021
+:Last Modified: November ??, 2021
 
 .. contents::
 
@@ -644,6 +644,18 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     sort: Optional<Document>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/find/
+     */
+    let: Optional<Document>;
   }
 
 ~~~~~~~~~~~~~~~~~
@@ -961,6 +973,19 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/update/
+     */
+    let: Optional<Document>;
   }
 
   class ReplaceOptions {
@@ -1035,6 +1060,18 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/delete/
+     */
+    let: Optional<Document>;
   }
 
 
@@ -1741,6 +1778,18 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    let: Optional<Document>;
   }
 
   class FindOneAndReplaceOptions {
@@ -1825,6 +1874,18 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    let: Optional<Document>;
   }
 
   class FindOneAndUpdateOptions {
@@ -1917,6 +1978,18 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    let: Optional<Document>;
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2100,6 +2173,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2021-11-??: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
 * 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
 * 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
