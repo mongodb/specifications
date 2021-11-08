@@ -1236,6 +1236,11 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
             }
       }
 
+   Add TLS options for the ``aws``, ``azure``, ``gcp``, and
+   ``kmip`` providers to use the following options:
+
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
+
 2. Create a ``ClientEncryption`` object named ``client_encryption_with_tls`` with the following KMS providers:
 
    .. code:: javascript
