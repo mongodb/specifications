@@ -1211,7 +1211,7 @@ Create the following four ``ClientEncryption`` objects.
 
 Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a default MongoClient as the ``keyVaultClient``.
 
-1. Create a ``ClientEncryption`` object named ``client_encryption_no_tls`` with the following KMS providers:
+1. Create a ``ClientEncryption`` object named ``client_encryption_no_client_cert`` with the following KMS providers:
 
    .. code:: javascript
 
@@ -1330,7 +1330,7 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
 Case 1: AWS
 ```````````
 
-Call `client_encryption_no_tls.createDataKey()` with "aws" as the provider and the
+Call `client_encryption_no_client_cert.createDataKey()` with "aws" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1362,7 +1362,7 @@ Expect an error indicating TLS handshake failed due to an invalid hostname.
 Case 2: Azure
 `````````````
 
-Call `client_encryption_no_tls.createDataKey()` with "azure" as the provider and the
+Call `client_encryption_no_client_cert.createDataKey()` with "azure" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1390,7 +1390,7 @@ Expect an error indicating TLS handshake failed due to an invalid hostname.
 Case 3: GCP
 ```````````
 
-Call `client_encryption_no_tls.createDataKey()` with "gcp" as the provider and the
+Call `client_encryption_no_client_cert.createDataKey()` with "gcp" as the provider and the
 following masterKey:
 
 .. code:: javascript
@@ -1418,7 +1418,7 @@ Expect an error indicating TLS handshake failed due to an invalid hostname.
 Case 4: KMIP
 ````````````
 
-Call `client_encryption_no_tls.createDataKey()` with "kmip" as the provider and the
+Call `client_encryption_no_client_cert.createDataKey()` with "kmip" as the provider and the
 following masterKey:
 
 .. code:: javascript
