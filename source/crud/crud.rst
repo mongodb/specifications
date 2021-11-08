@@ -2041,15 +2041,15 @@ driver is connected.
 If there are one or more available servers and one or more of those servers is
 pre-5.0 (i.e. wire version < 13), drivers MUST NOT use the available read
 preference and MUST instead select a server using a primary read preference.
-Otherwise, if there are either no available servers or all available servers are
-5.0+ (i.e. wire version >= 13), drivers MUST use the available read preference.
+
+Otherwise, if there are either no available servers, all available servers are
+5.0+ (i.e. wire version >= 13), or the topology type is LoadBalanced (we can
+assume the backing mongos is 5.0+), drivers MUST use the available read
+preference.
 
 Drivers SHOULD augment their
 `server selection algorithm <..../server-selection/server-selection.rst#server-selection-algorithm>`_
 such that this logic can be enforced within a single server selection attempt.
-
-If the driver is connected to a load balancer, it MUST consider the wire version
-of the backing server obtained from the connection handshake.
 
 Drivers MUST discern the read preference used to select a server for the
 operation, which SHALL be used for specifying the
