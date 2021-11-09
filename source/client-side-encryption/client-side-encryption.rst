@@ -437,6 +437,14 @@ This includes options equivalent to the following URI options:
 - `tlsDisableOCSPEndpointCheck`
 - `tlsDisableCertificateRevocationCheck`
 
+See the OCSP specification for a description of the default values of
+`tlsDisableOCSPEndpointCheck
+<https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck>`_
+and `tlsDisableCertificateRevocationCheck
+<https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck>`_
+Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and
+`tlsDisableCertificateRevocationCheck` for KMS TLS connections.
+
 See `Why do KMS providers require TLS options?`_
 
 schemaMap
