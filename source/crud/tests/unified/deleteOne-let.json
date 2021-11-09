@@ -1,6 +1,6 @@
 {
   "description": "deleteOne-let",
-  "schemaVersion": "1.4",
+  "schemaVersion": "1.0",
   "createEntities": [
     {
       "client": {
@@ -41,7 +41,7 @@
   ],
   "tests": [
     {
-      "description": "DeleteOne with let option",
+      "description": "deleteOne with let option",
       "runOnRequirements": [
         {
           "minServerVersion": "5.0"
@@ -111,10 +111,10 @@
       ]
     },
     {
-      "description": "DeleteOne with let option unsupported (server-side error)",
+      "description": "deleteOne with let option unsupported (server-side error)",
       "runOnRequirements": [
         {
-          "minServerVersion": "2.6.0",
+          "minServerVersion": "3.6.0",
           "maxServerVersion": "4.4.99"
         }
       ],

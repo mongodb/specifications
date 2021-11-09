@@ -1,6 +1,6 @@
 {
   "description": "deleteMany-let",
-  "schemaVersion": "1.4",
+  "schemaVersion": "1.0",
   "createEntities": [
     {
       "client": {
@@ -46,7 +46,7 @@
   ],
   "tests": [
     {
-      "description": "DeleteMany with let option",
+      "description": "deleteMany with let option",
       "runOnRequirements": [
         {
           "minServerVersion": "5.0"
@@ -116,10 +116,10 @@
       ]
     },
     {
-      "description": "DeleteMany with let option unsupported (server-side error)",
+      "description": "deleteMany with let option unsupported (server-side error)",
       "runOnRequirements": [
         {
-          "minServerVersion": "2.6.0",
+          "minServerVersion": "3.6.0",
           "maxServerVersion": "4.4.99"
         }
       ],
