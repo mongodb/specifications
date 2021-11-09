@@ -210,7 +210,7 @@ pertaining to URI options apply here.
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time. This count includes connections which are currently checked out.
 
-   * - maxConnecting
+   * - maxPoolConnecting
      - positive integer
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
@@ -488,7 +488,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
-- 2021-11-08 Add maxConnecting option.
+- 2021-11-08 Add maxPoolConnecting option.
 - 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation
   for directConnection option.
 - 2021-09-15 Add srvServiceName option
