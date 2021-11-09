@@ -63,17 +63,13 @@
             "update": [
               {
                 "$set": {
-                  "x": "$$x",
-                  "y": "$$y"
+                  "x": "$$x"
                 }
               }
             ],
             "let": {
               "id": 1,
-              "x": "foo",
-              "y": {
-                "$literal": "bar"
-              }
+              "x": "foo"
             }
           },
           "expectResult": {
@@ -100,17 +96,13 @@
                   "update": [
                     {
                       "$set": {
-                        "x": "$$x",
-                        "y": "$$y"
+                        "x": "$$x"
                       }
                     }
                   ],
                   "let": {
                     "id": 1,
-                    "x": "foo",
-                    "y": {
-                      "$literal": "bar"
-                    }
+                    "x": "foo"
                   }
                 }
               }
@@ -125,8 +117,7 @@
           "documents": [
             {
               "_id": 1,
-              "x": "foo",
-              "y": "bar"
+              "x": "foo"
             },
             {
               "_id": 2

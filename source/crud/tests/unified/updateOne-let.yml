@@ -34,11 +34,10 @@ tests:
             $expr:
               $eq: [ "$_id", "$$id" ]
           update: &update
-            - $set: {x: "$$x", y: "$$y" }
+            - $set: {x: "$$x" }
           let: &let0
             id: 1
             x: "foo"
-            y: { $literal: "bar" }
         expectResult:
           matchedCount: 1
           modifiedCount: 1
@@ -59,7 +58,7 @@ tests:
         collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - { _id: 1, x: "foo", y: "bar" }
+          - { _id: 1, x: "foo" }
           - { _id: 2 }
 
   - description: "UpdateOne with let option unsupported (server-side error)"
