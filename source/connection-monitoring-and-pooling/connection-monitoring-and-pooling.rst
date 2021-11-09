@@ -278,7 +278,7 @@ has the following properties:
    -  Connections are not created in the background to satisfy minPoolSize
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
--  **Rate-limited:** A Pool MUST limit the number of `Connections <#connection>`_ being `established <#establishing-a-connection-internal-implementation>`_ concurrently.
+-  **Rate-limited:** A Pool MUST limit the number of `Connections <#connection>`_ being `established <#establishing-a-connection-internal-implementation>`_ concurrently via the **maxConnecting** `pool option <#connection-pool-options-1>`_.
 
 
 .. code:: typescript
