@@ -1348,19 +1348,43 @@ following masterKey:
 
 Expect an error indicating TLS handshake failed.
 
-Call `client_encryption_with_tls.createDataKey()` with "aws" as the provider and
-the same masterKey.
+Call `client_encryption_with_tls.createDataKey()` with "aws" as the provider and the
+following masterKey:
+
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      endpoint: "127.0.0.1:8002"
+   }
 
 Expect an error from libmongocrypt with a message containing the string: "parse
 error". This implies TLS handshake succeeded.
 
-Call `client_encryption_expired.createDataKey()` with "aws" as the provider and
-the same masterKey.
+Call `client_encryption_expired.createDataKey()` with "aws" as the provider and the
+following masterKey:
+
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      endpoint: "127.0.0.1:8000"
+   }
 
 Expect an error indicating TLS handshake failed due to an expired certificate.
 
-Call `client_encryption_invalid_hostname.createDataKey()` with "aws" as the provider and
-the same masterKey.
+Call `client_encryption_invalid_hostname.createDataKey()` with "aws" as the provider and the
+following masterKey:
+
+.. code:: javascript
+
+   {
+      region: "us-east-1",
+      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+      endpoint: "127.0.0.1:8001"
+   }
 
 Expect an error indicating TLS handshake failed due to an invalid hostname.
 
