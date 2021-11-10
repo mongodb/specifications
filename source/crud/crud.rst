@@ -2026,54 +2026,37 @@ in the collection prior to ``$merge`` being executed).
 Read preferences and server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+This section is only applicable if an explicit (i.e. per-operation) or inherited
+(e.g. from a Collection) read preference is available and it is *not* a primary
+read preference (i.e. ``{ "mode": "primary" }``).
+
 Historically, only primaries could execute an aggregation pipeline with ``$out``
-or ``$merge``. As of ``featureCompatibilityVersion`` 4.4, secondaries can now
-execute such pipelines; however, since drivers do not track
-``featureCompatibilityVersion``, executing an aggregation pipeline with ``$out``
-or ``$merge`` on a secondary will require a 5.0+ server (i.e. wire version >=
-13).
+or ``$merge`` and drivers never considered a read preference for the operation.
+As of ``featureCompatibilityVersion`` 4.4, secondaries can now execute pipelines
+with ``$out`` or ``$merge``. Since drivers do not track
+``featureCompatibilityVersion``, the decision to consider a read preference for
+such a pipeline will depend on the wire version(s) of the server(s) to which the
+driver is connected.
 
-Drivers MUST guarantee the following:
+If there are one or more available servers and one or more of those servers is
+pre-5.0 (i.e. wire version < 13), drivers MUST NOT use the available read
+preference and MUST instead select a server using a primary read preference.
 
-- If an explicit (i.e. per-operation) read preference is specified for an
-  aggregation with a write stage, drivers MUST attempt to use it. If that would
-  result in a pre-5.0, secondary server being selected, drivers MUST instead
-  select a server using a primary read preference.
-- If no explicit read preference is specified but a default read preference is
-  available to inherit (e.g. from the Collection), drivers MUST attempt to use
-  it. If that would result in a pre-5.0, secondary server being selected,
-  drivers MUST instead select a server using a primary read preference.
+Otherwise, if there are either no available servers, all available servers are
+5.0+ (i.e. wire version >= 13), or the topology type is LoadBalanced (we can
+assume the backing mongos is 5.0+), drivers MUST use the available read
+preference.
 
-Drivers SHOULD use a custom server selector to consider server/wire version when
-matching a read preference and, if a pre-5.0 secondary would be selected, fall
-back to selecting a primary. With this approach, only a single server selection
-attempt is needed.
+Drivers SHOULD augment their
+`server selection algorithm <..../server-selection/server-selection.rst#server-selection-algorithm>`_
+such that this logic can be enforced within a single server selection attempt.
 
-If it is not possible to augment the server selector and a pre-5.0 secondary is
-selected, drivers MAY invoke server selection a second time to obtain a primary.
-However, if the first attempt results in a server selection timeout, drivers
-MUST NOT make a second attempt and MUST propagate the original timeout error. If
-the topology type is Single, Sharded, or LoadBalanced, drivers MUST NOT make a
-second attempt (there is no benefit in doing so).
-
-Regardless of whether drivers employ a custom server selector or two-attempt
-approach, they MUST discern the *effective* read preference for the operation,
-which SHALL be used for specifying the
+Drivers MUST discern the read preference used to select a server for the
+operation, which SHALL be used for specifying the
 `$readPreference global command argument <../message/OP_MSG.rst#global-command-arguments>`_
 and
 `passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_
-(if applicable). The effective read preference SHALL be discerned as follows:
-
-- In the absence of an explicit or inherited read preference, the effective read
-  preference is ``{ "mode": "primary" }``.
-- If an explicit or inherited read preference results in selection of an
-  ineligible server and selection falls back to a primary, the effective read
-  preference is ``{ "mode": "primary" }``.
-- If a pre-5.0 mongos or a load balancer backing a pre-5.0 mongos is selected,
-  the effective read preference is ``{ "mode": "primary" }``.
-- If an explicit or inherited read preference is used and results in selection
-  of an eligible server (excluding a pre-5.0 mongos as discussed above), that is
-  the effective read preference.
+(if applicable).
 
 
 Test Plan
@@ -2173,6 +2156,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
 * 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
 * 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
 * 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
