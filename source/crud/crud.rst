@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: November ??, 2021
+:Last Modified: November 10, 2021
 
 .. contents::
 
@@ -2173,7 +2173,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2021-11-??: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
+* 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
 * 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
 * 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
 * 2021-06-02: Introduce WriteError.details and clarify WriteError construction
