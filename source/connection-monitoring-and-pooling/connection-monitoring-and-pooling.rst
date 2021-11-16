@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-06-02
-:Version: 1.5.1
+:Last Modified: 2021-11-08
+:Version: 1.5.2
 
 .. contents::
 
@@ -116,6 +116,15 @@ Drivers that implement a Connection Pool MUST support the following ConnectionPo
        *  Defaults to 0.
        */
       maxIdleTimeMS?: number;
+
+      /**
+       *  The maximum number of Connections a Pool may be establishing concurrently.
+       *  Establishment of a Connection is a part of its life cycle
+       *  starting after a ConnectionCreatedEvent and ending before a ConnectionReadyEvent.
+       *  If specified, MUST be a number > 0.
+       *  Defaults to 2.
+       */
+      maxConnecting?: number;
     }
 
 Additionally, Drivers that implement a Connection Pool MUST support the following ConnectionPoolOptions UNLESS that driver meets ALL of the following conditions:
@@ -269,7 +278,7 @@ has the following properties:
    -  Connections are not created in the background to satisfy minPoolSize
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
--  **Rate-limited:** A Pool MUST limit the number of connections being created at a given time to be 2 (maxConnecting). 
+-  **Rate-limited:** A Pool MUST limit the number of `Connections <#connection>`_ being `established <#establishing-a-connection-internal-implementation>`_ concurrently via the **maxConnecting** `pool option <#connection-pool-options-1>`_.
 
 
 .. code:: typescript
@@ -1137,6 +1146,8 @@ Change log
 :2021-4-12: Adding in behaviour for load balancer mode.
 
 :2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
+
+:2021-11-08: Make maxConnecting configurable.
 
 .. Section for links.
 

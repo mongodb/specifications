@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.9.0
+:Spec Version: 1.9.1
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-10-14
+:Last Modified: 2021-11-08
 
 
 **Abstract**
@@ -209,6 +209,12 @@ pertaining to URI options apply here.
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time. This count includes connections which are currently checked out.
+
+   * - maxConnecting
+     - positive integer
+     - defined in the `Connection Pooling spec`_
+     - required for drivers with connection pools
+     - The maximum number of Connections a Pool may be establishing concurrently.
 
    * - maxStalenessSeconds
      - -1 (no max staleness check) or integer >= 90
@@ -482,6 +488,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2021-11-08 Add maxConnecting option.
 - 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation
   for directConnection option.
 - 2021-09-15 Add srvServiceName option
