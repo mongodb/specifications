@@ -17,5 +17,5 @@ tests:
             pipeline:
               - $collStats: { count: {} }
               - $group: { _id: 1, n: { $sum: $count }}
-          commandName: aggregate
-          databaseName: *database_name
+          command_name: aggregate
+          database_name: *database_name
