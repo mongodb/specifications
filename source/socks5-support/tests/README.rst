@@ -41,6 +41,8 @@ Drivers MUST test the following connection strings:
 .. list-table::
    :header-rows: 1
 
+   * - Connection String
+     - Expected Result
    * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1080&directConnection=true`
      - (fails)
    * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1081&directConnection=true`
