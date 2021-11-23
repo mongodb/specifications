@@ -66,7 +66,8 @@ equivalent :code:`MongoClient` option.
 This option specifies a TCP port number. The default for this option
 MUST be :code:`1080`.
 This option MUST only be configurable at the level of a :code:`MongoClient`.
-Drivers MUST ignore this option if :code:`proxyHost` was not specified.
+Drivers MUST error if this option was specified and :code:`proxyHost`
+was not specified.
 
 proxyUsername
 ^^^^^^^^^^^^^
@@ -76,9 +77,9 @@ username/password authentication, a connection string option of
 :code:`proxyUsername=username` MUST be added to the connection string
 or passed through an equivalent :code:`MongoClient` option.
 This option specifies a string of non-zero length. Drivers MUST ignore
-this option if it specifies a zero-length string, or if
-:code:`proxyHost` was not specified. Drivers MUST error if this option
-was specified and :code:`proxyHost` was not specified.
+this option if it specifies a zero-length string. Drivers MUST error
+if this option was specified and :code:`proxyHost` was not specified
+or :code:`proxyPassword` was not specified.
 
 proxyPassword
 ^^^^^^^^^^^^^
@@ -88,9 +89,9 @@ username/password authentication, a connection string option of
 :code:`proxyPassword=username` MUST be added to the connection string
 or passed through an equivalent :code:`MongoClient` option.
 This option specifies a string of non-zero length. Drivers MUST ignore
-this option if it specifies a zero-length string, or if
-:code:`proxyHost` was not specified. Drivers MUST error if this option
-was specified and :code:`proxyHost` was not specified.
+this option if it specifies a zero-length string. Drivers MUST error
+if this option was specified and :code:`proxyHost` was not specified
+or :code:`proxyUsername` was not specified.
 
 Connection Pooling
 ------------------------
@@ -119,7 +120,10 @@ was specified:
    to the destination host.
 
 Drivers MUST use the SOCKS5 proxy for connections to MongoDB services
-and client-side field-level encryption KMS servers.
+and `client-side field-level encryption KMS servers <https://github.com/mongodb/specifications/blob/master/source/client-side-encryption/client-side-encryption.rst#kms-provider>`__.
+
+Drivers MUST NOT use the SOCKS5 proxy for connections to
+:code:`mongocryptd` processes spawned for automatic client-side field-level encryption.
 
 Drivers SHOULD use the SOCKS5 proxy for all other outgoing TCP connections
 as well, if they create any.

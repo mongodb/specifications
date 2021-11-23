@@ -41,25 +41,34 @@ Drivers MUST test the following connection strings:
 .. list-table::
    :header-rows: 1
 
-   * - SOCKS5 auth required
-     - SOCKS5 auth disabled
-   * - :code:`mongodb://localhost:12345/?proxyHost=localhost&proxyPort=1080&directConnection=true` (fails)
-     - :code:`mongodb://localhost:12345/?proxyHost=localhost&proxyPort=1081&directConnection=true` (succeeds)
-   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1080&directConnection=true` (fails)
-     - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081&directConnection=true` (succeeds)
-   * - :code:`mongodb://localhost:12345/?proxyHost=localhost&proxyPort=1080&proxyUsername=nonexistentuser&proxyPassword=badauth&directConnection=true` (fails)
-     - :code:`mongodb://localhost:12345/?proxyHost=localhost&proxyPort=1081&proxyUsername=nonexistentuser&proxyPassword=badauth&directConnection=true` (succeeds)
-   * -
-     - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081&proxyUsername=nonexistentuser&proxyPassword=badauth` (succeeds)
-   * - :code:`mongodb://localhost:12345/?proxyHost=localhost&proxyPort=1080&proxyUsername=username&proxyPassword=p4ssw0rd&directConnection=true` (succeeds)
-     - :code:`mongodb://localhost:12345/?proxyHost=localhost&proxyPort=1081&directConnection=true` (succeeds)
-   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1080&proxyUsername=username&proxyPassword=p4ssw0rd` (succeeds)
-     - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081` (succeeds)
+   * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1080&directConnection=true`
+     - (fails)
+   * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1081&directConnection=true`
+     - (succeeds)
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1080&directConnection=true`
+     - (fails)
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081&directConnection=true`
+     - (succeeds)
+   * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1080&proxyUsername=nonexistentuser&proxyPassword=badauth&directConnection=true`
+     - (fails)
+   * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1081&proxyUsername=nonexistentuser&proxyPassword=badauth&directConnection=true`
+     - (succeeds)
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081&proxyUsername=nonexistentuser&proxyPassword=badauth`
+     - (succeeds)
+   * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1080&proxyUsername=username&proxyPassword=p4ssw0rd&directConnection=true`
+     - (succeeds)
+   * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1081&directConnection=true`
+     - (succeeds)
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1080&proxyUsername=username&proxyPassword=p4ssw0rd`
+     - (succeeds)
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081`
+     - (succeeds)
 
-where :code:`<replicaset>` stands for all hosts in the tests replica set.
+where :code:`<replicaset>` stands for all hosts in the tests replica set
+and :code:`mappedhost` stands for :code:`localhost:12345`.
 
 Drivers MUST create a :code:`MongoClient` for each of these connection strings,
-and attempt to run a :code:`hello` command against using those clients.
+and attempt to run a :code:`hello` command usin each client.
 The operation must succeed for table entries marked (succeeds) and fail
 for table entries marked (fails) in order to pass the tests.
 
