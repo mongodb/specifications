@@ -67,7 +67,10 @@ Drivers MUST test the following connection strings:
      - (succeeds)
 
 where :code:`<replicaset>` stands for all hosts in the tests replica set
-and :code:`mappedhost` stands for :code:`localhost:12345`.
+and :code:`mappedhost` stands for :code:`localhost:12345`. For the
+Evergreen task in which TLS is enabled, the required :code:`tls` and
+:code:`tlsCAFile` connection string options are appended to all connection strings
+listed above.
 
 Drivers MUST create a :code:`MongoClient` for each of these connection strings,
 and attempt to run a :code:`hello` command usin each client.
