@@ -125,9 +125,6 @@ and `client-side field-level encryption KMS servers <https://github.com/mongodb/
 Drivers MUST NOT use the SOCKS5 proxy for connections to
 :code:`mongocryptd` processes spawned for automatic client-side field-level encryption.
 
-Drivers SHOULD use the SOCKS5 proxy for all other outgoing TCP connections
-as well, if they create any.
-
 Drivers MUST treat a connection failure when connecting to the SOCKS5
 proxy or a SOCKS5 handshake or authentication failure the same as a
 network error (e.g. `ECONNREFUSED`).
