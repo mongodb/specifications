@@ -18,6 +18,12 @@ SOCKS5 Support
 Abstract
 ========
 
+SOCKS5 is a standardized protocol for connecting to network services through
+a separate proxy server. It can be used for connecting to hosts that would
+otherwise be unreachable from the local network by connecting to a proxy
+server, which receives the intended target host’s address from the client
+and then connects to that address.
+
 This specification defines driver behaviour when connecting to MongoDB services
 through a SOCKS5 proxy.
 
