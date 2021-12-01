@@ -92,7 +92,7 @@ proxyPassword
 
 To specify to the driver to connect using a SOCKS5 proxy requiring
 username/password authentication, a connection string option of
-:code:`proxyPassword=username` MUST be added to the connection string
+:code:`proxyPassword=password` MUST be added to the connection string
 or passed through an equivalent :code:`MongoClient` option.
 This option specifies a string of non-zero length. Drivers MUST ignore
 this option if it specifies a zero-length string. Drivers MUST error
