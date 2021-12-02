@@ -65,18 +65,6 @@ Drivers MUST test the following connection strings:
      - (succeeds)
    * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081`
      - (succeeds)
-   * - :code:`mongodb://localhost/?proxyPort=1080`
-     - (invalid)
-   * - :code:`mongodb://localhost/?proxyUsername=abc`
-     - (invalid)
-   * - :code:`mongodb://localhost/?proxyPassword=def`
-     - (invalid)
-   * - :code:`mongodb://localhost/?proxyPort=1080&proxyUsername=abc&proxyPassword=def`
-     - (invalid)
-   * - :code:`mongodb://localhost/?proxyHost=localhost&proxyUsername=abc`
-     - (invalid)
-   * - :code:`mongodb://localhost/?proxyHost=localhost&proxyPassword=def`
-     - (invalid)
 
 where :code:`<replicaset>` stands for all hosts in the tests replica set
 and :code:`mappedhost` stands for :code:`localhost:12345`. For the
@@ -86,9 +74,9 @@ listed above.
 
 Drivers MUST create a :code:`MongoClient` for each of these connection strings,
 and attempt to run a :code:`hello` command using each client.
-The operation must succeed for table entries marked (succeeds), fail
-for table entries marked (fails), and reject the connection string as
-invalid for table entries marked (invalid) in order to pass the tests.
+The operation must succeed for table entries marked (succeeds) and fail
+for table entries marked (fails). The connection strings MUST all
+be accepted as valid connection strings.
 
 Drivers MUST run variants of these tests in which the proxy options are
 substituted for :code:`MongoClient` options.

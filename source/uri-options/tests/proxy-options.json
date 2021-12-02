@@ -1,0 +1,58 @@
+{
+  "tests": [
+    {
+      "description": "proxyPort without proxyHost",
+      "uri": "mongodb://localhost/?proxyPort=1080",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "proxyUsername without proxyHost",
+      "uri": "mongodb://localhost/?proxyUsername=abc",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "proxyPassword without proxyHost",
+      "uri": "mongodb://localhost/?proxyPassword=def",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "all other proxy options without proxyHost",
+      "uri": "mongodb://localhost/?proxyPort=1080&proxyUsername=abc&proxyPassword=def",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "proxyUsername without proxyPassword",
+      "uri": "mongodb://localhost/?proxyHost=localhost&proxyUsername=abc",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "proxyPassword without proxyUsername",
+      "uri": "mongodb://localhost/?proxyHost=localhost&proxyPassword=def",
+      "valid": false,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    }
+  ]
+}
