@@ -565,8 +565,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
       }
 
    Configure KMIP TLS connections to use the following options:
+   
    - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_. This MAY be configured system-wide.
-   - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_ .
+   - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_.
+   
    The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    Where LOCAL_MASTERKEY is the following base64:
