@@ -47,3 +47,35 @@ tests:
         hosts: ~
         auth: ~
         options: {}
+    -
+        description: "multiple proxyHost parameters"
+        uri: "mongodb://localhost/?proxyHost=localhost&proxyHost=localhost2"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "multiple proxyPort parameters"
+        uri: "mongodb://localhost/?proxyHost=localhost&proxyPort=1234&proxyPort=12345"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "multiple proxyUsername parameters"
+        uri: "mongodb://localhost/?proxyHost=localhost&proxyUsername=abc&proxyUsername=def&proxyPassword=123"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
+    -
+        description: "multiple proxyPassword parameters"
+        uri: "mongodb://localhost/?proxyHost=localhost&proxyUsername=abc&proxyPassword=123&proxyPassword=456"
+        valid: false
+        warning: false
+        hosts: ~
+        auth: ~
+        options: {}
