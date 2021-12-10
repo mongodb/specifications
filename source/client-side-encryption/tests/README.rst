@@ -322,7 +322,7 @@ First, perform the setup.
             "clientId": <set from environment>,
             "clientSecret": <set from environment>,
          },
-            "gcp": {
+         "gcp": {
             "email": <set from environment>,
             "privateKey": <set from environment>,
          }
@@ -396,11 +396,11 @@ For each KMS provider (``aws``, ``azure``, ``gcp``, ``local``, and ``kmip``), re
           "keyName": "key-name-csfle"
         }
 
-      For "kmip":
+     For "kmip":
 
-      .. code:: javascript
+     .. code:: javascript
 
-         {}
+        {}
 
      For "local", do not set a masterKey document.
    - Expect a BSON binary with subtype 4 to be returned, referred to as ``datakey_id``.
