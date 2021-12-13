@@ -89,6 +89,51 @@
       "hosts": null,
       "auth": null,
       "options": {}
+    },
+    {
+      "description": "only host present",
+      "uri": "mongodb://localhost/?proxyHost=localhost",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "host and default port present",
+      "uri": "mongodb://localhost/?proxyHost=localhost&proxyPort=1080",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "host and non-default port present",
+      "uri": "mongodb://localhost/?proxyHost=localhost&proxyPort=12345",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "replicaset, host and non-default port present",
+      "uri": "mongodb://rs1,rs2,rs3/?proxyHost=localhost&proxyPort=12345",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
+    },
+    {
+      "description": "all options present",
+      "uri": "mongodb://rs1,rs2,rs3/?proxyHost=localhost&proxyPort=12345&proxyUsername=asdf&proxyPassword=qwerty",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {}
     }
   ]
 }

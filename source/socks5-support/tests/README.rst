@@ -47,9 +47,9 @@ Drivers MUST test the following connection strings:
      - (fails)
    * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1081&directConnection=true`
      - (succeeds)
-   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1080&directConnection=true`
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1080`
      - (fails)
-   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081&directConnection=true`
+   * - :code:`mongodb://<replicaset>/?proxyHost=localhost&proxyPort=1081`
      - (succeeds)
    * - :code:`mongodb://<mappedhost>/?proxyHost=localhost&proxyPort=1080&proxyUsername=nonexistentuser&proxyPassword=badauth&directConnection=true`
      - (fails)
