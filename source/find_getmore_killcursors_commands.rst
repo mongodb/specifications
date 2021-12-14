@@ -348,7 +348,8 @@ cursors. Server versions 5.1 and later do not support **OP_QUERY**.
 On server versions 5.1 and later, drivers MAY fallback to a non-exhaust cursor
 if an exhaust cursor is requested.
 
-On server versions 4.2 to 5.0 drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.
+On server versions 4.2 to 5.0 drivers SHOULD use **OP_MSG** but MAY use legacy
+**OP_QUERY**.
 
 On server versions prior to 3.6, drivers MUST fallback to the legacy **OP_QUERY**
 wire protocol messages. The **find** command does not support the exhaust flag
