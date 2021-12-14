@@ -342,9 +342,8 @@ Exhaust
 
 This section only applies to drivers that support exhaust cursors.
 
-On server versions 5.1 and later drivers SHOULD use **OP_MSG** for exhaust
-cursors. Server versions 5.1 and later do not support **OP_QUERY** for exhaust
-cursors.
+On server versions 5.1 and later drivers MUST use **OP_MSG** for exhaust
+cursors. Server versions 5.1 and later do not support **OP_QUERY**.
 
 On server versions 5.1 and later, drivers MAY fallback to a non-exhaust cursor
 if an exhaust cursor is requested.
