@@ -271,6 +271,11 @@ MongoDB 4.0 introduced a ``nameOnly`` boolean option to the ``listCollections``
 database command, which limits the command result to only include collection
 names. NOTE: ``nameOnly`` is applied before any filter is applied.
 
+MongoDB 4.0 also added an ``authorizedCollections`` boolean option to the ``listCollections``
+command, which can be used to limit the command result to only include collections
+the user is authorized to use. Drivers MUST always specify ``authorizedCollections``
+as true when they intend to access collection names from the ``listCollections`` command.
+
 Example return::
 
     [
@@ -284,11 +289,12 @@ Example return::
 
 
 Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
-the ``nameOnly`` option for the ``listCollections`` command and will ignore it 
-without raising an error. Therefore, drivers MUST always specify the ``nameOnly`` 
-option when they only intend to access collection names from the ``listCollections`` 
-command result, except drivers MUST NOT set ``nameOnly`` if a filter
-specifies any keys other than ``name``.
+the ``nameOnly`` and ``authorizedCollections`` options for the ``listCollections``
+command and will ignore it without raising an error. Therefore, drivers MUST
+always specify the ``nameOnly`` and ``authorizedCollections`` options when they
+only intend to access collection names from the ``listCollections`` command
+result, except drivers MUST NOT set ``nameOnly`` if a filter specifies any
+keys other than ``name``.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -433,6 +439,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.6.2 Changes
+    - Support ``authorizedCollections`` option in ``listCollections`` command.
+
 Version 0.6.1 Changes
     - Update to use secondaryOk.
 
@@ -449,7 +458,7 @@ Version 0.5 Changes
     - Clarify that ``nameOnly`` must not be used with filters other than ``name``.
 
 Version 0.4 Changes
-    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command. 
+    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command.
 
 Version 0.3.1 Changes
 
