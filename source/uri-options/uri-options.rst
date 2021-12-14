@@ -64,7 +64,7 @@ occur:
    value, an error MUST NOT be raised.
 
 
-directConnection URI option with multiple seeds or SRV URI 
+directConnection URI option with multiple seeds or SRV URI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The driver MUST report an error if the ``directConnection=true`` URI option
@@ -92,6 +92,14 @@ For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
 please see the
 `Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
 details.
+
+
+SOCKS5 options
+~~~~~~~~~~~~~~
+
+For URI option validation pertaining to ``proxyHost``, ``proxyPort``,
+``proxyUsername`` and ``proxyPassword```please see the
+`SOCKS5 support spec`_ for details.
 
 
 List of specified options
@@ -227,6 +235,30 @@ pertaining to URI options apply here.
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
      - The number of connections the driver should create and maintain in the pool even when no operations are occurring. This count includes connections which are currently checked out.
+
+   * - proxyHost
+     - any string
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The IPv4/IPv6 address or domain name of a SOCKS5 proxy server used for connecting to MongoDB services.
+
+   * - proxyPort
+     - non-negative integer
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The port of the SOCKS5 proxy server specified in ``proxyHost``.
+
+   * - proxyUsername
+     - any string
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The username for username/password authentication to the SOCKS5 proxy server specified in ``proxyHost``.
+
+   * - proxyPassword
+     - any string
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The password for username/password authentication to the SOCKS5 proxy server specified in ``proxyHost``.
 
    * - readConcernLevel
      - any string (`to allow for forwards compatibility with the server <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#unknown-levels-and-additional-options-for-string-based-readconcerns>`_)
@@ -488,6 +520,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
+- 2021-12-14 Add SOCKS5 options
 - 2021-11-08 Add maxConnecting option.
 - 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation
   for directConnection option.
@@ -503,3 +536,4 @@ Changes
 - 2019-09-08 Add retryReads option
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
+.. _SOCKS5 support spec: https://github.com/mongodb/specifications/blob/master/source/socks5-support/socks5.rst#mongoclient-configuration
