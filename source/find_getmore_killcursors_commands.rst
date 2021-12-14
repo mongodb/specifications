@@ -738,7 +738,7 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
-2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers.
+2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for exhaust cursors.
 
 2021-08-27 Exhaust cursors must use OP_MSG on 3.6+ servers.
 
