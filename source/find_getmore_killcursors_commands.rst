@@ -342,18 +342,25 @@ Exhaust
 
 This section only applies to drivers that support exhaust cursors.
 
-On server versions 5.1 and later drivers MUST use **OP_MSG** for exhaust
-cursors. Server versions 5.1 and later do not support **OP_QUERY**.
+The exhaust protocol differs based on the server version:
 
-On server versions 5.1 and later, drivers MAY fallback to a non-exhaust cursor
-if an exhaust cursor is requested.
+================  =========================================================================================================================
+Server version    Server behavior
+================  =========================================================================================================================
+4.0 and earlier   Only supports exhaust over legacy **OP_QUERY**. The **find** command does not support the exhaust flag from **OP_QUERY**.
+4.2 to 5.0        Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**.
+5.1 and later     Supports exhaust over **OP_MSG**.
+================  =========================================================================================================================
 
-On server versions 4.2 to 5.0 drivers SHOULD use **OP_MSG** but MAY use legacy
-**OP_QUERY**.
+Therefore drivers that implement exhaust cursors:
 
-On server versions prior to 3.6, drivers MUST fallback to the legacy **OP_QUERY**
-wire protocol messages. The **find** command does not support the exhaust flag
-from **OP_QUERY**.
+================  ==================================================================================================================================
+Server version    Driver behavior
+================  ==================================================================================================================================
+4.0 and earlier   Drivers MUST use legacy **OP_QUERY**.
+4.2 to 5.0        Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.
+5.1 and later     Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested.
+================  ==================================================================================================================================
 
 Interactions with OP_QUERY
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
