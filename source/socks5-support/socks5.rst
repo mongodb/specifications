@@ -5,8 +5,8 @@ SOCKS5 Support
 :Spec Title: SOCKS5 Support
 :Spec Version: 1.0.0
 :Author: Anna Henningsen
-:Advisors: TODO
-:Status: Draft
+:Advisors: Neal Beeken
+:Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
 :Last Modified: 2021-12-14
