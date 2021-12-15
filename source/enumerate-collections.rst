@@ -273,8 +273,8 @@ names. NOTE: ``nameOnly`` is applied before any filter is applied.
 
 MongoDB 4.0 also added an ``authorizedCollections`` boolean option to the ``listCollections``
 command, which can be used to limit the command result to only include collections
-the user is authorized to use. Drivers MUST always specify ``authorizedCollections``
-as true when they intend to access collection names from the ``listCollections`` command.
+the user is authorized to use. Drivers MAY allow users to set the ``authorizedCollections``
+option on the ``listCollectionNames`` method.
 
 Example return::
 
@@ -289,12 +289,11 @@ Example return::
 
 
 Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
-the ``nameOnly`` and ``authorizedCollections`` options for the ``listCollections``
-command and will ignore it without raising an error. Therefore, drivers MUST
-always specify the ``nameOnly`` and ``authorizedCollections`` options when they
-only intend to access collection names from the ``listCollections`` command
-result, except drivers MUST NOT set ``nameOnly`` if a filter specifies any
-keys other than ``name``.
+the ``nameOnly`` option for the ``listCollections`` command and will ignore it
+without raising an error. Therefore, drivers MUST always specify the ``nameOnly``
+option when they only intend to access collection names from the ``listCollections``
+command result, except drivers MUST NOT set ``nameOnly`` if a filter
+specifies any keys other than ``name``.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -348,7 +347,8 @@ Example return (a cursor which returns documents, not a simple array)::
 When returning this information as a cursor, a driver SHOULD use the
 method name ``listCollections`` or an idiomatic variant.
 
-Drivers MAY allow ``nameOnly`` option to be passed when executing the ``listCollections`` command for this method.
+Drivers MAY allow the ``nameOnly`` and ``authorizedCollections`` options
+to be passed when executing the ``listCollections`` command for this method.
 
 Returning a List of Collection Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,7 +368,8 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method,
+Drivers MAY allow the ``nameOnly`` and ``authorizedCollections`` options
+to be passed when executing the ``listCollections`` command for this method,
 except drivers MUST NOT set ``nameOnly`` if a filter specifies any keys other than ``name``.
 
 Replica Sets
