@@ -284,11 +284,16 @@ Example return::
 
 
 Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support
-the ``nameOnly`` option for the ``listCollections`` command and will ignore it 
-without raising an error. Therefore, drivers MUST always specify the ``nameOnly`` 
-option when they only intend to access collection names from the ``listCollections`` 
+the ``nameOnly`` option for the ``listCollections`` command and will ignore it
+without raising an error. Therefore, drivers MUST always specify the ``nameOnly``
+option when they only intend to access collection names from the ``listCollections``
 command result, except drivers MUST NOT set ``nameOnly`` if a filter
 specifies any keys other than ``name``.
+
+MongoDB 4.0 also added an ``authorizedCollections`` boolean option to the ``listCollections``
+command, which can be used to limit the command result to only include collections
+the user is authorized to use. Drivers MAY allow users to set the ``authorizedCollections``
+option on the ``listCollectionNames`` method.
 
 Getting Full Collection Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,7 +347,8 @@ Example return (a cursor which returns documents, not a simple array)::
 When returning this information as a cursor, a driver SHOULD use the
 method name ``listCollections`` or an idiomatic variant.
 
-Drivers MAY allow ``nameOnly`` option to be passed when executing the ``listCollections`` command for this method.
+Drivers MAY allow the ``nameOnly`` and ``authorizedCollections`` options
+to be passed when executing the ``listCollections`` command for this method.
 
 Returning a List of Collection Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -362,8 +368,12 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers MUST specify the ``nameOnly`` option when executing the ``listCollections`` command for this method,
-except drivers MUST NOT set ``nameOnly`` if a filter specifies any keys other than ``name``.
+Drivers MUST specify true for the ``nameOnly`` option when executing the
+``listCollections`` command for this method, except drivers MUST NOT set
+``nameOnly`` if a filter specifies any keys other than ``name``.
+
+Drivers MAY allow the ``authorizedCollections`` option to be passed when
+executing the ``listCollections`` command for this method
 
 Replica Sets
 ~~~~~~~~~~~~
@@ -433,6 +443,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+Version 0.7.0 Changes
+    - Support ``authorizedCollections`` option in ``listCollections`` command.
+
 Version 0.6.1 Changes
     - Update to use secondaryOk.
 
@@ -449,7 +462,7 @@ Version 0.5 Changes
     - Clarify that ``nameOnly`` must not be used with filters other than ``name``.
 
 Version 0.4 Changes
-    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command. 
+    - SPEC-1066: Support ``nameOnly`` option in ``listCollections`` command.
 
 Version 0.3.1 Changes
 
