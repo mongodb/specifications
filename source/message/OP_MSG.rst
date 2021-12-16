@@ -54,7 +54,7 @@ Usage
 MongoDB drivers SHOULD perform the MongoDB handshake using ``OP_MSG`` if an API
 version was declared on the client, but MAY decide to use ``OP_QUERY``.
 
-If no API version was declared, drivers that support MognoDB 3.4 and earlier
+If no API version was declared, drivers that support MongoDB 3.4 and earlier
 MUST perform the handshake using ``OP_QUERY`` to determine if the node supports
 ``OP_MSG``. Drivers that only support MongoDB 3.6 and newer MAY default to using
 ``OP_MSG``.
