@@ -368,7 +368,7 @@ Example return (in PHP, but abbreviated)::
       [5] => class MongoCollection#11 { }
     }
 
-Drivers SHOULD specify true for the ``nameOnly`` option when executing the
+Drivers MUST specify true for the ``nameOnly`` option when executing the
 ``listCollections`` command for this method, except drivers MUST NOT set
 ``nameOnly`` if a filter specifies any keys other than ``name``.
 
