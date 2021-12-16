@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: April 6, 2021
+:Last Modified: December 14, 2021
 
 .. contents::
 
@@ -342,7 +342,14 @@ Exhaust
 
 This section only applies to drivers that support exhaust cursors.
 
-On server versions 3.6 and later drivers MUST use **OP_MSG** for exhaust cursors.
+On server versions 5.1 and later drivers MUST use **OP_MSG** for exhaust
+cursors. Server versions 5.1 and later do not support **OP_QUERY**.
+
+On server versions 5.1 and later, drivers MAY fallback to a non-exhaust cursor
+if an exhaust cursor is requested.
+
+On server versions 4.2 to 5.0 drivers SHOULD use **OP_MSG** but MAY use legacy
+**OP_QUERY**.
 
 On server versions prior to 3.6, drivers MUST fallback to the legacy **OP_QUERY**
 wire protocol messages. The **find** command does not support the exhaust flag
@@ -731,6 +738,8 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
+2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for exhaust cursors.
+
 2021-08-27 Exhaust cursors must use OP_MSG on 3.6+ servers.
 
 2021-04-06 Updated to use hello and secondaryOk.
