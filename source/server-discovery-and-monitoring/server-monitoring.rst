@@ -1159,7 +1159,7 @@ Changelog
 
 - 2020-02-20 Extracted server monitoring from SDAM into this new spec.
 
-- 2021-04-30 Add 90th percentile RTT tracking.
+- 2021-12-23 Add 90th percentile RTT tracking.
 
 .. Section for links.
 

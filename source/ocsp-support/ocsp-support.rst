@@ -10,7 +10,7 @@ OCSP Support
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.4
-:Last Modified: 2021-04-30
+:Last Modified: 2021-12-23
 
 .. contents::
 
@@ -790,7 +790,7 @@ of checking this are:
 Changelog
 ==========
 
-**2021-04-30**: 2.1.0: Require that timeouts be applied per the client-side
+**2021-12-23**: 2.1.0: Require that timeouts be applied per the client-side
 operations timeout spec.
 
 **2021-04-07**: 2.0.1: Updated terminology to use allowList.

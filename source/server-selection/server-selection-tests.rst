@@ -8,7 +8,7 @@ Server Selection -- Test Plan
 :Advisors: David Golden
 :Status: Accepted
 :Type: Standards
-:Last Modified: April 30, 2021
+:Last Modified: 2021-12-23
 
 See also the YAML test files and their accompanying README in the "tests"
 directory.

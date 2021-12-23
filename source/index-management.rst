@@ -11,7 +11,7 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: April 30, 2021
+:Last Modified: 2021-12-23
 :Version: 1.7
 
 .. contents::
@@ -861,5 +861,5 @@ Changelog
   - Added options types to various helpers
   - Introduced ``commitQuorum`` option
   - Added deprecation message for ``background`` option.
-30 APR 2021:
+23 DEC 2021:
   - Require that timeouts be applied per the client-side operations timeout spec.

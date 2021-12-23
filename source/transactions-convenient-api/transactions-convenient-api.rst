@@ -10,7 +10,7 @@ Convenient API for Transactions
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.0
-:Last Modified: 2021-04-30
+:Last Modified: 2021-12-23
 
 .. contents::
 
@@ -501,7 +501,7 @@ client-side operation timeout, withTransaction can continue to use the
 Changes
 =======
 
-2021-04-30: withTransaction applies timeouts per the client-side
+2021-12-23: withTransaction applies timeouts per the client-side
             operations timeout specification.
 
 2019-04-24: withTransaction does not retry when commit fails with
