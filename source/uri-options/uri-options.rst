@@ -3,7 +3,7 @@ URI Options Specification
 =========================
 
 :Spec Title: URI Options Specification
-:Spec Version: 1.8.0
+:Spec Version: 1.10
 :Author: Sam Rossi
 :Spec Lead: Bernie Hackett
 :Advisory Group: Scott L'Hommedieu
@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-04-30
+:Last Modified: 2021-12-23
 
 
 **Abstract**
@@ -63,24 +63,44 @@ occur:
    same value. If all instances of ``tls`` and ``ssl`` have the same
    value, an error MUST NOT be raised.
 
-SRV URI with directConnection URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The driver MUST report an error if the ``directConnection=true`` URI option
-is specified with an SRV URI, because the URI may resolve to multiple
-hosts. The driver MUST allow specifying ``directConnection=false`` URI
-option with an SRV URI.
-
-Multiple seeds with directConnection URI option
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+directConnection URI option with multiple seeds or SRV URI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The driver MUST report an error if the ``directConnection=true`` URI option
 is specified with multiple seeds.
 
+The driver MUST report an error if the ``directConnection=true`` URI option
+is specified with an SRV URI, because the URI may resolve to multiple
+hosts. The driver MUST allow specifying ``directConnection=false`` URI option
+with an SRV URI.
+
+
+srvServiceName and srvMaxHosts URI options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For URI option validation pertaining to ``srvServiceName`` and ``srvMaxHosts``,
+please see the
+`Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#uri-validation>`_
+for details.
+
+
 Load Balancer Mode
 ~~~~~~~~~~~~~~~~~~
 
-For URI option validation in Load Balancer mode, please see the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-string-options>`__ for details.
+For URI option validation in Load Balancer mode (i.e. ``loadBalanced=true``),
+please see the
+`Load Balancer spec <../load-balancers/load-balancers.rst#uri-validation>`_ for
+details.
+
+
+SOCKS5 options
+~~~~~~~~~~~~~~
+
+For URI option validation pertaining to ``proxyHost``, ``proxyPort``,
+``proxyUsername`` and ``proxyPassword```please see the
+`SOCKS5 support spec`_ for details.
+
 
 List of specified options
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +194,7 @@ pertaining to URI options apply here.
 
    * - loadBalanced
      - "true" or "false"
-     - defined in `Load Balancer spec <../load-balancers/loadbalancers.rst#connection-string-options>`_
+     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`_
      - no
      - Whether the driver is connecting to a load balancer.
 
@@ -198,6 +218,12 @@ pertaining to URI options apply here.
      - required for drivers with connection pools
      - The maximum number of clients or connections able to be created by a pool at a given time. This count includes connections which are currently checked out.
 
+   * - maxConnecting
+     - positive integer
+     - defined in the `Connection Pooling spec`_
+     - required for drivers with connection pools
+     - The maximum number of Connections a Pool may be establishing concurrently.
+
    * - maxStalenessSeconds
      - -1 (no max staleness check) or integer >= 90
      - defined in `max staleness spec <https://github.com/mongodb/specifications/blob/master/source/max-staleness/max-staleness.rst#api>`_
@@ -208,7 +234,31 @@ pertaining to URI options apply here.
      - non-negative integer
      - defined in the `Connection Pooling spec`_
      - required for drivers with connection pools
-     - The number of connections the driver should create and maintain in the pool even when no operations are occurring. This count includes connections which are currently checked out. 
+     - The number of connections the driver should create and maintain in the pool even when no operations are occurring. This count includes connections which are currently checked out.
+
+   * - proxyHost
+     - any string
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The IPv4/IPv6 address or domain name of a SOCKS5 proxy server used for connecting to MongoDB services.
+
+   * - proxyPort
+     - non-negative integer
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The port of the SOCKS5 proxy server specified in ``proxyHost``.
+
+   * - proxyUsername
+     - any string
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The username for username/password authentication to the SOCKS5 proxy server specified in ``proxyHost``.
+
+   * - proxyPassword
+     - any string
+     - defined in the `SOCKS5 support spec`_
+     - no
+     - The password for username/password authentication to the SOCKS5 proxy server specified in ``proxyHost``.
 
    * - readConcernLevel
      - any string (`to allow for forwards compatibility with the server <https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#unknown-levels-and-additional-options-for-string-based-readconcerns>`_)
@@ -270,6 +320,21 @@ pertaining to URI options apply here.
      - NOTE: This option is deprecated  in favor of `timeoutMS <../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_
 
        Amount of time spent attempting to send or receive on a socket before timing out; note that this only applies to application operations, not SDAM.
+
+   * - srvMaxHosts
+     - non-negative integer; 0 means no maximum
+     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`_
+     - no
+     - The maximum number of SRV results to randomly select when initially
+       populating the seedlist or, during SRV polling, adding new hosts to the
+       topology.
+
+   * - srvServiceName
+     - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
+     - "mongodb"
+     - no
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`_
+       and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl
      - "true" or "false"
@@ -468,7 +533,14 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
-- 2021-04-30 Add the timeoutMS option and deprecate some existing timeout options
+- 2021-12-23 Add the timeoutMS option and deprecate some existing timeout options
+- 2021-12-14 Add SOCKS5 options
+- 2021-11-08 Add maxConnecting option.
+- 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation
+  for directConnection option.
+- 2021-09-15 Add srvServiceName option
+- 2021-09-13 Fix link to load balancer spec
+- 2021-04-15 Adding in behaviour for load balancer mode.
 - 2021-04-08 Updated to refer to hello and legacy hello
 - 2020-03-03 Add tlsDisableCertificateRevocationCheck option
 - 2020-02-26 Add tlsDisableOCSPEndpointCheck option
@@ -476,6 +548,6 @@ Changes
 - 2019-02-04 Specified errors for conflicting TLS-related URI options
 - 2019-04-26 authSource and authMechanism have no default value
 - 2019-09-08 Add retryReads option
-- 2021-04-15 Adding in behaviour for load balancer mode.
 
 .. _Connection Pooling spec: https://github.com/mongodb/specifications/blob/master/source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-options-1
+.. _SOCKS5 support spec: https://github.com/mongodb/specifications/blob/master/source/socks5-support/socks5.rst#mongoclient-configuration

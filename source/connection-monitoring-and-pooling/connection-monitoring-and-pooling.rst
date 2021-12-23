@@ -9,7 +9,7 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-04-30
+:Last Modified: 2021-12-23
 :Version: 1.6.0
 
 .. contents::
@@ -116,6 +116,15 @@ Drivers that implement a Connection Pool MUST support the following ConnectionPo
        *  Defaults to 0.
        */
       maxIdleTimeMS?: number;
+
+      /**
+       *  The maximum number of Connections a Pool may be establishing concurrently.
+       *  Establishment of a Connection is a part of its life cycle
+       *  starting after a ConnectionCreatedEvent and ending before a ConnectionReadyEvent.
+       *  If specified, MUST be a number > 0.
+       *  Defaults to 2.
+       */
+      maxConnecting?: number;
     }
 
 Additionally, Drivers that implement a Connection Pool MUST support the following ConnectionPoolOptions UNLESS that driver meets ALL of the following conditions:
@@ -271,7 +280,7 @@ has the following properties:
    -  Connections are not created in the background to satisfy minPoolSize
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
--  **Rate-limited:** A Pool MUST limit the number of connections being created at a given time to be 2 (maxConnecting). 
+-  **Rate-limited:** A Pool MUST limit the number of `Connections <#connection>`_ being `established <#establishing-a-connection-internal-implementation>`_ concurrently via the **maxConnecting** `pool option <#connection-pool-options-1>`_.
 
 
 .. code:: typescript
@@ -418,8 +427,12 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
 .. code::
 
    mark pool as "ready"
-   resume background thread
    emit PoolReadyEvent
+   allow background thread to create connections
+
+Note that the PoolReadyEvent MUST be emitted before the background thread is allowed to resume creating new connections,
+and it must be the case that no observer is able to observe actions of the background thread
+related to creating new connections before observing the PoolReadyEvent event.
 
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
@@ -505,16 +518,32 @@ Populating the Pool with a Connection (Internal Implementation)
 
 "Populating" the pool involves preemptively creating and establishing a
 `Connection <#connection>`_ which is marked as "available" for use in future
-operations. This process is used to help ensure the number of established
-connections managed by the pool is at least minPoolSize.
+operations.
 
 Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, it MUST be handled
-via the SDAM machinery according to the `Application Errors`_ section in the
-SDAM specification.
+If an error is encountered while populating a connection, it MUST be handled via
+the SDAM machinery according to the `Application Errors`_ section in the SDAM
+specification.
+
+If minPoolSize is set, the `Connection <#connection>`_ Pool MUST be populated
+until it has at least minPoolSize total `Connections <#connection>`_. This MUST
+occur only while the pool is "ready". If the pool implements a background
+thread, it can be used for this. If the pool does not implement a background
+thread, the checkOut method is responsible for ensuring this requirement is met.
+
+When populating the Pool, pendingConnectionCount has to be decremented after
+establishing a `Connection`_ similarly to how it is done in
+`Checking Out a Connection <#checking-out-a-connection>`_ to signal that
+another `Connection`_ is allowed to be established. Such a signal MUST become
+observable to any `Thread`_ after the action that
+`marks the established Connection as "available" <#marking-a-connection-as-available-internal-implementation>`_
+becomes observable to the `Thread`_.
+Informally, this order guarantees that no `Thread`_ tries to start
+establishing a `Connection`_ when there is an "available" `Connection`_
+established as a result of populating the Pool.
 
 .. code::
 
@@ -566,12 +595,10 @@ If the pool is "closed" or "paused", any attempt to check out a `Connection
 being "paused" MUST be considered a retryable error and MUST NOT be an error
 that marks the SDAM state unknown.
 
-If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
-minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
-not implement a background thread, the checkOut method is responsible for
-`populating the pool
-<#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
-`Connections <#connection>`_ such that this requirement is met.
+If the pool does not implement a background thread, the checkOut method is
+responsible for ensuring that the pool is `populated
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with at least minPoolSize
+`Connections <#connection>`_.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is
 established. In addition, the Pool MUST NOT prevent other threads from checking
@@ -735,14 +762,21 @@ A Pool SHOULD have a background Thread that is responsible for
 monitoring the state of all available `Connections <#connection>`_. This background
 thread SHOULD
 
--  Populate `Connections <#connection>`_ to ensure that the pool always satisfies **minPoolSize**
-    - The background thread SHOULD just go back to sleep instead of waiting for
-      pendingConnectionCount to become less than maxConnecting when satisfying
-      minPoolSize.
+-  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
 - Apply timeouts to connection establishment per `Client Side Operations
   Timeout: Background Connection Pooling
   <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
+
+Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
+A Run MUST do as much work as readily available and then end instead of waiting for more work.
+For example, instead of waiting for pendingConnectionCount to become less than maxConnecting when satisfying minPoolSize,
+a Run MUST either proceed with the rest of its duties, e.g., closing available perished connections, or end.
+
+The duration of intervals between the end of one Run and the beginning of the next Run is not specified,
+but the
+`Test Format and Runner Specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
+may restrict this duration, or introduce other restrictions to facilitate testing.
 
 withConnection
 ^^^^^^^^^^^^^^
@@ -1105,7 +1139,7 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 Change log
 ==========
 
-:2021-04-30: Require that timeouts be applied per the client-side operations
+:2021-12-23: Require that timeouts be applied per the client-side operations
              timeout specification.
 
 :2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.
@@ -1120,6 +1154,10 @@ Change log
              ConnectionCheckOutFailedEvent
 
 :2021-4-12: Adding in behaviour for load balancer mode.
+
+:2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
+
+:2021-11-08: Make maxConnecting configurable.
 
 .. Section for links.
 

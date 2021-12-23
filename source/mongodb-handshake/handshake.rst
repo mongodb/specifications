@@ -10,7 +10,7 @@ MongoDB Handshake
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 3.4
-:Last Modified: 2021-04-30
+:Last Modified: 2021-21-23
 
 
 .. contents::
@@ -30,9 +30,10 @@ backtrack log entries the offending application. The active connection data
 will also be queryable through aggregation pipeline, to enable collecting and
 analyzing driver trends.
 
-After connecting to a MongoDB node an isMaster command is issued, followed by
-authentication, if appropriate. This specification augments this handshake and
-defines certain arguments that clients provide as part of the handshake.
+After connecting to a MongoDB node a hello command (if Versioned API is requested)
+or a legacy hello command is issued, followed by authentication, if appropriate.
+This specification augments this handshake and defines certain arguments that
+clients provide as part of the handshake.
 
 This spec furthermore adds a new connection string argument for applications to
 declare its application name to the server.
@@ -44,6 +45,22 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
 
+Terms
+=====
+
+**hello command**
+    The command named ``hello``. It is the preferred and modern command for
+    handshakes and topology monitoring.
+
+**legacy hello command**
+    The command named ``isMaster``. It is the deprecated equivalent of the
+    ``hello`` command. It was deprecated in MongoDB 5.0.
+
+**isMaster / ismaster**
+    The correct casing is ``isMaster``, but servers will accept the alternate
+    casing ``ismaster``. Other case variations result in ``CommandNotFound``.
+    Drivers MUST take this case variation into account when determining which
+    commands to encrypt, redact, or otherwise treat specially.
 
 Specification
 =============
@@ -52,7 +69,24 @@ Specification
 Connection handshake
 --------------------
 
-The ``isMaster`` handshake MUST be performed on every socket to any and all servers
+MongoDB uses the ``hello`` or ``isMaster`` commands for handshakes and topology
+monitoring. ``hello`` is the modern and preferred command. ``isMaster`` is referred
+to as "legacy hello" and is maintained for backwards compatibility with servers
+that do not support the ``hello`` command.
+
+If a `server API version <../versioned-api/versioned-api.rst>`__ is requested,
+drivers MUST use the ``hello`` command for the initial handshake. If server API
+version is not requested, drivers MUST use legacy hello for the initial handshake
+and include ``helloOk: true`` in the handshake request.
+
+ASIDE: If the legacy handshake response includes ``helloOk: true``, then
+subsequent topology monitoring commands MUST use the ``hello`` command. If the
+legacy handshake response does not include ``helloOk: true``, then subsequent
+topology monitoring commands MUST use the legacy hello command. See the
+`Server Discovery and Monitoring spec <../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.rst>`__
+for further information.
+
+The initial handshake MUST be performed on every socket to any and all servers
 upon establishing the connection to MongoDB, including reconnects of dropped
 connections and newly discovered members of a cluster. It MUST be the first
 command sent over the respective socket. If the command fails the client MUST
@@ -61,16 +95,17 @@ Operations Timeout
 <../client-side-operations-timeout/client-side-operations-timeout.rst>`__
 specification.
 
-``isMaster`` commands issued after the initial connection handshake MUST NOT
-contain handshake arguments. Any subsequent ``isMaster`` calls, such as the ones
-for topology monitoring purposes, MUST NOT include this argument.
+``hello`` and legacy hello commands issued after the initial connection handshake
+MUST NOT contain handshake arguments. Any subsequent ``hello`` or legacy hello calls,
+such as the ones for topology monitoring purposes, MUST NOT include this argument.
 
 
-The ``isMaster`` handshake, as of MongoDB 3.4, supports a new argument, ``client``,
+The initial handshake, as of MongoDB 3.4, supports a new argument, ``client``,
 provided as a BSON object. This object has the following structure::
 
     {
-        isMaster: 1,
+        hello: 1,
+        helloOk: true,
         client: {
             /* OPTIONAL. If present, the "name" is REQUIRED */
             application: {
@@ -233,14 +268,14 @@ Speculative Authentication
 
 :since: 4.4
 
-The ``isMaster`` handshake supports a new argument, ``speculativeAuthenticate``,
-provided as a BSON document. Clients specifying this argument to ``isMaster`` will
-speculatively include the first command of an authentication handshake.
+The initial handshake supports a new argument, ``speculativeAuthenticate``,
+provided as a BSON document. Clients specifying this argument to ``hello`` or legacy
+hello will speculatively include the first command of an authentication handshake.
 This command may be provided to the server in parallel with any standard request for
 supported authentication mechanisms (i.e. ``saslSupportedMechs``). This would permit
 clients to merge the contents of their first authentication command with their
-``isMaster`` request, and receive the first authentication reply along with the
-``isMaster`` reply.
+initial handshake request, and receive the first authentication reply along with
+the initial handshake reply.
 
 When the mechanism is ``MONGODB-X509``, ``speculativeAuthenticate`` has the same
 structure as seen in the MONGODB-X509 conversation section in the
@@ -251,10 +286,10 @@ has the same fields as seen in the conversation subsection of the SCRAM-SHA-1 an
 SCRAM-SHA-256 sections in the `Driver Authentication spec <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#supported-authentication-methods>`_
 with an additional ``db`` field to specify the name of the authentication database.
 
-If the ``isMaster`` command with a ``speculativeAuthenticate`` argument succeeds,
-the client should proceed with the next step of the exchange. If the ``isMaster``
+If the initial handshake command with a ``speculativeAuthenticate`` argument succeeds,
+the client should proceed with the next step of the exchange. If the initial handshake
 response does not include a ``speculativeAuthenticate`` reply and the ``ok`` field
-in the ``isMaster`` response is set to 1, drivers MUST authenticate using the standard
+in the initial handshake response is set to 1, drivers MUST authenticate using the standard
 authentication handshake.
 
 The ``speculativeAuthenticate`` reply has the same fields, except for the ``ok`` field,
@@ -382,9 +417,15 @@ that can be formatted and value extracted from.
 Backwards Compatibility
 =======================
 
-The ``isMaster`` command currently ignores arguments (i.e. If arguments are
-provided the ``isMaster`` command discards them without erroring out). This
-functionality has therefore no backwards compatibility concerns.
+The legacy hello command currently ignores arguments. (i.e. If arguments are
+provided the legacy hello command discards them without erroring out). Adding
+client metadata functionality has therefore no backwards compatibility concerns.
+
+This also allows a driver to determine if the ``hello`` command is supported. On
+server versions that support the ``hello`` command, the legacy hello command with
+``helloOk: true`` will respond with ``helloOk: true``. On server versions that do
+not support the ``hello`` command, the ``helloOk: true`` argument is ignored and
+the legacy hello response will not contain ``helloOk: true``.
 
 Reference Implementation
 ========================
@@ -398,12 +439,12 @@ Q&A
    * No, just the string itself
 * The 512 bytes limit, does that include BSON overhead?
    * Yes
-* The 512 bytes limit, does it apply to the full ``isMaster`` document or just the ``client`` subdocument
+* The 512 bytes limit, does it apply to the full initial handshake document or just the ``client`` subdocument
    * Just the subdocument
 * Should I really try to fill the 512 bytes with data?
    * Not really. The server does not attempt to normalize or compress this data in anyway, so it will hold it in memory as-is per connection. 512 bytes for 20,000 connections is ~ 10mb of memory the server will need.
-* What happens if I pass this new ``isMaster`` argument to previous MongoDB versions?
-   * Nothing. Arguments passed to ``isMaster`` prior to MongoDB 3.4 are not treated in any special way and have no effect one way or other
+* What happens if I pass new arguments in the legacy hello command to previous MongoDB versions?
+   * Nothing. Arguments passed to the legacy hello command to prior versions of MongoDB are not treated in any special way and have no effect one way or another.
 * Are there wire version bumps or anything accompanying this specification?
    * No
 * Is establishing the handshake required for connecting to MongoDB 3.4?
@@ -411,12 +452,12 @@ Q&A
 * Does this affect SDAM implementations?
    * Possibly. There are a couple of gotchas. If the application.name is not in the URI...
       * The SDAM monitoring cannot be launched until the user has had the ability
-        to set the application name because the application name has to be sent to the
-        first ``isMaster``. This means that the connection pool cannot be established until
+        to set the application name because the application name has to be sent in the
+        initial handshake. This means that the connection pool cannot be established until
         the first user initiated command, or else some connections will have the
         application name while other won’t
-      * The ``isMaster`` handshake must be called on all sockets, including
-        administrative background sockets to MongoDB
+      * The initial handshake must be called on all sockets, including administrative background
+        sockets to MongoDB
 * My language doesn't have ``uname``, but does instead provide its own variation of these values, is that OK?
    * Absolutely. As long as the value is identifiable it is fine. The exact method and values are undefined by this specification
 
@@ -425,4 +466,5 @@ Changes
 
 * 2019-11-13: Added section about supporting wrapping libraries
 * 2020-02-12: Added section about speculative authentication
-* 2021-04-30: Require that timeouts be applied per the client-side operations timeout spec.
+* 2021-04-27: Updated to define ``hello`` and legacy hello
+* 2021-12-23: Require that timeouts be applied per the client-side operations timeout spec.

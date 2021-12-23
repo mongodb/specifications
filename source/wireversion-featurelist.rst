@@ -59,16 +59,19 @@ Server Wire version and Feature List
      - 8
      - | Sharded transactions
        | Aggregation $merge pipeline operator
+       | update "hint" option
 
    * - 4.4
      - 9
      - | Streaming protocol for SDAM
        | ResumableChangeStreamError error label
+       | delete "hint" option
        | findAndModify "hint" option
        | createIndexes "commitQuorum" option
 
    * - 5.0
-     - 12
+     - 13
      - | Consistent $collStats count behavior on sharded and non-sharded topologies
+       | $out and $merge on secondaries (technically FCV 4.4+)
 
 For more information see MongoDB Server repo: https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h

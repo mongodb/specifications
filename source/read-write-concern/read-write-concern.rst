@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2021-04-30
-:Version: 1.6.0
+:Last Modified: 2021-12-23
+:Version: 1.7
 
 .. contents::
 
@@ -75,12 +75,17 @@ Defined below are the constructs for drivers.
       /**
        * This is rendered as "linearizable" (lower-case) on the wire.
        */
-      linearizable
+      linearizable,
 
       /**
        * This is rendered as "available" (lower-case) on the wire.
        */
-      available
+      available,
+
+      /**
+       * This is rendered as "snapshot" (lower-case) on the wire.
+       */
+      snapshot
   }
 
   class ReadConcern {
@@ -131,6 +136,14 @@ considered the server’s default ``ReadConcern``.
 default ``ReadConcern`` while the latter is the user explicitly specifying a
 ``ReadConcern`` with a ``level`` of “local”.
 
+Snapshot Read Concern
+---------------------
+
+When a ``ReadConcern`` ``level`` ``snapshot`` is used, ``atClusterTime`` may be specified to indicate
+the desired point in time for reading. ``find``, ``aggregate`` and ``distinct`` operations executed with ``ReadConcern`` ``snapshot`` but without ``atClusterTime``
+will return ``atClusterTime`` timestamp in the server response. The obtained ``atClusterTime`` timestamp can be used for subsequent
+read operations.
+``ReadConcern`` ``level`` ``snapshot`` with ``clusterTime`` is supported in ``find``, ``aggregate`` and ``distinct`` operations.
 
 On the Wire
 -----------
@@ -710,4 +723,6 @@ Version History
   - 2019-10-31: Explicitly define write concern option mappings.
   - 2020-02-13: Inconsistent write concern must be considered an error.
   - 2021-04-07: Updated to use hello command.
-  - 2021-04-30: Deprecate wTimeoutMS in favor of timeoutMS.
+  - 2021-06-15: Added "snapshot" to Readconcern level
+  - 2021-07-12: Add missing commas after ReadConcernLevel enum values
+  - 2021-12-23: Deprecate wTimeoutMS in favor of timeoutMS.

@@ -9,8 +9,8 @@ Polling SRV Records for mongos Discovery
 :Author: Derick Rethans
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2018-11-29
-:Version: 1.0
+:Last Modified: 2020-10-14
+:Version: 1.2.0
 :Spec Lead: David Golden
 
 .. contents::
@@ -79,8 +79,10 @@ rescan is similar, but not identical to the behaviour of initial seedlist
 discovery.  Periodic scan MUST follow these rules:
 
 - The driver will query the DNS server for SRV records on
-  ``{hostname}.{domainname}``, prefixed with ``_mongodb._tcp.``:
-  ``_mongodb._tcp.{hostname}.{domainname}``.
+``{hostname}.{domainname}``, prefixed with the SRV service name and protocol.
+  The SRV service name is provided in the srvServiceName_ URI option and
+  defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the
+  URI should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``.
 
 - A driver MUST verify that the host names returned through SRV records have
   the same parent ``{domainname}``. When this verification fails, a driver:
@@ -103,11 +105,16 @@ discovery.  Periodic scan MUST follow these rules:
 - For all verified host names, as returned through the DNS SRV query, the
   driver:
 
-  - MUST add each valid new host to the topology as Unknown
   - MUST remove all hosts that are part of the topology, but are no longer
     in the returned set of valid hosts
   - MUST NOT remove all hosts, and then re-add the ones that were returned.
     Hosts that have not changed, MUST be left alone and unchanged.
+  - If srvMaxHosts_ is zero or greater than or equal to the number of valid
+    hosts, each valid new host MUST be added to the topology as Unknown.
+  - If srvMaxHosts_ is greater than zero and less than the number of valid
+    hosts, valid new hosts MUST be randomly selected and added to the topology
+    as Unknown until the topology has ``srvMaxHosts`` hosts. Drivers MUST use
+    the same randomization algorithm as they do for `initial selection`_.
 
 - Priorities and weights in SRV records MUST continue to be ignored, and MUST
   NOT dictate which mongos server is used for new connections.
@@ -126,6 +133,9 @@ calculated from the **end** of the previous rescan (or the **end** of the
 initial DNS seedlist discovery scan).
 
 .. _seedlist: https://github.com/mongodb/specifications/blob/master/source/initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#seedlist-discovery
+.. _srvMaxHosts: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts
+.. _srvServiceName: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename
+.. _`initial selection`: ../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#querying-dns
 
 Multi-Threaded Drivers
 ----------------------
@@ -227,4 +237,9 @@ No future work is expected.
 Changelog
 =========
 
-No changes yet.
+2021-10-14 - 1.2.0
+    Specify behavior for ``srvMaxHosts`` MongoClient option.
+
+2021-09-15 - 1.1.0
+    Clarify that service name only defaults to ``mongodb``, and should be
+    defined by the ``srvServiceName`` URI option.

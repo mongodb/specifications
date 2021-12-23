@@ -8,7 +8,7 @@ Server Discovery And Monitoring -- Summary
 :Advisors: David Golden, Craig Wilson
 :Status: Draft
 :Type: Standards
-:Last Modified: July 11, 2019
+:Last Modified: June 21, 2021
 
 .. contents::
 
@@ -31,10 +31,10 @@ Even in cases where several answers seem equally good, drivers must agree on one
 
 The server discovery and monitoring method is specified in five sections.
 First, a client is constructed.
-Second, it begins monitoring the topology by calling ismaster on all servers.
+Second, it begins monitoring the topology by calling ``hello`` or legacy hello on all servers.
 (Multi-threaded and asynchronous monitoring is described first,
 then single-threaded monitoring.)
-Third, as ismaster calls are received
+Third, as ``hello`` or legacy hello responses are received
 the client parses them,
 and fourth, it updates its view of the topology.
 Finally, this spec describes how drivers update their topology view
@@ -73,9 +73,6 @@ A client MUST be able to connect to a set of mongoses
 and monitor their availability and round trip time.
 This spec defines how mongoses are discovered and monitored,
 but does not define which mongos is selected for a given operation.
-
-A client MUST be able to directly connect to a mongod begun with "--slave".
-No additional master-slave features are described in this spec.
 
 Multi-threaded or asynchronous clients
 MUST unblock waiting operations
@@ -140,13 +137,13 @@ Multi-threaded or asynchronous monitoring
 '''''''''''''''''''''''''''''''''''''''''
 
 All servers' monitors run independently, in parallel:
-If some monitors block calling ismaster over slow connections,
+If some monitors block calling ``hello`` or legacy hello over slow connections,
 other monitors MUST proceed unimpeded.
 The natural implementation is a thread per server,
 but the decision is left to the implementer.
 
 Multi-threaded and asynchronous drivers
-MUST call ismaster on servers every 10 seconds by default.
+MUST call ``hello`` or legacy hello on servers every 10 seconds by default.
 (10 seconds is Mongos's frequency.)
 This frequency MAY be configurable.
 
@@ -165,20 +162,20 @@ Otherwise, the client attempts to check all members it knows of,
 in order from the least-recently to the most-recently checked.
 The scanning order is described completely in the spec.
 
-Parsing ismaster
-----------------
+Parsing ``hello`` or legacy hello
+---------------------------------
 
-The full algorithm for determining server type from an ismaster response
+The full algorithm for determining server type from a ``hello`` or legacy hello response
 is specified and test cases are provided.
 
 Drivers MUST record the server's round trip time
-after each successful call to ismaster.
+after each successful call to ``hello`` or legacy hello.
 How round trip times are averaged is not in this spec's scope.
 
 Updating the Topology View
 --------------------------
 
-After each attempt to call ismaster on a server,
+After each attempt to call ``hello`` or legacy hello on a server,
 the client updates its topology view.
 Initial topology discovery and long-running monitoring
 are both specified by the same detailed algorithm.
@@ -207,16 +204,16 @@ MUST abort and raise an exception if it was a write.
 It MAY be retried if it was a read.
 (The Read Preferences spec includes retry rules for reads.)
 
-If a monitor's ismaster call fails on a server,
+If a monitor's ``hello`` or legacy hello call fails on a server,
 the behavior is different from a failed application operation.
-The ismaster call is retried once, immediately,
+The ``hello`` or legacy hello call is retried once, immediately,
 before the server is marked "down".
 
 In either case the client MUST clear its connection pool for the server:
 if one socket is bad, it is likely that all are.
 
-An algorithm is specified for parsing
-"not master" and "node is recovering" errors.
+An algorithm is specified for inspecting error codes (MongoDB 3.6+) and
+falling back to parsing error messages when error codes are unavailable (MongoDB 3.4 and earlier).
 When the client sees such an error it knows its topology view is out of date.
 It MUST mark the server type "unknown."
 Multi-threaded and asynchronous clients MUST re-check the server soon,

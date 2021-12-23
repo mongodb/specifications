@@ -10,7 +10,7 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2021-04-30
+:Last Modified: 2021-12-23
 :Version: 1.4.0
 
 .. contents::
@@ -22,8 +22,8 @@ Abstract
 
 MongoDB 4.2 introduced support for client side encryption, guaranteeing
 that sensitive data can only be encrypted and decrypted with access to both
-MongoDB and a separate key management provider (supporting AWS, Azure, GCP
-and a local provider). Once enabled, data can be seamlessly encrypted
+MongoDB and a separate key management provider (supporting AWS, Azure, GCP,
+a local provider, and KMIP). Once enabled, data can be seamlessly encrypted
 and decrypted with minimal application code changes.
 
 META
@@ -163,8 +163,8 @@ MongoDB cluster and the KMS service.
 
 KMS Provider
 ------------
-A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, or the local provider) is
-used to decrypt data keys after fetching from the MongoDB Key Vault, and
+A KMS provider (AWS KMS, Azure Key Vault, GCP KMS, the local provider, or KMIP)
+is used to decrypt data keys after fetching from the MongoDB Key Vault, and
 encrypt newly created data keys.
 
 mongocryptd
@@ -249,6 +249,7 @@ MongoClient Changes
       schemaMap: Optional<Map<String, Document>>; // Maps namespace to a local schema
       bypassAutoEncryption: Optional<Boolean>; // Default false.
       extraOptions: Optional<Map<String, Value>>;
+      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
    }
 
 A MongoClient can be configured to automatically encrypt collection
@@ -286,7 +287,7 @@ The key vault collection namespace refers to a collection that contains all
 data keys used for encryption and decryption (aka the key vault collection).
 Data keys are stored as documents in a special MongoDB collection. Data
 keys are protected with encryption by a KMS provider (AWS KMS, Azure key
-vault, GCP KMS, or a local master key).
+vault, GCP KMS, a local master key, or KMIP).
 
 keyVaultClient
 ^^^^^^^^^^^^^^
@@ -356,9 +357,9 @@ See `What's the deal with metadataClient, keyVaultClient, and the internal clien
 kmsProviders
 ^^^^^^^^^^^^
 Multiple KMS providers may be specified. The kmsProviders map values differ by
-provider ("aws", "azure", "gcp", and "local"). The "local" provider is configured
-with master key material. The external providers are configured with credentials
-to authenticate.
+provider ("aws", "azure", "gcp", "local", and "kmip"). The "local" provider is
+configured with master key material. The external providers are configured with
+credentials to authenticate.
 
 .. code:: typescript
 
@@ -385,7 +386,66 @@ to authenticate.
       key: byte[96] or String // The master key used to encrypt/decrypt data keys. May be passed as a base64 encoded string.
    }
 
+   kmip: {
+      endpoint: String
+   }
+
 See `Why are extraOptions and kmsProviders maps?`_
+
+Drivers MUST enable TLS for all KMS connections.
+
+KMS provider TLS options
+````````````````````````
+
+Drivers MUST provide TLS options to configure TLS connections KMS providers.
+
+The TLS options SHOULD be consistent with the existing TLS options for MongoDB
+server TLS connections. The TLS options MUST enable setting a custom client
+certificate, equivalent to the `tlsCertificateKeyFile` URI option.
+
+Drivers SHOULD provide API that is consistent with configuring TLS options for
+MongoDB server TLS connections. New API to support the options MUST be
+independent of the KMS provider to permit future extension. The following is an
+example:
+
+.. code:: typescript
+
+   class AutoEncryptionOpts {
+      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // The TLSOptions apply to any TLS socket required to communicate
+      // with the KMS provider.
+      setTLSOptions (opts Map<String, TLSOptions>)
+   }
+
+   class ClientEncryptionOpts {
+      // setTLSOptions accepts a map of KMS provider names to TLSOptions.
+      // The TLSOptions apply to any TLS socket required to communicate
+      // with the KMS provider.
+      setTLSOptions (opts Map<String, TLSOptions>)
+   }
+
+Drivers MUST raise an error if the TLS options are set to disable TLS.
+The error MUST contain the message "TLS is required".
+
+Drivers SHOULD raise an error if insecure TLS options are set.
+The error MUST contain the message "Insecure TLS options prohibited".
+This includes options equivalent to the following URI options:
+
+- `tlsInsecure`
+- `tlsAllowInvalidCertificates`
+- `tlsAllowInvalidHostnames`
+- `tlsDisableOCSPEndpointCheck`
+- `tlsDisableCertificateRevocationCheck`
+
+See the OCSP specification for a description of the default values of
+`tlsDisableOCSPEndpointCheck
+<https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisableocspendpointcheck>`_
+and `tlsDisableCertificateRevocationCheck
+<https://github.com/mongodb/specifications/blob/master/source/ocsp-support/ocsp-support.rst#tlsdisablecertificaterevocationcheck>`_
+Drivers MUST NOT modify the default value of `tlsDisableOCSPEndpointCheck` and
+`tlsDisableCertificateRevocationCheck` for KMS TLS connections.
+
+See `Why do KMS providers require TLS options?`_
 
 schemaMap
 ^^^^^^^^^
@@ -473,13 +533,14 @@ ClientEncryption
       keyVaultClient: MongoClient;
       keyVaultNamespace: String;
       kmsProviders: Map<String, Map<String, Value>>;
+      tlsOptions: Optional<Map<String, TLSOptions>>; // Maps KMS provider to TLS options.
    }
 
 The ClientEncryption encapsulates explicit operations on a key vault
 collection that cannot be done directly on a MongoClient. Similar to
 configuring auto encryption on a MongoClient, it is
 constructed with a MongoClient (to a MongoDB cluster containing the key
-vault collection), KMS provider configuration, and keyVaultNamespace. It
+vault collection), KMS provider configuration, keyVaultNamespace, and tlsOptions. It
 provides an API for explicitly encrypting and decrypting values, and
 creating data keys. It does not provide an API to query keys from the key
 vault collection, as this can be done directly on the MongoClient.
@@ -534,9 +595,19 @@ If the kmsProvider is "gcp" the masterKey is required and has the following fiel
 
 If the kmsProvider is "local" the masterKey is not applicable.
 
+If the kmsProvider is "kmip" the masterKey is required and has the following fields:
+
+.. code-block:: javascript
+
+   {
+      keyId: Optional<String>, // keyId is the KMIP Unique Identifier to a 96 byte KMIP Secret Data managed object.
+                               // If keyId is omitted, the driver creates a random 96 byte KMIP Secret Data managed object.
+      endpoint: Optional<String> // Host with optional port.
+   }
+
 Drivers MUST document the expected fields in the masterKey document for the
-"aws", "azure", and "gcp" KMS providers. Additionally, they MUST document that
-masterKey is **required** for these providers and is not optional.
+"aws", "azure", "gcp", and "kmip" KMS providers. Additionally, they MUST
+document that masterKey is **required** for these providers and is not optional.
 
 The value of `endpoint` or `keyVaultEndpoint` is a host name with optional port
 number separated by a colon. E.g. "kms.us-east-1.amazonaws.com" or
@@ -907,6 +978,14 @@ endpoint   String   Optional, KMS URL, defaults to https://cloudkms.googleapis.c
 provider "local"
 ======== ======== ========================================================================
 
+================= ======== ===============================================================
+**Name**          **Type** **Description**
+provider          "kmip"
+endpoint          String   Optional. Defaults to kmip.endpoint from KMS providers.
+keyId             String   Required. keyId is the Unique Identifier to a 96 byte KMIP
+                           Secret Data managed object.
+================= ======== ===============================================================
+
 Data keys are needed for encryption and decryption. They are identified
 in the intent-to-encrypt marking and ciphertext. Data keys may be
 retrieved by querying the "_id" with a UUID or by querying the
@@ -1258,10 +1337,6 @@ Why require including a C library?
 
 -  libmongocrypt deduplicates a lot of the work: JSONSchema cache, KMS
    message construction/parsing, key caching, and encryption/decryption.
--  We are convinced that the next version of field-level encryption will
-   remove mongocryptd in place of a C library to do query parsing. That
-   will necessitate drivers using a C library. If we use libmongocrypt
-   now, that upgrade path is much easier.
 -  Our "best-effort" of storing decrypted key material securely is best
    accomplished with a C library.
 -  Having crypto done in one centralized C library makes it much easier
@@ -1477,6 +1552,24 @@ The ``publicData`` collection does not have encrypted fields, but the
 ``$lookup`` since there is no mechanism to determine encrypted fields of joined
 collections.
 
+Why do KMS providers require TLS options?
+-----------------------------------------
+
+Drivers authenticate to KMIP servers with the client certificate presented in
+TLS connections.
+
+This specification assumes that TLS connections to KMIP servers may require
+different TLS options than TLS connections to MongoDB servers.
+
+KMIP support in the MongoDB server is a precedent. The server supports
+``--kmipServerCAFile`` and ``--kmipClientCertificateFile`` to configure the
+encrypted storage engine KMIP. See
+https://docs.mongodb.com/manual/tutorial/configure-encryption/.
+
+TLS options may be useful for the AWS, Azure, and GCP KMS providers in
+a case where the default trust store does not include the needed CA
+certificates.
+
 Future work
 ===========
 
@@ -1542,7 +1635,8 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
-| 2021-04-30 | Require that timeouts be applied per the CSOT spec         |
+| 2021-12-23 | Require that timeouts be applied per the CSOT spec         |
+| 2021-11-04 | Add 'kmip' KMS provider                                    |
 | 2021-04-08 | Updated to use hello and legacy hello                      |
 | 2021-01-22 | Add sessionToken option to 'aws' KMS provider              |
 | 2020-12-12 | Add metadataClient option and internal client              |

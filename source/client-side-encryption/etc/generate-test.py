@@ -127,6 +127,38 @@ keys = {
             "keyName": "key-name-csfle"
         },
         "keyAltNames": ["altname", "gcp_altname"]
+    },
+    "kmip": {
+        "_id": {
+            "$binary": {
+                "base64": "dBHpr8aITfeBQ15grpbLpQ==",
+                "subType": "04"
+            }
+        },
+        "keyMaterial": {
+            "$binary": {
+                "base64": "eUYDyB0HuWb+lQgUwO+6qJQyTTDTY2gp9FbemL7ZFo0pvr0x6rm6Ff9OVUTGH6HyMKipaeHdiIJU1dzsLwvqKvi7Beh+U4iaIWX/K0oEg1GOsJc0+Z/in8gNHbGUYLmycHViM3LES3kdt7FdFSUl5rEBHrM71yoNEXImz17QJWMGOuT4x6yoi2pvnaRJwfrI4DjpmnnTrDMac92jgZehbg==",
+                "subType": "00"
+            }
+        },
+        "creationDate": {
+            "$date": {
+                "$numberLong": "1634220190041"
+            }
+        },
+        "updateDate": {
+            "$date": {
+                "$numberLong": "1634220190041"
+            }
+        },
+        "status": {
+            "$numberInt": "0"
+        },
+        "masterKey": {
+            "provider": "kmip",
+            "keyId": "1"
+        },
+        "keyAltNames": ["altname", "kmip_altname"]
     }
 }
 
@@ -191,6 +223,13 @@ schemas = {
             "encrypted_string_local": {
                 "encrypt": {
                     "keyId": [keys["local"]["_id"]],
+                    "bsonType": "string",
+                    "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+            },
+            "encrypted_string_kmip": {
+                "encrypt": {
+                    "keyId": [keys["kmip"]["_id"]],
                     "bsonType": "string",
                     "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
@@ -480,7 +519,18 @@ ciphertexts = [
                 "subType": "06"
             }
         }
-    }
+    },
+    {
+        "schema": "all",
+        "field": "encrypted_string_kmip",
+        "plaintext": "string0",
+        "data": {
+            "$binary": {
+                "base64": "AXQR6a/GiE33gUNeYK6Wy6UCKCwtKFIsL8eKObDVxvqGupJNUk7kXswHhB7G5j/C1D+6no+Asra0KgSU43bTL3ooIBLVyIzbV5CDJYqzAsa4WQ==",
+                "subType": "06"
+            }
+        }
+    },
 ]
 
 
