@@ -219,6 +219,10 @@ RetryableWriteError Labels
 
 The RetryableWriteError label might be added to an error in a variety of ways:
 
+- When the driver encounters a network error establishing an initial connection to a server,
+  it SHOULD add a RetryableWriteError label to that error if the MongoClient performing
+  the operation has the retryWrites configuration option set to true.
+
 - When the driver encounters a network error communicating with any server
   version that supports retryable writes, it MUST add a RetryableWriteError
   label to that error if the MongoClient performing the operation has the
@@ -791,13 +795,15 @@ Why does the driver only add the RetryableWriteError label to errors that occur 
 
 The driver does this to maintain consistency with the MongoDB server.
 Servers that support the RetryableWriteError label (MongoDB version 4.4 and newer)
-only add the label to an error when the client has added a txnNumber to the 
+only add the label to an error when the client has added a txnNumber to the
 command, which only happens when the retryWrites option is true on the client.
 For the driver to add the label even if retryWrites is not true would be
 inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
+
+2022-01-07: Note that drivers should retry handshake network failures.
 
 2021-11-02: Clarify that error labels are only specified in a top-level field of
 an error.

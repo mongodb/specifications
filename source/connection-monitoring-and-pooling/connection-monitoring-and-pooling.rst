@@ -19,7 +19,7 @@ Abstract
 
 Drivers currently support a variety of options that allow users to configure connection pooling behavior. Users are confused by drivers supporting different subsets of these options. Additionally, drivers implement their connection pools differently, making it difficult to design cross-driver pool functionality. By unifying and codifying pooling options and behavior across all drivers, we will increase user comprehension and code base maintainability.
 
-META 
+META
 ====
 
 The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in `RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
@@ -290,7 +290,7 @@ has the following properties:
        *  The Queue of threads waiting for a Connection to be available
        */
       waitQueue: WaitQueue;
-    
+
       /**
        *  A generation number representing the SDAM generation of the pool.
        */
@@ -319,7 +319,7 @@ has the following properties:
        *                      method. The pool cannot transition to any other state after being closed.
        */
       state: "paused" | "ready" | "closed";
-    
+
       // Any of the following connection counts may be computed rather than
       // actually stored on the pool.
 
@@ -328,7 +328,7 @@ has the following properties:
        *  ("pending" + "available" + "in use") the pool currently has
        */
       totalConnectionCount: number;
-    
+
       /**
        *  An integer expressing how many Connections are currently
        *  available in the pool.
@@ -439,7 +439,7 @@ Creating a Connection (Internal Implementation)
 
 When creating a `Connection <#connection>`_, the initial `Connection <#connection>`_ is in a
 “pending” state. This only creates a “virtual” `Connection <#connection>`_, and
-performs no I/O. 
+performs no I/O.
 
 .. code::
 
@@ -605,6 +605,9 @@ established. In addition, the Pool MUST NOT prevent other threads from checking
 out `Connections <#connection>`_ while establishing a `Connection
 <#connection>`_.
 
+If connection establishment fails due to a network error drivers SHOULD mark the
+error as `retryable <../retryable-writes/retryable-writes.rst#retryablewriteerror-labels>`_.
+
 Before a given `Connection <#connection>`_ is returned from checkOut, it must be marked as
 "in use", and the pool's availableConnectionCount MUST be decremented.
 
@@ -632,7 +635,7 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
             # back in to the pool.
             wait until pendingConnectionCount < maxConnecting or a connection is available
             continue
-          
+
     except pool is "closed":
       emit ConnectionCheckOutFailedEvent(reason="poolClosed")
       throw PoolClosedError
@@ -662,7 +665,9 @@ Before a given `Connection <#connection>`_ is returned from checkOut, it must be
       except connection establishment error:
         emit ConnectionCheckOutFailedEvent(reason="error")
         decrement totalConnectionCount
-        throw
+        if is NetworkError:
+          mark error as retryable
+        throw error
       finally:
         decrement pendingConnectionCount
     else:
@@ -855,12 +860,12 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
      *  Emitted when a Connection Pool creates a Connection object.
      *  NOTE: This does not mean that the Connection is ready for use.
      */
-    interface ConnectionCreatedEvent { 
+    interface ConnectionCreatedEvent {
       /**
        *  The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
-    
+
       /**
        *  The ID of the Connection
        */
@@ -875,7 +880,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *  The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
-    
+
       /**
        *  The ID of the Connection
        */
@@ -890,12 +895,12 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *  The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
-    
+
       /**
        *  The ID of the Connection
        */
       connectionId: number;
-    
+
       /**
        * A reason explaining why this Connection was closed.
        * Can be implemented as a string or enum.
@@ -927,7 +932,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        *  The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
-    
+
       /**
        *  A reason explaining why Connection check out failed.
        *  Can be implemented as a string or enum.
@@ -962,7 +967,7 @@ See the `Load Balancer Specification <../load-balancers/load-balancers.rst#event
        * The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
-    
+
       /**
        *  The ID of the Connection
        */
@@ -1032,9 +1037,9 @@ ConnectionClosed indicates that the `Connection <#connection>`_ is no longer a m
 Why are waitQueueSize and waitQueueMultiple deprecated?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-These options were originally only implemented in three drivers (Java, C#, and Python), and provided little value. While these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error from occurring. 
+These options were originally only implemented in three drivers (Java, C#, and Python), and provided little value. While these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error from occurring.
 
-Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily the behavior that users want. They can also result in cases where queue access oscillates back and forth between full and not full. If a driver has a full waitQueue, then all requests for `Connections <#connection>`_ will be rejected. If the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness guarantee that the waitQueue normally provides. 
+Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily the behavior that users want. They can also result in cases where queue access oscillates back and forth between full and not full. If a driver has a full waitQueue, then all requests for `Connections <#connection>`_ will be rejected. If the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness guarantee that the waitQueue normally provides.
 
 Because of these issues, it does not make sense to `go against driver mantras and provide an additional knob <../../README.rst#>`__. We may eventually pursue an alternative configurations to address wait queue size in `Advanced Pooling Behaviors <#advanced-pooling-behaviors>`__.
 
@@ -1067,7 +1072,7 @@ would block application threads, introducing unnecessary latency. Once
 a `Connection <#connection>`_ is marked as "closed", it will not be checked out
 again, so ensuring the socket is torn down does not need to happen
 immediately and can happen at a later time, either via async I/O or a
-background thread. 
+background thread.
 
 Why can the pool be paused?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

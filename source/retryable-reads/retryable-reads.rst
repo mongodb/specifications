@@ -79,7 +79,7 @@ SocketException                 9001
 
   .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
 
-MongoClient Configuration 
+MongoClient Configuration
 --------------------------
 
 This specification introduces the following client-level configuration option.
@@ -97,7 +97,7 @@ and "core" API (e.g. Java and C# driver) MUST NOT expose a configurable option
 at the level of an individual read operation, collection object, or database
 object in "high", but MAY expose the option in "core."
 
-Naming Deviations 
+Naming Deviations
 ^^^^^^^^^^^^^^^^^^
 
 `As with retryable writes
@@ -163,6 +163,7 @@ Drivers SHOULD support retryability for the following operations:
 - Any driver that provides generic command runners for read commands (with logic
   to inherit a client-level read concerns) SHOULD implement retryability for the
   read-only command runner.
+- Handshake failures due to a network error.
 
 Most of the above methods are defined in the following specifications:
 
@@ -190,10 +191,10 @@ Unsupported Read Operations
 Drivers MUST NOT retry the following operations:
 
 - ``Collection.mapReduce()``
-  
+
   - This is due to the "Early Failure on Socket Disconnect" feature not
     supporting ``mapReduce``.
-    
+
   - N.B. If ``mapReduce`` is executed via a generic command runner for read
     commands, drivers SHOULD NOT inspect the command to prevent ``mapReduce``
     from retrying.
@@ -346,7 +347,7 @@ and reflects the flow described above.
   function isRetryableReadsSupported(connection) {
     return connection.MaxWireVersion >= RETRYABLE_READS_MIN_WIRE_VERSION);
   }
-  
+
   /**
    * Executes a read command in the context of a MongoClient where a retryable
    * read have been enabled. The session parameter may be an implicit or
@@ -365,8 +366,11 @@ and reflects the flow described above.
       connection = server.getConnection()
     } catch (PoolClearedException poolClearedError) {
       return executeRetry(command, session, poolClearedError);
+    } catch (NetworkException networkError) {
+      // ConnectionPool should have handled SDAM state changes
+      return executeRetry(command, session, networkError);
     }
-  
+
     /* If the server does not support retryable reads or if the session in a
      * transaction execute the read as if retryable reads are not enabled. */
     if ( !isRetryableReadsSupported(connection) || session.inTransaction()) {
@@ -385,7 +389,7 @@ and reflects the flow described above.
     }
     return executeRetry(command, session, originalError);
   }
-  
+
   /**
    * Executes the second attempt of a retryable read after a retryable error
    * was encountered. On failure, this may return the original error, depending
@@ -401,7 +405,7 @@ and reflects the flow described above.
     } catch (Exception ignoredError) {
       throw originalError;
     }
-  
+
     /* If the server selected for retrying is too old, throw the original error.
      * The caller can then infer that an attempt was made and failed. This case
      * is very rare, and likely means that the cluster is in the midst of a
@@ -414,7 +418,7 @@ and reflects the flow described above.
     } catch (Exception ignoredError) {
       throw originalError;
     }
-  
+
     /* Allow any retryable error from the second attempt to propagate to our
      * caller, as it will be just as relevant (if not more relevant) than the
      * original error. For exceptions that originate from the driver (e.g. no
@@ -489,14 +493,14 @@ At a high level, the test plan will cover executing supported read operations
 within a MongoClient where retryable reads have been enabled, ensuring that
 reads are retried exactly once.
 
-Motivation for Change 
+Motivation for Change
 ======================
 
 Drivers currently have an API for the retryability of write operations but not
 for read operations. The driver API needs to be extended to include support for
 retryable behavior for read operations.
 
-Design Rationale 
+Design Rationale
 =================
 
 The design of this specification is based off the `Retryable Writes
@@ -513,7 +517,7 @@ simplicity as well as consistency with the design for retryable writes.
 See the `future work`_ section for potential upcoming changes
 to retry mechanics.
 
-Backwards Compatibility 
+Backwards Compatibility
 ========================
 
 The API changes to support retryable reads extend the existing API but do not
@@ -545,7 +549,7 @@ Rejected Designs
    simultaneously after the current one finishes.
 
 
-Reference Implementation 
+Reference Implementation
 =========================
 
 The C# and Python drivers will provide the reference implementations. See
@@ -578,7 +582,7 @@ Future work
 
 .. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
 
-Q&A 
+Q&A
 ====
 
 Why is retrying ``Cursor.getMore()`` not supported?
@@ -670,8 +674,10 @@ minor risk of degraded performance. Additionally, any customers experiencing
 degraded performance can simply disable ``retryableReads``.
 
 
-Changelog 
+Changelog
 ==========
+
+2022-01-07: Note that drivers should retry handshake network failures.
 
 2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
 

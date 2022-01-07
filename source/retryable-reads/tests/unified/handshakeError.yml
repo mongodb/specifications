@@ -1,0 +1,71 @@
+description: "retryable reads handshake failures"
+
+schemaVersion: "1.6"
+
+runOnRequirements:
+  - minServerVersion: "4.2"
+    topologies: [replicaset]
+    auth: true
+
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: false
+      observeEvents: [commandStartedEvent, connectionCheckOutStartedEvent]
+      uriOptions:
+        { retryReads: true, retryWrites: true, maxPoolSize: 5 }
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &databaseName retryable-handshake-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collectionName coll
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents:
+      - { _id: 1, x: 11 }
+      - { _id: 2, x: 22 }
+      - { _id: 3, x: 33 }
+
+tests:
+  - description: "InsertOne succeeds after retryable handshake network error"
+    operations:
+      -
+        # fail the next connection establishment
+        name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ saslContinue ] # use saslContinue here to avoid SDAM errors
+              closeConnection: true
+      -
+        name: findOne
+        object: *collection0
+        arguments:
+          filter: { _id: 2 }
+        expectResult:
+          - { _id: 2, x: 22 }
+
+    expectEvents:
+      - client: *client0
+        eventType: cmap
+        events:
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+      - client: *client0
+        events:
+          - &findAttempt
+            commandStartedEvent:
+              command:
+                find: *collectionName
+                filter: { _id: 2 }
+              databaseName: *databaseName
+          - *findAttempt
