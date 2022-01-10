@@ -5,7 +5,9 @@
     {
       "minServerVersion": "4.2",
       "topologies": [
-        "replicaset"
+        "replicaset",
+        "sharded",
+        "load-balanced"
       ],
       "auth": true
     }

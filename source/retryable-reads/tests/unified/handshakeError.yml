@@ -4,7 +4,7 @@ schemaVersion: "1.6"
 
 runOnRequirements:
   - minServerVersion: "4.2"
-    topologies: [replicaset]
+    topologies: [replicaset, sharded, load-balanced]
     auth: true
 
 createEntities:

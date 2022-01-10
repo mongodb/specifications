@@ -220,7 +220,7 @@ RetryableWriteError Labels
 The RetryableWriteError label might be added to an error in a variety of ways:
 
 - When the driver encounters a network error establishing an initial connection to a server,
-  it SHOULD add a RetryableWriteError label to that error if the MongoClient performing
+  it MUST add a RetryableWriteError label to that error if the MongoClient performing
   the operation has the retryWrites configuration option set to true.
 
 - When the driver encounters a network error communicating with any server
