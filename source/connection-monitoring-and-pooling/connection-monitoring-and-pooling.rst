@@ -453,13 +453,15 @@ Establishing a Connection (Internal Implementation)
 
 Before a `Connection <#connection>`_ can be marked as either "available" or "in use", it
 must be established. This process involves performing the initial
-handshake, handling OP_COMPRESSED, and performing authentication.
+handshake, inspecting the value of ``maxWireVersion``, handling OP_COMPRESSED,
+and performing authentication.
 
 .. code::
 
     try:
       connect connection via TCP / TLS
       perform connection handshake
+      inspect "maxWireVersion" # Use OP_MSG for authentication if supported
       handle OP_COMPRESSED
       perform connection authentication
       emit ConnectionReadyEvent
