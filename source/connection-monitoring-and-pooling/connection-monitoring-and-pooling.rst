@@ -454,8 +454,9 @@ Establishing a Connection (Internal Implementation)
 Before a `Connection <#connection>`_ can be marked as either "available" or "in use", it
 must be established. This process involves performing the initial
 handshake, inspecting the value of ``maxWireVersion`` (to decide whether to
-use ``OP_MSG``(>=3.6) or ``OP_QUERY``(<3.6) for future communications),
-handling OP_COMPRESSED, and performing authentication.
+use ``OP_MSG``(``maxWireVersion >= 6``) or ``OP_QUERY``(``maxWireVersion <6``)
+for future communications), handling OP_COMPRESSED, and performing
+authentication.
 
 .. code::
 
