@@ -456,7 +456,10 @@ must be established. This process involves performing the initial
 handshake, inspecting the value of ``maxWireVersion`` (to decide whether to
 use ``OP_MSG``(``maxWireVersion >= 6``) or ``OP_QUERY``(``maxWireVersion <6``)
 for future communications), handling OP_COMPRESSED, and performing
-authentication.
+authentication. It is necessary to inspect the value of ``maxWireVersion``
+because starting with MongoDB 6.0 using ``OP_QUERY`` for anything other than
+the handshake will result in an error. ``OP_QUERY`` should only be used with
+nodes that do not support ``OP_MSG``.
 
 .. code::
 
