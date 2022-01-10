@@ -459,7 +459,7 @@ for future communications), handling OP_COMPRESSED, and performing
 authentication. It is necessary to inspect the value of ``maxWireVersion``
 because starting with MongoDB 6.0 using ``OP_QUERY`` for anything other than
 the handshake will result in an error. Once the driver has performed the
-handhake and inspected the value of ``maxWireVersion``  it MUST use
+handshake and inspected the value of ``maxWireVersion`` it MUST use
 ``OP_MSG`` if supported.
 
 .. code::
