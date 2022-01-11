@@ -61,7 +61,7 @@ newer MAY default to using ``OP_MSG``.
 
 If the node supports ``OP_MSG``, any and all messages MUST use ``OP_MSG``,
 optionally compressed with ``OP_COMPRESSED``. This includes authentication
-messages starting in MongoDB 6.0.
+messages.
 
 
 
