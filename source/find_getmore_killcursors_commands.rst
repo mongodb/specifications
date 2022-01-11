@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: December 14, 2021
+:Last Modified: January ??, 2022
 
 .. contents::
 
@@ -113,7 +113,8 @@ The **find** command replaces the query functionality of the OP_QUERY wire proto
       "noCursorTimeout": <bool>,
       "awaitData": <bool>,
       "allowPartialResults": <bool>,
-      "readConcern": { ...}
+      "readConcern": { ...},
+      "comment": <any>
     }
 
 The accepted parameters are described in the table below.  Parameters marked "Req" are required by the server and MUST be included in the command.  Parameters marked "Def" define the default values assumed by the server if the parameter is omitted].
@@ -298,6 +299,12 @@ The accepted parameters are described in the table below.  Parameters marked "Re
        level: “local” is the default, if no level is explicitly specified.
        level: “local” means to do a read with no snapshot; this is the behavior of reads in 3.0 and prior versions of MongoDB.
        level: “majority” means to do a read from the latest committed snapshot known to the server  (which could be stale).
+   * - comment
+     -
+     -
+     - any
+     -
+     - Enables users to specify an arbitrary comment to help trace the operation through the database profiler, currentOp and logs. The default is to not send a value.
 
 
 For a successful command, the document returned from the server has the following format:
@@ -516,7 +523,8 @@ when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
       "getMore": <int64>,
       "collection": <string>,
       "batchSize": <int64>,
-      "maxTimeMS": <int32>
+      "maxTimeMS": <int32>,
+      "comment": <any>
     }
 
 The accepted parameters are described in the table below.
@@ -547,6 +555,11 @@ The accepted parameters are described in the table below.
      - If not set, the server defaults to it’s internal maxTimeMS setting.
 
        Please see the "Semantics of maxTimeMS" section for more details.
+   * - comment
+     -
+     - any
+     - Enables users to specify an arbitrary comment to help trace the operation through the database profiler, currentOp and logs. The default is to not send a value.
+
 
 The **batchSize** MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
@@ -579,7 +592,8 @@ The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol messa
         <cursor id 2>,
         …
         <cursor id n>
-      ]
+      ],
+      "comment": <any>
     }
 
 The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be secondaryOk=true when sent to a secondary.
@@ -600,6 +614,11 @@ The accepted parameters are described in the table below. The query flags passed
      - X
      - Array of int64’s
      - An array of one or more cursorId’s
+   * - comment
+     -
+     - any
+     - Enables users to specify an arbitrary comment to help trace the operation through the database profiler, currentOp and logs. The default is to not send a value.
+
 
 The command response will be as follows:
 
@@ -745,6 +764,8 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
+2022-01-?? Add comment option.
+
 2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for exhaust cursors.
 
 2021-08-27 Exhaust cursors must use OP_MSG on 3.6+ servers.

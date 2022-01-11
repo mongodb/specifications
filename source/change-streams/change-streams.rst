@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: September 1, 2021
+:Last Modified: January ??, 2022
 :Version: 1.9.3
 
 .. contents::
@@ -408,6 +408,15 @@ Driver API
      * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @note this is an aggregation command option
+     */
+    comment: Optional<any>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -891,4 +900,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2021-09-01 | Clarified that server selection during resumption should   |
 |            | respect normal server selection rules.                     |
++------------+------------------------------------------------------------+
+| 2022-01-?? | Changed ``comment`` to be of any type.                     |
 +------------+------------------------------------------------------------+

@@ -12,7 +12,7 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: April 6, 2021
+:Last Modified: January ??, 2022
 :Version: 0.6.1
 
 .. contents::
@@ -130,6 +130,14 @@ document::
 
     $ db.runCommand( { listCollections: 1, cursor : { batchSize: 25 } } );
 
+MongoDB 4.4 introduced a ``comment``  option to the ``listCollections``
+database command. This option Enables users to specify an arbitrary comment
+to help trace the operation through the database profiler, currentOp and logs.
+The default is to not send a value.
+
+Example of usage of the comment option::
+
+    $ db.runCommand({"listCollections": 1, "comment": "hi there"})
 
 Filters
 -------
@@ -257,6 +265,7 @@ All methods:
 - SHOULD be on the database object.
 - MUST allow a filter to be passed to include only requested collections.
 - MAY allow the ``cursor.batchSize`` option to be passed.
+- SHOULD allow the ``comment`` option to be passed.
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 

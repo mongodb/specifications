@@ -9,7 +9,7 @@ Enumerating Databases
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.7
-:Last Modified: 2019-11-20
+:Last Modified: 2022-01-??
 
 .. contents::
 
@@ -62,10 +62,10 @@ example, a driver may use ``list_databases`` instead of ``listDatabases``.
 
 Filters
 -------
-Drivers SHOULD support the ``filter`` option when implementing the `listDatabases`_ 
-database command. The ``filter`` option is a query predicate that determines which 
+Drivers SHOULD support the ``filter`` option when implementing the `listDatabases`_
+database command. The ``filter`` option is a query predicate that determines which
 databases are listed in the command result. You can specify a condition on any of the
-database fields returned in the command output: 
+database fields returned in the command output:
 
 .. _listDatabases: https://docs.mongodb.com/manual/reference/command/listDatabases/
 
@@ -73,7 +73,7 @@ database fields returned in the command output:
 - ``sizeOnDisk``
 - ``empty``
 - ``shards``
- 
+
 
 For example, to list only databases whose names begin with "foo":
 
@@ -96,6 +96,18 @@ The possible values for `authorizedDatabases` are:
 - ``true``
 
 See the server's `listDatabases`_ documentation for an explanation of what each value means.
+
+Comment
+-------
+
+MongoDB 4.4 introduced a ``comment``  option to the ``listDatabases``
+command. This option Enables users to specify an arbitrary comment
+to help trace the operation through the database profiler, currentOp and logs.
+The default is to not send a value.
+
+::
+
+  > db.getSiblingDB("admin").runCommand({listDatabases: 1, comment: "hi there"})
 
 Driver Methods
 --------------
@@ -143,7 +155,8 @@ result. This method SHOULD be named ``listDatabases``.
 Drivers MAY report ``totalSize`` (e.g. through an additional output variable on
 the ``listDatabases`` method), but this is not necessary.
 
-Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method. 
+Drivers SHOULD support the ``filter``, ``authorizedDatabases`` and ``comment``
+options when implementing this method.
 
 Enumerating Database Names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -173,7 +186,7 @@ Older versions of the server that do not support the ``nameOnly`` option for the
 drivers SHOULD always specify the ``nameOnly`` option when they only intend to
 access database names from the ``listDatabases`` command result.
 
-Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method. 
+Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method.
 
 Enumerating MongoDatabase Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -190,7 +203,7 @@ MongoDatabase through MongoClient (e.g. read preference, write concern).
 Drivers SHOULD specify the ``nameOnly`` option when executing the
 ``listDatabases`` command for this method.
 
-Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method. 
+Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method.
 
 Replica Sets
 ------------
@@ -280,5 +293,6 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
+* 2022-01-??: Support comment option in listDatabases command
 * 2017-10-30: Support filter option in listDatabases command
 * 2019-11-20: Support authorizedDatabases option in listDatabases command

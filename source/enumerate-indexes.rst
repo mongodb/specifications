@@ -12,7 +12,7 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2021-04-06
+:Last Modified: 2022-01-??
 :Version: 0.5.1
 
 .. contents::
@@ -141,6 +141,16 @@ document::
 
     $ db.runCommand( { listIndexes: 'collectionName', cursor : { batchSize: 25 } } );
 
+MongoDB 4.4 introduced a ``comment``  option to the ``listIndexes``
+database command. This option Enables users to specify an arbitrary comment
+to help trace the operation through the database profiler, currentOp and logs.
+The default is to not send a value.
+
+Example of usage of the comment option::
+
+    $ db.runCommand({listIndexes: 'collectionName', comment: "hi there"})
+
+
 Return types
 ~~~~~~~~~~~~
 
@@ -200,7 +210,7 @@ following algorithm (just like the
     use getmore with res.cursor.id and res.cursor.ns information to loop over
     remaing results
 
-If you need to fall back to querying ``system.indexes``, then you need 
+If you need to fall back to querying ``system.indexes``, then you need
 specify the full namespaces name (``dbName.collectionName``) as query criterion.
 
 Alternatively, and if a driver already implements checking MongoDB versions, a
@@ -255,12 +265,13 @@ All methods:
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MAY emulate returning a cursor for pre-2.8.0-rc3 servers.
+- SHOULD allow the ``comment`` option to be passed.
 
 Getting Index Names
 ~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method to enumerate all indexes, and return only
-the index names. 
+the index names.
 
 Example::
 

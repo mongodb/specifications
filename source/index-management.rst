@@ -11,7 +11,7 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Mar 30, 2020
+:Last Modified: Jan ??, 2022
 :Version: 1.6
 
 .. contents::
@@ -209,7 +209,7 @@ Standard API
      *   Cursor or Array for backwards compatibility - here the driver MUST always
      *   return a Cursor.
      */
-    listIndexes(): Cursor;
+    listIndexes(comment: Optional<any>): Cursor;
   }
 
   interface CreateIndexOptions {
@@ -235,6 +235,16 @@ Standard API
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/createIndexes/
+     *
+     * @since MongoDB 4.4
+     */
+    comment: Optional<any>;
   }
 
   interface CreateIndexesOptions {
@@ -248,6 +258,16 @@ Standard API
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/dropIndexes/
+     *
+     * @since MongoDB 4.4
+     */
+    comment: Optional<any>;
   }
 
   interface DropIndexesOptions {
@@ -385,7 +405,7 @@ Index View API
     /**
      * Returns the index view for this collection.
      */
-    indexes(): IndexView;
+    indexes(comment: Optional<any>): IndexView;
   }
 
   interface IndexView extends Iterable<Document> {
@@ -814,7 +834,7 @@ Q: What does the commitQuorum option do?
 Q: Why would a user want to specify a non-default ``commitQuorum``?
   Like ``w: "majority"``, ``commitQuorum: "votingMembers"`` doesn't consider non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom getLastErrorMode name>``).
 
-  Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind. 
+  Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind.
 
 Q: What is the difference between write concern and ``commitQuorum``?
   While these two options share a lot in terms of how they are specified, they configure entirely different things. ``commitQuorum`` determines how much new replication lag an index build can tolerably introduce, but it says nothing of durability. Write concern specifies the durability requirements of an index build, but it makes no guarantees about introducing replication lag.
@@ -829,6 +849,8 @@ Q: Why does the driver manually throw errors if the ``commitQuorum`` option is s
 Changelog
 ---------
 
+?? JAN 2022:
+  - Added comment field to helper methods.
 17 SEP 2015:
   - Added ``partialFilterExpression`` attribute to ``IndexOptions`` in order to support partial indexes.
   - Fixed "provides" typo.

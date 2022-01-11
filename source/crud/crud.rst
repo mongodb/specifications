@@ -289,12 +289,12 @@ Read
     maxAwaitTimeMS: Optional<Int64>;
 
     /**
-     * Enables users to specify an arbitrary string to help trace the operation through
+     * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
-    comment: Optional<String>;
+    comment: Optional<any>;
 
     /**
      * The index to use for the aggregation. The hint does not apply to $lookup and $graphLookup stages.
@@ -358,6 +358,12 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     skip: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     */
+    comment: Optional<any>;
   }
 
   class EstimatedDocumentCountOptions {
@@ -390,6 +396,14 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/distinct/
+     */
+    comment: Optional<any>;
   }
 
   enum CursorType {
@@ -475,7 +489,7 @@ Read
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
-    comment: Optional<String>;
+    comment: Optional<any>;
 
     /**
      * Indicates the type of cursor to use. This value includes both
@@ -897,6 +911,12 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     */
+    comment: Optional<any>;
   }
 
   class InsertManyOptions {
@@ -986,6 +1006,14 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/update/
+     */
+    comment: Optional<any>;
   }
 
   class ReplaceOptions {
@@ -1044,6 +1072,14 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/update/
+     */
+    comment: Optional<any>;
   }
 
   class DeleteOptions {
@@ -1084,6 +1120,14 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see http://docs.mongodb.com/manual/reference/command/delete/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/delete/
+     */
+    comment: Optional<any>;
   }
 
 
@@ -1139,6 +1183,14 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/delete/
+     */
+    comment: Optional<any>;
   }
 
   class DeleteManyModel implements WriteModel {
@@ -1173,6 +1225,14 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/delete/
+     */
+    comment: Optional<any>;
   }
 
   class ReplaceOneModel implements WriteModel {
@@ -1224,6 +1284,14 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    comment: Optional<any>;
   }
 
   class UpdateOneModel implements WriteModel {
@@ -1286,6 +1354,14 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    comment: Optional<any>;
   }
 
   class UpdateManyModel implements WriteModel {
@@ -1348,6 +1424,14 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/update/
+     */
+    comment: Optional<any>;
   }
 
 
@@ -1802,6 +1886,14 @@ Find And Modify
      * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    comment: Optional<any>;
   }
 
   class FindOneAndReplaceOptions {
@@ -1898,6 +1990,14 @@ Find And Modify
      * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    comment: Optional<any>;
   }
 
   class FindOneAndUpdateOptions {
@@ -2002,6 +2102,14 @@ Find And Modify
      * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    comment: Optional<any>;
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2168,6 +2276,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-01-??: Add comment attribute to all helpers.
 * 2022-01-14: Add let to ReplaceOptions
 * 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
 * 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions

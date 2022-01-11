@@ -161,6 +161,105 @@
           ]
         }
       ]
+    },
+    {
+      "description": "aggregate with a string comment",
+      "operations": [
+        {
+          "name": "aggregate",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              }
+            ],
+            "comment": "comment"
+          },
+          "object": "collection0"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": "coll0",
+                  "pipeline": [
+                    {
+                      "$match": {
+                        "_id": {
+                          "$gt": 1
+                        }
+                      }
+                    }
+                  ],
+                  "comment": "comment"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "aggregate with a document comment",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4"
+        }
+      ],
+      "operations": [
+        {
+          "name": "aggregate",
+          "arguments": {
+            "pipeline": [
+              {
+                "$match": {
+                  "_id": {
+                    "$gt": 1
+                  }
+                }
+              }
+            ],
+            "comment": {
+              "content": "test"
+            }
+          },
+          "object": "collection0"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": "coll0",
+                  "pipeline": [
+                    {
+                      "$match": {
+                        "_id": {
+                          "$gt": 1
+                        }
+                      }
+                    }
+                  ],
+                  "comment": {
+                    "content": "test"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
