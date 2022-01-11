@@ -454,22 +454,19 @@ Establishing a Connection (Internal Implementation)
 Before a `Connection <#connection>`_ can be marked as either "available" or "in use", it
 must be established. This process involves performing the initial
 handshake, inspecting the value of ``maxWireVersion`` (to decide whether to
-use ``OP_MSG``(``maxWireVersion >= 6``) or ``OP_QUERY``(``maxWireVersion <6``)
-for future communications), handling OP_COMPRESSED, and performing
-authentication. It is necessary to inspect the value of ``maxWireVersion``
-because starting with MongoDB 6.0 using ``OP_QUERY`` for anything other than
-the handshake will result in an error. Once the driver has performed the
-handshake and inspected the value of ``maxWireVersion`` it MUST use
-``OP_MSG`` if supported.
+use ``OP_MSG`` or ``OP_QUERY`` for future communications), handling
+OP_COMPRESSED, and performing authentication.
 
 .. code::
 
     try:
       connect connection via TCP / TLS
       perform connection handshake
-      inspect "maxWireVersion"
       handle OP_COMPRESSED
-      perform connection authentication
+      if maxWireVersion >= 6: # MongoDB 3.6+
+        perform connection authentication via OP_MSG
+      else:
+        perform connection authentication via OP_QUERY
       emit ConnectionReadyEvent
       return connection
     except error:

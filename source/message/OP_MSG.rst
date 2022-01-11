@@ -53,11 +53,6 @@ Usage
 ``OP_MSG`` is only available in MongoDB 3.6 (``maxWireVersion >= 6``) and later.
 MongoDB drivers SHOULD perform the MongoDB handshake using ``OP_MSG`` if an API
 version was declared on the client, but MAY decide to use ``OP_QUERY``.
-However, once the driver has performed the MongoDB handshake, and it has
-inspected the value of ``maxWireVersion``, it must use either ``OP_MSG``
-(``maxWireVersion >= 6``) or ``OP_QUERY``(``maxWireVersion < 6``)
-respectively. Starting in MongoDB 6.0, using ``OP_QUERY`` for anything other
-than the MongoDB handshake will result in an error.
 
 If no API version was declared, drivers that have historically supported MongoDB
 3.4 and earlier MUST perform the handshake using ``OP_QUERY`` to determine if the
@@ -65,7 +60,8 @@ node supports ``OP_MSG``. Drivers that have only ever supported MongoDB 3.6 and
 newer MAY default to using ``OP_MSG``.
 
 If the node supports ``OP_MSG``, any and all messages MUST use ``OP_MSG``,
-optionally compressed with ``OP_COMPRESSED``.
+optionally compressed with ``OP_COMPRESSED``. This includes authentication
+messages starting in MongoDB 6.0.
 
 
 
