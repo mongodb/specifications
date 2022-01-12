@@ -171,6 +171,10 @@ handshake:
 #. If the server is of type RSArbiter, no authentication is possible and the
    handshake is complete.
 
+#. Inspect the value of ``maxWireVersion``. If the value is greater than or
+   equal to ``6``, then the driver MUST use ``OP_MSG`` for authentication.
+   Otherwise, it MUST use ``OP_QUERY``.
+
 #. If credentials exist:
 
    #. A driver MUST authenticate with all credentials provided to the
