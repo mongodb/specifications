@@ -442,10 +442,10 @@ session is in the "starting transaction" state, meaning no operations
 have been performed on this transaction, drivers MUST NOT run the
 commitTransaction command.
 
-commitTransaction is a retryable write command. Drivers MUST retry after
-commitTransaction fails with a retryable error according to the Retryable
-Writes Specification, regardless of whether retryWrites is set on the
-MongoClient or not.
+commitTransaction is a retryable write command. Drivers MUST retry once
+after commitTransaction fails with a retryable error, including a
+handshake network error, according to the Retryable Writes Specification,
+regardless of whether retryWrites is set on the MongoClient or not.
 
 When commitTransaction is retried, either by the driver's internal retry
 logic or explicitly by the user calling commitTransaction again, drivers MUST
@@ -494,8 +494,8 @@ abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry
 after abortTransaction fails with a retryable error according to the
-`Retryable Writes Specification`_., regardless of whether retryWrites is set
-on the MongoClient or not.
+`Retryable Writes Specification`_, including a handshake network error,
+regardless of whether retryWrites is set on the MongoClient or not.
 
 If the operation times out or fails with a non-retryable error, drivers MUST
 ignore all errors from the abortTransaction command. Errors from
@@ -843,7 +843,7 @@ the session as ``commitTransaction`` may be called multiple times.
 
 Pinning in Load Balancer Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
 See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
 
 

@@ -1,6 +1,6 @@
 description: "retryable writes handshake failures"
 
-schemaVersion: "1.6"
+schemaVersion: "1.0"
 
 runOnRequirements:
   - minServerVersion: "4.2"
@@ -12,8 +12,7 @@ createEntities:
       id: &client0 client0
       useMultipleMongoses: false
       observeEvents: [commandStartedEvent, connectionCheckOutStartedEvent]
-      uriOptions:
-        { retryReads: true, retryWrites: true, maxPoolSize: 5 }
+      uriOptions: { retryReads: true, retryWrites: true, maxPoolSize: 5 }
   - database:
       id: &database0 database0
       client: *client0
@@ -30,11 +29,9 @@ initialData:
       - { _id: 1, x: 11 }
 
 tests:
-  - description: "InsertOne succeeds after retryable writeConcernError"
+  - description: "InsertOne succeeds after retryable handshake error"
     operations:
-      -
-        # fail the next connection establishment
-        name: failPoint
+      - name: failPoint # fail the next connection establishment
         object: testRunner
         arguments:
           client: *client0
@@ -42,10 +39,9 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands: [ saslContinue ]
+              failCommands: [saslContinue]
               closeConnection: true
-      -
-        name: insertOne
+      - name: insertOne
         object: *collection0
         arguments:
           document: { _id: 2, x: 22 }
@@ -58,12 +54,6 @@ tests:
           - { connectionCheckOutStartedEvent: {} }
       - client: *client0
         events:
-          - commandStartedEvent:
-              command:
-                insert: *collectionName
-                documents: [{ _id: 2, x: 22 }]
-              commandName: insert
-              databaseName: *databaseName
           - commandStartedEvent:
               command:
                 insert: *collectionName

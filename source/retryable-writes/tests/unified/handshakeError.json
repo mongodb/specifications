@@ -1,6 +1,6 @@
 {
   "description": "retryable writes handshake failures",
-  "schemaVersion": "1.6",
+  "schemaVersion": "1.0",
   "runOnRequirements": [
     {
       "minServerVersion": "4.2",
@@ -57,7 +57,7 @@
   ],
   "tests": [
     {
-      "description": "InsertOne succeeds after retryable writeConcernError",
+      "description": "InsertOne succeeds after retryable handshake error",
       "operations": [
         {
           "name": "failPoint",
@@ -105,21 +105,6 @@
         {
           "client": "client0",
           "events": [
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "insert": "coll",
-                  "documents": [
-                    {
-                      "_id": 2,
-                      "x": 22
-                    }
-                  ]
-                },
-                "commandName": "insert",
-                "databaseName": "retryable-handshake-tests"
-              }
-            },
             {
               "commandStartedEvent": {
                 "command": {

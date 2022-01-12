@@ -1,5 +1,5 @@
 {
-  "description": "retryable reads handshake failures",
+  "description": "retryable commitTransaction on handshake errors",
   "schemaVersion": "1.0",
   "runOnRequirements": [
     {
@@ -9,6 +9,7 @@
         "sharded",
         "load-balanced"
       ],
+      "serverless": "forbid",
       "auth": true
     }
   ],
@@ -41,6 +42,12 @@
         "database": "database0",
         "collectionName": "coll"
       }
+    },
+    {
+      "session": {
+        "id": "session0",
+        "client": "client0"
+      }
     }
   ],
   "initialData": [
@@ -51,21 +58,13 @@
         {
           "_id": 1,
           "x": 11
-        },
-        {
-          "_id": 2,
-          "x": 22
-        },
-        {
-          "_id": 3,
-          "x": 33
         }
       ]
     }
   ],
   "tests": [
     {
-      "description": "InsertOne succeeds after retryable handshake network error",
+      "description": "CommitTransaction succeeds after handshake network error",
       "operations": [
         {
           "name": "failPoint",
@@ -79,8 +78,7 @@
               },
               "data": {
                 "failCommands": [
-                  "saslContinue",
-                  "dropCollection"
+                  "saslContinue"
                 ],
                 "closeConnection": true
               }
@@ -88,24 +86,22 @@
           }
         },
         {
-          "name": "dropCollection",
-          "object": "database0",
-          "expectError": {
-            "isError": true
+          "name": "startTransaction",
+          "object": "session0"
+        },
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "_id": 2,
+              "x": 22
+            }
           }
         },
         {
-          "name": "findOne",
-          "object": "collection0",
-          "arguments": {
-            "filter": {
-              "_id": 2
-            }
-          },
-          "expectResult": {
-            "_id": 2,
-            "x": 22
-          }
+          "name": "commitTransaction",
+          "object": "session0"
         }
       ],
       "expectEvents": [
@@ -127,13 +123,45 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "coll",
-                  "filter": {
-                    "_id": 2
-                  }
+                  "insert": "coll",
+                  "documents": [
+                    {
+                      "_id": 2,
+                      "x": 22
+                    }
+                  ],
+                  "startTransaction": true
                 },
+                "commandName": "insert",
                 "databaseName": "retryable-handshake-tests"
               }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "commitTransaction": 1,
+                  "lsid": "session0",
+                  "startTransaction": true
+                },
+                "commandName": "commitTransaction",
+                "databaseName": "admin"
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": [
+        {
+          "collectionName": "coll",
+          "databaseName": "retryable-handshake-tests",
+          "documents": [
+            {
+              "_id": 1,
+              "x": 11
+            },
+            {
+              "_id": 2,
+              "x": 22
             }
           ]
         }

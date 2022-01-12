@@ -1,10 +1,11 @@
-description: "retryable reads handshake failures"
+description: "retryable abortTransaction on handshake errors"
 
 schemaVersion: "1.0"
 
 runOnRequirements:
   - minServerVersion: "4.2"
     topologies: [replicaset, sharded, load-balanced]
+    serverless: "forbid"
     auth: true
 
 createEntities:
@@ -21,17 +22,18 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collectionName coll
+  - session:
+      id: &session0 session0
+      client: *client0
 
 initialData:
   - collectionName: *collectionName
     databaseName: *databaseName
     documents:
       - { _id: 1, x: 11 }
-      - { _id: 2, x: 22 }
-      - { _id: 3, x: 33 }
 
 tests:
-  - description: "InsertOne succeeds after retryable handshake network error"
+  - description: "AbortTransaction succeeds after handshake network error"
     operations:
       - name: failPoint # fail the next connection establishment
         object: testRunner
@@ -41,17 +43,19 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 2 }
             data:
-              failCommands: [saslContinue, dropCollection] # use saslContinue here to avoid SDAM errors
+              failCommands: [saslContinue]
               closeConnection: true
-      - name: dropCollection
-        object: *database0
-        expectError:
-          isError: true
-      - name: findOne
+
+      - name: startTransaction
+        object: *session0
+
+      - name: insertOne
         object: *collection0
         arguments:
-          filter: { _id: 2 }
-        expectResult: { _id: 2, x: 22 }
+          document: { _id: 2, x: 22 }
+
+      - name: abortTransaction
+        object: *session0
 
     expectEvents:
       - client: *client0
@@ -63,6 +67,22 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                find: *collectionName
-                filter: { _id: 2 }
+                insert: *collectionName
+                documents: [{ _id: 2, x: 22 }]
+                startTransaction: true
+              commandName: insert
               databaseName: *databaseName
+          - commandStartedEvent:
+              command:
+                abortTransaction: 1
+                lsid: *session0
+                startTransaction: true
+              commandName: abortTransaction
+              databaseName: admin
+
+    outcome:
+      - collectionName: *collectionName
+        databaseName: *databaseName
+        documents:
+          - { _id: 1, x: 11 }
+          - { _id: 2, x: 22 } # The write was still applied
