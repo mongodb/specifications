@@ -707,10 +707,13 @@ to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
 incrementing the generation / marking the pool as "paused". If the pool is
 already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared
 event.
+This method MUST NOT be used in load balancer mode.
 
 A Pool MUST also have a method of clearing all `Connections <#connection>`_ for a
 specific ``serviceId`` for use when in load balancer mode. This method increments
 the generation of the pool for that specific ``serviceId`` in the generation map.
+Note that this method MUST NOT transition the pool to the "paused" state and
+MUST NOT clear the WaitQueue.
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
@@ -1132,6 +1135,8 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
+:2021-01-12: Clarify "clear" method behavior in load balancer mode.
+
 :2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.
 
 :2020-09-24: Introduce maxConnecting requirement
