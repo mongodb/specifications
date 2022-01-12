@@ -163,7 +163,7 @@ Drivers SHOULD support retryability for the following operations:
 - Any driver that provides generic command runners for read commands (with logic
   to inherit a client-level read concerns) SHOULD implement retryability for the
   read-only command runner.
-- Handshake failures due to a network error.
+- Any error that occurs during a handshake. (ex. Auth, ShutdownInProgress)
 
 Most of the above methods are defined in the following specifications:
 
