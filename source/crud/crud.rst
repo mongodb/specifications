@@ -1032,6 +1032,18 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/update/
+     */
+    let: Optional<Document>;
   }
 
   class DeleteOptions {
@@ -2156,6 +2168,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-01-12: Add let to ReplaceOptions
 * 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
 * 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
 * 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
