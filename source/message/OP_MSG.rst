@@ -51,8 +51,8 @@ Usage
 -----
 
 ``OP_MSG`` is only available in MongoDB 3.6 (``maxWireVersion >= 6``) and later.
-MongoDB drivers SHOULD perform the MongoDB handshake using ``OP_MSG`` if an API
-version was declared on the client, but MAY decide to use ``OP_QUERY``.
+MongoDB drivers MUST perform the MongoDB handshake using ``OP_MSG`` if an API
+version was declared on the client.
 
 If no API version was declared, drivers that have historically supported MongoDB
 3.4 and earlier MUST perform the handshake using ``OP_QUERY`` to determine if the

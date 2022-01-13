@@ -70,13 +70,15 @@ Connection handshake
 --------------------
 
 MongoDB uses the ``hello`` or ``isMaster`` commands for handshakes and topology
-monitoring. ``hello`` is the modern and preferred command. ``isMaster`` is referred
-to as "legacy hello" and is maintained for backwards compatibility with servers
+monitoring. ``hello`` is the modern and preferred command. ``hello`` must
+always be sent using the ``OP_MSG`` protocol. ``isMaster`` is referred to as
+"legacy hello" and is maintained for backwards compatibility with servers
 that do not support the ``hello`` command.
 
 If a `server API version <../versioned-api/versioned-api.rst>`__ is requested,
-drivers MUST use the ``hello`` command for the initial handshake. If server API
-version is not requested, drivers MUST use legacy hello for the initial handshake
+drivers MUST use the ``hello`` command for the initial handshake and use the
+``OP_MSG`` protocol. If server API version is not requested, drivers MUST
+use legacy hello for the initial handshake, use the ``OP_QUERY`` protocol,
 and include ``helloOk: true`` in the handshake request.
 
 ASIDE: If the legacy handshake response includes ``helloOk: true``, then
@@ -464,3 +466,4 @@ Changes
 * 2019-11-13: Added section about supporting wrapping libraries
 * 2020-02-12: Added section about speculative authentication
 * 2021-04-27: Updated to define ``hello`` and legacy hello
+* 2021-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
