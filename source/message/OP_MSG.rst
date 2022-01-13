@@ -61,7 +61,7 @@ newer MAY default to using ``OP_MSG``.
 
 If the node supports ``OP_MSG``, any and all messages MUST use ``OP_MSG``,
 optionally compressed with ``OP_COMPRESSED``. Authentication messages MUST
-also use ``OP_MSG`` when it is supported, but MUST not use ``OP_COMPRESSED``.
+also use ``OP_MSG`` when it is supported, but MUST NOT use ``OP_COMPRESSED``.
 
 
 
