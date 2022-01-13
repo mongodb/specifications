@@ -621,7 +621,7 @@ Q & A
 
 Changelog
 =========
-
+- 2021-01-13 Clarify that ``OP_MSG`` must be used when using versioned API
 - 2021-12-16 Clarify that old drivers should default to OP_QUERY handshakes
 - 2021-04-20 Suggest using OP_MSG for initial handshake when using versioned API
 - 2021-04-06 Updated to use hello and not writable primary
