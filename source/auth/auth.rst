@@ -1267,7 +1267,7 @@ Version History
 ===============
 
 Version 1.10.5 Changes
-    * Clarify that``OP_MSG`` must be used for authentication when it is
+    * Clarify that ``OP_MSG`` must be used for authentication when it is
       supported.
 
 Version 1.10.4 Changes
