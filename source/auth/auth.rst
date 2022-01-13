@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.4
+:Spec Version: 1.10.5
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2021-04-08
+:Last Modified: 2022-01-13
 
 .. contents::
 
@@ -1265,6 +1265,10 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 
 Version History
 ===============
+
+Version 1.10.5 Changes
+    * Clarify that``OP_MSG`` must be used for authentication when it is
+      supported.
 
 Version 1.10.4 Changes
     * Updated to use hello and legacy hello.
