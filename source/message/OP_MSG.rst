@@ -60,8 +60,8 @@ node supports ``OP_MSG``. Drivers that have only ever supported MongoDB 3.6 and
 newer MAY default to using ``OP_MSG``.
 
 If the node supports ``OP_MSG``, any and all messages MUST use ``OP_MSG``,
-optionally compressed with ``OP_COMPRESSED``. This includes authentication
-messages.
+optionally compressed with ``OP_COMPRESSED``. Authentication messages MUST
+also use ``OP_MSG`` when it is supported, but MUST not use ``OP_COMPRESSED``.
 
 
 
