@@ -296,7 +296,8 @@ versioned API. This is not covered in this specification.
 
 Change Log
 ==========
-
+* 2022-01-14: Require use of ``OP_MSG`` for initial step of handshake when
+  using the versioned API.
 * 2021-05-05: Require sending versioned API parameters with ``getMore`` and
   transaction-continuing commands.
 * 2021-04-20: Require using ``hello`` when using the versioned API.
