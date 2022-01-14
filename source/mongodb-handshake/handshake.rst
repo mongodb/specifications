@@ -466,4 +466,4 @@ Changes
 * 2019-11-13: Added section about supporting wrapping libraries
 * 2020-02-12: Added section about speculative authentication
 * 2021-04-27: Updated to define ``hello`` and legacy hello
-* 2021-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
+* 2022-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
