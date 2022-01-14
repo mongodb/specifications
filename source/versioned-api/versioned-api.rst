@@ -143,10 +143,8 @@ supported, or if the command does not support API versioning options. If the
 user does not declare an API version, the driver MUST NOT send any API
 versioning options to the server.
 
-This requirement applies to all command requests, regardless of whether they are
-sent using ``OP_MSG`` or ``OP_QUERY`` (e.g. during the initial handshake). For
-all other opcodes, including pre-command usage of ``OP_QUERY``, drivers MUST NOT
-attempt to send API version parameters to the server.
+If an API version is declared then the driver MUST use
+``OP_MSG`` for all messages, including the initial handshake.
 
 
 Command Syntax
@@ -177,8 +175,9 @@ Handshake behavior
 
 If an API version was declared, drivers MUST NOT use the legacy hello command
 during the initial handshake or afterwards. Instead, drivers MUST use the
-``hello`` command exclusively. If the server does not support ``hello``, the
-server description MUST reflect this with an ``Unknown`` server type.
+``hello`` command exclusively and use the ``OP_MSG`` protocol.
+If the server does not support ``hello``, the server description MUST
+reflect this with an ``Unknown`` server type.
 
 
 Cursors
