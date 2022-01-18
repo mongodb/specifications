@@ -9,7 +9,7 @@ Load Balancer Support
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 2021-12-22
+:Last Modified: 2022-01-18
 
 .. contents::
 
@@ -426,6 +426,6 @@ be supported.
 
 Change Log
 ==========
-
+- 2022-01-18: Clarify that ``OP_MSG`` must be used in load balanced mode.
 - 2021-12-22: Clarify that pinned connections in transactions are exclusive.
 - 2021-10-14: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.
