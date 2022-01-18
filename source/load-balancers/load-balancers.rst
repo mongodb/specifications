@@ -164,8 +164,8 @@ Connection Establishment
 In the case of the driver having the :code:`loadBalanced=true` connection string option
 specified, every pooled connection MUST add a :code:`loadBalanced` field to the
 :code:`hello` command in its `handshake <../mongodb-handshake/handshake.rst#connection-handshake>`__.
-The value of the field MUST be :code:`true`. If :code:`loadBalanced` is
-specified then ``OP_MSG`` must be used for all steps of the connection
+The value of the field MUST be :code:`true`. If :code:`loadBalanced=true` is
+specified then ``OP_MSG`` MUST be used for all steps of the connection
 handshake.
 
 Example:
