@@ -76,7 +76,7 @@ always be sent using the ``OP_MSG`` protocol. ``isMaster`` is referred to as
 that do not support the ``hello`` command.
 
 If a `server API version <../versioned-api/versioned-api.rst>`__ is
-requested or ``loadBalanced: True``, drivers  MUST use the ``hello`` command
+requested or ``loadBalanced: True``, drivers MUST use the ``hello`` command
 for the initial handshake and use the ``OP_MSG`` protocol. If server API
 version is not requested and ``loadBalanced: False``, drivers MUST use legacy
 hello for the first message of the initial handshake with the ``OP_QUERY``
