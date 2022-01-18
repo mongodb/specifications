@@ -70,14 +70,19 @@ Connection handshake
 --------------------
 
 MongoDB uses the ``hello`` or ``isMaster`` commands for handshakes and topology
-monitoring. ``hello`` is the modern and preferred command. ``isMaster`` is referred
-to as "legacy hello" and is maintained for backwards compatibility with servers
+monitoring. ``hello`` is the modern and preferred command. ``hello`` must
+always be sent using the ``OP_MSG`` protocol. ``isMaster`` is referred to as
+"legacy hello" and is maintained for backwards compatibility with servers
 that do not support the ``hello`` command.
 
-If a `server API version <../versioned-api/versioned-api.rst>`__ is requested,
-drivers MUST use the ``hello`` command for the initial handshake. If server API
-version is not requested, drivers MUST use legacy hello for the initial handshake
-and include ``helloOk: true`` in the handshake request.
+If a `server API version <../versioned-api/versioned-api.rst>`__ is
+requested drivers MUST use the ``hello`` command
+for the initial handshake and use the ``OP_MSG`` protocol. If server API
+version is not requested drivers MUST
+use legacy hello for the first message of the initial handshake with the
+``OP_QUERY`` protocol (before switching to ``OP_MSG`` if the
+``maxWireVersion`` indicates compatibility), and include ``helloOk:true``in
+the handshake request.
 
 ASIDE: If the legacy handshake response includes ``helloOk: true``, then
 subsequent topology monitoring commands MUST use the ``hello`` command. If the
@@ -96,6 +101,50 @@ disconnect.
 MUST NOT contain handshake arguments. Any subsequent ``hello`` or legacy hello calls,
 such as the ones for topology monitoring purposes, MUST NOT include this argument.
 
+Example Implementation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Consider the following pseudo-code for establishing a new connection:
+
+.. code:: python
+
+ conn = Connection()
+ conn.connect()  # Connect via TCP / TLS
+ if versioned_api_configured:
+     cmd = {"hello": 1}
+     conn.supports_op_msg = True  # Send the initial command via OP_MSG.
+ else:
+     cmd = {"legacy hello": 1, "helloOk": 1}
+     conn.supports_op_msg = False  # Send the initial command via OP_QUERY.
+ cmd["client"] = client_metadata
+ if client_options.compressors:
+     cmd["compression"] = client_options.compressors
+ if client_options.load_balanced:
+     cmd["loadBalanced"] = True
+ creds = client_options.credentials
+ if creds:
+     # Negotiate auth mechanism and perform speculative auth. See Auth spec for details.
+     if not creds.has_mechanism_configured():
+         cmd["saslSupportedMechs"] = ...
+     cmd["speculativeAuthenticate"] = ...
+
+ reply = conn.send_command("admin", cmd)
+
+ if reply["maxWireVersion"] >= 6:
+     # Use OP_MSG for all future commands, including authentication.
+     conn.supports_op_msg = True
+
+ # Store the negotiated compressor, see OP_COMPRESSED spec.
+ if reply.get("compression"):
+     conn.compressor = reply["compression"][0]
+
+ # Perform connection authentication. See Auth spec for details.
+ negotiated_mechs = reply.get("saslSupportedMechs")
+ speculative_auth = reply.get("speculativeAuthenticate")
+ conn.authenticate(creds, negotiated_mechs, speculative_auth)
+
+Hello Command
+~~~~~~~~~~~~~
 
 The initial handshake, as of MongoDB 3.4, supports a new argument, ``client``,
 provided as a BSON object. This object has the following structure::
@@ -464,3 +513,4 @@ Changes
 * 2019-11-13: Added section about supporting wrapping libraries
 * 2020-02-12: Added section about speculative authentication
 * 2021-04-27: Updated to define ``hello`` and legacy hello
+* 2022-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
