@@ -163,8 +163,10 @@ Connection Establishment
 
 In the case of the driver having the :code:`loadBalanced=true` connection string option
 specified, every pooled connection MUST add a :code:`loadBalanced` field to the
-:code:`hello` or legacy hello command in its `handshake <../mongodb-handshake/handshake.rst#connection-handshake>`__.
-The value of the field MUST be :code:`true`.
+:code:`hello` command in its `handshake <../mongodb-handshake/handshake.rst#connection-handshake>`__.
+The value of the field MUST be :code:`true`. If :code:`loadBalanced` is
+specified then ``OP_MSG`` must be used for all steps of the connection
+handshake.
 
 Example:
 
@@ -263,7 +265,7 @@ Initial Handshake Errors
 
 When establishing a new connection in load balanced mode, drivers MUST NOT perform SDAM
 error handling for any errors that occur before the MongoDB Handshake
-(i.e. :code:`hello` or legacy hello command) is complete. Errors during the MongoDB
+(i.e. :code:`hello` command) is complete. Errors during the MongoDB
 Handshake MUST also be ignored for SDAM error handling purposes. Once the initial
 handshake is complete, the connection MUST determine its generation number based
 on the :code:`serviceId` field in the handshake response. Any errors that occur
@@ -308,7 +310,7 @@ All services which terminate TLS MUST be configured to return a TLS certificate 
 which matches the hostname the client is connecting to.
 
 All services behind a load balancer that have been started with the aforementioned option MUST
-add a top level :code:`serviceId` field to their response to the :code:`hello` or legacy hello
+add a top level :code:`serviceId` field to their response to the :code:`hello`
 command. This field MUST be a BSON :code:`ObjectId` and SHOULD NOT change while the service is running.
 When a driver is configured to not be in load balanced mode and the service is configured behind
 a load balancer, the service MAY return an error from the driver's :code:`hello` command that
@@ -342,7 +344,7 @@ Why explicitly opt-in to this behaviour instead of letting mongos inform the dri
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Other versions of this design proposed a scheme in which the application does not have to opt-in to
-load balanced mode. Instead, the server would send a special field in :code:`hello` and legacy hello
+load balanced mode. Instead, the server would send a special field in :code:`hello`
 command responses to indicate that it was running behind a load balancer and the driver would change
 its behavior accordingly. We opted to take an approach that required code changes instead because
 load balancing changes driver behavior in ways that could cause unexpected application errors, so
