@@ -293,9 +293,9 @@ Fields:
 
 * type: a `TopologyType`_ enum value. See `initial TopologyType`_.
 * setName: the replica set name. Default null.
-* maxSetVersion: an integer or null. The largest setVersion ever reported by
-  a primary. Default null.
 * maxElectionId: an ObjectId or null. The largest electionId ever reported by
+  a primary. Default null.
+* maxSetVersion: an integer or null. The largest setVersion ever reported by
   a primary. Default null.
 * servers: a set of ServerDescription instances.
   Default contains one server: "localhost:27017", ServerType Unknown.
@@ -350,10 +350,10 @@ Fields:
   The client `monitors all three types of servers`_ in a replica set.
 * (=) tags: map from string to string. Default empty.
 * (=) setName: string or null. Default null.
-* (=) setVersion: integer or null. Default null.
 * (=) electionId: an ObjectId, if this is a MongoDB 2.6+ replica set member that
-  believes it is primary. See `using setVersion and electionId to detect stale primaries`_.
+  believes it is primary. See `using electionId and setVersion to detect stale primaries`_.
   Default null.
+* (=) setVersion: integer or null. Default null.
 * (=) primary: an address. This server's opinion of who the primary is.
   Default null.
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
@@ -1101,29 +1101,38 @@ updateRSFromPrimary
         checkIfHasPrimary()
         return
 
-    if description.setVersion is not null and description.electionId is not null:
+    if description.electionId is not null and description.setVersion is not null:
         # Election ids are ObjectIds, see
         # "using setVersion and electionId to detect stale primaries"
         # for comparison rules.
-        if (topologyDescription.maxSetVersion is not null and
-            topologyDescription.maxElectionId is not null and (
-                topologyDescription.maxSetVersion > description.setVersion or (
-                    topologyDescription.maxSetVersion == description.setVersion and
-                    topologyDescription.maxElectionId > description.electionId
+        if (
+            topologyDescription.maxElectionId is not null
+            and topologyDescription.maxSetVersion is not null
+            and (
+                # electionId change is checked first to align tuple ordering with RSM
+                topologyDescription.maxElectionId > description.electionId
+                or (
+                    # If there is no difference in electionId, we check ordering based on setVersion
+                    topologyDescription.maxElectionId == description.electionId
+                    and topologyDescription.maxSetVersion > description.setVersion
                 )
-            ):
-
+            )
+        ):
             # Stale primary.
             replace description with a default ServerDescription of type "Unknown"
             checkIfHasPrimary()
             return
 
+    if description.electionId is not null and (
+        topologyDescription.maxElectionId is null
+        or description.electionId > topologyDescription.maxElectionId
+    ):
         topologyDescription.maxElectionId = description.electionId
 
-    if (description.setVersion is not null and
-        (topologyDescription.maxSetVersion is null or
-            description.setVersion > topologyDescription.maxSetVersion)):
-
+    if description.setVersion is not null and (
+        topologyDescription.maxSetVersion is null
+        or description.setVersion > topologyDescription.maxSetVersion
+    ):
         topologyDescription.maxSetVersion = description.setVersion
 
     for each server in topologyDescription.servers:
@@ -1159,10 +1168,10 @@ updateRSFromPrimary
 
   See `replica set monitoring with and without a primary`_.
 
-  If the server is primary with an obsolete setVersion or electionId, it is
+  If the server is primary with an obsolete electionId or setVersion, it is
   likely a stale primary that is going to step down. Mark it Unknown and let periodic
   monitoring detect when it becomes secondary. See
-  `using setVersion and electionId to detect stale primaries`_.
+  `using electionId and setVersion to detect stale primaries`_.
 
   A note on checking "me": Unlike `updateRSWithPrimaryFromMember`, there is no need to remove the server if the address is not equal to
   "me": since the server address will not be a member of either "hosts", "passives", or "arbiters", the server will already have been
@@ -1960,7 +1969,7 @@ list are removed.
 
 .. _stale primaries:
 
-Using setVersion and electionId to detect stale primaries
+Using electionId and setVersion to detect stale primaries
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Replica set members running MongoDB 2.6.10+ or 3.0+ include an integer called
@@ -1971,13 +1980,17 @@ protocol versions; electionIds from one protocol version must not be compared
 to electionIds from a different protocol.
 
 Because protocol version changes require replica set reconfiguration,
-clients use the tuple (setVersion, electionId) to detect stale primaries.
+clients use the tuple (electionId, setVersion) to detect stale primaries.
+The tuple order comparison MUST be checked in the order of electionId followed
+by setVersion since that order of comparison is guaranteed monotonicity.
 
-The client remembers the greatest setVersion and electionId reported by a primary,
+The client remembers the greatest electionId and setVersion reported by a primary,
 and distrusts primaries from older setVersions or from the same setVersion
 but with lesser electionIds.
-It compares setVersions as integer values.
-It compares electionIds as 12-byte big-endian integers.
+
+- It compares electionIds as 12-byte sequence i.e. memory comparison.
+- It compares setVersions as integer values.
+
 This prevents the client from oscillating
 between the old and new primary during a split-brain period,
 and helps provide read-your-writes consistency with write concern "majority"
@@ -2018,15 +2031,18 @@ reads with WriteConcern Majority and ReadPreference Primary."
 Detecting a stale primary
 `````````````````````````
 
-To prevent this scenario, the client uses setVersion and electionId to
+To prevent this scenario, the client uses electionId and setVersion to
 determine which primary was elected last. In this case, it would not consider
-A primary, nor read from it, after receiving B's hello or legacy hello response with the
-same setVersion and a greater electionId.
+"A" a primary, nor read from it because server B will have a greater electionId
+but the same setVersion.
 
 Monotonicity
 ````````````
 
-The electionId is an ObjectId compared bytewise in big-endian order.
+The electionId is an ObjectId compared bytewise in order.
+
+(ie. 000000000000000000000001 > 000000000000000000000000, FF0000000000000000000000 > FE0000000000000000000000 etc.)
+
 In some server versions, it is monotonic with respect
 to a particular servers' system clock, but is not globally monotonic across
 a deployment.  However, if inter-server clock skews are small, it can be
@@ -2433,6 +2449,8 @@ Bernie Hackett gently oversaw the specification process.
 
 Changes
 -------
+
+2021-01-17: Require clients to compare (electionId, setVersion) tuples.
 
 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 
