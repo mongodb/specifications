@@ -849,8 +849,6 @@ Q: Why does the driver manually throw errors if the ``commitQuorum`` option is s
 Changelog
 ---------
 
-?? JAN 2022:
-  - Added comment field to helper methods.
 17 SEP 2015:
   - Added ``partialFilterExpression`` attribute to ``IndexOptions`` in order to support partial indexes.
   - Fixed "provides" typo.
@@ -872,3 +870,5 @@ Changelog
   - Added options types to various helpers
   - Introduced ``commitQuorum`` option
   - Added deprecation message for ``background`` option.
+?? JAN 2022:
+  - Added comment field to helper methods.

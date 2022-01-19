@@ -101,7 +101,7 @@ Comment
 -------
 
 MongoDB 4.4 introduced a ``comment``  option to the ``listDatabases``
-command. This option Enables users to specify an arbitrary comment
+command. This option enables users to specify an arbitrary comment
 to help trace the operation through the database profiler, currentOp and logs.
 The default is to not send a value.
 
@@ -186,7 +186,8 @@ Older versions of the server that do not support the ``nameOnly`` option for the
 drivers SHOULD always specify the ``nameOnly`` option when they only intend to
 access database names from the ``listDatabases`` command result.
 
-Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method.
+Drivers SHOULD support the ``filter``, ``authorizedDatabases`` and ``comment``
+options when implementing this method.
 
 Enumerating MongoDatabase Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,7 +204,8 @@ MongoDatabase through MongoClient (e.g. read preference, write concern).
 Drivers SHOULD specify the ``nameOnly`` option when executing the
 ``listDatabases`` command for this method.
 
-Drivers SHOULD support the ``filter`` and ``authorizedDatabases`` options when implementing this method.
+Drivers SHOULD support the ``filter``, ``authorizedDatabases`` and ``comment``
+options when implementing this method.
 
 Replica Sets
 ------------

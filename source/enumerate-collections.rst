@@ -131,7 +131,7 @@ document::
     $ db.runCommand( { listCollections: 1, cursor : { batchSize: 25 } } );
 
 MongoDB 4.4 introduced a ``comment``  option to the ``listCollections``
-database command. This option Enables users to specify an arbitrary comment
+database command. This option enables users to specify an arbitrary comment
 to help trace the operation through the database profiler, currentOp and logs.
 The default is to not send a value.
 

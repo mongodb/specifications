@@ -901,5 +901,5 @@ Changelog
 | 2021-09-01 | Clarified that server selection during resumption should   |
 |            | respect normal server selection rules.                     |
 +------------+------------------------------------------------------------+
-| 2022-01-?? | Changed ``comment`` to be of any type.                     |
+| 2022-01-?? | Added ``comment`` to ``ChangeStreamOptions``.              |
 +------------+------------------------------------------------------------+
