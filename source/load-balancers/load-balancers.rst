@@ -3,13 +3,13 @@ Load Balancer Support
 =====================
 
 :Spec Title: Load Balancer Support
-:Spec Version: 1.0.0
+:Spec Version: 1.0.1
 :Author: Durran Jordan
 :Advisors: Jeff Yemin, Divjot Arora, Andy Schwerin, Cory Mintz
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 5.0
-:Last Modified: 2021-04-06
+:Last Modified: 2021-12-22
 
 .. contents::
 
@@ -235,6 +235,8 @@ to a single connection ensures that all commands in the transaction target the s
 service behind the load balancer. The rules for pinning to a connection and releasing
 a pinned connection are the same as those for server pinning in non-load balanced sharded
 transactions as described in `When to unpin <../transactions/transactions.rst#when-to-unpin>`__.
+Drivers MUST NOT use the same connection for two concurrent transactions run under different
+sessions from the same client.
 
 Connection Tracking
 ^^^^^^^^^^^^^^^^^^^
@@ -423,4 +425,5 @@ be supported.
 Change Log
 ==========
 
+- 2021-12-22: Clarify that pinned connections in transactions are exclusive.
 - 2021-10-14: Note that ``loadBalanced=true`` conflicts with ``srvMaxHosts``.

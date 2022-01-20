@@ -13,7 +13,7 @@ Driver Authentication
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -170,6 +170,10 @@ handshake:
 
 #. If the server is of type RSArbiter, no authentication is possible and the
    handshake is complete.
+
+#. Inspect the value of ``maxWireVersion``. If the value is greater than or
+   equal to ``6``, then the driver MUST use ``OP_MSG`` for authentication.
+   Otherwise, it MUST use ``OP_QUERY``.
 
 #. If credentials exist:
 
@@ -1269,6 +1273,10 @@ Version History
 
 Version 1.11.0 Changes
     * Require that timeouts be applied per the client-side operations timeout spec.
+
+Version 1.10.5 Changes
+    * Clarify that ``OP_MSG`` must be used for authentication when it is
+      supported.
 
 Version 1.10.4 Changes
     * Updated to use hello and legacy hello.
