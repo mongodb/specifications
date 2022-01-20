@@ -10,7 +10,7 @@ Client Side Operations Timeout
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: November 24, 2020
+:Last Modified: 2022-01-19
 :Version: 1.0.0
 
 .. contents::
@@ -26,7 +26,7 @@ user. This timeout applies to all of the work done to execute the operation,
 including but not limited to server selection, connection checkout, and
 server-side execution.
 
-META 
+META
 ====
 
 The keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
@@ -229,8 +229,8 @@ The following pieces of operation execution are considered blocking:
       #.  All messages sent over the socket as part of the TLS handshake
 
       #. OCSP verification - HTTP requests sent to OCSP responders.
-      
-   #. MongoDB handshake (i.e. initial connection ``isMaster``)
+
+   #. MongoDB handshake (i.e. initial connection ``hello``)
 
    #. Authentication
 
@@ -732,9 +732,9 @@ Monitoring threads do not use timeoutMS
 
 Using ``timeoutMS`` in the monitoring and RTT calculation threads would
 require another special case in the code that derives ``maxTimeMS`` from
-``timeoutMS`` because the awaitable ``isMaster`` requests sent to 4.4+
+``timeoutMS`` because the awaitable ``hello`` requests sent to 4.4+
 servers already have a ``maxAwaitTimeMS`` field. Adding ``maxTimeMS`` also
-does not help for non-awaitable ``isMaster`` commands because we expect them
+does not help for non-awaitable ``hello`` commands because we expect them
 to execute quickly on the server. The Server Monitoring spec already mandates
 that drivers set and dynamically update the read/write timeout of the
 dedicated connections used in monitoring threads, so we rely on that to time
@@ -923,5 +923,7 @@ for each database operation. This would mimic using
 ``timeoutMode=ITERATION`` for cursors.
 
 
-Changelog 
+Changelog
 =========
+
+:2021-01-19: Initial version.
