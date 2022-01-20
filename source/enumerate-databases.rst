@@ -9,7 +9,7 @@ Enumerating Databases
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.7
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -286,4 +286,4 @@ Changes
 
 * 2017-10-30: Support filter option in listDatabases command
 * 2019-11-20: Support authorizedDatabases option in listDatabases command
-* 2021-12-23: Require that timeouts be applied per the client-side operations timeout spec.
+* 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.

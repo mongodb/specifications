@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 :Version: 1.10
 
 .. contents::
@@ -897,6 +897,6 @@ Changelog
 | 2021-09-01 | Clarified that server selection during resumption should   |
 |            | respect normal server selection rules.                     |
 +------------+------------------------------------------------------------+
-| 2021-12-23 | Require that timeouts be applied per the client-side       |
+| 2022-01-19 | Require that timeouts be applied per the client-side       |
 |            | operations timeout specification                           |
 +------------+------------------------------------------------------------+

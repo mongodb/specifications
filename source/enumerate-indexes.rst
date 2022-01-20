@@ -12,7 +12,7 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 :Version: 0.6.0
 
 .. contents::
@@ -394,7 +394,7 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 
-0.6.0 - 2021-12-23
+0.6.0 - 2022-01-19
     Require that timeouts be applied per the client-side operations timeout spec.
 
 0.5.1 - 2021-04-06

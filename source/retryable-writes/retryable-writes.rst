@@ -10,7 +10,7 @@ Retryable Writes
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -819,7 +819,7 @@ infinite loop scenario, socket timeouts are only considered retryable once.
 Changes
 =======
 
-2021-12-23: Change the retry policy to retry indefinitely and special case socket timeouts.
+2022-01-19: Change the retry policy to retry indefinitely and special case socket timeouts.
 
 2021-11-02: Clarify that error labels are only specified in a top-level field of
 an error.

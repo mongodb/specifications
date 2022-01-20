@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -671,7 +671,7 @@ infinite loop scenario, socket timeouts are only considered retryable once.
 Changelog 
 ==========
 
-2021-12-23: Change the retry policy to retry indefinitely and special case socket timeouts
+2022-01-19: Change the retry policy to retry indefinitely and special case socket timeouts
 
 2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
 

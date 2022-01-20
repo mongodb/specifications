@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -1416,7 +1416,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
-:2021-12-23: Deprecate maxCommitTimeMS in favor of timeoutMS.
+:2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.
 :2020-04-07: Clarify that all abortTransaction attempts should unpin the session,
              even if the command is not executed.
 :2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.

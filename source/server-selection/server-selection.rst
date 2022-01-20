@@ -9,7 +9,7 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 :Version: 1.14.0
 
 .. contents::
@@ -1891,7 +1891,7 @@ window.
 ``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire protocol flag or
 ``$readPreference`` global command argument for replica set topology.
 
-2021-12-23: Require that timeouts be applied per the client-side operations timeout spec
+2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

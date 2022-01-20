@@ -9,7 +9,7 @@ Server Discovery And Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: 2.34
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 

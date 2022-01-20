@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -1159,7 +1159,7 @@ Changelog
 
 - 2020-02-20 Extracted server monitoring from SDAM into this new spec.
 
-- 2021-12-23 Add 90th percentile RTT tracking.
+- 2022-01-19 Add 90th percentile RTT tracking.
 
 .. Section for links.
 

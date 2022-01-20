@@ -11,7 +11,7 @@ URI Options Specification
 :Informed: drivers@
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 
 
 **Abstract**
@@ -533,7 +533,7 @@ this specification MUST be updated to reflect those changes.
 Changes
 -------
 
-- 2021-12-23 Add the timeoutMS option and deprecate some existing timeout options
+- 2022-01-19 Add the timeoutMS option and deprecate some existing timeout options
 - 2021-12-14 Add SOCKS5 options
 - 2021-11-08 Add maxConnecting option.
 - 2021-10-14 Add srvMaxHosts option. Merge headings discussing URI validation

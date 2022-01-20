@@ -9,7 +9,7 @@ GridFS Spec
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.2
-:Last Modified: 2021-12-23
+:Last Modified: 2022-01-19
 :Version: 1.5
 
 .. contents::
@@ -1218,4 +1218,4 @@ Changes
 - 2018-01-31 Deprecated MD5, and specified an option to disable MD5 until removed
 - 2018-07-05 Must not use 'filemd5'
 - 2020-01-17 Added allowDiskUse to GridFSFindOptions
-- 2021-12-23 Require that timeouts be applied per the client-side operations timeout spec
+- 2022-01-19 Require that timeouts be applied per the client-side operations timeout spec
