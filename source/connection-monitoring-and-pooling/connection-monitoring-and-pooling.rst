@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-11-08
-:Version: 1.5.2
+:Last Modified: 2022-01-19
+:Version: 1.6.0
 
 .. contents::
 
@@ -136,6 +136,8 @@ Additionally, Drivers that implement a Connection Pool MUST support the followin
 
     interface ConnectionPoolOptions {
       /**
+       *  NOTE: This option has been deprecated in favor of timeoutMS.
+       *
        *  The maximum amount of time a thread can wait for a connection
        *  to become available.
        *  If specified, MUST be a number >= 0.
@@ -246,7 +248,7 @@ A concept that represents pending requests for `Connections <#connection>`_. Whe
 
 -  **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
 -  **Ordered/Fair**: When `Connections <#connection>`_ are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
--  **Timeout aggressively:** If **waitQueueTimeoutMS** is set, members of a WaitQueue MUST timeout if they are enqueued for longer than waitQueueTimeoutMS. Members of a WaitQueue MUST timeout aggressively, and MUST leave the WaitQueue immediately upon timeout.
+-  **Timeout aggressively:** Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed timeout and MUST leave the WaitQueue immediately in this case.
 
 The implementation details of a WaitQueue are left to the driver.
 Example implementations include:
@@ -560,9 +562,10 @@ Checking Out a Connection
 A Pool MUST have a method that allows the driver to check out a `Connection`_.
 Checking out a `Connection`_ involves submitting a request to the WaitQueue and,
 once that request reaches the front of the queue, having the Pool find or create
-a `Connection`_ to fulfill that request. If waitQueueTimeoutMS is specified,
-then requests MUST time out after spending waitQueueTimeoutMS or longer in the
-WaitQueue without receiving a `Connection`_.
+a `Connection`_ to fulfill that request. Requests MUST be subject to a timeout
+which is computed per the rules in
+`Client Side Operations Timeout: Server Selection
+<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
 
 To service a request for a `Connection`_, the Pool MUST first iterate over the
 list of available `Connections <#connection>`_, searching for a non-perished one
@@ -764,6 +767,9 @@ thread SHOULD
 
 -  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
+- Apply timeouts to connection establishment per `Client Side Operations
+  Timeout: Background Connection Pooling
+  <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
 
 Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
 A Run MUST do as much work as readily available and then end instead of waiting for more work.
@@ -1135,6 +1141,10 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
+
+:2021-01-19: Require that timeouts be applied per the client-side operations
+             timeout specification.
+
 :2021-01-12: Clarify "clear" method behavior in load balancer mode.
 
 :2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.

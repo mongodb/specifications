@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2021-06-21
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -92,7 +92,8 @@ RTT
 ```
 
 Round trip time. The client's measurement of the duration of one hello or legacy hello call.
-The RTT is used to support `localThresholdMS`_ from the Server Selection spec.
+The RTT is used to support `localThresholdMS`_ from the Server Selection spec
+and `timeoutMS`_ from the `Client Side Operations Timeout Spec`_.
 
 
 Monitoring
@@ -549,8 +550,12 @@ Clients MUST ignore the response to the hello or legacy hello command when measu
 Errors encountered when running a hello or legacy hello command MUST NOT update the topology.
 (See `Why don't clients mark a server unknown when an RTT command fails?`_)
 
+Clients MUST use RTT samples to calculate an approximation for the 90th
+percentile RTT for each server using the `t-digest algorithm`_.
+
 When constructing a ServerDescription from a streaming hello or legacy hello response,
-clients MUST use the current roundTripTime from the RTT task.
+clients MUST use average and 90th percentile round trip times from the RTT
+task.
 
 See the pseudocode in the `RTT thread`_ section for an example implementation.
 
@@ -749,7 +754,7 @@ The event API here is assumed to be like the standard `Python Event
             # and legacy hello will be used for subsequent monitoring commands.
             helloOk = response.helloOk
 
-            return ServerDescription(response, rtt=rttMonitor.average())
+            return ServerDescription(response, rtt=rttMonitor.average(), ninetiethPercentileRtt=rttMonitor.ninetiethPercentile())
         except Exception as exc:
             close connection
             rttMonitor.reset()
@@ -813,6 +818,7 @@ on a dedicated connection, for example:
         helloOk = versionedApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
+        rttDigest = TDigest() # for 90th percentile RTT calculation
 
     def reset():
         with lock:
@@ -821,10 +827,15 @@ on a dedicated connection, for example:
     def addSample(rtt):
         with lock:
             movingAverage.update(rtt)
+            rttDigest.update(rtt)
 
     def average():
         with lock:
             return movingAverage.get()
+
+    def ninetiethPercentile():
+        with lock:
+            return rttDigest.percentile(90)
 
     def run():
         while this monitor is not stopped:
@@ -1148,6 +1159,8 @@ Changelog
 
 - 2020-02-20 Extracted server monitoring from SDAM into this new spec.
 
+- 2022-01-19 Add 90th percentile RTT tracking.
+
 .. Section for links.
 
 .. _Server Selection Spec: /source/server-selection/server-selection.rst
@@ -1167,3 +1180,6 @@ Changelog
 .. _OP_MSG exhaustAllowed flag: /source/message/OP_MSG.rst#exhaustAllowed
 .. _Connection Pool: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#Connection-Pool
 .. _Why synchronize clearing a server's pool with updating the topology?: server-discovery-and-monitoring.rst#why-synchronize-clearing-a-server-s-pool-with-updating-the-topology?
+.. _Client Side Operations Timeout Spec: /source/client-side-operations-timeout/client-side-operations-timeout.rst
+.. _timeoutMS: /source/client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS
+.. _t-digest algorithm: https://github.com/tdunning/t-digest

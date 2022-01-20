@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: April 6, 2021
-:Version: 0.6.1
+:Last Modified: 2022-01-19
+:Version: 0.8.0
 
 .. contents::
 
@@ -259,6 +259,13 @@ All methods:
 - MAY allow the ``cursor.batchSize`` option to be passed.
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
+- MUST apply timeouts per the `Client Side Operations Timeout
+  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  specification.
+
+All methods that return cursors MUST support the timeout options documented
+in `Client Side Operations Timeout: Cursors
+<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
 
 Getting Collection Names
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -443,6 +450,10 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.8.0 Changes
+    - Require that timeouts be applied per the client-side operations timeout spec.
+
 Version 0.7.0 Changes
     - Support ``authorizedCollections`` option in ``listCollections`` command.
 

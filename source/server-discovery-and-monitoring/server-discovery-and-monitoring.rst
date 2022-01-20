@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.33
-:Last Modified: 2021-06-29
+:Version: 2.34
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -330,6 +330,7 @@ Fields:
   from the address the client uses.
 * (=) error: information about the last error related to this server. Default null.
 * roundTripTime: the duration of the hello or legacy hello call. Default null.
+* ninetiethPercentileRoundTripTime: the 90th percentile RTT for the server. Default null.
 * lastWriteDate: a 64-bit BSON datetime or null.
   The "lastWriteDate" from the server's most recent hello or legacy hello response.
 * opTime: an opTime or null.
@@ -361,6 +362,9 @@ Fields:
 * (=) topologyVersion: A topologyVersion or null. Default null.
   The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
+* (=) iscryptd: boolean indicating if the server is a
+  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -660,9 +664,11 @@ it stores error information in the ServerDescription's error field.
 roundTripTime
 `````````````
 
-Drivers MUST record the server's `round trip time`_ (RTT)
-after each successful call to hello or legacy hello. The Server Selection Spec
+Drivers MUST record the server's `round trip time`_ (RTT) after each
+successful call to to hello or legacy hello. The Server Selection Spec
 describes how RTT is averaged and how it is used in server selection.
+Drivers MUST also record the server's 90th percentile RTT per
+`Server Monitoring (Measuring RTT)`_.
 
 If a hello or legacy hello call fails, the RTT is not updated.
 Furthermore, while a server's type is Unknown its RTT is null,
@@ -2509,6 +2515,8 @@ mark the server Unknown and clear the pool.
 
 2021-06-29: Updated to use modern terminology.
 
+2020-12-23: Add iscryptd and 90th percentile RTT fields to ServerDescription.
+
 .. Section for links.
 
 .. _hello or legacy hello: /source/mongodb-handshake/handshake.rst#terms
@@ -2523,3 +2531,4 @@ mark the server Unknown and clear the pool.
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Authentication spec: /source/auth/auth.rst
+.. _Server Monitoring (Measuring RTT): server-monitoring.rst#measuring-rtt

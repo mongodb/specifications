@@ -11,8 +11,8 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: Mar 30, 2020
-:Version: 1.6
+:Last Modified: 2022-01-19
+:Version: 1.7
 
 .. contents::
 
@@ -109,6 +109,17 @@ Index Name Generation
 When the client generates a name for an index based on the keys, The driver MUST generate the name as key-direction pairs, separated by underscores. For example, the key ``{ name: 1, dob: -1 }`` MUST generate an index name of ``name_1_dob_-1``.
 
 Note there is one exception to this rule on the ``_id`` field. The server uses an index name with no direction, ``_id_``, which cannot be overridden.
+
+Timeouts
+--------
+
+Drivers MUST enforce timeouts for all operations per the `Client Side
+Operations Timeout
+<client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification. All operations that return cursors MUST support the timeout
+options documented in the `Cursors
+<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__
+section of that specification.
 
 ------------
 Standard API
@@ -850,3 +861,5 @@ Changelog
   - Added options types to various helpers
   - Introduced ``commitQuorum`` option
   - Added deprecation message for ``background`` option.
+19 JAN 2022:
+  - Require that timeouts be applied per the client-side operations timeout spec.

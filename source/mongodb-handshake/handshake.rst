@@ -10,7 +10,7 @@ MongoDB Handshake
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 3.4
-:Last Modified: 2021-04-27
+:Last Modified: 2022-01-19
 
 
 .. contents::
@@ -95,7 +95,10 @@ The initial handshake MUST be performed on every socket to any and all servers
 upon establishing the connection to MongoDB, including reconnects of dropped
 connections and newly discovered members of a cluster. It MUST be the first
 command sent over the respective socket. If the command fails the client MUST
-disconnect.
+disconnect. Timeouts MUST be applied to this command per the `Client Side
+Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
 
 ``hello`` and legacy hello commands issued after the initial connection handshake
 MUST NOT contain handshake arguments. Any subsequent ``hello`` or legacy hello calls,
@@ -514,3 +517,4 @@ Changes
 * 2020-02-12: Added section about speculative authentication
 * 2021-04-27: Updated to define ``hello`` and legacy hello
 * 2022-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
+* 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.

@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: September 1, 2021
-:Version: 1.9.3
+:Last Modified: 2022-01-19
+:Version: 1.10
 
 .. contents::
 
@@ -660,6 +660,11 @@ Although the implementation of tailable awaitData cursors is not specified, this
 
 All drivers MUST document how users can iterate a change stream and receive *all* resume token updates. `Why do we allow access to the resume token to users`_ shows an example. The documentation MUST state that users intending to store the resume token should use this method to get the most up to date resume token.
 
+Timeouts
+^^^^^^^^
+
+Drivers MUST apply timeouts to change stream establishment, iteration, and resume attempts per `Client Side Operations Timeout: Change Streams <../client-side-operations-timeout/client-side-operations-timeout.rst#Change-Streams>`__.
+
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -891,4 +896,7 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2021-09-01 | Clarified that server selection during resumption should   |
 |            | respect normal server selection rules.                     |
++------------+------------------------------------------------------------+
+| 2022-01-19 | Require that timeouts be applied per the client-side       |
+|            | operations timeout specification                           |
 +------------+------------------------------------------------------------+

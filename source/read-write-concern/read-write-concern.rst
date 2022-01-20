@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2021-07-12
-:Version: 1.6.1
+:Last Modified: 2022-01-19
+:Version: 1.7
 
 .. contents::
 
@@ -314,6 +314,8 @@ deviation guidance, see the `CRUD specification
     /**
      * Corresponds to the "wtimeout" field in the WriteConcern document sent to
      * the server.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     wtimeoutMS: Optional<Int64>
   }
@@ -326,6 +328,13 @@ FSync SHOULD be considered deprecated.  Those drivers supporting the deprecated
 ``fsync`` option SHOULD treat ``fsync`` identically to ``journal`` in terms of
 consistency with ``w`` and whether a ``WriteConcern`` that specifies ``fsync``
 is acknowledged or unacknowledged.
+
+
+wtimeoutMS
+----------
+
+``wtimeoutMS`` MUST be considered deprecated in favor of `timeoutMS
+<client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`__.
 
 
 Server’s Default WriteConcern
@@ -716,3 +725,4 @@ Version History
   - 2021-04-07: Updated to use hello command.
   - 2021-06-15: Added "snapshot" to Readconcern level
   - 2021-07-12: Add missing commas after ReadConcernLevel enum values
+  - 2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.
