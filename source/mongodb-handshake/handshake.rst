@@ -81,7 +81,7 @@ for the initial handshake and use the ``OP_MSG`` protocol. If server API
 version is not requested and ``loadBalanced: False``, drivers MUST use legacy
 hello for the first message of the initial handshake with the ``OP_QUERY``
 protocol (before switching to ``OP_MSG`` if the ``maxWireVersion`` indicates
-compatibility), and include ``helloOk:true``in the handshake request.
+compatibility), and include ``helloOk:true`` in the handshake request.
 
 ASIDE: If the legacy handshake response includes ``helloOk: true``, then
 subsequent topology monitoring commands MUST use the ``hello`` command. If the
