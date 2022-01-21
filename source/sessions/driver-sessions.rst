@@ -1111,9 +1111,11 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
 
 13. To confirm that implicit sessions are only obtained after a successful connection checkout
 
-    * Create a MongoClient with a maxPoolSize of 1
-    * Run 3 operations in parallel
-    * Assert that the session count never rises above 1
+    * Create a MongoClient with maxPoolSize=1, and attach a command succeeded listener
+    * Initiate 3 concurrent operations, e.g. collection.insertOne(doc)
+    * Wait for all operations to complete
+    * Assert that all commands contain the same lsid
+
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
