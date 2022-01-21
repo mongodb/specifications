@@ -447,13 +447,7 @@ replica set or a sharded cluster supports cluster times.
         * assert that the command has a ``level`` field with a value matching the custom readConcern
         * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
 
-10. | When an unacknowledged write is executed in a causally consistent
-    | ``ClientSession`` the ``operationTime`` property of the ``ClientSession`` is
-    | not updated
-        * ``session = client.startSession(causalConsistency = true)``
-        * configure the collection to use ``{ w : 0 }`` unacknowledged writes
-        * ``collection.anyWriteOperation(session, ...)``
-        * assert ``session.operationTime`` does not have a value
+10. **Removed**
 
 11. | When connected to a deployment that does not support cluster times messages sent to
     | the server should not include ``$clusterTime``
