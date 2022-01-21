@@ -444,7 +444,9 @@ Check Whether a Deployment Supports Session). If sessions are supported, the
 driver MUST behave as if a new ``ClientSession`` was started just for this one
 operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
-required by this spec.
+required by this spec. Regardless, please consult the startSession section to
+replicate the required steps for creating a session.
+Drivers MUST create an implicit session only after successfully checking out a connection.
 
 MongoCollection changes
 =======================
@@ -485,6 +487,7 @@ driver MUST behave as if a new ``ClientSession`` was started just for this one
 operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec.
+Drivers MUST create an implicit session only after successfully checking out a connection.
 
 Sessions and Cursors
 ====================
@@ -495,6 +498,16 @@ commands for that cursor MUST be run using the same session ID.
 If a driver decides to run a ``KILLCURSORS`` command on the cursor, it also MAY be
 run using the same session ID. See the Exceptions below for when it is permissible to not
 include a session ID in a ``KILLCURSORS`` command.
+
+Sessions and Connections
+========================
+A driver MUST only obtain an implicit session after it successfully checks out a connection.
+This limits the number of implicit sessions to never exceed the maximum connection pool size.
+The motivation for this behavior is to prevent many sessions from being created in a scenario
+where only a limited number are actually needed to execute operations.
+
+This only applies to implicit sessions, explicit sessions should not be modified
+to be bound by connection checkout in this way.
 
 How to Check Whether a Deployment Supports Sessions
 ===================================================
@@ -547,7 +560,7 @@ to the server:
   the server at the other end of this connection supports sessions. This scenario
   will only be a problem until the next heartbeat against that server.
 
-These race conditions are particulary insidious when the driver decides to
+These race conditions are particularly insidious when the driver decides to
 start an implicit session based on the conclusion that sessions are supported.
 We don't want existing applications that don't use explicit sessions to fail
 when using implicit sessions.
@@ -836,7 +849,7 @@ executing any command with a ``ClientSession``, the driver MUST mark the
 associated ``ServerSession`` as dirty. Dirty server sessions are discarded
 when returned to the server session pool. It is valid for a dirty session to be
 used for subsequent commands (e.g. an implicit retry attempt, a later command
-in a bulk write, or a later operation on an explict session), however, it MUST
+in a bulk write, or a later operation on an explicit session), however, it MUST
 remain dirty for the remainder of its lifetime regardless if later commands
 succeed.
 
@@ -1087,7 +1100,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * In the parent, create a ClientSession and assert its lsid is the same.
     * In the child, create a ClientSession and assert its lsid is different.
 
-12 For drivers that support forking, test that existing sessions are not checked
+12. For drivers that support forking, test that existing sessions are not checked
    into a cleared pool.  E.g.,
 
     * Create ClientSession
@@ -1095,6 +1108,12 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * Fork
     * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
     * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
+
+13. To confirm that implicit sessions are only obtained after a successful connection checkout
+
+    * Create a MongoClient with a maxPoolSize of 1
+    * Run 3 operations in parallel
+    * Assert that the session count never rises above 1
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
@@ -1269,3 +1288,4 @@ Change log
 :2021-04-08: Updated to use hello and legacy hello
 :2021-04-08: Adding in behaviour for load balancer mode.
 :2020-05-26: Simplify logic for determining sessions support
+:2022-01-19: Implicit sessions MUST be obtained after connection checkout succeeds
