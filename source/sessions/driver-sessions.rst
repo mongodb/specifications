@@ -503,8 +503,8 @@ Sessions and Connections
 ========================
 A driver MUST only obtain an implicit session after it successfully checks out a connection.
 This limits the number of implicit sessions to never exceed the maximum connection pool size.
-The motivation for this behavior is to prevent many sessions from being created in a scenario
-where only a limited number are actually needed to execute operations.
+The motivation for this behavior is to prevent too many sessions from being created in a scenario
+where only a limited number are actually needed to execute operations (i.e. TooManyLogicalSessions error).
 
 This only applies to implicit sessions, explicit sessions should not be modified
 to be bound by connection checkout in this way.
@@ -1260,6 +1260,21 @@ session because disconnects should be relatively rare and the server won't
 normally accumulate a large number of abandoned dirty sessions. Any abandoned
 sessions will be automatically cleaned up by the server after the
 configured ``logicalSessionTimeoutMinutes``.
+
+
+Why must driver's create an implicit session after successfully obtaining a connection from the pool?
+-----------------------------------------------------------------------------------------------------
+The problem that may occur is when the number of concurrent application requests are larger than the number of available connections,
+the driver may generate many more implicit sessions than connections.
+For example with maxPoolSize=1 and 100 threads, 100 implicit sessions may be created.
+This increases the load on the server since session state is cached in memory.
+In the worst case this kind of workload can hit the session limit and trigger TooManyLogicalSessions.
+
+In order to address this, drivers should check out an implicit session only after checking out a connection.
+This change will limit the number of implicit sessions to no greater than an application's maxPoolSize
+
+It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver could over allocate sessions.
+But those scenarios are extenuating and outside the scope of solving in this spec.
 
 Change log
 ==========
