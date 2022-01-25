@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.7.0
+:Spec Version: 1.8.0
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2022-01-19
+:Last Modified: 2022-01-25
 
 .. contents::
 
@@ -1416,6 +1416,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2022-01-25: Mention the additional case of a retryable handshake error
 :2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.
 :2020-04-07: Clarify that all abortTransaction attempts should unpin the session,
              even if the command is not executed.

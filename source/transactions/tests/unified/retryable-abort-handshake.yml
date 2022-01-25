@@ -1,6 +1,6 @@
 description: "retryable abortTransaction on handshake errors"
 
-schemaVersion: "1.0"
+schemaVersion: "1.4"
 
 runOnRequirements:
   - minServerVersion: "4.2"
@@ -35,16 +35,6 @@ initialData:
 tests:
   - description: "AbortTransaction succeeds after handshake network error"
     operations:
-      - name: failPoint # fail the next connection establishment
-        object: testRunner
-        arguments:
-          client: *client0
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 2 }
-            data:
-              failCommands: [saslContinue]
-              closeConnection: true
 
       - name: startTransaction
         object: *session0
@@ -54,6 +44,17 @@ tests:
         arguments:
           document: { _id: 2, x: 22 }
 
+      - name: failPoint # fail the next connection establishment
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [saslContinue]
+              closeConnection: true
+
       - name: abortTransaction
         object: *session0
 
@@ -61,8 +62,11 @@ tests:
       - client: *client0
         eventType: cmap
         events:
-          - { connectionCheckOutStartedEvent: {} }
-          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} } # startTransaction
+          - { connectionCheckOutStartedEvent: {} } # insertOne
+          - { connectionCheckOutStartedEvent: {} } # failPoint
+          - { connectionCheckOutStartedEvent: {} } # abortTransaction
+          - { connectionCheckOutStartedEvent: {} } # abortTransaction retry
       - client: *client0
         events:
           - commandStartedEvent:

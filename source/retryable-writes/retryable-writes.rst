@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.7.0
+:Spec Version: 1.8.0
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-11-02
+:Last Modified: 2022-01-25
 
 .. contents::
 
@@ -803,7 +803,7 @@ inconsistent with the server and potentially confusing to developers.
 Changes
 =======
 
-2022-01-07: Note that drivers should retry handshake network failures.
+2022-01-25: Note that drivers should retry handshake network failures.
 
 2021-11-02: Clarify that error labels are only specified in a top-level field of
 an error.

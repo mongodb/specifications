@@ -3,7 +3,7 @@ Retryable Reads
 ===============
 
 :Spec Title: Retryable Reads
-:Spec Version: 1.2.1
+:Spec Version: 1.3.1
 :Author: Vincent Kam
 :Lead: Bernie Hackett
 :Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-04-26
+:Last Modified: 2022-01-25
 
 .. contents::
 
@@ -163,7 +163,7 @@ Drivers SHOULD support retryability for the following operations:
 - Any driver that provides generic command runners for read commands (with logic
   to inherit a client-level read concerns) SHOULD implement retryability for the
   read-only command runner.
-- Any error that occurs during a handshake. (ex. Auth, ShutdownInProgress)
+- Any error that occurs during a handshake (eg. Auth, ShutdownInProgress).
 
 Most of the above methods are defined in the following specifications:
 
@@ -473,7 +473,7 @@ Documentation
 
 3. Driver release notes MUST make it clear to users that they may need to adjust
    custom retry logic to prevent an application from inadvertently retrying for
-   too long (see `Backwards Compatibility <#backwards-compatibility>`__ for
+   too long (see `Backwards Compatibility<#backwards-compatibility>`__ for
    details).
 
 4. Drivers implementing retryability for their generic command runner for read
@@ -677,7 +677,7 @@ degraded performance can simply disable ``retryableReads``.
 Changelog
 ==========
 
-2022-01-07: Note that drivers should retry handshake network failures.
+2022-01-25: Note that drivers should retry handshake network failures.
 
 2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
 

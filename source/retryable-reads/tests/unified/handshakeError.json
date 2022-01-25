@@ -1,6 +1,6 @@
 {
   "description": "retryable reads handshake failures",
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.3",
   "runOnRequirements": [
     {
       "minServerVersion": "4.2",
@@ -65,7 +65,7 @@
   ],
   "tests": [
     {
-      "description": "InsertOne succeeds after retryable handshake network error",
+      "description": "find succeeds after retryable handshake network error",
       "operations": [
         {
           "name": "failPoint",
@@ -95,17 +95,19 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "filter": {
               "_id": 2
             }
           },
-          "expectResult": {
-            "_id": 2,
-            "x": 22
-          }
+          "expectResult": [
+            {
+              "_id": 2,
+              "x": 22
+            }
+          ]
         }
       ],
       "expectEvents": [
