@@ -1109,7 +1109,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
     * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
 
-13. To confirm that implicit sessions are only obtained after a successful connection checkout
+13. To confirm that implicit sessions only allocate their server session after a successful connection checkout
 
     * Create a MongoClient with maxPoolSize=1, and attach a command succeeded listener
     * Initiate 3 concurrent operations, e.g. collection.insertOne(doc)
@@ -1310,4 +1310,4 @@ Change log
 :2021-04-08: Updated to use hello and legacy hello
 :2021-04-08: Adding in behaviour for load balancer mode.
 :2020-05-26: Simplify logic for determining sessions support
-:2022-01-19: Implicit sessions MUST be obtained after connection checkout succeeds
+:2022-01-19: Implicit sessions MUST obtain server session after connection checkout succeeds
