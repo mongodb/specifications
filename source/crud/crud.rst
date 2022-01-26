@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-19
+:Last Modified: 2022-01-??
 
 .. contents::
 
@@ -305,6 +305,10 @@ Read
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     *
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     comment: Optional<any>;
@@ -377,6 +381,10 @@ Read
     /**
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for count command,
+     * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
   }
@@ -419,6 +427,10 @@ Read
     /**
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for distinct command,
+     * and providing one will result in a server-side error.
      *
      * @see http://docs.mongodb.com/manual/reference/command/distinct/
      */
@@ -502,9 +514,12 @@ Read
     collation: Optional<Document>;
 
     /**
-     * Attaches a comment to the query.
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */

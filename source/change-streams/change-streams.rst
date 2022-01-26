@@ -413,6 +413,10 @@ Driver API
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate
      * @note this is an aggregation command option
      */
