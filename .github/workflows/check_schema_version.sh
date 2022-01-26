@@ -7,13 +7,14 @@ exitCode=0
 function get_schema_version() {
   node << EOF
     const { readFileSync } = require('fs')
-    console.log(JSON.parse(readFileSync("./$1")).schemaVersion)
+    const { load } = require('js-yaml')
+    console.log(load(readFileSync("./$1", { encoding: 'utf-8' })).schemaVersion)
 EOF
 }
 
 function get_all_schemaVersion_defining_files () {
-  # look for all json files with 'schemaVersion": "[1-9]'
-  grep --include='*.json' --files-with-matches --recursive --word-regexp --regexp='schemaVersion": "[1-9]' source | \
+  # look for all yaml files with "schemaVersion: ["'][1-9]"
+  grep --include=*.{yml,yaml} --files-with-matches --recursive --word-regexp --regexp="schemaVersion: [\"'][1-9]" source | \
   # Remove the known invalid test files from 'unified-test-format/tests/invalid'
   grep --word-regexp --invert-match 'unified-test-format/tests/invalid' | \
   # sort the result!
