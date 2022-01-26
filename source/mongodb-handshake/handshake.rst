@@ -76,13 +76,12 @@ always be sent using the ``OP_MSG`` protocol. ``isMaster`` is referred to as
 that do not support the ``hello`` command.
 
 If a `server API version <../versioned-api/versioned-api.rst>`__ is
-requested drivers MUST use the ``hello`` command
+requested or ``loadBalanced: True``, drivers MUST use the ``hello`` command
 for the initial handshake and use the ``OP_MSG`` protocol. If server API
-version is not requested drivers MUST
-use legacy hello for the first message of the initial handshake with the
-``OP_QUERY`` protocol (before switching to ``OP_MSG`` if the
-``maxWireVersion`` indicates compatibility), and include ``helloOk:true``in
-the handshake request.
+version is not requested and ``loadBalanced: False``, drivers MUST use legacy
+hello for the first message of the initial handshake with the ``OP_QUERY``
+protocol (before switching to ``OP_MSG`` if the ``maxWireVersion`` indicates
+compatibility), and include ``helloOk:true`` in the handshake request.
 
 ASIDE: If the legacy handshake response includes ``helloOk: true``, then
 subsequent topology monitoring commands MUST use the ``hello`` command. If the
@@ -113,7 +112,7 @@ Consider the following pseudo-code for establishing a new connection:
 
  conn = Connection()
  conn.connect()  # Connect via TCP / TLS
- if versioned_api_configured:
+ if versioned_api_configured or client_options.load_balanced:
      cmd = {"hello": 1}
      conn.supports_op_msg = True  # Send the initial command via OP_MSG.
  else:
