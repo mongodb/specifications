@@ -80,7 +80,7 @@ SocketException                 9001
   .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
 
 MongoClient Configuration
---------------------------
+-------------------------
 
 This specification introduces the following client-level configuration option.
 
@@ -98,7 +98,7 @@ at the level of an individual read operation, collection object, or database
 object in "high", but MAY expose the option in "core."
 
 Naming Deviations
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 `As with retryable writes
 <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#retrywrites>`__,
@@ -494,14 +494,14 @@ within a MongoClient where retryable reads have been enabled, ensuring that
 reads are retried exactly once.
 
 Motivation for Change
-======================
+=====================
 
 Drivers currently have an API for the retryability of write operations but not
 for read operations. The driver API needs to be extended to include support for
 retryable behavior for read operations.
 
 Design Rationale
-=================
+================
 
 The design of this specification is based off the `Retryable Writes
 specification
@@ -518,7 +518,7 @@ See the `future work`_ section for potential upcoming changes
 to retry mechanics.
 
 Backwards Compatibility
-========================
+=======================
 
 The API changes to support retryable reads extend the existing API but do not
 introduce any backward breaking changes. Existing programs that do not make use
@@ -550,7 +550,7 @@ Rejected Designs
 
 
 Reference Implementation
-=========================
+========================
 
 The C# and Python drivers will provide the reference implementations. See
 `CSHARP-2429 <https://jira.mongodb.org/browse/CSHARP-2429>`__ and `PYTHON-1674
@@ -583,7 +583,7 @@ Future work
 .. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
 
 Q&A
-====
+===
 
 Why is retrying ``Cursor.getMore()`` not supported?
 ---------------------------------------------------
@@ -675,7 +675,7 @@ degraded performance can simply disable ``retryableReads``.
 
 
 Changelog
-==========
+=========
 
 2022-01-25: Note that drivers should retry handshake network failures.
 

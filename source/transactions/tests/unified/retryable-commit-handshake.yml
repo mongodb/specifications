@@ -50,10 +50,19 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 1 }
+            mode: { times: 2 }
             data:
-              failCommands: [saslContinue]
+              # use saslContinue here to avoid SDAM errors
+              # this failPoint itself will create a usable connection in the connection pool
+              # so we run a dropCollection (that also fails) in order to discard the connection
+              # before testing that abortTransaction gets retried
+              failCommands: [saslContinue, dropCollection]
               closeConnection: true
+
+      - name: dropCollection
+        object: *database0
+        expectError:
+          isError: true
 
       - name: commitTransaction
         object: *session0

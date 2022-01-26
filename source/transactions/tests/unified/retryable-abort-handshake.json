@@ -88,15 +88,23 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 1
+                "times": 2
               },
               "data": {
                 "failCommands": [
-                  "saslContinue"
+                  "saslContinue",
+                  "dropCollection"
                 ],
                 "closeConnection": true
               }
             }
+          }
+        },
+        {
+          "name": "dropCollection",
+          "object": "database0",
+          "expectError": {
+            "isError": true
           }
         },
         {
