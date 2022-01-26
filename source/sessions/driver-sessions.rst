@@ -446,7 +446,7 @@ operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec. Regardless, please consult the startSession section to
 replicate the required steps for creating a session.
-Drivers MUST create an implicit session only after successfully checking out a connection.
+Drivers MUST NOT consume a server session id until after the connection is checked out.
 
 MongoCollection changes
 =======================
@@ -1262,7 +1262,7 @@ sessions will be automatically cleaned up by the server after the
 configured ``logicalSessionTimeoutMinutes``.
 
 
-Why must driver's create an implicit session after successfully obtaining a connection from the pool?
+Why must driver's wait to consume a server session until after a connection is checked out?
 -----------------------------------------------------------------------------------------------------
 The problem that may occur is when the number of concurrent application requests are larger than the number of available connections,
 the driver may generate many more implicit sessions than connections.
@@ -1270,8 +1270,13 @@ For example with maxPoolSize=1 and 100 threads, 100 implicit sessions may be cre
 This increases the load on the server since session state is cached in memory.
 In the worst case this kind of workload can hit the session limit and trigger TooManyLogicalSessions.
 
-In order to address this, drivers should check out an implicit session only after checking out a connection.
-This change will limit the number of implicit sessions to no greater than an application's maxPoolSize
+In order to address this, drivers MUST NOT consume a server session id until after the connection is checked out.
+This change will limit the number of "in use" server sessions to no greater than an application's maxPoolSize.
+
+The language here is specific about obtaining a server session as opposed to creating the implicit session
+to permit drivers to take an implementation approach where the implicit session creation logic largely remains unchanged.
+Implicit session creation can be left as is, as long as the underlying server resource isn't allocated until it
+is needed and, known it will be used, after connection checkout succeeds.
 
 It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver could over allocate sessions.
 But those scenarios are extenuating and outside the scope of solving in this spec.
