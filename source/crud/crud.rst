@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: January 14, 2022
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -113,6 +113,17 @@ A non-exhaustive list of acceptable naming deviations are as follows:
 * Using "FindOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call it "FindArgs" or "FindParams". However, calling it "QueryOptions" would not be acceptable.
 * Using "isOrdered" rather than "ordered". Some languages idioms prefer the use of "is", "has", or "was" and this is acceptable.
 
+
+Timeouts
+--------
+
+Drivers MUST enforce timeouts for all operations per the `Client Side
+Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification. All operations that return cursors MUST support the timeout
+options documented in the `Cursors
+<../client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__
+section of that specification.
 
 ---
 API
@@ -271,6 +282,8 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     maxTimeMS: Optional<Int64>;
@@ -347,8 +360,10 @@ Read
 
     /**
      * The maximum amount of time to allow the operation to run.
-
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
 
@@ -372,6 +387,8 @@ Read
      * The maximum amount of time to allow the operation to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
   }
@@ -392,6 +409,8 @@ Read
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
@@ -564,6 +583,8 @@ Read
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
@@ -1851,6 +1872,8 @@ Find And Modify
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     maxTimeMS: Optional<Int64>;
@@ -1933,6 +1956,8 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -2045,6 +2070,8 @@ Find And Modify
 
     /**
      * The maximum amount of time to allow the query to run.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -2277,6 +2304,7 @@ Changes
 =======
 
 * 2022-01-??: Add comment attribute to all helpers.
+* 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
 * 2022-01-14: Add let to ReplaceOptions
 * 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
 * 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions

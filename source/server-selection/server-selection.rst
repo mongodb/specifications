@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2021-09-28
-:Version: 1.13.4
+:Last Modified: 2022-01-19
+:Version: 1.14.0
 
 .. contents::
 
@@ -276,10 +276,14 @@ mongos currently uses ``localThreshold`` and MAY continue to do so.
 serverSelectionTimeoutMS
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-This defines how long to block for server selection before throwing an
+This defines the maximum time to block for server selection before throwing an
 exception.  The default is 30,000 (milliseconds).  It MUST be configurable at
 the client level.  It MUST NOT be configurable at the level of a database
 object, collection object, or at the level of an individual query.
+
+The actual timeout for server selection can be less than
+``serverSelectionTimeoutMS``. See `Timeouts`_ for rules to compute the exact
+value.
 
 This default value was chosen to be sufficient for a typical server primary
 election to complete.  As the server improves the speed of elections, this
@@ -302,7 +306,7 @@ then either selects a server or raises an error.
 
 The serverSelectionTryOnce option MUST be true by default.
 If it is set false, then the driver repeatedly searches for an appropriate server
-for up to serverSelectionTimeoutMS milliseconds
+until the selection process times out
 (pausing `minHeartbeatFrequencyMS
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms>`_
 between attempts, as required by the `Server Discovery and Monitoring`_
@@ -790,6 +794,15 @@ Server selection varies depending on whether a client is
 multi-threaded/asynchronous or single-threaded because a single-threaded
 client cannot rely on the topology state being updated in the background.
 
+Timeouts
+~~~~~~~~
+
+Multi-threaded drivers and single-threaded drivers with
+``serverSelectionTryOnce`` set to false MUST enforce a timeout for the server
+selection process. The timeout MUST be computed as described in
+`Client Side Operations Timeout: Server Selection
+<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
+
 Multi-threaded or asynchronous server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -856,8 +869,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
 9. Request an immediate topology check, then block the server selection thread
    until the topology changes or until the server selection timeout has elapsed
 
-10. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
-    the selection start time, raise a `server selection error`_
+10. If server selection has timed out, raise a `server selection error`_
 
 11. Goto Step #2
 
@@ -869,20 +881,20 @@ Single-threaded drivers do not monitor the topology in the background.
 Instead, they MUST periodically update the topology during server selection
 as described below.
 
-When ``serverSelectionTryOnce`` is true, ``serverSelectionTimeoutMS`` has
+When ``serverSelectionTryOnce`` is true, server selection timeouts have
 no effect; a single immediate topology check will be done if the topology
 starts stale or if the first selection attempt fails.
 
 When ``serverSelectionTryOnce`` is false, then the server selection loops
 until a server is successfully selected or until
-``serverSelectionTimeoutMS`` is exceeded.
+the selection timeout is exceeded.
 
 Therefore, for single-threaded clients, the server selection algorithm is
 as follows:
 
 1. Record the server selection start time
 
-2. Record the maximum time as start time plus ``serverSelectionTimeoutMS``
+2. Record the maximum time as start time plus the computed timeout
 
 3. If the topology has not been scanned in ``heartbeatFrequencyMS``
    milliseconds, mark the topology stale
@@ -929,15 +941,15 @@ is no longer suitable, the driver MUST repeat the server selection
 algorithm and select a new server.
 
 Because single-threaded selection can do a blocking immediate check,
-``serverSelectionTimeoutMS`` is not a hard deadline.  The actual
+the server selection timeout is not a hard deadline.  The actual
 maximum server selection time for any given request can vary from
-``serverSelectionTimeoutMS`` minus ``minHeartbeatFrequencyMS`` to
-``serverSelectionTimeoutMS`` plus the time required for a blocking scan.
+the timeout minus ``minHeartbeatFrequencyMS`` to
+the timeout plus the time required for a blocking scan.
 
 Single-threaded drivers MUST document that when ``serverSelectionTryOne``
 is true, selection may take up to the time required for a blocking scan,
 and when ``serverSelectionTryOne`` is false, selection may take up to
-``serverSelectionTimeoutMS`` plus the time required for a blocking scan.
+the timeout plus the time required for a blocking scan.
 
 Topology type: Unknown
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -1245,7 +1257,7 @@ selection`_::
         client.lock.acquire()
 
         now = gettime()
-        endTime = now + serverSelectionTimeoutMS
+        endTime = now + computed server selection timeout
 
         while true:
             # The topologyDescription keeps track of whether any server has an
@@ -1306,7 +1318,7 @@ The following is pseudocode for `single-threaded server selection`_::
     def getServer(criteria):
         startTime = gettime()
         loopEndTime = startTime
-        maxTime = startTime + serverSelectionTimeoutMS/1000
+        maxTime = startTime + computed server selection timeout
         nextUpdateTime = topologyDescription.lastUpdateTime
                        + heartbeatFrequencyMS/1000:
 
@@ -1595,7 +1607,7 @@ A user of a single-threaded driver who prefers resilience in the face of topolog
 rather than short response times,
 can turn the "try once" mode off.
 Then driver rescans the topology every minHeartbeatFrequencyMS
-until a suitable server is found or the serverSelectionTimeoutMS expires.
+until a suitable server is found or the timeout expires.
 
 What is the purpose of socketCheckIntervalMS?
 ---------------------------------------------
@@ -1867,10 +1879,7 @@ selection rules.
 2020-10-10: Consider server load when selecting servers within the latency
 window.
 
-.. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
-   so it does no additional wire version checks related to maxStalenessSeconds.
-
-2021-4-7: Adding in behaviour for load balancer mode.
+2021-04-07: Adding in behaviour for load balancer mode.
 
 2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
 
@@ -1881,3 +1890,8 @@ window.
 2021-09-28: Note that 5.0+ secondaries support aggregate with write stages (e.g.
 ``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire protocol flag or
 ``$readPreference`` global command argument for replica set topology.
+
+2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
+
+.. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
+   so it does no additional wire version checks related to maxStalenessSeconds.

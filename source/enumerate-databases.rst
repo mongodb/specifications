@@ -117,6 +117,10 @@ need to change it. Do not break backwards compatibility when adding new methods.
 
 All methods SHOULD be implemented on the MongoClient object.
 
+All methods MUST apply timeouts per the `Client Side Operations Timeout
+<client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
+
 Enumerating Full Database Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -298,3 +302,4 @@ Changes
 * 2022-01-??: Support comment option in listDatabases command
 * 2017-10-30: Support filter option in listDatabases command
 * 2019-11-20: Support authorizedDatabases option in listDatabases command
+* 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.

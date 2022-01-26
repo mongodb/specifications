@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.6.0
+:Spec Version: 1.7.0
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2021-04-12
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -160,6 +160,8 @@ This section is an overview of the public API for transactions:
         /**
          * The maximum amount of time to allow a single commitTransaction
          * command to run.
+         *
+         * NOTE: This option is deprecated in favor of timeoutMS.
          */
         Optional<Int64> maxCommitTimeMS;
     }
@@ -305,6 +307,9 @@ preference on a transaction.
 maxCommitTimeMS
 ^^^^^^^^^^^^^^^
 
+NOTE: This option is deprecated in favor of `timeoutMS
+<../client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`_.
+
 The maximum amount of time to allow a single commitTransaction command to run.
 
 This option is only sent with the commitTransaction command(s) and only if the
@@ -437,12 +442,12 @@ session is in the "starting transaction" state, meaning no operations
 have been performed on this transaction, drivers MUST NOT run the
 commitTransaction command.
 
-commitTransaction is a retryable write command. Drivers MUST retry once
-after commitTransaction fails with a retryable error according to the
-Retryable Writes Specification, regardless of whether retryWrites is set
-on the MongoClient or not.
+commitTransaction is a retryable write command. Drivers MUST retry after
+commitTransaction fails with a retryable error according to the Retryable
+Writes Specification, regardless of whether retryWrites is set on the
+MongoClient or not.
 
-When commitTransaction is retried, either by the driver's internal retry-once
+When commitTransaction is retried, either by the driver's internal retry
 logic or explicitly by the user calling commitTransaction again, drivers MUST
 apply ``w: majority`` to the write concern of the commitTransaction command. If
 the transaction is using a `writeConcern`_ that is not the server default (i.e.
@@ -487,19 +492,18 @@ session is in the "starting transaction" state, meaning, no operations
 have been performed on this transaction, drivers MUST NOT run the
 abortTransaction command.
 
-abortTransaction is a retryable write command. Drivers MUST retry once
+abortTransaction is a retryable write command. Drivers MUST retry
 after abortTransaction fails with a retryable error according to the
 `Retryable Writes Specification`_., regardless of whether retryWrites is set
 on the MongoClient or not.
 
-After the retryable write attempt, drivers MUST ignore all errors from
-the abortTransaction command. Errors from abortTransaction are
-meaningless to the application because they cannot do anything to
-recover from the error. The transaction will ultimately be aborted by
-the server anyway either upon reaching an age limit or when the
-application starts a new transaction on this session, see `Drivers
-ignore all abortTransaction
-errors <#drivers-ignore-all-aborttransaction-errors>`__.
+If the operation times out or fails with a non-retryable error, drivers MUST
+ignore all errors from the abortTransaction command. Errors from
+abortTransaction are meaningless to the application because they cannot do
+anything to recover from the error. The transaction will ultimately be
+aborted by the server anyway either upon reaching an age limit or when the
+application starts a new transaction on this session, see `Drivers ignore all
+abortTransaction errors <#drivers-ignore-all-aborttransaction-errors>`__.
 
 endSession changes
 ^^^^^^^^^^^^^^^^^^
@@ -927,7 +931,7 @@ UnknownTransactionCommitResult
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The commitTransaction command is considered a retryable write. The
-driver will automatically retry the commitTransaction once after a
+driver will automatically retry the commitTransaction after a
 retryable error. Although this adds a layer of protection, the driver’s
 retry attempt of a commitTransaction may again fail with a retryable
 error. In that case, both the driver and the application do not know the
@@ -1412,6 +1416,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.
 :2020-04-07: Clarify that all abortTransaction attempts should unpin the session,
              even if the command is not executed.
 :2020-04-07: Specify that sessions should be unpinned once a transaction is aborted.
