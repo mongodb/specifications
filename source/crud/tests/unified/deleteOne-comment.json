@@ -39,7 +39,12 @@
           "_id": 1
         },
         {
-          "_id": 2
+          "_id": 2,
+          "name": "name"
+        },
+        {
+          "_id": 3,
+          "name": "name"
         }
       ]
     }
@@ -74,7 +79,8 @@
                     {
                       "q": {
                         "_id": 1
-                      }
+                      },
+                      "limit": 1
                     }
                   ],
                   "comment": "comment"
@@ -90,7 +96,12 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 2
+              "_id": 2,
+              "name": "name"
+            },
+            {
+              "_id": 3,
+              "name": "name"
             }
           ]
         }
@@ -127,7 +138,8 @@
                     {
                       "q": {
                         "_id": 1
-                      }
+                      },
+                      "limit": 1
                     }
                   ],
                   "comment": {
@@ -145,7 +157,12 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 2
+              "_id": 2,
+              "name": "name"
+            },
+            {
+              "_id": 3,
+              "name": "name"
             }
           ]
         }

@@ -29,7 +29,6 @@ tests:
   - description: "findOneAndReplace with string comment"
     operations:
       - name: findOneAndReplace
-
         object: *collection0
         arguments:
           filter: &filter
@@ -52,7 +51,6 @@ tests:
   - description: "findOneAndReplace with document comment"
     operations:
       - name: findOneAndReplace
-
         object: *collection0
         arguments:
           filter: *filter

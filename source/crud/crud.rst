@@ -935,6 +935,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class InsertOneOptions {
@@ -951,6 +961,10 @@ Insert, Update, Replace, Delete, and Bulk Writes
     /**
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
   }
@@ -972,6 +986,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * Defaults to true.
      */
     ordered: Boolean;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class UpdateOptions {
@@ -1047,6 +1071,10 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for update command,
+     * and providing one will result in a server-side error.
+     *
      * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     comment: Optional<any>;
@@ -1113,6 +1141,10 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for update command,
+     * and providing one will result in a server-side error.
+     *
      * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     comment: Optional<any>;
@@ -1160,6 +1192,10 @@ Insert, Update, Replace, Delete, and Bulk Writes
     /**
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for delete command,
+     * and providing one will result in a server-side error.
      *
      * @see http://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -1219,14 +1255,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
-
-    /**
-     * Enables users to specify an arbitrary comment to help trace the operation through
-     * the database profiler, currentOp and logs. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/delete/
-     */
-    comment: Optional<any>;
   }
 
   class DeleteManyModel implements WriteModel {
@@ -1261,14 +1289,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
-
-    /**
-     * Enables users to specify an arbitrary comment to help trace the operation through
-     * the database profiler, currentOp and logs. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/delete/
-     */
-    comment: Optional<any>;
   }
 
   class ReplaceOneModel implements WriteModel {
@@ -1320,14 +1340,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Enables users to specify an arbitrary comment to help trace the operation through
-     * the database profiler, currentOp and logs. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/update/
-     */
-    comment: Optional<any>;
   }
 
   class UpdateOneModel implements WriteModel {
@@ -1390,14 +1402,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Enables users to specify an arbitrary comment to help trace the operation through
-     * the database profiler, currentOp and logs. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/update/
-     */
-    comment: Optional<any>;
   }
 
   class UpdateManyModel implements WriteModel {
@@ -1460,14 +1464,6 @@ Bulk Write Models
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
-
-    /**
-     * Enables users to specify an arbitrary comment to help trace the operation through
-     * the database profiler, currentOp and logs. The default is to not send a value.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/update/
-     */
-    comment: Optional<any>;
   }
 
 

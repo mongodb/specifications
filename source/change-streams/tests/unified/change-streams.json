@@ -1,6 +1,14 @@
 {
   "description": "change-streams",
   "schemaVersion": "1.0",
+  "runOnRequirements": [
+    {
+      "topologies": [
+        "replicaset",
+        "sharded-replicaset"
+      ]
+    }
+  ],
   "createEntities": [
     {
       "client": {
@@ -37,10 +45,7 @@
       "description": "Test array truncation",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.7",
-          "topologies": [
-            "replicaset"
-          ]
+          "minServerVersion": "4.7"
         }
       ],
       "operations": [
@@ -119,10 +124,7 @@
       "description": "Test with document comment",
       "runOnRequirements": [
         {
-          "minServerVersion": "4.4",
-          "topologies": [
-            "replicaset"
-          ]
+          "minServerVersion": "4.4"
         }
       ],
       "operations": [
@@ -162,14 +164,31 @@
       ]
     },
     {
-      "description": "Test with string comment",
+      "description": "Test with document comment - pre 4.4",
       "runOnRequirements": [
         {
-          "topologies": [
-            "replicaset"
-          ]
+          "maxServerVersion": "4.2.99"
         }
       ],
+      "operations": [
+        {
+          "name": "createChangeStream",
+          "object": "collection0",
+          "arguments": {
+            "pipeline": [],
+            "comment": {
+              "name": "test1"
+            }
+          },
+          "expectError": {
+            "errorContains": "comment must be a string, not a object",
+            "isClientError": false
+          }
+        }
+      ]
+    },
+    {
+      "description": "Test with string comment",
       "operations": [
         {
           "name": "createChangeStream",

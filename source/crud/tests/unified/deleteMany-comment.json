@@ -39,7 +39,12 @@
           "_id": 1
         },
         {
-          "_id": 2
+          "_id": 2,
+          "name": "name2"
+        },
+        {
+          "_id": 3,
+          "name": "name3"
         }
       ]
     }
@@ -53,12 +58,14 @@
           "object": "collection0",
           "arguments": {
             "filter": {
-              "_id": 1
+              "_id": {
+                "$gt": 1
+              }
             },
             "comment": "comment"
           },
           "expectResult": {
-            "deletedCount": 1
+            "deletedCount": 2
           }
         }
       ],
@@ -73,8 +80,11 @@
                   "deletes": [
                     {
                       "q": {
-                        "_id": 1
-                      }
+                        "_id": {
+                          "$gt": 1
+                        }
+                      },
+                      "limit": 0
                     }
                   ],
                   "comment": "comment"
@@ -90,7 +100,7 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 2
+              "_id": 1
             }
           ]
         }
@@ -104,14 +114,16 @@
           "object": "collection0",
           "arguments": {
             "filter": {
-              "_id": 1
+              "_id": {
+                "$gt": 1
+              }
             },
             "comment": {
               "key": "value"
             }
           },
           "expectResult": {
-            "deletedCount": 1
+            "deletedCount": 2
           }
         }
       ],
@@ -126,8 +138,11 @@
                   "deletes": [
                     {
                       "q": {
-                        "_id": 1
-                      }
+                        "_id": {
+                          "$gt": 1
+                        }
+                      },
+                      "limit": 0
                     }
                   ],
                   "comment": {
@@ -145,7 +160,7 @@
           "databaseName": "crud-tests",
           "documents": [
             {
-              "_id": 2
+              "_id": 1
             }
           ]
         }

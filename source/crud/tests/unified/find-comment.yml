@@ -26,14 +26,12 @@ tests:
   - description: "find with string comment"
     operations:
       - name: find
-
         object: *collection0
         arguments:
           filter: &filter
             _id: 1
           comment: "comment"
-        expectResult:
-          - { _id: 1 }
+        expectResult: &expect_result
     expectEvents:
       - client: *client0
         events:
@@ -46,16 +44,13 @@ tests:
   - description: "find with document comment"
     runOnRequirements:
       - minServerVersion: "4.4"
-
     operations:
       - name: find
-
         object: *collection0
         arguments:
           filter: *filter
           comment: &comment { key: "value"}
-        expectResult:
-          - { _id: 1 }
+        expectResult: *expect_result
     expectEvents:
       - client: *client0
         events:

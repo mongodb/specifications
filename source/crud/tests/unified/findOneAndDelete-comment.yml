@@ -29,7 +29,6 @@ tests:
   - description: "findOneAndDelete with string comment"
     operations:
       - name: findOneAndDelete
-
         object: *collection0
         arguments:
           filter: &filter
@@ -50,7 +49,6 @@ tests:
   - description: "findOneAndDelete with document comment"
     operations:
       - name: findOneAndDelete
-
         object: *collection0
         arguments:
           filter: *filter
