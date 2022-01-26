@@ -13,16 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.x
       - name: Set up npm
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: lts/*
       - name: Install dependencies
-        run: |
-          npm install -g ajv-cli
+        run: npm install -g ajv-cli
       - name: Check unified format test files against schema
-        run: |
-          cd source/unified-test-format/tests && make
+        working-directory: source/unified-test-format/tests
+        run: make
+      - name: Check all unified tests schema version is valid
+        run: bash .github/workflows/check_schema_version.sh
