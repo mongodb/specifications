@@ -131,13 +131,18 @@ document::
     $ db.runCommand( { listCollections: 1, cursor : { batchSize: 25 } } );
 
 MongoDB 4.4 introduced a ``comment``  option to the ``listCollections``
-database command. This option enables users to specify an arbitrary comment
-to help trace the operation through the database profiler, currentOp and logs.
-The default is to not send a value.
+database command. This option enables users to specify a comment as an arbitrary
+BSON type to help trace the operation through the database profiler, currentOp
+and logs. The default is to not send a value.
 
 Example of usage of the comment option::
 
     $ db.runCommand({"listCollections": 1, "comment": "hi there"})
+
+Any comment set on a ``listCollections`` command is inherited by any subsequent
+``getMore`` commands run on the same ``cursor.id`` returned from the
+``listCollections`` command. Therefore, drivers MUST NOT attach the comment
+to subsequent getMore commands on a cursor.
 
 Filters
 -------
@@ -460,7 +465,7 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 
-Version 0.8.0 Changes
+Version 0.9.0 Changes
     Add ``comment`` option to ``listCollections`` command.
 
 Version 0.8.0 Changes

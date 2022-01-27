@@ -309,6 +309,11 @@ Read
      * Server versions prior to 4.4 only support string as comment,
      * and providing a non-string type will result in a server-side error.
      *
+     * Any comment set on a aggregate command is inherited by any subsequent
+     * getMore commands run on the same cursor.id returned from the
+     * aggregate command. Therefore, drivers MUST NOT attach the comment
+     * to subsequent getMore commands on a cursor.
+     *
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     comment: Optional<any>;
@@ -520,6 +525,11 @@ Read
      * The comment can be any valid BSON type for server versions 4.4 and above.
      * Server versions prior to 4.4 only support string as comment,
      * and providing a non-string type will result in a server-side error.
+     *
+     * Any comment set on a find command is inherited by any subsequent
+     * getMore commands run on the same cursor.id returned from the
+     * find command. Therefore, drivers MUST NOT attach the comment
+     * to subsequent getMore commands on a cursor.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */

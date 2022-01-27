@@ -101,8 +101,8 @@ Comment
 -------
 
 MongoDB 4.4 introduced a ``comment``  option to the ``listDatabases``
-command. This option enables users to specify an arbitrary comment
-to help trace the operation through the database profiler, currentOp and logs.
+command. This option enables users to specify a comment as an arbitrary
+BSON type to help trace the operation through the database profiler, currentOp and logs.
 The default is to not send a value.
 
 ::

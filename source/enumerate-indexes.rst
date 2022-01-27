@@ -142,14 +142,18 @@ document::
     $ db.runCommand( { listIndexes: 'collectionName', cursor : { batchSize: 25 } } );
 
 MongoDB 4.4 introduced a ``comment``  option to the ``listIndexes``
-database command. This option enables users to specify an arbitrary comment
-to help trace the operation through the database profiler, currentOp and logs.
+database command. This option enables users to specify a comment as an arbitrary
+BSON type to help trace the operation through the database profiler, currentOp and logs.
 The default is to not send a value.
 
 Example of usage of the comment option::
 
     $ db.runCommand({listIndexes: 'collectionName', comment: "hi there"})
 
+Any comment set on a ``listIndexes`` command is inherited by any subsequent
+``getMore`` commands run on the same ``cursor.id`` returned from the
+``listIndexes`` command. Therefore, drivers MUST NOT attach the comment
+to subsequent getMore commands on a cursor.
 
 Return types
 ~~~~~~~~~~~~
