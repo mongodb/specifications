@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-19
+:Last Modified: 2022-01-27
 
 .. contents::
 
@@ -822,7 +822,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @throws InvalidArgumentException if requests is empty
      * @throws BulkWriteException
      */
-    bulkWrite(requests: WriteModel[], options: Optional<BulkWriteOptions>): BulkWriteResult;
+    bulkWrite(requests: WriteModel[], options: Optional<BulkWriteOptions>): Optional<BulkWriteResult>;
 
     /**
      * Inserts the provided document. If the document is missing an identifier,
@@ -831,7 +831,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/insert/
      * @throws WriteException
      */
-    insertOne(document: Document, options: Optional<InsertOneOptions>): InsertOneResult;
+    insertOne(document: Document, options: Optional<InsertOneOptions>): Optional<InsertOneResult>;
 
     /**
      * Inserts the provided documents. If any documents are missing an identifier,
@@ -846,7 +846,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @throws InvalidArgumentException if documents is empty
      * @throws BulkWriteException
      */
-    insertMany(documents: Iterable<Document>, options: Optional<InsertManyOptions>): InsertManyResult;
+    insertMany(documents: Iterable<Document>, options: Optional<InsertManyOptions>): Optional<InsertManyResult>;
 
     /**
      * Deletes one document.
@@ -854,7 +854,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      * @throws WriteException
      */
-    deleteOne(filter: Document, options: Optional<DeleteOptions>): DeleteResult;
+    deleteOne(filter: Document, options: Optional<DeleteOptions>): Optional<DeleteResult>;
 
     /**
      * Deletes multiple documents.
@@ -862,7 +862,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      * @throws WriteException
      */
-    deleteMany(filter: Document, options: Optional<DeleteOptions>): DeleteResult;
+    deleteMany(filter: Document, options: Optional<DeleteOptions>): Optional<DeleteResult>;
 
     /**
      * Replaces a single document.
@@ -870,7 +870,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    replaceOne(filter: Document, replacement: Document, options: Optional<ReplaceOptions>): UpdateResult;
+    replaceOne(filter: Document, replacement: Document, options: Optional<ReplaceOptions>): Optional<UpdateResult>;
 
     /**
      * Updates one document.
@@ -878,7 +878,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
+    updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): Optional<UpdateResult>;
 
     /**
      * Updates multiple documents.
@@ -886,7 +886,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
+    updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): Optional<UpdateResult>;
   }
 
   class BulkWriteOptions {
@@ -1375,7 +1375,7 @@ Bulk Write Models
 Write Results
 ~~~~~~~~~~~~~
 
-The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value.
+The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return a optional results (e.g. ``Optional<BulkWriteResult>``) such that unacknowledged writes don't have a value and acknowledged writes do have a value.
 
 .. note::
     If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount member is not available when the write was unacknowledged. Check the acknowledged member to avoid this error."
@@ -1433,6 +1433,11 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 
   }
 
+  /**
+   * Note: this class is "NOT REQUIRED" since all of its fields are marked
+   * "NOT REQUIRED". Drivers that do not implement this class SHOULD use void
+   * as the return type for insertOne.
+   */
   class InsertOneResult {
 
     /**
@@ -1453,6 +1458,11 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 
   }
 
+  /**
+   * Note: this class is "NOT REQUIRED" since all of its fields are marked
+   * "NOT REQUIRED". Drivers that do not implement this class SHOULD use void
+   * as the return type for insertMany.
+   */
   class InsertManyResult {
 
     /**
@@ -1725,7 +1735,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndDelete(filter: Document, options: Optional<FindOneAndDeleteOptions>): Document;
+    findOneAndDelete(filter: Document, options: Optional<FindOneAndDeleteOptions>): Optional<Document>;
 
     /**
      * Finds a single document and replaces it, returning either the original or the replaced
@@ -1734,7 +1744,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndReplace(filter: Document, replacement: Document, options: Optional<FindOneAndReplaceOptions>): Document;
+    findOneAndReplace(filter: Document, replacement: Document, options: Optional<FindOneAndReplaceOptions>): Optional<Document>;
 
     /**
      * Finds a single document and updates it, returning either the original or the updated
@@ -1743,7 +1753,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndUpdate(filter: Document, update: (Document | Document[]), options: Optional<FindOneAndUpdateOptions>): Document;
+    findOneAndUpdate(filter: Document, update: (Document | Document[]), options: Optional<FindOneAndUpdateOptions>): Optional<Document>;
 
   }
 
@@ -2195,6 +2205,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-01-27: Use optional return types for write commands and findAndModify
 * 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
 * 2022-01-14: Add let to ReplaceOptions
 * 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
