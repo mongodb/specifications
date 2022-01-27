@@ -27,6 +27,7 @@ initialData: &initial_data
         x: 33
       - _id: 4
         x: 44
+
 tests:
   - description: 'BulkWrite with string comment'
     runOnRequirements:
@@ -53,6 +54,13 @@ tests:
                   _id: 3
           comment: &string_comment "comment"
         expectResult: &expect_results
+          deletedCount: 1
+          insertedCount: 1
+          insertedIds: { 0: 5 }
+          matchedCount: 2
+          modifiedCount: 2
+          upsertedCount: 0
+          upsertedIds: {  }
     expectEvents:
       - client: *client0
         events:

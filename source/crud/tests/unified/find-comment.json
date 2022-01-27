@@ -52,7 +52,11 @@
             },
             "comment": "comment"
           },
-          "expectResult": null
+          "expectResult": [
+            {
+              "_id": 1
+            }
+          ]
         }
       ],
       "expectEvents": [
@@ -93,7 +97,11 @@
               "key": "value"
             }
           },
-          "expectResult": null
+          "expectResult": [
+            {
+              "_id": 1
+            }
+          ]
         }
       ],
       "expectEvents": [

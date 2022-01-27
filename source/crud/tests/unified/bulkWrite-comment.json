@@ -102,7 +102,17 @@
             ],
             "comment": "comment"
           },
-          "expectResult": null
+          "expectResult": {
+            "deletedCount": 1,
+            "insertedCount": 1,
+            "insertedIds": {
+              "0": 5
+            },
+            "matchedCount": 2,
+            "modifiedCount": 2,
+            "upsertedCount": 0,
+            "upsertedIds": {}
+          }
         }
       ],
       "expectEvents": [
@@ -261,7 +271,17 @@
               "key": "value"
             }
           },
-          "expectResult": null
+          "expectResult": {
+            "deletedCount": 1,
+            "insertedCount": 1,
+            "insertedIds": {
+              "0": 5
+            },
+            "matchedCount": 2,
+            "modifiedCount": 2,
+            "upsertedCount": 0,
+            "upsertedIds": {}
+          }
         }
       ],
       "expectEvents": [

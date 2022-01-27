@@ -32,6 +32,7 @@ tests:
             _id: 1
           comment: "comment"
         expectResult: &expect_result
+          - { _id: 1 }
     expectEvents:
       - client: *client0
         events:
