@@ -59,3 +59,16 @@ tests:
                 find: *collection0Name
                 filter: *filter
                 comment: *comment
+
+  - description: "find with document comment - pre 4.4"
+    runOnRequirements:
+      - maxServerVersion: "4.2.99"
+    operations:
+      - name: find
+        object: *collection0
+        arguments:
+          filter: *filter
+          comment: &comment { key: "value"}
+        expectError:
+          errorContains: "'comment' field must be of BSON type string"
+          isClientError: false
