@@ -1,4 +1,4 @@
-description: bulkWrite-update-comment
+description: bulkWrite-comment
 schemaVersion: '1.0'
 
 createEntities:
@@ -13,7 +13,7 @@ createEntities:
   - collection:
       id: &collection0 collection0
       database: database0
-      collectionName: &collection_name BulkWrite_update_comment
+      collectionName: &collection_name BulkWrite_comment
 
 initialData: &initial_data
   - collectionName: *collection_name

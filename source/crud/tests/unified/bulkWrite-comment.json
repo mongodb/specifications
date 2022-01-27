@@ -1,5 +1,5 @@
 {
-  "description": "bulkWrite-update-comment",
+  "description": "bulkWrite-comment",
   "schemaVersion": "1.0",
   "createEntities": [
     {
@@ -21,13 +21,13 @@
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "BulkWrite_update_comment"
+        "collectionName": "BulkWrite_comment"
       }
     }
   ],
   "initialData": [
     {
-      "collectionName": "BulkWrite_update_comment",
+      "collectionName": "BulkWrite_comment",
       "databaseName": "crud-v2",
       "documents": [
         {
@@ -112,7 +112,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "BulkWrite_update_comment",
+                  "insert": "BulkWrite_comment",
                   "documents": [
                     {
                       "_id": 5,
@@ -127,7 +127,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "update": "BulkWrite_update_comment",
+                  "update": "BulkWrite_comment",
                   "updates": [
                     {
                       "q": {
@@ -147,7 +147,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "update": "BulkWrite_update_comment",
+                  "update": "BulkWrite_comment",
                   "updates": [
                     {
                       "q": {
@@ -166,7 +166,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "delete": "BulkWrite_update_comment",
+                  "delete": "BulkWrite_comment",
                   "deletes": [
                     {
                       "q": {
@@ -184,7 +184,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "BulkWrite_update_comment",
+          "collectionName": "BulkWrite_comment",
           "databaseName": "crud-v2",
           "documents": [
             {
@@ -271,7 +271,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "BulkWrite_update_comment",
+                  "insert": "BulkWrite_comment",
                   "documents": [
                     {
                       "_id": 5,
@@ -288,7 +288,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "update": "BulkWrite_update_comment",
+                  "update": "BulkWrite_comment",
                   "updates": [
                     {
                       "q": {
@@ -310,7 +310,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "update": "BulkWrite_update_comment",
+                  "update": "BulkWrite_comment",
                   "updates": [
                     {
                       "q": {
@@ -331,7 +331,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "delete": "BulkWrite_update_comment",
+                  "delete": "BulkWrite_comment",
                   "deletes": [
                     {
                       "q": {
@@ -351,7 +351,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "BulkWrite_update_comment",
+          "collectionName": "BulkWrite_comment",
           "databaseName": "crud-v2",
           "documents": [
             {
@@ -434,7 +434,7 @@
       ],
       "outcome": [
         {
-          "collectionName": "BulkWrite_update_comment",
+          "collectionName": "BulkWrite_comment",
           "databaseName": "crud-v2",
           "documents": [
             {
