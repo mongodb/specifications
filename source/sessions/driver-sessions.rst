@@ -1262,7 +1262,7 @@ sessions will be automatically cleaned up by the server after the
 configured ``logicalSessionTimeoutMinutes``.
 
 
-Why must driver's wait to consume a server session until after a connection is checked out?
+Why must drivers wait to consume a server session until after a connection is checked out?
 -----------------------------------------------------------------------------------------------------
 The problem that may occur is when the number of concurrent application requests are larger than the number of available connections,
 the driver may generate many more implicit sessions than connections.
