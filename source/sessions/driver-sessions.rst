@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.8.0
+:Spec Version: 1.9.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2021-04-12
+:Last Modified: 2022-01-28
 
 .. contents::
 
@@ -1310,4 +1310,4 @@ Change log
 :2021-04-08: Updated to use hello and legacy hello
 :2021-04-08: Adding in behaviour for load balancer mode.
 :2020-05-26: Simplify logic for determining sessions support
-:2022-01-19: Implicit sessions MUST obtain server session after connection checkout succeeds
+:2022-01-28: Implicit sessions MUST obtain server session after connection checkout succeeds
