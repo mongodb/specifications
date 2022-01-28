@@ -80,6 +80,17 @@
             }
           ]
         }
+      ],
+      "outcome": [
+        {
+          "collectionName": "coll0",
+          "databaseName": "crud-tests",
+          "documents": [
+            {
+              "_id": 2
+            }
+          ]
+        }
       ]
     },
     {
@@ -118,6 +129,17 @@
                   }
                 }
               }
+            }
+          ]
+        }
+      ],
+      "outcome": [
+        {
+          "collectionName": "coll0",
+          "databaseName": "crud-tests",
+          "documents": [
+            {
+              "_id": 2
             }
           ]
         }

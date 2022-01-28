@@ -1,5 +1,4 @@
 description: "findOneAndDelete-comment"
-
 schemaVersion: "1.0"
 
 runOnRequirements:
@@ -45,6 +44,11 @@ tests:
                 query: *filter
                 remove: true
                 comment: "comment"
+    outcome: &outcome
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - { _id: 2 }
 
   - description: "findOneAndDelete with document comment"
     operations:
@@ -64,3 +68,4 @@ tests:
                 query: *filter
                 remove: true
                 comment: *comment
+    outcome: *outcome

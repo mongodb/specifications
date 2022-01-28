@@ -1,5 +1,4 @@
 description: "findOneAndReplace-comment"
-
 schemaVersion: "1.0"
 
 runOnRequirements:
@@ -47,6 +46,12 @@ tests:
                 query: *filter
                 update: *replacement
                 comment: "comment"
+    outcome: &outcome
+      - collectionName: *collection0Name
+        databaseName: *database0Name
+        documents:
+          - { _id: 1, x: 5 }
+          - { _id: 2 }
 
   - description: "findOneAndReplace with document comment"
     operations:
@@ -67,3 +72,5 @@ tests:
                 query: *filter
                 update: *replacement
                 comment: *comment
+    outcome: *outcome
+

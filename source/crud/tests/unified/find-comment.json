@@ -163,9 +163,28 @@
             }
           },
           "expectError": {
-            "errorContains": "'comment' field must be of BSON type string",
             "isClientError": false
           }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "coll0",
+                  "filter": {
+                    "_id": 1
+                  },
+                  "comment": {
+                    "key": "value"
+                  }
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -237,7 +256,9 @@
                   },
                   "collection": "coll0",
                   "batchSize": 2,
-                  "comment": null
+                  "comment": {
+                    "$$exists": false
+                  }
                 }
               }
             },
@@ -252,7 +273,9 @@
                   },
                   "collection": "coll0",
                   "batchSize": 2,
-                  "comment": null
+                  "comment": {
+                    "$$exists": false
+                  }
                 }
               }
             }

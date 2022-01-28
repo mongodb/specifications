@@ -447,9 +447,30 @@
             "comment": "comment"
           },
           "expectError": {
-            "errorContains": "BSON field 'insert.comment' is an unknown field.",
             "isClientError": false
           }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "BulkWrite_comment",
+                  "documents": [
+                    {
+                      "_id": 5,
+                      "x": "inserted"
+                    }
+                  ],
+                  "ordered": true,
+                  "comment": "comment"
+                }
+              }
+            }
+          ]
         }
       ],
       "outcome": [

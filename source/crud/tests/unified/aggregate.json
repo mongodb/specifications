@@ -164,6 +164,11 @@
     },
     {
       "description": "aggregate with a string comment",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "3.6.0"
+        }
+      ],
       "operations": [
         {
           "name": "aggregate",
@@ -265,6 +270,7 @@
       "description": "aggregate with a document comment - pre 4.4",
       "runOnRequirements": [
         {
+          "minServerVersion": "3.6.0",
           "maxServerVersion": "4.2.99"
         }
       ],
@@ -287,14 +293,46 @@
             }
           },
           "expectError": {
-            "errorContains": "comment must be a string, not a object",
             "isClientError": false
           }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "aggregate": "coll0",
+                  "pipeline": [
+                    {
+                      "$match": {
+                        "_id": {
+                          "$gt": 1
+                        }
+                      }
+                    }
+                  ],
+                  "comment": {
+                    "content": "test"
+                  }
+                },
+                "commandName": "aggregate",
+                "databaseName": "aggregate-tests"
+              }
+            }
+          ]
         }
       ]
     },
     {
       "description": "aggregate with comment does not set comment on getMore",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "3.6.0"
+        }
+      ],
       "operations": [
         {
           "name": "aggregate",
@@ -373,7 +411,9 @@
                   },
                   "collection": "coll0",
                   "batchSize": 2,
-                  "comment": null
+                  "comment": {
+                    "$$exists": false
+                  }
                 },
                 "commandName": "getMore",
                 "databaseName": "aggregate-tests"
@@ -390,7 +430,9 @@
                   },
                   "collection": "coll0",
                   "batchSize": 2,
-                  "comment": null
+                  "comment": {
+                    "$$exists": false
+                  }
                 },
                 "commandName": "getMore",
                 "databaseName": "aggregate-tests"

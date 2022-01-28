@@ -306,15 +306,15 @@ Read
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
      * The comment can be any valid BSON type for server versions 4.4 and above.
-     * Server versions prior to 4.4 only support string as comment,
+     * Server versions between 3.6 and 4.2 only support string as comment,
      * and providing a non-string type will result in a server-side error.
+     * Older server versions do not support comment for aggregate command at all,
+     * and providing one will result in a server-side error.
      *
      * Any comment set on a aggregate command is inherited by any subsequent
      * getMore commands run on the same cursor.id returned from the
      * aggregate command. Therefore, drivers MUST NOT attach the comment
      * to subsequent getMore commands on a cursor.
-     *
-     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     comment: Optional<any>;
 
@@ -436,8 +436,6 @@ Read
      * The comment can be any valid BSON type for server versions 4.4 and above.
      * Server versions prior to 4.4 do not support comment for distinct command,
      * and providing one will result in a server-side error.
-     *
-     * @see http://docs.mongodb.com/manual/reference/command/distinct/
      */
     comment: Optional<any>;
   }
@@ -530,8 +528,6 @@ Read
      * getMore commands run on the same cursor.id returned from the
      * find command. Therefore, drivers MUST NOT attach the comment
      * to subsequent getMore commands on a cursor.
-     *
-     * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     comment: Optional<any>;
 
@@ -951,7 +947,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
      * The comment can be any valid BSON type for server versions 4.4 and above.
-     * Server versions prior to 4.4 do not support comment for insert command,
+     * Server versions prior to 4.4 do not support comment for write operations,
      * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
@@ -1084,8 +1080,6 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * The comment can be any valid BSON type for server versions 4.4 and above.
      * Server versions prior to 4.4 do not support comment for update command,
      * and providing one will result in a server-side error.
-     *
-     * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     comment: Optional<any>;
   }
@@ -1154,8 +1148,6 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * The comment can be any valid BSON type for server versions 4.4 and above.
      * Server versions prior to 4.4 do not support comment for update command,
      * and providing one will result in a server-side error.
-     *
-     * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     comment: Optional<any>;
   }
@@ -1206,8 +1198,6 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * The comment can be any valid BSON type for server versions 4.4 and above.
      * Server versions prior to 4.4 do not support comment for delete command,
      * and providing one will result in a server-side error.
-     *
-     * @see http://docs.mongodb.com/manual/reference/command/delete/
      */
     comment: Optional<any>;
   }
@@ -1935,7 +1925,9 @@ Find And Modify
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
   }
@@ -2041,7 +2033,9 @@ Find And Modify
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
   }
@@ -2155,7 +2149,10 @@ Find And Modify
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
   }

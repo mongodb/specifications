@@ -162,6 +162,15 @@ tests:
           requests: *requests
           comment: "comment"
         expectError:
-          errorContains: "BSON field 'insert.comment' is an unknown field."
           isClientError: false
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                insert: *collection_name
+                documents:
+                  - *inserted_document
+                ordered: true
+                comment: "comment"
     outcome: *initial_data

@@ -75,8 +75,15 @@ tests:
           filter: *filter
           comment: &comment { key: "value"}
         expectError:
-          errorContains: "'comment' field must be of BSON type string"
           isClientError: false
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              command:
+                find: *collection0Name
+                filter: *filter
+                comment: *comment
 
   - description: "find with comment does not set comment on getMore"
     operations:
@@ -106,10 +113,10 @@ tests:
                 getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
-                comment: null
+                comment: { $$exists: false }
           - commandStartedEvent:
               command:
                 getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
-                comment: null
+                comment: { $$exists: false }
