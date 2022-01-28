@@ -3,7 +3,7 @@ Causal Consistency Specification
 ================================
 
 :Spec Title: Causal Consistency Specification (See the registry of specs)
-:Spec Version: 1.2
+:Spec Version: 1.1
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Misha Tyulene, A. Jesse Jiryu Davis
@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2022-01-26
+:Last Modified: 2022-01-28
 
 .. contents::
 
@@ -526,4 +526,4 @@ Changelog
 - 2017-11-17: Added link to ReadConcern spec which lists commands that support readConcern
 - 2021-06-26: Default value for causalConsistency is influenced by snapshot reads
 - 2022-01-22: Remove outdated prose test #10
-- 2022-01-26: Fix formatting for prose tests
+- 2022-01-28: Fix formatting for prose tests
