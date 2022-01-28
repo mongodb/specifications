@@ -1375,7 +1375,7 @@ Bulk Write Models
 Write Results
 ~~~~~~~~~~~~~
 
-The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return a optional results (e.g. ``Optional<BulkWriteResult>``) such that unacknowledged writes don't have a value and acknowledged writes do have a value.
+The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an optional result (e.g. ``Optional<BulkWriteResult>``) such that unacknowledged writes don't have a value and acknowledged writes do have a value.
 
 .. note::
     If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount member is not available when the write was unacknowledged. Check the acknowledged member to avoid this error."
