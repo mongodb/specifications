@@ -86,7 +86,7 @@ Commands
 find
 ----
 
-The **find** command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
+The **`find <https://docs.mongodb.com/manual/reference/command/find/>`_** command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
 
 For a successful command, the document returned from the server has the following format:
 
@@ -293,51 +293,12 @@ In the case of **a tailable cursor with awaitData == true** the driver MUST prov
 getMore
 -------
 
-The **getMore** command replaces the **OP_GET_MORE** wire protocol message.
+The **`getMore https://docs.mongodb.com/manual/reference/command/getMore/`_** command replaces the **OP_GET_MORE** wire protocol message.
 The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true
 when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
-**find** and **killCursors** commands. The command takes the following object.
+**find** and **killCursors** commands.
 
-.. code:: javascript
-
-    {
-      "getMore": <int64>,
-      "collection": <string>,
-      "batchSize": <int64>,
-      "maxTimeMS": <int32>,
-    }
-
-The accepted parameters are described in the table below.
-
-.. list-table:: getMore command parameters
-   :widths: 15 15 15 30
-   :header-rows: 1
-
-   * - Parameter
-     - Req
-     - Type
-     - Description
-   * - getMore
-     - X
-     - int64
-     - Specifies the cursorid of the ClientCursor that this getMore should exercise.
-   * - collection
-     - X
-     - String
-     - The name of the collection on which the query is operating.
-   * - batchSize
-     - X
-     - Int32
-     - Indicates how many results should be returned in the next batch to the client. Errors if zero or negative.
-   * - maxTimeMS
-     -
-     - Int32
-     - If not set, the server defaults to it’s internal maxTimeMS setting.
-
-       Please see the "Semantics of maxTimeMS" section for more details.
-
-
-The **batchSize** MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
+The **batchSize** option of **getMore** command MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
 On success, the getMore command will return the following:
 
@@ -357,44 +318,7 @@ On success, the getMore command will return the following:
 killCursors
 -----------
 
-The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
-
-.. code:: javascript
-
-    {
-      "killCursors": <string>,
-      "cursors": [
-        <cursor id 1>
-        <cursor id 2>,
-        …
-        <cursor id n>
-      ],
-      "comment": <any>
-    }
-
-The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be secondaryOk=true when sent to a secondary.
-
-.. list-table:: killCursors command parameters
-   :widths: 15 15 15 30
-   :header-rows: 1
-
-   * - Parameter
-     - Req
-     - Type
-     - Description
-   * - killCursors
-     - X
-     - String
-     - The collection name used in the find command that created this cursor.
-   * - cursors
-     - X
-     - Array of int64’s
-     - An array of one or more cursorId’s
-   * - comment
-     -
-     - any
-     - Enables users to specify an arbitrary comment to help trace the operation through the database profiler, currentOp and logs. The default is to not send a value.
-
+The **`killCursors <https://docs.mongodb.com/manual/reference/command/killCursors/>`_** command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
 
 The command response will be as follows:
 
@@ -540,7 +464,7 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
-2022-01-?? Add comment option.
+2022-01-?? Replace examples/tables for find, getMore, and killCursors with server manual links.
 
 2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for exhaust cursors.
 

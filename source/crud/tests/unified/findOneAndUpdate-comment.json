@@ -1,11 +1,6 @@
 {
   "description": "findOneAndUpdate-comment",
   "schemaVersion": "1.0",
-  "runOnRequirements": [
-    {
-      "minServerVersion": "4.4"
-    }
-  ],
   "createEntities": [
     {
       "client": {
@@ -47,6 +42,11 @@
   "tests": [
     {
       "description": "findOneAndUpdate with string comment",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4"
+        }
+      ],
       "operations": [
         {
           "name": "findOneAndUpdate",
@@ -97,6 +97,11 @@
     },
     {
       "description": "findOneAndUpdate with document comment",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4"
+        }
+      ],
       "operations": [
         {
           "name": "findOneAndUpdate",
@@ -144,6 +149,76 @@
                   }
                 }
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "findOneAndUpdate with comment - pre 4.4",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.2.0",
+          "maxServerVersion": "4.2.99"
+        }
+      ],
+      "operations": [
+        {
+          "name": "findOneAndUpdate",
+          "object": "collection0",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            },
+            "update": [
+              {
+                "$set": {
+                  "x": 5
+                }
+              }
+            ],
+            "comment": "comment"
+          },
+          "expectError": {
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "findAndModify": "coll0",
+                  "query": {
+                    "_id": 1
+                  },
+                  "update": [
+                    {
+                      "$set": {
+                        "x": 5
+                      }
+                    }
+                  ],
+                  "comment": "comment"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "outcome": [
+        {
+          "collectionName": "coll0",
+          "databaseName": "crud-tests",
+          "documents": [
+            {
+              "_id": 1
+            },
+            {
+              "_id": 2
             }
           ]
         }
