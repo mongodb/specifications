@@ -3,7 +3,7 @@ Retryable Reads
 ===============
 
 :Spec Title: Retryable Reads
-:Spec Version: 1.3.0
+:Spec Version: 1.2.1
 :Author: Vincent Kam
 :Lead: Bernie Hackett
 :Advisory Group: Shane Harvey, Scott L’Hommedieu, Jeremy Mikola
@@ -11,7 +11,7 @@ Retryable Reads
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-01-19
+:Last Modified: 2021-04-26
 
 .. contents::
 
@@ -22,7 +22,7 @@ Abstract
 
 This specification is about the ability for drivers to automatically retry any
 read operation that has not yet received any results—due to a transient network
-error, a "not writable primary" error after a replica set failover, etc.
+error, a "not writable primary" error after a replica set failover, etc.—exactly once.
 
 This specification will
 
@@ -262,31 +262,23 @@ Drivers MUST only attempt to retry a read command if
 3. Deciding to allow retry, encountering the initial retryable error, and selecting a server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the driver decides to allow retry and the first attempt of a retryable
-read command encounters a retryable error, the driver MUST update its
-topology according to the Server Discovery and Monitoring spec (see `SDAM:
-Error Handling
+If the driver decides to allow retry and the first attempt of a retryable read
+command encounters a retryable error, the driver MUST update its topology
+according to the Server Discovery and Monitoring spec (see `SDAM: Error Handling
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling>`__)
-and capture this original retryable error. Drivers MUST then retry the
-operation as many times as necessary until a retry attempt succeeds or
-returns a non-retryable error. Additionally, if the ``socketTimeoutMS``
-option is set and is being used to derive socket timeouts for the operation,
-drivers MUST stop retrying after encountering two socket timeouts, either
-consecutive or non-consecutive. In this case, the second socket timeout error
-MUST be propagated to the application. Finally, drivers MUST stop retrying if
-the operation times out per `Client Side Operations Timeout: Retryability
-<../client-side-operations-timeout/client-side-operations-timeout.rst#retryability>`__.
+and capture this original retryable error. Drivers should then proceed with
+selecting a server for the retry attempt.
 
 3a. Selecting the server for retry
 ''''''''''''''''''''''''''''''''''
 
-If the driver cannot select a server for a retry attempt or the newly
-selected server does not support retryable reads, retrying is not possible
-and drivers MUST raise the retryable error from the previous attempt. In both
-cases, the caller is able to infer that an attempt was made.
+If the driver cannot select a server for the retry attempt or the newly selected
+server does not support retryable reads, retrying is not possible and drivers
+MUST raise the original retryable error. In both cases, the caller is able to
+infer that an attempt was made.
 
-3b. Sending an equivalent command for a retry attempt
-'''''''''''''''''''''''''''''''''''''''''''''''''''''
+3b. Sending an equivalent command for the second attempt
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 After server selection, a driver MUST send a valid command to the newly selected
 server that is equivalent [1]_ to the initial command sent to the first
@@ -318,15 +310,18 @@ The above requirement can be fulfilled in one of two ways:
    there is no guarantee that the lower versioned server can support the
    original command.
 
-3c. If a retry attempt fails
-''''''''''''''''''''''''''''
+3c. If the retry attempt fails
+''''''''''''''''''''''''''''''
 
-If a retry attempt also fails, drivers MUST update their topology according to
+If the retry attempt also fails, drivers MUST update their topology according to
 the SDAM spec (see `SDAM: Error Handling
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling>`__).
 If an error would not allow the caller to infer that an attempt was made
-(e.g. connection pool exception originating from the driver), the error from the
-previous attempt should be raised.
+(e.g. connection pool exception originating from the driver), the original error
+should be raised. If the retry failed due to another retryable error or some
+other error originating from the server, that error should be raised instead as
+the caller can infer that an attempt was made and the second error is likely
+more relevant (with respect to the current topology state).
 
 4. Implementation constraints
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -358,81 +353,84 @@ and reflects the flow described above.
    * explicit client session (depending on how the CRUD method was invoked).
    */
   function executeRetryableRead(command, session) {
-    Exception previousError = null; 
-    int numSocketTimeouts = 0;
-    while true {
-      try {
-        server = selectServer();
-      } catch (ServerSelectionException exception) {
-        if (previousError == null) {
-          // If this is the first attempt, propagate the exception.
-          throw exception;
-        }
-        // For retries, propagate the original error.
-        throw previousError;
-      }
+    /* Allow ServerSelectionException to propagate to our caller, which
+     * can then assume that no attempts were made. */
+    server = selectServer();
 
-      try {
-        connection = server.getConnection();
-      } catch (PoolClearedException poolClearedError) {
-        /* PoolClearedException indicates the operation did not even attempt to
-         * create a connection, let alone execute the operation. This means we
-         * are always safe to attempt a retry. We do not need to update SDAM,
-         * since whatever error caused the pool to be cleared will do so itself. */
+    /* PoolClearedException indicates the operation did not even attempt to
+     * create a connection, let alone execute the operation. This means we
+     * are always safe to attempt a retry. We do not need to update SDAM,
+     * since whatever error caused the pool to be cleared will do so itself. */
+    try {
+      connection = server.getConnection()
+    } catch (PoolClearedException poolClearedError) {
+      return executeRetry(command, session, poolClearedError);
+    }
+  
+    /* If the server does not support retryable reads or if the session in a
+     * transaction execute the read as if retryable reads are not enabled. */
+    if ( !isRetryableReadsSupported(connection) || session.inTransaction()) {
+      return executeCommand(connection, command);
+    }
 
-        previousError = poolClearedError;
-        continue;
-      }
-
-      if ( !isRetryableReadsSupported(connection) || session.inTransaction()) {
-        /* If this is the first loop iteration and we determine that retryable
-         * reads are not supported, execute the command once and allow any
-         * errors to propagate */
-
-        if (previousError == null) {
-          return executeCommand(connection, command);
-        }
-
-        /* If the server selected for retrying is too old, throw the original error.
-         * The caller can then infer that an attempt was made and failed. This case
-         * is very rare, and likely means that the cluster is in the midst of a
-         * downgrade. */
-        throw previousError;
-      }
-
-      /* NetworkException and NotWritablePrimaryException are both retryable errors. If
-       * caught, remember the exception, update SDAM accordingly, and proceed with
-       * retrying the operation.
-       *
-       * Exceptions that originate from the driver (e.g. no socket available
-       * from the connection pool) are treated as fatal. Any such exception
-       * that occurs on the original attempt is propagated as-is. On retries,
-       * the error from the previous attempt is raised as it will be more
-       * relevant for the user. */
-      try {
-        return executeCommand(connection, retryableCommand);
-      } catch (NetworkException networkError) {
-        updateTopologyDescriptionForNetworkError(server, networkError);
-
-        // Check if we've reached the socket timeout limit and terminate the
-        // loop.
-        if (networkError is NetworkTimeoutException) {
-          numSocketTimeouts++;
-          if (numSocketTimeouts == 2) {
-            throw networkError;
-          }
-        }
-
-        previousError = networkError;
-      } catch (NotWritablePrimaryException notPrimaryError) {
-        updateTopologyDescriptionForNotWritablePrimaryError(server, notPrimaryError);
-        previousError = notPrimaryError;
-      } catch (DriverException error) {
-        if ( previousError != null ) {
-          return previousError;
-        }
-        return error;
-      }
+    /* NetworkException and NotWritablePrimaryException are both retryable errors. If
+     * caught, remember the exception, update SDAM accordingly, and proceed with
+     * retrying the operation. */
+    try {
+      return executeCommand(server, command);
+    } catch (NetworkException originalError) {
+      updateTopologyDescriptionForNetworkError(server, originalError);
+    } catch (NotWritablePrimaryException originalError) {
+      updateTopologyDescriptionForNotWritablePrimaryError(server, originalError);
+    }
+    return executeRetry(command, session, originalError);
+  }
+  
+  /**
+   * Executes the second attempt of a retryable read after a retryable error
+   * was encountered. On failure, this may return the original error, depending
+   * on the type of the new error encountered.
+   */
+  function executeRetry(command, session, originalError) {
+    /* If we cannot select a server, do not proceed with retrying and
+     * throw the original error. The caller can then infer that an attempt was
+     * made and failed. */
+    try {
+      server = selectServer();
+      connection = server.getConnection()
+    } catch (Exception ignoredError) {
+      throw originalError;
+    }
+  
+    /* If the server selected for retrying is too old, throw the original error.
+     * The caller can then infer that an attempt was made and failed. This case
+     * is very rare, and likely means that the cluster is in the midst of a
+     * downgrade. */
+    if ( !isRetryableReadsSupported(connection)) {
+      throw originalError;
+    }
+    try {
+      secondCommand = createCommand(server);
+    } catch (Exception ignoredError) {
+      throw originalError;
+    }
+  
+    /* Allow any retryable error from the second attempt to propagate to our
+     * caller, as it will be just as relevant (if not more relevant) than the
+     * original error. For exceptions that originate from the driver (e.g. no
+     * socket available from the connection pool), we should raise the original
+     * error. Other exceptions originating from the server should be allowed to
+     * propagate. */
+    try {
+      return executeCommand(connection, secondCommand);
+    } catch (NetworkException secondError) {
+      updateTopologyDescriptionForNetworkError(server, secondError);
+      throw secondError;
+    } catch (NotWritablePrimaryException secondError) {
+      updateTopologyDescriptionForNotWritabelPrimaryError(server, secondError);
+      throw secondError;
+    } catch (DriverException ignoredError) {
+      throw originalError;
     }
   }
 
@@ -605,6 +603,31 @@ It is worth noting that the "Cursors survive primary stepdown" feature avoids
 this issue in certain common circumstances, so that we may revisit this decision
 to disallow trying ``getMore()`` in the future.
 
+Why are read operations only retried once?
+------------------------------------------
+
+`Read operations are only retried once for the same reasons that writes are also
+only retried
+once. <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#why-are-write-operations-only-retried-once>`__
+For convenience's sake, that reasoning has been adapted for reads and reproduced
+below:
+
+The spec concerns itself with retrying read operations that encounter a
+retryable error (i.e. no response due to network error or a response indicating
+that the node is no longer a primary). A retryable error may be classified as
+either a transient error (e.g. dropped connection, replica set failover) or
+persistent outage. In the case of a transient error, the driver will mark the
+server as "unknown" per the `SDAM
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
+spec. A subsequent retry attempt will allow the driver to rediscover the primary
+within the designated server selection timeout period (30 seconds by
+default). If server selection times out during this retry attempt, we can
+reasonably assume that there is a persistent outage. In the case of a persistent
+outage, multiple retry attempts are fruitless and would waste time. See `How To
+Write Resilient MongoDB Applications
+<https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/>`__ for
+additional discussion on this strategy.
+
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------
 
@@ -646,32 +669,9 @@ retry reads because the resilience benefit of retryable reads outweighs the
 minor risk of degraded performance. Additionally, any customers experiencing
 degraded performance can simply disable ``retryableReads``.
 
-Why did a previous version of the spec require that drivers retry operations only once?
----------------------------------------------------------------------------------------
-
-The initial version of this specification mandated that drivers retry
-operations only once if the initial attempt failed with a transient error.
-However, this is not resilient to cascading failures in a cluster such as
-rolling server restarts during planned maintenance events. If the cluster is
-experiencing such transient failures, drivers expect the operation to succeed
-after some retries. If the cluster is actually in a permanently unhealthy state,
-though, we expect monitoring checks and background connection pool maintenance
-routines to start failing and servers to be marked unknown until server
-selection fails. Because server selection timeouts are not retryable, the
-operation will eventually fail.
-
-We make one exception for socket timeouts derived from the
-``socketTimeoutMS`` option. Such timeouts could occur due to transient
-network errors, so it’s useful to consider them retryable. However, they
-could also occur if the server requires more time than ``socketTimeoutMS`` to
-complete an operation. In this case, retrying indefinitely would result in an
-infinite retry loop. To maintain resiliency but avoid the undesirable
-infinite loop scenario, socket timeouts are only considered retryable once.
 
 Changelog 
 ==========
-
-2022-01-19: Change the retry policy to retry indefinitely and special case socket timeouts
 
 2021-04-26: Replaced deprecated terminology; removed requirement to parse error message text as MongoDB 3.6+ servers will always return an error code
 

@@ -3,7 +3,7 @@ Causal Consistency Specification
 ================================
 
 :Spec Title: Causal Consistency Specification (See the registry of specs)
-:Spec Version: 1.0
+:Spec Version: 1.1
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Misha Tyulene, A. Jesse Jiryu Davis
@@ -12,7 +12,7 @@ Causal Consistency Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 17-Nov-2017
+:Last Modified: 2022-01-28
 
 .. contents::
 
@@ -361,107 +361,115 @@ Note: some tests are only relevant to certain deployments. For the purpose of de
 which tests to run assume that any deployment that is version 3.6 or higher and is either a
 replica set or a sharded cluster supports cluster times.
 
-1.  When a ``ClientSession`` is first created the ``operationTime`` has no value
-        * ``session = client.startSession()``
-        * assert ``session.operationTime`` has no value
+1. When a ``ClientSession`` is first created the ``operationTime`` has no value.
 
-2.  | The first read in a causally consistent session must not send
-    | ``afterClusterTime`` to the server (because the ``operationTime`` has not yet
-    | been determined)
-        * ``session = client.startSession(causalConsistency = true)``
-        * ``document = collection.anyReadOperation(session, ...)``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command does not have an ``afterClusterTime``
+   * ``session = client.startSession()``
+   * assert ``session.operationTime`` has no value
 
-3.  | The first read or write on a ``ClientSession`` should update the
-    | ``operationTime`` of the ``ClientSession``, even if there is an error
-        * skip this test if connected to a deployment that does not support cluster times
-        * ``session = client.startSession() // with or without causal consistency``
-        * ``collection.anyReadOrWriteOperation(session, ...) // test with errors also if possible``
-        * capture the response sent from the server (using APM or other mechanism)
-        * assert ``session.operationTime`` has the same value that is in the response from the server
+2. The first read in a causally consistent session must not send ``afterClusterTime`` to
+   the server (because the ``operationTime`` has not yet been determined)
 
-4.  | A ``findOne`` followed by any other read operation (test them all) should
-    | include the ``operationTime`` returned by the server for the first operation in
-    | the ``afterClusterTime`` parameter of the second operation
-        * skip this test if connected to a deployment that does not support cluster times
-        * ``session = client.startSession(causalConsistency = true)``
-        * ``collection.findOne(session, {})``
-        * ``operationTime = session.operationTime``
-        * ``collection.anyReadOperation(session, ...)``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
+   * ``session = client.startSession(causalConsistency = true)``
+   * ``document = collection.anyReadOperation(session, ...)``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command does not have an ``afterClusterTime``
 
-5.  | Any write operation (test them all) followed by a ``findOne`` operation should
-    | include the ``operationTime`` of the first operation in the ``afterClusterTime``
-    | parameter of the second operation, including the case where the first operation
-    | returned an error
-        * skip this test if connected to a deployment that does not support cluster times
-        * ``session = client.startSession(causalConsistency = true)``
-        * ``collection.anyWriteOperation(session, ...) // test with errors also where possible``
-        * ``operationTime = session.operationTime``
-        * ``collection.findOne(session, {})``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
+3. The first read or write on a ``ClientSession`` should update the ``operationTime`` of
+   the ``ClientSession``, even if there is an error.
 
-6.  | A read operation in a ``ClientSession`` that is not causally consistent
-    | should not include the ``afterClusterTime`` parameter in the command sent to the
-    | server
-        * skip this test if connected to a deployment that does not support cluster times
-        * ``session = client.startSession(causalConsistency = false)``
-        * ``collection.anyReadOperation(session, {})``
-        * ``operationTime = session.operationTime``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command does not have an ``afterClusterTime`` field
+   * skip this test if connected to a deployment that does not support cluster times
+   * ``session = client.startSession() // with or without causal consistency``
+   * ``collection.anyReadOrWriteOperation(session, ...) // test with errors also if possible``
+   * capture the response sent from the server (using APM or other mechanism)
+   * assert ``session.operationTime`` has the same value that is in the response from the server
 
-7.  | A read operation in a causally consistent session against a deployment that does not support cluster times does
-    | not include the ``afterClusterTime`` parameter in the command sent to the server
-        * skip this test if connected to a deployment that does support cluster times
-        * ``session = client.startSession(causalConsistency = true)``
-        * ``collection.anyReadOperation(session, {})``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command does not have an ``afterClusterTime`` field
+4. A ``findOne`` followed by any other read operation (test them all) should include the
+   ``operationTime`` returned by the server for the first operation in the ``afterClusterTime``
+   parameter of the second operation
 
-8.  | When using the default server ``ReadConcern`` the ``readConcern`` parameter in the
-    | command sent to the server should not include a ``level`` field
-        * skip this test if connected to a deployment that does not support cluster times
-        * ``session = client.startSession(causalConsistency = true)``
-        * configure ``collection`` to use default server ``ReadConcern``
-        * ``collection.findOne(session, {})``
-        * ``operationTime = session.operationTime``
-        * ``collection.anyReadOperation(session, ...)``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command does not have a ```level`` field
-        * assert that the command has a ``afterClusterTime`` field with a value of ``operationTime``
+   * skip this test if connected to a deployment that does not support cluster times
+   * ``session = client.startSession(causalConsistency = true)``
+   * ``collection.findOne(session, {})``
+   * ``operationTime = session.operationTime``
+   * ``collection.anyReadOperation(session, ...)``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
 
-9.  | When using a custom ``ReadConcern`` the ``readConcern`` field in the command sent to
-    | the server should be a merger of the ``ReadConcern`` value and the ``afterClusterTime``
-    | field
-        * skip this test if connected to a deployment that does not support cluster times
-        * ``session = client.startSession(causalConsistency = true)``
-        * configure collection to use a custom ReadConcern
-        * ``collection.findOne(session, {})``
-        * ``operationTime = session.operationTime``
-        * ``collection.anyReadOperation(session, ...)``
-        * capture the command sent to the server (using APM or other mechanism)
-        * assert that the command has a ``level`` field with a value matching the custom readConcern
-        * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
+5. Any write operation (test them all) followed by a ``findOne`` operation should include
+   the ``operationTime`` of the first operation in the ``afterClusterTime`` parameter of the
+   second operation, including the case where the first operation returned an error.
+
+   * skip this test if connected to a deployment that does not support cluster times
+   * ``session = client.startSession(causalConsistency = true)``
+   * ``collection.anyWriteOperation(session, ...) // test with errors also where possible``
+   * ``operationTime = session.operationTime``
+   * ``collection.findOne(session, {})``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
+
+6. A read operation in a ``ClientSession`` that is not causally consistent should not include
+   the ``afterClusterTime`` parameter in the command sent to the server.
+
+   * skip this test if connected to a deployment that does not support cluster times
+   * ``session = client.startSession(causalConsistency = false)``
+   * ``collection.anyReadOperation(session, {})``
+   * ``operationTime = session.operationTime``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command does not have an ``afterClusterTime`` field
+
+7. A read operation in a causally consistent session against a deployment that does not support
+   cluster times does not include the ``afterClusterTime`` parameter in the command sent to the
+   server.
+
+   * skip this test if connected to a deployment that does support cluster times
+   * ``session = client.startSession(causalConsistency = true)``
+   * ``collection.anyReadOperation(session, {})``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command does not have an ``afterClusterTime`` field
+
+8. When using the default server ``ReadConcern`` the ``readConcern`` parameter in the command sent
+   to the server should not include a ``level`` field.
+
+   * skip this test if connected to a deployment that does not support cluster times
+   * ``session = client.startSession(causalConsistency = true)``
+   * configure ``collection`` to use default server ``ReadConcern``
+   * ``collection.findOne(session, {})``
+   * ``operationTime = session.operationTime``
+   * ``collection.anyReadOperation(session, ...)``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command does not have a ```level`` field
+   * assert that the command has a ``afterClusterTime`` field with a value of ``operationTime``
+
+9. When using a custom ``ReadConcern`` the ``readConcern`` field in the command sent to the
+   server should be a merger of the ``ReadConcern`` value and the ``afterClusterTime`` field.
+
+   * skip this test if connected to a deployment that does not support cluster times
+   * ``session = client.startSession(causalConsistency = true)``
+   * configure collection to use a custom ReadConcern
+   * ``collection.findOne(session, {})``
+   * ``operationTime = session.operationTime``
+   * ``collection.anyReadOperation(session, ...)``
+   * capture the command sent to the server (using APM or other mechanism)
+   * assert that the command has a ``level`` field with a value matching the custom readConcern
+   * assert that the command has an ``afterClusterTime`` field with a value of ``operationTime``
 
 10. **Removed**
 
-11. | When connected to a deployment that does not support cluster times messages sent to
-    | the server should not include ``$clusterTime``
-        * skip this test when connected to a deployment that does support cluster times
-        * ``document = collection.findOne({})``
-        * capture the command sent to the server
-        * assert that the command does not include a ``$clusterTime`` field
+11. When connected to a deployment that does not support cluster times messages sent to the
+    server should not include ``$clusterTime``.
 
-12. | When connected to a deployment that does support cluster times messages sent to the server should
-    | include ``$clusterTime``
-        * skip this test when connected to a deployment that does not support cluster times
-        * ``document = collection.findOne({})``
-        * capture the command sent to the server
-        * assert that the command includes a ``$clusterTime`` field
+    * skip this test when connected to a deployment that does support cluster times
+    * ``document = collection.findOne({})``
+    * capture the command sent to the server
+    * assert that the command does not include a ``$clusterTime`` field
+
+12. When connected to a deployment that does support cluster times messages sent to the server
+    should include ``$clusterTime``.
+
+    * skip this test when connected to a deployment that does not support cluster times
+    * ``document = collection.findOne({})``
+    * capture the command sent to the server
+    * assert that the command includes a ``$clusterTime`` field
 
 Motivation 
 ==========
@@ -515,4 +523,7 @@ Changelog
 - 2017-10-04: Added advanceOperationTime
 - 2017-10-05: How to handle default read concern
 - 2017-10-06: advanceOperationTime MUST NOT validate operationTime
-- 2017-11-17 : Added link to ReadConcern spec which lists commands that support readConcern
+- 2017-11-17: Added link to ReadConcern spec which lists commands that support readConcern
+- 2021-06-26: Default value for causalConsistency is influenced by snapshot reads
+- 2022-01-22: Remove outdated prose test #10
+- 2022-01-28: Fix formatting for prose tests

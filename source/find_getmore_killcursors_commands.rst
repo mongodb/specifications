@@ -86,7 +86,9 @@ Commands
 find
 ----
 
-The **`find <https://docs.mongodb.com/manual/reference/command/find/>`_** command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
+The `find`_ command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
+
+.. _find: https://docs.mongodb.com/manual/reference/command/find/
 
 For a successful command, the document returned from the server has the following format:
 
@@ -293,10 +295,12 @@ In the case of **a tailable cursor with awaitData == true** the driver MUST prov
 getMore
 -------
 
-The **`getMore https://docs.mongodb.com/manual/reference/command/getMore/`_** command replaces the **OP_GET_MORE** wire protocol message.
+The `getMore`_ command replaces the **OP_GET_MORE** wire protocol message.
 The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true
 when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
 **find** and **killCursors** commands.
+
+.. _getMore: https://docs.mongodb.com/manual/reference/command/getMore/
 
 The **batchSize** option of **getMore** command MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
@@ -318,7 +322,9 @@ On success, the getMore command will return the following:
 killCursors
 -----------
 
-The **`killCursors <https://docs.mongodb.com/manual/reference/command/killCursors/>`_** command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
+The `killCursors`_ command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
+
+.. _killCursors: https://docs.mongodb.com/manual/reference/command/killCursors/
 
 The command response will be as follows:
 
