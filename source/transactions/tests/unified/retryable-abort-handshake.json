@@ -48,6 +48,12 @@
         "id": "session0",
         "client": "client0"
       }
+    },
+    {
+      "session": {
+        "id": "session1",
+        "client": "client0"
+      }
     }
   ],
   "initialData": [
@@ -85,6 +91,7 @@
           "object": "testRunner",
           "arguments": {
             "client": "client0",
+            "session": "session1",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -103,6 +110,10 @@
         {
           "name": "dropCollection",
           "object": "database0",
+          "arguments": {
+            "collection": "doesNotMatter",
+            "session": "session1"
+          },
           "expectError": {
             "isError": true
           }

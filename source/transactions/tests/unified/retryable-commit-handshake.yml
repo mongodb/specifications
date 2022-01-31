@@ -25,6 +25,9 @@ createEntities:
   - session:
       id: &session0 session0
       client: *client0
+  - session:
+      id: &session1 session1
+      client: *client0
 
 initialData:
   - collectionName: *collectionName
@@ -44,10 +47,14 @@ tests:
         arguments:
           document: { _id: 2, x: 22 }
 
+      # The following failPoint and dropCollection utilize session1 so that
+      # the transaction won't be failed by the intentional erroring of dropCollection
+      # and it will have an empty pool when it goes to run commitTransaction
       - name: failPoint # fail the next connection establishment
         object: testRunner
         arguments:
           client: *client0
+          session: *session1
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -55,12 +62,15 @@ tests:
               # use saslContinue here to avoid SDAM errors
               # this failPoint itself will create a usable connection in the connection pool
               # so we run a dropCollection (that also fails) in order to discard the connection
-              # before testing that abortTransaction gets retried
+              # before testing that commitTransaction gets retried
               failCommands: [saslContinue, dropCollection]
               closeConnection: true
 
       - name: dropCollection
         object: *database0
+        arguments:
+          collection: doesNotMatter
+          session: *session1
         expectError:
           isError: true
 

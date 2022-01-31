@@ -366,9 +366,6 @@ and reflects the flow described above.
       connection = server.getConnection()
     } catch (PoolClearedException poolClearedError) {
       return executeRetry(command, session, poolClearedError);
-    } catch (NetworkException networkError) {
-      // ConnectionPool should have handled SDAM state changes
-      return executeRetry(command, session, networkError);
     }
 
     /* If the server does not support retryable reads or if the session in a

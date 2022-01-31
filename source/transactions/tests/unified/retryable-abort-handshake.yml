@@ -23,7 +23,12 @@ createEntities:
       database: *database0
       collectionName: &collectionName coll
   - session:
+      # This session will be used to execute the transaction
       id: &session0 session0
+      client: *client0
+  - session:
+      # This session will be used to create the failPoint, and empty the pool
+      id: &session1 session1
       client: *client0
 
 initialData:
@@ -44,10 +49,14 @@ tests:
         arguments:
           document: { _id: 2, x: 22 }
 
+      # The following failPoint and dropCollection utilize session1 so that
+      # the transaction won't be failed by the intentional erroring of dropCollection
+      # and it will have an empty pool when it goes to run abortTransaction
       - name: failPoint # fail the next connection establishment
         object: testRunner
         arguments:
           client: *client0
+          session: *session1
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 2 }
@@ -61,6 +70,9 @@ tests:
 
       - name: dropCollection
         object: *database0
+        arguments:
+          collection: doesNotMatter
+          session: *session1
         expectError:
           isError: true
 
