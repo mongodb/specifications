@@ -60,6 +60,11 @@
   "tests": [
     {
       "description": "find with string comment",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "3.6"
+        }
+      ],
       "operations": [
         {
           "name": "find",
@@ -147,7 +152,8 @@
       "description": "find with document comment - pre 4.4",
       "runOnRequirements": [
         {
-          "maxServerVersion": "4.2.99"
+          "maxServerVersion": "4.2.99",
+          "minServerVersion": "3.6"
         }
       ],
       "operations": [
@@ -190,6 +196,11 @@
     },
     {
       "description": "find with comment does not set comment on getMore",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "3.6"
+        }
+      ],
       "operations": [
         {
           "name": "find",

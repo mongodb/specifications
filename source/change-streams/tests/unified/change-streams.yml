@@ -19,6 +19,7 @@ initialData:
   - collectionName: *collection0
     databaseName: *database0
     documents: []
+
 tests:
   - description: "Test array truncation"
     runOnRequirements:
@@ -117,6 +118,8 @@ tests:
                 comment: *comment0
 
   - description: "Test with string comment"
+    runOnRequirements:
+      - minServerVersion: "3.6.0"
     operations:
       - name: createChangeStream
         object: *collection0

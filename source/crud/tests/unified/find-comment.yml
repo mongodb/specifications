@@ -28,6 +28,8 @@ initialData: &initialData
 
 tests:
   - description: "find with string comment"
+    runOnRequirements:
+      - minServerVersion: "3.6"
     operations:
       - name: find
         object: *collection0
@@ -68,6 +70,7 @@ tests:
   - description: "find with document comment - pre 4.4"
     runOnRequirements:
       - maxServerVersion: "4.2.99"
+        minServerVersion: "3.6"
     operations:
       - name: find
         object: *collection0
@@ -86,6 +89,8 @@ tests:
                 comment: *comment
 
   - description: "find with comment does not set comment on getMore"
+    runOnRequirements:
+      - minServerVersion: "3.6"
     operations:
       - name: find
         object: *collection0
