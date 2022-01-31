@@ -39,8 +39,16 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-              failCommands: [saslContinue]
+              failCommands: [dropCollection, saslContinue]
               closeConnection: true
+
+      - name: dropCollection
+        object: *database0
+        arguments:
+          collection: doesNotMatter
+        expectError:
+          isError: true
+
       - name: insertOne
         object: *collection0
         arguments:

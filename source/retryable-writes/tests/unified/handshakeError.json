@@ -71,11 +71,22 @@
               },
               "data": {
                 "failCommands": [
+                  "dropCollection",
                   "saslContinue"
                 ],
                 "closeConnection": true
               }
             }
+          }
+        },
+        {
+          "name": "dropCollection",
+          "object": "database0",
+          "arguments": {
+            "collection": "doesNotMatter"
+          },
+          "expectError": {
+            "isError": true
           }
         },
         {

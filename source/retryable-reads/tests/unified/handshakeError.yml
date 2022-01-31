@@ -47,10 +47,14 @@ tests:
               # before testing our read operation "find"
               failCommands: [saslContinue, dropCollection]
               closeConnection: true
+
       - name: dropCollection
         object: *database0
+        arguments:
+          collection: doesNotMatter
         expectError:
           isError: true
+
       - name: find
         object: *collection0
         arguments:
