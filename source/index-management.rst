@@ -11,8 +11,8 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 2022-01-19
-:Version: 1.7
+:Last Modified: 2022-01-01
+:Version: 1.8
 
 .. contents::
 
@@ -220,7 +220,7 @@ Standard API
      *   Cursor or Array for backwards compatibility - here the driver MUST always
      *   return a Cursor.
      */
-    listIndexes(): Cursor;
+    listIndexes(options: Optional<ListIndexesOptions>): Cursor;
   }
 
   interface CreateIndexOptions {
@@ -246,6 +246,16 @@ Standard API
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/createIndexes/
+     *
+     * @since MongoDB 4.4
+     */
+    comment: Optional<any>;
   }
 
   interface CreateIndexesOptions {
@@ -259,6 +269,16 @@ Standard API
      * @note This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/dropIndexes/
+     *
+     * @since MongoDB 4.4
+     */
+    comment: Optional<any>;
   }
 
   interface DropIndexesOptions {
@@ -396,7 +416,7 @@ Index View API
     /**
      * Returns the index view for this collection.
      */
-    indexes(): IndexView;
+    indexes(options: Optional<ListIndexesOptions>): IndexView;
   }
 
   interface IndexView extends Iterable<Document> {
@@ -803,6 +823,23 @@ Common API Components
     hidden: Boolean;
   }
 
+  interface ListIndexesOptions {
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * Any comment set on a listIndexes command is inherited by any subsequent
+     * getMore commands run on the same cursor.id returned from the
+     * listIndexes command. Therefore, drivers MUST NOT attach the comment
+     * to subsequent getMore commands on a cursor.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/listIndexes/
+     *
+     * @since MongoDB 4.4
+     */
+    comment: Optional<any>;
+  }
+
 ---------
 Q & A
 ---------
@@ -811,9 +848,6 @@ Q: Where is write concern?
   The ``createIndexes`` and ``dropIndexes`` commands take a write concern that indicates how the write is acknowledged. Since all operations defined in this specification are performed on a collection, it's uncommon that two different index operations on the same collection would use a different write concern. As such, the most natural place to indicate write concern is on the client, the database, or the collection itself and not the operations within it.
 
   However, it might be that a driver needs to expose write concern to a user per operation for various reasons. It is permitted to allow a write concern option, but since writeConcern is a top-level command option, it MUST NOT be specified as part of an ``IndexModel`` passed into the helper. It SHOULD be specified via the options parameter of the helper. For example, it would be ambiguous to specify write concern for one or more models passed to ``createIndexes()``, but it would not be to specify it via the ``CreateIndexesOptions``.
-
-Q: Where is ``ListIndexesOptions``?
-  There are no options required by the index enumeration spec for listing indexes, so there is currently no need to define an options type for it. A driver MAY accept options (e.g. ``maxTimeMS``) on the helpers that list indexes, and, if it does, it SHOULD accept them the same way it accepts options for other helpers (e.g. through a ``ListCollectionOptions`` object or acceptable deviation).
 
 Q: What does the commitQuorum option do?
   Prior to MongoDB 4.4, secondaries would simply replicate index builds once they were completed on the primary. Building indexes requires an exclusive lock on the collection being indexed, so the secondaries would be blocked from replicating all other operations while the index build took place. This would introduce replication lag correlated to however long the index build took.
@@ -825,7 +859,7 @@ Q: What does the commitQuorum option do?
 Q: Why would a user want to specify a non-default ``commitQuorum``?
   Like ``w: "majority"``, ``commitQuorum: "votingMembers"`` doesn't consider non-voting data-bearing nodes such as analytics nodes. If a user wanted to ensure these nodes didn't lag behind, then they would specify ``commitQuorum: <total number of data-bearing nodes, including non-voting nodes>``. Alternatively, if they wanted to ensure only specific non-voting nodes didn't lag behind, they could specify a `custom getLastErrorMode based on the nodes' tag sets <https://docs.mongodb.com/manual/reference/replica-configuration/#rsconf.settings.getLastErrorModes>`_ (e.g. ``commitQuorum: <custom getLastErrorMode name>``).
 
-  Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind. 
+  Additionally, if a user has a high tolerance for replication lag, they can set a lower value for ``commitQuorum``. This is useful for situations where certain secondaries take longer to build indexes than the primaries, and the user doesn't care if they lag behind.
 
 Q: What is the difference between write concern and ``commitQuorum``?
   While these two options share a lot in terms of how they are specified, they configure entirely different things. ``commitQuorum`` determines how much new replication lag an index build can tolerably introduce, but it says nothing of durability. Write concern specifies the durability requirements of an index build, but it makes no guarantees about introducing replication lag.
@@ -863,3 +897,5 @@ Changelog
   - Added deprecation message for ``background`` option.
 19 JAN 2022:
   - Require that timeouts be applied per the client-side operations timeout spec.
+01 FEB 2022:
+  - Added comment field to helper methods.

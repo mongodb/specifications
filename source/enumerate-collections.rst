@@ -12,8 +12,8 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2022-01-19
-:Version: 0.8.0
+:Last Modified: 2022-02-01
+:Version: 0.9.0
 
 .. contents::
 
@@ -130,6 +130,19 @@ document::
 
     $ db.runCommand( { listCollections: 1, cursor : { batchSize: 25 } } );
 
+MongoDB 4.4 introduced a ``comment``  option to the ``listCollections``
+database command. This option enables users to specify a comment as an arbitrary
+BSON type to help trace the operation through the database profiler, currentOp
+and logs. The default is to not send a value.
+
+Example of usage of the comment option::
+
+    $ db.runCommand({"listCollections": 1, "comment": "hi there"})
+
+Any comment set on a ``listCollections`` command is inherited by any subsequent
+``getMore`` commands run on the same ``cursor.id`` returned from the
+``listCollections`` command. Therefore, drivers MUST NOT attach the comment
+to subsequent getMore commands on a cursor.
 
 Filters
 -------
@@ -257,6 +270,7 @@ All methods:
 - SHOULD be on the database object.
 - MUST allow a filter to be passed to include only requested collections.
 - MAY allow the ``cursor.batchSize`` option to be passed.
+- SHOULD allow the ``comment`` option to be passed.
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MUST apply timeouts per the `Client Side Operations Timeout
@@ -450,6 +464,9 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+Version 0.9.0 Changes
+    Add ``comment`` option to ``listCollections`` command.
 
 Version 0.8.0 Changes
     - Require that timeouts be applied per the client-side operations timeout spec.
