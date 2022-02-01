@@ -73,6 +73,9 @@ tests:
                 replacement: &replacement {"_id": 3}
                 let: &let
                   id: 1
+        expectError:
+          errorContains: "'replace.let' is an unknown field"
+          isClientError: false
     expectEvents:
       - client: *client0
         events:

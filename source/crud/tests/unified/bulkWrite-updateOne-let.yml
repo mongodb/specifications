@@ -76,11 +76,15 @@ tests:
                 filter: &filter
                   _id:
                     $gt: "$$id"
+                    x: 1
                 update: &update
                   $inc:
                     x: 1
                 let: &let
                   id: 1
+        expectError:
+          errorContains: "'update.let' is an unknown field"
+          isClientError: false
     expectEvents:
       - client: *client0
         events:
