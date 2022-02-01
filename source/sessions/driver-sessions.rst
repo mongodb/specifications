@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.8.0
+:Spec Version: 1.9.0
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2021-04-12
+:Last Modified: 2022-01-28
 
 .. contents::
 
@@ -444,7 +444,9 @@ Check Whether a Deployment Supports Session). If sessions are supported, the
 driver MUST behave as if a new ``ClientSession`` was started just for this one
 operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
-required by this spec.
+required by this spec. Regardless, please consult the startSession section to
+replicate the required steps for creating a session.
+Drivers MUST NOT consume a server session id until after the connection is checked out.
 
 MongoCollection changes
 =======================
@@ -485,6 +487,7 @@ driver MUST behave as if a new ``ClientSession`` was started just for this one
 operation and ended immediately after this operation completes. The actual
 implementation will likely involve calling ``client.startSession``, but that is not
 required by this spec.
+Drivers MUST create an implicit session only after successfully checking out a connection.
 
 Sessions and Cursors
 ====================
@@ -495,6 +498,16 @@ commands for that cursor MUST be run using the same session ID.
 If a driver decides to run a ``KILLCURSORS`` command on the cursor, it also MAY be
 run using the same session ID. See the Exceptions below for when it is permissible to not
 include a session ID in a ``KILLCURSORS`` command.
+
+Sessions and Connections
+========================
+A driver MUST only obtain an implicit session after it successfully checks out a connection.
+This limits the number of implicit sessions to never exceed the maximum connection pool size.
+The motivation for this behavior is to prevent too many sessions from being created in a scenario
+where only a limited number are actually needed to execute operations (i.e. TooManyLogicalSessions error).
+
+This only applies to implicit sessions, explicit sessions should not be modified
+to be bound by connection checkout in this way.
 
 How to Check Whether a Deployment Supports Sessions
 ===================================================
@@ -547,7 +560,7 @@ to the server:
   the server at the other end of this connection supports sessions. This scenario
   will only be a problem until the next heartbeat against that server.
 
-These race conditions are particulary insidious when the driver decides to
+These race conditions are particularly insidious when the driver decides to
 start an implicit session based on the conclusion that sessions are supported.
 We don't want existing applications that don't use explicit sessions to fail
 when using implicit sessions.
@@ -836,7 +849,7 @@ executing any command with a ``ClientSession``, the driver MUST mark the
 associated ``ServerSession`` as dirty. Dirty server sessions are discarded
 when returned to the server session pool. It is valid for a dirty session to be
 used for subsequent commands (e.g. an implicit retry attempt, a later command
-in a bulk write, or a later operation on an explict session), however, it MUST
+in a bulk write, or a later operation on an explicit session), however, it MUST
 remain dirty for the remainder of its lifetime regardless if later commands
 succeed.
 
@@ -1087,7 +1100,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * In the parent, create a ClientSession and assert its lsid is the same.
     * In the child, create a ClientSession and assert its lsid is different.
 
-12 For drivers that support forking, test that existing sessions are not checked
+12. For drivers that support forking, test that existing sessions are not checked
    into a cleared pool.  E.g.,
 
     * Create ClientSession
@@ -1095,6 +1108,14 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * Fork
     * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
     * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
+
+13. To confirm that implicit sessions only allocate their server session after a successful connection checkout
+
+    * Create a MongoClient with maxPoolSize=1, and attach a command succeeded listener
+    * Initiate 3 concurrent operations, e.g. collection.insertOne(doc)
+    * Wait for all operations to complete
+    * Assert that all commands contain the same lsid
+
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
 ----------------------------------------------------------------------------------------------
@@ -1240,6 +1261,26 @@ normally accumulate a large number of abandoned dirty sessions. Any abandoned
 sessions will be automatically cleaned up by the server after the
 configured ``logicalSessionTimeoutMinutes``.
 
+
+Why must drivers wait to consume a server session until after a connection is checked out?
+-----------------------------------------------------------------------------------------------------
+The problem that may occur is when the number of concurrent application requests are larger than the number of available connections,
+the driver may generate many more implicit sessions than connections.
+For example with maxPoolSize=1 and 100 threads, 100 implicit sessions may be created.
+This increases the load on the server since session state is cached in memory.
+In the worst case this kind of workload can hit the session limit and trigger TooManyLogicalSessions.
+
+In order to address this, drivers MUST NOT consume a server session id until after the connection is checked out.
+This change will limit the number of "in use" server sessions to no greater than an application's maxPoolSize.
+
+The language here is specific about obtaining a server session as opposed to creating the implicit session
+to permit drivers to take an implementation approach where the implicit session creation logic largely remains unchanged.
+Implicit session creation can be left as is, as long as the underlying server resource isn't allocated until it
+is needed and, known it will be used, after connection checkout succeeds.
+
+It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver could over allocate sessions.
+But those scenarios are extenuating and outside the scope of solving in this spec.
+
 Change log
 ==========
 
@@ -1269,3 +1310,4 @@ Change log
 :2021-04-08: Updated to use hello and legacy hello
 :2021-04-08: Adding in behaviour for load balancer mode.
 :2020-05-26: Simplify logic for determining sessions support
+:2022-01-28: Implicit sessions MUST obtain server session after connection checkout succeeds
