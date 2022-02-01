@@ -465,6 +465,9 @@ mechanism_properties
 	SERVICE_REALM
 		Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support cross-realm authentication where the user exists in one realm and the service in another.
 
+	SERVICE_HOST
+		Drivers MAY allow the user to specify a different host for the service. This is stored in the service principal name instead of the standard host name. This is generally used for cases where the initial role is being created from localhost but the actual service host would differ.
+
 Hostname Canonicalization
 `````````````````````````
 
