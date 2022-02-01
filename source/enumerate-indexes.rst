@@ -12,7 +12,7 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2022-01-??
+:Last Modified: 2022-02-01
 :Version: 0.7.0
 
 .. contents::
@@ -409,7 +409,7 @@ The shell implements the first algorithm for falling back if the
 Version History
 ===============
 
-0.7.0 - 2022-01-??
+0.7.0 - 2022-02-01
     Add ``comment`` option to ``listIndexes`` command.
 
 0.6.0 - 2022-01-19

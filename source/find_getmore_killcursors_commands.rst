@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: January ??, 2022
+:Last Modified: February 01, 2022
 
 .. contents::
 
@@ -470,7 +470,7 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
-2022-01-?? Replace examples/tables for find, getMore, and killCursors with server manual links.
+2022-02-01 Replace examples/tables for find, getMore, and killCursors with server manual links.
 
 2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for exhaust cursors.
 

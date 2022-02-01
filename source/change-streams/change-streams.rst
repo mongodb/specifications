@@ -9,7 +9,7 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-01-??
+:Last Modified: 2022-02-01
 :Version: 1.11
 
 .. contents::
@@ -913,5 +913,5 @@ Changelog
 | 2022-01-19 | Require that timeouts be applied per the client-side       |
 |            | operations timeout specification                           |
 +------------+------------------------------------------------------------+
-| 2022-01-?? | Added ``comment`` to ``ChangeStreamOptions``.              |
+| 2022-02-01 | Added ``comment`` to ``ChangeStreamOptions``.              |
 +------------+------------------------------------------------------------+

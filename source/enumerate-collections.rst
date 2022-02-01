@@ -12,7 +12,7 @@ Enumerating Collections
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2022-01-??
+:Last Modified: 2022-02-01
 :Version: 0.9.0
 
 .. contents::

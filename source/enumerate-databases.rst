@@ -9,7 +9,7 @@ Enumerating Databases
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.7
-:Last Modified: 2022-01-??
+:Last Modified: 2022-02-01
 
 .. contents::
 
@@ -299,7 +299,7 @@ all ``sizeOnDisk`` fields in the array of database information documents.
 Changes
 =======
 
-* 2022-01-??: Support comment option in listDatabases command
+* 2022-02-01: Support comment option in listDatabases command
 * 2017-10-30: Support filter option in listDatabases command
 * 2019-11-20: Support authorizedDatabases option in listDatabases command
 * 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.

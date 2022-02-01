@@ -11,7 +11,7 @@ Index Management
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.4
-:Last Modified: 2022-01-??
+:Last Modified: 2022-01-01
 :Version: 1.8
 
 .. contents::
@@ -897,5 +897,5 @@ Changelog
   - Added deprecation message for ``background`` option.
 19 JAN 2022:
   - Require that timeouts be applied per the client-side operations timeout spec.
-?? JAN 2022:
+01 FEB 2022:
   - Added comment field to helper methods.

@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-??
+:Last Modified: 2022-02-01
 
 .. contents::
 
@@ -2331,7 +2331,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2022-01-??: Add comment attribute to all helpers.
+* 2022-02-01: Add comment attribute to all helpers.
 * 2022-01-27: Use optional return types for write commands and findAndModify
 * 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
 * 2022-01-14: Add let to ReplaceOptions
