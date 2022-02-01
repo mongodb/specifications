@@ -148,7 +148,8 @@
                 "updateOne": {
                   "filter": {
                     "_id": {
-                      "$gt": "$$id"
+                      "$gt": "$$id",
+                      "x": 1
                     }
                   },
                   "update": {
@@ -162,6 +163,10 @@
                 }
               }
             ]
+          },
+          "expectError": {
+            "errorContains": "'update.let' is an unknown field",
+            "isClientError": false
           }
         }
       ],
@@ -177,7 +182,8 @@
                     {
                       "q": {
                         "_id": {
-                          "$gt": "$$id"
+                          "$gt": "$$id",
+                          "x": 1
                         }
                       },
                       "u": {

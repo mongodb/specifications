@@ -56,7 +56,7 @@
           "arguments": {
             "requests": [
               {
-                "updateOne": {
+                "updateMany": {
                   "filter": {
                     "_id": {
                       "$gt": "$$id"
@@ -143,7 +143,7 @@
           "arguments": {
             "requests": [
               {
-                "updateOne": {
+                "updateMany": {
                   "filter": {
                     "_id": {
                       "$gt": "$$id"
@@ -160,6 +160,10 @@
                 }
               }
             ]
+          },
+          "expectError": {
+            "errorContains": "'update.let' is an unknown field",
+            "isClientError": false
           }
         }
       ],
