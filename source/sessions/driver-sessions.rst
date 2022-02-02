@@ -1110,7 +1110,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
 
 13. To confirm that implicit sessions only allocate their server session after a successful connection checkout
 
-    * Create a MongoClient with the following options: ``maxPoolSize=1``, ``retryableReads=true``, and ``retryableWrites=true``
+    * Create a MongoClient with the following options: ``maxPoolSize=1`` and ``retryWrites=true``
     * Attach a command succeeded listener that collects each command's lsid
     * Initiate the following concurrent operations
       * insertOne
