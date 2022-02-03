@@ -103,10 +103,12 @@
           }
         },
         {
-          "name": "dropCollection",
+          "name": "runCommand",
           "object": "database0",
           "arguments": {
-            "collection": "doesNotMatter",
+            "command": {
+              "ping": 1
+            },
             "session": "session1"
           },
           "expectError": {
@@ -162,7 +164,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "drop": "coll"
+                  "ping": 1
                 },
                 "databaseName": "retryable-handshake-tests"
               }

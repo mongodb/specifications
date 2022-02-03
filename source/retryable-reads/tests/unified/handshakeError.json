@@ -75,7 +75,7 @@
               "data": {
                 "failCommands": [
                   "saslContinue",
-                  "drop"
+                  "ping"
                 ],
                 "closeConnection": true
               }
@@ -83,10 +83,12 @@
           }
         },
         {
-          "name": "dropCollection",
+          "name": "runCommand",
           "object": "database0",
           "arguments": {
-            "collection": "doesNotMatter"
+            "command": {
+              "ping": 1
+            }
           },
           "expectError": {
             "isError": true
@@ -138,7 +140,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "drop": "coll"
+                  "ping": 1
                 },
                 "databaseName": "retryable-handshake-tests"
               }

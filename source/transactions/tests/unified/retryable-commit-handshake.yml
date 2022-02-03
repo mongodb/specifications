@@ -63,13 +63,13 @@ tests:
               # this failPoint itself will create a usable connection in the connection pool
               # so we run a dropCollection (that also fails) in order to discard the connection
               # before testing that commitTransaction gets retried
-              failCommands: [saslContinue, drop]
+              failCommands: [saslContinue, ping]
               closeConnection: true
 
-      - name: dropCollection
+      - name: ping
         object: *database0
         arguments:
-          collection: doesNotMatter
+          command: { ping: 1 }
           session: *session1
         expectError:
           isError: true
@@ -97,7 +97,7 @@ tests:
               databaseName: *databaseName
           - commandStartedEvent:
               command:
-                drop: *collectionName
+                ping: 1
               databaseName: *databaseName
           - commandStartedEvent:
               command:

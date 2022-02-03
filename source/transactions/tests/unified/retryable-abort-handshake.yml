@@ -67,10 +67,10 @@ tests:
               failCommands: [saslContinue, drop]
               closeConnection: true
 
-      - name: dropCollection
+      - name: runCommand
         object: *database0
         arguments:
-          collection: doesNotMatter
+          command: { ping: 1 }
           session: *session1
         expectError:
           isError: true
@@ -98,7 +98,7 @@ tests:
               databaseName: *databaseName
           - commandStartedEvent:
               command:
-                drop: *collectionName
+                ping: 1
               databaseName: *databaseName
           - commandStartedEvent:
               command:

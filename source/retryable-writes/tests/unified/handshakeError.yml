@@ -38,13 +38,13 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 2 }
             data:
-              failCommands: [ping, saslContinue]
+              failCommands: [saslContinue, ping]
               closeConnection: true
 
       - name: dropCollection
         object: *database0
         arguments:
-          collection: doesNotMatter
+          command: { ping: 1 }
         expectError:
           isError: true
 
@@ -69,7 +69,7 @@ tests:
               databaseName: *databaseName
           - commandStartedEvent:
               command:
-                drop: *collectionName
+                ping: 1
               databaseName: *databaseName
 
     outcome:
