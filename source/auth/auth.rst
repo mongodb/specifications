@@ -471,7 +471,7 @@ mechanism_properties
 Hostname Canonicalization
 `````````````````````````
 
-If CANONICALIZE_HOST_NAME is true, the client MUST canonicalize the name of each host it uses for authentication. There are two options. First, if the client's underlying GSSAPI library provides hostname canonicalization, the client MAY rely on it. For example, MIT Kerberos has `a configuration option for canonicalization <https://web.mit.edu/kerberos/krb5-1.13/doc/admin/princ_dns.html#service-principal-canonicalization>`_.
+If CANONICALIZE_HOST_NAME is true, "forward", or "forwardAndReverse", the client MUST canonicalize the name of each host it uses for authentication. There are two options. First, if the client's underlying GSSAPI library provides hostname canonicalization, the client MAY rely on it. For example, MIT Kerberos has `a configuration option for canonicalization <https://web.mit.edu/kerberos/krb5-1.13/doc/admin/princ_dns.html#service-principal-canonicalization>`_.
 
 Second, the client MAY implement its own canonicalization. If so, the canonicalization algorithm MUST be::
 
@@ -489,8 +489,8 @@ Second, the client MAY implement its own canonicalization. If so, the canonicali
     # Unspecified which CNAME is used if > 1.
     host = one of the records in cnames
 
-  reversed = do a reverse DNS lookup for address
-  if reversed:
+  if forwardAndReverse:
+    reversed = do a reverse DNS lookup for address
     canonicalized = lowercase(reversed)
   else:
     canonicalized = lowercase(host)
@@ -1063,7 +1063,7 @@ authSource
 authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
 	A generic method to set mechanism properties in the connection string. 
 
-	For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be ``authMechanismProperties=CANONICALIZE_HOST_NAME:true,SERVICE_REALM:AWESOME``.
+	For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be ``authMechanismProperties=CANONICALIZE_HOST_NAME:forward,SERVICE_REALM:AWESOME``.
 
 gssapiServiceName (deprecated)
 	An alias for ``authMechanismProperties=SERVICE_NAME:mongodb``.
