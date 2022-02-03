@@ -358,13 +358,19 @@ and reflects the flow described above.
      * can then assume that no attempts were made. */
     server = selectServer();
 
-    /* PoolClearedException indicates the operation did not even attempt to
-     * create a connection, let alone execute the operation. This means we
-     * are always safe to attempt a retry. We do not need to update SDAM,
-     * since whatever error caused the pool to be cleared will do so itself. */
     try {
       connection = server.getConnection()
     } catch (PoolClearedException poolClearedError) {
+      /* PoolClearedException indicates the operation did not even attempt to
+       * create a connection, let alone execute the operation. This means we
+       * are always safe to attempt a retry. We do not need to update SDAM,
+       * since whatever error caused the pool to be cleared will do so itself. */
+      return executeRetry(command, session, poolClearedError);
+    } catch (NetworkError networkError) {
+      /* NetworkError indicates the getConnection was not able to establish
+       * a successfully handshake-ed connection with the server, this is retryable.
+       * We do not need to update SDAM, since network errors already mark
+       * servers Unknown and empty the pool. */
       return executeRetry(command, session, poolClearedError);
     }
 
