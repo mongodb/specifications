@@ -460,7 +460,7 @@ mechanism_properties
 		Drivers MUST allow the user to specify a different service name. The default is "mongodb".
 
 	CANONICALIZE_HOST_NAME
-		Drivers MAY allow the user to request canonicalization of the hostname. This might be required when the hosts report different hostnames than what is used in the kerberos database. The default is "false".
+		Drivers MAY allow the user to request canonicalization of the hostname. This might be required when the hosts report different hostnames than what is used in the kerberos database. The value is a string of either "none", "forward", or "forwardAndReverse". "none" is the default and performs no canonicalization. "forward" performs a forward DNS lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS lookup and then a reverse lookup on that value to canonicalize the hostname. The driver MUST error if any lookup errors or returns no results. Drivers MAY decide to also keep the legacy boolean values where `true` equals the "forward" behaviour and `false` equals "none".
 
 	SERVICE_REALM
 		Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support cross-realm authentication where the user exists in one realm and the service in another.
