@@ -506,8 +506,7 @@ This limits the number of implicit sessions to never exceed the maximum connecti
 The motivation for this behavior is to prevent too many sessions from being created in a scenario
 where only a limited number are actually needed to execute operations (i.e. TooManyLogicalSessions error).
 
-This only applies to implicit sessions, explicit sessions should not be modified
-to be bound by connection checkout in this way.
+Explicit sessions MAY be changed to allocate a server session similarly, but it is not required.
 
 How to Check Whether a Deployment Supports Sessions
 ===================================================
@@ -1111,8 +1110,17 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
 
 13. To confirm that implicit sessions only allocate their server session after a successful connection checkout
 
-    * Create a MongoClient with maxPoolSize=1, and attach a command succeeded listener
-    * Initiate 3 concurrent operations, e.g. collection.insertOne(doc)
+    * Create a MongoClient with the following options: ``maxPoolSize=1`` and ``retryWrites=true``
+    * Attach a command started listener that collects each command's lsid
+    * Initiate the following concurrent operations
+      * insertOne
+      * deleteOne
+      * updateOne
+      * bulkWrite ``[ { updateOne } ]``
+      * findOneAndDelete
+      * findOneAndUpdate
+      * findOneAndReplace
+      * find
     * Wait for all operations to complete
     * Assert that all commands contain the same lsid
 
