@@ -20,12 +20,7 @@
         "observeEvents": [
           "commandStartedEvent",
           "connectionCheckOutStartedEvent"
-        ],
-        "uriOptions": {
-          "retryReads": true,
-          "retryWrites": true,
-          "maxPoolSize": 5
-        }
+        ]
       }
     },
     {
@@ -80,7 +75,7 @@
               "data": {
                 "failCommands": [
                   "saslContinue",
-                  "dropCollection"
+                  "drop"
                 ],
                 "closeConnection": true
               }
@@ -136,6 +131,14 @@
                   "filter": {
                     "_id": 2
                   }
+                },
+                "databaseName": "retryable-handshake-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "drop": "coll"
                 },
                 "databaseName": "retryable-handshake-tests"
               }

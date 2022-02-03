@@ -21,12 +21,7 @@
         "observeEvents": [
           "commandStartedEvent",
           "connectionCheckOutStartedEvent"
-        ],
-        "uriOptions": {
-          "retryReads": true,
-          "retryWrites": true,
-          "maxPoolSize": 5
-        }
+        ]
       }
     },
     {
@@ -100,7 +95,7 @@
               "data": {
                 "failCommands": [
                   "saslContinue",
-                  "dropCollection"
+                  "drop"
                 ],
                 "closeConnection": true
               }
@@ -161,6 +156,14 @@
                   "startTransaction": true
                 },
                 "commandName": "insert",
+                "databaseName": "retryable-handshake-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "drop": "coll"
+                },
                 "databaseName": "retryable-handshake-tests"
               }
             },

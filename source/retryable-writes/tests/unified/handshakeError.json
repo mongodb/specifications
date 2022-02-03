@@ -20,12 +20,7 @@
         "observeEvents": [
           "commandStartedEvent",
           "connectionCheckOutStartedEvent"
-        ],
-        "uriOptions": {
-          "retryReads": true,
-          "retryWrites": true,
-          "maxPoolSize": 5
-        }
+        ]
       }
     },
     {
@@ -67,11 +62,11 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 1
+                "times": 2
               },
               "data": {
                 "failCommands": [
-                  "dropCollection",
+                  "ping",
                   "saslContinue"
                 ],
                 "closeConnection": true
@@ -128,6 +123,14 @@
                   ]
                 },
                 "commandName": "insert",
+                "databaseName": "retryable-handshake-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "drop": "coll"
+                },
                 "databaseName": "retryable-handshake-tests"
               }
             }

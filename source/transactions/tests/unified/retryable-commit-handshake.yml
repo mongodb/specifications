@@ -13,7 +13,7 @@ createEntities:
       id: &client0 client0
       useMultipleMongoses: false
       observeEvents: [commandStartedEvent, connectionCheckOutStartedEvent]
-      uriOptions: { retryReads: true, retryWrites: true, maxPoolSize: 5 }
+      uriOptions: { retryWrites: false } # commitTransaction is retryable regardless of this option being set
   - database:
       id: &database0 database0
       client: *client0
@@ -63,7 +63,7 @@ tests:
               # this failPoint itself will create a usable connection in the connection pool
               # so we run a dropCollection (that also fails) in order to discard the connection
               # before testing that commitTransaction gets retried
-              failCommands: [saslContinue, dropCollection]
+              failCommands: [saslContinue, drop]
               closeConnection: true
 
       - name: dropCollection
@@ -94,6 +94,10 @@ tests:
                 documents: [{ _id: 2, x: 22 }]
                 startTransaction: true
               commandName: insert
+              databaseName: *databaseName
+          - commandStartedEvent:
+              command:
+                drop: *collectionName
               databaseName: *databaseName
           - commandStartedEvent:
               command:

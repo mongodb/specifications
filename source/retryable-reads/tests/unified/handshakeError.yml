@@ -12,7 +12,6 @@ createEntities:
       id: &client0 client0
       useMultipleMongoses: false
       observeEvents: [commandStartedEvent, connectionCheckOutStartedEvent]
-      uriOptions: { retryReads: true, retryWrites: true, maxPoolSize: 5 }
   - database:
       id: &database0 database0
       client: *client0
@@ -45,7 +44,7 @@ tests:
               # this failPoint itself will create a usable connection in the connection pool
               # so we run a dropCollection (that also fails) in order to discard the connection
               # before testing our read operation "find"
-              failCommands: [saslContinue, dropCollection]
+              failCommands: [saslContinue, drop]
               closeConnection: true
 
       - name: dropCollection
@@ -73,4 +72,8 @@ tests:
               command:
                 find: *collectionName
                 filter: { _id: 2 }
+              databaseName: *databaseName
+          - commandStartedEvent:
+              command:
+                drop: *collectionName
               databaseName: *databaseName
