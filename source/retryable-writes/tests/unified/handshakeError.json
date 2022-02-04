@@ -75,9 +75,10 @@
           }
         },
         {
-          "name": "dropCollection",
+          "name": "runCommand",
           "object": "database0",
           "arguments": {
+            "commandName": "ping",
             "command": {
               "ping": 1
             }
@@ -116,6 +117,14 @@
             {
               "commandStartedEvent": {
                 "command": {
+                  "ping": 1
+                },
+                "databaseName": "retryable-handshake-tests"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
                   "insert": "coll",
                   "documents": [
                     {
@@ -125,14 +134,6 @@
                   ]
                 },
                 "commandName": "insert",
-                "databaseName": "retryable-handshake-tests"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "ping": 1
-                },
                 "databaseName": "retryable-handshake-tests"
               }
             }

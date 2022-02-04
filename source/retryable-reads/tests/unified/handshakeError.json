@@ -86,6 +86,7 @@
           "name": "runCommand",
           "object": "database0",
           "arguments": {
+            "commandName": "ping",
             "command": {
               "ping": 1
             }
@@ -129,10 +130,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "coll",
-                  "filter": {
-                    "_id": 2
-                  }
+                  "ping": 1
                 },
                 "databaseName": "retryable-handshake-tests"
               }
@@ -140,7 +138,10 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "ping": 1
+                  "find": "coll",
+                  "filter": {
+                    "_id": 2
+                  }
                 },
                 "databaseName": "retryable-handshake-tests"
               }

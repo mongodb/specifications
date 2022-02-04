@@ -106,9 +106,10 @@
           }
         },
         {
-          "name": "ping",
+          "name": "runCommand",
           "object": "database0",
           "arguments": {
+            "commandName": "ping",
             "command": {
               "ping": 1
             },

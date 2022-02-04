@@ -62,14 +62,15 @@ tests:
             data:
               # use saslContinue here to avoid SDAM errors
               # this failPoint itself will create a usable connection in the connection pool
-              # so we run a dropCollection (that also fails) in order to discard the connection
-              # before testing that abortTransaction gets retried
-              failCommands: [saslContinue, drop]
+              # so we run a ping (with closeConnection: true) in order to discard the connection
+              # before testing that abortTransaction will fail a handshake but will get retried
+              failCommands: [saslContinue, ping]
               closeConnection: true
 
       - name: runCommand
         object: *database0
         arguments:
+          commandName: ping
           command: { ping: 1 }
           session: *session1
         expectError:

@@ -66,9 +66,10 @@ tests:
               failCommands: [saslContinue, ping]
               closeConnection: true
 
-      - name: ping
+      - name: runCommand
         object: *database0
         arguments:
+          commandName: ping
           command: { ping: 1 }
           session: *session1
         expectError:

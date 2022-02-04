@@ -50,6 +50,7 @@ tests:
       - name: runCommand
         object: *database0
         arguments:
+          commandName: ping
           command: { ping: 1 }
         expectError:
           isError: true
@@ -70,10 +71,10 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                find: *collectionName
-                filter: { _id: 2 }
+                ping: 1
               databaseName: *databaseName
           - commandStartedEvent:
               command:
-                ping: 1
+                find: *collectionName
+                filter: { _id: 2 }
               databaseName: *databaseName

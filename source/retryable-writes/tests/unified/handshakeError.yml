@@ -41,9 +41,10 @@ tests:
               failCommands: [saslContinue, ping]
               closeConnection: true
 
-      - name: dropCollection
+      - name: runCommand
         object: *database0
         arguments:
+          commandName: ping
           command: { ping: 1 }
         expectError:
           isError: true
@@ -63,13 +64,13 @@ tests:
         events:
           - commandStartedEvent:
               command:
-                insert: *collectionName
-                documents: [{ _id: 2, x: 22 }]
-              commandName: insert
+                ping: 1
               databaseName: *databaseName
           - commandStartedEvent:
               command:
-                ping: 1
+                insert: *collectionName
+                documents: [{ _id: 2, x: 22 }]
+              commandName: insert
               databaseName: *databaseName
 
     outcome:

@@ -95,7 +95,7 @@
               "data": {
                 "failCommands": [
                   "saslContinue",
-                  "drop"
+                  "ping"
                 ],
                 "closeConnection": true
               }
@@ -106,6 +106,7 @@
           "name": "runCommand",
           "object": "database0",
           "arguments": {
+            "commandName": "ping",
             "command": {
               "ping": 1
             },
