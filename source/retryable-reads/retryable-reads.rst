@@ -79,6 +79,10 @@ SocketException                 9001
 
   .. _PoolClearedError: ../connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool-errors
 
+- Any of the above retryable errors that occur during a connection handshake (including the
+  authentication step). For example, a network error or ShutdownInProgress error
+  encountered when running the hello or saslContinue commands.
+
 MongoClient Configuration
 -------------------------
 
@@ -163,7 +167,6 @@ Drivers SHOULD support retryability for the following operations:
 - Any driver that provides generic command runners for read commands (with logic
   to inherit a client-level read concerns) SHOULD implement retryability for the
   read-only command runner.
-- Any error that occurs during a handshake (eg. Auth, ShutdownInProgress).
 
 Most of the above methods are defined in the following specifications:
 
@@ -367,10 +370,10 @@ and reflects the flow described above.
        * since whatever error caused the pool to be cleared will do so itself. */
       return executeRetry(command, session, poolClearedError);
     } catch (NetworkError networkError) {
-      /* NetworkError indicates the getConnection was not able to establish
-       * a successfully handshake-ed connection with the server, this is retryable.
-       * We do not need to update SDAM, since network errors already mark
-       * servers Unknown and empty the pool. */
+      updateTopologyDescriptionForNetworkError(server, networkError);
+      return executeRetry(command, session, poolClearedError);
+    } catch (NotWritablePrimaryException originalError) {
+      updateTopologyDescriptionForNotWritablePrimaryError(server, originalError);
       return executeRetry(command, session, poolClearedError);
     }
 
