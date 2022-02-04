@@ -100,6 +100,10 @@ tests:
                 SERVICE_NAME: "other"
                 CANONICALIZE_HOST_NAME: "none"
     -
+        description: "must raise an error when the hostname canonicalization is invalid"
+        uri: "mongodb://user%40DOMAIN.COM@localhost/?authMechanism=GSSAPI&authMechanismProperties=SERVICE_NAME:other,CANONICALIZE_HOST_NAME:invalid"
+        valid: false
+    -
         description: "should accept the password (GSSAPI)"
         uri: "mongodb://user%40DOMAIN.COM:password@localhost/?authMechanism=GSSAPI&authSource=$external"
         valid: true

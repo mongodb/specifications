@@ -460,7 +460,7 @@ mechanism_properties
 		Drivers MUST allow the user to specify a different service name. The default is "mongodb".
 
 	CANONICALIZE_HOST_NAME
-		Drivers MAY allow the user to request canonicalization of the hostname. This might be required when the hosts report different hostnames than what is used in the kerberos database. The value is a string of either "none", "forward", or "forwardAndReverse". "none" is the default and performs no canonicalization. "forward" performs a forward DNS lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS lookup and then a reverse lookup on that value to canonicalize the hostname. The driver MUST error if any lookup errors or returns no results. Drivers MAY decide to also keep the legacy boolean values where `true` equals the "forward" behaviour and `false` equals "none".
+		Drivers MAY allow the user to request canonicalization of the hostname. This might be required when the hosts report different hostnames than what is used in the kerberos database. The value is a string of either "none", "forward", or "forwardAndReverse". "none" is the default and performs no canonicalization. "forward" performs a forward DNS lookup to canonicalize the hostname. "forwardAndReverse" performs a forward DNS lookup and then a reverse lookup on that value to canonicalize the hostname. The driver MUST error if any lookup errors or returns no results. Drivers MAY decide to also keep the legacy boolean values where `true` equals the "forwardAndReverse" behaviour and `false` equals "none".
 
 	SERVICE_REALM
 		Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support cross-realm authentication where the user exists in one realm and the service in another.
@@ -471,7 +471,11 @@ mechanism_properties
 Hostname Canonicalization
 `````````````````````````
 
-If CANONICALIZE_HOST_NAME is true, "forward", or "forwardAndReverse", the client MUST canonicalize the name of each host it uses for authentication. There are two options. First, if the client's underlying GSSAPI library provides hostname canonicalization, the client MAY rely on it. For example, MIT Kerberos has `a configuration option for canonicalization <https://web.mit.edu/kerberos/krb5-1.13/doc/admin/princ_dns.html#service-principal-canonicalization>`_.
+Valid values for CANONICALIZE_HOST_NAME are `true`, `false`, "none", "forward", "forwardAndReverse". If a value is provided that does not match one of these the driver MUST raise an error.
+
+If CANONICALIZE_HOST_NAME is `false`, "none", or not provided, the driver MUST NOT canonicalize the host name.
+
+If CANONICALIZE_HOST_NAME is `true`, "forward", or "forwardAndReverse", the client MUST canonicalize the name of each host it uses for authentication. There are two options. First, if the client's underlying GSSAPI library provides hostname canonicalization, the client MAY rely on it. For example, MIT Kerberos has `a configuration option for canonicalization <https://web.mit.edu/kerberos/krb5-1.13/doc/admin/princ_dns.html#service-principal-canonicalization>`_.
 
 Second, the client MAY implement its own canonicalization. If so, the canonicalization algorithm MUST be::
 
@@ -489,7 +493,7 @@ Second, the client MAY implement its own canonicalization. If so, the canonicali
     # Unspecified which CNAME is used if > 1.
     host = one of the records in cnames
 
-  if forwardAndReverse:
+  if forwardAndReverse or true:
     reversed = do a reverse DNS lookup for address
     canonicalized = lowercase(reversed)
   else:
@@ -503,7 +507,7 @@ For example, here is a Python implementation of this algorithm using ``getaddrin
   import sys
 
 
-  def canonicalize(host):
+  def canonicalize(host, mode):
       # Get a CNAME for host, if any.
       af, socktype, proto, canonname, sockaddr = getaddrinfo(
           host, None, 0, 0, IPPROTO_TCP, AI_CANONNAME)[0]
@@ -511,14 +515,16 @@ For example, here is a Python implementation of this algorithm using ``getaddrin
       print('address from getaddrinfo: [%s]' % (sockaddr[0],))
       print('canonical name from getaddrinfo: [%s]' % (canonname,))
 
-      try:
-          # NI_NAMEREQD requests an error if getnameinfo fails.
-          name = getnameinfo(sockaddr, NI_NAMEREQD)
-      except gaierror as exc:
-          print('getname info failed: "%s"' % (exc,))
+      if (mode == true or mode == 'forwardAndReverse'):
+          try:
+              # NI_NAMEREQD requests an error if getnameinfo fails.
+              name = getnameinfo(sockaddr, NI_NAMEREQD)
+          except gaierror as exc:
+              print('getname info failed: "%s"' % (exc,))
+              return canonname.lower()
+          return name[0].lower()
+      else:
           return canonname.lower()
-
-      return name[0].lower()
 
 
   canonicalized = canonicalize(sys.argv[1])
