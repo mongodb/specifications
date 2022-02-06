@@ -56,7 +56,7 @@ tests:
         expectResult: &expect_results
           deletedCount: 1
           insertedCount: 1
-          insertedIds: { $$unsetOrMatches: {} }
+          insertedIds: { $$unsetOrMatches: { 0: 5} }
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 0
