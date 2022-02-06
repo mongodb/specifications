@@ -108,7 +108,9 @@
             "deletedCount": 1,
             "insertedCount": 1,
             "insertedIds": {
-              "$$unsetOrMatches": {}
+              "$$unsetOrMatches": {
+                "0": 5
+              }
             },
             "matchedCount": 2,
             "modifiedCount": 2,
@@ -271,7 +273,9 @@
             "deletedCount": 1,
             "insertedCount": 1,
             "insertedIds": {
-              "$$unsetOrMatches": {}
+              "$$unsetOrMatches": {
+                "0": 5
+              }
             },
             "matchedCount": 2,
             "modifiedCount": 2,
