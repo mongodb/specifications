@@ -43,7 +43,6 @@ tests:
                     u: *update
                     multi: true
                 comment: "comment"
-
     outcome: &outcome
       - collectionName: *collection0Name
         databaseName: *database0Name
