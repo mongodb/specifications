@@ -8,8 +8,7 @@
         "replicaset",
         "sharded",
         "load-balanced"
-      ],
-      "auth": true
+      ]
     }
   ],
   "createEntities": [
@@ -69,7 +68,7 @@
                   "insertOne"
                 ],
                 "errmsg": "not master",
-                "errorCode": 1
+                "errorCode": 10107
               }
             }
           }
@@ -90,6 +89,9 @@
           "client": "client0",
           "eventType": "cmap",
           "events": [
+            {
+              "connectionCheckOutStartedEvent": {}
+            },
             {
               "connectionCheckOutStartedEvent": {}
             },

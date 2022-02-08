@@ -8,8 +8,7 @@
         "replicaset",
         "sharded",
         "load-balanced"
-      ],
-      "auth": true
+      ]
     }
   ],
   "createEntities": [
@@ -77,7 +76,7 @@
                   "find"
                 ],
                 "errmsg": "not master",
-                "errorCode": 1
+                "errorCode": 10107
               }
             }
           }
@@ -108,12 +107,29 @@
             },
             {
               "connectionCheckOutStartedEvent": {}
+            },
+            {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
+              "connectionCheckOutStartedEvent": {}
             }
           ]
         },
         {
           "client": "client0",
           "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "coll",
+                  "filter": {
+                    "_id": 2
+                  }
+                },
+                "databaseName": "retryable-read-notwritableprimary-tests"
+              }
+            },
             {
               "commandStartedEvent": {
                 "command": {
