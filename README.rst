@@ -94,6 +94,14 @@ Drivers follow semantic versioning
 Drivers should follow X.Y.Z versioning, where breaking API changes require a
 bump to X.  See `semver.org <https://semver.org/>`_  for more.
 
+Backward breaking behavior changes and semver
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Backward breaking behavior changes can be more dangerous and disruptive than
+backward breaking API changes. When thinking about the implications of a
+behavior change, ask yourself what could happen if a user upgraded your library
+without carefully reading the changelog and/or adequately testing the change.
+
 Writing Documents
 -----------------
 
