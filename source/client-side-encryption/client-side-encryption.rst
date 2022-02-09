@@ -1192,7 +1192,7 @@ collections (e.g. aggregate with $lookup) are handled properly.
 
 Test Plan
 =========
-See the `README.rst <https://github.com/mongodb/specifications/blob/5ea8e02dfc7096c0ad78c3fadded8e66470a4c19/source/client-side-encryption/tests/README.rst>`_ in the test directory.
+See the `README.rst <../client-side-encryption/tests/README.rst>`_ in the test directory.
 
 Rationale
 =========
