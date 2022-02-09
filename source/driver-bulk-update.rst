@@ -4,7 +4,7 @@ Bulk API Spec
 :Authors: Christian Kvalheim
 :Status: Deprecated
 :Type: Standards
-:Last Modified: October 9, 2015
+:Last Modified: May 18, 2021
 
 .. contents::
 
@@ -12,6 +12,10 @@ Changes from previous versions
 ------------------------------
 
 Deprecated in favor of the *Driver CRUD API*.
+
+v0.8
+~~~~
+* Removed "Test Case 3: Key validation, no $-prefixed keys allowed" for insert.
 
 v0.7
 ~~~~
@@ -895,13 +899,7 @@ Test Case 2:
         
         Same for initializeOrderedBulkOp().    
 
-Test Case 3:
-    Key validation, no $-prefixed keys allowed:
-        batch = initializeUnorderedBulkOp().insert({$key: 1})
-        
-        bulk.execute() throws reasonable error (server does the validation)
-        
-        Same for initializeOrderedBulkOp().
+Test Case 3: *Removed*
 
 Test Case 4:
     Inserting a document succeeds and returns 'nInserted’ of 1:

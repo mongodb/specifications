@@ -109,10 +109,18 @@ Each YAML file has the following keys:
     
   - ``clientOptions``: Optional, parameters to pass to MongoClient().
 
-  - ``useMultipleMongoses`` (optional): If ``true``, the MongoClient for this
-    test should be initialized with multiple mongos seed addresses. If ``false``
-    or omitted, only a single mongos address should be specified. This field has
-    no effect for non-sharded topologies.
+  - ``useMultipleMongoses`` (optional): If ``true``, and the topology type is
+    ``Sharded``, the MongoClient for this test should be initialized with multiple
+    mongos seed addresses. If ``false`` or omitted, only a single mongos address
+    should be specified.
+
+    If ``true``, and the topology type is ``LoadBalanced``, the MongoClient for
+    this test should be initialized with the URI of the load balancer fronting
+    multiple servers. If ``false`` or omitted, the MongoClient for this test
+    should be initialized with the URI of the load balancer fronting a single
+    server.
+
+    ``useMultipleMongoses`` only affects ``Sharded`` and ``LoadBalanced`` topologies.
     
   - ``skipReason``: Optional, string describing why this test should be skipped.
 
@@ -182,7 +190,8 @@ PoolClearedError Retryability Test
 ==================================
 
 This test will be used to ensure drivers properly retry after encountering PoolClearedErrors.
-This test MUST be implemented by any driver that implements the CMAP specification.
+It MUST be implemented by any driver that implements the CMAP specification.
+This test requires MongoDB 4.2.9+ for ``blockConnection`` support in the failpoint.
 
 1. Create a client with maxPoolSize=1 and retryReads=true. If testing against a
    sharded deployment, be sure to connect to only a single mongos.
@@ -219,6 +228,8 @@ This test MUST be implemented by any driver that implements the CMAP specificati
 
 Changelog
 =========
+
+:2021-08-27: Clarify behavior of ``useMultipleMongoses`` for ``LoadBalanced`` topologies.
 
 :2019-03-19: Add top-level ``runOn`` field to denote server version and/or
              topology requirements requirements for the test file. Removes the

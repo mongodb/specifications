@@ -10,8 +10,8 @@ Extended JSON
 :Advisory Group: Jeff Yemin, Christian Kvalheim, Hannes Magnusson, Matt Broadstone, Jesse Davis
 :Status: Proposed
 :Type: Standards
-:Last Modified: October 1, 2020
-:Version: 2.1.1
+:Last Modified: May 21, 2021
+:Version: 2.2.0
 
 .. contents::
 
@@ -186,9 +186,8 @@ Conversion table
 |                    | "$id": <Extended JSON for the id>,                       |                                                       |
 |                    | "$db": <database name as a *string*>}                    |                                                       |
 |                    |                                                          |                                                       |
-|                    |DBRefs may also have other fields that do not begin with  |                                                       |
-|                    |``$``, which MUST appear after ``$id`` and ``$db`` (if    |                                                       |
-|                    |supported).                                               |                                                       |
+|                    |DBRefs may also have other fields, which MUST appear after|                                                       |
+|                    |``$id`` and ``$db`` (if supported).                       |                                                       |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
 |MinKey              |{"$minKey": 1}                                            | <Same as Canonical Extended JSON>                     |
 +--------------------+----------------------------------------------------------+-------------------------------------------------------+
@@ -298,10 +297,15 @@ in which case it SHOULD follow these rules:
   the document ``{"$code": "function(){}", "$scope": {}}`` must be considered
   identical to ``{"$scope": {}, "$code": "function(){}"}``.
 
-* If the parsed object contains any of the special **keys** in the Conversion
-  table such as ``"$binary"``, ``"$timestamp"``, etc., then it must contain
-  exactly the keys of a type wrapper. Any missing or extra keys constitute an
-  error.
+* If the parsed object contains any of the special **keys** for a type in the
+  `Conversion table`_ (e.g. ``"$binary"``, ``"$timestamp"``) then it must
+  contain exactly the keys of the type wrapper. Any missing or extra keys
+  constitute an error.
+
+  DBRef is the lone exception to this rule, as it is only a common convention
+  and not a proper type. An object that resembles a DBRef but fails to fully
+  comply with its structure (e.g. has ``$ref`` but missing ``$id``) MUST be left
+  as-is and MUST NOT constitute an error.
 
 * If the **keys** of the parsed object exactly match the **keys** of a type
   wrapper in the Conversion table, and the **values** of the parsed object have
@@ -929,6 +933,15 @@ a MongoDB query filter containing the ``$type`` operator?
 
 Changes
 =======
+
+v2.2.0
+------
+
+* Remove any mention of extra dollar-prefixed keys being prohibited in a DBRef.
+  MongoDB 5.0 and compatible drivers no longer enforce such restrictions.
+
+* Objects that resemble a DBRef without fully complying to its structure should
+  be left as-is during parsing.
 
 v2.1.1
 ------

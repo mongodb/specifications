@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: April 17, 2020
+:Last Modified: 2022-02-01
 
 .. contents::
 
@@ -113,6 +113,17 @@ A non-exhaustive list of acceptable naming deviations are as follows:
 * Using "FindOptions" as an example, Javascript wouldn't need to name it while other drivers might prefer to call it "FindArgs" or "FindParams". However, calling it "QueryOptions" would not be acceptable.
 * Using "isOrdered" rather than "ordered". Some languages idioms prefer the use of "is", "has", or "was" and this is acceptable.
 
+
+Timeouts
+--------
+
+Drivers MUST enforce timeouts for all operations per the `Client Side
+Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification. All operations that return cursors MUST support the timeout
+options documented in the `Cursors
+<../client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__
+section of that specification.
 
 ---
 API
@@ -271,6 +282,8 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate/
      */
     maxTimeMS: Optional<Int64>;
@@ -283,18 +296,27 @@ Read
      * SHOULD always send this value, if the cursor is not a TAILABLE_AWAIT cursor the server will
      * ignore it.
      *
-     * @note this option is an alias for `maxTimeMS`, used on `getMore` commands
-     * @note this option is not set on the `aggregate` command
+     * @note this option is an alias for maxTimeMS, used on getMore commands
+     * @note this option is not set on the aggregate command
      */
     maxAwaitTimeMS: Optional<Int64>;
 
     /**
-     * Enables users to specify an arbitrary string to help trace the operation through
+     * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions between 3.6 and 4.2 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     * Older server versions do not support comment for aggregate command at all,
+     * and providing one will result in a server-side error.
+     *
+     * Any comment set on a aggregate command is inherited by any subsequent
+     * getMore commands run on the same cursor.id returned from the
+     * aggregate command. Therefore, drivers MUST NOT attach the comment
+     * to subsequent getMore commands on a cursor.
      */
-    comment: Optional<String>;
+    comment: Optional<any>;
 
     /**
      * The index to use for the aggregation. The hint does not apply to $lookup and $graphLookup stages.
@@ -306,6 +328,18 @@ Read
      * @see http://docs.mongodb.com/manual/reference/command/aggregate/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     */
+    let: Optional<Document>;
   }
 
   class CountOptions {
@@ -335,8 +369,10 @@ Read
 
     /**
      * The maximum amount of time to allow the operation to run.
-
+     *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
 
@@ -346,6 +382,16 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     skip: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for count command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class EstimatedDocumentCountOptions {
@@ -354,6 +400,8 @@ Read
      * The maximum amount of time to allow the operation to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     maxTimeMS: Optional<Int64>;
   }
@@ -375,9 +423,21 @@ Read
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      *
+     * NOTE: This option is deprecated in favor of timeoutMS.
+     *
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for distinct command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   enum CursorType {
@@ -457,13 +517,19 @@ Read
     collation: Optional<Document>;
 
     /**
-     * Attaches a comment to the query.
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/find/
+     * Any comment set on a find command is inherited by any subsequent
+     * getMore commands run on the same cursor.id returned from the
+     * find command. Therefore, drivers MUST NOT attach the comment
+     * to subsequent getMore commands on a cursor.
      */
-    comment: Optional<String>;
+    comment: Optional<any>;
 
     /**
      * Indicates the type of cursor to use. This value includes both
@@ -538,6 +604,8 @@ Read
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
@@ -632,6 +700,18 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/find/
      */
     sort: Optional<Document>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/find/
+     */
+    let: Optional<Document>;
   }
 
 ~~~~~~~~~~~~~~~~~
@@ -647,14 +727,14 @@ documents or consulting an index. The countDocuments helper counts the
 documents that match the provided query filter using an aggregation pipeline.
 
 The count() helper is deprecated. It has always been implemented using the
-`count` command. The behavior of the count command differs depending on the
+``count`` command. The behavior of the count command differs depending on the
 options passed to it and may or may not provide an accurate count. When
 no query filter is provided the count command provides an estimate using
 collection metadata. Even when provided with a query filter the count
 command can return inaccurate results with a sharded cluster `if orphaned
 documents exist or if a chunk migration is in progress <https://docs.mongodb.com/manual/reference/command/count/#behavior>`_.
 The countDocuments helper avoids these sharded cluster problems entirely
-when used with MongoDB 3.6+, and when using `Primary` read preference with
+when used with MongoDB 3.6+, and when using ``Primary`` read preference with
 older sharded clusters.
 
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -690,8 +770,8 @@ option is maxTimeMS.
 countDocuments
 ~~~~~~~~~~~~~~
 
-The countDocuments function is implemented using the `$group` aggregate
-pipeline stage with `$sum`. Applications must be required to pass a value
+The countDocuments function is implemented using the ``$group`` aggregate
+pipeline stage with ``$sum``. Applications must be required to pass a value
 for filter, but an empty document is supported::
 
   pipeline = [{'$match': filter}]
@@ -703,9 +783,9 @@ for filter, but an empty document is supported::
   }
   pipeline.push({'$group': {'_id': 1, 'n': {'$sum': 1}}})
 
-The count of documents is returned in the 'n' field, similar to the `count`
+The count of documents is returned in the ``n`` field, similar to the ``count``
 command. countDocuments options other than filter, skip, and limit are added as
-options to the `aggregate` command.
+options to the ``aggregate`` command.
 
 In the event this aggregation is run against an empty collection, an empty
 array will be returned with no ``n`` field. Drivers MUST interpret this result
@@ -754,9 +834,9 @@ The server supports several collection-less aggregation source stages like ``$cu
 Write
 -----
 
-~~~~~
-Basic
-~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Insert, Update, Replace, Delete, and Bulk Writes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: typescript
 
@@ -777,7 +857,7 @@ Basic
      * @throws InvalidArgumentException if requests is empty
      * @throws BulkWriteException
      */
-    bulkWrite(requests: WriteModel[], options: Optional<BulkWriteOptions>): BulkWriteResult;
+    bulkWrite(requests: WriteModel[], options: Optional<BulkWriteOptions>): Optional<BulkWriteResult>;
 
     /**
      * Inserts the provided document. If the document is missing an identifier,
@@ -786,7 +866,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/insert/
      * @throws WriteException
      */
-    insertOne(document: Document, options: Optional<InsertOneOptions>): InsertOneResult;
+    insertOne(document: Document, options: Optional<InsertOneOptions>): Optional<InsertOneResult>;
 
     /**
      * Inserts the provided documents. If any documents are missing an identifier,
@@ -801,7 +881,7 @@ Basic
      * @throws InvalidArgumentException if documents is empty
      * @throws BulkWriteException
      */
-    insertMany(documents: Iterable<Document>, options: Optional<InsertManyOptions>): InsertManyResult;
+    insertMany(documents: Iterable<Document>, options: Optional<InsertManyOptions>): Optional<InsertManyResult>;
 
     /**
      * Deletes one document.
@@ -809,7 +889,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      * @throws WriteException
      */
-    deleteOne(filter: Document, options: Optional<DeleteOptions>): DeleteResult;
+    deleteOne(filter: Document, options: Optional<DeleteOptions>): Optional<DeleteResult>;
 
     /**
      * Deletes multiple documents.
@@ -817,7 +897,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      * @throws WriteException
      */
-    deleteMany(filter: Document, options: Optional<DeleteOptions>): DeleteResult;
+    deleteMany(filter: Document, options: Optional<DeleteOptions>): Optional<DeleteResult>;
 
     /**
      * Replaces a single document.
@@ -825,7 +905,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    replaceOne(filter: Document, replacement: Document, options: Optional<ReplaceOptions>): UpdateResult;
+    replaceOne(filter: Document, replacement: Document, options: Optional<ReplaceOptions>): Optional<UpdateResult>;
 
     /**
      * Updates one document.
@@ -833,7 +913,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
+    updateOne(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): Optional<UpdateResult>;
 
     /**
      * Updates multiple documents.
@@ -841,7 +921,7 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      * @throws WriteException
      */
-    updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): UpdateResult;
+    updateMany(filter: Document, update: (Document | Document[]), options: Optional<UpdateOptions>): Optional<UpdateResult>;
   }
 
   class BulkWriteOptions {
@@ -861,6 +941,16 @@ Basic
      * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for write operations,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class InsertOneOptions {
@@ -873,6 +963,16 @@ Basic
      * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class InsertManyOptions {
@@ -892,6 +992,16 @@ Basic
      * Defaults to true.
      */
     ordered: Boolean;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class UpdateOptions {
@@ -934,7 +1044,8 @@ Basic
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -948,6 +1059,29 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/update/
+     */
+    let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for update command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class ReplaceOptions {
@@ -979,7 +1113,8 @@ Basic
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -993,6 +1128,28 @@ Basic
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/update/
+     */
+    let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for update command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class DeleteOptions {
@@ -1015,11 +1172,34 @@ Basic
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_DELETE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
     hint: Optional<(String | Document)>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/delete/
+     */
+    let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for delete command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
 
@@ -1069,7 +1249,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_DELETE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/delete/
      */
@@ -1144,7 +1325,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1205,7 +1387,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1266,7 +1449,8 @@ Bulk Write Models
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
      * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_UPDATE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/update/
      */
@@ -1283,10 +1467,10 @@ Bulk Write Models
   }
 
 
-Results
-~~~~~~~
+Write Results
+~~~~~~~~~~~~~
 
-The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an Optional<BulkWriteResult> such that unacknowledged writes don't have a value and acknowledged writes do have a value.
+The acknowledged property is defined for languages/frameworks without a sufficient optional type. Hence, a driver may choose to return an optional result (e.g. ``Optional<BulkWriteResult>``) such that unacknowledged writes don't have a value and acknowledged writes do have a value.
 
 .. note::
     If you have a choice, consider providing the acknowledged member and raising an error if the other fields are accessed in an unacknowledged write. Instead of users receiving a null reference exception, you have the opportunity to provide an informative error message indicating the correct way to handle the situation. For instance, "The insertedCount member is not available when the write was unacknowledged. Check the acknowledged member to avoid this error."
@@ -1344,6 +1528,11 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 
   }
 
+  /**
+   * Note: this class is "NOT REQUIRED" since all of its fields are marked
+   * "NOT REQUIRED". Drivers that do not implement this class SHOULD use void
+   * as the return type for insertOne.
+   */
   class InsertOneResult {
 
     /**
@@ -1364,6 +1553,11 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 
   }
 
+  /**
+   * Note: this class is "NOT REQUIRED" since all of its fields are marked
+   * "NOT REQUIRED". Drivers that do not implement this class SHOULD use void
+   * as the return type for insertMany.
+   */
   class InsertManyResult {
 
     /**
@@ -1438,21 +1632,30 @@ Any result class with all parameters marked NOT REQUIRED is ultimately NOT REQUI
 
   }
 
-
+~~~~~~~~~~~~~~
 Error Handling
 ~~~~~~~~~~~~~~
 
-Defined below are error and exception types that should be reported from the various write methods. Since error types across languages would be impossible to reconcile, the below definitions represent the fields and names for the information that should be present. Structure isn't important as long as the information is available.
+Defined below are error and exception types that should be reported from the
+various write methods. Since error types across languages would be impossible to
+reconcile, the below definitions represent the fields and names for the
+information that should be present. Structure isn't important as long as the
+information is available.
 
-Drivers SHOULD report errors however they report other server errors: by raising an exception, returning "false", or another idiom that is consistent with other server errors.
+Drivers SHOULD report errors however they report other server errors: by raising
+an exception, returning "false" and populating an error struct, or another idiom
+that is consistent with other server errors.
 
+WriteConcernError
+~~~~~~~~~~~~~~~~~
 
 .. code:: typescript
 
   class WriteConcernError {
 
     /**
-     * An integer value identifying the write concern error.
+     * An integer value identifying the write concern error. Corresponds to the
+     * "writeConcernError.code" field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
@@ -1460,13 +1663,16 @@ Drivers SHOULD report errors however they report other server errors: by raising
 
     /**
      * A document identifying the write concern setting related to the error.
+     * Corresponds to the "writeConcernError.errInfo" field in the command
+     * response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
     details: Document;
 
     /**
-     * A description of the error.
+     * A description of the error. Corresponds to the
+     * "writeConcernError.errmsg" field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
@@ -1476,25 +1682,59 @@ Drivers SHOULD report errors however they report other server errors: by raising
 
 Drivers MUST construct a ``WriteConcernError`` from a server reply as follows:
 
-- set ``code`` to ``writeConcernError.code``.
-- set ``message`` to ``writeConcernError.errmsg`` if available.
-- set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
+- Set ``code`` to ``writeConcernError.code``.
+- Set ``message`` to ``writeConcernError.errmsg`` if available.
+- Set ``details`` to ``writeConcernError.errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
 
-See the `Read/Write Concern specification </source/read-write-concern/read-write-concern.rst#Errors>`_ for examples of how a server represents write concern errors in replies.
+See `writeConcernError Examples </source/read-write-concern/read-write-concern.rst#writeconcernerror-examples>`_
+in the Read/Write Concern spec for examples of how a server represents write
+concern errors in replies.
+
+WriteError
+~~~~~~~~~~
+
+Write errors for ``insert``, ``update``, and ``delete`` commands are reported as
+objects within a ``writeErrors`` array field in the command response. Drivers
+MUST construct a ``WriteError`` from a server reply as follows (where
+``writeErrors[]`` refers to a particular element in the array):
+
+- Set ``code`` to ``writeErrors[].code``.
+- Set ``message`` to ``writeErrors[].errmsg`` if available.
+- Set ``details`` to ``writeErrors[].errInfo`` if available. Drivers MUST NOT parse inside ``errInfo``.
+
+For single-statement writes (i.e. ``insertOne``, ``updateOne``, ``updateMany``,
+``replaceOne``, ``deleteOne``, and ``deleteMany``), a single write error may be
+reported in the array and ``writeErrors[0].index`` will be zero.
+
+For multi-statement writes (i.e. ``insertMany`` and ``bulkWrite``), potentially
+many write errors may be reported in the array and the ``index`` property will
+be set accordingly. Since the reported ``index`` is specific to each command,
+drivers MUST adjust the index accordingly for ``BulkWriteError.index``.
 
 .. code:: typescript
 
   class WriteError {
 
     /**
-     * An integer value identifying the error.
+     * An integer value identifying the write error. Corresponds to the
+     * "writeErrors[].code" field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
     code: Int32;
 
     /**
-     * A description of the error.
+     * A document providing more information about the write error (e.g. details
+     * pertaining to document validation). Corresponds to the
+     * "writeErrors[].errInfo" field in the command response.
+     *
+     * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
+     */
+    details: Document;
+
+    /**
+     * A description of the error. Corresponds to the "writeErrors[].errmsg"
+     * field in the command response.
      *
      * @see https://docs.mongodb.com/manual/reference/method/WriteResult/
      */
@@ -1505,7 +1745,10 @@ See the `Read/Write Concern specification </source/read-write-concern/read-write
   class BulkWriteError : WriteError {
 
     /**
-     * The index of the request that errored.
+     * The index of the request that errored. This is derived in part from the
+     * "writeErrors[].index" field in the command response; however, drivers
+     * MUST adjust the index accordingly for bulk writes that execute multiple
+     * writes commands.
      */
     index: Int32;
 
@@ -1587,7 +1830,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndDelete(filter: Document, options: Optional<FindOneAndDeleteOptions>): Document;
+    findOneAndDelete(filter: Document, options: Optional<FindOneAndDeleteOptions>): Optional<Document>;
 
     /**
      * Finds a single document and replaces it, returning either the original or the replaced
@@ -1596,7 +1839,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndReplace(filter: Document, replacement: Document, options: Optional<FindOneAndReplaceOptions>): Document;
+    findOneAndReplace(filter: Document, replacement: Document, options: Optional<FindOneAndReplaceOptions>): Optional<Document>;
 
     /**
      * Finds a single document and updates it, returning either the original or the updated
@@ -1605,7 +1848,7 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      * @throws WriteException
      */
-    findOneAndUpdate(filter: Document, update: (Document | Document[]), options: Optional<FindOneAndUpdateOptions>): Document;
+    findOneAndUpdate(filter: Document, update: (Document | Document[]), options: Optional<FindOneAndUpdateOptions>): Optional<Document>;
 
   }
 
@@ -1639,7 +1882,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1649,6 +1892,8 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1673,6 +1918,28 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     sort: Optional<Document>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class FindOneAndReplaceOptions {
@@ -1702,7 +1969,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1712,6 +1979,8 @@ Find And Modify
      * The maximum amount of time to allow the query to run.
      *
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1757,6 +2026,28 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class FindOneAndUpdateOptions {
@@ -1796,7 +2087,7 @@ Find And Modify
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
      * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
-     * For unacknowledged writes using OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
+     * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1804,6 +2095,8 @@ Find And Modify
 
     /**
      * The maximum amount of time to allow the query to run.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      *
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
@@ -1849,6 +2142,29 @@ Find And Modify
      * @see https://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     upsert: Optional<Boolean>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed
+     * expressions that do not reference document fields. Parameters can then be
+     * accessed as variables in an aggregate expression context (e.g. "$$var").
+     *
+     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+     *
+     * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
+     */
+    let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1860,8 +2176,66 @@ The ``update`` family of operations require that the update document parameter M
 The ``replace`` family of operations require that the replacement document parameter MUST NOT begin with an atomic modifier. In practice, this means that introspection needs to happen on that document to enforce this. However, it is enough to only check the first element in the document. If it does not begin with a ``$`` sign but an element later on does, the server will throw an error.
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Aggregation Pipelines with Write Stages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section discusses special considerations for aggregation pipelines that
+contain write stages (e.g. ``$out``, ``$merge``).
+
+
+Returning a cursor on the output collection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As noted in the documentation for the ``aggregate`` helper earlier in this
+document, ``$out`` and ``$merge`` are special pipeline stages that cause no
+results to be returned from the server. As such, drivers MAY setup a cursor to
+be executed upon iteration against the output collection and return that instead
+of an iterable that would otherwise have no results.
+
+Drivers that do so for ``$merge`` MAY remind users that such a cursor may return
+more documents than were written by the aggregation (e.g. documents that existed
+in the collection prior to ``$merge`` being executed).
+
+
+Read preferences and server selection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section is only applicable if an explicit (i.e. per-operation) or inherited
+(e.g. from a Collection) read preference is available and it is *not* a primary
+read preference (i.e. ``{ "mode": "primary" }``).
+
+Historically, only primaries could execute an aggregation pipeline with ``$out``
+or ``$merge`` and drivers never considered a read preference for the operation.
+As of ``featureCompatibilityVersion`` 4.4, secondaries can now execute pipelines
+with ``$out`` or ``$merge``. Since drivers do not track
+``featureCompatibilityVersion``, the decision to consider a read preference for
+such a pipeline will depend on the wire version(s) of the server(s) to which the
+driver is connected.
+
+If there are one or more available servers and one or more of those servers is
+pre-5.0 (i.e. wire version < 13), drivers MUST NOT use the available read
+preference and MUST instead select a server using a primary read preference.
+
+Otherwise, if there are either no available servers, all available servers are
+5.0+ (i.e. wire version >= 13), or the topology type is LoadBalanced (we can
+assume the backing mongos is 5.0+), drivers MUST use the available read
+preference.
+
+Drivers SHOULD augment their
+`server selection algorithm <..../server-selection/server-selection.rst#server-selection-algorithm>`_
+such that this logic can be enforced within a single server selection attempt.
+
+Drivers MUST discern the read preference used to select a server for the
+operation, which SHALL be used for specifying the
+`$readPreference global command argument <../message/OP_MSG.rst#global-command-arguments>`_
+and
+`passing read preference to mongos and load balancers <../server-selection/server-selection.rst#passing-read-preference-to-mongos-and-load-balancers>`_
+(if applicable).
+
+
 Test Plan
-======================================
+=========
 
 See the `README <tests/README.rst>`_ for tests.
 
@@ -1954,12 +2328,19 @@ Q: Where is ``singleBatch`` in FindOptions?
 Q: Why are client-side errors raised for some unsupported options?
   Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field with which to express these options so a client-side error is the only mechanism to inform the user that such options are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
 
-Q: Why are client-side errors raised when options are provided for unacknowledged write operations, even on server versions that support those options?
-  Even if the server supports an option, that option could be incorrectly formatted or contain outdated information (e.g. a "hint" option referencing an index that no longer exists). This is a problem during unacknowledged writes because the server cannot return an error response to alert the client of an incorrect option. By always raising a client-side error when options are specified for unacknowledged writes, users are prevented from performing operations with options that do not work.
-
 Changes
 =======
 
+* 2022-02-01: Add comment attribute to all helpers.
+* 2022-01-27: Use optional return types for write commands and findAndModify
+* 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
+* 2022-01-14: Add let to ReplaceOptions
+* 2021-11-10: Revise rules for applying read preference for aggregations with $out and $merge.
+* 2021-11-10: Add let to FindOptions, UpdateOptions, DeleteOptions, FindOneAndDeleteOptions, FindOneAndReplaceOptions, FindOneAndUpdateOptions
+* 2021-09-28: Support aggregations with $out and $merge on 5.0+ secondaries
+* 2021-08-31: Allow unacknowledged hints on write operations if supported by server (reverts previous change).
+* 2021-06-02: Introduce WriteError.details and clarify WriteError construction
+* 2021-06-01: Add let to AggregateOptions
 * 2021-01-21: Update estimatedDocumentCount to use $collStats stage for servers >= 4.9
 * 2020-04-17: Specify that the driver must raise an error for unacknowledged hints on any write operation, regardless of server version.
 * 2020-03-19: Clarify that unacknowledged update, findAndModify, and delete operations with a hint option should raise an error on older server versions.
@@ -1973,8 +2354,8 @@ Changes
 * 2019-09-26: Added hint option for update commands.
 * 2019-06-07: Consistent treatment for aggregate $merge and $out stages
 * 2019-05-01: Specify a document or pipeline for commands with updates in server 4.2+.
-* 2019-02-20: Mark the `request` field of `BulkWriteError` as NOT REQUIRED
-* 2018-11-30: Specify `maxAwaitTimeMS` in AggregateOptions
+* 2019-02-20: Mark the request field of BulkWriteError as NOT REQUIRED
+* 2018-11-30: Specify maxAwaitTimeMS in AggregateOptions
 * 2018-11-15: Aggregate commands with an $out stage should not specify batchSize
 * 2018-10-25: Note how results are backed for aggregate, distinct, and find operations
 * 2018-07-25: Added upsertedCount to UpdateResult.

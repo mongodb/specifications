@@ -3,14 +3,14 @@ Retryable Writes
 ================
 
 :Spec Title: Retryable Writes
-:Spec Version: 1.6.1
+:Spec Version: 1.7.0
 :Author: Jeremy Mikola
 :Lead: \A. Jesse Jiryu Davis
 :Advisors: Robert Stam, Esha Maharishi, Samantha Ritter, and Kaloian Manassiev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2021-04-26
+:Last Modified: 2021-11-02
 
 .. contents::
 
@@ -213,8 +213,6 @@ Determining Retryable Errors
 When connected to a MongoDB instance that supports retryable writes (versions 3.6+),
 the driver MUST treat all errors with the RetryableWriteError label as retryable.
 This error label can be found in the top-level "errorLabels" field of the error.
-In a server error response with a writeConcernError field the top level document
-or the writeConcernError document may contain the RetryableWriteError error label.
 
 RetryableWriteError Labels
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -800,6 +798,9 @@ inconsistent with the server and potentially confusing to developers.
 
 Changes
 =======
+
+2021-11-02: Clarify that error labels are only specified in a top-level field of
+an error.
 
 2021-04-26: Replaced deprecated terminology
 

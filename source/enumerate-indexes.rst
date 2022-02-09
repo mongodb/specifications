@@ -12,8 +12,8 @@ Enumerating Indexes
 :Status: Draft
 :Type: Standards
 :Server Versions: 1.8-2.7.5, 2.8.0-rc3 and later
-:Last Modified: 2021-04-06
-:Version: 0.5.1
+:Last Modified: 2022-02-01
+:Version: 0.7.0
 
 .. contents::
 
@@ -141,6 +141,20 @@ document::
 
     $ db.runCommand( { listIndexes: 'collectionName', cursor : { batchSize: 25 } } );
 
+MongoDB 4.4 introduced a ``comment``  option to the ``listIndexes``
+database command. This option enables users to specify a comment as an arbitrary
+BSON type to help trace the operation through the database profiler, currentOp and logs.
+The default is to not send a value.
+
+Example of usage of the comment option::
+
+    $ db.runCommand({listIndexes: 'collectionName', comment: "hi there"})
+
+Any comment set on a ``listIndexes`` command is inherited by any subsequent
+``getMore`` commands run on the same ``cursor.id`` returned from the
+``listIndexes`` command. Therefore, drivers MUST NOT attach the comment
+to subsequent getMore commands on a cursor.
+
 Return types
 ~~~~~~~~~~~~
 
@@ -200,7 +214,7 @@ following algorithm (just like the
     use getmore with res.cursor.id and res.cursor.ns information to loop over
     remaing results
 
-If you need to fall back to querying ``system.indexes``, then you need 
+If you need to fall back to querying ``system.indexes``, then you need
 specify the full namespaces name (``dbName.collectionName``) as query criterion.
 
 Alternatively, and if a driver already implements checking MongoDB versions, a
@@ -255,12 +269,20 @@ All methods:
 - MUST use the *same* return type (ie, array or cursor) whether either a
   pre-2.7.6 server, a post-2.7.6 or a post-2.8.0-rc3 server is being used.
 - MAY emulate returning a cursor for pre-2.8.0-rc3 servers.
+- SHOULD allow the ``comment`` option to be passed.
+- MUST apply timeouts per the `Client Side Operations Timeout
+  <client-side-operations-timeout/client-side-operations-timeout.rst>`__
+  specification.
+
+All methods that return cursors MUST support the timeout options documented
+in `Client Side Operations Timeout: Cursors
+<client-side-operations-timeout/client-side-operations-timeout.rst#Cursors>`__.
 
 Getting Index Names
 ~~~~~~~~~~~~~~~~~~~
 
 Drivers MAY implement a method to enumerate all indexes, and return only
-the index names. 
+the index names.
 
 Example::
 
@@ -386,6 +408,13 @@ The shell implements the first algorithm for falling back if the
 
 Version History
 ===============
+
+0.7.0 - 2022-02-01
+    Add ``comment`` option to ``listIndexes`` command.
+
+0.6.0 - 2022-01-19
+    Require that timeouts be applied per the client-side operations timeout spec.
+
 0.5.1 - 2021-04-06
     Changed to secondaryOk.
 

@@ -49,7 +49,7 @@ Each YAML file has the following keys:
     - ``database``: Watch changes on database ``database_name``
     - ``client``: Watch changes on entire clusters
   - ``topology``: An array of server topologies against which to run the test.
-    Valid topologies are ``single``, ``replicaset``, ``sharded``, and "load-balanced".
+    Valid topologies are ``single``, ``replicaset``, ``sharded``, and ``load-balanced``.
   - ``changeStreamPipeline``: An array of additional aggregation pipeline stages to add to the change stream
   - ``changeStreamOptions``: Additional options to add to the changeStream
   - ``operations``: Array of documents, each describing an operation. Each document has the following fields:

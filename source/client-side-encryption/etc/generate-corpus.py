@@ -15,7 +15,7 @@ targetdir = sys.argv[1]
 
 # Generate test data from this matrix of axes.
 axes = [
-    ("kms", [ "aws", "local", "azure", "gcp"]),
+    ("kms", [ "aws", "local", "azure", "gcp", "kmip"]),
     ("type", [ "double", "string", "object", "array", "binData=00", "binData=04", "undefined", "objectId", "bool", "date", "null", "regex", "dbPointer", "javascript", "symbol", "javascriptWithScope", "int", "timestamp", "long", "decimal", "minKey", "maxKey" ]),
     ("algo", [ "rand", "det" ]),
     ("method", [ "auto", "explicit" ]),
@@ -51,6 +51,8 @@ def gen_schema (map):
             key_id = """[ { "$binary": { "base64": "AZUREAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
         elif map["kms"] == "gcp":
             key_id = """[ { "$binary": { "base64": "GCPAAAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
+        elif map["kms"] == "kmip":
+            key_id = """[ { "$binary": { "base64": "KMIPAAAAAAAAAAAAAAAAAA==", "subType": "04" } } ]"""
     else:
         key_id = "\"/altname_" + map["kms"] + "\""
 
@@ -128,6 +130,7 @@ corpus_sections = [
     """ "altname_local": "local" """ ,
     """ "altname_azure": "azure" """ ,
     """ "altname_gcp": "gcp" """ ,
+    """ "altname_kmip": "kmip" """ ,
 ]
 
 def enumerate_axis (map, axis, remaining):

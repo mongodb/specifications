@@ -9,8 +9,8 @@ Server Selection
 :Advisors: \A. Jesse Jiryu Davis, Samantha Ritter, Robert Stam, Jeff Yemin
 :Status: Accepted
 :Type: Standards
-:Last Modified: 2020-03-17
-:Version: 1.12.0
+:Last Modified: 2022-01-19
+:Version: 1.14.0
 
 .. contents::
 
@@ -167,10 +167,10 @@ Terms
     Abbreviation for "round trip time".
 
 **Round trip time**
-    The time in milliseconds to execute an ``ismaster`` command and
+    The time in milliseconds to execute a ``hello`` or legacy hello command and
     receive a response for a given server.  This spec differentiates between
-    the RTT of a single ``ismaster`` command and a server's *average* RTT over
-    several such commands.
+    the RTT of a single ``hello`` or legacy hello command and a server's *average*
+    RTT over several such commands.
 
 **Secondary**
     A server of type RSSecondary.
@@ -276,10 +276,14 @@ mongos currently uses ``localThreshold`` and MAY continue to do so.
 serverSelectionTimeoutMS
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-This defines how long to block for server selection before throwing an
+This defines the maximum time to block for server selection before throwing an
 exception.  The default is 30,000 (milliseconds).  It MUST be configurable at
 the client level.  It MUST NOT be configurable at the level of a database
 object, collection object, or at the level of an individual query.
+
+The actual timeout for server selection can be less than
+``serverSelectionTimeoutMS``. See `Timeouts`_ for rules to compute the exact
+value.
 
 This default value was chosen to be sufficient for a typical server primary
 election to complete.  As the server improves the speed of elections, this
@@ -302,7 +306,7 @@ then either selects a server or raises an error.
 
 The serverSelectionTryOnce option MUST be true by default.
 If it is set false, then the driver repeatedly searches for an appropriate server
-for up to serverSelectionTimeoutMS milliseconds
+until the selection process times out
 (pausing `minHeartbeatFrequencyMS
 <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#minheartbeatfrequencyms>`_
 between attempts, as required by the `Server Discovery and Monitoring`_
@@ -456,9 +460,9 @@ mongos MUST reject a read with ``maxStalenessSeconds`` that is not a positive in
 mongos MUST reject a read if ``maxStalenessSeconds`` is less than smallestMaxStalenessSeconds,
 with error code 160 (SERVER-24421).
 
-During server selection,
-drivers (but not mongos) MUST raise an error if ``maxStalenessSeconds`` is a positive number,
-and any server's ``maxWireVersion`` is less than 5. [#]_
+During server selection, drivers (but not mongos) with ``minWireVersion`` < 5
+MUST raise an error if ``maxStalenessSeconds`` is a positive number, and any
+available server's ``maxWireVersion`` is less than 5. [#]_
 
 After filtering servers according to ``mode``, and before filtering with ``tag_sets``,
 eligibility MUST be determined from ``maxStalenessSeconds`` as follows:
@@ -575,44 +579,50 @@ basis similar to how ``hint`` or ``batchSize`` are set. E.g., in Python::
         maxStalenessSeconds=120,
         hedge={'enabled': true})
 
-If a driver API allows users to potentially set both the legacy ``slaveOK``
-configuration option and a default read preference configuration option,
-passing a value for both MUST be an error. (See `Use of slaveOk`_ for the two
-uses of ``slaveOK``.)
+Passing read preference to mongos and load balancers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Passing read preference to mongos
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If a server of type Mongos or LoadBalancer is selected for a read operation, the read
+preference is passed to the selected mongos through the use of ``$readPreference``
+(as a `Global Command Argument`_ for OP_MSG or a query modifier for OP_QUERY) and, for
+OP_QUERY only, the ``SecondaryOk`` wire protocol flag, according to the following rules.
 
-If a server of type Mongos is selected for a read operation, the read
-preference is passed to the selected mongos through the use of the
-``slaveOK`` wire protocol flag, the ``$readPreference`` query
-modifier or both, according to the following rules.
+For OP_MSG:
+```````````
+
+- For mode 'primary', drivers MUST NOT set ``$readPreference``
+
+- For all other read preference modes (i.e. 'secondary', 'primaryPreferred',
+  ...), drivers MUST set ``$readPreference``
+
+For OP_QUERY:
+`````````````
 
 If the read preference contains **only** a ``mode`` parameter and the mode is
 'primary' or 'secondaryPreferred', for maximum backwards compatibility with
-older versions of mongos, drivers MUST only use the value of the ``slaveOK``
+older versions of mongos, drivers MUST only use the value of the ``SecondaryOk``
 wire protocol flag (i.e. set or unset) to indicate the desired read preference
 and MUST NOT use a ``$readPreference`` query modifier.
 
-Therefore, when sending queries to a mongos, the following rules apply:
+Therefore, when sending queries to a mongos or load balancer, the following rules apply:
 
-  - For mode 'primary', drivers MUST NOT set the ``slaveOK`` wire protocol flag
-    and MUST NOT use ``$readPreference``
+- For mode 'primary', drivers MUST NOT set the ``SecondaryOk`` wire protocol flag
+  and MUST NOT use ``$readPreference``
 
-  - For mode 'secondary', drivers MUST set the ``slaveOK`` wire protocol flag
-    and MUST also use ``$readPreference``
+- For mode 'secondary', drivers MUST set the ``SecondaryOk`` wire protocol flag
+  and MUST also use ``$readPreference``
 
-  - For mode 'primaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag
-    and MUST also use ``$readPreference``
+- For mode 'primaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag
+  and MUST also use ``$readPreference``
 
-  - For mode 'secondaryPreferred', drivers MUST set the ``slaveOK`` wire protocol flag.
-    If the read preference contains a non-empty ``tag_sets`` parameter,
-    ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
-    non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
-    use ``$readPreference``
+- For mode 'secondaryPreferred', drivers MUST set the ``SecondaryOk`` wire protocol flag.
+  If the read preference contains a non-empty ``tag_sets`` parameter,
+  ``maxStalenessSeconds`` is a positive integer, or the ``hedge`` parameter is
+  non-empty, drivers MUST use ``$readPreference``; otherwise, drivers MUST NOT
+  use ``$readPreference``
 
-  - For mode 'nearest', drivers MUST set the ``slaveOK`` wire protocol flag
-    and MUST also use ``$readPreference``
+- For mode 'nearest', drivers MUST set the ``SecondaryOk`` wire protocol flag
+  and MUST also use ``$readPreference``
 
 The ``$readPreference`` query modifier sends the read preference as part of the
 query.  The read preference fields ``tag_sets`` is represented in a ``$readPreference``
@@ -634,7 +644,10 @@ the query MUST be provided using the ``$query`` modifier like so::
         }
     }
 
-A valid ``$readPreference`` document for mongos has the following requirements:
+Document structure
+``````````````````
+
+A valid ``$readPreference`` document for mongos or load balancer has the following requirements:
 
 1.  The ``mode`` field MUST be present exactly once with the mode represented
     in camel case:
@@ -657,7 +670,7 @@ A valid ``$readPreference`` document for mongos has the following requirements:
 
     The ``hedge`` field MUST be either absent or be a document.
 
-Mongos receiving a query with ``$readPreference`` SHOULD validate the
+Mongos or service receiving a query with ``$readPreference`` SHOULD validate the
 ``mode``, ``tags``, ``maxStalenessSeconds``, and ``hedge`` fields according to
 rules 1 and 2 above, but SHOULD ignore unrecognized fields for
 forward-compatibility rather than throwing an error.
@@ -710,12 +723,12 @@ the command and how it is invoked:
       configuration.  Languages with dynamic argument lists MUST throw an error
       if a read preference is provided as an argument.
 
-      Clients SHOULD rely on the server to return a "not master" or other error
-      if the command is "must-use-primary".  Clients MAY raise an exception
-      before sending the command if the topology type is Single and the server
-      type is not "Standalone", "RSPrimary" or "Mongos", but the identification
-      of the set of 'must-use-primary' commands is out of scope for this
-      specification.
+      Clients SHOULD rely on the server to return a "not writable primary" or
+      other error if the command is "must-use-primary".  Clients MAY raise an
+      exception before sending the command if the topology type is Single and
+      the server type is not "Standalone", "RSPrimary" or "Mongos", but the
+      identification of the set of 'must-use-primary' commands is out of scope
+      for this specification.
 
     - "should-use-primary": these commands are intended to be run on a primary,
       but would succeed -- albeit with possibly stale data -- when run against
@@ -735,33 +748,35 @@ the command and how it is invoked:
 
       The current list of "may-use-secondary" commands includes:
 
-        - aggregate without a write stage (e.g. ``$out``, ``$merge``)
-        - collStats
-        - count
-        - dbStats
-        - distinct
-        - find
-        - geoNear
-        - geoSearch
-        - group
-        - mapReduce where the ``out`` option is ``{ inline: 1 }``
-        - parallelCollectionScan
+      - aggregate without a write stage (e.g. ``$out``, ``$merge``)
+      - collStats
+      - count
+      - dbStats
+      - distinct
+      - find
+      - geoNear
+      - geoSearch
+      - group
+      - mapReduce where the ``out`` option is ``{ inline: 1 }``
+      - parallelCollectionScan
 
       Associated command-specific helpers SHOULD take a read preference
       argument and otherwise MUST use the default read preference from client,
-      database or collection configuration.
+      database, or collection configuration.
 
-      The aggregate command succeeds on a secondary unless a write stage (e.g.
-      ``$out``, ``$merge``) is specified. When a write stage is specified, the
-      command must be treated as a write command. If the read preference is not
-      'primary', the driver SHOULD warn if a write stage is included in the
-      pipeline.
+      For pre-5.0 servers, an aggregate command is "must-use-primary" if its
+      pipeline contains a write stage (e.g. ``$out``, ``$merge``); otherwise, it
+      is "may-use-secondary". For 5.0+ servers, secondaries can execute an
+      aggregate command with a write stage and all aggregate commands are
+      "may-use-secondary". This is discussed in more detail in
+      `Read preferences and server selection <../crud/crud.rst#read-preferences-and-server-selection>`_
+      in the CRUD spec.
 
-      If a client provides a specific helper for inline mapreduce, then it is
-      "may-use-secondary" and the *regular* mapreduce helper is "must use
-      primary". Otherwise mapreduce behaves like the aggregate helper: it is the
-      user's responsibility to specify {inline: 1} when running mapreduce on a
-      secondary.
+      If a client provides a specific helper for inline mapReduce, then it is
+      "may-use-secondary" and the *regular* mapReduce helper is
+      "must-use-primary". Otherwise, the mapReduce helper is "may-use-secondary"
+      and it is the user's responsibility to specify ``{inline: 1}`` when
+      running mapReduce on a secondary.
 
     New command-specific helpers implemented in the future will be considered
     "must-use-primary", "should-use-primary" or "may-use-secondary" according
@@ -778,6 +793,15 @@ ServerDescription for an operation of the given type.
 Server selection varies depending on whether a client is
 multi-threaded/asynchronous or single-threaded because a single-threaded
 client cannot rely on the topology state being updated in the background.
+
+Timeouts
+~~~~~~~~
+
+Multi-threaded drivers and single-threaded drivers with
+``serverSelectionTryOnce`` set to false MUST enforce a timeout for the server
+selection process. The timeout MUST be computed as described in
+`Client Side Operations Timeout: Server Selection
+<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
 
 Multi-threaded or asynchronous server selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -845,8 +869,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
 9. Request an immediate topology check, then block the server selection thread
    until the topology changes or until the server selection timeout has elapsed
 
-10. If more than ``serverSelectionTimeoutMS`` milliseconds have elapsed since
-    the selection start time, raise a `server selection error`_
+10. If server selection has timed out, raise a `server selection error`_
 
 11. Goto Step #2
 
@@ -858,20 +881,20 @@ Single-threaded drivers do not monitor the topology in the background.
 Instead, they MUST periodically update the topology during server selection
 as described below.
 
-When ``serverSelectionTryOnce`` is true, ``serverSelectionTimeoutMS`` has
+When ``serverSelectionTryOnce`` is true, server selection timeouts have
 no effect; a single immediate topology check will be done if the topology
 starts stale or if the first selection attempt fails.
 
 When ``serverSelectionTryOnce`` is false, then the server selection loops
 until a server is successfully selected or until
-``serverSelectionTimeoutMS`` is exceeded.
+the selection timeout is exceeded.
 
 Therefore, for single-threaded clients, the server selection algorithm is
 as follows:
 
 1. Record the server selection start time
 
-2. Record the maximum time as start time plus ``serverSelectionTimeoutMS``
+2. Record the maximum time as start time plus the computed timeout
 
 3. If the topology has not been scanned in ``heartbeatFrequencyMS``
    milliseconds, mark the topology stale
@@ -918,15 +941,15 @@ is no longer suitable, the driver MUST repeat the server selection
 algorithm and select a new server.
 
 Because single-threaded selection can do a blocking immediate check,
-``serverSelectionTimeoutMS`` is not a hard deadline.  The actual
+the server selection timeout is not a hard deadline.  The actual
 maximum server selection time for any given request can vary from
-``serverSelectionTimeoutMS`` minus ``minHeartbeatFrequencyMS`` to
-``serverSelectionTimeoutMS`` plus the time required for a blocking scan.
+the timeout minus ``minHeartbeatFrequencyMS`` to
+the timeout plus the time required for a blocking scan.
 
 Single-threaded drivers MUST document that when ``serverSelectionTryOne``
 is true, selection may take up to the time required for a blocking scan,
 and when ``serverSelectionTryOne`` is false, selection may take up to
-``serverSelectionTimeoutMS`` plus the time required for a blocking scan.
+the timeout plus the time required for a blocking scan.
 
 Topology type: Unknown
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -947,20 +970,31 @@ available.  Depending on server type, the read preference is communicated
 to the server differently:
 
 - Type Mongos: the read preference is sent to the server using the rules
-  for `Passing read preference to mongos`_.
+  for `Passing read preference to mongos and load balancers`_.
 
 - Type Standalone: clients MUST NOT send the read preference to the server
 
-- For all other types, using OP_QUERY: clients MUST always set the ``slaveOK`` wire
+- For all other types, using OP_QUERY: clients MUST always set the ``SecondaryOk`` wire
   protocol flag on reads to ensure that any server type can handle the
   request.
 
 - For all other types, using OP_MSG: If no read preference is configured by the
   application, or if the application read preference is Primary, then
   $readPreference MUST be set to ``{ "mode": "primaryPreferred" }`` to ensure
-  that any server type can handle the request.
+  that any server type can handle the request.  If the application read
+  preference is set otherwise, $readPreference MUST be set following
+  `Document structure`_.
 
 The single server is always suitable for write operations if it is available.
+
+Topology type: LoadBalanced
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+During command construction, drivers MUST add a $readPreference field to the
+command when required by `Passing read preference to mongos and load balancers`_;
+see the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-selection>`__
+for details.
+
 
 Topology types: ReplicaSetWithPrimary or ReplicaSetNoPrimary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1000,10 +1034,12 @@ If ``mode`` is 'primaryPreferred', select the primary if it is known, otherwise
 attempt the selection algorithm with ``mode`` 'secondary' and the user's
 ``maxStalenessSeconds`` and ``tag_sets``.
 
-For all read preferences modes except 'primary', clients MUST set the ``slaveOK`` wire
-protocol flag to ensure that any suitable server can handle the request.  Clients
-MUST NOT set the ``slaveOK`` wire protocol flag if the read preference mode is
-'primary'.
+For all read preferences modes except 'primary', clients MUST set the
+``SecondaryOk`` wire protocol flag (OP_QUERY) or ``$readPreference`` global
+command argument (OP_MSG) to ensure that any suitable server can handle the
+request. If the read preference mode is 'primary', clients MUST NOT set the
+``SecondaryOk`` wire protocol flag (OP_QUERY) or ``$readPreference`` global
+command argument (OP_MSG).
 
 Write operations
 ````````````````
@@ -1022,7 +1058,7 @@ Mongos or Unknown.
 
 For read operations, all servers of type Mongos are suitable; the ``mode``,
 ``tag_sets``, and ``maxStalenessSeconds`` read preference parameters are ignored for selecting a
-server, but are passed through to mongos. See `Passing read preference to mongos`_.
+server, but are passed through to mongos. See `Passing read preference to mongos and load balancers`_.
 
 For write operations, all servers of type Mongos are suitable.
 
@@ -1037,15 +1073,15 @@ Calculation of Average Round Trip Times
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For every available server, clients MUST track the average RTT of server
-monitoring ``ismaster`` commands.
+monitoring ``hello`` or legacy hello commands.
 
 An Unknown server has no average RTT.  When a server becomes unavailable, its
 average RTT MUST be cleared.  Clients MAY implement this idiomatically (e.g
 nil, -1, etc.).
 
 When there is no average RTT for a server, the average RTT MUST be set equal to
-the first RTT measurement (i.e. the first ``ismaster`` command after the
-server becomes available).
+the first RTT measurement (i.e. the first ``hello`` or legacy hello command after
+the server becomes available).
 
 After the first measurement, average RTT MUST be computed using an
 exponentially-weighted moving average formula, with a weighting factor
@@ -1167,7 +1203,7 @@ Modes ('primary', 'secondary', ...) are constants declared in whatever way is
 idiomatic for the programming language. The constant values may be ints,
 strings, or whatever.  However, when attaching modes to ``$readPreference``
 camel case must be used as described above in `Passing read preference to
-mongos`_.
+mongos and load balancers`_.
 
 primaryPreferred and secondaryPreferred
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1221,7 +1257,7 @@ selection`_::
         client.lock.acquire()
 
         now = gettime()
-        endTime = now + serverSelectionTimeoutMS
+        endTime = now + computed server selection timeout
 
         while true:
             # The topologyDescription keeps track of whether any server has an
@@ -1231,7 +1267,7 @@ selection`_::
                 throw invalid wire protocol range error with details
 
             if maxStalenessSeconds is set:
-                if any server's maxWireVersion < 5:
+                if client minWireVersion < 5 and any available server's maxWireVersion < 5:
                     client.lock.release()
                     throw error
 
@@ -1282,7 +1318,7 @@ The following is pseudocode for `single-threaded server selection`_::
     def getServer(criteria):
         startTime = gettime()
         loopEndTime = startTime
-        maxTime = startTime + serverSelectionTimeoutMS/1000
+        maxTime = startTime + computed server selection timeout
         nextUpdateTime = topologyDescription.lastUpdateTime
                        + heartbeatFrequencyMS/1000:
 
@@ -1316,7 +1352,7 @@ The following is pseudocode for `single-threaded server selection`_::
                 throw invalid wire version range error with details
 
             if maxStalenessSeconds is set:
-                if any server's maxWireVersion < 5:
+                if client minWireVersion < 5 and any available server's maxWireVersion < 5:
                     throw error
 
                 if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
@@ -1370,25 +1406,6 @@ could be different across servers::
         error_message = a ServerDescription.error value
     else:
         error_message = ', '.join(all ServerDescriptions' errors)
-
-Use of slaveOk
---------------
-
-There are two usages of ``slaveOK``:
-
-1.  A driver query parameter that predated read preference modes and tag
-    set lists.
-
-2.  A wire protocol flag on OP_QUERY operations
-
-
-Using ``slaveOk`` as a query parameter is deprecated. Until it is removed,
-``slaveOk`` used as a method argument or query option is considered
-equivalent to a read preference ``mode`` of 'secondaryPreferred'
-
-The ``slaveOk`` wire protocol flag remains in the wire protocol and drivers
-set this bit for each topology type as described in the specification
-above.
 
 Cursors
 -------
@@ -1514,23 +1531,23 @@ servers or of preferring newly introduced servers. Additionally, that approach
 could lead to the same node being selected repeatedly rather than spreading the
 load out among all suitable servers.
 
-The slaveOK wire protocol flag
-------------------------------
+The SecondaryOk wire protocol flag
+----------------------------------
 
 In server selection, there is a race condition that could exist between what
 a selected server type is believed to be and what it actually is.
 
-The ``slaveOK`` wire protocol flag solves the race problem by communicating
+The ``SecondaryOk`` wire protocol flag solves the race problem by communicating
 to the server whether a secondary is acceptable.  The server knows its type
-and can return a "not master" error if ``slaveOK`` is false and the server
-is a secondary.
+and can return a "not writable primary" error if ``SecondaryOk`` is false and
+the server is a secondary.
 
 However, because topology type Single is used for direct connections, we want
-read operations to succeed even against a secondary, so the ``slaveOK`` wire
+read operations to succeed even against a secondary, so the ``SecondaryOk`` wire
 protocol flag must be sent to mongods with topology type Single.
 
-(If the server type is Mongos, follow the rules for `passing read preference to
-mongos`_, even for topology type Single.)
+(If the server type is Mongos, follow the rules for
+`Passing read preference to mongos and load balancers`_, even for topology type Single.)
 
 General command method going to primary
 ---------------------------------------
@@ -1590,7 +1607,7 @@ A user of a single-threaded driver who prefers resilience in the face of topolog
 rather than short response times,
 can turn the "try once" mode off.
 Then driver rescans the topology every minHeartbeatFrequencyMS
-until a suitable server is found or the serverSelectionTimeoutMS expires.
+until a suitable server is found or the timeout expires.
 
 What is the purpose of socketCheckIntervalMS?
 ---------------------------------------------
@@ -1611,8 +1628,8 @@ that have not been used in the last `socketCheckIntervalMS`_, which is more
 frequent by default than `heartbeatFrequencyMS` defined in the Server Discovery
 and Monitoring Spec.
 
-The client checks the socket with a "ping" command, rather than "ismaster",
-because it is not checking the server's full state as in the Server Discovery
+The client checks the socket with a "ping" command, rather than "hello" or legacy
+hello, because it is not checking the server's full state as in the Server Discovery
 and Monitoring Spec, it is only verifying that the connection is still open. We
 might also consider a `select` or `poll` call to check if the socket layer
 considers the socket closed, without requiring a round-trip to the server.
@@ -1672,8 +1689,7 @@ but had the following surprising consequence:
 
 The old spec also had the swapped problem, reading from the primary with
 'secondaryPreferred', except for mongos which was changed at the last minute
-before release with SERVER-6565_ ("Do not use primary if secondaries are
-available for slaveOk").
+before release with SERVER-6565_.
 
 This left application developers with two problems:
 
@@ -1745,7 +1761,7 @@ could occur, such as:
 
     - the server might send an RST packet, indicating the socket was already closed
 
-    - for write operations, the server might return a "not master" error
+    - for write operations, the server might return a "not writable primary" error
 
 This specification does not require nor prohibit drivers from attempting
 automatic recovery for various cases where it might be considered reasonable to
@@ -1757,8 +1773,8 @@ do so, such as:
     - for a read operation, after a socket error, selecting a new server
       meeting the read preference and resending the query
 
-    - for a write operation, after a "not master" error, selecting a new server
-      (to locate the primary) and resending the write operation
+    - for a write operation, after a "not writable primary" error, selecting a new
+      server (to locate the primary) and resending the write operation
 
 Driver-common rules for retrying operations (and configuring such retries)
 could be the topic of a different, future specification.
@@ -1804,9 +1820,12 @@ References
 .. _Driver Authentication: https://github.com/mongodb/specifications/blob/master/source/auth
 .. _maxConnecting: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst#connection-pool
 .. _Connection Monitoring and Pooling: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
+.. _Global Command Argument: /source/message/OP_MSG.rst#global-command-arguments
 
 Changes
 =======
+
+2021-08-05: Updated $readPreference logic to describe OP_MSG behavior.
 
 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
@@ -1838,8 +1857,8 @@ must retry selection after checking an idle socket and discovering it is broken.
 2017-11-10: Added application-configurated server selector.
 
 2017-11-12: Specify read preferences for OP_MSG with direct connection, and
-delete obsolete comment direct connections to secondaries getting "not master"
-errors by design.
+delete obsolete comment direct connections to secondaries getting "not writable
+primary" errors by design.
 
 2018-01-22: Clarify that $query wrapping is only for OP_QUERY
 
@@ -1859,6 +1878,20 @@ selection rules.
 
 2020-10-10: Consider server load when selecting servers within the latency
 window.
+
+2021-04-07: Adding in behaviour for load balancer mode.
+
+2021-05-12: Removed deprecated URI option in favour of readPreference=secondaryPreferred.
+
+2021-05-13: Updated to use modern terminology.
+
+2021-09-03: Clarify that wire version check only applies to available servers.
+
+2021-09-28: Note that 5.0+ secondaries support aggregate with write stages (e.g.
+``$out`` and ``$merge``). Clarify setting ``SecondaryOk` wire protocol flag or
+``$readPreference`` global command argument for replica set topology.
+
+2022-01-19: Require that timeouts be applied per the client-side operations timeout spec
 
 .. [#] mongos 3.4 refuses to connect to mongods with maxWireVersion < 5,
    so it does no additional wire version checks related to maxStalenessSeconds.

@@ -6,14 +6,14 @@ Driver Authentication
 =====================
 
 :Spec: 100
-:Spec Version: 1.10.4
+:Spec Version: 1.11.0
 :Title: Driver Authentication
 :Author: Craig Wilson, David Golden
 :Advisors: Andy Schwerin, Bernie Hacket, Jeff Yemin, David Golden
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2021-04-08
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -171,6 +171,10 @@ handshake:
 #. If the server is of type RSArbiter, no authentication is possible and the
    handshake is complete.
 
+#. Inspect the value of ``maxWireVersion``. If the value is greater than or
+   equal to ``6``, then the driver MUST use ``OP_MSG`` for authentication.
+   Otherwise, it MUST use ``OP_QUERY``.
+
 #. If credentials exist:
 
    #. A driver MUST authenticate with all credentials provided to the
@@ -182,6 +186,11 @@ handshake:
 If the authentication handshake fails for a socket, drivers MUST mark the
 server Unknown and clear the server's connection pool. (See `Q & A`_ below and
 SDAM's `Why mark a server Unknown after an auth error`_ for rationale.)
+
+All blocking operations executed as part of the authentication handshake MUST
+apply timeouts per the `Client Side Operations Timeout
+<../client-side-operations-timeout/client-side-operations-timeout.rst>`__
+specification.
 
 Mechanism Negotiation via Handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -455,6 +464,9 @@ mechanism_properties
 
 	SERVICE_REALM
 		Drivers MAY allow the user to specify a different realm for the service. This might be necessary to support cross-realm authentication where the user exists in one realm and the service in another.
+
+	SERVICE_HOST
+		Drivers MAY allow the user to specify a different host for the service. This is stored in the service principal name instead of the standard host name. This is generally used for cases where the initial role is being created from localhost but the actual service host would differ.
 
 Hostname Canonicalization
 `````````````````````````
@@ -1261,6 +1273,13 @@ Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 
 Version History
 ===============
+
+Version 1.11.0 Changes
+    * Require that timeouts be applied per the client-side operations timeout spec.
+
+Version 1.10.5 Changes
+    * Clarify that ``OP_MSG`` must be used for authentication when it is
+      supported.
 
 Version 1.10.4 Changes
     * Updated to use hello and legacy hello.

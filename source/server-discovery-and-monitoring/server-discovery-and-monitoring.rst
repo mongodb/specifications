@@ -8,8 +8,8 @@ Server Discovery And Monitoring
 :Advisors: David Golden, Craig Wilson
 :Status: Accepted
 :Type: Standards
-:Version: 2.21
-:Last Modified: 2020-06-08
+:Version: 2.34
+:Last Modified: 2022-01-19
 
 .. contents::
 
@@ -37,10 +37,10 @@ when they take advantage of a design that has been well-considered, reviewed, an
 
 The server discovery and monitoring method is specified in four sections.
 First, a client is `configured`_.
-Second, it begins `monitoring`_ by calling ismaster on all servers.
+Second, it begins `monitoring`_ by calling `hello or legacy hello`_ on all servers.
 (Multi-threaded and asynchronous monitoring is described first,
 then single-threaded monitoring.)
-Third, as ismaster calls are received
+Third, as hello or legacy hello responses are received
 the client `parses them`_,
 and fourth, it `updates its view of the topology`_.
 
@@ -81,7 +81,7 @@ and connecting to uninitialized members (see `RSGhost`_) in order to run
 Setting a read preference MUST NOT be necessary to connect to a secondary.
 Of course,
 the secondary will reject all operations done with the PRIMARY read preference
-because the slaveOk bit is not set,
+because the secondaryOk bit is not set,
 but the initial connection itself succeeds.
 Drivers MAY allow direct connections to arbiters
 (for example, to run administrative commands).
@@ -100,10 +100,6 @@ A client MUST be able to connect to a set of mongoses
 and monitor their availability and `round trip time`_.
 This spec defines how mongoses are discovered and monitored,
 but does not define which mongos is selected for a given operation.
-
-**Master-slave:**
-A client MUST be able to directly connect to a mongod begun with "--slave".
-No additional master-slave features are described in this spec.
 
 Terms
 '''''
@@ -147,20 +143,21 @@ A server type from which a client can receive application data:
 * RSPrimary
 * RSSecondary
 * Standalone
+* LoadBalanced
 
 Round trip time
 ```````````````
 
 Also known as RTT.
 
-The client's measurement of the duration of one ismaster call.
+The client's measurement of the duration of one hello or legacy hello call.
 The round trip time is used to support the "localThresholdMS" [1]_
 option in the Server Selection Spec.
 
-ismaster outcome
-````````````````
+hello or legacy hello outcome
+`````````````````````````````
 
-The result of an attempt to call the "ismaster" command on a server.
+The result of an attempt to call the hello or legacy hello command on a server.
 It consists of three elements:
 a boolean indicating the success or failure of the attempt,
 a document containing the command response (or null if it failed),
@@ -171,7 +168,7 @@ and the round trip time to execute the command (or null if it failed).
 check
 `````
 
-The client checks a server by attempting to call ismaster on it,
+The client checks a server by attempting to call hello or legacy hello on it,
 and recording the outcome.
 
 .. _scans: #scan
@@ -186,9 +183,7 @@ suitable
 
 A server is judged "suitable" for an operation if the client can use it
 for a particular operation.
-For example, a write requires a standalone
-(or the master of a master-slave set),
-primary, or mongos.
+For example, a write requires a standalone, primary, or mongos.
 Suitability is fully specified in the `Server Selection Spec
 <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst>`_.
 
@@ -241,7 +236,7 @@ the pool at the time the connection attempt was started.
 State Change Error
 ``````````````````
 
-A server reply document indicating a "not master" or "node is recovering"
+A server reply document indicating a "not writable primary" or "node is recovering"
 error. Starting in MongoDB 4.4 these errors may also include a
 `topologyVersion`_ field.
 
@@ -271,7 +266,7 @@ Enums
 TopologyType
 ~~~~~~~~~~~~
 
-Single, ReplicaSetNoPrimary, ReplicaSetWithPrimary, Sharded, or Unknown.
+Single, ReplicaSetNoPrimary, ReplicaSetWithPrimary, Sharded, LoadBalanced, or Unknown.
 
 See `updating the TopologyDescription`_.
 
@@ -280,9 +275,9 @@ ServerType
 
 Standalone, Mongos,
 PossiblePrimary, RSPrimary, RSSecondary, RSArbiter, RSOther, RSGhost,
-or Unknown.
+LoadBalancer or Unknown.
 
-See `parsing an ismaster response`_.
+See `parsing a hello or legacy hello response`_.
 
 .. note:: Single-threaded clients use the PossiblePrimary type
    to maintain proper `scanning order`_.
@@ -320,7 +315,7 @@ ServerDescription
 `````````````````
 
 The client's view of a single server,
-based on the most recent `ismaster outcome`_.
+based on the most recent hello or legacy hello outcome.
 
 Again, drivers may store this information however they choose;
 this data structure is defined here
@@ -330,13 +325,14 @@ Fields:
 
 * address: the hostname or IP, and the port number,
   that the client connects to.
-  Note that this is **not** the server's ismaster.me field,
+  Note that this is **not** the "me" field in the server's hello or legacy hello response,
   in the case that the server reports an address different
   from the address the client uses.
 * (=) error: information about the last error related to this server. Default null.
-* roundTripTime: the duration of the ismaster call. Default null.
+* roundTripTime: the duration of the hello or legacy hello call. Default null.
+* ninetiethPercentileRoundTripTime: the 90th percentile RTT for the server. Default null.
 * lastWriteDate: a 64-bit BSON datetime or null.
-  The "lastWriteDate" from the server's most recent ismaster response.
+  The "lastWriteDate" from the server's most recent hello or legacy hello response.
 * opTime: an opTime or null.
   An opaque value representing the position in the oplog of the most recently seen write. Default null.
   (Only mongos and shard servers record this field when monitoring
@@ -364,8 +360,11 @@ Fields:
 * lastUpdateTime: when this server was last checked. Default "infinity ago".
 * (=) logicalSessionTimeoutMinutes: integer or null. Default null.
 * (=) topologyVersion: A topologyVersion or null. Default null.
-  The "topologyVersion" from the server's most recent ismaster response or
+  The "topologyVersion" from the server's most recent hello or legacy hello response or
   `State Change Error`_.
+* (=) iscryptd: boolean indicating if the server is a
+  `mongocryptd <../client-side-encryption/client-side-encryption.rst#mongocryptd>`_
+  server. Default null.
 
 "Passives" are priority-zero replica set members that cannot become primary.
 The client treats them precisely the same as other members.
@@ -471,6 +470,8 @@ Drivers MUST enforce:
   and possibly Single,
   are allowed.
   (See `verifying setName with TopologyType Single`_.)
+* ``loadBalanced=true`` cannot be used in conjunction with
+  ``directConnection=true`` or ``replicaSet``
 
 Handling of SRV URIs resolving to single host
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -540,12 +541,12 @@ Monitoring
 See the `Server Monitoring spec`_ for how a driver monitors each server. In
 summary, the client monitors each server in the topology. The scope of server
 monitoring is to provide the topology with updated ServerDescriptions based on
-isMaster command responses.
+hello or legacy hello command responses.
 
-.. _parses them: #parsing-an-ismaster-response
+.. _parses them: #parsing-a-hello-or-legacy-hello-response
 
-Parsing an ismaster response
-''''''''''''''''''''''''''''
+Parsing a hello or legacy hello response
+''''''''''''''''''''''''''''''''''''''''
 
 The client represents its view of each server with a `ServerDescription`_.
 Each time the client `checks`_ a server, it MUST replace its description of
@@ -559,7 +560,12 @@ This replacement MUST happen even if the new server description compares equal
 to the previous one, in order to keep client-tracked attributes like last
 update time and round trip time up to date.
 
-ServerDescriptions are created from ismaster outcomes as follows:
+Drivers MUST be able to handle responses to both ``hello`` and legacy hello
+commands. When checking results, drivers MUST first check for the
+``isWritablePrimary`` field and fall back to checking for an ``ismaster`` field
+if ``isWritablePrimary`` was not found.
+
+ServerDescriptions are created from hello or legacy hello outcomes as follows:
 
 type
 ````
@@ -576,8 +582,8 @@ are not replica set member states at all.
 +-------------------+---------------------------------------------------------------+
 | State             | Symptoms                                                      |
 +===================+===============================================================+
-| Unknown           | Initial, or after a network error or failed ismaster call,    |
-|                   | or "ok: 1" not in ismaster response.                          |
+| Unknown           | Initial, or after a network error or failed hello or legacy   |
+|                   | hello call, or "ok: 1" not in hello or legacy hello response. |
 +-------------------+---------------------------------------------------------------+
 | Standalone        | No "msg: isdbgrid", no setName, and no "isreplicaset: true".  |
 +-------------------+---------------------------------------------------------------+
@@ -585,7 +591,8 @@ are not replica set member states at all.
 +-------------------+---------------------------------------------------------------+
 | PossiblePrimary   | Not yet checked, but another member thinks it is the primary. |
 +-------------------+---------------------------------------------------------------+
-| RSPrimary         | "ismaster: true", "setName" in response.                      |
+| RSPrimary         | "isWritablePrimary: true" or "ismaster: true",                |
+|                   | "setName" in response.                                        |
 +-------------------+---------------------------------------------------------------+
 | RSSecondary       | "secondary: true", "setName" in response.                     |
 +-------------------+---------------------------------------------------------------+
@@ -596,13 +603,11 @@ are not replica set member states at all.
 +-------------------+---------------------------------------------------------------+
 | RSGhost           | "isreplicaset: true" in response.                             |
 +-------------------+---------------------------------------------------------------+
+| LoadBalanced      | "loadBalanced=true" in URI.                                   |
++-------------------+---------------------------------------------------------------+
 
 A server can transition from any state to any other.  For example, an
 administrator could shut down a secondary and bring up a mongos in its place.
-
-When a server transitions from Unknown to data-bearing type, the driver MUST
-ensure the server's connection pool is set up (if the driver implements
-connection pooling). See `Connection Pool Management`_ for more information.
 
 .. _RSGhost: #RSGhost-and-RSOther
 
@@ -659,11 +664,13 @@ it stores error information in the ServerDescription's error field.
 roundTripTime
 `````````````
 
-Drivers MUST record the server's `round trip time`_ (RTT)
-after each successful call to ismaster. The Server Selection Spec describes how
-RTT is averaged and how it is used in server selection.
+Drivers MUST record the server's `round trip time`_ (RTT) after each
+successful call to to hello or legacy hello. The Server Selection Spec
+describes how RTT is averaged and how it is used in server selection.
+Drivers MUST also record the server's 90th percentile RTT per
+`Server Monitoring (Measuring RTT)`_.
 
-If an ismaster call fails, the RTT is not updated.
+If a hello or legacy hello call fails, the RTT is not updated.
 Furthermore, while a server's type is Unknown its RTT is null,
 and if it changes from a known type to Unknown its RTT is set to null.
 However, if it changes from one known type to another
@@ -673,14 +680,14 @@ not set to null nor restarted from scratch.
 lastWriteDate and opTime
 ````````````````````````
 
-The isMaster response of a replica set member running MongoDB 3.4 and later
+The hello or legacy hello response of a replica set member running MongoDB 3.4 and later
 contains a ``lastWrite`` subdocument with fields ``lastWriteDate`` and ``opTime``
 (`SERVER-8858`_).
-If these fields are available, parse them from the ismaster response,
+If these fields are available, parse them from the hello or legacy hello response,
 otherwise set them to null.
 
 Clients MUST NOT attempt to compensate for the network latency between when the server
-generated its isMaster response and when the client records ``lastUpdateTime``.
+generated its hello or legacy hello response and when the client records ``lastUpdateTime``.
 
 .. _SERVER-8858: https://jira.mongodb.org/browse/SERVER-8858
 
@@ -693,7 +700,7 @@ Hostnames are normalized to lower-case
 ``````````````````````````````````````
 
 The same as with seeds provided in the initial configuration,
-all hostnames in the ismaster response's "me", "hosts", "passives", and "arbiters"
+all hostnames in the hello or legacy hello response's "me", "hosts", "passives", and "arbiters"
 entries MUST be lower-cased.
 
 This prevents unnecessary work rediscovering a server
@@ -715,7 +722,7 @@ value, or to null otherwise.
 topologyVersion
 ```````````````
 
-MongoDB 4.4 and later include a ``topologyVersion`` field in all isMaster
+MongoDB 4.4 and later include a ``topologyVersion`` field in all hello or legacy hello
 and `State Change Error`_ responses. Clients MUST check for this field and set
 the ServerDescription's topologyVersion field to this value, if present.
 The topologyVersion helps the client and server determine the relative
@@ -735,7 +742,7 @@ The topologyVersion is a subdocument with two fields, "processId" and
 topologyVersion Comparison
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To compare a topologyVersion from an isMaster or State Change Error
+To compare a topologyVersion from a hello or legacy hello or State Change Error
 response to the current ServerDescription's topologyVersion:
 
 #. If the response topologyVersion is unset or the ServerDescription's
@@ -749,12 +756,18 @@ response to the current ServerDescription's topologyVersion:
 See `Replacing the TopologyDescription`_ for an example implementation of
 topologyVersion comparison.
 
+serviceId
+`````````
+
+MongoDB 5.0 and later, as well as any mongos-like service, include a ``serviceId``
+field when the service is configured behind a load balancer.
+
 Other ServerDescription fields
 ``````````````````````````````
 
 Other required fields
 defined in the `ServerDescription`_ data structure
-are parsed from the ismaster response in the obvious way.
+are parsed from the hello or legacy hello response in the obvious way.
 
 .. _updates its view of the topology:
 
@@ -798,6 +811,7 @@ MUST be replaced with the new ServerDescription.
 
 .. _is compatible:
 
+
 Checking wire protocol compatibility
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -839,6 +853,12 @@ of Single. In this case, if the ServerDescription's setName is null or wrong,
 the ServerDescription MUST be replaced with a default ServerDescription of
 type Unknown.
 
+
+TopologyType LoadBalanced
+`````````````````````````
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#server-discovery-and-monitoring>`__ for details.
+
 Other TopologyTypes
 ```````````````````
 
@@ -850,7 +870,7 @@ with no seeds in the initial seed list. A client SHOULD emit a warning when,
 in the process of updating its topology description, it removes the last
 server from the topology.
 
-Whenever a client completes an ismaster call,
+Whenever a client completes a hello or legacy hello call,
 it creates a new ServerDescription with the proper `ServerType`_.
 It replaces the server's previous description in TopologyDescription.servers
 with the new one.
@@ -862,7 +882,7 @@ the client updates the "compatible" and "compatibilityError" fields
 as described above for TopologyType Single.
 Otherwise "compatible" is set to true.
 
-It is possible for a multi-threaded client to receive an ismaster outcome
+It is possible for a multi-threaded client to receive a hello or legacy hello outcome
 from a server after the server has been removed from the TopologyDescription.
 For example, a monitor begins checking a server "A",
 then a different monitor receives a response from the primary
@@ -870,7 +890,7 @@ claiming that "A" has been removed from the replica set,
 so the client removes "A" from the TopologyDescription.
 Then, the check of server "A" completes.
 
-In all cases, the client MUST ignore ismaster outcomes from servers
+In all cases, the client MUST ignore hello or legacy hello outcomes from servers
 that are not in the TopologyDescription.
 
 The following subsections explain in detail what actions the client takes
@@ -908,14 +928,14 @@ TopologyType explanations
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This subsection complements the `TopologyType table`_
-with prose explanations of the TopologyTypes (besides Single).
+with prose explanations of the TopologyTypes (besides Single and LoadBalanced).
 
 TopologyType Unknown
   A starting state.
 
   **Actions**:
 
-  * If the incoming ServerType is Unknown (that is, the ismaster call failed),
+  * If the incoming ServerType is Unknown (that is, the hello or legacy hello call failed),
     keep the server in TopologyDescription.servers.
     The TopologyType remains Unknown.
   * The `TopologyType remains Unknown when an RSGhost is discovered`_, too.
@@ -975,7 +995,7 @@ Actions
 
 updateUnknownWithStandalone
   This subroutine is executed
-  with the ServerDescription from Standalone (including a slave)
+  with the ServerDescription from Standalone
   when the TopologyType is Unknown::
 
     if description.address not in topologyDescription.servers:
@@ -1022,8 +1042,9 @@ updateRSWithoutPrimary
 
   Unlike `updateRSFromPrimary`_,
   this subroutine does **not** remove any servers from the TopologyDescription
-  based on the list of servers in isMaster.hosts. The only server that might be
-  removed is the server itself that the isMaster response is from.
+  based on the list of servers in the "hosts" field of the hello or legacy hello
+  response. The only server that might be removed is the server itself that the
+  hello or legacy hello response is from.
 
   The special handling of description.primary
   ensures that a single-threaded client
@@ -1180,13 +1201,13 @@ remove
 
   In multi-threaded clients, a monitor may be currently checking this server
   and may not immediately abort.
-  Once the check completes, this server's ismaster outcome MUST be ignored,
-  and the monitor SHOULD halt.
+  Once the check completes, this server's hello or legacy hello outcome MUST be
+  ignored, and the monitor SHOULD halt.
 
 Logical Session Timeout
 ```````````````````````
 
-Whenever a client updates the TopologyDescription from an ismaster response,
+Whenever a client updates the TopologyDescription from a hello or legacy hello response,
 it MUST set TopologyDescription.logicalSessionTimeoutMinutes to the smallest
 logicalSessionTimeoutMinutes value among ServerDescriptions of all data-bearing
 server types. If any have a null logicalSessionTimeoutMinutes,
@@ -1201,8 +1222,11 @@ Connection Pool Management
 ''''''''''''''''''''''''''
 
 For drivers that support connection pools, after a server check is
-complete, if the server is determined to be `data-bearing
-<https://github.com/mongodb/specifications/blob/masterserver-discovery-and-monitoring.rst#data-bearing-server-type>`_
+completed successfully, if the server is determined to be
+`data-bearing <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#data-bearing-server-type>`_
+or a
+`direct connection <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#general-requirements>`__
+to the server is requested,
 and does not already have a connection pool, the driver MUST create
 the connection pool for the server. Additionally, if a driver
 implements a CMAP compliant connection pool, the server's pool (even
@@ -1231,7 +1255,7 @@ When processing a network or command error, clients MUST first check the
 error's `generation number`_. If the error's generation number is equal to
 the pool's generation number then error handling MUST continue according to
 `Network error when reading or writing`_ or
-`"not master" and "node is recovering"`_. Otherwise, the error is considered
+`"not writable primary" and "node is recovering"`_. Otherwise, the error is considered
 stale and the client MUST NOT update any topology state.
 (See `Why ignore errors based on CMAP's generation number?`_)
 
@@ -1264,25 +1288,34 @@ implementation::
                 return
 
             if isStateChangeError(error):
-                # Mark the server Unknown
-                unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
-                onServerDescriptionChanged(unknown, connection pool for server)
+                # Don't mark server unknown in load balanced mode.
+                if type != LoadBalanced
+                  # Mark the server Unknown
+                  unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
+                  onServerDescriptionChanged(unknown, connection pool for server)
                 if isShutdown(code) or (error was from <4.2):
                   # the pools must only be cleared while the lock is held.
-                  clear connection pool for server
+                  if type == LoadBalanced:
+                    clear connection pool for serviceId
+                  else:
+                    clear connection pool for server
                 if multi-threaded:
                     request immediate check
                 else:
-                    # Check right now if this is "not master", since it might be a
+                    # Check right now if this is "not writable primary", since it might be a
                     # useful secondary. If it's "node is recovering" leave it for the
                     # next full scan.
-                    if isNotMaster(error):
+                    if isNotWritablePrimary(error):
                         check failing server
             elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
-                # Mark the server Unknown
-                unknown = new ServerDescription(type=Unknown, error=error)
-                onServerDescriptionChanged(unknown, connection pool for server)
-                clear connection pool for server
+                if type != LoadBalanced
+                  # Mark the server Unknown
+                  unknown = new ServerDescription(type=Unknown, error=error)
+                  onServerDescriptionChanged(unknown, connection pool for server)
+                  clear connection pool for server
+                else
+                  if serviceId
+                    clear connection pool for serviceId
                 # Cancel inprogress check
                 cancel monitor check
 
@@ -1303,7 +1336,7 @@ The following pseudocode checks a response for a "not master" or "node is
 recovering" error::
 
     recoveringCodes = [11600, 11602, 13436, 189, 91]
-    notMasterCodes = [10107, 13435, 10058]
+    notWritablePrimaryCodes = [10107, 13435, 10058]
     shutdownCodes = [11600, 91]
 
     def isRecovering(message, code):
@@ -1315,9 +1348,9 @@ recovering" error::
             return ("not master or secondary" in message
                 or "node is recovering" in message)
 
-    def isNotMaster(message, code):
+    def isNotWritablePrimary(message, code):
         if code:
-            if code in notMasterCodes:
+            if code in notWritablePrimaryCodes:
               return true
         else:
           # if no code, use the error message.
@@ -1333,7 +1366,7 @@ recovering" error::
     def isStateChangeError(error):
         message = error.errmsg
         code = error.code
-        return isRecovering(message, code) or isNotMaster(message, code)
+        return isRecovering(message, code) or isNotWritablePrimary(message, code)
 
     def parseGle(response):
         if "err" in response:
@@ -1362,15 +1395,19 @@ To describe how the client responds to network errors during application operati
 we distinguish two phases of connecting to a server and using it for application operations:
 
 - *Before the handshake completes*: the client establishes a new connection to the server
-  and completes an initial handshake by calling "isMaster" and reading the response,
-  and optionally completing authentication
+  and completes an initial handshake by calling "hello" or legacy hello and reading the
+  response, and optionally completing authentication
 - *After the handshake completes*: the client uses the established connection for
   application operations
 
 If there is a network error or timeout on the connection before the handshake completes,
 the client MUST replace the server's description
-with a default ServerDescription of type Unknown,
-and fill the ServerDescription's error field with useful information.
+with a default ServerDescription of type Unknown when the TopologyType is not
+LoadBalanced, and fill the ServerDescription's error field with useful information.
+
+If there is a network error or timeout on the connection before the handshake completes,
+and the TopologyType is LoadBalanced, the client MUST keep the ServerDescription
+as LoadBalancer.
 
 If there is a network timeout on the connection after the handshake completes,
 the client MUST NOT mark the server Unknown.
@@ -1378,13 +1415,13 @@ the client MUST NOT mark the server Unknown.
 rather than an unavailable server.)
 If, however, there is some other network error on the connection after the
 handshake completes, the client MUST replace the server's description
-with a default ServerDescription of type Unknown,
-and fill the ServerDescription's error field with useful information,
+with a default ServerDescription of type Unknown if the TopologyType is not
+LoadBalanced, and fill the ServerDescription's error field with useful information,
 the same as if an error or timeout occurred before the handshake completed.
 
 When the client marks a server Unknown due to a network error or timeout,
 the Unknown ServerDescription MUST be sent through the same process for
-`updating the TopologyDescription`_ as if it had been a failed ismaster outcome
+`updating the TopologyDescription`_ as if it had been a failed hello or legacy hello outcome
 from a server check: for example, if the TopologyType is ReplicaSetWithPrimary
 and a write to the RSPrimary server fails because of a network error
 (other than timeout), then a new ServerDescription is created for the primary,
@@ -1407,15 +1444,15 @@ It will be refreshed by the next periodic check or,
 if an application operation needs the server sooner than that,
 then a re-check will be triggered by the server selection algorithm.
 
-"not master" and "node is recovering"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"not writable primary" and "node is recovering"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These errors are detected from a getLastError response,
 write command response, or query response. Clients MUST check if the server
-error is a "node is recovering" error or a "not master" error.
+error is a "node is recovering" error or a "not writable primary" error.
 
 If the response includes an error code, it MUST be solely used to determine
-if error is a "node is recovering" or "not master" error.
+if error is a "node is recovering" or "not writable primary" error.
 Clients MUST match the errors by the numeric error code and not by the code
 name, as the code name can change from one server version to the next.
 
@@ -1431,23 +1468,23 @@ unusable. These are called "node is recovering" errors:
     - 11600
   * - InterruptedDueToReplStateChange
     - 11602
-  * - NotMasterOrSecondary
+  * - NotPrimaryOrSecondary
     - 13436
   * - PrimarySteppedDown
     - 189
   * - ShutdownInProgress
     - 91
 
-And the following error codes indicate a "not master" error:
+And the following error codes indicate a "not writable primary" error:
 
 .. list-table::
   :header-rows: 1
 
   * - Error Name
     - Error Code
-  * - NotMaster
+  * - NotWritablePrimary
     - 10107
-  * - NotMasterNoSlaveOk
+  * - NotPrimaryNoSecondaryOk
     - 13435
   * - LegacyNotPrimary
     - 10058
@@ -1456,7 +1493,7 @@ Clients MUST fallback to checking the error message if and only if the
 response does not include an error code. The error is considered a "node
 is recovering" error if the substrings "node is recovering" or "not master or
 secondary" are anywhere in the error message. Otherwise, if the substring "not
-master" is in the error message it is a "not master" error.
+master" is in the error message it is a "not writable primary" error.
 
 Additionally, if the response includes a write concern error, then the code
 and message of the write concern error MUST be checked the same way a response
@@ -1465,10 +1502,10 @@ error is checked above.
 Errors contained within the writeErrors field MUST NOT be checked.
 
 See the test scenario called
-"parsing 'not master' and 'node is recovering' errors"
+"parsing 'not writable primary' and 'node is recovering' errors"
 for example response documents.
 
-When the client sees a "not master" or "node is recovering" error and
+When the client sees a "not writable primary" or "node is recovering" error and
 the error's `topologyVersion`_ is strictly greater than the current
 ServerDescription's topologyVersion it MUST replace the server's description
 with a ServerDescription of type Unknown.
@@ -1481,11 +1518,11 @@ ServerDescription if present.
 Multi-threaded and asynchronous clients MUST `request an immediate check`_
 of the server.
 Unlike in the "network error" scenario above,
-a "not master" or "node is recovering" error means the server is available
+a "not writable primary" or "node is recovering" error means the server is available
 but the client is wrong about its type,
 thus an immediate re-check is likely to provide useful information.
 
-For single-threaded clients, in the case of a "not master" or "node is
+For single-threaded clients, in the case of a "not writable primary" or "node is
 shutting down" error, the client MUST mark the topology as "stale" so the next
 server selection scans all servers. For a "node is recovering" error,
 single-threaded clients MUST NOT mark the topology as "stale". If a node is
@@ -1504,11 +1541,11 @@ shutting down" errors:
   * - ShutdownInProgress
     - 91
 
-When handling a "not master" or "node is recovering" error, the client MUST
+When handling a "not writable primary" or "node is recovering" error, the client MUST
 clear the server's connection pool if and only if the error is
 "node is shutting down" or the error originated from server version < 4.2.
 
-(See `when does a client see "not master" or "node is recovering"?`_, `use
+(See `when does a client see "not writable primary" or "node is recovering"?`_, `use
 error messages to detect "not master" and "node is recovering"`_, and `other
 transient errors`_ and `Why close connections when a node is shutting down?`_.)
 
@@ -1516,8 +1553,8 @@ Authentication errors
 ~~~~~~~~~~~~~~~~~~~~~
 
 If the authentication handshake fails for a connection, drivers MUST mark the
-server Unknown and clear the server's connection pool. (See
-`Why mark a server Unknown after an auth error?`_)
+server Unknown and clear the server's connection pool if the TopologyType is
+not LoadBalanced. (See `Why mark a server Unknown after an auth error?`_)
 
 Monitoring SDAM events
 ''''''''''''''''''''''
@@ -1570,10 +1607,10 @@ Multi-threaded
 
 .. _use min and maxWireVersion only to determine compatibility:
 
-Warning about the maxWireVersion from a monitor's ismaster response
-```````````````````````````````````````````````````````````````````
+Warning about the maxWireVersion from a monitor's hello or legacy hello response
+````````````````````````````````````````````````````````````````````````````````
 
-Clients consult some fields from a server's ismaster response
+Clients consult some fields from a server's hello or legacy hello response
 to decide how to communicate with it:
 
 * maxWireVersion
@@ -1582,7 +1619,7 @@ to decide how to communicate with it:
 * maxWriteBatchSize
 
 It is tempting to take these values
-from the last ismaster response a *monitor* received
+from the last hello or legacy hello response a *monitor* received
 and store them in the ServerDescription, but this is an anti-pattern.
 Multi-threaded and asynchronous clients that do so
 are prone to several classes of race, for example:
@@ -1600,13 +1637,13 @@ are prone to several classes of race, for example:
   since maxWireVersion is *now* reported as 0.
 * Authentication fails, the server requires SCRAM-SHA-1.
 
-Better to call ismaster for each new socket, as required by the `Auth Spec
+Better to call hello or legacy hello for each new socket, as required by the `Auth Spec
 <https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst>`_,
-and use the ismaster response associated with that socket
+and use the hello or legacy hello response associated with that socket
 for maxWireVersion, maxBsonObjectSize, etc.:
 all the fields required to correctly communicate with the server.
 
-The ismaster responses received by monitors determine if the topology
+The hello or legacy hello responses received by monitors determine if the topology
 as a whole `is compatible`_ with the driver,
 and which servers are suitable for selection.
 The monitors' responses should not be used to determine how to format
@@ -1625,8 +1662,8 @@ can simply acquire a reference to the current one
 and read it, without holding a lock that would block a monitor
 from making further updates.
 
-Process one ismaster outcome at a time
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Process one hello or legacy hello outcome at a time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although servers are checked in parallel,
 the function that actually creates the new TopologyDescription
@@ -1666,9 +1703,9 @@ must do no I/O::
         address = server.address
         newTopologyDescription.servers[address] = server
 
-        # for drivers that implement CMAP, mark the connection pool as ready after
-        # a successful check.
-        if server.type != Unknown:
+        # for drivers that implement CMAP, mark the connection pool as ready after a successful check
+        if (server.type in (Mongos, RSPrimary, RSSecondary, Standalone, LoadBalanced))
+                or (server.type != Unknown and newTopologyDescription.type == Single):
             pool.ready()
 
         take any additional actions,
@@ -1853,7 +1890,7 @@ Supporting earlier versions is impractical.
 TopologyType remains Unknown when an RSGhost is discovered
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-If the TopologyType is Unknown and the client receives an ismaster response
+If the TopologyType is Unknown and the client receives a hello or legacy hello response
 from an`RSGhost`_, the TopologyType could be set to ReplicaSetNoPrimary.
 However, an RSGhost does not report its setName,
 so the setName would still be unknown.
@@ -1879,11 +1916,11 @@ This rule supports the following common scenario:
    for maintenance, without changing its port number.
 #. The client is initialized with seeds A and B,
    TopologyType Unknown, and no setName.
-#. The first ismaster response is from B, the standalone.
+#. The first hello or legacy hello response is from B, the standalone.
 
 What if the client changed TopologyType to Single at this point?
 It would be unable to use the replica set; it would have to remove A
-from the TopologyDescription once A's ismaster response comes.
+from the TopologyDescription once A's hello or legacy hello response comes.
 
 The user's intent in this case is clearly to use the replica set,
 despite the outdated seed list. So this spec requires clients to remove B
@@ -1914,7 +1951,7 @@ The primary's view of the replica set is authoritative for two reasons:
 2. Since reconfigs must be executed on the primary,
    the primary is the first to know of them.
    Reconfigs propagate to non-primaries eventually,
-   but the client can receive ismaster responses from non-primaries
+   but the client can receive hello or legacy hello responses from non-primaries
    that reflect any past state of the replica set.
    See the "Replica set discovery" test scenario.
 
@@ -1934,7 +1971,7 @@ Using setVersion and electionId to detect stale primaries
 
 Replica set members running MongoDB 2.6.10+ or 3.0+ include an integer called
 "setVersion" and an ObjectId called
-"electionId" in their ismaster response.
+"electionId" in their hello or legacy hello response.
 Starting with MongoDB 3.2.0, replica sets can use two different replication
 protocol versions; electionIds from one protocol version must not be compared
 to electionIds from a different protocol.
@@ -1977,7 +2014,7 @@ Consider the following situation:
 3. Server B is elected primary.
 4. The client discovers that B is primary, does a write-concern "majority"
    write operation on B and receives acknowledgment.
-5. The client receives an ismaster response from A, claiming A is still primary.
+5. The client receives a hello or legacy hello response from A, claiming A is still primary.
 6. If the client trusts that A is primary, the next read-preference "primary"
    read sees stale data from A that may *not* include the write sent to B.
 
@@ -1989,7 +2026,7 @@ Detecting a stale primary
 
 To prevent this scenario, the client uses setVersion and electionId to
 determine which primary was elected last. In this case, it would not consider
-A primary, nor read from it, after receiving B's ismaster response with the
+A primary, nor read from it, after receiving B's hello or legacy hello response with the
 same setVersion and a greater electionId.
 
 Monotonicity
@@ -2249,16 +2286,16 @@ might refer to a server also known as "host1", and the URI is::
 
   mongodb://host_alias/?replicaSet=rs
 
-When the client connects to "host_alias", its ismaster response includes the
+When the client connects to "host_alias", its hello or legacy hello response includes the
 list of hostnames from the replica set config, which does not include the seed::
 
    {
       hosts: ["host1:27017", "host2:27017"],
       setName: "rs",
-      ... other ismaster response fields ...
+      ... other hello or legacy hello response fields ...
    }
 
-This spec requires clients to connect to the hostnames listed in the ismaster
+This spec requires clients to connect to the hostnames listed in the hello or legacy hello
 response. Furthermore, if the response is from a primary, the client MUST
 remove all hostnames not listed. In this case, the client disconnects from
 "host_alias" and tries "host1" and "host2". (See `updateRSFromPrimary`_.)
@@ -2267,7 +2304,7 @@ Thus, replica set members must be reachable from the client by the hostnames
 listed in the replica set config.
 
 An alternative proposal is for clients to continue using the hostnames in the
-seed list. It could add new hosts from the ismaster response, and where a host
+seed list. It could add new hosts from the hello or legacy hello response, and where a host
 is known by two names, the client can deduplicate them using the "me" field and
 prefer the name in the seed list.
 
@@ -2315,16 +2352,16 @@ which will require updates to this spec:
 Questions and Answers
 ---------------------
 
-When does a client see "not master" or "node is recovering"?
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+When does a client see "not writable primary" or "node is recovering"?
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 These errors indicate one of these:
 
 * A write was attempted on an unwritable server
-  (arbiter, secondary, slave, ghost, or recovering).
+  (arbiter, secondary, ghost, or recovering).
 * A read was attempted on an unreadable server
   (arbiter, ghost, or recovering)
-  or a read was attempted on a read-only server without the slaveOk bit set.
+  or a read was attempted on a read-only server without the secondaryOk bit set.
 * An operation was attempted on a server that is now shutting down.
 
 In any case the error is a symptom that
@@ -2332,8 +2369,8 @@ a ServerDescription's type no longer reflects reality.
 
 On MongoDB 4.0 and earlier, a primary closes its connections when it steps
 down, so in many cases the next operation causes a network error
-rather than "not master".
-The driver can see a "not master" error in the following scenario:
+rather than "not writable primary".
+The driver can see a "not writable primary" error in the following scenario:
 
 #. The client discovers the primary.
 #. The primary steps down.
@@ -2344,12 +2381,12 @@ The driver can see a "not master" error in the following scenario:
    never attempted an operation on this server,
    or because all connections are in use by other threads.
 #. The client creates a connection to the old primary.
-#. The client attempts to write, or to read without the slaveOk bit,
-   and receives "not master".
+#. The client attempts to write, or to read without the secondaryOk bit,
+   and receives "not writable primary".
 
-See `"not master" and "node is recovering"`_,
+See `"not writable primary" and "node is recovering"`_,
 and the test scenario called
-"parsing 'not master' and 'node is recovering' errors".
+"parsing 'not writable primary' and 'node is recovering' errors".
 
 Why close connections when a node is shutting down?
 '''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -2358,13 +2395,13 @@ When a server shuts down, it will return one of the "node is shutting down"
 errors for each attempted operation and eventually will close all connections.
 Keeping a connection to a server which is shutting down open would only
 produce errors on this connection - such a connection will never be usable for
-any operations. In contrast, when a server 4.2 or later returns "not master"
+any operations. In contrast, when a server 4.2 or later returns "not writable primary"
 error the connection may be usable for other operations (such as secondary reads).
 
 What's the point of periodic monitoring?
 ''''''''''''''''''''''''''''''''''''''''
 
-Why not just wait until a "not master" error or
+Why not just wait until a "not writable primary" error or
 "node is recovering" error informs the client that its
 TopologyDescription is wrong? Or wait until server selection
 fails to find a suitable server, and only scan all servers then?
@@ -2421,10 +2458,10 @@ Changes
 
 2016-08-04: Explain better why clients use the hostnames in RS config, not URI.
 
-2016-08-31: Multi-threaded clients SHOULD use ismaster replies to update the topology
+2016-08-31: Multi-threaded clients SHOULD use hello or legacy hello replies to update the topology
   when they handshake application connections.
 
-2016-10-06: in updateRSWithoutPrimary the isMaster response's "primary" field
+2016-10-06: in updateRSWithoutPrimary the hello or legacy hello response's "primary" field
   should be used to update the topology description, even if address != me.
 
 2016-10-29: Allow for idleWritePeriodMS to change someday.
@@ -2443,7 +2480,7 @@ to auto-retry.
 
 2017-06-13: Move socketCheckIntervalMS to Server Selection Spec.
 
-2017-08-01: Parse logicalSessionTimeoutMinutes from isMaster reply.
+2017-08-01: Parse logicalSessionTimeoutMinutes from hello or legacy hello reply.
 
 2017-08-11: Clearer specification of "incompatible" logic.
 
@@ -2470,8 +2507,19 @@ check. Synchronize pool clearing with SDAM updates.
 2021-2-11: Errors encountered during auth are handled by SDAM. Auth errors
 mark the server Unknown and clear the pool.
 
+2021-4-12: Adding in behaviour for load balancer mode.
+
+2021-05-03: Require parsing "isWritablePrimary" field in responses.
+
+2021-06-09: Connection pools must be created and eventually marked ready for any server if a direct connection is used.
+
+2021-06-29: Updated to use modern terminology.
+
+2020-12-23: Add iscryptd and 90th percentile RTT fields to ServerDescription.
+
 .. Section for links.
 
+.. _hello or legacy hello: /source/mongodb-handshake/handshake.rst#terms
 .. _connection string: http://docs.mongodb.org/manual/reference/connection-string/
 .. _Server Monitoring spec: server-monitoring.rst
 .. _SDAM Monitoring Specification: server-discovery-and-monitoring-monitoring.rst
@@ -2483,3 +2531,4 @@ mark the server Unknown and clear the pool.
 .. _Connection Monitoring and Pooling spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _CMAP spec: /source/connection-monitoring-and-pooling/connection-monitoring-and-pooling.rst
 .. _Authentication spec: /source/auth/auth.rst
+.. _Server Monitoring (Measuring RTT): server-monitoring.rst#measuring-rtt

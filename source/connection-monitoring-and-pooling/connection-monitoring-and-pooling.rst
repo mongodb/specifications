@@ -9,8 +9,8 @@ Connection Monitoring and Pooling
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: September 24, 2020
-:Version: 1.4.0
+:Last Modified: 2022-01-19
+:Version: 1.6.0
 
 .. contents::
 
@@ -116,6 +116,15 @@ Drivers that implement a Connection Pool MUST support the following ConnectionPo
        *  Defaults to 0.
        */
       maxIdleTimeMS?: number;
+
+      /**
+       *  The maximum number of Connections a Pool may be establishing concurrently.
+       *  Establishment of a Connection is a part of its life cycle
+       *  starting after a ConnectionCreatedEvent and ending before a ConnectionReadyEvent.
+       *  If specified, MUST be a number > 0.
+       *  Defaults to 2.
+       */
+      maxConnecting?: number;
     }
 
 Additionally, Drivers that implement a Connection Pool MUST support the following ConnectionPoolOptions UNLESS that driver meets ALL of the following conditions:
@@ -127,6 +136,8 @@ Additionally, Drivers that implement a Connection Pool MUST support the followin
 
     interface ConnectionPoolOptions {
       /**
+       *  NOTE: This option has been deprecated in favor of timeoutMS.
+       *
        *  The maximum amount of time a thread can wait for a connection
        *  to become available.
        *  If specified, MUST be a number >= 0.
@@ -203,7 +214,7 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A `Conne
 
       /**
        *  An integer representing the “generation” of the pool
-       *  when this Connection was created
+       *  when this Connection was created.
        */
       generation: number;
 
@@ -237,7 +248,7 @@ A concept that represents pending requests for `Connections <#connection>`_. Whe
 
 -  **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
 -  **Ordered/Fair**: When `Connections <#connection>`_ are made available, they are issued out to threads in the order that the threads entered the WaitQueue.
--  **Timeout aggressively:** If **waitQueueTimeoutMS** is set, members of a WaitQueue MUST timeout if they are enqueued for longer than waitQueueTimeoutMS. Members of a WaitQueue MUST timeout aggressively, and MUST leave the WaitQueue immediately upon timeout.
+-  **Timeout aggressively:** Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed timeout and MUST leave the WaitQueue immediately in this case.
 
 The implementation details of a WaitQueue are left to the driver.
 Example implementations include:
@@ -269,7 +280,7 @@ has the following properties:
    -  Connections are not created in the background to satisfy minPoolSize
 
 -  **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number of `Connections <#connection>`_ (including available and in use) MUST NOT exceed **maxPoolSize**
--  **Rate-limited:** A Pool MUST limit the number of connections being created at a given time to be 2 (maxConnecting). 
+-  **Rate-limited:** A Pool MUST limit the number of `Connections <#connection>`_ being `established <#establishing-a-connection-internal-implementation>`_ concurrently via the **maxConnecting** `pool option <#connection-pool-options-1>`_.
 
 
 .. code:: typescript
@@ -281,9 +292,15 @@ has the following properties:
       waitQueue: WaitQueue;
     
       /**
-       *  A generation number representing the SDAM generation of the pool
+       *  A generation number representing the SDAM generation of the pool.
        */
       generation: number;
+
+      /**
+       * A map representing the various generation numbers for various services
+       * when in load balancer mode.
+       */
+      serviceGenerations: Map<ObjectId, [number, number]>;
 
       /**
        * The state of the pool.
@@ -410,8 +427,12 @@ method MUST immediately return and MUST NOT emit a PoolReadyEvent.
 .. code::
 
    mark pool as "ready"
-   resume background thread
    emit PoolReadyEvent
+   allow background thread to create connections
+
+Note that the PoolReadyEvent MUST be emitted before the background thread is allowed to resume creating new connections,
+and it must be the case that no observer is able to observe actions of the background thread
+related to creating new connections before observing the PoolReadyEvent event.
 
 Creating a Connection (Internal Implementation)
 -----------------------------------------------
@@ -497,16 +518,32 @@ Populating the Pool with a Connection (Internal Implementation)
 
 "Populating" the pool involves preemptively creating and establishing a
 `Connection <#connection>`_ which is marked as "available" for use in future
-operations. This process is used to help ensure the number of established
-connections managed by the pool is at least minPoolSize.
+operations.
 
 Populating the pool MUST NOT block any application threads. For example, it
 could be performed on a background thread or via the use of non-blocking/async
 I/O. Populating the pool MUST NOT be performed unless the pool is "ready".
 
-If an error is encountered while populating a connection, it MUST be handled
-via the SDAM machinery according to the `Application Errors`_ section in the
-SDAM specification.
+If an error is encountered while populating a connection, it MUST be handled via
+the SDAM machinery according to the `Application Errors`_ section in the SDAM
+specification.
+
+If minPoolSize is set, the `Connection <#connection>`_ Pool MUST be populated
+until it has at least minPoolSize total `Connections <#connection>`_. This MUST
+occur only while the pool is "ready". If the pool implements a background
+thread, it can be used for this. If the pool does not implement a background
+thread, the checkOut method is responsible for ensuring this requirement is met.
+
+When populating the Pool, pendingConnectionCount has to be decremented after
+establishing a `Connection`_ similarly to how it is done in
+`Checking Out a Connection <#checking-out-a-connection>`_ to signal that
+another `Connection`_ is allowed to be established. Such a signal MUST become
+observable to any `Thread`_ after the action that
+`marks the established Connection as "available" <#marking-a-connection-as-available-internal-implementation>`_
+becomes observable to the `Thread`_.
+Informally, this order guarantees that no `Thread`_ tries to start
+establishing a `Connection`_ when there is an "available" `Connection`_
+established as a result of populating the Pool.
 
 .. code::
 
@@ -525,9 +562,10 @@ Checking Out a Connection
 A Pool MUST have a method that allows the driver to check out a `Connection`_.
 Checking out a `Connection`_ involves submitting a request to the WaitQueue and,
 once that request reaches the front of the queue, having the Pool find or create
-a `Connection`_ to fulfill that request. If waitQueueTimeoutMS is specified,
-then requests MUST time out after spending waitQueueTimeoutMS or longer in the
-WaitQueue without receiving a `Connection`_.
+a `Connection`_ to fulfill that request. Requests MUST be subject to a timeout
+which is computed per the rules in
+`Client Side Operations Timeout: Server Selection
+<../client-side-operations-timeout/client-side-operations-timeout.rst#server-selection>`_.
 
 To service a request for a `Connection`_, the Pool MUST first iterate over the
 list of available `Connections <#connection>`_, searching for a non-perished one
@@ -557,12 +595,10 @@ If the pool is "closed" or "paused", any attempt to check out a `Connection
 being "paused" MUST be considered a retryable error and MUST NOT be an error
 that marks the SDAM state unknown.
 
-If minPoolSize is set, the `Connection <#connection>`_ Pool MUST have at least
-minPoolSize total `Connections <#connection>`_ while it is "ready". If the pool does
-not implement a background thread, the checkOut method is responsible for
-`populating the pool
-<#populating-the-pool-with-a-connection-internal-implementation>`_ with enough
-`Connections <#connection>`_ such that this requirement is met.
+If the pool does not implement a background thread, the checkOut method is
+responsible for ensuring that the pool is `populated
+<#populating-the-pool-with-a-connection-internal-implementation>`_ with at least minPoolSize
+`Connections <#connection>`_.
 
 A `Connection <#connection>`_ MUST NOT be checked out until it is
 established. In addition, the Pool MUST NOT prevent other threads from checking
@@ -674,6 +710,13 @@ to Connection Monitoring events, a PoolClearedEvent MUST be emitted after
 incrementing the generation / marking the pool as "paused". If the pool is
 already "paused" when it is cleared, then the pool MUST NOT emit a PoolCleared
 event.
+This method MUST NOT be used in load balancer mode.
+
+A Pool MUST also have a method of clearing all `Connections <#connection>`_ for a
+specific ``serviceId`` for use when in load balancer mode. This method increments
+the generation of the pool for that specific ``serviceId`` in the generation map.
+Note that this method MUST NOT transition the pool to the "paused" state and
+MUST NOT clear the WaitQueue.
 
 As part of clearing the pool, the WaitQueue MUST also be cleared, meaning all
 requests in the WaitQueue MUST fail with errors indicating that the pool was
@@ -683,6 +726,20 @@ an error that marks the SDAM state unknown. Clearing the WaitQueue MUST happen
 eagerly so that any operations waiting on `Connections <#connection>`_ can retry
 as soon as possible. The pool MUST NOT rely on WaitQueueTimeoutMS to clear
 requests from the WaitQueue.
+
+Load Balancer Mode
+------------------
+
+For load-balanced deployments, pools MUST maintain a map from ``serviceId`` to a
+tuple of (generation, connection count) where the connection count refers to the
+total number of connections that exist for a specific ``serviceId``. The pool MUST
+remove the entry for a ``serviceId`` once the connection count reaches 0.
+Once the MongoDB handshake is done, the connection MUST get the
+generation number that applies to its ``serviceId`` from the map and update the
+map to increment the connection count for this ``serviceId``.
+
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
+
 
 Forking
 -------
@@ -708,11 +765,21 @@ A Pool SHOULD have a background Thread that is responsible for
 monitoring the state of all available `Connections <#connection>`_. This background
 thread SHOULD
 
--  Populate `Connections <#connection>`_ to ensure that the pool always satisfies **minPoolSize**
-    - The background thread SHOULD just go back to sleep instead of waiting for
-      pendingConnectionCount to become less than maxConnecting when satisfying
-      minPoolSize.
+-  Populate `Connections <#connection>`_ to ensure that the pool always satisfies minPoolSize.
 -  Remove and close perished available `Connections <#connection>`_.
+- Apply timeouts to connection establishment per `Client Side Operations
+  Timeout: Background Connection Pooling
+  <../client-side-operations-timeout/client-side-operations-timeout.rst#background-connection-pooling>`__.
+
+Conceptually, the aforementioned activities are organized into sequential Background Thread Runs.
+A Run MUST do as much work as readily available and then end instead of waiting for more work.
+For example, instead of waiting for pendingConnectionCount to become less than maxConnecting when satisfying minPoolSize,
+a Run MUST either proceed with the rest of its duties, e.g., closing available perished connections, or end.
+
+The duration of intervals between the end of one Run and the beginning of the next Run is not specified,
+but the
+`Test Format and Runner Specification <https://github.com/mongodb/specifications/tree/master/source/connection-monitoring-and-pooling/tests>`__
+may restrict this duration, or introduce other restrictions to facilitate testing.
 
 withConnection
 ^^^^^^^^^^^^^^
@@ -729,6 +796,7 @@ All drivers that implement a connection pool MUST provide an API that allows use
 Events
 ------
 
+See the `Load Balancer Specification <../load-balancers/load-balancers.rst#events>`__ for details on the ``serviceId`` field.
 
 .. code:: typescript
 
@@ -765,6 +833,12 @@ Events
        *  The ServerAddress of the Endpoint the pool is attempting to connect to.
        */
       address: string;
+
+      /**
+       * The service id for which the pool was cleared for in load balancing mode.
+       * See load balancer specification for more information about this field.
+       */
+      serviceId: Optional<ObjectId>
     }
 
     /**
@@ -1067,6 +1141,12 @@ Exhaust Cursors may require changes to how we close `Connections <#connection>`_
 
 Change log
 ==========
+
+:2021-01-19: Require that timeouts be applied per the client-side operations
+             timeout specification.
+
+:2021-01-12: Clarify "clear" method behavior in load balancer mode.
+
 :2020-12-17: Introduce "paused" and "ready" states. Clear WaitQueue on pool clear.
 
 :2020-09-24: Introduce maxConnecting requirement
@@ -1077,6 +1157,12 @@ Change log
 
 :2019-06-06: Add "connectionError" as a valid reason for
              ConnectionCheckOutFailedEvent
+
+:2021-4-12: Adding in behaviour for load balancer mode.
+
+:2021-06-02: Formalize the behavior of a `Background Thread <#background-thread>`__.
+
+:2021-11-08: Make maxConnecting configurable.
 
 .. Section for links.
 

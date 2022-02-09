@@ -12,8 +12,8 @@ Read and Write Concern
 :Status: Approved
 :Type: Standards
 :Server Versions: 2.4+
-:Last Modified: 2021-04-07
-:Version: 1.5.5
+:Last Modified: 2022-01-19
+:Version: 1.7
 
 .. contents::
 
@@ -75,12 +75,17 @@ Defined below are the constructs for drivers.
       /**
        * This is rendered as "linearizable" (lower-case) on the wire.
        */
-      linearizable
+      linearizable,
 
       /**
        * This is rendered as "available" (lower-case) on the wire.
        */
-      available
+      available,
+
+      /**
+       * This is rendered as "snapshot" (lower-case) on the wire.
+       */
+      snapshot
   }
 
   class ReadConcern {
@@ -131,6 +136,14 @@ considered the server’s default ``ReadConcern``.
 default ``ReadConcern`` while the latter is the user explicitly specifying a
 ``ReadConcern`` with a ``level`` of “local”.
 
+Snapshot Read Concern
+---------------------
+
+When a ``ReadConcern`` ``level`` ``snapshot`` is used, ``atClusterTime`` may be specified to indicate
+the desired point in time for reading. ``find``, ``aggregate`` and ``distinct`` operations executed with ``ReadConcern`` ``snapshot`` but without ``atClusterTime``
+will return ``atClusterTime`` timestamp in the server response. The obtained ``atClusterTime`` timestamp can be used for subsequent
+read operations.
+``ReadConcern`` ``level`` ``snapshot`` with ``clusterTime`` is supported in ``find``, ``aggregate`` and ``distinct`` operations.
 
 On the Wire
 -----------
@@ -301,6 +314,8 @@ deviation guidance, see the `CRUD specification
     /**
      * Corresponds to the "wtimeout" field in the WriteConcern document sent to
      * the server.
+     *
+     * NOTE: This option is deprecated in favor of timeoutMS.
      */
     wtimeoutMS: Optional<Int64>
   }
@@ -313,6 +328,13 @@ FSync SHOULD be considered deprecated.  Those drivers supporting the deprecated
 ``fsync`` option SHOULD treat ``fsync`` identically to ``journal`` in terms of
 consistency with ``w`` and whether a ``WriteConcern`` that specifies ``fsync``
 is acknowledged or unacknowledged.
+
+
+wtimeoutMS
+----------
+
+``wtimeoutMS`` MUST be considered deprecated in favor of `timeoutMS
+<client-side-operations-timeout/client-side-operations-timeout.rst#timeoutMS>`__.
 
 
 Server’s Default WriteConcern
@@ -701,3 +723,6 @@ Version History
   - 2019-10-31: Explicitly define write concern option mappings.
   - 2020-02-13: Inconsistent write concern must be considered an error.
   - 2021-04-07: Updated to use hello command.
+  - 2021-06-15: Added "snapshot" to Readconcern level
+  - 2021-07-12: Add missing commas after ReadConcernLevel enum values
+  - 2022-01-19: Deprecate wTimeoutMS in favor of timeoutMS.

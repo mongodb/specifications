@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: April 23, 2021
-:Version: 1.9.2
+:Last Modified: 2022-02-01
+:Version: 1.11
 
 .. contents::
 
@@ -335,8 +335,8 @@ Driver API
     /**
      * Allowed values: ‘updateLookup’.  When set to ‘updateLookup’, the change notification
      * for partial updates will include both a delta describing the changes to the document,
-     * as well as a copy of the entire document that was changed from some time after the 
-     * change occurred. The default is to not send a value. 
+     * as well as a copy of the entire document that was changed from some time after the
+     * change occurred. The default is to not send a value.
      * For forward compatibility, a driver MUST NOT raise an error when a user provides an
      * unknown value. The driver relies on the server to validate this option.
      * @note this is an option of the `$changeStream` pipeline stage.
@@ -408,6 +408,19 @@ Driver API
      * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @note this is an aggregation command option
+     */
+    comment: Optional<any>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -506,7 +519,7 @@ Drivers MUST use the ``ns`` returned in the ``aggregate`` command to set the ``c
 ChangeStream
 ------------
 
-A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method. 
+A ``ChangeStream`` is an abstraction of a `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_ cursor, with support for resumability.  Implementors MAY choose to implement a ``ChangeStream`` as an extension of an existing tailable cursor implementation.  If the ``ChangeStream`` is implemented as a type which owns a tailable cursor, then the implementor MUST provide a manner of closing the change stream, as well as satisfy the requirements of extending ``Iterable<Document>``. If your language has an idiomatic way of disposing of resources you MAY choose to implement that in addition to, or instead of, an explicit close method.
 
 A change stream MUST track the last resume token, per `Updating the Cached Resume Token`_.
 
@@ -514,7 +527,7 @@ Drivers MUST raise an error on the first document received without a resume toke
 
 A change stream MUST attempt to resume a single time if it encounters any resumable error per `Resumable Error`_.  A change stream MUST NOT attempt to resume on any other type of error.
 
-In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference before attempting to resume.
+In addition to tracking a resume token, change streams MUST also track the read preference specified when the change stream was created. In the event of a resumable error, a change stream MUST perform server selection with the original read preference using the `rules for server selection <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#rules-for-server-selection>`_ before attempting to resume.
 
 Single Server Topologies
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -659,6 +672,11 @@ Synchronous drivers MUST provide a way to iterate a change stream without blocki
 Although the implementation of tailable awaitData cursors is not specified, this MAY be implemented with a ``tryNext`` method on the change stream cursor.
 
 All drivers MUST document how users can iterate a change stream and receive *all* resume token updates. `Why do we allow access to the resume token to users`_ shows an example. The documentation MUST state that users intending to store the resume token should use this method to get the most up to date resume token.
+
+Timeouts
+^^^^^^^^
+
+Drivers MUST apply timeouts to change stream establishment, iteration, and resume attempts per `Client Side Operations Timeout: Change Streams <../client-side-operations-timeout/client-side-operations-timeout.rst#Change-Streams>`__.
 
 Notes and Restrictions
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -888,4 +906,12 @@ Changelog
 | 2021-04-23 | Updated to use modern terminology                          |
 +------------+------------------------------------------------------------+
 | 2021-04-29 | Added ``load-balanced`` to test topology requirements      |
++------------+------------------------------------------------------------+
+| 2021-09-01 | Clarified that server selection during resumption should   |
+|            | respect normal server selection rules.                     |
++------------+------------------------------------------------------------+
+| 2022-01-19 | Require that timeouts be applied per the client-side       |
+|            | operations timeout specification                           |
++------------+------------------------------------------------------------+
+| 2022-02-01 | Added ``comment`` to ``ChangeStreamOptions``.              |
 +------------+------------------------------------------------------------+
