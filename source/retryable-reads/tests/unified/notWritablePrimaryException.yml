@@ -40,7 +40,7 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [find]
-              errorCode: 10107
+              errorCode: 10107 # NotWritablePrimary
 
       - name: find
         object: *collection0

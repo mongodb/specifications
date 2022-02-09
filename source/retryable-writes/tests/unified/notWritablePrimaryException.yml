@@ -38,7 +38,7 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [insertOne]
-              errorCode: 10107
+              errorCode: 10107 # NotWritablePrimary
 
       - name: insertOne
         object: *collection0
