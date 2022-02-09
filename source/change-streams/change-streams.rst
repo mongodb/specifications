@@ -142,6 +142,13 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
     ns: Document;
 
     /**
+     * Only present for ops of type 'rename'.
+     *
+     * The namespace, in the same format as `ns`, that a collection has been renamed to.
+     */
+    to: Optional<Document>;
+
+    /**
      * Only present for ops of type ‘insert’, ‘update’, ‘replace’, and
      * ‘delete’.
      *
