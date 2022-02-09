@@ -40,7 +40,6 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [find]
-              errmsg: "not master"
               errorCode: 10107
 
       - name: find

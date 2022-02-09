@@ -75,7 +75,6 @@
                 "failCommands": [
                   "find"
                 ],
-                "errmsg": "not master",
                 "errorCode": 10107
               }
             }
