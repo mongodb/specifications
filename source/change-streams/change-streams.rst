@@ -252,6 +252,12 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * @since 6.0.0
      */
     collectionUUID: Optional<Binary>;
+
+    /**
+     * The cluster time at which the change occurred.
+     */
+    clusterTime: Timestamp;
+
   }
 
   class UpdateDescription {
