@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-02-01
-:Version: 1.11
+:Last Modified: 2022-02-10
+:Version: 1.12
 
 .. contents::
 
@@ -416,6 +416,9 @@ Driver API
      * The comment can be any valid BSON type for server versions 4.4 and above.
      * Server versions prior to 4.4 only support string as comment,
      * and providing a non-string type will result in a server-side error.
+     *
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate
      * @note this is an aggregation command option
@@ -914,4 +917,7 @@ Changelog
 |            | operations timeout specification                           |
 +------------+------------------------------------------------------------+
 | 2022-02-01 | Added ``comment`` to ``ChangeStreamOptions``.              |
++------------+------------------------------------------------------------+
+| 2022-02-10 | Specified that ``getMore`` command must explicitly send    |
+|            | inherited ``comment``.                                     |
 +------------+------------------------------------------------------------+

@@ -88,7 +88,7 @@ tests:
                 filter: *filter
                 comment: *comment
 
-  - description: "find with comment does not set comment on getMore"
+  - description: "find with comment sets comment on getMore"
     runOnRequirements:
       - minServerVersion: "3.6"
     operations:
@@ -118,10 +118,10 @@ tests:
                 getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
-                comment: { $$exists: false }
+                comment: "comment"
           - commandStartedEvent:
               command:
                 getMore: { $$type: [ int, long ] }
                 collection: *collection0Name
                 batchSize: 2
-                comment: { $$exists: false }
+                comment: "comment"
