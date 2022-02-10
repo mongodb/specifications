@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-02-01
+:Last Modified: 2022-02-??
 
 .. contents::
 
@@ -311,10 +311,9 @@ Read
      * Older server versions do not support comment for aggregate command at all,
      * and providing one will result in a server-side error.
      *
-     * Any comment set on a aggregate command is inherited by any subsequent
-     * getMore commands run on the same cursor.id returned from the
-     * aggregate command. Therefore, drivers MUST NOT attach the comment
-     * to subsequent getMore commands on a cursor.
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.id returned from
+     * the aggregate command.
      */
     comment: Optional<any>;
 
@@ -524,10 +523,9 @@ Read
      * Server versions prior to 4.4 only support string as comment,
      * and providing a non-string type will result in a server-side error.
      *
-     * Any comment set on a find command is inherited by any subsequent
-     * getMore commands run on the same cursor.id returned from the
-     * find command. Therefore, drivers MUST NOT attach the comment
-     * to subsequent getMore commands on a cursor.
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.id returned from
+     * the find command.
      */
     comment: Optional<any>;
 
@@ -2331,6 +2329,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-02-??: Specified that ``getMore`` command must explicitly send inherited comment.
 * 2022-02-01: Add comment attribute to all helpers.
 * 2022-01-27: Use optional return types for write commands and findAndModify
 * 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
