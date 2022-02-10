@@ -312,8 +312,7 @@ Read
      * and providing one will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.id returned from
-     * the aggregate command.
+     * subsequent getMore commands run on the same cursor.
      */
     comment: Optional<any>;
 
@@ -524,8 +523,7 @@ Read
      * and providing a non-string type will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.id returned from
-     * the find command.
+     * subsequent getMore commands run on the same cursor.
      */
     comment: Optional<any>;
 

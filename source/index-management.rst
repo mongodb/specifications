@@ -828,10 +828,8 @@ Common API Components
      * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * Any comment set on a listIndexes command is inherited by any subsequent
-     * getMore commands run on the same cursor.id returned from the
-     * listIndexes command. Therefore, drivers MUST NOT attach the comment
-     * to subsequent getMore commands on a cursor.
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.
      *
      * @see https://docs.mongodb.com/manual/reference/command/listIndexes/
      *

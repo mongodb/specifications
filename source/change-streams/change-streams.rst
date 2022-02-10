@@ -418,8 +418,7 @@ Driver API
      * and providing a non-string type will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.id returned from
-     * the aggregate command.
+     * subsequent getMore commands run on the same cursor.
      *
      * @see https://docs.mongodb.com/manual/reference/command/aggregate
      * @note this is an aggregation command option
