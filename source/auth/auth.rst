@@ -450,7 +450,7 @@ source
 	MUST be "$external". Defaults to ``$external``.
 
 password
-	MAY be specified.
+	MAY be specified. If omitted, drivers MUST NOT pass the username without password to SSPI on Windows and instead use the default credentials.
 
 mechanism
 	MUST be "GSSAPI"
