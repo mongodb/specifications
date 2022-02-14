@@ -10,8 +10,8 @@ Client Side Encryption
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 4.2
-:Last Modified: 2022-01-19
-:Version: 1.4.0
+:Last Modified: 2022-02-24
+:Version: 1.4.1
 
 .. contents::
 
@@ -336,7 +336,7 @@ The following pseudo-code describes the configuration behavior for the three ``M
 Configuring the internal ``MongoClient`` MUST match the parent ``MongoClient``,
 except ``minPoolSize`` is set to ``0`` and ``AutoEncryptionOpts`` is omitted.
 This includes copying the options and host information from the URI, and other
-non-URI configuration (monitoring callbacks, versioned API, etc.).
+non-URI configuration (monitoring callbacks, stable API, etc.).
 
 Drivers MUST document that an additional ``MongoClient`` may be created, using
 the following as a template:
@@ -1635,6 +1635,7 @@ Changelog
 =========
 
 +------------+------------------------------------------------------------+
+| 2022-02-24 | Rename Versioned API to Stable API                         |
 | 2022-01-19 | Require that timeouts be applied per the CSOT spec         |
 | 2021-11-04 | Add 'kmip' KMS provider                                    |
 | 2021-04-08 | Updated to use hello and legacy hello                      |

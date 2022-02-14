@@ -1,15 +1,15 @@
-=========================
-Versioned API For Drivers
-=========================
+======================
+Stable API For Drivers
+======================
 
-:Spec Title: Versioned API For Drivers
-:Spec Version: 1.2.1
+:Spec Title: Stable API For Drivers (previously: Versioned API)
+:Spec Version: 1.2.2
 :Author: Andreas Braun
 :Advisors: Jeff Yemin, A. Jesse Jiryu Davis, Patrick Freed, Oleg Pudeyev
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2022-01-14
+:Last Modified: 2022-02-24
 
 .. contents::
 
@@ -21,7 +21,7 @@ Abstract
 As MongoDB moves toward more frequent releases (a.k.a. continuous delivery), we
 want to enable users to take advantage of our rapidly released features, without
 exposing applications to incompatible server changes due to automatic server
-upgrades. A versioned API will help accomplish that goal.
+upgrades. A stable API will help accomplish that goal.
 
 
 META
@@ -89,7 +89,7 @@ declare an API version:
 
 Drivers SHOULD group the ``serverApi`` option with other similar client options
 like ``autoEncryptionOpts``. Drivers MUST NOT allow specification of any
-versioned API options via the connection string. See the
+stable API options via the connection string. See the
 `Design Rationale`_ for more details.
 
 
@@ -137,7 +137,7 @@ Sending Declared API Version to the Server
 
 The declared API version MUST be sent to the server as part of every command
 request, with the exception of the cases listed below. Drivers MUST NOT use a
-server's reported ``maxWireVersion`` to decide whether it supports the versioned
+server's reported ``maxWireVersion`` to decide whether it supports the stable
 API. The server will reply with an error if the declared API version is not
 supported, or if the command does not support API versioning options. If the
 user does not declare an API version, the driver MUST NOT send any API
@@ -284,19 +284,21 @@ However, this is not necessary until there is a different API version and we
 have data on why and how users would want to override the declared API version.
 
 
-Versioned CRUD API
-------------------
+Stable CRUD API
+---------------
 
-Drivers may also want to provide versioned ``MongoClient``, ``MongoDatabase``,
+Drivers may also want to provide specialized ``MongoClient``, ``MongoDatabase``,
 and ``MongoCollection`` classes to only include features that are part of the
-versioned API. This is not covered in this specification.
+stable API. This is not covered in this specification.
 
 
 Change Log
 ==========
+
+* 2022-02-24: Rename Versioned API to Stable API
 * 2022-01-14: Require ``OP_MSG`` for all messages including the initial step
-  of the handshake when using versioned API.
-* 2021-05-05: Require sending versioned API parameters with ``getMore`` and
+  of the handshake when using stable API.
+* 2021-05-05: Require sending stable API parameters with ``getMore`` and
   transaction-continuing commands.
-* 2021-04-20: Require using ``hello`` when using the versioned API.
+* 2021-04-20: Require using ``hello`` when using the stable API.
 * 2021-04-10: Replaced usages of ``acceptAPIVersion2`` with ``acceptApiVersion2``.

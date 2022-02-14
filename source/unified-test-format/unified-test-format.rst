@@ -3,13 +3,13 @@ Unified Test Format
 ===================
 
 :Spec Title: Unified Test Format
-:Spec Version: 1.6.0
+:Spec Version: 1.6.1
 :Author: Jeremy Mikola
 :Advisors: Prashant Mital, Isabel Atkinson, Thomas Reggi
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: N/A
-:Last Modified: 2021-08-30
+:Last Modified: 2022-02-24
 
 .. contents::
 
@@ -750,7 +750,7 @@ The structure of this object is as follows:
 
 - ``deprecationErrors``: Optional boolean.
 
-See the `Versioned API <../versioned-api/versioned-api.rst>`__ spec for more
+See the `Stable API <../versioned-api/versioned-api.rst>`__ spec for more
 details on these fields.
 
 
@@ -3280,6 +3280,8 @@ spec changes developed in parallel or during the same release cycle.
 
 Change Log
 ==========
+
+:2022-02-24: Rename Versioned API to Stable API
 
 :2021-08-30: Add ``hasServerConnectionId`` field to ``commandStartedEvent``,
              ``commandSuccededEvent`` and ``commandFailedEvent``.

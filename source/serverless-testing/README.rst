@@ -104,7 +104,7 @@ Atlas Serverless testing suite, including prose tests:
 - CRUD, including the v1 and unified tests
 - Retryable Reads
 - Retryable Writes
-- Versioned API
+- Versioned/Stable API
 - Driver Sessions
 - Transactions (excluding convenient API)
 
