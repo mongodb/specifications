@@ -32,12 +32,14 @@ tests:
         arguments:
           requests:
             - updateMany:
-                filter: &filter { _id: "$$id"}
+                filter: &filter
+                  $expr:
+                    $eq: [ "$_id", "$$id" ]
                 update: &update
                   $inc:
                     x: 1
           let: &let
-            id: 0
+            id: 1
     expectEvents:
       - client: *client0
         events:
@@ -77,7 +79,7 @@ tests:
                   $inc:
                     x: 1
           let: &let
-            id: 2
+            id: 1
         expectError:
           errorContains: "'update.let' is an unknown field"
           isClientError: false

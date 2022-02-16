@@ -33,7 +33,8 @@ tests:
           requests:
             - updateOne:
                 filter: &filter
-                  _id: "$$id"
+                  $expr:
+                    $eq: [ "$_id", "$$id" ]
                 update: &update
                   - $set:
                       x: 22
@@ -73,8 +74,8 @@ tests:
           requests:
             - updateOne:
                 filter: &filter
-                  _id:
-                    $gt: "$$id"
+                  $expr:
+                    $eq: [ "$_id", "$$id" ]
                 update: &update
                   $inc:
                     x: 1
