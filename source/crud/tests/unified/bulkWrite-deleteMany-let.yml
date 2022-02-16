@@ -2,9 +2,6 @@ description: "BulkWrite deleteMany-let"
 
 schemaVersion: "1.0"
 
-filterMap: &filterMap
-  limit: 0
-
 createEntities:
   - client:
       id: &client0 client0
