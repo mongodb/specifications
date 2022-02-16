@@ -65,7 +65,7 @@ tests:
         arguments:
           requests:
             - deleteOne:
-                filter: &filter1
+                filter: &filter
                   $expr:
                     $eq: [ "$_id", "$$id" ]
           let: &let1
@@ -81,7 +81,7 @@ tests:
                 delete: *collection0Name
                 deletes:
                   - q: *filter
-                    limit: 0
+                    limit: 1
                 let: *let1
     outcome:
       -
