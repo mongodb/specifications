@@ -58,21 +58,21 @@
               {
                 "updateOne": {
                   "filter": {
-                    "_id": {
-                      "$gt": "$$id"
-                    }
+                    "_id": "$$id"
                   },
-                  "update": {
-                    "$inc": {
-                      "x": 1
+                  "update": [
+                    {
+                      "$set": {
+                        "x": 22
+                      }
                     }
-                  },
-                  "let": {
-                    "id": 1
-                  }
+                  ]
                 }
               }
-            ]
+            ],
+            "let": {
+              "id": 1
+            }
           }
         }
       ],
@@ -87,18 +87,15 @@
                   "updates": [
                     {
                       "q": {
-                        "_id": {
-                          "$gt": "$$id"
+                        "_id": "$$id"
+                      },
+                      "u": [
+                        {
+                          "$set": {
+                            "x": 22
+                          }
                         }
-                      },
-                      "u": {
-                        "$inc": {
-                          "x": 1
-                        }
-                      },
-                      "let": {
-                        "id": 1
-                      },
+                      ],
                       "multi": {
                         "$$unsetOrMatches": false
                       },
@@ -106,7 +103,10 @@
                         "$$unsetOrMatches": false
                       }
                     }
-                  ]
+                  ],
+                  "let": {
+                    "id": 1
+                  }
                 }
               }
             }
@@ -120,11 +120,11 @@
           "documents": [
             {
               "_id": 1,
-              "x": 20
+              "x": 22
             },
             {
               "_id": 2,
-              "x": 22
+              "x": 21
             }
           ]
         }
@@ -148,21 +148,20 @@
                 "updateOne": {
                   "filter": {
                     "_id": {
-                      "$gt": "$$id",
-                      "x": 1
+                      "$gt": "$$id"
                     }
                   },
                   "update": {
                     "$inc": {
                       "x": 1
                     }
-                  },
-                  "let": {
-                    "id": 1
                   }
                 }
               }
-            ]
+            ],
+            "let": {
+              "id": 1
+            }
           },
           "expectError": {
             "errorContains": "'update.let' is an unknown field",
@@ -182,17 +181,13 @@
                     {
                       "q": {
                         "_id": {
-                          "$gt": "$$id",
-                          "x": 1
+                          "$gt": "$$id"
                         }
                       },
                       "u": {
                         "$inc": {
                           "x": 1
                         }
-                      },
-                      "let": {
-                        "id": 1
                       },
                       "multi": {
                         "$$unsetOrMatches": false
@@ -201,7 +196,10 @@
                         "$$unsetOrMatches": false
                       }
                     }
-                  ]
+                  ],
+                  "let": {
+                    "id": 1
+                  }
                 }
               }
             }

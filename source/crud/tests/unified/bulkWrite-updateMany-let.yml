@@ -32,9 +32,7 @@ tests:
         arguments:
           requests:
             - updateMany:
-                filter: &filter
-                  _id:
-                    $gt: "$$id"
+                filter: &filter { _id: "$$id"}
                 update: &update
                   $inc:
                     x: 1
@@ -49,17 +47,17 @@ tests:
                 updates:
                   - q: *filter
                     u: *update
-                    let: *let
                     multi: true
                     upsert:
                       $$unsetOrMatches: false
+                let: *let
     outcome:
       -
         collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 1, x: 21 }
-          - { _id: 2, x: 22 }
+          - { _id: 2, x: 21 }
 
   - description: "Bulk Write updateMany with let option unsupported
   (server-side error)"
@@ -73,13 +71,13 @@ tests:
           requests:
             - updateMany:
                 filter: &filter
-                  _id:
-                    $gt: "$$id"
+                  $expr:
+                    $eq: [ "$_id", "$$id" ]
                 update: &update
                   $inc:
                     x: 1
           let: &let
-            id: 1
+            id: 2
         expectError:
           errorContains: "'update.let' is an unknown field"
           isClientError: false
@@ -92,10 +90,12 @@ tests:
                 updates:
                   - q: *filter
                     u: *update
-                    let: *let
                     multi: true
                     upsert:
                       $$unsetOrMatches: false
+                    limit: 0
+                let: *let
+
     outcome:
       -
         collectionName: *collection0Name

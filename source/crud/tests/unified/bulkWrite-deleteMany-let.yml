@@ -2,6 +2,9 @@ description: "BulkWrite deleteMany-let"
 
 schemaVersion: "1.0"
 
+filterMap: &filterMap
+  limit: 0
+
 createEntities:
   - client:
       id: &client0 client0
@@ -45,6 +48,7 @@ tests:
                 delete: *collection0Name
                 deletes:
                   - q: *filter
+                    limit: 0
                 let: *let0
     outcome:
       -
@@ -79,8 +83,8 @@ tests:
               command:
                 delete: *collection0Name
                 deletes:
-                  -
-                    q: *filter1
+                  - q: *filter
+                    limit: 0
                 let: *let1
     outcome:
       -

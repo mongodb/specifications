@@ -33,11 +33,10 @@ tests:
           requests:
             - updateOne:
                 filter: &filter
-                  _id:
-                    $gt: "$$id"
+                  _id: "$$id"
                 update: &update
-                  $inc:
-                    x: 1
+                  - $set:
+                      x: 22
           let: &let
             id: 1
     expectEvents:
@@ -59,8 +58,8 @@ tests:
         collectionName: *collection0Name
         databaseName: *database0Name
         documents:
-          - { _id: 1, x: 20 }
-          - { _id: 2, x: 22 }
+          - { _id: 1, x: 22 }
+          - { _id: 2, x: 21 }
 
   - description: "Bulk Write updateOne with let option unsupported
   (server-side error)"
@@ -76,7 +75,6 @@ tests:
                 filter: &filter
                   _id:
                     $gt: "$$id"
-                    x: 1
                 update: &update
                   $inc:
                     x: 1
