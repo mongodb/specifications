@@ -38,8 +38,8 @@ tests:
                 update: &update
                   $inc:
                     x: 1
-                let: &let
-                  id: 0
+          let: &let
+            id: 0
     expectEvents:
       - client: *client0
         events:
@@ -78,8 +78,8 @@ tests:
                 update: &update
                   $inc:
                     x: 1
-                let: &let
-                  id: 1
+          let: &let
+            id: 1
         expectError:
           errorContains: "'update.let' is an unknown field"
           isClientError: false

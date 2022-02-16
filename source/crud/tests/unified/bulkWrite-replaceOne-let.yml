@@ -36,8 +36,8 @@ tests:
                   $expr:
                     $eq: [ "$_id", "$$id" ]
                 replacement: &replacement {"x": 3}
-                let: &let
-                  id: 1
+          let: &let
+            id: 1
     expectEvents:
       - client: *client0
         events:
@@ -71,8 +71,8 @@ tests:
                   $expr:
                     $eq: [ "$_id", "$$id" ]
                 replacement: &replacement {"_id": 3}
-                let: &let
-                  id: 1
+        let: &let
+          id: 1
         expectError:
           errorContains: "'replace.let' is an unknown field"
           isClientError: false

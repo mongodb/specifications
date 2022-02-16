@@ -35,8 +35,8 @@ tests:
                 filter: &filter
                   $expr:
                     $eq: [ "$_id", "$$id" ]
-                let: &let0
-                  id: 1
+          let: &let0
+            id: 1
     expectEvents:
       - client: *client0
         events:
@@ -67,8 +67,8 @@ tests:
                 filter: &filter1
                   $expr:
                     $eq: [ "$_id", "$$id" ]
-                let: &let1
-                  id: 1
+          let: &let1
+            id: 1
         expectError:
           errorContains: "'delete.let' is an unknown field"
           isClientError: false
