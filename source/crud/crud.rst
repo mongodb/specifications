@@ -12,7 +12,7 @@ Driver CRUD API
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 2.6
-:Last Modified: 2022-01-27
+:Last Modified: 2022-02-10
 
 .. contents::
 
@@ -302,12 +302,19 @@ Read
     maxAwaitTimeMS: Optional<Int64>;
 
     /**
-     * Enables users to specify an arbitrary string to help trace the operation through
+     * Enables users to specify an arbitrary comment to help trace the operation through
      * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * @see http://docs.mongodb.com/manual/reference/command/aggregate/
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions between 3.6 and 4.2 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     * Older server versions do not support comment for aggregate command at all,
+     * and providing one will result in a server-side error.
+     *
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.
      */
-    comment: Optional<String>;
+    comment: Optional<any>;
 
     /**
      * The index to use for the aggregation. The hint does not apply to $lookup and $graphLookup stages.
@@ -373,6 +380,16 @@ Read
      * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
      */
     skip: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for count command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class EstimatedDocumentCountOptions {
@@ -409,6 +426,16 @@ Read
      * @see https://docs.mongodb.com/manual/reference/command/distinct/
      */
     maxTimeMS: Optional<Int64>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for distinct command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   enum CursorType {
@@ -488,13 +515,17 @@ Read
     collation: Optional<Document>;
 
     /**
-     * Attaches a comment to the query.
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
      *
-     * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
      *
-     * @see https://docs.mongodb.com/manual/reference/command/find/
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.
      */
-    comment: Optional<String>;
+    comment: Optional<any>;
 
     /**
      * Indicates the type of cursor to use. This value includes both
@@ -906,6 +937,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for write operations,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class InsertOneOptions {
@@ -918,6 +959,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
      */
     bypassDocumentValidation: Optional<Boolean>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class InsertManyOptions {
@@ -937,6 +988,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * Defaults to true.
      */
     ordered: Boolean;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for insert command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class UpdateOptions {
@@ -1007,6 +1068,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for update command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class ReplaceOptions {
@@ -1065,6 +1136,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see http://docs.mongodb.com/manual/reference/command/update/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for update command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class DeleteOptions {
@@ -1105,6 +1186,16 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * @see http://docs.mongodb.com/manual/reference/command/delete/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for delete command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
 
@@ -1835,6 +1926,16 @@ Find And Modify
      * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class FindOneAndReplaceOptions {
@@ -1933,6 +2034,16 @@ Find And Modify
      * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
   class FindOneAndUpdateOptions {
@@ -2039,6 +2150,17 @@ Find And Modify
      * @see http://docs.mongodb.com/manual/reference/command/findAndModify/
      */
     let: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 do not support comment for findAndModify command,
+     * and providing one will result in a server-side error.
+     */
+    comment: Optional<any>;
   }
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2205,6 +2327,8 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
+* 2022-02-01: Add comment attribute to all helpers.
 * 2022-01-27: Use optional return types for write commands and findAndModify
 * 2022-01-19: Deprecate the maxTimeMS option and require that timeouts be applied per the client-side operations timeout spec.
 * 2022-01-14: Add let to ReplaceOptions

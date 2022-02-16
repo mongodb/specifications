@@ -687,12 +687,12 @@ Configure with KMS providers as follows:
             "tenantId": <set from environment>,
             "clientId": <set from environment>,
             "clientSecret": <set from environment>,
-            "identityPlatformEndpoint": "example.com:443"
+            "identityPlatformEndpoint": "doesnotexist.invalid:443"
          },
          "gcp": {
             "email": <set from environment>,
             "privateKey": <set from environment>,
-            "endpoint": "example.com:443"
+            "endpoint": "doesnotexist.invalid:443"
          },
          "kmip": {
             "endpoint": "doesnotexist.local:5698"
@@ -775,10 +775,10 @@ Test cases
       {
         region: "us-east-1",
         key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-        endpoint: "example.com"
+        endpoint: "doesnotexist.invalid"
       }
 
-   Expect this to fail with an exception with a message containing the string: "parse error"
+   Expect this to fail with a network exception indicating failure to resolve "doesnotexist.invalid".
 
 7. Call `client_encryption.createDataKey()` with "azure" as the provider and the following masterKey:
 
@@ -791,7 +791,7 @@ Test cases
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
-   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
+   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with a network exception indicating failure to resolve "doesnotexist.invalid".
 
 8. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
 
@@ -807,7 +807,7 @@ Test cases
 
    Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to validate it works.
 
-   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with an exception with a message containing the string: "parse error".
+   Call ``client_encryption_invalid.createDataKey()`` with the same masterKey. Expect this to fail with a network exception indicating failure to resolve "doesnotexist.invalid".
 
 9. Call `client_encryption.createDataKey()` with "gcp" as the provider and the following masterKey:
 
@@ -818,7 +818,7 @@ Test cases
         "location": "global",
         "keyRing": "key-ring-csfle",
         "keyName": "key-name-csfle",
-        "endpoint": "example.com:443"
+        "endpoint": "doesnotexist.invalid:443"
       }
 
    Expect this to fail with an exception with a message containing the string: "Invalid KMS response".

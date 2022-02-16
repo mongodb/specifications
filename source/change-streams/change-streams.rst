@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-01-19
-:Version: 1.10
+:Last Modified: 2022-02-10
+:Version: 1.12
 
 .. contents::
 
@@ -408,6 +408,22 @@ Driver API
      * @note this is an option of the `$changeStream` pipeline stage.
      */
      startAfter: Optional<Document>;
+
+    /**
+     * Enables users to specify an arbitrary comment to help trace the operation through
+     * the database profiler, currentOp and logs. The default is to not send a value.
+     *
+     * The comment can be any valid BSON type for server versions 4.4 and above.
+     * Server versions prior to 4.4 only support string as comment,
+     * and providing a non-string type will result in a server-side error.
+     *
+     * If a comment is provided, drivers MUST attach this comment to all
+     * subsequent getMore commands run on the same cursor.
+     *
+     * @see https://docs.mongodb.com/manual/reference/command/aggregate
+     * @note this is an aggregation command option
+     */
+    comment: Optional<any>
   }
 
 **NOTE:** The set of ``ChangeStreamOptions`` may grow over time.
@@ -899,4 +915,9 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-01-19 | Require that timeouts be applied per the client-side       |
 |            | operations timeout specification                           |
++------------+------------------------------------------------------------+
+| 2022-02-01 | Added ``comment`` to ``ChangeStreamOptions``.              |
++------------+------------------------------------------------------------+
+| 2022-02-10 | Specified that ``getMore`` command must explicitly send    |
+|            | inherited ``comment``.                                     |
 +------------+------------------------------------------------------------+

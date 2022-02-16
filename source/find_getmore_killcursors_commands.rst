@@ -14,7 +14,7 @@ Find, getMore and killCursors commands.
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.2
-:Last Modified: December 14, 2021
+:Last Modified: February 01, 2022
 
 .. contents::
 
@@ -86,219 +86,9 @@ Commands
 find
 ----
 
-The **find** command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
+The `find`_ command replaces the query functionality of the OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire protocol message, the **find** command cannot be used to execute other commands.
 
-.. code:: javascript
-
-    {
-      "find": <string>,
-      "filter": { ... },
-      "sort": { ... },
-      "projection": { ... },
-      "hint": { ... }|<string>,
-      "skip": <int64>,
-      "limit": <int64>,
-      "batchSize": <int64>,
-      "singleBatch": <bool>,
-      "comment": <string>,
-      "maxScan": <int32>,
-      "maxTimeMS": <int32>,
-      "max": { ... },
-      "min": { ... },
-      "returnKey": <bool>,
-      "showRecordId": <bool>,
-      "snapshot": <bool>,
-      "tailable": <bool>,
-      "oplogReplay": <bool>,
-      "noCursorTimeout": <bool>,
-      "awaitData": <bool>,
-      "allowPartialResults": <bool>,
-      "readConcern": { ...}
-    }
-
-The accepted parameters are described in the table below.  Parameters marked "Req" are required by the server and MUST be included in the command.  Parameters marked "Def" define the default values assumed by the server if the parameter is omitted].
-
-.. list-table:: Find command parameters
-   :widths: 15 15 15 15 15 30
-   :header-rows: 1
-
-   * - Parameter
-     - Req
-     - Def.
-     - Type
-     - CRUD API Mapping
-     - Description
-   * - find
-     - X
-     -
-     - String
-     -
-     - Its argument MUST be a string specifying the name of the collection
-   * - filter
-     - X
-     -
-     - Doc.
-     - filter
-     - The query predicate.
-   * - sort
-     -
-     -
-     - Doc.
-     - FindOptions.sort
-     - If specified, then the result set will be sorted accordingly. The document is in expected to be in ordered form.
-   * - projection
-     -
-     -
-     - Doc.
-     - FindOptions.projection
-     - If provided it specifies the inclusion or exclusion of fields in the returned documents.
-   * - hint
-     -
-     -
-     - Doc.
-       String
-     - modifiers.$hint
-     - If specified, then the query system will only consider plans using the hinted index.
-
-       If the driver provides a document, it takes the following format
-
-       { field1: <-1/1>, ... fieldN: <-1/1> }
-
-       If the driver provides a string, it is the name of the index to use as the hint.  For an index specification {a: 1} this might take the form of the string a_1.
-   * - skip
-     -
-     - 0
-     - int64
-     - FindOptions.skip
-     - Specifies the starting point for the returned documents.
-   * - limit
-     -
-     -
-     - int64
-     - FindOptions.limit
-     - A limit of 0 has the same meaning as the absence of a limit.
-   * - batchSize
-     -
-     -
-     - int64
-     - FindOptions.batchSize
-     - batchSize specifies the maximum number of documents returned in a find or getMore command.
-   * - singleBatch
-     -
-     - false
-     - Bool
-     -
-     - If true, then the server will return a single batch up to the maximum server message size, and then close the ClientCursor. The client cannot issue any OP_GET_MORE messages or getMore commands.
-   * - comment
-     -
-     -
-     - String
-     - FindOptions.comment
-     - The comment meta-operator makes it possible to attach a comment to a query.
-   * - maxScan
-     -
-     -
-     - Int32 >= 0
-     - modifiers.$maxScan
-     - Constrains the query to only scan the specified number of documents when fulfilling the query.
-   * - maxTimeMS
-     -
-     -
-     - Int32 >= 0
-     - FindOptions.maxTimeMS
-     - Specifies a cumulative time limit in milliseconds for processing operations on the cursor
-   * - max
-     -
-     -
-     - Doc.
-     - modifiers.$max
-     - Specify a max value to specify the exclusive upper bound for a specific index in order to constrain the results of find(). The max specifies the upper bound for all keys of a specific index in order.
-
-       The specified document takes the form of
-
-       { field1: <max value>, ... fieldN: <max valueN> }
-   * - min
-     -
-     -
-     - Doc.
-     - modifiers.$min
-     - Specify a min value to specify the inclusive lower bound for a specific index in order to constrain the results of find(). The min specifies the lower bound for all keys of a specific index in order.
-
-       The specified document takes the form of
-
-       { field1: <min value>, ... fieldN: <min valueN> }
-   * - returnKey
-     -
-     -
-     - Bool
-     - modifiers.$returnKey
-     - Only return the index field or fields for the results of the query. If returnKey is set to true and the query does not use an index to perform the read operation, the returned documents will not contain any fields.
-   * - showRecordId
-     -
-     -
-     - Bool
-     - modifiers.$showDiskLoc
-     - The showRecordId field returns the internal MongoDB record id for each document returned by the query.
-   * - snapshot
-     -
-     -
-     - Bool
-     - modifiers.$snapshot
-     - The snapshot operator prevents the cursor from returning a document more than once because an intervening write operation.
-   * - tailable
-     -
-     -
-     - Bool
-     - Set if FindOptions.cursorType is either CursorType.TAILABLE or CursorType.TAILABLE_AWAIT
-     - Specify that find command MUST return a tailable cursor.
-
-       Can only only be used if the find command is operating over a capped collections.
-   * - oplogReplay
-     -
-     -
-     - Bool
-     - FindOptions.oplogReply
-     - Internal replication use only.
-   * - noCursorTimeout
-     -
-     -
-     - Bool
-     - FindOptions.noCursorTimeout
-     - The server normally times out idle cursors after an inactivity period (10 minutes) to prevent excess memory use. Set this option to prevent that.
-   * - awaitData
-     -
-     -
-     - Bool
-     - Set if FindOptions.cursorType is CursorType.TAILABLE_AWAIT
-     - If True awaitData MUST have tailable. maxTimeMS on getMore can be used to control the amount of time the cursor waits for new documents before returning an empty result.
-   * - allowPartialResults
-     -
-     -
-     - Bool
-     - FindOptions.allowPartialResults
-     - Get partial results from a mongos if some shards are down (instead of throwing an error).
-
-       Drivers MUST NOT send this field if the topology type is not 'Sharded'
-   * - readConcern
-     -
-     -
-     - Doc
-     - N/A
-
-       MAY be set on CRUD specification (see readConcern specification for details)
-     - Allows driver to specify if the query should be performed against a specific snapshot view of the documents in a collection. (N.B. this is not the same as the "snapshot" option, above.)
-
-       .. code:: javascript
-
-         The readConcern option takes the following document specification.
-         {
-           level: "[majority|local]",
-         }
-
-       level: “local” is the default, if no level is explicitly specified.
-       level: “local” means to do a read with no snapshot; this is the behavior of reads in 3.0 and prior versions of MongoDB.
-       level: “majority” means to do a read from the latest committed snapshot known to the server  (which could be stale).
-
+.. _find: https://docs.mongodb.com/manual/reference/command/find/
 
 For a successful command, the document returned from the server has the following format:
 
@@ -505,50 +295,14 @@ In the case of **a tailable cursor with awaitData == true** the driver MUST prov
 getMore
 -------
 
-The **getMore** command replaces the **OP_GET_MORE** wire protocol message.
+The `getMore`_ command replaces the **OP_GET_MORE** wire protocol message.
 The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true
 when sent to a secondary. The OP_QUERY namespace MUST be the same as for the
-**find** and **killCursors** commands. The command takes the following object.
+**find** and **killCursors** commands.
 
-.. code:: javascript
+.. _getMore: https://docs.mongodb.com/manual/reference/command/getMore/
 
-    {
-      "getMore": <int64>,
-      "collection": <string>,
-      "batchSize": <int64>,
-      "maxTimeMS": <int32>
-    }
-
-The accepted parameters are described in the table below.
-
-.. list-table:: getMore command parameters
-   :widths: 15 15 15 30
-   :header-rows: 1
-
-   * - Parameter
-     - Req
-     - Type
-     - Description
-   * - getMore
-     - X
-     - int64
-     - Specifies the cursorid of the ClientCursor that this getMore should exercise.
-   * - collection
-     - X
-     - String
-     - The name of the collection on which the query is operating.
-   * - batchSize
-     - X
-     - Int32
-     - Indicates how many results should be returned in the next batch to the client. Errors if zero or negative.
-   * - maxTimeMS
-     -
-     - Int32
-     - If not set, the server defaults to it’s internal maxTimeMS setting.
-
-       Please see the "Semantics of maxTimeMS" section for more details.
-
-The **batchSize** MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
+The **batchSize** option of **getMore** command MUST be an int32 larger than 0. If **batchSize** is equal to 0 it must be omitted. If **batchSize** is less than 0 it must be turned into a positive integer using **Math.abs** or equivalent function in your language.
 
 On success, the getMore command will return the following:
 
@@ -568,38 +322,9 @@ On success, the getMore command will return the following:
 killCursors
 -----------
 
-The **killCursors** command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
+The `killCursors`_ command replaces the **OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore** commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
 
-.. code:: javascript
-
-    {
-      "killCursors": <string>,
-      "cursors": [
-        <cursor id 1>
-        <cursor id 2>,
-        …
-        <cursor id n>
-      ]
-    }
-
-The accepted parameters are described in the table below. The query flags passed to OP_QUERY for a killCursors command MUST be secondaryOk=true when sent to a secondary.
-
-.. list-table:: killCursors command parameters
-   :widths: 15 15 15 30
-   :header-rows: 1
-
-   * - Parameter
-     - Req
-     - Type
-     - Description
-   * - killCursors
-     - X
-     - String
-     - The collection name used in the find command that created this cursor.
-   * - cursors
-     - X
-     - Array of int64’s
-     - An array of one or more cursorId’s
+.. _killCursors: https://docs.mongodb.com/manual/reference/command/killCursors/
 
 The command response will be as follows:
 
@@ -745,6 +470,8 @@ More in depth information about passing read preferences to Mongos can be found 
 
 Changes
 =======
+2022-02-01 Replace examples/tables for find, getMore, and killCursors with server manual links.
+
 2021-12-14 Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for exhaust cursors.
 
 2021-08-27 Exhaust cursors must use OP_MSG on 3.6+ servers.

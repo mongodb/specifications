@@ -325,8 +325,9 @@ MAY also close the connection associated with the transaction when the transacti
 Conversely, those services must abort a transaction when the connection associated with the
 transaction is closed.
 
-Any applications that connect directly to services and not through the load balancer MUST also
-supply the :code:`loadBalanced=true` option to the driver they use to connect.
+Any applications that connect directly to services and not through the load balancer MUST connect
+via the regular service port as they normally would and not the port specified by the
+`loadBalancerPort` option. The `loadBalanced=true` URI option MUST be omitted in this case.
 
 
 Q&A

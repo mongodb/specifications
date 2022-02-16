@@ -90,7 +90,7 @@ declare an API version:
 Drivers SHOULD group the ``serverApi`` option with other similar client options
 like ``autoEncryptionOpts``. Drivers MUST NOT allow specification of any
 versioned API options via the connection string. See the
-`design rationale <_rationale_no_uri_options>`_ for more details.
+`Design Rationale`_ for more details.
 
 
 ServerApiVersion enumeration
@@ -211,8 +211,6 @@ that the behaviour of the command helper is undefined in this case.
 
 Design Rationale
 ================
-
-.. _rationale_no_uri_options:
 
 No URI Options
 --------------
