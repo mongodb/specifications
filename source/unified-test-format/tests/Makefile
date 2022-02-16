@@ -33,7 +33,7 @@ collection-management: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../collection-management/tests/*.yml" --valid
 
 sessions: HAS_AJV
-	@ajv test -s $(SCHEMA) -d "../../sessions/tests/unified/*.yml" --valid
+	@ajv test -s $(SCHEMA) -d "../../sessions/tests/*.yml" --valid
 
 command-monitoring: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../command-monitoring/tests/unified/*.yml" --valid
