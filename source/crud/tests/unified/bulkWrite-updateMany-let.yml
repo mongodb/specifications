@@ -50,8 +50,7 @@ tests:
                   - q: *filter
                     u: *update
                     multi: true
-                    upsert:
-                      $$unsetOrMatches: false
+                    upsert: { $$unsetOrMatches: false }
                 let: *let
     outcome:
       -

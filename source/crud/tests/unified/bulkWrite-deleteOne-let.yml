@@ -80,8 +80,7 @@ tests:
               command:
                 delete: *collection0Name
                 deletes:
-                  -
-                    q: *filter1
+                  - q: *filter1
                     limit: 1
                 let: *let1
     outcome:
