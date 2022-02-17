@@ -93,10 +93,8 @@ tests:
                 updates:
                   - q: *filter
                     u: *update
-                    multi:
-                      $$unsetOrMatches: false
-                    upsert:
-                      $$unsetOrMatches: false
+                    multi: { $$unsetOrMatches: false }
+                    upsert: { $$unsetOrMatches: false }
                 let: *let
     outcome:
       -
