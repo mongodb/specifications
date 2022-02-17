@@ -35,7 +35,8 @@ tests:
                 filter: &filter
                   $expr:
                     $eq: [ "$_id", "$$id" ]
-          let: &let { id: 1 }
+          let: &let
+            id: 1
     expectEvents:
       - client: *client0
         events:
@@ -63,8 +64,7 @@ tests:
           requests:
             - deleteOne:
                 filter: *filter
-          let: &let
-            id: 1
+          let: *let
         expectError:
           errorContains: "'delete.let' is an unknown field"
           isClientError: false

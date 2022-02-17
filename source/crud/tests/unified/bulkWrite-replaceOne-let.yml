@@ -68,8 +68,7 @@ tests:
             - replaceOne:
                 filter: *filter
                 replacement: *replacement
-          let: &let
-            id: 1
+          let: *let
         expectError:
           errorContains: "'update.let' is an unknown field"
           isClientError: false
