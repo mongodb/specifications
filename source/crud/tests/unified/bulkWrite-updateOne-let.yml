@@ -15,7 +15,7 @@ createEntities:
       database: *database0
       collectionName: &collection0Name coll0
 
-initialData: &initialData
+initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
     documents:
@@ -55,15 +55,13 @@ tests:
                       $$unsetOrMatches: false
                 let: *let
     outcome:
-      -
-        collectionName: *collection0Name
+      - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 1, x: 22 }
           - { _id: 2, x: 21 }
 
-  - description: "Bulk Write updateOne with let option unsupported
-  (server-side error)"
+  - description: "Bulk Write updateOne with let option unsupported (server-side error)"
     runOnRequirements:
       - minServerVersion: "3.6.0"
         maxServerVersion: "4.9"
@@ -73,12 +71,8 @@ tests:
         arguments:
           requests:
             - updateOne:
-                filter: &filter
-                  $expr:
-                    $eq: [ "$_id", "$$id" ]
-                update: &update
-                  $inc:
-                    x: 1
+                filter: *filter
+                update: *update
           let: &let
             id: 1
         expectError:
@@ -99,8 +93,7 @@ tests:
                       $$unsetOrMatches: false
                 let: *let
     outcome:
-      -
-        collectionName: *collection0Name
+      - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 1, x: 20 }

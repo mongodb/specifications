@@ -15,7 +15,7 @@ createEntities:
       database: *database0
       collectionName: &collection0Name coll0
 
-initialData: &initialData
+initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
     documents:
@@ -36,8 +36,8 @@ tests:
                   $expr:
                     $eq: [ "$_id", "$$id" ]
                 update: &update
-                  $inc:
-                    x: 1
+                  - $set:
+                      x: 21
           let: &let
             id: 1
     expectEvents:
@@ -54,15 +54,13 @@ tests:
                       $$unsetOrMatches: false
                 let: *let
     outcome:
-      -
-        collectionName: *collection0Name
+      - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 1, x: 21 }
           - { _id: 2, x: 21 }
 
-  - description: "Bulk Write updateMany with let option unsupported
-  (server-side error)"
+  - description: "Bulk Write updateMany with let option unsupported (server-side error)"
     runOnRequirements:
       - minServerVersion: "3.6.0"
         maxServerVersion: "4.9"
@@ -72,14 +70,9 @@ tests:
         arguments:
           requests:
             - updateMany:
-                filter: &filter
-                  $expr:
-                    $eq: [ "$_id", "$$id" ]
-                update: &update
-                  $inc:
-                    x: 1
-          let: &let
-            id: 1
+                filter: *filter
+                update: *update
+          let: *let
         expectError:
           errorContains: "'update.let' is an unknown field"
           isClientError: false
@@ -95,12 +88,10 @@ tests:
                     multi: true
                     upsert:
                       $$unsetOrMatches: false
-                    limit: { $$unsetOrMatches: 0 }
                 let: *let
 
     outcome:
-      -
-        collectionName: *collection0Name
+      - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 1, x: 20 }

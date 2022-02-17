@@ -15,7 +15,7 @@ createEntities:
       database: *database0
       collectionName: &collection0Name coll0
 
-initialData: &initialData
+initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
     documents:
@@ -56,10 +56,9 @@ tests:
           - { _id: 1, x: 3 }
           - { _id: 2 }
 
-  - description: "Bulk Write replaceOne with let option unsupported
-  (server-side error)"
+  - description: "Bulk Write replaceOne with let option unsupported (server-side error)"
     runOnRequirements:
-      - minServerVersion: "3.6.0"
+      - minServerVersion: "4.2"
         maxServerVersion: "4.9"
     operations:
       - object: *collection0
@@ -67,10 +66,8 @@ tests:
         arguments:
           requests:
             - replaceOne:
-                filter: &filter1
-                  $expr:
-                    $eq: [ "$_id", "$$id" ]
-                replacement: &replacement {"_id": 3}
+                filter: *filter
+                replacement: *replacement
           let: &let
             id: 1
         expectError:

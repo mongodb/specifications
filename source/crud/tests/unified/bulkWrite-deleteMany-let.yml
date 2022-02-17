@@ -15,7 +15,7 @@ createEntities:
       database: *database0
       collectionName: &collection0Name coll0
 
-initialData: &initialData
+initialData:
   - collectionName: *collection0Name
     databaseName: *database0Name
     documents:
@@ -35,7 +35,7 @@ tests:
                 filter: &filter
                   $expr:
                     $eq: [ "$_id", "$$id" ]
-          let: &let0
+          let: &let
             id: 1
     expectEvents:
       - client: *client0
@@ -46,16 +46,14 @@ tests:
                 deletes:
                   - q: *filter
                     limit: 0
-                let: *let0
+                let: *let
     outcome:
-      -
-        collectionName: *collection0Name
+      - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 2 }
 
-  - description: "Bulk Write deleteMany with let option unsupported
-  (server-side error)"
+  - description: "Bulk Write deleteMany with let option unsupported (server-side error)"
     runOnRequirements:
       - minServerVersion: "3.6.0"
         maxServerVersion: "4.9"
@@ -65,10 +63,8 @@ tests:
         arguments:
           requests:
             - deleteOne:
-                filter: &filter
-                  $expr:
-                    $eq: [ "$_id", "$$id" ]
-          let: &let1
+                filter: *filter
+          let: &let
             id: 1
         expectError:
           errorContains: "'delete.let' is an unknown field"
@@ -82,10 +78,9 @@ tests:
                 deletes:
                   - q: *filter
                     limit: 1
-                let: *let1
+                let: *let
     outcome:
-      -
-        collectionName: *collection0Name
+      - collectionName: *collection0Name
         databaseName: *database0Name
         documents:
           - { _id: 1 }
