@@ -42,7 +42,7 @@ tests:
             data:
               # use saslContinue here to avoid SDAM errors
               # this failPoint itself will create a usable connection in the connection pool
-              # so we run a dropCollection (that also fails) in order to discard the connection
+              # so we run a ping (that also fails) in order to discard the connection
               # before testing our read operation "find"
               failCommands: [saslContinue, ping]
               closeConnection: true

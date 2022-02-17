@@ -78,6 +78,7 @@
           "name": "insertOne",
           "object": "collection0",
           "arguments": {
+            "session": "session0",
             "document": {
               "_id": 2,
               "x": 22
@@ -177,8 +178,9 @@
               "commandStartedEvent": {
                 "command": {
                   "commitTransaction": 1,
-                  "lsid": "session0",
-                  "startTransaction": true
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  }
                 },
                 "commandName": "commitTransaction",
                 "databaseName": "admin"

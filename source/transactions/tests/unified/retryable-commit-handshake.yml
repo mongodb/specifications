@@ -45,10 +45,11 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
+          session: *session0
           document: { _id: 2, x: 22 }
 
-      # The following failPoint and dropCollection utilize session1 so that
-      # the transaction won't be failed by the intentional erroring of dropCollection
+      # The following failPoint and ping utilize session1 so that
+      # the transaction won't be failed by the intentional erroring of ping
       # and it will have an empty pool when it goes to run commitTransaction
       - name: failPoint # fail the next connection establishment
         object: testRunner
@@ -61,7 +62,7 @@ tests:
             data:
               # use saslContinue here to avoid SDAM errors
               # this failPoint itself will create a usable connection in the connection pool
-              # so we run a dropCollection (that also fails) in order to discard the connection
+              # so we run a ping (that also fails) in order to discard the connection
               # before testing that commitTransaction gets retried
               failCommands: [saslContinue, ping]
               closeConnection: true
@@ -103,8 +104,8 @@ tests:
           - commandStartedEvent:
               command:
                 commitTransaction: 1
-                lsid: *session0
-                startTransaction: true
+                lsid:
+                  $$sessionLsid: *session0
               commandName: commitTransaction
               databaseName: admin
 
