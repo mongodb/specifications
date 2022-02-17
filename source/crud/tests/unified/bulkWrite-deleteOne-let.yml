@@ -75,7 +75,7 @@ tests:
               command:
                 delete: *collection0Name
                 deletes:
-                  - q: *filter1
+                  - q: *filter
                     limit: 1
                 let: *let
     outcome:
