@@ -956,6 +956,8 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * The let parameter must be a valid Document type for server versions 5.0 and above.
      * Server versions prior to 5.0 do not support the let parameter for bulk write operations,
      * and providing it will result in a server-side error.
+     *
+     * The value of let will be passed to all update and delete, but not insert, commands.
      */
     let: Optional<Document>;
   }
