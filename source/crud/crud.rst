@@ -951,7 +951,7 @@ Insert, Update, Replace, Delete, and Bulk Writes
     /**
      * Map of parameter names and values. Values must be constant or closed expressions that do not
      * reference document fields. Parameters can then be accessed as variables in an aggregate
-     * expression context (e.g. “$$var”).
+     * expression context (e.g. "$$var").
      *
      * The let parameter must be a valid Document type for server versions 5.0 and above.
      * Server versions prior to 5.0 do not support the let parameter for bulk write operations,
