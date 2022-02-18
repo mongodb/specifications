@@ -60,6 +60,8 @@ tests:
         events:
           - { connectionCheckOutStartedEvent: {} }
           - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
       - client: *client0
         events:
           - commandStartedEvent:
@@ -110,6 +112,8 @@ tests:
       - client: *client0
         eventType: cmap
         events:
+          - { connectionCheckOutStartedEvent: {} }
+          - { connectionCheckOutStartedEvent: {} }
           - { connectionCheckOutStartedEvent: {} }
           - { connectionCheckOutStartedEvent: {} }
       - client: *client0
