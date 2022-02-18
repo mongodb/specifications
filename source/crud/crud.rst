@@ -2338,7 +2338,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
-* 2022-02-18: Add let to BulkWriteOptions
+* 2022-02-18: Add let to BulkWriteOptions.
 * 2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
 * 2022-02-01: Add comment attribute to all helpers.
 * 2022-01-27: Use optional return types for write commands and findAndModify
