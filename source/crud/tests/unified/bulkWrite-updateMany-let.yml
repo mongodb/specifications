@@ -59,7 +59,7 @@ tests:
           - { _id: 1, x: 21 }
           - { _id: 2, x: 21 }
 
-  - description: "Bulk Write updateMany with let option unsupported (server-side error)"
+  - description: "BulkWrite updateMany with let option unsupported (server-side error)"
     runOnRequirements:
       - minServerVersion: "3.6.0"
         maxServerVersion: "4.9"
