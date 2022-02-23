@@ -947,6 +947,19 @@ Insert, Update, Replace, Delete, and Bulk Writes
      * and providing one will result in a server-side error.
      */
     comment: Optional<any>;
+
+    /**
+     * Map of parameter names and values. Values must be constant or closed expressions that do not
+     * reference document fields. Parameters can then be accessed as variables in an aggregate
+     * expression context (e.g. "$$var").
+     *
+     * The let parameter must be a valid Document type for server versions 5.0 and above.
+     * Server versions prior to 5.0 do not support the let parameter for bulk write operations,
+     * and providing it will result in a server-side error.
+     *
+     * The value of let will be passed to all update and delete, but not insert, commands.
+     */
+    let: Optional<Document>;
   }
 
   class InsertOneOptions {
@@ -2327,6 +2340,7 @@ Q: Why are client-side errors raised for some unsupported options?
 Changes
 =======
 
+* 2022-02-18: Add let to BulkWriteOptions.
 * 2022-02-10: Specified that ``getMore`` command must explicitly send inherited comment.
 * 2022-02-01: Add comment attribute to all helpers.
 * 2022-01-27: Use optional return types for write commands and findAndModify
