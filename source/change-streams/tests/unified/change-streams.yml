@@ -139,7 +139,8 @@ tests:
 
   - description: "Test that comment is set on getMore"
     runOnRequirements:
-      - minServerVersion: "3.6.0"
+      - minServerVersion: "4.4.0"
+        topologies: [ single, replicaset ]
     operations:
       - name: createChangeStream
         object: *collection0
