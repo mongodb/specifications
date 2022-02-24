@@ -7,7 +7,7 @@ Server Monitoring
 :Status: Accepted
 :Type: Standards
 :Version: Same as the `Server Discovery And Monitoring`_ spec
-:Last Modified: 2022-01-19
+:Last Modified: 2022-02-24
 
 .. contents::
 
@@ -666,15 +666,15 @@ The event API here is assumed to be like the standard `Python Event
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
         minHeartbeatFrequencyMS = 500
-        versionedApi = versionedApi
+        stableApi = stableApi
 
         # Internal Monitor state:
         connection = Null
         # Server API versioning implies that the server supports hello.
-        helloOk = versionedApi != Null
+        helloOk = stableApi != Null
         description = default ServerDescription
         lock = Mutex()
-        rttMonitor = RttMonitor(serverAddress, versionedApi)
+        rttMonitor = RttMonitor(serverAddress, stableApi)
 
     def run():
         # Start the RttMonitor.
@@ -716,7 +716,7 @@ The event API here is assumed to be like the standard `Python Event
         # cancelCheck call could be reading from it.
         with lock:
             # Server API versioning implies that the server supports hello.
-            helloOk = versionedApi != Null
+            helloOk = stableApi != Null
             connection = new Connection(serverAddress)
             set connection timeout to connectTimeoutMS
 
@@ -810,12 +810,12 @@ on a dedicated connection, for example:
         serverAddress = serverAddress
         connectTimeoutMS = connectTimeoutMS
         heartbeatFrequencyMS = heartbeatFrequencyMS
-        versionedApi = versionedApi
+        stableApi = stableApi
 
         # Internal state:
         connection = Null
         # Server API versioning implies that the server supports hello.
-        helloOk = versionedApi != Null
+        helloOk = stableApi != Null
         lock = Mutex()
         movingAverage = MovingAverage()
         rttDigest = TDigest() # for 90th percentile RTT calculation
@@ -847,7 +847,7 @@ on a dedicated connection, for example:
                 # for resetting the average RTT.
                 close connection
                 connection = Null
-                helloOk = versionedApi != Null
+                helloOk = stableApi != Null
 
             # Can be awakened when the client is closed.
             event.wait(heartbeatFrequencyMS)
@@ -855,7 +855,7 @@ on a dedicated connection, for example:
 
     def setUpConnection():
         # Server API versioning implies that the server supports hello.
-        helloOk = versionedApi != Null
+        helloOk = stableApi != Null
         connection = new Connection(serverAddress)
         set connection timeout to connectTimeoutMS
         perform connection handshake
@@ -1160,6 +1160,8 @@ Changelog
 - 2020-02-20 Extracted server monitoring from SDAM into this new spec.
 
 - 2022-01-19 Add 90th percentile RTT tracking.
+
+- 2022-02-24: Rename Versioned API to Stable API
 
 .. Section for links.
 
