@@ -294,9 +294,10 @@ Fields:
 * type: a `TopologyType`_ enum value. See `initial TopologyType`_.
 * setName: the replica set name. Default null.
 * maxElectionId: an ObjectId or null. The largest electionId ever reported by
-  a primary. Default null.
+  a primary. Default null. Part of the (``electionId``, ``setVersion``) tuple.
 * maxSetVersion: an integer or null. The largest setVersion ever reported by
-  a primary. Default null.
+  a primary. It may not monotonically increase, as electionId takes precedence in ordering
+  Default null. Part of the (``electionId``, ``setVersion``) tuple.
 * servers: a set of ServerDescription instances.
   Default contains one server: "localhost:27017", ServerType Unknown.
 * stale: a boolean for single-threaded clients, whether the topology must
@@ -1123,16 +1124,17 @@ updateRSFromPrimary
             checkIfHasPrimary()
             return
 
-    if description.electionId is not null and (
-        topologyDescription.maxElectionId is null
-        or description.electionId > topologyDescription.maxElectionId
+    if topologyDescription.maxElectionId is null:
+      topologyDescription.maxElectionId = description.electionId
+
+    if topologyDescription.maxSetVersion is null:
+      topologyDescription.maxSetVersion = description.setVersion
+
+    if (
+        description.electionId is not null and (description.electionId > topologyDescription.maxElectionId))
+        or (description.setVersion is not null and (description.setVersion > topologyDescription.maxSetVersion)
     ):
         topologyDescription.maxElectionId = description.electionId
-
-    if description.setVersion is not null and (
-        topologyDescription.maxSetVersion is null
-        or description.setVersion > topologyDescription.maxSetVersion
-    ):
         topologyDescription.maxSetVersion = description.setVersion
 
     for each server in topologyDescription.servers:
@@ -2436,6 +2438,17 @@ Why is auto-discovery the preferred default?
 
 Auto-discovery is most resilient and is therefore preferred.
 
+Why is it possible for maxSetVersion to go down?
+''''''''''''''''''''''''''''''''''''''''''''''''
+
+``maxElectionId`` and ``maxSetVersion`` are actually considered a pair of values
+Drivers MAY consider implementing comparison in code as a tuple of the two to ensure their always updated together:
+
+::
+  New tuple                          old tuple
+  { electionId: 2, setVersion: 1 } > { electionId: 1, setVersion: 50 }
+
+In this scenario, the maxSetVersion goes from 50 to 1, but the maxElectionId is raised to 2.
 
 Acknowledgments
 ---------------
