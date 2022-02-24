@@ -87,7 +87,7 @@ tests:
           - commandSucceededEvent:
               commandName: killCursors
 
-  - name: "timeoutMS can be overridden for close"
+  - description: "timeoutMS can be overridden for close"
     operations:
       - name: failPoint
         object: testRunner
