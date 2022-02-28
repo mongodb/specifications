@@ -10,7 +10,7 @@ Change Streams
 :Type: Standards
 :Minimum Server Version: 3.6
 :Last Modified: 2022-02-10
-:Version: 1.12
+:Version: 1.13
 
 .. contents::
 
@@ -929,4 +929,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-02-10 | Specified that ``getMore`` command must explicitly send    |
 |            | inherited ``comment``.                                     |
++------------+------------------------------------------------------------+
+| 2022-02-28 | Added ``to`` to ``ChangeStreamDocument``.                  |
 +------------+------------------------------------------------------------+
