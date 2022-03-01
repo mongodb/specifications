@@ -2431,8 +2431,9 @@ Why is it possible for maxSetVersion to go down?
 ``maxElectionId`` and ``maxSetVersion`` are actually considered a pair of values
 Drivers MAY consider implementing comparison in code as a tuple of the two to ensure their always updated together:
 
-::
-  New tuple                          old tuple
+.. code:: typescript
+
+  // New tuple                        old tuple
   { electionId: 2, setVersion: 1 } > { electionId: 1, setVersion: 50 }
 
 In this scenario, the maxSetVersion goes from 50 to 1, but the maxElectionId is raised to 2.
