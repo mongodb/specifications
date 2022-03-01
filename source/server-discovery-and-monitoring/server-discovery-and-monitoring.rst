@@ -1106,36 +1106,23 @@ updateRSFromPrimary
         # Election ids are ObjectIds, see
         # "using setVersion and electionId to detect stale primaries"
         # for comparison rules.
-        if (
-            topologyDescription.maxElectionId is not null
-            and topologyDescription.maxSetVersion is not null
-            and (
-                # electionId change is checked first to align tuple ordering with RSM
-                topologyDescription.maxElectionId > description.electionId
-                or (
-                    # If there is no difference in electionId, we check ordering based on setVersion
-                    topologyDescription.maxElectionId == description.electionId
-                    and topologyDescription.maxSetVersion > description.setVersion
-                )
-            )
-        ):
+
+        # Null values are always considered "less than"
+        maxElectionIdIsGreater = topologyDescription.maxElectionId < serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+        maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+        maxElectionIdIsLess = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+        maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion if topologyDescription.maxSetVersion is not null else false
+        maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion if topologyDescription.maxSetVersion is not null else true
+
+        if maxElectionIdIsGreater or (maxElectionIdIsEqual and maxSetVersionIsGreater):
             # Stale primary.
-            replace description with a default ServerDescription of type "Unknown"
+            # replace description with a default ServerDescription of type "Unknown"
             checkIfHasPrimary()
             return
 
-    if topologyDescription.maxElectionId is null:
-      topologyDescription.maxElectionId = description.electionId
-
-    if topologyDescription.maxSetVersion is null:
-      topologyDescription.maxSetVersion = description.setVersion
-
-    if (
-        description.electionId is not null and (description.electionId > topologyDescription.maxElectionId))
-        or (description.setVersion is not null and (description.setVersion > topologyDescription.maxSetVersion)
-    ):
-        topologyDescription.maxElectionId = description.electionId
-        topologyDescription.maxSetVersion = description.setVersion
+        if maxElectionIdIsLess or (maxElectionIdIsEqual and maxSetVersionIsLess):
+            topologyDescription.maxElectionId = serverDescription.electionId;
+            topologyDescription.maxSetVersion = serverDescription.setVersion;
 
     for each server in topologyDescription.servers:
         if server.address != description.address:
