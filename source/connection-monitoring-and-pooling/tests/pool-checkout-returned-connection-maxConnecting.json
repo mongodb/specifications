@@ -35,6 +35,10 @@
       "label": "conn0"
     },
     {
+      "name": "checkOut",
+      "label": "conn1"
+    },
+    {
       "name": "start",
       "target": "thread1"
     },
@@ -61,7 +65,7 @@
     {
       "name": "waitForEvent",
       "event": "ConnectionCheckOutStarted",
-      "count": 4
+      "count": 6
     },
     {
       "name": "wait",
@@ -72,9 +76,17 @@
       "connection": "conn0"
     },
     {
+      "name": "wait",
+      "ms": 20
+    },
+    {
+      "name": "checkIn",
+      "connection": "conn1"
+    },
+    {
       "name": "waitForEvent",
       "event": "ConnectionCheckedOut",
-      "count": 4
+      "count": 6
     }
   ],
   "events": [
@@ -82,6 +94,15 @@
       "type": "ConnectionCreated",
       "address": 42,
       "connectionId": 1
+    },
+    {
+      "type": "ConnectionCheckedOut",
+      "address": 42
+    },
+    {
+      "type": "ConnectionCreated",
+      "address": 42,
+      "connectionId": 2
     },
     {
       "type": "ConnectionCheckedOut",
@@ -97,21 +118,33 @@
     },
     {
       "type": "ConnectionCheckedIn",
-      "connectionId": 1,
-      "address": 42
+      "address": 42,
+      "connectionId": 1
     },
     {
       "type": "ConnectionCheckedOut",
-      "connectionId": 1,
-      "address": 42
+      "address": 42,
+      "connectionId": 1
+    },
+    {
+      "type": "ConnectionCheckedIn",
+      "address": 42,
+      "connectionId": 2
     },
     {
       "type": "ConnectionCheckedOut",
-      "address": 42
+      "address": 42,
+      "connectionId": 2
+    },
+    {
+      "type": "ConnectionCheckedIn",
+      "address": 42,
+      "connectionId": 3
     },
     {
       "type": "ConnectionCheckedOut",
-      "address": 42
+      "address": 42,
+      "connectionId": 3
     }
   ],
   "ignore": [

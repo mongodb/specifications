@@ -19,9 +19,13 @@ poolOptions:
   waitQueueTimeoutMS: 5000
 operations:
   - name: ready
-  # check out a connection and hold on to it.
+  # check out 3 connections and hold on to them.
   - name: checkOut
-    label: conn0
+    label: conn1
+  - name: checkOut
+    label: conn2
+  - name: checkOut
+    label: conn3
   # then start three threads that all attempt to check out. Two threads
   # will fill maxConnecting, and the other should be waiting either for
   # the other two to finish or for the main thread to check its connection
@@ -42,42 +46,66 @@ operations:
   # for the establishments to begin.
   - name: waitForEvent
     event: ConnectionCheckOutStarted
-    count: 4
+    count: 6
   - name: wait
     ms: 100
-  # check original connection back in, so the thread that isn't
-  # currently establishing will become unblocked. Then wait for
-  # all threads to complete.
+  # check original 3 connections back in, so all 3 of the waiting threads are
+  # unblocked. Wait 20ms between each checkIn so the checkIn/checkOut event
+  # order is more reliable. Then wait for all threads to complete.
   - name: checkIn
-    connection: conn0
+    connection: conn1
+  - name: wait
+    ms: 20
+  - name: checkIn
+    connection: conn2
+  - name: wait
+    ms: 20
+  - name: checkIn
+    connection: conn3
   - name: waitForEvent
     event: ConnectionCheckedOut
-    count: 4
+    count: 6
 events:
-  # main thread checking out a Connection and holding it
+  # Main thread checking out 3 connections and holding them.
   - type: ConnectionCreated
     address: 42
     connectionId: 1
   - type: ConnectionCheckedOut
     address: 42
-  # two threads creating their Connections
+  - type: ConnectionCreated
+    address: 42
+    connectionId: 2
+  - type: ConnectionCheckedOut
+    address: 42
+  - type: ConnectionCreated
+    address: 42
+    connectionId: 3
+  - type: ConnectionCheckedOut
+    address: 42
+  # Two threads creating their connections, limited by maxConnecting.
   - type: ConnectionCreated
     address: 42
   - type: ConnectionCreated
     address: 42
-  # main thread checking its Connection back in
+  # Main thread checking its 3 connections back in.
   - type: ConnectionCheckedIn
+    address: 42
     connectionId: 1
-    address: 42
-  # remaining thread checking out the returned Connection
   - type: ConnectionCheckedOut
+    address: 42
     connectionId: 1
+  - type: ConnectionCheckedIn
     address: 42
-  # first two threads finishing Connection establishment
+    connectionId: 2
   - type: ConnectionCheckedOut
     address: 42
+    connectionId: 2
+  - type: ConnectionCheckedIn
+    address: 42
+    connectionId: 3
   - type: ConnectionCheckedOut
     address: 42
+    connectionId: 3
 ignore:
   - ConnectionPoolReady
   - ConnectionClosed
