@@ -1110,7 +1110,7 @@ updateRSFromPrimary
         # Null values are always considered "less than"
         maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
         maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-        maxElectionIdIsLess = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+        maxElectionIdIsLess = topologyDescription.maxElectionId < serverDescription.electionId if topologyDescription.maxElectionId is not null else false
         maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion if topologyDescription.maxSetVersion is not null else false
         maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion if topologyDescription.maxSetVersion is not null else true
 
