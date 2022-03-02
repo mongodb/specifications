@@ -3,14 +3,14 @@ MongoDB Handshake
 =================
 
 :Spec Title: MongoDB Handshake
-:Spec Version: 1.3.0
+:Spec Version: 1.3.1
 :Author: Hannes Magnusson
 :Kernel Advisory: Mark Benvenuto
 :Driver Advisory: Anna Herlihy, Justin Lee
 :Status: Approved
 :Type: Standards
 :Minimum Server Version: 3.4
-:Last Modified: 2022-01-19
+:Last Modified: 2022-02-24
 
 
 .. contents::
@@ -30,7 +30,7 @@ backtrack log entries the offending application. The active connection data
 will also be queryable through aggregation pipeline, to enable collecting and
 analyzing driver trends.
 
-After connecting to a MongoDB node a hello command (if Versioned API is requested)
+After connecting to a MongoDB node a hello command (if Stable API is requested)
 or a legacy hello command is issued, followed by authentication, if appropriate.
 This specification augments this handshake and defines certain arguments that
 clients provide as part of the handshake.
@@ -112,7 +112,7 @@ Consider the following pseudo-code for establishing a new connection:
 
  conn = Connection()
  conn.connect()  # Connect via TCP / TLS
- if versioned_api_configured or client_options.load_balanced:
+ if stable_api_configured or client_options.load_balanced:
      cmd = {"hello": 1}
      conn.supports_op_msg = True  # Send the initial command via OP_MSG.
  else:
@@ -517,3 +517,4 @@ Changes
 * 2021-04-27: Updated to define ``hello`` and legacy hello
 * 2022-01-13: Updated to disallow ``hello`` using ``OP_QUERY``
 * 2022-01-19: Require that timeouts be applied per the client-side operations timeout spec.
+* 2022-02-24: Rename Versioned API to Stable API

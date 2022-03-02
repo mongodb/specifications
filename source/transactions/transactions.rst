@@ -3,7 +3,7 @@ Driver Transactions Specification
 =================================
 
 :Spec Title: Driver Transactions Specification
-:Spec Version: 1.7.0
+:Spec Version: 1.8.0
 :Author: Shane Harvey
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: A\. Jesse Jiryu Davis, Matt Broadstone, Robert Stam, Jeff Yemin, Spencer Brody
@@ -12,7 +12,7 @@ Driver Transactions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 4.0 (The minimum server version this spec applies to)
-:Last Modified: 2022-01-19
+:Last Modified: 2022-01-25
 
 .. contents::
 
@@ -442,10 +442,10 @@ session is in the "starting transaction" state, meaning no operations
 have been performed on this transaction, drivers MUST NOT run the
 commitTransaction command.
 
-commitTransaction is a retryable write command. Drivers MUST retry after
-commitTransaction fails with a retryable error according to the Retryable
-Writes Specification, regardless of whether retryWrites is set on the
-MongoClient or not.
+commitTransaction is a retryable write command. Drivers MUST retry once
+after commitTransaction fails with a retryable error, including a
+handshake network error, according to the Retryable Writes Specification,
+regardless of whether retryWrites is set on the MongoClient or not.
 
 When commitTransaction is retried, either by the driver's internal retry
 logic or explicitly by the user calling commitTransaction again, drivers MUST
@@ -494,8 +494,8 @@ abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry
 after abortTransaction fails with a retryable error according to the
-`Retryable Writes Specification`_., regardless of whether retryWrites is set
-on the MongoClient or not.
+`Retryable Writes Specification`_, including a handshake network error,
+regardless of whether retryWrites is set on the MongoClient or not.
 
 If the operation times out or fails with a non-retryable error, drivers MUST
 ignore all errors from the abortTransaction command. Errors from
@@ -843,7 +843,7 @@ the session as ``commitTransaction`` may be called multiple times.
 
 Pinning in Load Balancer Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 
+
 See the `Load Balancer Specification <../load-balancers/load-balancers.rst#connection-pooling>`__ for details.
 
 
@@ -1416,6 +1416,7 @@ durable, which achieves the primary objective of avoiding duplicate commits.
 **Changelog**
 -------------
 
+:2022-01-25: Mention the additional case of a retryable handshake error
 :2022-01-19: Deprecate maxCommitTimeMS in favor of timeoutMS.
 :2020-04-07: Clarify that all abortTransaction attempts should unpin the session,
              even if the command is not executed.
