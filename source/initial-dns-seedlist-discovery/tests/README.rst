@@ -14,8 +14,9 @@ replica set name ``repl0``.
 
 The tests in the ``load-balanced`` directory MUST be executed against a
 load-balanced sharded cluster with the mongos servers running on localhost ports
-27017 and 27018 (corresponding to the script in `drivers-evergreen-tools`_). The
-load balancers, shard servers, and config servers may run on any open ports.
+27017 and 27018 and ``--loadBalancerPort`` 27050 and 27051, respectively
+(corresponding to the script in `drivers-evergreen-tools`_). The load balancers,
+shard servers, and config servers may run on any open ports.
 
 .. _`drivers-evergreen-tools`: https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/run-load-balancer.sh
 
@@ -56,7 +57,9 @@ these tests::
   _mongodb._tcp.test19.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
   _mongodb._tcp.test20.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
   _mongodb._tcp.test21.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test.build.10gen.cc.
-  _customname._tcp.test22.test.build.10gen.cc 86400  IN SRV  27017  localhost.test.build.10gen.cc
+  _customname._tcp.test22.test.build.10gen.cc 86400  IN SRV  27017  localhost.test.build.10gen.cc.
+  _mongodb._tcp.test23.test.build.10gen.cc.   86400  IN SRV  8000   localhost.test.build.10gen.cc.
+  _mongodb._tcp.test24.test.build.10gen.cc.   86400  IN SRV  8000   localhost.test.build.10gen.cc.
 
   Record                                    TTL    Class   Text
   test5.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0&authSource=thisDB"
@@ -68,12 +71,18 @@ these tests::
   test11.test.build.10gen.cc.               86400  IN TXT  "replicaS" "et=rep" "l0"
   test20.test.build.10gen.cc.               86400  IN TXT  "loadBalanced=true"
   test21.test.build.10gen.cc.               86400  IN TXT  "loadBalanced=false"
+  test24.test.build.10gen.cc.               86400  IN TXT  "loadBalanced=true"
 
-Note that ``test4`` is omitted deliberately to test what happens with no SRV
-record. ``test9`` is missing because it was deleted during the development of
-the tests. The missing ``test.`` sub-domain in the SRV record target for
-``test12`` is deliberate. ``test22`` is used to test a custom service name
-(``customname``).
+Notes:
+
+- ``test4`` is omitted deliberately to test what happens with no SRV record.
+- ``test9`` is missing because it was deleted during the development of the
+  tests.
+- The missing ``test.`` sub-domain in the SRV record target for ``test12`` is
+  deliberate.
+- ``test22`` is used to test a custom service name (``customname``).
+- ``test23`` and ``test24`` point to port 8000 (HAProxy) and are used for
+  load-balanced tests.
 
 In our tests we have used ``localhost.test.build.10gen.cc`` as the domain, and
 then configured ``localhost.test.build.10gen.cc`` to resolve to 127.0.0.1.
