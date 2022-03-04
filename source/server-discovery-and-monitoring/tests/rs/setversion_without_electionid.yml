@@ -40,8 +40,7 @@ phases: [
         }
     },
 
-    # B is elected, its setVersion is older but we believe it anyway, because
-    # setVersion is only used in conjunction with electionId.
+    # B is elected, its setVersion is older so it is stale
     {
         responses: [
             ["b:27017", {

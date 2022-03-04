@@ -1107,22 +1107,27 @@ updateRSFromPrimary
     # for comparison rules.
 
     # Null values for both electionId and setVersion are always considered less than
-    electionIdIsNull = serverDescription.electionId == null;
-    maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId
-    maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId
-    maxElectionIdIsLess = topologyDescription.maxElectionId < serverDescription.electionId
-    maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion
-    maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion
-
-    if maxElectionIdIsGreater or ((maxElectionIdIsEqual or electionIdIsNull) and maxSetVersionIsGreater):
+    if topologyDescription.maxElectionId > serverDescription.electionId or (
+        (
+            topologyDescription.maxElectionId == serverDescription.electionId
+            or serverDescription.electionId == null
+        )
+        and topologyDescription.maxSetVersion > serverDescription.setVersion
+    ):
         # Stale primary.
         # replace serverDescription with a default ServerDescription of type "Unknown"
         checkIfHasPrimary()
         return
 
-    if maxElectionIdIsLess or ((maxElectionIdIsEqual or electionIdIsNull) and maxSetVersionIsLess):
-        topologyDescription.maxElectionId = serverDescription.electionId;
-        topologyDescription.maxSetVersion = serverDescription.setVersion;
+    if topologyDescription.maxElectionId < serverDescription.electionId or (
+        (
+            topologyDescription.maxElectionId == serverDescription.electionId
+            or serverDescription.electionId == null
+        )
+        and topologyDescription.maxSetVersion < serverDescription.setVersion
+    ):
+        topologyDescription.maxElectionId = serverDescription.electionId
+        topologyDescription.maxSetVersion = serverDescription.setVersion
 
     for each server in topologyDescription.servers:
         if server.address != serverDescription.address:
