@@ -1089,54 +1089,56 @@ updateRSWithPrimaryFromMember
 updateRSFromPrimary
   This subroutine is executed with a ServerDescription of type RSPrimary::
 
-    if description.address not in topologyDescription.servers:
+    if serverDescription.address not in topologyDescription.servers:
         return
 
     if topologyDescription.setName is null:
-        topologyDescription.setName = description.setName
+        topologyDescription.setName = serverDescription.setName
 
-    else if topologyDescription.setName != description.setName:
+    else if topologyDescription.setName != serverDescription.setName:
         # We found a primary but it doesn't have the setName
         # provided by the user or previously discovered.
         remove this server from topologyDescription and stop monitoring it
         checkIfHasPrimary()
         return
 
-    if description.electionId is not null and description.setVersion is not null:
-        # Election ids are ObjectIds, see
-        # "using setVersion and electionId to detect stale primaries"
-        # for comparison rules.
+    # Election ids are ObjectIds, see
+    # "using setVersion and electionId to detect stale primaries"
+    # for comparison rules.
 
-        # Null values are always considered "less than"
-        maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-        maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-        maxElectionIdIsLess = topologyDescription.maxElectionId < serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-        maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion if topologyDescription.maxSetVersion is not null else false
-        maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion if topologyDescription.maxSetVersion is not null else true
+    # TODO!!! handle null is min for serverDescription.electionId and serverDescription.setVersion
 
-        if maxElectionIdIsGreater or (maxElectionIdIsEqual and maxSetVersionIsGreater):
-            # Stale primary.
-            # replace description with a default ServerDescription of type "Unknown"
-            checkIfHasPrimary()
-            return
+    # Null values are always considered "less than"
+    electionIdIsNull = serverDescription.electionId == null;
+    maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+    maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+    maxElectionIdIsLess = topologyDescription.maxElectionId < serverDescription.electionId if topologyDescription.maxElectionId is not null else false
+    maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion if topologyDescription.maxSetVersion is not null else false
+    maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion if topologyDescription.maxSetVersion is not null else true
 
-        if maxElectionIdIsLess or (maxElectionIdIsEqual and maxSetVersionIsLess):
-            topologyDescription.maxElectionId = serverDescription.electionId;
-            topologyDescription.maxSetVersion = serverDescription.setVersion;
+    if maxElectionIdIsGreater or ((maxElectionIdIsEqual or electionIdIsNull) and maxSetVersionIsGreater):
+        # Stale primary.
+        # replace serverDescription with a default ServerDescription of type "Unknown"
+        checkIfHasPrimary()
+        return
+
+    if maxElectionIdIsLess or ((maxElectionIdIsEqual or electionIdIsNull) and maxSetVersionIsLess):
+        topologyDescription.maxElectionId = serverDescription.electionId;
+        topologyDescription.maxSetVersion = serverDescription.setVersion;
 
     for each server in topologyDescription.servers:
-        if server.address != description.address:
+        if server.address != serverDescription.address:
             if server.type is RSPrimary:
                 # See note below about invalidating an old primary.
                 replace the server with a default ServerDescription of type "Unknown"
 
-    for each address in description's "hosts", "passives", and "arbiters":
+    for each address in serverDescription's "hosts", "passives", and "arbiters":
         if address is not in topologyDescription.servers:
             add new default ServerDescription of type "Unknown"
             begin monitoring the new server
 
     for each server in topologyDescription.servers:
-        if server.address not in description's "hosts", "passives", or "arbiters":
+        if server.address not in serverDescription's "hosts", "passives", or "arbiters":
             remove the server and stop monitoring it
 
     checkIfHasPrimary()
