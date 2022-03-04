@@ -1106,13 +1106,13 @@ updateRSFromPrimary
     # "using setVersion and electionId to detect stale primaries"
     # for comparison rules.
 
-    # Null values are always considered "less than"
+    # Null values for both electionId and setVersion are always considered less than
     electionIdIsNull = serverDescription.electionId == null;
-    maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-    maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-    maxElectionIdIsLess = topologyDescription.maxElectionId < serverDescription.electionId if topologyDescription.maxElectionId is not null else false
-    maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion if topologyDescription.maxSetVersion is not null else false
-    maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion if topologyDescription.maxSetVersion is not null else true
+    maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId
+    maxElectionIdIsEqual = topologyDescription.maxElectionId == serverDescription.electionId
+    maxElectionIdIsLess = topologyDescription.maxElectionId < serverDescription.electionId
+    maxSetVersionIsGreater = topologyDescription.maxSetVersion > serverDescription.setVersion
+    maxSetVersionIsLess = topologyDescription.maxSetVersion < serverDescription.setVersion
 
     if maxElectionIdIsGreater or ((maxElectionIdIsEqual or electionIdIsNull) and maxSetVersionIsGreater):
         # Stale primary.
