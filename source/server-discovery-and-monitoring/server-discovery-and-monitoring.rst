@@ -1106,8 +1106,6 @@ updateRSFromPrimary
     # "using setVersion and electionId to detect stale primaries"
     # for comparison rules.
 
-    # TODO!!! handle null is min for serverDescription.electionId and serverDescription.setVersion
-
     # Null values are always considered "less than"
     electionIdIsNull = serverDescription.electionId == null;
     maxElectionIdIsGreater = topologyDescription.maxElectionId > serverDescription.electionId if topologyDescription.maxElectionId is not null else false
