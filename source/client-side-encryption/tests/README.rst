@@ -84,7 +84,7 @@ Each YAML file has the following keys:
         - ``local`` The local KMS provider.
 
           - ``key`` A 96 byte local key.
-         
+
         - ``kmip`` The KMIP KMS provider credentials. An empty object. Drivers MUST fill in KMIP credentials (`endpoint`, and TLS options).
 
       - ``schemaMap``: Optional, a map from namespaces to local JSON schemas.
@@ -221,10 +221,10 @@ Then for each element in ``tests``:
            "kmip": { "endpoint": "localhost:5698" }
 
         Configure KMIP TLS connections to use the following options:
-        
+
         - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_. This MAY be configured system-wide.
         - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_.
-        
+
         The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    #. If ``autoEncryptOpts`` does not include ``keyVaultNamespace``, default it
@@ -331,10 +331,10 @@ First, perform the setup.
       }
 
    Configure KMIP TLS connections to use the following options:
-   
+
    - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_. This MAY be configured system-wide.
    - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_.
-   
+
    The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    Configure both objects with ``keyVaultNamespace`` set to ``keyvault.datakeys``.
@@ -569,10 +569,10 @@ The corpus test exhaustively enumerates all ways to encrypt all BSON value types
       }
 
    Configure KMIP TLS connections to use the following options:
-   
+
    - ``tlsCAFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/ca.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem>`_. This MAY be configured system-wide.
    - ``tlsCertificateKeyFile`` (or equivalent) set to `drivers-evergreen-tools/.evergreen/x509gen/client.pem <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem>`_.
-   
+
    The method of passing TLS options for KMIP TLS connections is driver dependent.
 
    Where LOCAL_MASTERKEY is the following base64:
@@ -1110,14 +1110,14 @@ The following tests that connections to KMS servers with TLS verify peer certifi
 The two tests below make use of mock KMS servers which can be run on Evergreen using `the mock KMS server script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
 Drivers can set up their local Python enviroment for the mock KMS server by running `the virtualenv activation script <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/activate_venv.sh>`_.
 
-To start two mock KMS servers, one on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, and one on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file,
+To start two mock KMS servers, one on port 9000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file, and one on port 9001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file,
 run the following commands from the ``.evergreen/csfle`` directory:
 
 .. code::
 
    . ./activate_venv.sh
-   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 8000 &
-   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8001 &
+   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 9000 &
+   python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 9001 &
 
 Setup
 `````
@@ -1133,7 +1133,7 @@ For both tests, do the following:
 Invalid KMS Certificate
 ```````````````````````
 
-#. Start a mock KMS server on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
+#. Start a mock KMS server on port 9000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
 
 #. Call ``client_encryption.createDataKey()`` with "aws" as the provider and the following masterKey:
 
@@ -1142,7 +1142,7 @@ Invalid KMS Certificate
       {
          "region": "us-east-1",
          "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-         "endpoint": "127.0.0.1:8000",
+         "endpoint": "127.0.0.1:9000",
       }
 
    Expect this to fail with an exception with a message referencing an expired certificate. This message will be language dependent.
@@ -1153,7 +1153,7 @@ Invalid KMS Certificate
 Invalid Hostname in KMS Certificate
 ```````````````````````````````````
 
-#. Start a mock KMS server on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
+#. Start a mock KMS server on port 9001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
 
 #. Call ``client_encryption.createDataKey()`` with "aws" as the provider and the following masterKey:
 
@@ -1162,7 +1162,7 @@ Invalid Hostname in KMS Certificate
       {
          "region": "us-east-1",
          "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-         "endpoint": "127.0.0.1:8001",
+         "endpoint": "127.0.0.1:9001",
       }
 
    Expect this to fail with an exception with a message referencing an incorrect or unexpected host. This message will be language dependent.
@@ -1182,36 +1182,36 @@ Four mock KMS server processes must be running:
 
 1. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
 
-   Run on port 8000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
-   
+   Run on port 9000 with `ca.pem`_ as a CA file and `expired.pem`_ as a cert file.
+
    Example:
 
    .. code::
 
-      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 8000
+      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/expired.pem --port 9000
 
 2. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
 
-   Run on port 8001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
-   
+   Run on port 9001 with `ca.pem`_ as a CA file and `wrong-host.pem`_ as a cert file.
+
    Example:
 
    .. code::
 
-      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 8001
+      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/wrong-host.pem --port 9001
 
 3. The mock `KMS HTTP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py>`_.
 
-   Run on port 8002 with `ca.pem`_ as a CA file and `server.pem`_ as a cert file.
+   Run on port 9002 with `ca.pem`_ as a CA file and `server.pem`_ as a cert file.
 
    Run with the ``--require_client_cert`` option.
-   
+
    Example:
 
    .. code::
 
-      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 8002 --require_client_cert
-   
+      python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9002 --require_client_cert
+
 
 4. The mock `KMS KMIP server <https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_kmip_server.py>`_.
 
@@ -1232,12 +1232,12 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
                "tenantId": <set from environment>,
                "clientId": <set from environment>,
                "clientSecret": <set from environment>,
-               "identityPlatformEndpoint": "127.0.0.1:8002"
+               "identityPlatformEndpoint": "127.0.0.1:9002"
             },
             "gcp": {
                "email": <set from environment>,
                "privateKey": <set from environment>,
-               "endpoint": "127.0.0.1:8002"
+               "endpoint": "127.0.0.1:9002"
             },
             "kmip" {
                "endpoint": "127.0.0.1:5698"
@@ -1262,12 +1262,12 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
                "tenantId": <set from environment>,
                "clientId": <set from environment>,
                "clientSecret": <set from environment>,
-               "identityPlatformEndpoint": "127.0.0.1:8002"
+               "identityPlatformEndpoint": "127.0.0.1:9002"
             },
             "gcp": {
                "email": <set from environment>,
                "privateKey": <set from environment>,
-               "endpoint": "127.0.0.1:8002"
+               "endpoint": "127.0.0.1:9002"
             },
             "kmip" {
                "endpoint": "127.0.0.1:5698"
@@ -1277,7 +1277,7 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
    Add TLS options for the ``aws``, ``azure``, ``gcp``, and
    ``kmip`` providers to use the following options:
 
-   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide. 
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
    - ``tlsCertificateKeyFile`` (or equivalent) set to `client.pem`_
 
 3. Create a ``ClientEncryption`` object named ``client_encryption_expired`` with the following KMS providers:
@@ -1293,15 +1293,15 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
                "tenantId": <set from environment>,
                "clientId": <set from environment>,
                "clientSecret": <set from environment>,
-               "identityPlatformEndpoint": "127.0.0.1:8000"
+               "identityPlatformEndpoint": "127.0.0.1:9000"
             },
             "gcp": {
                "email": <set from environment>,
                "privateKey": <set from environment>,
-               "endpoint": "127.0.0.1:8000"
+               "endpoint": "127.0.0.1:9000"
             },
             "kmip" {
-               "endpoint": "127.0.0.1:8000"
+               "endpoint": "127.0.0.1:9000"
             }
       }
 
@@ -1323,22 +1323,22 @@ Configure each with ``keyVaultNamespace`` set to ``keyvault.datakeys``, and a de
                "tenantId": <set from environment>,
                "clientId": <set from environment>,
                "clientSecret": <set from environment>,
-               "identityPlatformEndpoint": "127.0.0.1:8001"
+               "identityPlatformEndpoint": "127.0.0.1:9001"
             },
             "gcp": {
                "email": <set from environment>,
                "privateKey": <set from environment>,
-               "endpoint": "127.0.0.1:8001"
+               "endpoint": "127.0.0.1:9001"
             },
             "kmip" {
-               "endpoint": "127.0.0.1:8001"
+               "endpoint": "127.0.0.1:9001"
             }
       }
 
    Add TLS options for the ``aws``, ``azure``, ``gcp``, and
    ``kmip`` providers to use the following options:
 
-   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide. 
+   - ``tlsCAFile`` (or equivalent) set to `ca.pem`_. This MAY be configured system-wide.
 
 Case 1: AWS
 ```````````
@@ -1351,7 +1351,7 @@ following masterKey:
    {
       region: "us-east-1",
       key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
-      endpoint: "127.0.0.1:8002"
+      endpoint: "127.0.0.1:9002"
    }
 
 Expect an error indicating TLS handshake failed.
@@ -1364,7 +1364,7 @@ following masterKey:
    {
       region: "us-east-1",
       key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
-      endpoint: "127.0.0.1:8002"
+      endpoint: "127.0.0.1:9002"
    }
 
 Expect an error from libmongocrypt with a message containing the string: "parse
@@ -1378,7 +1378,7 @@ following masterKey:
    {
       region: "us-east-1",
       key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
-      endpoint: "127.0.0.1:8000"
+      endpoint: "127.0.0.1:9000"
    }
 
 Expect an error indicating TLS handshake failed due to an expired certificate.
@@ -1391,7 +1391,7 @@ following masterKey:
    {
       region: "us-east-1",
       key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
-      endpoint: "127.0.0.1:8001"
+      endpoint: "127.0.0.1:9001"
    }
 
 Expect an error indicating TLS handshake failed due to an invalid hostname.
