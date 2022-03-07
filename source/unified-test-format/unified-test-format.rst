@@ -1006,11 +1006,11 @@ The structure of each object is as follows:
   executing `operations`_. If the array is empty, the test runner MUST assert
   that no events were observed on the client (excluding ignored events).
 
-- ``eventMatch``: Optional string.  Specifies how the ``events`` array is
-  matched against the observed events.  Valid values are ``exact``, meaning
-  that observed events after all specified events have matched MUST cause a
-  test failure, and ``prefix``, meaning that observed events after all
-  specified events have been matched MUST NOT cause a test failure.
+- ``ignoreExtraEvents``: Optional boolean.  Specifies how the ``events`` array
+  is matched against the observed events.  If ``false``, observed events after
+  all specified events have matched MUST cause a test failure; if ``true``,
+  observed events after all specified events have been matched MUST NOT cause a
+  test failure.  Defaults to ``false``.
 
 
 expectedEvent

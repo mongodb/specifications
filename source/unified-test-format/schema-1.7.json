@@ -220,10 +220,7 @@
           "enum": ["command", "cmap"]
         },
         "events": { "type": "array" },
-        "eventMatch": {
-          "type": "string",
-          "enum": ["exact", "prefix"]
-        }
+        "ignoreExtraEvents": { "type": "boolean" }
       },
       "oneOf": [
         {

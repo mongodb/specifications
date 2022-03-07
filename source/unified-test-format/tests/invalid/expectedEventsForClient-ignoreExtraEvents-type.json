@@ -1,5 +1,5 @@
 {
-  "description": "expectedEventsForClient-additionalProperties",
+  "description": "expectedEventsForClient-ignoreExtraEvents-type",
   "schemaVersion": "1.7",
   "createEntities": [
     {
@@ -16,7 +16,7 @@
         {
           "client": "client0",
           "events": [],
-          "eventMatch": 0
+          "ignoreExtraEvents": 0
         }
       ]
     }

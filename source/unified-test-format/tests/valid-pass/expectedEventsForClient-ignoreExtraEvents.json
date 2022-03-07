@@ -1,5 +1,5 @@
 {
-  "description": "expectedEventsForClient-eventType",
+  "description": "expectedEventsForClient-ignoreExtraEvents",
   "schemaVersion": "1.7",
   "createEntities": [
     {
@@ -35,7 +35,7 @@
   ],
   "tests": [
     {
-      "description": "eventMatch can be set to exact",
+      "description": "ignoreExtraEvents can be set to false",
       "operations": [
         {
           "name": "insertOne",
@@ -50,7 +50,7 @@
       "expectEvents": [
         {
           "client": "client0",
-          "eventMatch": "exact",
+          "ignoreExtraEvents": false,
           "events": [
             {
               "commandStartedEvent": {
@@ -70,7 +70,7 @@
       ]
     },
     {
-      "description": "eventMatch can be set to prefix",
+      "description": "ignoreExtraEvents can be set to true",
       "operations": [
         {
           "name": "insertOne",
@@ -94,7 +94,7 @@
       "expectEvents": [
         {
           "client": "client0",
-          "eventMatch": "prefix",
+          "ignoreExtraEvents": true,
           "events": [
             {
               "commandStartedEvent": {
@@ -114,7 +114,7 @@
       ]
     },
     {
-      "description": "eventMatch defaults to exact if unset",
+      "description": "ignoreExtraEvents defaults to false if unset",
       "operations": [
         {
           "name": "insertOne",
