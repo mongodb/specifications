@@ -1107,27 +1107,17 @@ updateRSFromPrimary
     # for comparison rules.
 
     # Null values for both electionId and setVersion are always considered less than
-    if topologyDescription.maxElectionId > serverDescription.electionId or (
-        (
-            topologyDescription.maxElectionId == serverDescription.electionId
-            or serverDescription.electionId == null
-        )
-        and topologyDescription.maxSetVersion > serverDescription.setVersion
+    if serverDescription.electionId > serverDescription.maxElectionId or (
+        serverDescription.electionId == topologyDescription.maxElectionId
+        and serverDescription.setVersion >= topologyDescription.maxSetVersion
     ):
+        topologyDescription.maxElectionId = serverDescription.electionId
+        topologyDescription.maxSetVersion = serverDescription.setVersion
+    else:
         # Stale primary.
         # replace serverDescription with a default ServerDescription of type "Unknown"
         checkIfHasPrimary()
         return
-
-    if topologyDescription.maxElectionId < serverDescription.electionId or (
-        (
-            topologyDescription.maxElectionId == serverDescription.electionId
-            or serverDescription.electionId == null
-        )
-        and topologyDescription.maxSetVersion < serverDescription.setVersion
-    ):
-        topologyDescription.maxElectionId = serverDescription.electionId
-        topologyDescription.maxSetVersion = serverDescription.setVersion
 
     for each server in topologyDescription.servers:
         if server.address != serverDescription.address:
