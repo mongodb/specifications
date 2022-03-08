@@ -3287,7 +3287,7 @@ spec changes developed in parallel or during the same release cycle.
 Change Log
 ==========
 
-:2022-03-01: Add ``eventMatch`` field to ``expectedEventsForClient``.
+:2022-03-01: Add ``ignoreExtraEvents`` field to ``expectedEventsForClient``.
 
 :2022-02-24: Rename Versioned API to Stable API
 
