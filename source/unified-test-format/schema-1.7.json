@@ -250,7 +250,8 @@
             "events": {
               "type": "array",
               "items": { "$ref": "#/definitions/expectedCommandEvent" }
-            }
+            },
+            "ignoreExtraEvents": { "type": "boolean" }
           }
         }
       ]
