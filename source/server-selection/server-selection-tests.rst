@@ -296,7 +296,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
         },
     }
 
-3. Create a client with both mongoses' adresses in its seed list,
+3. Create a client with both mongoses' addresses in its seed list,
    appName="loadBalancingTest", and command monitoring enabled.
 
 4. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
