@@ -281,7 +281,7 @@ Prose Test
 
 Multi-threaded and async drivers MUST also implement the following prose test:
 
-1. Configure a sharded cluster with two mongoses. Use a 4.9.0 or newer server version.
+1. Configure a sharded cluster with two mongoses. Use a 4.2.9 or newer server version.
 
 2. Enable the following failpoint against exactly one of the mongoses::
 
