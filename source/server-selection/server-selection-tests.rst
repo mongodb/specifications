@@ -281,7 +281,7 @@ Prose Test
 
 Multi-threaded and async drivers MUST also implement the following prose test:
 
-1. Configure a sharded cluster with two mongoses.
+1. Configure a sharded cluster with two mongoses. Use a 4.2.9 or newer server version.
 
 2. Enable the following failpoint against exactly one of the mongoses::
 
@@ -296,7 +296,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
         },
     }
 
-3. Create a client with both mongoses' adresses in its seed list,
+3. Create a client with both mongoses' addresses in its seed list,
    appName="loadBalancingTest", and command monitoring enabled.
 
 4. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
