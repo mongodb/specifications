@@ -3,7 +3,7 @@ Driver Sessions Specification
 =============================
 
 :Spec Title: Driver Sessions Specification (See the registry of specs)
-:Spec Version: 1.9.0
+:Spec Version: 1.9.1
 :Author: Robert Stam
 :Spec Lead: A\. Jesse Jiryu Davis
 :Advisory Group: Jeremy Mikola, Jeff Yemin, Samantha Ritter
@@ -12,7 +12,7 @@ Driver Sessions Specification
 :Status: Accepted (Could be Draft, Accepted, Rejected, Final, or Replaced)
 :Type: Standards
 :Minimum Server Version: 3.6 (The minimum server version this spec applies to)
-:Last Modified: 2022-01-28
+:Last Modified: 2022-03-16
 
 .. contents::
 
@@ -205,10 +205,12 @@ in such a way that new options can be added in a backward compatible way (it is
 acceptable for backward compatibility to be at the source level).
 
 A ``ClientSession`` MUST be associated with a ``ServerSession`` at the time
-``startSession`` is called. As an implementation optimization drivers SHOULD reuse
+``startSession`` is called. As an implementation optimization drivers MUST reuse
 ``ServerSession`` instances across multiple ``ClientSession`` instances subject
 to the rule that a server session MUST NOT be used by two ``ClientSession``
-instances at the same time (see the Server Session Pool section).
+instances at the same time (see the Server Session Pool section). Additionally,
+a ``ClientSession`` may only ever be associated with one ``ServerSession`` for
+its lifetime.
 
 Drivers MUST report an error if sessions are not supported by the deployment
 (see How to Check Whether a Deployment Supports Sessions). This error MUST either
@@ -304,8 +306,8 @@ This property returns the ``SessionOptions`` that were used to start this
 sessionId
 ---------
 
-This property returns the session ID of this session. Note that if server
-sessions are pooled, different ``ClientSession`` instances will have the same session ID,
+This property returns the session ID of this session. Note that since ``ServerSession``s
+are pooled, different ``ClientSession`` instances will have the same session ID,
 but never at the same time.
 
 advanceClusterTime
@@ -502,10 +504,17 @@ include a session ID in a ``KILLCURSORS`` command.
 
 Sessions and Connections
 ========================
-A driver MUST only obtain an implicit session after it successfully checks out a connection.
-This limits the number of implicit sessions to never exceed the maximum connection pool size.
-The motivation for this behavior is to prevent too many sessions from being created in a scenario
-where only a limited number are actually needed to execute operations (i.e. TooManyLogicalSessions error).
+A driver MUST only obtain an implicit session's ``ServerSession`` after it successfully checks out a connection.
+A driver SHOULD NOT attempt to release the acquired session before connection check in.
+There are a variety of cases, such as, retryable operations or cursor creating operations
+where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
+Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
+
+Drivers SHOULD attempt to release the ``ServerSession`` to the pool at the earliest possible opportunity.
+Drivers SHOULD attempt to reuse ``ServerSession`` as best as possible, concurrency fairness willing.
+
+Through both through the pooling mechanism and limiting acquisition to successful
+connection checkout we can have guaranteed improvement of ``ServerSession`` recycling.
 
 Explicit sessions MAY be changed to allocate a server session similarly, but it is not required.
 
@@ -666,7 +675,9 @@ and implicit sessions.
 When wrapping commands in a ``$query`` field
 --------------------------------------------
 
-If the driver is wrapping the command in a ``$query`` field in order to pass a readPreference to a mongos (see `ReadPreference and Mongos <./find_getmore_killcursors_commands.rst#readpreference-and-mongos>`_), the driver SHOULD NOT add the ``lsid`` as a top-level field, and MUST add the ``lsid`` as a field of the ``$query``
+If the driver is wrapping the command in a ``$query`` field for non-OP_MSG messages in order to pass a readPreference to a
+mongos (see `ReadPreference and Mongos <./find_getmore_killcursors_commands.rst#readpreference-and-mongos>`_),
+the driver SHOULD NOT add the ``lsid`` as a top-level field, and MUST add the ``lsid`` as a field of the ``$query``
 
 .. code:: typescript
 
@@ -781,9 +792,7 @@ In case of an error, the server response has the following format:
 
 Drivers MUST ignore any errors returned by the ``endSessions`` command.
 
-Drivers that do not implement a server session pool MUST run the ``endSessions``
-command when the ``ClientSession.endSession`` method is called. Drivers that do
-implement a server session pool SHOULD run the ``endSessions`` command once when
+Drivers that implement a server session pool SHOULD run the ``endSessions`` command once when
 the ``MongoClient`` instance is shut down. If the number of sessions is very large
 the ``endSessions`` command SHOULD be run multiple times to end 10,000 sessions at
 a time (in order to avoid creating excessively large commands).
@@ -801,15 +810,15 @@ corresponding ``ServerSession``. However, starting a server session might requir
 round trip to the server (which can be avoided by generating the session ID
 locally) and ending a session requires a separate round trip to the server.
 Drivers can operate more efficiently and put less load on the server if they
-cache ``ServerSession`` instances for reuse. To this end drivers SHOULD
+cache ``ServerSession`` instances for reuse. To this end drivers MUST
 implement a server session pool containing ``ServerSession`` instances
 available for reuse. A ``ServerSession`` pool MUST belong to a ``MongoClient``
 instance and have the same lifetime as the ``MongoClient`` instance.
 
-If a driver has a server session pool, then when a new ``ClientSession`` is started
-it MUST attempt to acquire a server session from the server session pool. See
-the algorithm below for the steps to follow when attempting to acquire a
-``ServerSession`` from the server session pool.
+When a new implicit ``ClientSession`` is started it MUST NOT attempt to acquire a server
+session from the server session pool. When a new explicit ``ClientSession`` is started
+it MAY attempt to acquire a server session from the server session pool.
+See the algorithm below for the steps to follow when attempting to acquire a ``ServerSession`` from the server session pool.
 
 Note that ``ServerSession`` instances acquired from the server session pool might have as
 little as one minute left before becoming stale and being discarded server
@@ -825,18 +834,16 @@ to the hello and legacy hello commands. The smallest reported timeout is recorde
 ``logicalSessionTimeoutMinutes`` property of the ``TopologyDescription``. See the
 Server Discovery And Monitoring specification for details.
 
-If a driver has a server session pool, then when a ``ClientSession`` is ended it
-MUST return the server session to the server session pool. See the algorithm
-below for the steps to follow when returning a ``ServerSession`` instance to the server
+When a ``ClientSession`` is ended it MUST return the server session to the server session pool.
+See the algorithm below for the steps to follow when returning a ``ServerSession`` instance to the server
 session pool.
 
 The server session pool has no maximum size. The pool only shrinks when a
 server session is acquired for use or discarded.
 
-If a driver has a server session pool, then when a ``MongoClient`` instance is
-closed the driver MUST proactively inform the server that the pooled server
-sessions will no longer be used by sending one or more ``endSessions`` commands to the
-server.
+When a ``MongoClient`` instance is closed the driver MUST proactively inform the
+server that the pooled server sessions will no longer be used by sending one or
+more ``endSessions`` commands to the server.
 
 The server session pool is modeled as a double ended queue. The algorithms
 below require the ability to add and remove ``ServerSession`` instances from the front of
@@ -1143,17 +1150,19 @@ Test Plan
     * Attach a command started listener that collects each command's lsid
     * Initiate the following concurrent operations
 
-      * insertOne
-      * deleteOne
-      * updateOne
-      * bulkWrite ``[ { updateOne } ]``
-      * findOneAndDelete
-      * findOneAndUpdate
-      * findOneAndReplace
-      * find
+      * ``insertOne({ }),``
+      * ``deleteOne({ }),``
+      * ``updateOne({ }, { $set: { a: 1 } }),``
+      * ``bulkWrite([{ updateOne: { filter: { }, update: { $set: { a: 1 } } } }]),``
+      * ``findOneAndDelete({ }),``
+      * ``findOneAndUpdate({ }, { $set: { a: 1 } }),``
+      * ``findOneAndReplace({ }, { a: 1 }),``
+      * ``find().toArray()``
 
     * Wait for all operations to complete
-    * Assert that all commands contain the same lsid
+    * Drivers MAY assert that exactly one session is used for all the concurrent operations listed, however this can be nondeterministic if the session isn't released before check in. Drivers SHOULD NOT attempt to release before check in.
+    * Drivers SHOULD assert that after repeated runs they are able to achieve the use of exactly one session, this will statistically prove we've reduced the allocation amount
+    * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations. In this instance it would less than (but NOT equal to) 8.
 
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
@@ -1323,6 +1332,19 @@ is needed and, known it will be used, after connection checkout succeeds.
 It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver could over allocate sessions.
 But those scenarios are extenuating and outside the scope of solving in this spec.
 
+Appendix
+========
+
+Drivers that DO NOT implement ServerSession pooling
+---------------------------------------------------
+
+Drivers MUST implement ``ServerSession`` pooling, however this section captures the notable difference if a driver does not implement pooling.
+
+Drivers that do not implement a server session pool will NOT be able to implement reducing server session allocation described in this spec and tested in test 13.
+
+Drivers that do not implement a server session pool MUST run the ``endSessions`` command when the ``ClientSession.endSession``
+method is called as opposed to deferring sending the command when the ``MongoClient`` is closed.
+
 Change log
 ==========
 
@@ -1353,3 +1375,4 @@ Change log
 :2021-04-08: Adding in behaviour for load balancer mode.
 :2020-05-26: Simplify logic for determining sessions support
 :2022-01-28: Implicit sessions MUST obtain server session after connection checkout succeeds
+:2022-03-16: ServerSession Pooling is required and clarifies session acquisition bounding
