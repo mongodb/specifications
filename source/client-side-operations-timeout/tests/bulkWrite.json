@@ -64,7 +64,7 @@
                   "update"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 30
+                "blockTimeMS": 60
               }
             }
           }
@@ -92,7 +92,7 @@
                 }
               }
             ],
-            "timeoutMS": 50
+            "timeoutMS": 100
           },
           "expectError": {
             "isTimeoutError": true
