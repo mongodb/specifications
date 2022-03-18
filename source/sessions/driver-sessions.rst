@@ -137,7 +137,7 @@ Applications start a new session like this:
 
 .. code:: typescript
 
-    options = new SessionOptions(...);
+    options = new SessionOptions(/* various settings */);
     session = client.startSession(options);
 
 The ``SessionOptions`` will be individually defined in several other
@@ -149,8 +149,8 @@ For example:
 
 .. code:: typescript
 
-    collection.InsertOne(session, ...)
-    collection.UpdateOne(session, ...)
+    collection.InsertOne(session /* etc. */)
+    collection.UpdateOne(session /* etc. */)
 
 Applications end a session like this:
 
@@ -166,16 +166,15 @@ MongoClient changes
 
 ``MongoClient`` interface summary
 
-.. code:: typescript
+.. code:: java
 
     class SessionOptions {
-        // various other options as defined in other specifications
+      // various other options as defined in other specifications
     }
 
     interface MongoClient {
-        ClientSession startSession(SessionOptions options);
-
-        // other existing members of MongoClient
+      ClientSession startSession(SessionOptions options);
+      // other existing members of MongoClient
     }
 
 Each new member is documented below.
@@ -262,7 +261,7 @@ processes (see Q&A for the rationale).
 
 ClientSession interface summary:
 
-.. code:: typescript
+.. code:: java
 
     interface ClientSession {
         MongoClient client;
@@ -358,11 +357,11 @@ merely to describe the operation of the server session pool.
 
 ServerSession interface summary
 
-.. code:: typescript
+.. code:: java
 
     interface ServerSession {
-        BsonDocument sessionId;
-        DateTime lastUse;
+      BsonDocument sessionId;
+      DateTime lastUse;
     }
 
 sessionId
@@ -402,7 +401,9 @@ A session ID is a ``BsonDocument`` that has the following form:
 
 .. code:: typescript
 
-    { id : <UUID> }
+    interface SessionId {
+      id: UUID
+    }
 
 Where the UUID is encoded as a BSON binary value of subtype 4.
 
@@ -583,7 +584,10 @@ document passed to runCommand).:
 
 .. code:: typescript
 
-    { commandName: ..., lsid : { id : <UUID> } }
+    interface ExampleCommandWithLSID {
+      foo: 1;
+      lsid: SessionId;
+    }
 
 Exceptions to sending the session ID to the server on all commands
 ==================================================================
@@ -667,7 +671,7 @@ If the driver is wrapping the command in a ``$query`` field in order to pass a r
 .. code:: typescript
 
     // Wrapped command:
-    {
+    interface WrappedCommandExample {
       $query: {
         find: { foo: 1 }
       },
@@ -675,21 +679,21 @@ If the driver is wrapping the command in a ``$query`` field in order to pass a r
     }
 
     // Correct application of lsid
-    {
+    interface CorrectLSIDUsageExample {
       $query: {
         find: { foo: 1 },
-        lsid: <...>
+        lsid: SessionId
       },
       $readPreference: {}
     }
 
-    // Incorrect application of lsid.
-    {
+    // Incorrect application of lsid
+    interface IncorrectLSIDUsageExample {
       $query: {
         find: { foo: 1 }
       },
       $readPreference: {},
-      lsid: <...>
+      lsid: SessionId
     }
 
 
@@ -703,7 +707,10 @@ The ``startSession`` server command has the following format:
 
 .. code:: typescript
 
-    { startSession : 1, $clusterTime : ... }
+    interface StartSessionCommand {
+      startSession: 1;
+      $clusterTime?: ClusterTime;
+    }
 
 The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section "Gossipping the cluster time" for information on ``$clusterTime``.
@@ -714,16 +721,20 @@ The server response has the following format:
 
 .. code:: typescript
 
-    {
-        ok : 1,
-        id : <BsonDocument>,
+    interface StartSessionResponse {
+      ok: 1;
+      id: BsonDocument;
     }
 
 In case of an error, the server response has the following format:
 
 .. code:: typescript
 
-    { ok : 0, errmsg : "...", code : NN }
+    interface StartSessionError {
+      ok: 0;
+      errmsg: string;
+      code: number;
+    }
 
 When connected to a replica set the ``startSession`` command MUST be sent to the
 primary if the primary is available. The ``startSession`` command MAY be sent to a
@@ -740,7 +751,10 @@ The ``endSessions`` server command has the following format:
 
 .. code:: typescript
 
-    { endSessions : [ { id : <UUID> }, { id : <UUID> }, ... ], $clusterTime : ... }
+    interface EndSessionCommand {
+      endSessions: Array<SessionId>;
+      $clusterTime?: ClusterTime;
+    }
 
 The ``$clusterTime`` field should only be sent when gossipping the cluster time. See the
 section of "Gossipping the cluster time" for information on ``$clusterTime``.
@@ -751,13 +765,19 @@ The server response has the following format:
 
 .. code:: typescript
 
-    { ok : 1 }
+    interface EndSessionResponse {
+      ok: 1;
+    }
 
 In case of an error, the server response has the following format:
 
 .. code:: typescript
 
-    { ok : 0, errmsg : "...", code : NN }
+    interface EndSessionError {
+      ok: 0;
+      errmsg: string;
+      code: number;
+    }
 
 Drivers MUST ignore any errors returned by the ``endSessions`` command.
 
@@ -858,9 +878,10 @@ Algorithm to acquire a ServerSession instance from the server session pool
 1. If the server session pool is empty create a new ``ServerSession`` and use it
 
 2. Otherwise remove a ``ServerSession`` from the front of the queue and examine it:
-    * If the driver is in load balancer mode, use this ``ServerSession``.
-    * If it has at least one minute left before becoming stale use this ``ServerSession``
-    * If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to step 1.
+
+   * If the driver is in load balancer mode, use this ``ServerSession``.
+   * If it has at least one minute left before becoming stale use this ``ServerSession``
+   * If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to step 1.
 
 See the `Load Balancer Specification <../load-balancers/load-balancers.rst#session-expiration>`__
 for details on session expiration.
@@ -877,11 +898,12 @@ Algorithm to return a ServerSession instance to the server session pool
    from the end of the queue and discarded (or allowed to be garbage collected)
 
 2. Then examine the server session that is being returned to the pool and:
-    * If this session is marked dirty (i.e. it was involved in a network error)
-      discard it (let it be garbage collected)
-    * If it will expire in less than one minute discard it
-      (let it be garbage collected)
-    * If it won't expire for at least one minute add it to the front of the queue
+
+   * If this session is marked dirty (i.e. it was involved in a network error)
+     discard it (let it be garbage collected)
+   * If it will expire in less than one minute discard it
+     (let it be garbage collected)
+   * If it won't expire for at least one minute add it to the front of the queue
 
 Gossipping the cluster time
 ===========================
@@ -902,23 +924,24 @@ a ``$clusterTime`` in a response received from a server.
 Receiving the current cluster time
 ----------------------------------
 
-Drivers MUST examine all responses to server
+Drivers MUST examine all responses from the server
 commands to see if they contain a top level field named ``$clusterTime`` formatted
 as follows:
 
 .. code:: typescript
 
-    {
-        ...
-        $clusterTime : {
-            clusterTime : <BsonTimestamp>,
-            signature : {
-                hash : <BsonBinaryData>,
-                keyId : <BsonInt64>
-            }
-        },
-        ...
-    }
+  interface ClusterTime {
+    clusterTime: Timestamp;
+    signature: {
+      hash: Binary;
+      keyId: Int64;
+    };
+  }
+
+  interface AnyServerResponse {
+    // ... other properties ...
+    $clusterTime: ClusterTime;
+  }
 
 Whenever a driver receives a cluster time from a server it MUST compare it to
 the current highest seen cluster time for the deployment. If the new cluster time
@@ -991,95 +1014,102 @@ been upgraded to 3.6.
 Test Plan
 =========
 
-1. Pool is LIFO.
-    * This test applies to drivers with session pools.
-    * Call ``MongoClient.startSession`` twice to create two sessions, let us call them ``A`` and ``B``.
-    * Call ``A.endSession``, then ``B.endSession``.
-    * Call ``MongoClient.startSession``: the resulting session must have the same session ID as ``B``.
-    * Call ``MongoClient.startSession`` again: the resulting session must have the same session ID  as ``A``.
+1. Pool is LIFO
+
+   * This test applies to drivers with session pools.
+   * Call ``MongoClient.startSession`` twice to create two sessions, let us call them ``A`` and ``B``.
+   * Call ``A.endSession``, then ``B.endSession``.
+   * Call ``MongoClient.startSession``: the resulting session must have the same session ID as ``B``.
+   * Call ``MongoClient.startSession`` again: the resulting session must have the same session ID  as ``A``.
 
 2. ``$clusterTime`` in commands
-    * Turn ``heartbeatFrequencyMS`` up to a very large number.
-    * Register a command-started and a command-succeeded APM listener.  If the driver has no APM support, inspect commands/replies in another idiomatic way, such as monkey-patching or a mock server.
-    * Send a ``ping`` command to the server with the generic ``runCommand`` method.
-    * Assert that the command passed to the command-started listener includes ``$clusterTime`` if and only if ``maxWireVersion`` >= 6.
-    * Record the ``$clusterTime``, if any, in the reply passed to the command-succeeded APM listener.
-    * Send another ``ping`` command.
-    * Assert that ``$clusterTime`` in the command passed to the command-started listener, if any, equals the ``$clusterTime`` in the previous server reply. (Turning ``heartbeatFrequencyMS`` up prevents an intervening heartbeat from advancing the ``$clusterTime`` between these final two steps.)
 
-    Repeat for:
-        * An aggregate command from the ``aggregate`` helper method
-        * A find command from the ``find`` helper method
-        * An insert command from the ``insert_one`` helper method
+   * Turn ``heartbeatFrequencyMS`` up to a very large number.
+   * Register a command-started and a command-succeeded APM listener.  If the driver has no APM support, inspect commands/replies in another idiomatic way, such as monkey-patching or a mock server.
+   * Send a ``ping`` command to the server with the generic ``runCommand`` method.
+   * Assert that the command passed to the command-started listener includes ``$clusterTime`` if and only if ``maxWireVersion`` >= 6.
+   * Record the ``$clusterTime``, if any, in the reply passed to the command-succeeded APM listener.
+   * Send another ``ping`` command.
+   * Assert that ``$clusterTime`` in the command passed to the command-started listener, if any, equals the ``$clusterTime`` in the previous server reply. (Turning ``heartbeatFrequencyMS`` up prevents an intervening heartbeat from advancing the ``$clusterTime`` between these final two steps.)
+
+     * Repeat for:
+
+       * An aggregate command from the ``aggregate`` helper method
+       * A find command from the ``find`` helper method
+       * An insert command from the ``insert_one`` helper method
 
 3. Test explicit and implicit session arguments
-    * Register a command-started APM listener.  If the driver has no APM support, inspect commands in another idiomatic way, such as monkey-patching or a mock server.
-    * Create ``client1``
-    * Get ``database`` from ``client1``
-    * Get ``collection`` from ``database``
-    * Start ``session`` from ``client1``
-    * Call ``collection.insertOne(session,...)``
-    * Assert that the command passed to the command-started listener contained the session ``lsid`` from ``session``.
-    * Call ``collection.insertOne(,...)`` (*without* a session argument)
-    * Assert that the command passed to the command-started listener contained a session ``lsid``.
 
-    Repeat for:
-        * All methods that take a session parameter.
+   * Register a command-started APM listener.  If the driver has no APM support, inspect commands in another idiomatic way, such as monkey-patching or a mock server.
+   * Create ``client1``
+   * Get ``database`` from ``client1``
+   * Get ``collection`` from ``database``
+   * Start ``session`` from ``client1``
+   * Call ``collection.insertOne(session,...)``
+   * Assert that the command passed to the command-started listener contained the session ``lsid`` from ``session``.
+   * Call ``collection.insertOne(,...)`` (*without* a session argument)
+   * Assert that the command passed to the command-started listener contained a session ``lsid``.
+
+     * Repeat for:
+
+       * All methods that take a session parameter.
 
 4. Test that session argument is for the right client
-    * Create ``client1`` and ``client2``
-    * Get ``database`` from ``client1``
-    * Get ``collection`` from ``database``
-    * Start ``session`` from ``client2``
-    * Call ``collection.insertOne(session,...)``
-    * Assert that an error was reported because ``session`` was not started from ``client1``
 
-    Repeat for:
-        * All methods that take a session parameter.
+   * Create ``client1`` and ``client2``
+   * Get ``database`` from ``client1``
+   * Get ``collection`` from ``database``
+   * Start ``session`` from ``client2``
+   * Call ``collection.insertOne(session,...)``
+   * Assert that an error was reported because ``session`` was not started from ``client1``
+
+     * Repeat for:
+
+       * All methods that take a session parameter.
 
 5. Test that no further operations can be performed using a session after ``endSession`` has been called
-    * Start a ``session``
-    * End the ``session``
-    * Call ``collection.InsertOne(session, ...)``
-    * Assert that the proper error was reported
 
-    Repeat for:
-        * All methods that take a session parameter.
+   * Start a ``session``
+   * End the ``session``
+   * Call ``collection.InsertOne(session, ...)``
+   * Assert that the proper error was reported
 
-    If your driver implements a platform dependent idiomatic disposal pattern, test
-    that also (if the idiomatic disposal pattern calls ``endSession`` it would be
-    sufficient to only test the disposal pattern since that ends up calling
-    ``endSession``).
+     * Repeat for:
+
+       * All methods that take a session parameter.
+
+   * If your driver implements a platform dependent idiomatic disposal pattern, test
+     that also (if the idiomatic disposal pattern calls ``endSession`` it would be
+     sufficient to only test the disposal pattern since that ends up calling
+     ``endSession``).
 
 6. Authenticating as multiple users suppresses implicit sessions
-    * Skip this test if your driver does not allow simultaneous authentication with multiple users
-    * Authenticate as two users
-    * Call ``findOne`` with no explicit session
-    * Capture the command sent to the server
-    * Assert that the command sent to the server does not have an ``lsid`` field
 
-7. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session
-to the pool.
+   * Skip this test if your driver does not allow simultaneous authentication with multiple users
+   * Authenticate as two users
+   * Call ``findOne`` with no explicit session
+   * Capture the command sent to the server
+   * Assert that the command sent to the server does not have an ``lsid`` field
 
-    * Insert two documents into a collection
-    * Execute a find operation on the collection and iterate past the first document
-    * Assert that the implicit session is returned to the pool. This can be done in several ways:
+7. Client-side cursor that exhausts the results on the initial query immediately returns the implicit session to the pool.
 
-      * Track in-use count in the server session pool and assert that the count has dropped to zero
-      * Track the lsid used for the find operation (e.g. with APM) and then do another operation and
-        assert that the same lsid is used as for the find operation.
+   * Insert two documents into a collection
+   * Execute a find operation on the collection and iterate past the first document
+   * Assert that the implicit session is returned to the pool. This can be done in several ways:
 
-8. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session
-to the pool.
+     * Track in-use count in the server session pool and assert that the count has dropped to zero
+     * Track the lsid used for the find operation (e.g. with APM) and then do another operation and
+       assert that the same lsid is used as for the find operation.
 
-    * Insert five documents into a collection
-    * Execute a find operation on the collection with batch size of 3
-    * Iterate past the first four documents, forcing the final ``getMore`` operation
-    * Assert that the implicit session is returned to the pool prior to iterating past the last document
+8. Client-side cursor that exhausts the results after a ``getMore`` immediately returns the implicit session to the pool.
 
-9. At the end of every individual functional test of the driver, there SHOULD be an assertion that
-there are no remaining sessions checked out from the pool.  This may require changes to existing tests to
-ensure that they close any explicit client sessions and any unexhausted cursors.
+   * Insert five documents into a collection
+   * Execute a find operation on the collection with batch size of 3
+   * Iterate past the first four documents, forcing the final ``getMore`` operation
+   * Assert that the implicit session is returned to the pool prior to iterating past the last document
+
+9. At the end of every individual functional test of the driver, there SHOULD be an assertion that there are no remaining sessions checked out from the pool.
+   This may require changes to existing tests to ensure that they close any explicit client sessions and any unexhausted cursors.
 
 10. For every combination of topology and readPreference, ensure that ``find`` and ``getMore`` both send the same session id
 
@@ -1089,8 +1119,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * Iterate through enough documents (3) to force a ``getMore``
     * Assert that the server receives a non-zero lsid equal to the lsid that ``find`` sent.
 
-11. For drivers that support forking, test that the session pool can be cleared
-    after a fork without calling ``endSession``.  E.g.,
+11. For drivers that support forking, test that the session pool can be cleared after a fork without calling ``endSession``.  E.g.,
 
     * Create ClientSession
     * Record its lsid
@@ -1099,8 +1128,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * In the parent, create a ClientSession and assert its lsid is the same.
     * In the child, create a ClientSession and assert its lsid is different.
 
-12. For drivers that support forking, test that existing sessions are not checked
-   into a cleared pool.  E.g.,
+12. For drivers that support forking, test that existing sessions are not checked into a cleared pool.  E.g.,
 
     * Create ClientSession
     * Record its lsid
@@ -1108,11 +1136,13 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
     * In the parent, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is the same.
     * In the child, return the ClientSession to the pool, create a new ClientSession, and assert its lsid is different.
 
+
 13. To confirm that implicit sessions only allocate their server session after a successful connection checkout
 
     * Create a MongoClient with the following options: ``maxPoolSize=1`` and ``retryWrites=true``
     * Attach a command started listener that collects each command's lsid
     * Initiate the following concurrent operations
+
       * insertOne
       * deleteOne
       * updateOne
@@ -1121,6 +1151,7 @@ ensure that they close any explicit client sessions and any unexhausted cursors.
       * findOneAndUpdate
       * findOneAndReplace
       * find
+
     * Wait for all operations to complete
     * Assert that all commands contain the same lsid
 
@@ -1135,19 +1166,21 @@ Tests that only apply to drivers that allow authentication to be changed on the 
 -----------------------------------------------------------------------------------
 
 1. Authenticating as a second user after starting a session results in a server error
-    * Authenticate as the first user
-    * Start a session by calling ``startSession``
-    * Authenticate as a second user
-    * Call ``findOne`` using the session as an explicit session
-    * Assert that the driver returned an error because multiple users are authenticated
+
+   * Authenticate as the first user
+   * Start a session by calling ``startSession``
+   * Authenticate as a second user
+   * Call ``findOne`` using the session as an explicit session
+   * Assert that the driver returned an error because multiple users are authenticated
 
 2. Driver verifies that session is owned by the current user
-    * Authenticate as user A
-    * Start a session by calling ``startSession``
-    * Logout user A
-    * Authenticate as user B
-    * Call ``findOne`` using the session as an explicit session
-    * Assert that the driver returned an error because the session is owned by a different user
+
+   * Authenticate as user A
+   * Start a session by calling ``startSession``
+   * Logout user A
+   * Authenticate as user B
+   * Call ``findOne`` using the session as an explicit session
+   * Assert that the driver returned an error because the session is owned by a different user
 
 Motivation
 ==========
@@ -1271,7 +1304,8 @@ configured ``logicalSessionTimeoutMinutes``.
 
 
 Why must drivers wait to consume a server session until after a connection is checked out?
------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
 The problem that may occur is when the number of concurrent application requests are larger than the number of available connections,
 the driver may generate many more implicit sessions than connections.
 For example with maxPoolSize=1 and 100 threads, 100 implicit sessions may be created.
@@ -1292,7 +1326,7 @@ But those scenarios are extenuating and outside the scope of solving in this spe
 Change log
 ==========
 
-:2017-09-13: If causalConsistency option is ommitted assume true
+:2017-09-13: If causalConsistency option is omitted assume true
 :2017-09-16: Omit session ID when opening and authenticating a connection
 :2017-09-18: Drivers MUST gossip the cluster time when they see a $clusterTime
 :2017-09-19: How to safely use initialClusterTime
