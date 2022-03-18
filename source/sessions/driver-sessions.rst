@@ -306,8 +306,8 @@ This property returns the ``SessionOptions`` that were used to start this
 sessionId
 ---------
 
-This property returns the session ID of this session. Note that since ``ServerSession``s
-are pooled, different ``ClientSession`` instances will have the same session ID,
+This property returns the session ID of this session. Note that since ``ServerSessions``
+are pooled, different ``ClientSession`` instances can have the same session ID,
 but never at the same time.
 
 advanceClusterTime
@@ -506,17 +506,10 @@ Sessions and Connections
 ========================
 A driver MUST only obtain an implicit session's ``ServerSession`` after it successfully checks out a connection.
 A driver SHOULD NOT attempt to release the acquired session before connection check in.
-There are a variety of cases, such as, retryable operations or cursor creating operations
-where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
-Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
+Through both through the pooling mechanism and limiting acquisition to a successful
+connection checkout we can have guaranteed improvement of ``ServerSession`` reuse.
 
-Drivers SHOULD attempt to release the ``ServerSession`` to the pool at the earliest possible opportunity.
-Drivers SHOULD attempt to reuse ``ServerSession`` as best as possible, concurrency fairness willing.
-
-Through both through the pooling mechanism and limiting acquisition to successful
-connection checkout we can have guaranteed improvement of ``ServerSession`` recycling.
-
-Explicit sessions MAY be changed to allocate a server session similarly, but it is not required.
+Explicit sessions MAY be changed to allocate a server session similarly.
 
 How to Check Whether a Deployment Supports Sessions
 ===================================================
@@ -792,10 +785,9 @@ In case of an error, the server response has the following format:
 
 Drivers MUST ignore any errors returned by the ``endSessions`` command.
 
-Drivers that implement a server session pool SHOULD run the ``endSessions`` command once when
-the ``MongoClient`` instance is shut down. If the number of sessions is very large
-the ``endSessions`` command SHOULD be run multiple times to end 10,000 sessions at
-a time (in order to avoid creating excessively large commands).
+The ``endSessions`` command MUST be run once when the ``MongoClient`` instance is shut down.
+If the number of sessions is very large the ``endSessions`` command SHOULD be run
+multiple times to end 10,000 sessions at a time (in order to avoid creating excessively large commands).
 
 When connected to a sharded cluster the ``endSessions`` command can be sent to any
 mongos. When connected to a replica set the ``endSessions`` command MUST be sent to
@@ -817,7 +809,7 @@ instance and have the same lifetime as the ``MongoClient`` instance.
 
 When a new implicit ``ClientSession`` is started it MUST NOT attempt to acquire a server
 session from the server session pool. When a new explicit ``ClientSession`` is started
-it MAY attempt to acquire a server session from the server session pool.
+it SHOULD attempt to acquire a server session from the server session pool.
 See the algorithm below for the steps to follow when attempting to acquire a ``ServerSession`` from the server session pool.
 
 Note that ``ServerSession`` instances acquired from the server session pool might have as
@@ -1159,7 +1151,8 @@ Test Plan
       * ``findOneAndReplace({ }, { a: 1 }),``
       * ``find().toArray()``
 
-    * Wait for all operations to complete
+    * Wait for all operations to complete successfully
+    * Assert that all commands contain the same lsid. Note that it's possible, for >1 server session to be used because the session is not released until after the connection is checked in. If this assertion fails, repeat this test 5 times until the assertion holds.
     * Drivers MAY assert that exactly one session is used for all the concurrent operations listed, however this can be nondeterministic if the session isn't released before check in. Drivers SHOULD NOT attempt to release before check in.
     * Drivers SHOULD assert that after repeated runs they are able to achieve the use of exactly one session, this will statistically prove we've reduced the allocation amount
     * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations. In this instance it would less than (but NOT equal to) 8.
@@ -1331,6 +1324,15 @@ is needed and, known it will be used, after connection checkout succeeds.
 
 It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver could over allocate sessions.
 But those scenarios are extenuating and outside the scope of solving in this spec.
+
+// TODO
+There are a variety of cases, such as, retryable operations or cursor creating operations
+where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
+
+Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
+
+Drivers SHOULD attempt to release the ``ServerSession`` to the pool at the earliest possible opportunity.
+Drivers SHOULD attempt to reuse ``ServerSession`` as best as possible, concurrency fairness willing.
 
 Appendix
 ========
