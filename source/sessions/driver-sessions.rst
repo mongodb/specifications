@@ -1325,12 +1325,12 @@ is needed and, known it will be used, after connection checkout succeeds.
 It is still possible that via explicit sessions or cursors, which hold on to the session they started with, a driver could over allocate sessions.
 But those scenarios are extenuating and outside the scope of solving in this spec.
 
-// TODO
+Why should drivers NOT attempt to release a serverSession before checking back in the operation's connection?
+-------------------------------------------------------------------------------------------------------------
+
 There are a variety of cases, such as, retryable operations or cursor creating operations
 where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
-
 Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
-
 Drivers SHOULD attempt to release the ``ServerSession`` to the pool at the earliest possible opportunity.
 Drivers SHOULD attempt to reuse ``ServerSession`` as best as possible, concurrency fairness willing.
 
