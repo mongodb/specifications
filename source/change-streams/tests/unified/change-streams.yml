@@ -424,7 +424,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -470,7 +469,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -504,7 +502,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalDb0Collection1
@@ -558,7 +555,6 @@ tests:
           pipeline:
             - $match:
                 fullDocument.z: 3
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -608,7 +604,6 @@ tests:
         object: *database0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalDb0Collection1
@@ -673,7 +668,6 @@ tests:
         object: *client0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalDb0Collection1
@@ -751,7 +745,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -848,7 +841,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: dropCollection
         object: *database0
@@ -895,7 +887,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: dropCollection
         object: *database0
@@ -947,8 +938,7 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options:
-            batchSize: 1
+          batchSize: 1
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0

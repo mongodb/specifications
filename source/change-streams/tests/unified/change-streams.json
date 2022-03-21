@@ -807,8 +807,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -886,8 +885,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -942,8 +940,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1039,8 +1036,7 @@
                   "fullDocument.z": 3
                 }
               }
-            ],
-            "options": {}
+            ]
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1128,8 +1124,7 @@
           "name": "createChangeStream",
           "object": "database0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1240,8 +1235,7 @@
           "name": "createChangeStream",
           "object": "client0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1373,8 +1367,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1535,8 +1528,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1616,8 +1608,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1706,9 +1697,7 @@
           "object": "collection0",
           "arguments": {
             "pipeline": [],
-            "options": {
-              "batchSize": 1
-            }
+            "batchSize": 1
           },
           "saveResultAsEntity": "changeStream0"
         },

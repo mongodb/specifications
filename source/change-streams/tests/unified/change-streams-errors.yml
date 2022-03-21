@@ -37,7 +37,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         expectError:
           errorCode: 40573
   - description: Change Stream should error when an invalid aggregation stage is passed in
@@ -51,7 +50,6 @@ tests:
         arguments:
           pipeline:
             - $unsupported: foo
-          options: {}
         expectError:
           errorCode: 40324
     expectEvents:
@@ -81,7 +79,6 @@ tests:
           pipeline:
             - $project:
                 _id: 0
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -117,7 +114,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0

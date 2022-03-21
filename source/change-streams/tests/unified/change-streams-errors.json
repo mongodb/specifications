@@ -65,8 +65,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "expectError": {
             "errorCode": 40573
@@ -93,8 +92,7 @@
               {
                 "$unsupported": "foo"
               }
-            ],
-            "options": {}
+            ]
           },
           "expectError": {
             "errorCode": 40324
@@ -151,8 +149,7 @@
                   "_id": 0
                 }
               }
-            ],
-            "options": {}
+            ]
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -211,8 +208,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },

@@ -50,7 +50,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -126,7 +125,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -202,7 +200,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -277,7 +274,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -353,7 +349,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -429,7 +424,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -505,7 +499,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -581,7 +574,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -657,7 +649,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -733,7 +724,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -809,7 +799,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -885,7 +874,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -961,7 +949,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -1037,7 +1024,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -1113,7 +1099,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -1189,7 +1174,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -1269,7 +1253,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0
@@ -1347,7 +1330,6 @@ tests:
         object: *collection0
         arguments:
           pipeline: []
-          options: {}
         saveResultAsEntity: &changeStream0 changeStream0
       - name: insertOne
         object: *globalCollection0

@@ -86,8 +86,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -220,8 +219,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -354,8 +352,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -488,8 +485,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -622,8 +618,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -756,8 +751,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -890,8 +884,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1024,8 +1017,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1158,8 +1150,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1292,8 +1283,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1426,8 +1416,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1560,8 +1549,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1694,8 +1682,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1828,8 +1815,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -1962,8 +1948,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -2096,8 +2081,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -2230,8 +2214,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
@@ -2363,8 +2346,7 @@
           "name": "createChangeStream",
           "object": "collection0",
           "arguments": {
-            "pipeline": [],
-            "options": {}
+            "pipeline": []
           },
           "saveResultAsEntity": "changeStream0"
         },
