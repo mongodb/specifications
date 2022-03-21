@@ -1154,8 +1154,8 @@ Test Plan
     * Wait for all operations to complete successfully
     * Assert the following across at least 5 retries of the above test:
 
-        * Drivers MUST assert that exactly one session is used for all operations at least once across the 5 retries of this test.
-        * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations in every retry of this test. In this instance it would less than (but NOT equal to) 8.
+      * Drivers MUST assert that exactly one session is used for all operations at least once across the 5 retries of this test.
+      * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations in every retry of this test. In this instance it would less than (but NOT equal to) 8.
 
 
 
