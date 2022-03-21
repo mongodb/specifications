@@ -808,8 +808,8 @@ available for reuse. A ``ServerSession`` pool MUST belong to a ``MongoClient``
 instance and have the same lifetime as the ``MongoClient`` instance.
 
 When a new implicit ``ClientSession`` is started it MUST NOT attempt to acquire a server
-session from the server session pool. When a new explicit ``ClientSession`` is started
-it SHOULD attempt to acquire a server session from the server session pool.
+session from the server session pool immediately. When a new explicit ``ClientSession`` is started
+it SHOULD attempt to acquire a server session from the server session pool immediately.
 See the algorithm below for the steps to follow when attempting to acquire a ``ServerSession`` from the server session pool.
 
 Note that ``ServerSession`` instances acquired from the server session pool might have as
@@ -1152,10 +1152,11 @@ Test Plan
       * ``find().toArray()``
 
     * Wait for all operations to complete successfully
-    * Assert that all commands contain the same lsid. Note that it's possible, for >1 server session to be used because the session is not released until after the connection is checked in. If this assertion fails, repeat this test 5 times until the assertion holds.
-    * Drivers MAY assert that exactly one session is used for all the concurrent operations listed, however this can be nondeterministic if the session isn't released before check in. Drivers SHOULD NOT attempt to release before check in.
-    * Drivers SHOULD assert that after repeated runs they are able to achieve the use of exactly one session, this will statistically prove we've reduced the allocation amount
-    * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations. In this instance it would less than (but NOT equal to) 8.
+    * Assert the following across at least 5 retries of the above test:
+
+        * Drivers MUST assert that exactly one session is used for all operations at least once across the 5 retries of this test.
+        * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations in every retry of this test. In this instance it would less than (but NOT equal to) 8.
+
 
 
 Tests that only apply to drivers that have not implemented OP_MSG and are still using OP_QUERY
@@ -1333,19 +1334,6 @@ where a ``serverSession`` must remain acquired by the ``ClientSession`` after an
 Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
 Drivers SHOULD attempt to release the ``ServerSession`` to the pool at the earliest possible opportunity.
 Drivers SHOULD attempt to reuse ``ServerSession`` as best as possible, concurrency fairness willing.
-
-Appendix
-========
-
-Drivers that DO NOT implement ServerSession pooling
----------------------------------------------------
-
-Drivers MUST implement ``ServerSession`` pooling, however this section captures the notable difference if a driver does not implement pooling.
-
-Drivers that do not implement a server session pool will NOT be able to implement reducing server session allocation described in this spec and tested in test 13.
-
-Drivers that do not implement a server session pool MUST run the ``endSessions`` command when the ``ClientSession.endSession``
-method is called as opposed to deferring sending the command when the ``MongoClient`` is closed.
 
 Change log
 ==========
