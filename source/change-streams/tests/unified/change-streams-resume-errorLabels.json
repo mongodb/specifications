@@ -36,20 +36,6 @@
     },
     {
       "database": {
-        "id": "database1",
-        "client": "client0",
-        "databaseName": "database1"
-      }
-    },
-    {
-      "collection": {
-        "id": "collection1",
-        "database": "database1",
-        "collectionName": "collection1"
-      }
-    },
-    {
-      "database": {
         "id": "globalDatabase0",
         "client": "globalClient",
         "databaseName": "database0"
@@ -61,41 +47,6 @@
         "database": "globalDatabase0",
         "collectionName": "collection0"
       }
-    },
-    {
-      "database": {
-        "id": "globalDatabase1",
-        "client": "globalClient",
-        "databaseName": "database1"
-      }
-    },
-    {
-      "collection": {
-        "id": "globalCollection1",
-        "database": "globalDatabase1",
-        "collectionName": "collection1"
-      }
-    },
-    {
-      "collection": {
-        "id": "globalDb1Collection0",
-        "database": "globalDatabase1",
-        "collectionName": "collection0"
-      }
-    },
-    {
-      "collection": {
-        "id": "globalDb0Collection1",
-        "database": "globalDatabase0",
-        "collectionName": "collection1"
-      }
-    }
-  ],
-  "initialData": [
-    {
-      "collectionName": "collection0",
-      "databaseName": "database0",
-      "documents": []
     }
   ],
   "tests": [
