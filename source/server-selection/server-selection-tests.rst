@@ -282,6 +282,8 @@ Prose Test
 Multi-threaded and async drivers MUST also implement the following prose test:
 
 1. Configure a sharded cluster with two mongoses. Use a 4.2.9 or newer server version.
+   This test should not be run using TLS or authentication to reduce the chance of
+   a false test failure.
 
 2. Enable the following failpoint against exactly one of the mongoses::
 
@@ -296,19 +298,28 @@ Multi-threaded and async drivers MUST also implement the following prose test:
         },
     }
 
-3. Create a client with both mongoses' addresses in its seed list,
-   appName="loadBalancingTest", and command monitoring enabled.
+3. Insert an empty document into the collection being used for the test.
 
-4. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
-   using that client.
+4. Create a client with both mongoses' addresses in its seed list,
+   appName="loadBalancingTest" and localThresholdMS=30000.
 
-5. Assert that fewer than 25% of the CommandStartedEvents occurred on the mongos
-   that the failpoint was enabled on.
+5. Using SDAM monitoring events, ensure both mongoses have been discovered and marked as
+   available.
 
-6. Disable the failpoint.
+6. Using CMAP events, ensure the client's connection pools for both
+   mongoses have been saturated, either via setting minPoolSize=maxPoolSize or
+   executing operations.
 
-7. Repeat this test without any failpoints and assert that each mongos was
-   selected roughly 50% (within +/- 10%) of the time.
+7. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
+   with empty filters using that client.
+
+8. Using command monitoring events, assert that fewer than 25% of the
+   CommandStartedEvents occurred on the mongos that the failpoint was enabled on.
+
+9. Disable the failpoint.
+
+10. Repeat steps 7 and 8 without any failpoints and assert that each mongos was
+    selected roughly 50% (within +/- 10%) of the time.
 
 
 Application-Provided Server Selector
