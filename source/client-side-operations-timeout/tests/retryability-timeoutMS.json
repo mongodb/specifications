@@ -2286,9 +2286,6 @@
         {
           "name": "listDatabaseNames",
           "object": "client",
-          "arguments": {
-            "filter": {}
-          },
           "expectError": {
             "isTimeoutError": true
           }
@@ -2323,10 +2320,7 @@
         },
         {
           "name": "listDatabaseNames",
-          "object": "client",
-          "arguments": {
-            "filter": {}
-          }
+          "object": "client"
         }
       ],
       "expectEvents": [
@@ -2412,8 +2406,7 @@
           "name": "listDatabaseNames",
           "object": "client",
           "arguments": {
-            "timeoutMS": 0,
-            "filter": {}
+            "timeoutMS": 0
           }
         }
       ],

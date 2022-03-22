@@ -236,7 +236,7 @@ tests:
           maxAwaitTimeMS: 1
           timeoutMS: 100
         saveResultAsEntity: &changeStream changeStream
-      # Block getMore for 15ms to force the next() call to time out.
+      # Block getMore for 150ms to force the next() call to time out.
       - name: failPoint
         object: testRunner
         arguments:

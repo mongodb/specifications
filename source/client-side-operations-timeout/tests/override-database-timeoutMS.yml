@@ -321,6 +321,7 @@ tests:
         object: *database
         arguments:
           command: { ping: 1 }
+          commandName: ping
           
         
     expectEvents:
@@ -363,6 +364,7 @@ tests:
         object: *database
         arguments:
           command: { ping: 1 }
+          commandName: ping
           
         
     expectEvents:

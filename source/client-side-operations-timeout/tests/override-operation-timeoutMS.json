@@ -189,8 +189,7 @@
           "name": "listDatabaseNames",
           "object": "client",
           "arguments": {
-            "timeoutMS": 1000,
-            "filter": {}
+            "timeoutMS": 1000
           }
         }
       ],
@@ -244,8 +243,7 @@
           "name": "listDatabaseNames",
           "object": "client",
           "arguments": {
-            "timeoutMS": 0,
-            "filter": {}
+            "timeoutMS": 0
           }
         }
       ],
@@ -741,7 +739,8 @@
             "timeoutMS": 1000,
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         }
       ],
@@ -798,7 +797,8 @@
             "timeoutMS": 0,
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         }
       ],

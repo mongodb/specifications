@@ -7,15 +7,18 @@ Operation = namedtuple('Operation', ['operation_name', 'command_name', 'object',
 
 CLIENT_OPERATIONS = [
     Operation('listDatabases', 'listDatabases', 'client', ['filter: {}']),
-    Operation('listDatabaseNames', 'listDatabases', 'client', ['filter: {}']),
+    Operation('listDatabaseNames', 'listDatabases', 'client', []),
     Operation('createChangeStream', 'aggregate', 'client', ['pipeline: []'])
 ]
+
+RUN_COMMAND_ARGUMENTS = '''command: { ping: 1 }
+          commandName: ping'''
 
 DB_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'database', ['pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]']),
     Operation('listCollections', 'listCollections', 'database', ['filter: {}']),
     Operation('listCollectionNames', 'listCollections', 'database', ['filter: {}']),
-    Operation('runCommand', 'ping', 'database', ['command: { ping: 1 }']),
+    Operation('runCommand', 'ping', 'database', [RUN_COMMAND_ARGUMENTS]),
     Operation('createChangeStream', 'aggregate', 'database', ['pipeline: []'])
 ]
 

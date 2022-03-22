@@ -607,7 +607,6 @@ tests:
         object: *client
         arguments:
           timeoutMS: 100000
-          filter: {}
           
         
 
@@ -643,7 +642,6 @@ tests:
         object: *client
         arguments:
           timeoutMS: 100000
-          filter: {}
           
         
     expectEvents:
@@ -1107,6 +1105,7 @@ tests:
         arguments:
           timeoutMS: 100000
           command: { ping: 1 }
+          commandName: ping
           
         
 
@@ -1143,6 +1142,7 @@ tests:
         arguments:
           timeoutMS: 100000
           command: { ping: 1 }
+          commandName: ping
           
         
     expectEvents:

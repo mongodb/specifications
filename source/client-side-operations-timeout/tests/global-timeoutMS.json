@@ -265,9 +265,6 @@
         {
           "name": "listDatabaseNames",
           "object": "client",
-          "arguments": {
-            "filter": {}
-          },
           "expectError": {
             "isTimeoutError": true
           }
@@ -358,10 +355,7 @@
         },
         {
           "name": "listDatabaseNames",
-          "object": "client",
-          "arguments": {
-            "filter": {}
-          }
+          "object": "client"
         }
       ],
       "expectEvents": [
@@ -1177,7 +1171,8 @@
           "arguments": {
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           },
           "expectError": {
             "isTimeoutError": true
@@ -1273,7 +1268,8 @@
           "arguments": {
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         }
       ],

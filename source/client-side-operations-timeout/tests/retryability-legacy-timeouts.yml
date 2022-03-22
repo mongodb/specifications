@@ -723,9 +723,7 @@ tests:
               blockTimeMS: 55
       - name: listDatabaseNames
         object: *client
-        arguments:
-          filter: {}
-          
+        
     expectEvents:
       - client: *client
         events:
@@ -754,9 +752,7 @@ tests:
               blockTimeMS: 55
       - name: listDatabaseNames
         object: *client
-        arguments:
-          filter: {}
-          
+        
         expectError:
             # Network errors are considered client errors by the unified test format spec.
             isClientError: true

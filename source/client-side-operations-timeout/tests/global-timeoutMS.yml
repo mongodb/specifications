@@ -160,9 +160,7 @@ tests:
               blockTimeMS: 60
       - name: listDatabaseNames
         object: *client
-        arguments:
-          filter: {}
-          
+        
         expectError:
           isTimeoutError: true
     expectEvents:
@@ -210,9 +208,7 @@ tests:
               blockTimeMS: 15
       - name: listDatabaseNames
         object: *client
-        arguments:
-          filter: {}
-          
+        
         
     expectEvents:
       - client: *client
@@ -647,6 +643,7 @@ tests:
         object: *database
         arguments:
           command: { ping: 1 }
+          commandName: ping
           
         expectError:
           isTimeoutError: true
@@ -697,6 +694,7 @@ tests:
         object: *database
         arguments:
           command: { ping: 1 }
+          commandName: ping
           
         
     expectEvents:
