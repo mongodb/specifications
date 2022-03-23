@@ -44,7 +44,7 @@ Each YAML file has the following keys:
   - ``maxServerVersion``: Reserved for later use
   - ``failPoint``: Optional configureFailPoint command document to run to configure a fail point on the primary server.
   - ``target``: The entity on which to run the change stream. Valid values are:
-  
+
     - ``collection``: Watch changes on collection ``database_name.collection_name``
     - ``database``: Watch changes on database ``database_name``
     - ``client``: Watch changes on entire clusters
@@ -77,7 +77,7 @@ The definition of MATCH or MATCHES in the Spec Test Runner is as follows:
 Pseudocode implementation of ``actual`` MATCHES ``expected``:
 
 ::
-  
+
   If expected is "42" or 42:
     Assert that actual exists (is not null or undefined)
   Else:
@@ -103,9 +103,9 @@ Spec Test Runner
 Before running the tests
 
 - Create a MongoClient ``globalClient``, and connect to the server.
-When executing tests against a sharded cluster, ``globalClient`` must only connect to one mongos. This is because tests
-that set failpoints will only work consistently if both the ``configureFailPoint`` and failing commands are sent to the
-same mongos.
+  When executing tests against a sharded cluster, ``globalClient`` must only connect to one mongos. This is because tests
+  that set failpoints will only work consistently if both the ``configureFailPoint`` and failing commands are sent to the
+  same mongos.
 
 For each YAML file, for each element in ``tests``:
 
@@ -213,7 +213,7 @@ The following tests have not yet been automated, but MUST still be tested. All t
    - If ``resumeAfter`` was not specified, the ``getResumeToken`` result must be empty.
 
 #. For a ``ChangeStream`` under these conditions:
-   
+
    - The batch is not empty.
    - The batch has been iterated up to but not including the last element.
 

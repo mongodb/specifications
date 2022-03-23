@@ -49,7 +49,7 @@ Retryable Error
 
 An error is considered retryable if it meets any of the criteria defined under
 `Retryable Writes: Terms: Retryable Error
-<https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#terms>`__,
+<https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#terms>`_,
 minus the final criterion about write concern errors. For convenience, the
 relevant criteria have been adapted to retryable reads and reproduced below.
 
@@ -171,22 +171,22 @@ Drivers SHOULD support retryability for the following operations:
 Most of the above methods are defined in the following specifications:
 
 - `Change Streams
-  <https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst>`__
+  <https://github.com/mongodb/specifications/blob/master/source/change-streams/change-streams.rst>`_
 
 - `CRUD
-  <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst>`__
+  <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst>`_
 
 - `Enumerating Collections
-  <https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst>`__
+  <https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst>`_
 
 - `Enumerating Indexes
-  <https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst>`__
+  <https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst>`_
 
 - `Enumerating Databases
-  <https://github.com/mongodb/specifications/blob/master/source/enumerate-databases.rst>`__
+  <https://github.com/mongodb/specifications/blob/master/source/enumerate-databases.rst>`_
 
 - `GridFS Spec
-  <https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst>`__
+  <https://github.com/mongodb/specifications/blob/master/source/gridfs/gridfs-spec.rst>`_
 
 Unsupported Read Operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,7 +205,7 @@ Drivers MUST NOT retry the following operations:
 -  Cursor.getMore()
 
    - See `Why is retrying Cursor.getMore() not supported?
-     <#why-is-retrying-cursor.getmore-not-supported>`__
+     <#why-is-retrying-cursor.getmore-not-supported>`_
 
 -  The generic runCommand helper, even if it is passed a read command.
 
@@ -220,7 +220,7 @@ Executing Retryable Read Commands
 
 Executing retryable read commands is extremely similar to `executing retryable
 write commands
-<https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#executing-retryable-write-commands>`__.
+<https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#executing-retryable-write-commands>`_.
 The following explanation for executing retryable read commands has been adapted
 from the explanation for executing retryable write commands.
 
@@ -269,7 +269,7 @@ Drivers MUST only attempt to retry a read command if
 If the driver decides to allow retry and the first attempt of a retryable read
 command encounters a retryable error, the driver MUST update its topology
 according to the Server Discovery and Monitoring spec (see `SDAM: Error Handling
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling>`__)
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling>`_)
 and capture this original retryable error. Drivers should then proceed with
 selecting a server for the retry attempt.
 
@@ -319,7 +319,7 @@ The above requirement can be fulfilled in one of two ways:
 
 If the retry attempt also fails, drivers MUST update their topology according to
 the SDAM spec (see `SDAM: Error Handling
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling>`__).
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#error-handling>`_).
 If an error would not allow the caller to infer that an attempt was made
 (e.g. connection pool exception originating from the driver), the original error
 should be raised. If the retry failed due to another retryable error or some
@@ -332,14 +332,14 @@ more relevant (with respect to the current topology state).
 
 When retrying a read command, drivers MUST NOT resend the original wire protocol
 message (see: `Can drivers resend the same wire protocol message on retry
-attempts? <#_uctengj3f6jh>`__).
+attempts? <#_uctengj3f6jh>`_).
 
 Pseudocode
 ~~~~~~~~~~
 
 The following pseudocode for executing retryable read commands has been adapted
 from `the pseudocode for executing retryable write commands
-<https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#executing-retryable-write-commands>`__
+<https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#executing-retryable-write-commands>`_
 and reflects the flow described above.
 
 .. code:: typescript
@@ -462,7 +462,7 @@ Command Monitoring
 `As with retryable writes
 <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#command-monitoring>`__,
 in accordance with the `Command Monitoring
-<https://github.com/mongodb/specifications/blob/master/source/command-monitoring/command-monitoring.rst>`__
+<https://github.com/mongodb/specifications/blob/master/source/command-monitoring/command-monitoring.rst>`_
 specification, drivers MUST guarantee that each ``CommandStartedEvent`` has
 either a correlating ``CommandSucceededEvent`` or ``CommandFailedEvent``. If the
 first attempt of a retryable read operation encounters a retryable error,
@@ -477,11 +477,11 @@ Documentation
 1. Drivers MUST document all read operations that support retryable behavior.
 
 2. Drivers MUST document that the operations in `Unsupported Read Operations
-   <#unsupported-read-operations>`__ do not support retryable behavior.
+   <#unsupported-read-operations>`_ do not support retryable behavior.
 
 3. Driver release notes MUST make it clear to users that they may need to adjust
    custom retry logic to prevent an application from inadvertently retrying for
-   too long (see `Backwards Compatibility<#backwards-compatibility>`__ for
+   too long (see `Backwards Compatibility <#backwards-compatibility>`_ for
    details).
 
 4. Drivers implementing retryability for their generic command runner for read
@@ -494,7 +494,7 @@ Test Plan
 =========
 
 See the `README
-<https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`__
+<https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`_
 for tests.
 
 At a high level, the test plan will cover executing supported read operations
@@ -561,8 +561,8 @@ Reference Implementation
 ========================
 
 The C# and Python drivers will provide the reference implementations. See
-`CSHARP-2429 <https://jira.mongodb.org/browse/CSHARP-2429>`__ and `PYTHON-1674
-<https://jira.mongodb.org/browse/PYTHON-1674>`__.
+`CSHARP-2429 <https://jira.mongodb.org/browse/CSHARP-2429>`_ and `PYTHON-1674
+<https://jira.mongodb.org/browse/PYTHON-1674>`_.
 
 Security Implications
 =====================
@@ -585,7 +585,7 @@ Future work
 
 4. Once `DRIVERS-560`_ is resolved, tests will be added to allow testing
    Retryable Reads on MongoDB 3.6. See the `test plan
-   <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`__
+   <https://github.com/mongodb/specifications/blob/master/source/retryable-reads/tests/README.rst>`_
    for additional information.
 
 .. _DRIVERS-560: https://jira.mongodb.org/browse/DRIVERS-560
@@ -620,7 +620,7 @@ Why are read operations only retried once?
 
 `Read operations are only retried once for the same reasons that writes are also
 only retried
-once. <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#why-are-write-operations-only-retried-once>`__
+once. <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#why-are-write-operations-only-retried-once>`_
 For convenience's sake, that reasoning has been adapted for reads and reproduced
 below:
 
@@ -630,28 +630,28 @@ that the node is no longer a primary). A retryable error may be classified as
 either a transient error (e.g. dropped connection, replica set failover) or
 persistent outage. In the case of a transient error, the driver will mark the
 server as "unknown" per the `SDAM
-<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`__
+<https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst>`_
 spec. A subsequent retry attempt will allow the driver to rediscover the primary
 within the designated server selection timeout period (30 seconds by
 default). If server selection times out during this retry attempt, we can
 reasonably assume that there is a persistent outage. In the case of a persistent
 outage, multiple retry attempts are fruitless and would waste time. See `How To
 Write Resilient MongoDB Applications
-<https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/>`__ for
+<https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/>`_ for
 additional discussion on this strategy.
 
 Can drivers resend the same wire protocol message on retry attempts?
 --------------------------------------------------------------------
 
 No. `This is in contrast to the answer supplied in in the retryable writes
-specification. <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts>`__
+specification. <https://github.com/mongodb/specifications/blob/master/source/retryable-writes/retryable-writes.rst#can-drivers-resend-the-same-wire-protocol-message-on-retry-attempts>`_
 However, when retryable writes were implemented, no driver actually chose to
 resend the same wire protocol message. Today, if a driver attempted to resend
 the same wire protocol message, this could violate `the rules for gossiping
 $clusterTime
-<https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#gossipping-the-cluster-time>`__:
+<https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#gossipping-the-cluster-time>`_:
 specifically `the rule that a driver must send the highest seen $clusterTime
-<https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-highest-seen-cluster-time>`__.
+<https://github.com/mongodb/specifications/blob/master/source/sessions/driver-sessions.rst#sending-the-highest-seen-cluster-time>`_.
 
 Additionally, there would be a behavioral difference between a driver resending
 the same wire protocol message and one that does not. For example, a driver that

@@ -96,7 +96,7 @@ individual driver operations.
 We break up the measurement this way to better isolate the benchmark from
 external volatility. If we consider the problem of benchmarking an operation
 over many iterations, such as 100,000 document insertions, we want to avoid
-two extreme forms of measurement:  
+two extreme forms of measurement:
 
 -  measuring a single insertion 100,000 times -- in this case, the timing
    code is likely to be a greater proportion of executed code, which
@@ -579,7 +579,7 @@ Phases:
 |                                      | (or JSON string for C).              |
 +--------------------------------------+--------------------------------------+
 | Before task                          | Drop the 'corpus' collection.        |
-|                                      |  Create an empty 'corpus' collection |
+|                                      | Create an empty 'corpus' collection  |
 |                                      | with the 'create' command.           |
 |                                      | Construct a Collection object for    |
 |                                      | the 'corpus' collection to use for   |
@@ -620,7 +620,7 @@ Phases:
 |                                      | (or JSON string for C).              |
 +--------------------------------------+--------------------------------------+
 | Before task                          | Drop the 'corpus' collection.        |
-|                                      |  Create an empty 'corpus' collection |
+|                                      | Create an empty 'corpus' collection  |
 |                                      | with the 'create' command.           |
 |                                      | Construct a Collection object for    |
 |                                      | the 'corpus' collection to use for   |
@@ -792,13 +792,13 @@ Phases:
 
 +--------------------------------------+--------------------------------------+
 | Setup                                | Construct a MongoClient object.      |
-|                                      |  Drop the 'perftest' database.  Load |
+|                                      | rop the 'perftest' database.  Load   |
 |                                      | the GRIDFS\_LARGE  file as a string  |
 |                                      | or other language-appropriate type   |
 |                                      | for binary octet data.               |
 +--------------------------------------+--------------------------------------+
 | Before task                          | Drop the default GridFS bucket.      |
-|                                      |  Insert a 1-byte file into the       |
+|                                      | Insert a 1-byte file into the        |
 |                                      | bucket. (This ensures the bucket     |
 |                                      | collections and indices have been    |
 |                                      | created.)                            |
@@ -838,8 +838,8 @@ Phases:
 
 +--------------------------------------+--------------------------------------+
 | Setup                                | Construct a MongoClient object.      |
-|                                      |  Drop the 'perftest' database.       |
-|                                      |  Upload the GRIDFS\_LARGE  file to   |
+|                                      | Drop the 'perftest' database.        |
+|                                      | Upload the GRIDFS\_LARGE  file to    |
 |                                      | the default gridFS bucket with the   |
 |                                      | name "gridfstest".  Record the       |
 |                                      | \_id of the uploaded file.           |
@@ -907,7 +907,7 @@ Phases:
 |                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | Before task                          | Drop the 'corpus' collection.        |
-|                                      |  Create an empty 'corpus' collection |
+|                                      | Create an empty 'corpus' collection  |
 |                                      | with the 'create' command.           |
 +--------------------------------------+--------------------------------------+
 | Do task                              | Do an unordered insert of all        |
@@ -939,12 +939,11 @@ Phases:
 
 +--------------------------------------+--------------------------------------+
 | Setup                                | Construct a MongoClient object.      |
-|                                      |  Drop the 'perftest' database. Drop  |
+|                                      | Drop the 'perftest' database. Drop   |
 |                                      | the 'corpus' collection.  Do an      |
 |                                      | unordered insert of all 500,000      |
 |                                      | documents in the dataset into the    |
 |                                      | 'corpus' collection.                 |
-|                                      |                                      |
 +--------------------------------------+--------------------------------------+
 | Before task                          | Construct whatever objects, threads, |
 |                                      | etc. are required for exporting the  |
@@ -1023,8 +1022,8 @@ Phases:
 
 +--------------------------------------+--------------------------------------+
 | Setup                                | Construct a MongoClient object.      |
-|                                      |  Drop the 'perftest' database.       |
-|                                      |  Construct a temporary directory for |
+|                                      | Drop the 'perftest' database.        |
+|                                      | Construct a temporary directory for  |
 |                                      | holding downloads. Drop the default  |
 |                                      | GridFS bucket in the 'perftest'      |
 |                                      | database.  Upload the 50 file        |

@@ -76,7 +76,7 @@ Insert a document and wait one second.
 
 Get the client's ServerDescription for the server.
 It must have a non-zero lastWriteDate.
-Wait another second. [1]
+Wait another second. [1]_
 
 Insert a document and wait one second.
 

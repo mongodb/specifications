@@ -39,7 +39,7 @@ document are to be interpreted as described in
 Conflicting TLS options
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`_,
+Per the `Connection String spec <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst#repeated-keys>`__,
 the behavior of duplicates of most URI options is undefined. However, due
 to the security implications of certain options, drivers MUST raise an
 error to the user during parsing if any of the following circumstances
@@ -98,7 +98,7 @@ SOCKS5 options
 ~~~~~~~~~~~~~~
 
 For URI option validation pertaining to ``proxyHost``, ``proxyPort``,
-``proxyUsername`` and ``proxyPassword```please see the
+``proxyUsername`` and ``proxyPassword`` please see the
 `SOCKS5 support spec`_ for details.
 
 
@@ -176,13 +176,13 @@ pertaining to URI options apply here.
 
    * - directConnection
      - "true" or "false"
-     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#initial-topology-type>`_
+     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#initial-topology-type>`__
      - no
      - Whether to connect to the deployment in Single topology.
 
    * - heartbeatFrequencyMS
      - integer greater than or equal to 500
-     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms>`_
+     - defined in `SDAM spec <https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#heartbeatfrequencyms>`__
      - no
      - the interval between regular server monitoring checks
 
@@ -194,14 +194,14 @@ pertaining to URI options apply here.
 
    * - loadBalanced
      - "true" or "false"
-     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`_
+     - defined in `Load Balancer spec <../load-balancers/load-balancers.rst#loadbalanced>`__
      - no
      - Whether the driver is connecting to a load balancer.
 
    * - localThresholdMS
      - non-negative integer; 0 means 0 ms (i.e. the fastest eligible server
        must be selected)
-     - defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#localthresholdms>`_
+     - defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#localthresholdms>`__
      - no
      - The amount of time beyond the fastest round trip time that a given
        server’s round trip time can take and still be eligible for server selection
@@ -267,8 +267,8 @@ pertaining to URI options apply here.
      - Default read concern for the client
 
    * - readPreference
-     - any string; currently supported values are defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`_, but must be lowercase camelCase, e.g. "primaryPreferred"
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`_
+     - any string; currently supported values are defined in the `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`__, but must be lowercase camelCase, e.g. "primaryPreferred"
+     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#mode>`__
      - no
      - Default read preference for the client (excluding tags)
 
@@ -303,13 +303,13 @@ pertaining to URI options apply here.
 
    * - serverSelectionTimeoutMS
      - positive integer; a driver may also accept 0 to be used for a special case, provided that it documents the meaning
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontimeoutms>`_
+     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontimeoutms>`__
      - no
      - A timeout in milliseconds to block for server selection before raising an error
 
    * - serverSelectionTryOnce
      - "true" or "false"
-     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontryonce>`_
+     - defined in `server selection spec <https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst#serverselectiontryonce>`__
      - required for single-threaded drivers
      - Scan the topology only once after a server selection failure instead of repeatedly until the server selection times out
 
@@ -323,7 +323,7 @@ pertaining to URI options apply here.
 
    * - srvMaxHosts
      - non-negative integer; 0 means no maximum
-     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`_
+     - defined in the `Initial DNS Seedlist Discovery spec <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvmaxhosts>`__
      - no
      - The maximum number of SRV results to randomly select when initially
        populating the seedlist or, during SRV polling, adding new hosts to the
@@ -333,7 +333,7 @@ pertaining to URI options apply here.
      - a valid SRV service name according to `RFC 6335 <https://datatracker.ietf.org/doc/html/rfc6335#section-5.1>`_
      - "mongodb"
      - no
-     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`_
+     - the service name to use for SRV lookup in `initial DNS seedlist discovery <../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.rst#srvservicename>`__
        and `SRV polling <../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.rst>`_
 
    * - ssl

@@ -328,7 +328,7 @@ The `killCursors`_ command replaces the **OP_KILL_CURSORS** wire protocol messag
 
 The command response will be as follows:
 
-.. code:: javascript
+.. code-block::
 
     {
       "cursorsKilled": [

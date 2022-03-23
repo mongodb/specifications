@@ -153,7 +153,7 @@ as specified in `RFC 6960: 4.1.1
 <https://tools.ietf.org/html/rfc6960#section-4.1.1>`__.
 For convenience, the relevant section has been duplicated below:
 
-.. code:: ASN.1
+.. code::
 
    CertID          ::=     SEQUENCE {
        hashAlgorithm       AlgorithmIdentifier,

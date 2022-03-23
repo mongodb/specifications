@@ -43,7 +43,7 @@ General Syntax
 In general we follow URI style conventions, however unlike a URI the
 connection string supports multiple hosts.
 
-.. code:: prettyprint
+.. code:: text
 
   mongodb://username:password@example.com:27017,example2.com:27017,...,example.comN:27017/database?key=value&keyN=valueN
   \_____/   \_______________/ \_________/ \__/  \_______________________________________/ \______/ \_/ \___/
@@ -102,7 +102,7 @@ A host identifier consists of a host and an optional port.
 
 Host
 ~~~~
-Identifies a server address to connect to. It can identify either a hostname, IP address, IP Literal, or UNIX domain socket. For definitions of hostname, IP address and IP Literal formats see `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.2>`_ .
+Identifies a server address to connect to. It can identify either a hostname, IP address, IP Literal, or UNIX domain socket. For definitions of hostname, IP address and IP Literal formats see `RFC 3986 Section 3.2.2 <http://tools.ietf.org/html/rfc3986#section-3.2.2>`_ .
 
 UNIX domain sockets MUST end in ".sock" and MUST be URL encoded, for example::
 
@@ -120,7 +120,7 @@ This specification does not define how host types should be differentiated (e.g.
 
 Port (optional)
 ~~~~~~~~~~~~~~~
-The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See `RFC 3986 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
+The port is an integer between 1 and 65535 (inclusive) that identifies the port to connect to. See `RFC 3986 3.2.3 <http://tools.ietf.org/html/rfc3986#section-3.2.3>`_ .
 
 .. _database contains no prohibited characters:
 
@@ -164,7 +164,7 @@ When defining and documenting keys, specifications should follow the camelCase n
 Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported keys. For example::
 
   Unsupported option 'connectMS'.
-  
+
 Keys should be descriptive and follow existing conventions:
 
 Time based keys

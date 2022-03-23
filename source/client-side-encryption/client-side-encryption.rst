@@ -173,8 +173,8 @@ mongocryptd is a singleton local process needed for auto
 encryption. It speaks the MongoDB wire protocol and the driver uses
 mongocryptd by connecting with a MongoClient. By default, the driver
 will attempt to automatically spawn mongocryptd. If the MongoClient is
-configured with `extraOptions.mongocryptdBypassSpawn=true`, or 
-`AutoEncryptionOpts.bypassAutoEncryption=true` then the driver will not 
+configured with `extraOptions.mongocryptdBypassSpawn=true`, or
+`AutoEncryptionOpts.bypassAutoEncryption=true` then the driver will not
 attempt to spawn mongocryptd. The mongocryptd process is
 responsible for self terminating after idling for a time period.
 
@@ -305,7 +305,7 @@ See `What's the deal with metadataClient, keyVaultClient, and the internal clien
 
 keyVaultClient, metadataClient, and the internal MongoClient
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The following pseudo-code describes the configuration behavior for the three ``MongoClient``s:
+The following pseudo-code describes the configuration behavior for the three ``MongoClient`` objects:
 
 .. code::
 
@@ -475,8 +475,8 @@ bypassAutoEncryption
 ^^^^^^^^^^^^^^^^^^^^
 
 Drivers MUST disable auto encryption when the 'bypassAutoEncryption'
-option is true and not try to spawn mongocryptd. Automatic encryption 
-may be disabled with the bypassAutoEncryption option. 
+option is true and not try to spawn mongocryptd. Automatic encryption
+may be disabled with the bypassAutoEncryption option.
 See `Why is there a bypassAutoEncryption?`_.
 
 extraOptions
@@ -792,8 +792,8 @@ encryption.
 
 Managing mongocryptd
 ====================
-If a MongoClient is configured for Client Side Encryption 
-(eg. bypassAutoEncryption=false), then by default 
+If a MongoClient is configured for Client Side Encryption
+(eg. bypassAutoEncryption=false), then by default
 (unless mongocryptdBypassSpawn=true), mongocryptd MUST be
 spawned by the driver. Spawning MUST include the command line argument
 --idleShutdownTimeoutSecs. If the user does not supply one through
@@ -864,7 +864,7 @@ The state machine is created with the libmongocrypt function
 ``mongocrypt_ctx_new`` and initialized with a ``mongocrypt_ctx_encrypt_init`` or
 ``mongocrypt_ctx_decrypt_init``. See the `libmongocrypt API documentation
 <https://github.com/mongodb/libmongocrypt/blob/master/src/mongocrypt.h.in>`_ for
-more information. 
+more information.
 
 An encrypted MongoClient configured with bypassAutoEncryption MUST NOT
 attempt automatic encryption for any command.
@@ -1330,7 +1330,7 @@ Why cache keys?
 We can't re-fetch the key on each operation, the performance goal for
 this project requires us to cache. We do need a revocation mechanism,
 based upon periodic checking from the client. Initially this window will
-not be configurable. See future work: `Make the key caching window configurable`__.
+not be configurable.
 
 Why require including a C library?
 ----------------------------------
@@ -1468,7 +1468,7 @@ Meaning if the first attempt to mongocryptd fails to connect, then the user
 would observe a 5 second delay. This is not configurable in the URI, so this
 must be overriden internally. Since mongocryptd is a local process, there should
 only be a very short delay after spawning mongocryptd for it to start listening
-on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_.
+on sockets. See the SDAM spec description of `cooldownMS`_.
 
 Because single threaded drivers may exceed ``serverSelectionTimeoutMS`` by the
 duration of the topology scan, ``connectTimeoutMS`` is also reduced.
@@ -1518,7 +1518,7 @@ The use pattern of the ``metadataClient`` will likely greatly differ from
 the parent ``MongoClient``. So it is configured with ``minPoolSize=0``.
 
 The ``metadataClient`` is not an exposed option because a user could
-misconfigure it to point to another MongoDB cluster, which could be a 
+misconfigure it to point to another MongoDB cluster, which could be a
 security risk.
 
 Why is the metadataClient not needed if bypassAutoEncryption=true
