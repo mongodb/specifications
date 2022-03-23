@@ -1,3 +1,4 @@
+# Tests for resume behavior on server versions that do not support the ResumableChangeStreamError label
 description: "change-streams errors"
 schemaVersion: "1.7"
 createEntities:
@@ -107,7 +108,7 @@ tests:
   - description: change stream resumes after HostUnreachable
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -185,7 +186,7 @@ tests:
   - description: change stream resumes after HostNotFound
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -263,7 +264,7 @@ tests:
   - description: change stream resumes after NetworkTimeout
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -341,7 +342,7 @@ tests:
   - description: change stream resumes after ShutdownInProgress
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -419,7 +420,7 @@ tests:
   - description: change stream resumes after PrimarySteppedDown
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -496,7 +497,7 @@ tests:
   - description: change stream resumes after ExceededTimeLimit
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -573,7 +574,7 @@ tests:
   - description: change stream resumes after SocketException
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -650,7 +651,7 @@ tests:
   - description: change stream resumes after NotWritablePrimary
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -727,7 +728,7 @@ tests:
   - description: change stream resumes after InterruptedAtShutdown
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -804,7 +805,7 @@ tests:
   - description: change stream resumes after InterruptedDueToReplStateChange
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -881,7 +882,7 @@ tests:
   - description: change stream resumes after NotPrimaryNoSecondaryOk
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -958,7 +959,7 @@ tests:
   - description: change stream resumes after NotPrimaryOrSecondary
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -1035,7 +1036,7 @@ tests:
   - description: change stream resumes after StaleShardVersion
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -1112,7 +1113,7 @@ tests:
   - description: change stream resumes after StaleEpoch
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -1189,7 +1190,7 @@ tests:
   - description: change stream resumes after RetryChangeStream
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -1266,7 +1267,7 @@ tests:
   - description: change stream resumes after FailedToSatisfyReadPreference
     runOnRequirements:
       - minServerVersion: "4.2"
-        maxServerVersion: 4.2.99
+        maxServerVersion: "4.2.99"
         topologies:
           - replicaset
           - sharded
@@ -1340,6 +1341,8 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+    # CursorNotFound is special-cased to be resumable regardless of server versions or error labels, so this test has
+    # no maxWireVersion.
   - description: change stream resumes after CursorNotFound
     runOnRequirements:
       - minServerVersion: "4.2"

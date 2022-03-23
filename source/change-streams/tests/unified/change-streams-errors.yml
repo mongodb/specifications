@@ -29,7 +29,7 @@ createEntities:
 tests:
   - description: "The watch helper must not throw a custom exception when executed against a single server topology, but instead depend on a server error"
     runOnRequirements:
-      - minServerVersion: 3.6.0
+      - minServerVersion: "3.6.0"
         topologies:
           - single
     operations:
@@ -41,7 +41,7 @@ tests:
           errorCode: 40573
   - description: Change Stream should error when an invalid aggregation stage is passed in
     runOnRequirements:
-      - minServerVersion: 3.6.0
+      - minServerVersion: "3.6.0"
         topologies:
           - replicaset
     operations:
@@ -67,7 +67,7 @@ tests:
               databaseName: *database0
   - description: Change Stream should error when _id is projected out
     runOnRequirements:
-      - minServerVersion: 4.1.11
+      - minServerVersion: "4.1.11"
         topologies:
           - replicaset
           - sharded

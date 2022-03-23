@@ -1,3 +1,4 @@
+# Tests for resume behavior on server versions that support the ResumableChangeStreamError label
 description: "change-streams errors"
 schemaVersion: "1.7"
 createEntities:
@@ -29,7 +30,7 @@ createEntities:
 tests:
   - description: change stream resumes after HostUnreachable
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -40,7 +41,7 @@ tests:
         arguments:
           client: globalClient
           failPoint:
-            configureFailPoint: failGetMoreAfterCursorCheckout
+            configureFailPoint: failGetMoreAfterCursorCheckout # SERVER-46091 explains why a new failpoint was needed
             mode:
               times: 1
             data:
@@ -104,7 +105,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after HostNotFound
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -179,7 +180,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after NetworkTimeout
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -253,7 +254,7 @@ tests:
               commandName: aggregate
   - description: change stream resumes after ShutdownInProgress
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -328,7 +329,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after PrimarySteppedDown
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -403,7 +404,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after ExceededTimeLimit
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -478,7 +479,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after SocketException
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -553,7 +554,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after NotWritablePrimary
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -628,7 +629,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after InterruptedAtShutdown
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -703,7 +704,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after InterruptedDueToReplStateChange
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -778,7 +779,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after NotPrimaryNoSecondaryOk
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -853,7 +854,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after NotPrimaryOrSecondary
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -928,7 +929,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after StaleShardVersion
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -1003,7 +1004,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after StaleEpoch
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -1078,7 +1079,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after RetryChangeStream
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -1153,7 +1154,7 @@ tests:
               databaseName: *database0
   - description: change stream resumes after FailedToSatisfyReadPreference
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -1226,9 +1227,10 @@ tests:
                           $$exists: true
               commandName: aggregate
               databaseName: *database0
+  # The next two tests ensure that the driver only uses the error label, not the allow list.
   - description: change stream resumes if error contains ResumableChangeStreamError
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -1245,7 +1247,7 @@ tests:
             data:
               failCommands:
                 - getMore
-              errorCode: 50
+              errorCode: 50 # Use an error code that does not have the allow list label by default
               closeConnection: false
               errorLabels:
                 - ResumableChangeStreamError
@@ -1307,7 +1309,7 @@ tests:
               databaseName: *database0
   - description: change stream does not resume if error does not contain ResumableChangeStreamError
     runOnRequirements:
-      - minServerVersion: 4.3.1
+      - minServerVersion: "4.3.1"
         topologies:
           - replicaset
           - sharded
@@ -1318,13 +1320,13 @@ tests:
         arguments:
           client: globalClient
           failPoint:
-            configureFailPoint: failCommand
+            configureFailPoint: failCommand # failCommand will not add the allow list error label
             mode:
               times: 1
             data:
               failCommands:
                 - getMore
-              errorCode: 6
+              errorCode: 6 # Use an error code that is on the allow list
               closeConnection: false
       - name: createChangeStream
         object: *collection0
