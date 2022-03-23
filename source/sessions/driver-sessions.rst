@@ -504,10 +504,10 @@ include a session ID in a ``KILLCURSORS`` command.
 
 Sessions and Connections
 ========================
-A driver MUST only obtain an implicit session's ``ServerSession`` after it successfully checks out a connection.
+
+To reduce the number of ``ServerSessions`` created, the driver MUST only obtain an implicit session's
+``ServerSession`` after it successfully checks out a connection.
 A driver SHOULD NOT attempt to release the acquired session before connection check in.
-Through both through the pooling mechanism and limiting acquisition to a successful
-connection checkout we can have guaranteed improvement of ``ServerSession`` reuse.
 
 Explicit sessions MAY be changed to allocate a server session similarly.
 
@@ -1155,6 +1155,9 @@ Test Plan
     * Assert the following across at least 5 retries of the above test:
 
       * Drivers MUST assert that exactly one session is used for all operations at least once across the retries of this test.
+
+        * Note that it's possible, although rare, for >1 server session to be used because the session is not released until after the connection is checked in.
+
       * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations in every retry of this test. In this instance it would less than (but NOT equal to) 8.
 
 
@@ -1332,8 +1335,6 @@ Why should drivers NOT attempt to release a serverSession before checking back i
 There are a variety of cases, such as, retryable operations or cursor creating operations
 where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
 Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
-Drivers SHOULD attempt to release the ``ServerSession`` to the pool at the earliest possible opportunity.
-Drivers SHOULD attempt to reuse ``ServerSession`` as best as possible, concurrency fairness willing.
 
 Change log
 ==========
