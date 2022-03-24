@@ -809,7 +809,7 @@ instance and have the same lifetime as the ``MongoClient`` instance.
 
 When a new implicit ``ClientSession`` is started it MUST NOT attempt to acquire a server
 session from the server session pool immediately. When a new explicit ``ClientSession`` is started
-it SHOULD attempt to acquire a server session from the server session pool immediately.
+it MAY attempt to acquire a server session from the server session pool immediately.
 See the algorithm below for the steps to follow when attempting to acquire a ``ServerSession`` from the server session pool.
 
 Note that ``ServerSession`` instances acquired from the server session pool might have as
@@ -1158,7 +1158,7 @@ Test Plan
 
         * Note that it's possible, although rare, for >1 server session to be used because the session is not released until after the connection is checked in.
 
-      * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations in every retry of this test. In this instance it would less than (but NOT equal to) 8.
+      * Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations in every retry of this test. In this instance it would be less than (but NOT equal to) 8.
 
 
 
@@ -1332,7 +1332,7 @@ But those scenarios are extenuating and outside the scope of solving in this spe
 Why should drivers NOT attempt to release a serverSession before checking back in the operation's connection?
 -------------------------------------------------------------------------------------------------------------
 
-There are a variety of cases, such as, retryable operations or cursor creating operations
+There are a variety of cases, such as retryable operations or cursor creating operations,
 where a ``serverSession`` must remain acquired by the ``ClientSession`` after an operation is attempted.
 Attempting to account for all these scenarios has risks that do not justify the potential guaranteed ``ServerSession`` allocation limiting.
 
