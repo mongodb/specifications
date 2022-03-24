@@ -318,9 +318,11 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 
 9. Disable the failpoint.
 
-10. Repeat steps 7 and 8 without any failpoints and assert that each mongos was
-    selected roughly 50% (within +/- 10%) of the time.
+10. Start 10 concurrent threads / tasks that each run 100 `fundOne` operations
+    with empty filters using that client.
 
+11. Using command monitoring events, assert that each mongos was selected
+    roughly 50% of the time (within +/- 10%).
 
 Application-Provided Server Selector
 ====================================
