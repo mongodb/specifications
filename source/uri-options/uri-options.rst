@@ -116,6 +116,7 @@ String spec
 <https://github.com/mongodb/specifications/blob/master/source/connection-string/connection-string-spec.rst>`_
 pertaining to URI options apply here.
 
+.. _uri.options:
 
 .. list-table::
    :header-rows: 1

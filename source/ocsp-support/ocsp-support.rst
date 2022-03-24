@@ -186,8 +186,10 @@ MongoClient Configuration
 This specification introduces the client-level configuration options
 defined below.
 
+.. _ocsp.tlsDisableOCSPEndpointCheck:
+
 tlsDisableOCSPEndpointCheck
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Drivers that can, on a per MongoClient basis, disable non-stapled OCSP
 while keeping stapled OCSP enabled MUST implement this option.
@@ -211,8 +213,10 @@ library hard-fails only on Windows) then this option MUST default to
 true only on the platform where the driver exhibits hard-fail behavior,
 and a driver MUST document this behavior.
 
+.. _ocsp.tlsDisableCertificateRevocationCheck:
+
 tlsDisableCertificateRevocationCheck
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Drivers whose TLS libraries support an option to toggle general
 certificate revocation checking must implement this option if enabling

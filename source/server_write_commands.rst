@@ -52,25 +52,25 @@ Generic Fields
       ..., writeConcern: { w: 2 }, ...
 
   Note that the write concern will be issued at the end of the batch application.
-  
+
   We also support the "unusual" write concern: ``{ w : 0 }``, which means the user is uninterested
   in the result of the write at this time.  In this protocol, there is no provision to ignore the
-  response packet.  The protocol, however, sends a very condensed response when it sees that 
+  response packet.  The protocol, however, sends a very condensed response when it sees that
   write concern (e.g. omits everything but the ``ok`` field).
 
 * ``ordered``: optional, with a boolean type. If true, applies the batch's items in the same
-  order the items appear, ie. sequentially.  If ``ordered`` is false, the server applies the 
-  batch items in no particular order -- possibly, in parallel.  The default value is true, 
+  order the items appear, ie. sequentially.  If ``ordered`` is false, the server applies the
+  batch items in no particular order -- possibly, in parallel.  The default value is true,
   sequential.
 
     example: ::
 
      ..., ordered: false, ...
-     
+
 * ``metadata``: RESERVED FOR MONGOS USE, future use.
 
 * ``failFast``: NOT YET USED, RESERVED FOR FUTURE USE.  Optional, with a boolean type.  If false, allows
-  the batch to continue processing even if some elements in the batch have errors.  If true, 
+  the batch to continue processing even if some elements in the batch have errors.  If true,
   the batch will stop on first error(s) it detects (write concern will not be applied).  Defaults
   to true for ordered batches, and false for unordered batches.
 
@@ -138,15 +138,23 @@ ensure a batch can be correctly processed, two limits must be respected.
 
 Both of these limits can be found using hello():
 
-* ``maxBsonObjectSize`` : currently 16 MiB, this is the maximum size of writes (excluding command overhead)
-  that should be sent to the server.  Documents to be inserted, query documents for updates and
-  deletes, and update expression documents must be <= this size.  Once these documents have been
-  assembled into a write command the total size may exceed ``maxBsonObjectSize`` by a maximum of
-  16 KiB, allowing users to insert documents up to ``maxBsonObjectSize``.
+.. glossary::
 
-* ``maxWriteBatchSize`` : currently 1000, this is the maximum number of inserts, updates, or deletes that 
-  can be included in a write batch.  If more than this number of writes are included, the server cannot
-  guarantee space in the response document to reply to the batch.
+  ``maxBsonObjectSize``
+
+    currently 16 MiB, this is the maximum size of writes (excluding command
+    overhead) that should be sent to the server. Documents to be inserted, query
+    documents for updates and deletes, and update expression documents must be
+    <= this size. Once these documents have been assembled into a write command
+    the total size may exceed ``maxBsonObjectSize`` by a maximum of 16 KiB,
+    allowing users to insert documents up to ``maxBsonObjectSize``.
+
+  ``maxWriteBatchSize``
+
+    currently 1000, this is the maximum number of inserts, updates, or deletes
+    that can be included in a write batch. If more than this number of writes
+    are included, the server cannot guarantee space in the response document to
+    reply to the batch.
 
 If the batch is too large in size or bytes, the command may fail.
 
@@ -158,7 +166,7 @@ There are two types of responses to any command:
 - a ``command failure``, which indicates the command itself did not complete successfully.  Example
   command failures include failure to authorize, failure to parse, operation aborted by user,
   and unexpected errors during execution (these should be very rare).
-   
+
 - successful command execution, which for write commands may include write errors.
 
 Command Failure Fields
@@ -188,10 +196,10 @@ The main body of a successful response is below:
 
 .. _n:
 
-* ``n``: Mandatory field, with a positive numeric type or zero. This field contains the aggregated 
+* ``n``: Mandatory field, with a positive numeric type or zero. This field contains the aggregated
   number of documents successfully affected by the entire write command. This includes the number of
-  documents inserted, upserted, updated, and deleted.  We do not report on the individual number of 
-  documents affected by each batch item. If the application would wish so, then the application 
+  documents inserted, upserted, updated, and deleted.  We do not report on the individual number of
+  documents affected by each batch item. If the application would wish so, then the application
   should issue one-item batches.
 
 .. _writeErrors:
@@ -218,9 +226,9 @@ request types require additional response information, as described below.
   field is only and always present for batch updates.  ``nModified`` is the physical number of documents
   affected by an update, while ``n`` is the logical number of documents matched by the update's query.
   For example, if we have 100 documents like ::
-  
+
     { bizName: "McD", employees: ["Alice", "Bob", "Carol"] }
-    
+
   and we are adding a single new employee using $addToSet for each business document, ``n`` is useful to
   ensure all businesses have been updated, and ``nModified`` is useful to know which businesses actually
   added a new employee.
@@ -228,7 +236,7 @@ request types require additional response information, as described below.
 .. _upserted:
 
 * ``upserted``: Optional field, with an array type.  If any upserts occurred in the batch,
-  the array contains a BSON document listing the ``index`` and ``_id`` of the newly 
+  the array contains a BSON document listing the ``index`` and ``_id`` of the newly
   upserted document in the database.
 
 .. _lastOp:
@@ -363,7 +371,7 @@ Checking if command failed
 To check if a write command _failed_
 
 ::
-  
+
   if (ok == 0) {
     // The command itself failed (authentication failed.., syntax error)
   } else if (writeErrors is array) {
@@ -390,7 +398,7 @@ Command failure to parse or authenticate
       code: <number>,
       errmsg: "Failed to parse batched update request, missing update expression 'u' field"
     }
-    
+
     { ok: 0,
       code: <number>,
       errmsg: "Not authorized to perform update"
