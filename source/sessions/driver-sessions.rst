@@ -1366,4 +1366,4 @@ Change log
 :2021-04-08: Adding in behaviour for load balancer mode.
 :2020-05-26: Simplify logic for determining sessions support
 :2022-01-28: Implicit sessions MUST obtain server session after connection checkout succeeds
-:2022-03-16: ServerSession Pooling is required and clarifies session acquisition bounding
+:2022-03-24: ServerSession Pooling is required and clarifies session acquisition bounding
