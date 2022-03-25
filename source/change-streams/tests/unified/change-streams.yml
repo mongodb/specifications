@@ -177,3 +177,54 @@ tests:
                 comment: "comment"
               commandName: getMore
               databaseName: *database0
+
+  - description: "Test server error on projecting out _id"
+    runOnRequirements:
+      - minServerVersion: "3.6"
+    operations:
+      - name: createChangeStream
+        object: *collection0
+        arguments:
+          pipeline: [ { $project: { _id: 0 } } ]
+        saveResultAsEntity: &changeStream0 changeStream0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: {
+            "_id": 1,
+            "a": 1
+          }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectError:
+          errorCode: 280
+          errorCodeName: "ChangeStreamFatalError"
+          errorLabelsContain: [ "NonResumableChangeStreamError" ]
+
+
+  - description: "Test projection in change stream returns expected fields"
+    runOnRequirements:
+      - minServerVersion: "3.6"
+    operations:
+      - name: createChangeStream
+        object: *collection0
+        arguments:
+          pipeline: [ { $project: { optype: "$operationType", ns: 1, newField: "value" } } ]
+        saveResultAsEntity: &changeStream0 changeStream0
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: {
+            "_id": 1,
+            "a": 1
+          }
+      - name: iterateUntilDocumentOrError
+        object: *changeStream0
+        expectResult: {
+          "optype": "insert",
+          "ns": {
+            "db": "database0",
+            "coll": "collection0"
+          },
+          "newField": "value"
+        }
