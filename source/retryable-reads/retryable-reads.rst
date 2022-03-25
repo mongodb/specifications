@@ -481,7 +481,7 @@ Documentation
 
 3. Driver release notes MUST make it clear to users that they may need to adjust
    custom retry logic to prevent an application from inadvertently retrying for
-   too long (see `Backwards Compatibility<#backwards-compatibility>`__ for
+   too long (see `Backwards Compatibility <#backwards-compatibility>`__ for
    details).
 
 4. Drivers implementing retryability for their generic command runner for read
