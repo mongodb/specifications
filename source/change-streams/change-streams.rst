@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-03-14
-:Version: 1.13
+:Last Modified: 2022-03-25
+:Version: 1.13.1
 
 .. contents::
 
@@ -132,12 +132,19 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      *
      * @note: Whether a change is reported as an event of the operation type
      * `update` or `replace` is a server implementation detail.
+     *
+     * @note: The server will add new `operationType` values in the future and drivers
+     * MUST NOT err when they encounter a new `operationType`. Unknown `operationType`
+     * values may be represented by "unknown" or the literal string value.
      */
     operationType: "insert" | "update" | "replace" | "delete" | "invalidate" | "drop" | "dropDatabase" | "rename";
 
     /**
-     * Contains two fields: “db” and “coll” containing the database and
+     * Contains two fields: "db" and "coll" containing the database and
      * collection name in which the change happened.
+     *
+     * @note: Drivers MUST NOT err when extra fields are encountered in the `ns` document
+     * as the server may add new fields in the future such as `viewOn`.
      */
     ns: Document;
 
@@ -470,6 +477,11 @@ Presently change streams support only a subset of available aggregation stages:
 - ``$redact``
 
 A driver MUST NOT throw an exception if any unsupported stage is provided, but instead depend on the server to return an error.
+
+A driver MUST NOT throw an exception if a user adds, removes, or modifies fields using ``$project``. The server will produce an error if ``_id``
+is projected out, but a user should otherwise be able to modify the shape of the change stream event as desired. This may require the result
+to be deserialized to a ``BsonDocument`` or custom-defined type rather than a ``ChangeStreamDocument``. It is the responsiblity of the
+user to ensure that the deserialized type is compatible with the specified ``$project`` stage.
 
 The aggregate helper methods MUST have no new logic related to the ``$changeStream`` stage. Drivers MUST be capable of handling `TAILABLE_AWAIT <https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst#read>`_  cursors from the aggregate command in the same way they handle such cursors from find.
 
@@ -931,4 +943,6 @@ Changelog
 |            | inherited ``comment``.                                     |
 +------------+------------------------------------------------------------+
 | 2022-02-28 | Added ``to`` to ``ChangeStreamDocument``.                  |
++------------+------------------------------------------------------------+
+| 2022-03-25 | Do not error when parsing change stream event documents.   |
 +------------+------------------------------------------------------------+
