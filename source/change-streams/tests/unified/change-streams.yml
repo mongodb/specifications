@@ -140,6 +140,9 @@ tests:
   - description: "Test that comment is set on getMore"
     runOnRequirements:
       - minServerVersion: "4.4.0"
+        # Topolgies are limited because of potentially empty getMore responses
+        # on sharded clusters.
+        # See https://jira.mongodb.org/browse/DRIVERS-2248 for more details.
         topologies: [ replicaset ]
     operations:
       - name: createChangeStream
@@ -183,6 +186,9 @@ tests:
     runOnRequirements:
       - minServerVersion: "3.6.0"
         maxServerVersion: "4.3.99"
+        # Topolgies are limited because of potentially empty getMore responses
+        # on sharded clusters.
+        # See https://jira.mongodb.org/browse/DRIVERS-2248 for more details.
         topologies: [ replicaset ]
     operations:
       - name: createChangeStream
