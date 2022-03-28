@@ -21,4 +21,4 @@ jobs:
           pip3 install poetry
           poetry install
       - name: Check RST files with rstcheck
-        run: make -j8 lint
+        run: poetry run make -j8 lint
