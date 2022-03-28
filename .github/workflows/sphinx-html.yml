@@ -1,0 +1,23 @@
+name: Generate HTML Pages with Sphinx
+
+on:
+  push:
+    branches: [master]
+  pull_request: ~
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install Sphinx Tools
+        run: |
+          python -m pip install -U pip
+          pip3 install poetry
+          poetry install
+      - name: Generate the HTML Pages
+        run: poetry run make -j8 hmtl

@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "mongodb-specifications"
+version = "0.0.0"
+description = "MongoDB Specification Documents"
+authors = []
+readme = "README.rst"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+Sphinx = "^4.4.0"
+doc8 = "^0.10.1"
+rstcheck = "^3.3.1"
+toml = "^0.10.2"
+
+[tool.poetry.dev-dependencies]
+
+[tool.doc8]
+ignore = [
+    "D001",  # Line too long
+    "D002",  # Trailing whitespace
+    "D003",  # Tab used for indent
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
