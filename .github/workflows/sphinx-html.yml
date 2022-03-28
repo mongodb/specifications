@@ -20,4 +20,4 @@ jobs:
           pip3 install poetry
           poetry install
       - name: Generate the HTML Pages
-        run: poetry run make -j8 hmtl
+        run: poetry run make -j8 html
