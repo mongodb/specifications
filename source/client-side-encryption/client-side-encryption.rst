@@ -305,7 +305,7 @@ See `What's the deal with metadataClient, keyVaultClient, and the internal clien
 
 keyVaultClient, metadataClient, and the internal MongoClient
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The following pseudo-code describes the configuration behavior for the three ``MongoClient``s:
+The following pseudo-code describes the configuration behavior for the three ``MongoClient`` objects:
 
 .. code::
 
@@ -816,7 +816,7 @@ MongoClient fails to connect after spawning, the server selection error
 is propagated to the user.
 
 Single-threaded drivers MUST connect with `serverSelectionTryOnce=false <../server-selection/server-selection.rst#serverselectiontryonce>`_
-, connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
+, connectTimeoutMS=10000, and MUST bypass `cooldownMS <../server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__ when connecting to mongocryptd. See `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with mongocryptdBypassSpawn=true,
 then the driver is not responsible for spawning mongocryptd. If server
@@ -1330,7 +1330,7 @@ Why cache keys?
 We can't re-fetch the key on each operation, the performance goal for
 this project requires us to cache. We do need a revocation mechanism,
 based upon periodic checking from the client. Initially this window will
-not be configurable. See future work: `Make the key caching window configurable`__.
+not be configurable.
 
 Why require including a C library?
 ----------------------------------
@@ -1468,7 +1468,7 @@ Meaning if the first attempt to mongocryptd fails to connect, then the user
 would observe a 5 second delay. This is not configurable in the URI, so this
 must be overriden internally. Since mongocryptd is a local process, there should
 only be a very short delay after spawning mongocryptd for it to start listening
-on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`_.
+on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__.
 
 Because single threaded drivers may exceed ``serverSelectionTimeoutMS`` by the
 duration of the topology scan, ``connectTimeoutMS`` is also reduced.

@@ -210,8 +210,8 @@ For example,
 .. code:: typescript
 
 	db.command({
-		create: “myCollection”,
-		collation: {locale: “en_US”}
+		create: "myCollection",
+		collation: {locale: "en_US"}
 	});
 
 -------------
@@ -226,7 +226,7 @@ user will provide BulkWrite operation models as in the following example:
 .. code:: typescript
 
   db.collection.bulkWrite([
-    {insertOne: { … }},
+    {insertOne: { ... }},
 
     {updateOne: { filter: { name: "PING" },
                           update: { $set: { name: "pong" }},

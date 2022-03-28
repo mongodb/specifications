@@ -334,19 +334,19 @@ The command response will be as follows:
       "cursorsKilled": [
         <cursor id 1>
         <cursor id 2>,
-        …
+        ...
         <cursor id n>
       ],
       "cursorsNotFound": [
         <cursor id 1>
         <cursor id 2>,
-        …
+        ...
         <cursor id n>
       ],
       "cursorsAlive": [
         <cursor id 1>
         <cursor id 2>,
-        …
+        ...
         <cursor id n>
       ],
       ok: 1

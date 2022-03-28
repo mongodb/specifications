@@ -804,7 +804,7 @@ For example:
 
 - A client creates a ``ChangeStream``, and calls ``watch``
 - The ``ChangeStream`` sends out the initial ``aggregate`` call, and receives a response
-with no initial values. Because there are no initial values, there is no latest resumeToken.
+  with no initial values. Because there are no initial values, there is no latest resumeToken.
 - The client's network is partitioned from the server, causing the client's ``getMore`` to time out
 - Changes occur on the server.
 - The network is unpartitioned

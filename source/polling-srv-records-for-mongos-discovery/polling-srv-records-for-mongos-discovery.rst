@@ -79,7 +79,7 @@ rescan is similar, but not identical to the behaviour of initial seedlist
 discovery.  Periodic scan MUST follow these rules:
 
 - The driver will query the DNS server for SRV records on
-``{hostname}.{domainname}``, prefixed with the SRV service name and protocol.
+  ``{hostname}.{domainname}``, prefixed with the SRV service name and protocol.
   The SRV service name is provided in the srvServiceName_ URI option and
   defaults to ``mongodb``. The protocol is always ``tcp``. After prefixing, the
   URI should look like: ``_{srvServiceName}._tcp.{hostname}.{domainname}``.
