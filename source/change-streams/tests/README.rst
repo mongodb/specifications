@@ -239,7 +239,3 @@ The following tests have not yet been automated, but MUST still be tested. All t
 #. **Removed**
 #. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has not received any results yet MUST include a ``startAfter`` option and MUST NOT include a ``resumeAfter`` option when resuming a change stream.
 #. ``$changeStream`` stage for ``ChangeStream`` started with ``startAfter`` against a server ``>=4.1.1`` that has received at least one result MUST include a ``resumeAfter`` option and MUST NOT include a ``startAfter`` option when resuming a change stream.
-
-#. When a ``ChangeStream`` returns a ``ChangeStreamDocument`` containing an ``operationType`` of ``addedInFutureMongoDBVersion``, the driver MUST NOT err.
-#. When a ``ChangeStream`` returns a ``ChangeStreamDocument`` containing a ``newField`` with value ``newFieldValue``, the driver MUST NOT err.
-#. When a ``ChangeStream`` returns a ``ChangeStreamDocument`` containing an ``ns`` with value ``{viewOn: "db.coll"}``, the driver MUST NOT err.
