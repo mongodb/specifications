@@ -20,12 +20,12 @@ BSON Binary Subtype 6
 Abstract
 ========
 
-Client side encryption requires a new binary subtype to store (1)
-encrypted ciphertext with metadata, and (2) binary markings indicating
-what values must be encrypted in a document. (1) is stored in the
-server, but (2) is only used in the communication protocol between
-libmongocrypt and mongocryptd described in `Driver Spec: Client Side Encryption
-Encryption <https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/client-side-encryption.rst>`_.
+Client side encryption requires a new binary subtype to store (1) encrypted
+ciphertext with metadata, and (2) binary markings indicating what values must be
+encrypted in a document. (1) is stored in the server, but (2) is only used in
+the communication protocol between libmongocrypt and `mongocryptd`/`cslfle`
+described in `Driver Spec: Client Side Encryption Encryption
+<https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/client-side-encryption.rst>`_.
 
 META
 ====
@@ -41,10 +41,9 @@ has multiple formats determined by the first byte, but are all related
 to client side encryption. The first byte indicates the type and layout
 of the remaining data.
 
-All values are represented in little endian. The payload is generally
-optimized for storage size. The exception is the intent-to-encrypt
-markings which are only used between libmongocrypt and mongocryptd and
-never persisted.
+All values are represented in little endian. The payload is generally optimized
+for storage size. The exception is the intent-to-encrypt markings which are only
+used between libmongocrypt and `mongocryptd`/`csfle` and never persisted.
 
 .. code:: typescript
 
@@ -134,9 +133,9 @@ more in the future) of our 124 remaining subtypes.
 
 Why are intent-to-encrypt markings needed?
 ------------------------------------------
-Intent-to-encrypt markings provide a simple way for mongocryptd to
+Intent-to-encrypt markings provide a simple way for `mongocryptd`/`csfle` to
 communicate what values need to be encrypted to libmongocrypt.
-Alternatively, mongocryptd could respond with a list of field paths. But
+Alternatively, one could respond with a list of field paths. But
 field paths are difficult to make unambiguous, and even the query
 language is not always consistent.
 
@@ -167,7 +166,7 @@ underlying encrypted BSON type is correct.
 Reference Implementation
 ========================
 
-libmongocrypt and mongocryptd will be the reference implementation of
+libmongocrypt and `mongocryptd`/`csfle` will be the reference implementation of
 how BSON binary subtype 6 is used.
 
 Security Implication
