@@ -1,6 +1,7 @@
 description: "change-streams"
 schemaVersion: "1.0"
 runOnRequirements:
+  - minServerVersion: "3.6"
   - topologies: [ replicaset, sharded-replicaset ]
 createEntities:
   - client:
@@ -97,8 +98,7 @@ tests:
 
   - description: "Test with document comment - pre 4.4"
     runOnRequirements:
-      - minServerVersion: "3.6.0"
-        maxServerVersion: "4.2.99"
+      - maxServerVersion: "4.2.99"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -118,8 +118,6 @@ tests:
                 comment: *comment0
 
   - description: "Test with string comment"
-    runOnRequirements:
-      - minServerVersion: "3.6.0"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -179,8 +177,6 @@ tests:
               databaseName: *database0
 
   - description: "Test unknown operationType MUST NOT err"
-    runOnRequirements:
-      - minServerVersion: "3.6"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -191,23 +187,16 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: {
-            "_id": 1,
-            "a": 1
-          }
+          document: { "_id": 1, "a": 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectResult: {
-          "operationType": "addedInFutureMongoDBVersion",
-          "ns": {
-            "db": "database0",
-            "coll": "collection0"
-          }
-        }
+        expectResult:
+          operationType: "addedInFutureMongoDBVersion"
+          ns:
+            db: *database0
+            coll: *collection0
 
   - description: "Test newField added in response MUST NOT err"
-    runOnRequirements:
-      - minServerVersion: "3.6"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -218,24 +207,17 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: {
-            "_id": 1,
-            "a": 1
-          }
+          document: { "_id": 1, "a": 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectResult: {
-          "operationType": "insert",
-          "ns": {
-            "db": "database0",
-            "coll": "collection0"
-          },
-          "newField": "newFieldValue"
-        }
+        expectResult:
+          operationType: "insert"
+          ns:
+            db: *database0
+            coll: *collection0
+          newField: "newFieldValue"
 
   - description: "Test new structure in ns document MUST NOT err"
-    runOnRequirements:
-      - minServerVersion: "3.6"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -246,22 +228,15 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: {
-            "_id": 1,
-            "a": 1
-          }
+          document: { "_id": 1, "a": 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectResult: {
-          "operationType": "insert",
-          "ns": {
-            "viewOn": "db.coll"
-          }
-        }
+        expectResult:
+          operationType: "insert"
+          ns:
+            viewOn: "db.coll"
 
   - description: "Test modified structure in ns document MUST NOT err"
-    runOnRequirements:
-      - minServerVersion: "3.6"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -272,24 +247,17 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: {
-            "_id": 1,
-            "a": 1
-          }
+          document: { "_id": 1, "a": 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectResult: {
-          "operationType": "insert",
-          "ns": {
-            "db": "database0",
-            "coll": "collection0",
-            "viewOn": "db.coll"
-          }
-        }
+        expectResult:
+          operationType: "insert"
+          ns:
+            db: *database0
+            coll: *collection0
+            viewOn: "db.coll"
 
   - description: "Test server error on projecting out _id"
-    runOnRequirements:
-      - minServerVersion: "3.6"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -299,10 +267,7 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: {
-            "_id": 1,
-            "a": 1
-          }
+          document: { "_id": 1, "a": 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
         expectError:
@@ -312,8 +277,6 @@ tests:
 
 
   - description: "Test projection in change stream returns expected fields"
-    runOnRequirements:
-      - minServerVersion: "3.6"
     operations:
       - name: createChangeStream
         object: *collection0
@@ -323,17 +286,12 @@ tests:
       - name: insertOne
         object: *collection0
         arguments:
-          document: {
-            "_id": 1,
-            "a": 1
-          }
+          document: { "_id": 1, "a": 1 }
       - name: iterateUntilDocumentOrError
         object: *changeStream0
-        expectResult: {
-          "optype": "insert",
-          "ns": {
-            "db": "database0",
-            "coll": "collection0"
-          },
-          "newField": "value"
-        }
+        expectResult:
+          optype: "insert"
+          ns:
+            db: *database0
+            coll: *collection0
+          newField: "value"
