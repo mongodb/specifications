@@ -836,7 +836,7 @@ Client Second:
    }
 
 In response to the Server First message, drivers MUST send an ``authorization header``. Drivers MUST follow the
-`Signature Version 4 Signing Process <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_ to
+`Signature Version 4 Signing Process <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`__ to
 calculate the signature for the ``authorization header``. The required and optional headers and their associated
 values drivers MUST use for the canonical request (see `Summary of Signing Steps
 <https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html>`_) are specified in the table
@@ -850,7 +850,7 @@ The following example shows a finished Authorization header.
 
 .. code:: javascript
 
-    Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7
+    Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7    
 
 The following diagram is a summary of the steps drivers MUST follow to calculate the signature.
 
@@ -865,8 +865,8 @@ Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
 Host*                    Host field from Server First Message
 Region                   Derived from Host - see `Region Calculation`_ below
-X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`_
-X-Amz-Security-Token*    Optional, see `Amazon Documentation`_
+X-Amz-Date*              See `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/sigv4_elements.html>`__
+X-Amz-Security-Token*    Optional, see `Amazon Documentation <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`__
 X-MongoDB-Server-Nonce*  Base64 string of server nonce
 X-MongoDB-GS2-CB-Flag*   ASCII lower-case character ‘n’ or ‘y’ or ‘p’
 X-MongoDB-Optional-Data* Optional data, base64 encoded representation of the optional object provided by the client

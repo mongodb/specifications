@@ -124,8 +124,8 @@ remove.
 
 Current shell implementation
 ============================
-The shell implementation serves as a guide only. One main difference between the shell implementation and a proper driver implementation
-is that unordered bulk operations are not optimized by re-ordering the writes; only the execution semantics are kept correct.
+The shell implementation serves as a guide only. One main difference between the shell implementation and a proper driver implementation 
+is that unordered bulk operations are not optimized by re-ordering the writes; only the execution semantics are kept correct. 
 You can find it here:
 
 https://github.com/mongodb/mongo/blob/master/src/mongo/shell/bulk_api.js

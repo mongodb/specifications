@@ -314,7 +314,9 @@ Read
      * and providing one will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.
+     * subsequent getMore commands run on the same cursor for server
+     * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
+     * attach a comment to getMore commands.
      */
     comment: Optional<any>;
 
@@ -525,7 +527,9 @@ Read
      * and providing a non-string type will result in a server-side error.
      *
      * If a comment is provided, drivers MUST attach this comment to all
-     * subsequent getMore commands run on the same cursor.
+     * subsequent getMore commands run on the same cursor for server
+     * versions 4.4 and above. For server versions below 4.4 drivers MUST NOT
+     * attach a comment to getMore commands.
      */
     comment: Optional<any>;
 

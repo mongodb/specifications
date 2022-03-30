@@ -1875,7 +1875,7 @@ Meaning if the first attempt to mongocryptd fails to connect, then the user
 would observe a 5 second delay. This is not configurable in the URI, so this
 must be overriden internally. Since mongocryptd is a local process, there should
 only be a very short delay after spawning mongocryptd for it to start listening
-on sockets. See the server monitoring spec description of `cooldownMS <sm.cooldownMS>`.
+on sockets. See the SDAM spec description of `cooldownMS <../source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#cooldownms>`__.
 
 Because single threaded drivers may exceed ``serverSelectionTimeoutMS`` by the
 duration of the topology scan, ``connectTimeoutMS`` is also reduced.
