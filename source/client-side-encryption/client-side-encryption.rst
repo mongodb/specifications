@@ -517,13 +517,11 @@ following :doc:`URI options </uri-options/uri-options>`:
 - ``tlsDisableCertificateRevocationCheck``
 
 
-See the OCSP specification for a description of the default values of
-`tlsDisableOCSPEndpointCheck <ocsp.tlsDisableOCSPEndpointCheck>` and
-`tlsDisableCertificateRevocationCheck <ocsp.tlsDisableCertificateRevocationCheck>`
-Drivers MUST NOT modify the default value of
-`tlsDisableOCSPEndpointCheck <ocsp.tlsDisableOCSPEndpointCheck>` and
-`tlsDisableCertificateRevocationCheck <ocsp.tlsDisableCertificateRevocationCheck>`
-for KMS TLS connections.
+See :doc:`the OCSP specification </ocsp-support/ocsp-support>` for a description
+of the default values of ``tlsDisableOCSPEndpointCheck`` and
+``tlsDisableCertificateRevocationCheck`` Drivers MUST NOT modify the default
+value of ``tlsDisableOCSPEndpointCheck`` and
+``tlsDisableCertificateRevocationCheck`` for KMS TLS connections.
 
 .. seealso:: `Why do KMS providers require TLS options?`_
 
@@ -1213,9 +1211,10 @@ Connecting to mongocryptd
 -------------------------
 
 Single-threaded drivers MUST connect with
-`serverSelectionTryOnce=false <ss.serverSelectionTryOnce>` ,
-``connectTimeoutMS=10000``, and MUST bypass `cooldownMS <sm.cooldownms>`
-when connecting to mongocryptd. See
+:doc:`serverSelectionTryOnce=false </server-selection/server-selection>`,
+``connectTimeoutMS=10000``, and MUST bypass
+:doc:`cooldownMS </server-discovery-and-monitoring/server-monitoring>` when
+connecting to mongocryptd. See
 `Why are serverSelectionTryOnce and cooldownMS disabled for single-threaded drivers connecting to mongocryptd?`_.
 
 If the ClientEncryption is configured with ``mongocryptdBypassSpawn=true``, then
@@ -1307,7 +1306,7 @@ splitting occurs relative to automatic encryption is implementation-dependent.
 
 Drivers MUST not reduce the size limits for a single write before automatic
 encryption. I.e. if a single document has size larger than 2MiB (but less than
-:term:`maxBsonObjectSize`) proceed with automatic encryption.
+``maxBsonObjectSize``) proceed with automatic encryption.
 
 Drivers MUST document the performance limitation of enabling client side
 encryption by including the following documentation in MongoClient:

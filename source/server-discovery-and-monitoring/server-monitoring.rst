@@ -217,8 +217,6 @@ command, it MUST use the `streaming protocol`_.
 Single-threaded monitoring
 ``````````````````````````
 
-.. _sm.cooldownMS:
-
 cooldownMS
 ~~~~~~~~~~
 

@@ -34,7 +34,7 @@ maxWireVersion < 5 or if the user is using opcode-based unacknowledged writes.
 The CRUD and Index Management specs include the collation option in
 descriptions of API elements where it is supported. This document provides
 more details on the specific driver behavior required to handle the collation
-option.
+option. 
 
 META
 ====
@@ -270,7 +270,7 @@ There should be no backwards compatibility concerns.
 Reference Implementation
 ========================
 
-Reference Implementation:
+Reference Implementation: 
   `RUBY-1126 <https://jira.mongodb.org/browse/RUBY-1126>`_
   `JAVA-2241 <https://jira.mongodb.org/browse/JAVA-2241>`_
 
@@ -281,7 +281,7 @@ Q: Insert doesn’t take a collation?
 
 A: No, only queries take collation. A collation is a per operation value, it
 does not affect how the data is stored.
-
+  
 Q: Delete and Update take a collation?
 
 A: Yes, delete and update operations use the query system to match against a

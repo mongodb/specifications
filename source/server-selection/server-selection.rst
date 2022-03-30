@@ -273,8 +273,6 @@ a backward-breaking change.
 
 mongos currently uses ``localThreshold`` and MAY continue to do so.
 
-.. _ss.serverSelectionTimeoutMS:
-
 serverSelectionTimeoutMS
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -298,8 +296,6 @@ topology is in flux can set this to a small number.
 A serverSelectionTimeoutMS of zero MAY have special meaning in some drivers;
 zero's meaning is not defined in this spec, but all drivers SHOULD document
 the meaning of zero.
-
-.. _ss.serverSelectionTryOnce:
 
 serverSelectionTryOnce
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -394,8 +390,6 @@ is a list with an empty tag set: ``[{}]``. The default ``maxStalenessSeconds``
 is -1 or null, depending on the language. The default ``hedge`` is unset.
 
 Each is explained in greater detail below.
-
-.. _ss.mode:
 
 mode
 ````

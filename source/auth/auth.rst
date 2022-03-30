@@ -46,7 +46,7 @@ Definitions
 Credential
 	The pieces of information used to establish the authenticity of a user. This is composed of an identity and some form of evidence such as a password or a certificate.
 
-FQDN
+FQDN 
 	Fully Qualified Domain Name
 
 Mechanism
@@ -70,7 +70,7 @@ Client Implementation
 MongoCredential
 ---------------
 
-Drivers SHOULD contain a type called ``MongoCredential``. It SHOULD contain some or all of the following information.
+Drivers SHOULD contain a type called `MongoCredential`. It SHOULD contain some or all of the following information.
 
 username (string)
 	* Applies to all mechanisms.
@@ -254,8 +254,8 @@ Caching credentials in SCRAM
 
 In the implementation of SCRAM authentication mechanisms (e.g. SCRAM-SHA-1
 and SCRAM-SHA-256), drivers MUST maintain a cache of computed SCRAM credentials.
-The cache entries SHOULD be identified by the password, salt, iteration count,
-and a value that uniquely identifies the authentication mechanism (e.g. "SHA1"
+The cache entries SHOULD be identified by the password, salt, iteration count, 
+and a value that uniquely identifies the authentication mechanism (e.g. "SHA1" 
 or "SCRAM-SHA-256").
 
 The cache entry value MUST be either the ``saltedPassword`` parameter or the
@@ -434,7 +434,7 @@ Many languages will have the ability to utilize 3rd party libraries. The server 
 GSSAPI
 ~~~~~~
 
-:since:
+:since: 
 	2.4 Enterprise
 
 	2.6 Enterprise on Windows
@@ -654,7 +654,7 @@ source
 	MUST be specified. Defaults to the database name if supplied on the connection string or ``admin``.
 
 password
-	MUST be specified.
+	MUST be specified. 
 
 mechanism
 	MUST be "SCRAM-SHA-1"
@@ -734,33 +734,33 @@ MONGODB-AWS
 
 :since: 4.4
 
-MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secret access key), `temporary AWS IAM credentials <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html>`_ obtained from an
-`AWS Security Token Service (STS) <https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html>`_
-`Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request,
+MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secret access key), `temporary AWS IAM credentials <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html>`_ obtained from an 
+`AWS Security Token Service (STS) <https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html>`_ 
+`Assume Role <https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html>`_ request, 
 or temporary AWS IAM credentials assigned to an `EC2 instance <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html>`_ or ECS task. Temporary credentials, in addition to an access key ID and a secret access key, includes a security (or session) token.
 
-MONGODB-AWS requires that a client create a randomly generated nonce. It is
-imperative, for security sake, that this be as secure and truly random as possible. Additionally, the secret access key and only the secret access key is sensitive. Drivers MUST take proper precautions to ensure we do not leak this info.
+MONGODB-AWS requires that a client create a randomly generated nonce. It is 
+imperative, for security sake, that this be as secure and truly random as possible. Additionally, the secret access key and only the secret access key is sensitive. Drivers MUST take proper precautions to ensure we do not leak this info. 
 
 All messages between MongoDB clients and servers are sent as BSON V1.1 Objects in the payload field of saslStart and saslContinue.
-All fields in these messages have a "short name" which is used in the serialized
+All fields in these messages have a "short name" which is used in the serialized 
 BSON representation and a human-readable "friendly name" which is used in this specification. They are as follows:
 
-==== ==================== ================= ==============================================================================================================================================
+==== ==================== ================= ============================================================================================================================================== 
 Name Friendly Name        Type              Description
 ==== ==================== ================= ==============================================================================================================================================
-r    client nonce         BinData Subtype 0 32 byte cryptographically secure random number
+r    client nonce         BinData Subtype 0 32 byte cryptographically secure random number 
 p    gs2-cb-flag          int32             The integer representation of the ASCII charater 'n' or 'y', i.e., ``110`` or ``121``
 s    server nonce         BinData Subtype 0 64 bytes total, 32 bytes from the client first message and a 32 byte cryptographically secure random number generated by the server
-h    sts host             string            FQDN of the STS service
+h    sts host             string            FQDN of the STS service 
 a    authorization header string            Authorization header for `AWS Signature Version 4 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 d    X-AMZ-Date           string            Current date in UTC. See `AWS Signature Version 4 <https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_
 t    X-AMZ-Security-Token string            Optional AWS security token
-==== ==================== ================= ==============================================================================================================================================
+==== ==================== ================= ============================================================================================================================================== 
 
 Drivers MUST NOT advertise support for channel binding, as the server does
 not support it and legacy servers may fail authentication if drivers advertise
-support. The client-first-message MUST set the gs2-cb-flag to the integer representation
+support. The client-first-message MUST set the gs2-cb-flag to the integer representation 
 of the ASCII character ``n``, i.e., ``110``.
 
 Conversation
@@ -776,7 +776,7 @@ Client First
 
 .. code:: javascript
 
-   {
+   { 
         "r" : new BinData(0, "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjI="),
         "p" : 110
    }
@@ -785,7 +785,7 @@ Server First
 
 .. code:: javascript
 
-   {
+   { 
        "s" : new BinData(0, "dzw1U2IwSEtgaWI0IUxZMVJqc2xuQzNCcUxBc05wZjIGS0J9EgLwzEZ9dIzr/hnnK2mgd4D7F52t8g9yTC5cIA=="),
        "h" : "sts.amazonaws.com"
    }
@@ -808,9 +808,9 @@ Client First
 
 .. code:: javascript
 
-   {
-       "saslStart" : 1,
-       "mechanism" : "MONGODB-AWS"
+   { 
+       "saslStart" : 1, 
+       "mechanism" : "MONGODB-AWS" 
        "payload" : new BinData(0, "NAAAAAVyACAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz4QcABuAAAAAA==")
    }
 
@@ -819,8 +819,8 @@ Server First
 .. code:: javascript
 
    {
-       "conversationId" : 1,
-       "done" : false,
+       "conversationId" : 1, 
+       "done" : false, 
        "payload" : new BinData(0, "ZgAAAAVzAEAAAAAAWj0lSjp8M0BMKGU+QVAzRSpWfk0hJigqO1V+b0FaVz5Rj7x9UOBHJLvPgvgPS9sSzZUWgAPTy8HBbI1cG1WJ9gJoABIAAABzdHMuYW1hem9uYXdzLmNvbQAA"),
        "ok" : 1.0
    }
@@ -857,9 +857,9 @@ The following diagram is a summary of the steps drivers MUST follow to calculate
 .. image:: includes/calculating_a_signature.png
 
 ======================== ======================================================================================================
-Name                     Value
+Name                     Value       
 ======================== ======================================================================================================
-HTTP Request Method      POST
+HTTP Request Method      POST 
 URI                      /
 Content-Type*            application/x-www-form-urlencoded
 Content-Length*          43
@@ -879,7 +879,7 @@ Body                     Action=GetCallerIdentity&Version=2011-06-15
 Region Calculation
 ``````````````````
 
-To get the region from the host, the driver MUST follow the algorithm expressed in psuedocode below. ::
+To get the region from the host, the driver MUST follow the algorithm expressed in psuedocode below. :: 
 
 	if the host is invalid according to the rules described earlier
 		the region is undefined and the driver must raise an error.
@@ -890,21 +890,21 @@ To get the region from the host, the driver MUST follow the algorithm expressed 
 	else // the valid host string contains no periods and is not "aws.amazonaws.com"
 		the region is "us-east-1"
 
-Examples are provided below.
+Examples are provided below. 
 
 ==============================  =========  ======================================================
-Host                            Region     Notes
+Host                            Region     Notes                                                 
 ==============================  =========  ======================================================
-sts.amazonaws.com               us-east-1  the host is "sts.amazonaws.com"; use `us-east-1`
-sts.us-west-2.amazonaws.com     us-west-2  use the second label
+sts.amazonaws.com               us-east-1  the host is "sts.amazonaws.com"; use `us-east-1`                
+sts.us-west-2.amazonaws.com     us-west-2  use the second label                    
 sts.us-west-2.amazonaws.com.ch  us-west-2  use the second label
-example.com                     com        use the second label
+example.com                     com        use the second label                                                
 localhost                       us-east-1  no "``.``" character; use the default region
-sts..com                        <Error>    second label is empty
-.amazonaws.com                  <Error>    starts with a period
-sts.amazonaws.                  <Error>    ends with a period
-""                              <Error>    empty string
-"string longer than 255"        <Error>    string longer than 255 bytes
+sts..com                        <Error>    second label is empty                                 
+.amazonaws.com                  <Error>    starts with a period                                  
+sts.amazonaws.                  <Error>    ends with a period                                   
+""                              <Error>    empty string                                          
+"string longer than 255"        <Error>    string longer than 255 bytes                          
 ==============================  =========  ======================================================
 
 `MongoCredential`_ Properties
@@ -929,8 +929,8 @@ mechanism_properties
 
 Obtaining Credentials
 `````````````````````
-Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete the steps in the `Signature Version 4 Signing Process
-<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_.  If a username and password are provided drivers
+Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete the steps in the `Signature Version 4 Signing Process 
+<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.  If a username and password are provided drivers 
 MUST use these for the AWS IAM access key and AWS IAM secret key, respectively. If, additionally, a session token is provided Drivers MUST use it as well. If a username is provided without a password (or vice-versa) or if *only* a session token is provided Drivers MUST raise an error. In other words, regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret access key or an access key ID, a secret access key and a session token.
 
 The order in which Drivers MUST search for credentials is:
@@ -979,7 +979,7 @@ credentials. Querying the URI will return the JSON response:
     "SecretAccessKey": <secret_access_key>,
     "Token": <security_token>
    }
-
+   
 EC2 endpoint
 ____________
 If the environment variable ``AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`` is unset, drivers MUST use the EC2 endpoint,
@@ -1028,7 +1028,7 @@ To re-direct queries from the EC2 endpoint to the mock server, replace the link-
 	$ TOKEN=`curl -X PUT "http://localhost:8000/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 30"`
 	$ ROLE_NAME=`curl http://localhost:8000/latest/meta-data/iam/security-credentials/ -H "X-aws-ec2-metadata-token: $TOKEN"`
 	$ curl http://localhost:8000/latest/meta-data/iam/security-credentials/$ROLE_NAME -H "X-aws-ec2-metadata-token: $TOKEN"
-
+	
 The JSON response from both the actual and mock EC2 endpoint will be in this format:
 
 .. code:: javascript
@@ -1043,9 +1043,9 @@ The JSON response from both the actual and mock EC2 endpoint will be in this for
     		"Expiration": <date>
 	}
 
-From the JSON response drivers
-MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process
-<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html>`_.
+From the JSON response drivers 
+MUST obtain the ``access_key``, ``secret_key`` and ``security_token`` which will be used during the `Signature Version 4 Signing Process 
+<https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true>`_.
 
 -------------------------
 Connection String Options
@@ -1070,7 +1070,7 @@ authSource
 	For MONGODB-CR, SCRAM-SHA-1 and SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or ``admin``.
 
 authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
-	A generic method to set mechanism properties in the connection string.
+	A generic method to set mechanism properties in the connection string. 
 
 	For example, to set REALM and CANONICALIZE_HOST_NAME, the option would be ``authMechanismProperties=CANONICALIZE_HOST_NAME:forward,SERVICE_REALM:AWESOME``.
 
@@ -1182,8 +1182,8 @@ As a URI, those have to be UTF-8 encoded and URL-escaped, e.g.:
 - mongodb://%E2%85%A8:IV@mongodb.example.com/admin
 - mongodb://%E2%85%A8:I%C2%ADV@mongodb.example.com/admin
 
---------------------------
-Speculative Authentication
+--------------------------	
+Speculative Authentication	
 --------------------------
 
 See the speculative authentication section in the `MongoDB Handshake spec <https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst>`_.
@@ -1233,22 +1233,22 @@ Q: It's possible to continue using authenticated sockets even if new sockets fai
 	Yes, that's technically true. The issue with doing that is for drivers using connection pooling. An application would function normally until an operation needed an additional connection(s) during a spike. Each new connection would fail to authenticate causing intermittent failures that would be very difficult to understand for a user.
 
 Q: Should a driver support multiple credentials?
-    No.
+    No. 
 
-    Historically, the MongoDB server and drivers have supported multiple credentials, one per authSource, on a single connection.  It was necessary because early versions of MongoDB allowed a user to be granted privileges
-    to access the database in which the user was defined (or all databases in the special case of the "admin" database).  But with the introduction of role-based access control in MongoDB 2.6, that restriction was
+    Historically, the MongoDB server and drivers have supported multiple credentials, one per authSource, on a single connection.  It was necessary because early versions of MongoDB allowed a user to be granted privileges 
+    to access the database in which the user was defined (or all databases in the special case of the "admin" database).  But with the introduction of role-based access control in MongoDB 2.6, that restriction was 
     removed and it became possible to create applications that access multiple databases with a single authenticated user.
 
-    Role-based access control also introduces the potential for accidental privilege escalation.  An application may, for example, authenticate user A from authSource X, and user B from authSource Y, thinking that
+    Role-based access control also introduces the potential for accidental privilege escalation.  An application may, for example, authenticate user A from authSource X, and user B from authSource Y, thinking that 
     user A has privileges only on collections in X and user B has privileges only on collections in Y.  But with role-based access control that restriction no longer exists, and it's possible that user B has, for example,
     more privileges on collections in X than user A does.  Due to this risk it's generally safer to create a single user with only the privileges required for a given application, and authenticate only that one user
     in the application.
 
-    In addition, since only a single credential is supported per authSource, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the "$external" database).
+    In addition, since only a single credential is supported per authSource, certain mechanisms are restricted to a single credential and some credentials cannot be used in conjunction (GSSAPI and X509 both use the "$external" database). 
 
-    Finally, MongoDB 3.6 introduces sessions, and allows at most a single authenticated user on any connection which makes use of one. Therefore any application that requires multiple authenticated users will not be able to make use of any feature that builds on sessions (e.g. retryable writes).
-
-    Drivers should therefore guide application creators in the right direction by supporting the association of at most one credential with a MongoClient instance.
+    Finally, MongoDB 3.6 introduces sessions, and allows at most a single authenticated user on any connection which makes use of one. Therefore any application that requires multiple authenticated users will not be able to make use of any feature that builds on sessions (e.g. retryable writes).  
+    
+    Drivers should therefore guide application creators in the right direction by supporting the association of at most one credential with a MongoClient instance. 
 
 Q: Should a driver support lazy authentication?
     No, for the same reasons as given in the previous section, as lazy authentication is another mechanism for allowing multiple credentials to be associated with a single MongoClient instance.
@@ -1276,7 +1276,7 @@ Q: Why does SCRAM sometimes SASLprep and sometimes not?
     problem, MongoDB decided that the best user experience on upgrade and
     lowest technical risk of implementation is to require drivers to continue
     to not SASLprep usernames in SCRAM-SHA-256.
-
+    
 Q: Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS?
 	No. While it's possible to allow access to EC2 instance metadata in ECS, for security reasons, Amazon states it's best practice to avoid this. (See `accessing EC2 metadata in ECS <https://aws.amazon.com/premiumsupport/knowledge-center/ecs-container-ec2-metadata/>`_ and `IAM Roles for Tasks <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html>`_)
 

@@ -164,7 +164,7 @@ When defining and documenting keys, specifications should follow the camelCase n
 Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported keys. For example::
 
   Unsupported option 'connectMS'.
-
+  
 Keys should be descriptive and follow existing conventions:
 
 Time based keys

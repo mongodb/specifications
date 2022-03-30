@@ -92,8 +92,6 @@ A non-exhaustive list of acceptable deviations are as follows:
   In addition, it is imperative that documentation indicate when the order of operations is important. For instance, skip and limit in find is order irrelevant where skip and limit in aggregate is not.
 
 
-.. _crud.naming:
-
 Naming
 ------
 
