@@ -227,7 +227,7 @@ error generation number
 ```````````````````````
 
 The error's generation number is the generation of the connection on which the
-application error occured. Note that when a network error occurs before the
+application error occurred. Note that when a network error occurs before the
 handshake completes then the error's generation number is the generation of
 the pool at the time the connection attempt was started.
 
@@ -666,7 +666,7 @@ roundTripTime
 `````````````
 
 Drivers MUST record the server's `round trip time`_ (RTT) after each
-successful call to to hello or legacy hello. The Server Selection Spec
+successful call to hello or legacy hello. The Server Selection Spec
 describes how RTT is averaged and how it is used in server selection.
 Drivers MUST also record the server's 90th percentile RTT per
 `Server Monitoring (Measuring RTT)`_.
@@ -1113,7 +1113,7 @@ updateRSFromPrimary
     # for comparison rules.
 
     # Null values for both electionId and setVersion are always considered less than
-    if serverDescription.electionId > serverDescription.maxElectionId or (
+    if serverDescription.electionId > topologyDescription.maxElectionId or (
         serverDescription.electionId == topologyDescription.maxElectionId
         and serverDescription.setVersion >= topologyDescription.maxSetVersion
     ):
@@ -1975,8 +1975,8 @@ The tuple order comparison MUST be checked in the order of electionId followed
 by setVersion since that order of comparison is guaranteed monotonicity.
 
 The client remembers the greatest electionId and setVersion reported by a primary,
-and distrusts primaries from older setVersions or from the same setVersion
-but with lesser electionIds.
+and distrusts primaries from older electionIds or from the same electionId
+but with lesser setVersion.
 
 - It compares electionIds as 12-byte sequence i.e. memory comparison.
 - It compares setVersions as integer values.
