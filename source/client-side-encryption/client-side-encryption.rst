@@ -200,13 +200,15 @@ encrypt newly created data keys.
 mongocryptd
 -----------
 `mongocryptd` is a singleton local process needed for auto-encryption when no
-`cse.csfle` library is used. It speaks the MongoDB wire protocol and the driver
-uses `mongocryptd` by connecting with a MongoClient. By default, if `csfle` is
+`csfle` library is used. It speaks the MongoDB wire protocol and the driver uses
+`mongocryptd` by connecting with a MongoClient. By default, if `csfle` is
 unavailable, the driver should attempt to automatically spawn `mongocryptd`. If
 the MongoClient is configured with :option:`extraOptions.mongocryptdBypassSpawn`
 set to |true|, OR :option:`bypassAutoEncryption` is set to |true| then the
 driver will not attempt to spawn `mongocryptd`. The `mongocryptd` process is
-responsible for self terminating after idling for a time period.
+responsible for self terminating after idling for a time period. If
+:option:`extraOptions.csfleRequired` is set to |true|, the driver will not
+connect to `mongocryptd` and instead rely on `csfle` being available.
 
 .. seealso:: Refer to `cse.managing-mongocryptd` for more information.
 
@@ -551,6 +553,7 @@ and `csfle`, with more detail described in the Implementation_ section:
       mongocryptdSpawnArgs: string[];
       csfleSearchPaths: string[];
       csflePathOverride: string | undefined;
+      csfleRequired: boolean;
    }
 
 Drivers MUST implement extraOptions in a way that allows
@@ -575,7 +578,7 @@ fields.
    :default: |false|
 
    Disables automatic spawning of `mongocryptd`. Refer:
-   :ref:`cse.managing-mongocryptd`
+   `Managing mongocryptd`_
 
 .. option:: extraOptions.mongocryptdSpawnArgs
 
@@ -583,7 +586,7 @@ fields.
    :default: :ts:`["--idleShutdownTimeoutSecs=60"]`
 
    Allow the user to specify additional command-line options for spawning
-   `mongocryptd` Refer: :ref:`cse.managing-mongocryptd`
+   `mongocryptd` Refer: `Managing mongocryptd`_
 
 .. option:: extraOptions.mongocryptdSpawnPath
 
@@ -591,7 +594,7 @@ fields.
    :default: :ts:`""`
 
    Used for spawning. Defaults to empty string and spawns `mongocryptd` from
-   system path. Refer: :ref:`cse.managing-mongocryptd`
+   system path. Refer: `Managing mongocryptd`_
 
 .. option:: extraOptions.csfleSearchPaths
 
@@ -620,6 +623,22 @@ fields.
    - :ref:`cse.csfle.path-resolution`
    - :ref:`cse.enabling-csfle`
 
+.. option:: extraOptions.csfleRequired
+
+   :type: :ts:`boolean`
+   :default: |false|
+
+   If |true|, the driver should refuse to continue unless `csfle` was loaded
+   successfully.
+
+   If, after initializing a `libmongocrypt_handle`, `csfle` is detected to be
+   unavailable AND :option:`extraOptions.csfleRequired` is |true|, the driver
+   MUST consider the `libmongocrypt_handle` to be invalid and return an error to
+   the user. Refer:
+
+   - :ref:`cse.enabling-csfle`
+   - `Managing mongocryptd`_
+   - `Detecting csfle Availability`_
 
 
 keyVaultClient, metadataClient, and the internal MongoClient
@@ -975,10 +994,10 @@ All errors from the MongoClient to `mongocryptd` or the `csfle` error category
 MUST be distinguished in some way (e.g. exception type) to make it easier for
 users to distinguish when a command fails due to auto encryption limitations.
 
-All errors from the MongoClient interacting with the key vault
-collection MUST be distinguished in some way (e.g. exception type) to
-make it easier for users to distinguish when a command fails due to
-behind-the-scenes operations required for encryption or decryption.
+All errors from the MongoClient interacting with the key vault collection MUST
+be distinguished in some way (e.g. exception type) to make it easier for users
+to distinguish when a command fails due to behind-the-scenes operations required
+for encryption or decryption.
 
 Drivers MUST apply timeouts to operations executed as part of client-side encryption per `Client Side Operations
 Timeout: Client Side Encryption
@@ -1122,6 +1141,8 @@ of `csfle` path options in `extraOptions`:
   guaranteed not to load `csfle`.
 
 
+.. _cse.csfle.detecting:
+
 Detecting `csfle` Availability
 ------------------------------
 
@@ -1200,10 +1221,14 @@ If the following conditions are met:
 - The user's ``MongoClient`` is configured for client-side encryption (i.e.
   `bypassAutoEncryption` is not |false|)
 - **AND** the user has not disabled `mongocryptd` spawning (i.e. by setting
-  `extraOptions.mongocryptdBypassSpawn` to |true|)
-- **AND** the `cse.csfle` library is unavailable *OR* is disabled.
+  `extraOptions.mongocryptdBypassSpawn` to |true|),
+- **AND** the `cse.csfle` library is unavailable,
+- **AND** the :option:`extraOptions.csfleRequired` option is |false|.
 
 **then** ``mongocryptd`` MUST be spawned by the driver.
+
+If the :option:`extraOptions.csfleRequired` option is |true| then the driver
+MUST NOT attempt to spawn or connect to `mongocryptd`.
 
 
 Spawning ``mongocryptd``
