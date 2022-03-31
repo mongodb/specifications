@@ -301,27 +301,24 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 3. Insert an empty document into the collection being used for the test.
 
 4. Create a client with both mongoses' addresses in its seed list,
-   appName="loadBalancingTest" and localThresholdMS=30000.
+   appName="loadBalancingTest", and localThresholdMS=30000.
 
-5. Using SDAM monitoring events, ensure both mongoses have been discovered and marked as
-   available.
-
-6. Using CMAP events, ensure the client's connection pools for both
+5. Using CMAP events, ensure the client's connection pools for both
    mongoses have been saturated, either via setting minPoolSize=maxPoolSize or
    executing operations.
 
-7. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
+6. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
    with empty filters using that client.
 
-8. Using command monitoring events, assert that fewer than 25% of the
+7. Using command monitoring events, assert that fewer than 25% of the
    CommandStartedEvents occurred on the mongos that the failpoint was enabled on.
 
-9. Disable the failpoint.
+8. Disable the failpoint.
 
-10. Start 10 concurrent threads / tasks that each run 100 `fundOne` operations
+9. Start 10 concurrent threads / tasks that each run 100 `fundOne` operations
     with empty filters using that client.
 
-11. Using command monitoring events, assert that each mongos was selected
+10. Using command monitoring events, assert that each mongos was selected
     roughly 50% of the time (within +/- 10%).
 
 Application-Provided Server Selector
