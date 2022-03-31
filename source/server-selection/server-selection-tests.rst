@@ -296,7 +296,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
             blockTimeMS: 500,
             appName: "loadBalancingTest",
         },
-    }
+     }
 
 3. Insert an empty document into the collection being used for the test.
 
@@ -316,7 +316,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 8. Disable the failpoint.
 
 9. Start 10 concurrent threads / tasks that each run 100 `findOne` operations
-    with empty filters using that client.
+   with empty filters using that client.
 
 10. Using command monitoring events, assert that each mongos was selected
     roughly 50% of the time (within +/- 10%).
