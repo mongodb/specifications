@@ -303,9 +303,16 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 4. Create a client with both mongoses' addresses in its seed list,
    appName="loadBalancingTest", and localThresholdMS=30000.
 
+   * localThresholdMS is set to a high value to help avoid a single mongos
+     being selected too many times due to a random spike in latency in the
+     other mongos.
+
 5. Using CMAP events, ensure the client's connection pools for both
    mongoses have been saturated, either via setting minPoolSize=maxPoolSize or
    executing operations.
+
+   * This helps reduce any noise introduced by connection establishment latency
+     during the actual server selection tests.
 
 6. Start 10 concurrent threads / tasks that each run 10 `findOne` operations
    with empty filters using that client.
