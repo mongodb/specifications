@@ -9,8 +9,8 @@ Change Streams
 :Status: Accepted
 :Type: Standards
 :Minimum Server Version: 3.6
-:Last Modified: 2022-02-10
-:Version: 1.12
+:Last Modified: 2022-03-14
+:Version: 1.13
 
 .. contents::
 
@@ -140,6 +140,13 @@ If an aggregate command with a ``$changeStream`` stage completes successfully, t
      * collection name in which the change happened.
      */
     ns: Document;
+
+    /**
+     * Only present for ops of type 'rename'.
+     *
+     * The namespace, in the same format as `ns`, that a collection has been renamed to.
+     */
+    to: Optional<Document>;
 
     /**
      * Only present for ops of type ‘insert’, ‘update’, ‘replace’, and
@@ -922,4 +929,6 @@ Changelog
 +------------+------------------------------------------------------------+
 | 2022-02-10 | Specified that ``getMore`` command must explicitly send    |
 |            | inherited ``comment``.                                     |
++------------+------------------------------------------------------------+
+| 2022-02-28 | Added ``to`` to ``ChangeStreamDocument``.                  |
 +------------+------------------------------------------------------------+
