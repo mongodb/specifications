@@ -19,6 +19,13 @@ Client Side Encryption
 
 .. default-role:: any
 
+.. role:: ts(code)
+   :language: typescript
+   :class: highlight
+
+.. |true| replace:: :ts:`true`
+.. |false| replace:: :ts:`false`
+
 .. contents::
 
 --------
@@ -192,13 +199,13 @@ encrypt newly created data keys.
 
 mongocryptd
 -----------
-mongocryptd is a singleton local process needed for auto-encryption when no
+`mongocryptd` is a singleton local process needed for auto-encryption when no
 `cse.csfle` library is used. It speaks the MongoDB wire protocol and the driver
-uses mongocryptd by connecting with a MongoClient. By default, the driver will
-attempt to automatically spawn mongocryptd. If the MongoClient is configured
-with `extraOptions.mongocryptdBypassSpawn=true <extraOptions>`, or
-`AutoEncryptionOpts.bypassAutoEncryption=true <AutoEncryptionOpts_>`_ then the
-driver will not attempt to spawn mongocryptd. The mongocryptd process is
+uses `mongocryptd` by connecting with a MongoClient. By default, if `csfle` is
+unavailable, the driver should attempt to automatically spawn `mongocryptd`. If
+the MongoClient is configured with :option:`extraOptions.mongocryptdBypassSpawn`
+set to |true|, OR :option:`bypassAutoEncryption` is set to |true| then the
+driver will not attempt to spawn `mongocryptd`. The `mongocryptd` process is
 responsible for self terminating after idling for a time period.
 
 .. seealso:: Refer to `cse.managing-mongocryptd` for more information.
@@ -209,19 +216,18 @@ responsible for self terminating after idling for a time period.
 csfle
 -----
 
-csfle is a dynamically-loaded C++ library providing query analysis for
-auto-encryption. It replaces `mongocryptd` for performing query
-analysis to
+`csfle` is a dynamically-loaded C++ library providing query analysis for
+auto-encryption. It replaces `mongocryptd` for performing query analysis to
 `mark-up sensitive fields within a command <subtype6.intent-to-encrypt>`.
 
-Drivers are not required to load and interact with csfle directly. Instead, they
-inform `libmongocrypt` where to find csfle and `libmongocrypt` will handle csfle
-communication automatically.
+Drivers are not required to load and interact with `csfle` directly. Instead,
+they inform `libmongocrypt` where to find `csfle` and `libmongocrypt` will
+handle `csfle` communication automatically.
 
 .. seealso::
 
-   Refer to `cse.enabling-csfle` for information on using enabling the
-   csfle library
+   Refer to `cse.enabling-csfle` for information on using enabling the `csfle`
+   library
 
 
 libmongocrypt
@@ -355,10 +361,10 @@ AutoEncryptionOpts
 
 .. option:: bypassAutoEncryption
 
-   :type: Boolean | ``undefined``
+   :type: :ts:`boolean | undefined`
 
    Drivers MUST disable auto encryption when the 'bypassAutoEncryption' option
-   is ``true`` and not try to
+   is |true| and not try to
    `spawn mongocryptd <cse.managing-mongocryptd>` nor
    `load csfle <cse.enabling-csfle>`. Automatic encryption may be
    completely disabled with the ``bypassAutoEncryption`` option. See
@@ -366,7 +372,7 @@ AutoEncryptionOpts
 
 .. option:: keyVaultClient
 
-   :type: MongoClient_ | ``undefined``
+   :type: :ts:`MongoClient | undefined` (Refer: MongoClient_)
 
    The key vault collection is assumed to reside on the same MongoDB cluster as
    indicated by the connecting URI. But the optional ``keyVaultClient`` can be
@@ -382,7 +388,7 @@ AutoEncryptionOpts
 
 .. option:: keyVaultNamespace
 
-   :type: string
+   :type: :ts:`string`
 
    The key vault collection namespace refers to a collection that contains all
    data keys used for encryption and decryption (aka the key vault collection).
@@ -392,7 +398,7 @@ AutoEncryptionOpts
 
 .. option:: schemaMap
 
-   :type: ``undefined`` | ``Map<String, Document>``
+   :type: :ts:`undefined | {[key: string]: object}`
 
    Automatic encryption is configured with an "encrypt" field in a collection's
    JSONSchema. By default, a collection's JSONSchema is periodically polled with
@@ -417,16 +423,19 @@ AutoEncryptionOpts
 
 .. option:: kmsProviders
 
-   :type: ``Map<String, Map<String, Value>>``
+   :type: :ts:`{[kmsProviderName: string]: object}`
 
    Multiple KMS providers may be specified. The ``kmsProviders`` map values
-   differ by provider ("aws", "azure", "gcp", "local", and "kmip"). The "local"
-   provider is configured with master key material. The external providers are
-   configured with credentials to authenticate.
+   differ by provider (:ts:`"aws"`, :ts:`"azure"`, :ts:`"gcp"`, :ts:`"local"`,
+   and :ts:`"kmip"`). The :ts:`"local"` provider is configured with master key
+   material. The external providers are configured with credentials to
+   authenticate.
 
    Drivers MUST enable TLS for all KMS connections.
 
    .. seealso:: `Why are extraOptions and kmsProviders maps?`_
+
+   The following defines the shape and schema of the supported KMS providers:
 
    .. code-block:: typescript
 
@@ -459,14 +468,14 @@ AutoEncryptionOpts
 
 .. option:: tlsOptions
 
-   :type: ``undefined`` | Map<String, TLSOptions_>
+   :type: :ts:`undefined | {[key: string]: TLSOptions}` (Refer: TLSOptions_)
 
    A mapping between :option:`kmsProvider <kmsProviders>` names and
    `TLS Options <TLSOptions_>`_.
 
 .. option:: extraOptions
 
-   :type: ``undefined`` | `ExtraOptions <cse.extraOptions>`
+   :type: :ts:`undefined | ExtraOptions` (Refer: `ExtraOptions <cse.extraOptions>`)
 
    Set extra options. Refer to `cse.extraOptions`
 
@@ -525,44 +534,23 @@ value of ``tlsDisableOCSPEndpointCheck`` and
 
 .. seealso:: `Why do KMS providers require TLS options?`_
 
-.. |opt-paths-prefer| replace:: `extraOptions.csfleSearchPathsPrefer <cse.extraOptions_>`__
-.. |opt-paths-fallback| replace:: `extraOptions.csfleSearchPathsFallback <cse.extraOptions_>`__
-.. |opt-path-override| replace:: `extraOptions.csflePathOverride <cse.extraOptions_>`__
-
 .. _cse.extraOptions:
 
 Extra Auto-Encryption Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``extraOptions`` parameter to AutoEncryptionOpts_ relate to `mongocryptd`
+The `extraOptions` parameter to AutoEncryptionOpts_ relate to `mongocryptd`
 and `csfle`, with more detail described in the Implementation_ section:
 
 .. code-block:: typescript
 
    interface ExtraOptions {
-      // Defaults to "mongodb://localhost:27020".
-      mongocryptdURI: Optional<String>,
-
-      // Defaults to false.
-      mongocryptdBypassSpawn: Optional<Boolean>,
-
-      // Used for spawning. Defaults to empty string and spawns mongocryptd from system path.
-      mongocryptdSpawnPath: Optional<String>,
-
-      // Passed when spawning mongocryptd. If omitted, this defaults to ["--idleShutdownTimeoutSecs=60"]
-      mongocryptdSpawnArgs: Optional<Array<String>>,
-
-      // An array of paths to search for csfle before searching the system
-      csfleSearchPathsPrefer: Optional<Array<String>>,
-
-      // An array of paths to search for csfle after searching the system
-      csfleSearchPathsFallback: Optional<Array<String>>,
-
-      // An absolute path to a csfle dynamic library to use for csfle
-      csflePathOverride: Optional<String>,
-
-      // If 'true', do not search the system for a csfle library
-      csfleDisableSystemLibrary: Optional<Boolean>,
+      mongocryptdURI: string;
+      mongocryptdBypassSpawn: boolean;
+      mongocryptdSpawnPath: string,
+      mongocryptdSpawnArgs: string[];
+      csfleSearchPaths: string[];
+      csflePathOverride: string | undefined;
    }
 
 Drivers MUST implement extraOptions in a way that allows
@@ -570,16 +558,68 @@ deprecating/removing options in the future without an API break, such as
 with a BSON document or map type instead of a struct type with fixed
 fields.
 
-.. seealso::
+.. seealso:: `Why are extraOptions and kmsProviders maps?`_.
 
-   - `cse.managing-mongocryptd`
-   - `csfle`:
+.. rubric:: Options
 
-     - `cse.enabling-csfle`
-     - `cse.csfle.search-paths`
-     - `cse.csfle.override-path`
+.. option:: extraOptions.mongocryptdURI
 
-   - `Why are extraOptions and kmsProviders maps?`_.
+   :type: :ts:`string`
+   :default: :ts:`"mongodb://localhost:27020"`
+
+   Allows the user to set the URI to use when connecting to `mongocryptd`.
+
+.. option:: extraOptions.mongocryptdBypassSpawn
+
+   :type: :ts:`boolean`
+   :default: |false|
+
+   Disables automatic spawning of `mongocryptd`. Refer:
+   :ref:`cse.managing-mongocryptd`
+
+.. option:: extraOptions.mongocryptdSpawnArgs
+
+   :type: :ts:`string[]`
+   :default: :ts:`["--idleShutdownTimeoutSecs=60"]`
+
+   Allow the user to specify additional command-line options for spawning
+   `mongocryptd` Refer: :ref:`cse.managing-mongocryptd`
+
+.. option:: extraOptions.mongocryptdSpawnPath
+
+   :type: :ts:`string`
+   :default: :ts:`""`
+
+   Used for spawning. Defaults to empty string and spawns `mongocryptd` from
+   system path. Refer: :ref:`cse.managing-mongocryptd`
+
+.. option:: extraOptions.csfleSearchPaths
+
+   :type: :ts:`string[]`
+   :default: :ts:`["$ORIGIN"]`
+
+   .. |opt-paths| replace:: :option:`extraOptions.csfleSearchPaths`
+
+   Allow the user to specify directories in which to search for `csfle`. Refer:
+
+   - :ref:`cse.csfle.search-paths`
+   - :ref:`cse.csfle.path-resolution`
+   - :ref:`cse.enabling-csfle`
+
+.. option:: extraOptions.csflePathOverride
+
+   :type: :ts:`undefined | string`
+   :default: :ts:`undefined`
+
+   .. |opt-path-override| replace:: :option:`extraOptions.csflePathOverride`
+
+   Allow the user to specify an absolute path to a `csfle` dynamic library to
+   load. Refer:
+
+   - :ref:`cse.csfle.override-path`
+   - :ref:`cse.csfle.path-resolution`
+   - :ref:`cse.enabling-csfle`
+
 
 
 keyVaultClient, metadataClient, and the internal MongoClient
@@ -627,7 +667,7 @@ the following as a template:
    internal ``MongoClient`` is created if any of the following are true:
 
    - ``AutoEncryptionOpts.keyVaultClient`` is not passed.
-   - ``AutoEncryptionOpts.bypassAutomaticEncryption`` is ``false``.
+   - ``AutoEncryptionOpts.bypassAutomaticEncryption`` is |false|.
 
    If an internal ``MongoClient`` is created, it is configured with the same
    options as the parent ``MongoClient`` except ``minPoolSize`` is set to ``0``
@@ -977,106 +1017,43 @@ Enabling Command Marking with the `csfle` Library
 
 The MongoDB Enterprise distribution includes a dynamic library named
 ``mongo_csfle_v1`` (with the appropriate file extension or filename suffix for
-the host platform). This library will be loaded by libmongocrypt when the
+the host platform). This library will be loaded by `libmongocrypt` when the
 ``mongocrypt_init`` function is invoked
 `(from the libmongocrypt C API) <lmc-c-api_>`_ based on the search critera that
 are provided by the driver.
 
-libmongocrypt allows the driver to specify an arbitrary list of directory paths
-in which to search for the `csfle` dynamic library. The user may specify `csfle`
-search behavior by specifying options in `cse.extraOptions`.
+`libmongocrypt` allows the driver to specify an arbitrary list of directory
+paths in which to search for the `csfle` dynamic library. The user may specify
+`csfle` search behavior by specifying options in `extraOptions`: |opt-paths| and
+|opt-path-override|.
 
 .. note::
 
-   The driver MUST NOT manipulate or do any validation on the csfle path options
-   provided in `cse.extraoptions`. They should be passed through to
-   libmongocrypt unchanged.
+   The driver MUST NOT manipulate or do any validation on the `csfle` path
+   options provided in `extraOptions`. They should be passed through to
+   `libmongocrypt` unchanged.
 
-
-Path Resolution Behavior
-------------------------
-
-.. |---| unicode:: U+2014
-
-Drivers should include and note the following information regarding the behavior
-of `csfle` path options in `cse.extraOptions`:
-
-- If used, the `override path`_ must be given as a path to the `csfle` dynamic
-  library file *itself*, and not simply the directory that contains it.
-
-- If the `override path`_ is specified, the `search paths`_ will be ignored.
-
-- For `csfle` `search paths`_ and the `override path`_, if the given path is a
-  relative path and the first path component is the literal string
-  "``$ORIGIN``", the "``$ORIGIN``" component will be replaced by the absolute
-  path to the directory containing the `libmongocrypt` library that is
-  performing the `csfle` search. This behavior mimics the ``$ORIGIN`` behavior
-  of the ``RUNPATH``/``RPATH`` properties of ELF executable files. This permits
-  bundling the `csfle` library along with `libmongocrypt` for creating portable
-  application distributions without relying on a externally/globally available
-  `csfle` library.
-
-  .. note:: No other ``RPATH``/``RUNPATH``-style substitutions are available.
-
-  .. _cse.csfle.dollar-system:
-
-- For `csfle` `search paths`_, if a search path string is "``$SYSTEM``", then
-  |---| instead of `libmongocrypt` searching for `csfle` in a directory named
-  "``SYSTEM``" |---| `libmongocrypt` will defer to the operating system's own
-  dynamic-library resolution mechanism when processing that search-path.
-
-- If a `search path`_ or `override path`_ is given as a relative path, that path
-  will be resolved relative to the working directory of the operating system
-  process.
 
 .. _search path:
 .. _search paths:
 .. _cse.csfle.search-paths:
 
-Adding Search Paths
--------------------
+Setting Search Paths
+--------------------
 
-The driver MUST append csfle search paths to the `libmongocrypt_handle` in the
-following order:
+The driver MUST append `csfle` search paths to the `libmongocrypt_handle`. For
+each path :math:`P` in |opt-paths|, append :math:`P` to the search paths on the
+`libmongocrypt_handle`, maintaining the order of the user-provided array..
 
-1. Append each search path in |opt-paths-prefer|.
-2. If `extraOptions.csfleDisableSystemLibrary <cse.extraoptions_>`__ *was not*
-   specified as ``true`` by the user, append the literal string "``$SYSTEM``" to
-   the path list. (`Refer <cse.csfle.dollar-system_>`_)
-3. Append each search path in |opt-paths-fallback|.
 
-.. note::
+.. rubric:: Explaination
 
-   If |opt-path-override| is set on a `libmongocrypt_handle`, then these search
-   paths will have no effect.
+The |opt-paths| array allows the user to customize the location of the `csfle`
+library that they want to use for their application. For example, a user may
+have bundled a `csfle` library with their application and knows where in the
+bundle that library is located.
 
-.. note::
-
-   If no |opt-paths-prefer| was specified or is an empty array, AND if no
-   |opt-paths-fallback| was specified or is an empty array, AND
-   `extraOptions.csfleDisableSystemLibrary <cse.extraOptions_>`__ was specified
-   as ``true``, the result should be that no csfle search paths will be added to
-   the `libmongocrypt_handle`, therefore libmongocrypt *will not* search for the
-   csfle library.
-
-   In this case, unless |opt-path-override| is specified, `libmongocrypt` is
-   guaranteed not to load csfle.
-
-   If |opt-path-override| is not specified and no search paths are appended,
-   libmongocrypt will never load csfle and will never produce any errors related
-   to csfle.
-
-Explanation
-^^^^^^^^^^^
-
-This has the bahvior that |opt-paths-prefer| allow the user to "inject" a
-`csfle` library before the possibility of loading on from the system, and
-|opt-paths-fallback| allows the user to provide a `csfle` library as a
-"fallback" in case the system does not have a `csfle` library. The appended
-string "``$SYSTEM``" will direct `libmongocrypt` to try and load `csfle` from
-the system.
-
-.. seealso:: `Path Resolution Behavior`_
+.. seealso:: `cse.csfle.path-resolution`_
 
 
 .. _override path:
@@ -1085,19 +1062,64 @@ the system.
 Overriding the `csfle` Library Path
 -------------------------------------
 
-If |opt-path-override| was specified by the user, the driver MUST set the csfle
-path override on the `libmongocrypt_handle`.
+If |opt-path-override| was specified by the user, the driver MUST set the
+`csfle` path override on the `libmongocrypt_handle`.
 
 .. note::
 
-   If a path override is set on a `libmongocrypt_handle` and libmongocrypt fails
-   to load csfle from that filepath, then that will result in a hard-error when
-   initializing libmongocrypt.
+   If a path override is set on a `libmongocrypt_handle` and `libmongocrypt`
+   fails to load `csfle` from that filepath, then that will result in a
+   hard-error when initializing `libmongocrypt`.
 
-.. note::
 
-   Setting an override path disables
-   `csfle search paths <cse.csfle.search-paths>` from having any effect.
+.. _cse.csfle.path-resolution:
+
+Path Resolution Behavior
+------------------------
+
+.. |---| unicode:: U+2014
+
+Drivers should include and note the following information regarding the behavior
+of `csfle` path options in `extraOptions`:
+
+- If used, the `override path`_ must be given as a path to the `csfle` dynamic
+  library file *itself*, and not simply the directory that contains it.
+
+- If the `override path`_ is specified, the `search paths`_ will be ignored.
+
+- For `csfle` `search paths`_ and the `override path`_, if the given path is a
+  relative path and the first path component is the literal string
+  :ts:`"$ORIGIN"`, the :ts:`"$ORIGIN"` component will be replaced by the
+  absolute path to the directory containing the `libmongocrypt` library that is
+  performing the `csfle` search. This behavior mimics the ``$ORIGIN`` behavior
+  of the ``RUNPATH``/``RPATH`` properties of ELF executable files. This permits
+  bundling the `csfle` library along with `libmongocrypt` for creating portable
+  application distributions without relying on a externally/globally available
+  `csfle` library.
+
+  .. note:: No other ``RPATH``/``RUNPATH``-style substitutions are available.
+
+- For `csfle` `search paths`_, if a search path string is :ts:`"$SYSTEM"`, then
+  |---| instead of `libmongocrypt` searching for `csfle` in a directory named
+  "``$SYSTEM``" |---| `libmongocrypt` will defer to the operating system's own
+  dynamic-library resolution mechanism when processing that search-path.
+
+- If a `search path`_ or `override path`_ is given as a relative path, that path
+  will be resolved relative to the working directory of the operating system
+  process.
+
+- If an `override path`_ was specified and `libmongocrypt` fails to load `csfle`
+  from that filepath, `libmongocrypt` will fail to initialize with a hard-error.
+
+- If `libmongocrypt` fails to load the `csfle` library from the `search paths`_,
+  `libmongocrypt` will proceed without error and presume that `csfle` is
+  unavailable.
+
+- If |opt-paths| is specified to be an empty array, the resulting `csfle` search
+  paths will also be an empty array, effectively disabling `csfle` searching.
+
+  In this case, unless |opt-path-override| is specified, `libmongocrypt` is
+  guaranteed not to load `csfle`.
 
 
 Detecting `csfle` Availability
@@ -1107,22 +1129,22 @@ Detecting `csfle` Availability
 `libmongocrypt_handle`.
 
 After initializing the `libmongocrypt_handle`, the driver can detect whether
-`csfle` was successfully loaded by asking libmongocrypt for the csfle version
-string. If the result is an empty string, libmongocrypt did not load csfle and
-the driver must rely on `mongocryptd` to mark command documents for encryption.
+`csfle` was successfully loaded by asking `libmongocrypt` for the `csfle`
+version string. If the result is an empty string, `libmongocrypt` did not load
+`csfle` and the driver must rely on `mongocryptd` to mark command documents for
+encryption.
 
 
 "Disabling" `csfle`
 -------------------
 
-`csfle` can be "disabled" on a `libmongocrypt_handle` by ommission:
+As noted in `Path Resolution Behavior`_, `csfle` can be "disabled" on a
+`libmongocrypt_handle` by omission:
 
-1. Do not append any `csfle` search paths. (Refer:
-   :ref:`cse.csfle.search-paths`)
-2. Do not specify a `csfle` library path override. (Refer:
-   :ref:`cse.csfle.override-path`)
+1. Set |opt-paths| to an empty array :ts:`[]`,
+2. AND do not specify a `csfle` library `override path`_ (|opt-path-override|).
 
-This has an effect of "disabling" `csfle` for that handle.
+This has an effect of "disabling" `csfle` for that `libmongocrypt_handle`.
 
 If at least one `csfle` search path is appended, the `libmongocrypt_handle`
 "wants" `csfle`, but it might *not* successfully load `csfle`. Failing to
@@ -1130,9 +1152,9 @@ load a `csfle` library after searching every directory in the search paths is
 *not* an error *unless* there is another `csfle` library already loaded in the
 same operating system process (See: `cse.csfle-multiple`).
 
-If the `csfle` path override is set on a `libmongocrypt_handle`, that
-library handle *requires* `csfle`, and failing to load a `csfle` library
-from that override path will result in a hard error.
+If the `csfle` `override path`_ is set on a `libmongocrypt_handle`, that library
+handle *requires* `csfle`, and failing to load a `csfle` library from that
+`override path`_ will result in a hard error.
 
 
 .. _cse.csfle-multiple:
@@ -1142,26 +1164,26 @@ Loading `csfle` Multiple Times
 
 Due to implementation restrictions, there must not be more than one `csfle`
 dynamic library loaded simultaneously in a single operating system process.
-libmongocrypt will enforce this at the time that it loads `csfle` while
-initializing a `libmongocrypt_handle`. libmongocrypt will keep track of the open
-`csfle` library globally, and any subsequent attempt to use a `csfle` library
-that does not exactly match the filepath of the already-loaded `csfle` will
-result in an error.
+`libmongocrypt` will do its best to enforce this at the time that it loads
+`csfle` while initializing a `libmongocrypt_handle`. `libmongocrypt` will keep
+track of the open `csfle` library globally, and any subsequent attempt to use a
+`csfle` library that does not exactly match the filepath of the already-loaded
+`csfle` will result in an error.
 
 If at least one `libmongocrypt_handle` exists in an operating system process
 that has an open handle to a `csfle` library, subsequent attempts to initialize
 an additional `libmongocrypt_handle` will fail if:
 
 1. The new `libmongocrypt_handle` wants `csfle` (i.e. has at least one
-   search path OR set a path override).
+   `search path`_ OR set an `override path`_).
 2. AND the initialization of that `libmongocrypt_handle` does not successfully
    find the same `csfle` library that was loaded by the existing
-   `libmongocrypt_handle` that is already using csfle.
+   `libmongocrypt_handle` that is already using `csfle`.
 
 Drivers SHOULD document this limitation for users along with the documentation
-on the ``csfle*`` options in `cse.extraoptions`. Specifically, care should
+on the ``csfle*`` options in `extraOptions`. Specifically, care should
 be taken to always specify the same set of search and override paths for the
-lifetime of a `libmongocrypt_handle` that has csfle open.
+lifetime of a `libmongocrypt_handle` that has `csfle` open.
 
 Once all open handles to a `csfle` library are closed, it is possible to load a
 different `csfle` library than was previously loaded. The restriction only
@@ -1176,9 +1198,9 @@ Managing mongocryptd
 If the following conditions are met:
 
 - The user's ``MongoClient`` is configured for client-side encryption (i.e.
-  ``bypassAutoEncryption != false``)
-- **AND** the user has not disabled ``mongocryptd`` spawning (i.e. with
-  ``mongocryptdBypassSpawn=true``)
+  `bypassAutoEncryption` is not |false|)
+- **AND** the user has not disabled `mongocryptd` spawning (i.e. by setting
+  `extraOptions.mongocryptdBypassSpawn` to |true|)
 - **AND** the `cse.csfle` library is unavailable *OR* is disabled.
 
 **then** ``mongocryptd`` MUST be spawned by the driver.
@@ -1188,16 +1210,14 @@ Spawning ``mongocryptd``
 ------------------------
 
 Spawning MUST include the command line argument ``--idleShutdownTimeoutSecs``.
-If the user does not supply one through
-`extraOptions.mongocryptdSpawnArgs <cse.extraOptions>` (which may be either in
-the form "``--idleShutdownTimeoutSecs=60``" or as two consecutive arguments
-``["--idleShutdownTimeoutSecs", 60]``, then the driver MUST append
-``--idleShutdownTimeoutSecs=60`` to the arguments. This tells ``mongocryptd`` to
-automatically terminate after 60 seconds of non-use. The stdout and stderr of
-the spawned process MUST not be exposed in the driver (e.g. redirect to
-``/dev/null``). Users can pass the argument ``--logpath`` to
-`extraOptions.mongocryptdSpawnArgs <cse.extraoptions>` if they need to inspect
-mongocryptd logs.
+If the user does not supply one through `extraOptions.mongocryptdSpawnArgs`
+(which may be either in the form "``--idleShutdownTimeoutSecs=60``" or as two
+consecutive arguments ``["--idleShutdownTimeoutSecs", 60]``, then the driver
+MUST append ``--idleShutdownTimeoutSecs=60`` to the arguments. This tells
+``mongocryptd`` to automatically terminate after 60 seconds of non-use. The
+stdout and stderr of the spawned process MUST not be exposed in the driver (e.g.
+redirect to ``/dev/null``). Users can pass the argument ``--logpath`` to
+`extraOptions.mongocryptdSpawnArgs` if they need to inspect mongocryptd logs.
 
 Upon construction, the MongoClient MUST create a `mongocryptd_client`
 configured with ``serverSelectionTimeoutMS=10000``.
@@ -1934,7 +1954,7 @@ Why is the metadataClient not needed if bypassAutoEncryption=true
 
 JSON schema data is only needed for automatic encryption but not for automatic
 decryption. ``listCollections`` is not run when ``bypassAutoEncryption`` is
-``true``, making a metadataClient unnecessary.
+|true|, making a metadataClient unnecessary.
 
 Why are commands sent to mongocryptd on collections without encrypted fields?
 -----------------------------------------------------------------------------
