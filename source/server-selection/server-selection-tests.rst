@@ -315,7 +315,7 @@ Multi-threaded and async drivers MUST also implement the following prose test:
 
 8. Disable the failpoint.
 
-9. Start 10 concurrent threads / tasks that each run 100 `fundOne` operations
+9. Start 10 concurrent threads / tasks that each run 100 `findOne` operations
     with empty filters using that client.
 
 10. Using command monitoring events, assert that each mongos was selected
