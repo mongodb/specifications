@@ -517,9 +517,9 @@ example:
 Drivers MUST raise an error if the TLS options are set to disable TLS.
 The error MUST contain the message "TLS is required".
 
-error if insecure TLS options are set. The error MUST contain the message
-"Insecure TLS options prohibited". This includes options equivalent to the
-following :doc:`URI options </uri-options/uri-options>`:
+Drivers SHOULD raise an error if insecure TLS options are set. The error MUST
+contain the message "Insecure TLS options prohibited". This includes options
+equivalent to the following :doc:`URI options </uri-options/uri-options>`:
 
 - ``tlsInsecure``
 - ``tlsAllowInvalidCertificates``
@@ -628,7 +628,7 @@ fields.
    :type: :ts:`boolean`
    :default: |false|
 
-   If |true|, the driver should refuse to continue unless `csfle` was loaded
+   If |true|, the driver MUST refuse to continue unless `csfle` was loaded
    successfully.
 
    If, after initializing a `libmongocrypt_handle`, `csfle` is detected to be
@@ -1062,7 +1062,7 @@ Setting Search Paths
 
 The driver MUST append `csfle` search paths to the `libmongocrypt_handle`. For
 each path :math:`P` in |opt-paths|, append :math:`P` to the search paths on the
-`libmongocrypt_handle`, maintaining the order of the user-provided array..
+`libmongocrypt_handle`, maintaining the order of the user-provided array.
 
 
 .. rubric:: Explaination
